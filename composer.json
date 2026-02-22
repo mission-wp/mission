@@ -1,0 +1,23 @@
+{
+	"name": "mission-wp/mission",
+	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=8.0"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.6",
+		"yoast/phpunit-polyfills": "^2.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Mission\\": "src/"
+		}
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"sort-packages": true
+	}
+}
+

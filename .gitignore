@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+blocks/build/
+
+# WordPress environment
+.wp-env/
+
+# Playwright artifacts (screenshots, videos, traces, auth state)
+artifacts/
+
+# OS files
+.DS_Store
+
+
+# IDE / tools
+.phpunit.result.cache
+.claude/
+.agents/
+
+# Project docs (not for repo)
+CLAUDE.md
+MVP.md

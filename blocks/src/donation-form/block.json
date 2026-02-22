@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission/donation-form",
+	"version": "0.1.0",
+	"title": "Donation Form",
+	"category": "widgets",
+	"icon": "dashicons-money-alt",
+	"description": "Donation form",
+	"supports": {
+		"html": false
+	},
+	"textdomain": "mission",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js",
+	"render": "file:./index.php"
+}
+

@@ -1,0 +1,26 @@
+{
+	"name": "mission",
+	"version": "1.0.0",
+	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
+	"private": true,
+	"scripts": {
+		"build": "wp-scripts build --webpack-src-dir=blocks/src --output-path=blocks/build",
+		"start": "wp-scripts start --webpack-src-dir=blocks/src --output-path=blocks/build",
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:destroy": "wp-env destroy",
+		"env:cli": "wp-env run cli",
+		"test:unit:js": "wp-scripts test-unit-js",
+		"test:e2e": "wp-scripts test-playwright",
+		"lint:js": "wp-scripts lint-js blocks/src",
+		"lint:css": "wp-scripts lint-style blocks/src",
+		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/mission vendor/bin/phpunit"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.0.0",
+		"@wordpress/scripts": "^30.0.0"
+	},
+	"overrides": {
+		"simple-git": "3.31.1"
+	}
+}
