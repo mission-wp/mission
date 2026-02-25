@@ -10,6 +10,7 @@ namespace Mission\Admin;
 use Mission\Admin\Pages\CampaignsPage;
 use Mission\Admin\Pages\DashboardPage;
 use Mission\Admin\Pages\DonationsPage;
+use Mission\Admin\Pages\FormsPage;
 use Mission\Admin\Pages\DonorsPage;
 use Mission\Admin\Pages\SettingsPage;
 
@@ -29,6 +30,11 @@ class AdminModule {
 	 * Submenu slug for Campaigns.
 	 */
 	public const CAMPAIGNS_SLUG = 'mission-campaigns';
+
+	/**
+	 * Submenu slug for Donation Forms.
+	 */
+	public const FORMS_SLUG = 'mission-forms';
 
 	/**
 	 * Submenu slug for Donations.
@@ -61,6 +67,7 @@ class AdminModule {
 		$this->pages = array(
 			'dashboard' => new DashboardPage(),
 			'campaigns' => new CampaignsPage(),
+			'forms'     => new FormsPage(),
 			'donations' => new DonationsPage(),
 			'donors'    => new DonorsPage(),
 			'settings'  => new SettingsPage(),
@@ -103,6 +110,15 @@ class AdminModule {
 			'manage_options',
 			self::CAMPAIGNS_SLUG,
 			array( $this->pages['campaigns'], 'render' )
+		);
+
+		add_submenu_page(
+			self::MENU_SLUG,
+			__( 'Donation Forms', 'mission' ),
+			__( 'Donation Forms', 'mission' ),
+			'manage_options',
+			self::FORMS_SLUG,
+			array( $this->pages['forms'], 'render' )
 		);
 
 		add_submenu_page(
