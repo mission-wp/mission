@@ -4,6 +4,7 @@ vendor/
 
 # Build output
 blocks/build/
+admin/build/
 
 # WordPress environment
 .wp-env/

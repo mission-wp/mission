@@ -14,19 +14,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Settings page class.
  */
-class SettingsPage implements AdminPage {
+class SettingsPage extends AdminPage {
 
 	/**
-	 * Render the page.
+	 * Get the page slug.
 	 *
-	 * @return void
+	 * @return string
 	 */
-	public function render(): void {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<p><?php esc_html_e( 'Settings coming soon.', 'mission' ); ?></p>
-		</div>
-		<?php
+	public function get_slug(): string {
+		return 'settings';
 	}
 }

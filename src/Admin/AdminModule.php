@@ -74,6 +74,78 @@ class AdminModule {
 		);
 
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+	}
+
+	/**
+	 * Enqueue admin scripts and styles on Mission pages.
+	 *
+	 * @param string $hook_suffix The current admin page hook suffix.
+	 *
+	 * @return void
+	 */
+	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by admin_enqueue_scripts hook signature.
+	public function enqueue_admin_assets( string $hook_suffix ): void {
+		$screen = get_current_screen();
+
+		if ( ! $screen || ! $this->is_mission_screen( $screen->id ) ) {
+			return;
+		}
+
+		$asset_file = MISSION_PATH . 'admin/build/mission-admin.asset.php';
+
+		if ( ! file_exists( $asset_file ) ) {
+			return;
+		}
+
+		$asset = require $asset_file;
+
+		wp_enqueue_script(
+			'mission-admin',
+			MISSION_URL . 'admin/build/mission-admin.js',
+			$asset['dependencies'],
+			$asset['version'],
+			true
+		);
+
+		wp_enqueue_style(
+			'mission-admin',
+			MISSION_URL . 'admin/build/mission-admin.css',
+			array( 'wp-components' ),
+			$asset['version']
+		);
+
+		wp_localize_script(
+			'mission-admin',
+			'missionAdmin',
+			array(
+				'restUrl'   => rest_url( 'mission/v1/' ),
+				'restNonce' => wp_create_nonce( 'wp_rest' ),
+				'adminUrl'  => admin_url(),
+				'page'      => $screen->id,
+				'version'   => MISSION_VERSION,
+			)
+		);
+	}
+
+	/**
+	 * Check if the given screen ID belongs to a Mission admin page.
+	 *
+	 * @param string $screen_id The screen ID to check.
+	 *
+	 * @return bool
+	 */
+	private function is_mission_screen( string $screen_id ): bool {
+		$mission_screens = array(
+			'toplevel_page_mission',
+			'mission_page_mission-campaigns',
+			'mission_page_mission-forms',
+			'mission_page_mission-donations',
+			'mission_page_mission-donors',
+			'mission_page_mission-settings',
+		);
+
+		return in_array( $screen_id, $mission_screens, true );
 	}
 
 	/**
