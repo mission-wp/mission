@@ -20,6 +20,6 @@ artifacts/
 .claude/
 .agents/
 
-# Project docs (not for repo)
-CLAUDE.md
-MVP.md
+# Markdown files (internal docs, task tracking, etc.)
+*.md
+!README.md
