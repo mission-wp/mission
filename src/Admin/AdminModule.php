@@ -161,11 +161,13 @@ class AdminModule {
 			return 'dashicons-heart';
 		}
 
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file, not a remote URL.
 		$svg_content = file_get_contents( $logo_path );
 		if ( false === $svg_content ) {
 			return 'dashicons-heart';
 		}
 
+		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Encoding SVG for data URI, not obfuscation.
 		$base64 = base64_encode( $svg_content );
 		return 'data:image/svg+xml;base64,' . $base64;
 	}

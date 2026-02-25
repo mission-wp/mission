@@ -60,10 +60,10 @@ $capabilities = array(
 );
 
 foreach ( wp_roles()->roles as $role_name => $role_info ) {
-	$role = get_role( $role_name );
-	if ( $role ) {
+	$wp_role = get_role( $role_name );
+	if ( $wp_role ) {
 		foreach ( $capabilities as $cap ) {
-			$role->remove_cap( $cap );
+			$wp_role->remove_cap( $cap );
 		}
 	}
 }

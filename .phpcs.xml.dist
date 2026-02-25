@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset name="Mission">
+	<description>PHPCS rules for the Mission donation plugin.</description>
+
+	<!-- What to scan. -->
+	<file>./src</file>
+	<file>./mission.php</file>
+	<file>./uninstall.php</file>
+
+	<!-- Show progress and sniff codes in all reports. -->
+	<arg value="ps"/>
+	<arg name="colors"/>
+
+	<!-- Strip file paths down to the relevant bit. -->
+	<arg name="basepath" value="."/>
+
+	<!-- Check up to 8 files simultaneously. -->
+	<arg name="parallel" value="8"/>
+
+	<!-- Use WordPress-Extra as the base ruleset. -->
+	<rule ref="WordPress-Extra">
+		<!-- Allow short array syntax. -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+	</rule>
+
+	<!-- Check for PHP cross-version compatibility. -->
+	<config name="testVersion" value="8.0-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- WordPress prefix for hooks, options, etc. -->
+	<config name="minimum_wp_version" value="6.5"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="mission"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Allow PSR-4 file naming (class-based filenames, not class- prefix). -->
+	<rule ref="WordPress.Files.FileName">
+		<properties>
+			<property name="strict_class_file_names" value="false"/>
+		</properties>
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+	</rule>
+
+	<!-- Exclude vendor and build directories. -->
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+	<exclude-pattern>/blocks/build/*</exclude-pattern>
+	<exclude-pattern>/tests/*</exclude-pattern>
+</ruleset>

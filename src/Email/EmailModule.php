@@ -37,7 +37,7 @@ class EmailModule {
 	 * @param array  $data Template data.
 	 * @return string Rendered HTML.
 	 */
-	public function render_partial( string $partial, array $data = array() ): string {
+	public function render_partial( string $partial, array $data = array() ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- $data is available to the included template.
 		$partial_file = $this->template_dir . 'partials/' . $partial . '.php';
 
 		if ( ! file_exists( $partial_file ) ) {

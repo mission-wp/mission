@@ -14,7 +14,9 @@
 		"test:e2e": "wp-scripts test-playwright",
 		"lint:js": "wp-scripts lint-js blocks/src",
 		"lint:css": "wp-scripts lint-style blocks/src",
-		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/mission vendor/bin/phpunit"
+		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/mission vendor/bin/phpunit",
+		"lint:php": "vendor/bin/phpcs",
+		"lint:php:fix": "vendor/bin/phpcbf"
 	},
 	"devDependencies": {
 		"@wordpress/env": "^10.0.0",

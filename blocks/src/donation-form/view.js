@@ -1,11 +1,11 @@
 /**
  * Donation form frontend JavaScript.
  */
-(function () {
+( function () {
 	'use strict';
 
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', init);
+	if ( document.readyState === 'loading' ) {
+		document.addEventListener( 'DOMContentLoaded', init );
 	} else {
 		init();
 	}
@@ -13,4 +13,4 @@
 	function init() {
 		// Donation form initialization will go here.
 	}
-})();
+} )();
