@@ -1,8 +1,10 @@
 import { SlotFillProvider } from '@wordpress/components';
 import Dashboard from './pages/Dashboard';
+import Forms from './pages/Forms';
 
 const pages = {
 	dashboard: Dashboard,
+	forms: Forms,
 };
 
 export default function App( { container } ) {

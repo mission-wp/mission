@@ -70,7 +70,7 @@ class AdminModuleTest extends WP_UnitTestCase {
 
 		$this->assertContains( AdminModule::MENU_SLUG, $submenu_slugs, 'Dashboard submenu missing.' );
 		$this->assertContains( AdminModule::CAMPAIGNS_SLUG, $submenu_slugs, 'Campaigns submenu missing.' );
-		$this->assertContains( 'edit.php?post_type=mission_form', $submenu_slugs, 'Donation Forms submenu missing.' );
+		$this->assertContains( AdminModule::FORMS_SLUG, $submenu_slugs, 'Donation Forms submenu missing.' );
 		$this->assertContains( AdminModule::DONATIONS_SLUG, $submenu_slugs, 'Donations submenu missing.' );
 		$this->assertContains( AdminModule::DONORS_SLUG, $submenu_slugs, 'Donors submenu missing.' );
 		$this->assertContains( AdminModule::SETTINGS_SLUG, $submenu_slugs, 'Settings submenu missing.' );

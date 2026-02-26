@@ -191,7 +191,8 @@ class AdminModule {
 			__( 'Donation Forms', 'mission' ),
 			__( 'Donation Forms', 'mission' ),
 			'manage_options',
-			'edit.php?post_type=mission_form'
+			self::FORMS_SLUG,
+			array( $this->pages['forms'], 'render' )
 		);
 
 		add_submenu_page(
@@ -250,7 +251,7 @@ class AdminModule {
 		$screen = get_current_screen();
 
 		if ( $screen && 'mission_form' === $screen->post_type ) {
-			return 'edit.php?post_type=mission_form';
+			return self::FORMS_SLUG;
 		}
 
 		return $submenu_file;
