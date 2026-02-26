@@ -7,6 +7,7 @@
 
 namespace Mission\Admin;
 
+use Mission\Admin\Pages\CampaignsPage;
 use Mission\Admin\Pages\DashboardPage;
 use Mission\Admin\Pages\TransactionsPage;
 use Mission\Admin\Pages\DonorsPage;
@@ -28,6 +29,11 @@ class AdminModule {
 	 * Submenu slug for Transactions.
 	 */
 	public const TRANSACTIONS_SLUG = 'mission-transactions';
+
+	/**
+	 * Submenu slug for Campaigns.
+	 */
+	public const CAMPAIGNS_SLUG = 'mission-campaigns';
 
 	/**
 	 * Submenu slug for Donors.
@@ -54,6 +60,7 @@ class AdminModule {
 	public function init(): void {
 		$this->pages = array(
 			'dashboard'    => new DashboardPage(),
+			'campaigns'    => new CampaignsPage(),
 			'transactions' => new TransactionsPage(),
 			'donors'       => new DonorsPage(),
 			'settings'     => new SettingsPage(),
@@ -126,10 +133,10 @@ class AdminModule {
 	private function is_mission_screen( string $screen_id ): bool {
 		$mission_screens = array(
 			'toplevel_page_mission',
+			'mission_page_mission-campaigns',
 			'mission_page_mission-transactions',
 			'mission_page_mission-donors',
 			'mission_page_mission-settings',
-			'edit-mission_campaign',
 			'mission_campaign',
 		);
 
@@ -168,8 +175,8 @@ class AdminModule {
 			__( 'Campaigns', 'mission' ),
 			__( 'Campaigns', 'mission' ),
 			'manage_options',
-			'edit.php?post_type=mission_campaign',
-			''
+			self::CAMPAIGNS_SLUG,
+			array( $this->pages['campaigns'], 'render' )
 		);
 
 		add_submenu_page(
@@ -228,7 +235,7 @@ class AdminModule {
 		$screen = get_current_screen();
 
 		if ( $screen && 'mission_campaign' === $screen->post_type ) {
-			return 'edit.php?post_type=mission_campaign';
+			return self::CAMPAIGNS_SLUG;
 		}
 
 		return $submenu_file;

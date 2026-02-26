@@ -1,7 +1,9 @@
 import { SlotFillProvider } from '@wordpress/components';
+import Campaigns from './pages/Campaigns';
 import Dashboard from './pages/Dashboard';
 
 const pages = {
+	campaigns: Campaigns,
 	dashboard: Dashboard,
 };
 
