@@ -57,11 +57,11 @@ class Plugin {
 	private ?Email\EmailModule $email_module = null;
 
 	/**
-	 * Form post type instance.
+	 * Campaign post type instance.
 	 *
-	 * @var Forms\FormPostType|null
+	 * @var Campaigns\CampaignPostType|null
 	 */
-	private ?Forms\FormPostType $form_post_type = null;
+	private ?Campaigns\CampaignPostType $campaign_post_type = null;
 
 	/**
 	 * Get plugin instance.
@@ -85,9 +85,9 @@ class Plugin {
 		$this->database_module = new Database\DatabaseModule();
 		$this->database_module->init();
 
-		// Initialize form post type (must be before blocks module).
-		$this->form_post_type = new Forms\FormPostType();
-		$this->form_post_type->init();
+		// Initialize campaign post type (must be before blocks module).
+		$this->campaign_post_type = new Campaigns\CampaignPostType();
+		$this->campaign_post_type->init();
 
 		// Initialize blocks module (registers custom blocks).
 		$this->blocks_module = new Blocks\BlocksModule();
