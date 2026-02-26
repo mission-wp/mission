@@ -8,9 +8,8 @@
 namespace Mission\Tests\Admin;
 
 use Mission\Admin\AdminModule;
-use Mission\Admin\Pages\CampaignsPage;
 use Mission\Admin\Pages\DashboardPage;
-use Mission\Admin\Pages\DonationsPage;
+use Mission\Admin\Pages\TransactionsPage;
 use Mission\Admin\Pages\DonorsPage;
 use Mission\Admin\Pages\SettingsPage;
 use WP_UnitTestCase;
@@ -69,12 +68,11 @@ class AdminModuleTest extends WP_UnitTestCase {
 		$submenu_slugs = array_column( $submenu[ AdminModule::MENU_SLUG ], 2 );
 
 		$this->assertContains( AdminModule::MENU_SLUG, $submenu_slugs, 'Dashboard submenu missing.' );
-		$this->assertContains( AdminModule::CAMPAIGNS_SLUG, $submenu_slugs, 'Campaigns submenu missing.' );
-		$this->assertContains( AdminModule::FORMS_SLUG, $submenu_slugs, 'Donation Forms submenu missing.' );
-		$this->assertContains( AdminModule::DONATIONS_SLUG, $submenu_slugs, 'Donations submenu missing.' );
+		$this->assertContains( 'edit.php?post_type=mission_campaign', $submenu_slugs, 'Campaigns submenu missing.' );
+		$this->assertContains( AdminModule::TRANSACTIONS_SLUG, $submenu_slugs, 'Transactions submenu missing.' );
 		$this->assertContains( AdminModule::DONORS_SLUG, $submenu_slugs, 'Donors submenu missing.' );
 		$this->assertContains( AdminModule::SETTINGS_SLUG, $submenu_slugs, 'Settings submenu missing.' );
-		$this->assertCount( 6, $submenu[ AdminModule::MENU_SLUG ] );
+		$this->assertCount( 5, $submenu[ AdminModule::MENU_SLUG ] );
 	}
 
 	/**
@@ -92,31 +90,17 @@ class AdminModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that the campaigns page renders expected content.
+	 * Test that the transactions page renders expected content.
 	 */
-	public function test_campaigns_page_renders(): void {
-		$page = new CampaignsPage();
+	public function test_transactions_page_renders(): void {
+		$page = new TransactionsPage();
 
 		ob_start();
 		$page->render();
 		$output = ob_get_clean();
 
 		$this->assertStringContainsString( 'id="mission-admin"', $output );
-		$this->assertStringContainsString( 'data-page="campaigns"', $output );
-	}
-
-	/**
-	 * Test that the donations page renders expected content.
-	 */
-	public function test_donations_page_renders(): void {
-		$page = new DonationsPage();
-
-		ob_start();
-		$page->render();
-		$output = ob_get_clean();
-
-		$this->assertStringContainsString( 'id="mission-admin"', $output );
-		$this->assertStringContainsString( 'data-page="donations"', $output );
+		$this->assertStringContainsString( 'data-page="transactions"', $output );
 	}
 
 	/**

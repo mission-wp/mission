@@ -7,10 +7,8 @@
 
 namespace Mission\Admin;
 
-use Mission\Admin\Pages\CampaignsPage;
 use Mission\Admin\Pages\DashboardPage;
-use Mission\Admin\Pages\DonationsPage;
-use Mission\Admin\Pages\FormsPage;
+use Mission\Admin\Pages\TransactionsPage;
 use Mission\Admin\Pages\DonorsPage;
 use Mission\Admin\Pages\SettingsPage;
 
@@ -27,19 +25,9 @@ class AdminModule {
 	public const MENU_SLUG = 'mission';
 
 	/**
-	 * Submenu slug for Campaigns.
+	 * Submenu slug for Transactions.
 	 */
-	public const CAMPAIGNS_SLUG = 'mission-campaigns';
-
-	/**
-	 * Submenu slug for Donation Forms.
-	 */
-	public const FORMS_SLUG = 'mission-forms';
-
-	/**
-	 * Submenu slug for Donations.
-	 */
-	public const DONATIONS_SLUG = 'mission-donations';
+	public const TRANSACTIONS_SLUG = 'mission-transactions';
 
 	/**
 	 * Submenu slug for Donors.
@@ -65,18 +53,16 @@ class AdminModule {
 	 */
 	public function init(): void {
 		$this->pages = array(
-			'dashboard' => new DashboardPage(),
-			'campaigns' => new CampaignsPage(),
-			'forms'     => new FormsPage(),
-			'donations' => new DonationsPage(),
-			'donors'    => new DonorsPage(),
-			'settings'  => new SettingsPage(),
+			'dashboard'    => new DashboardPage(),
+			'transactions' => new TransactionsPage(),
+			'donors'       => new DonorsPage(),
+			'settings'     => new SettingsPage(),
 		);
 
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
-		add_filter( 'parent_file', array( $this, 'set_forms_parent_menu' ) );
-		add_filter( 'submenu_file', array( $this, 'set_forms_submenu_file' ) );
+		add_filter( 'parent_file', array( $this, 'set_campaign_parent_menu' ) );
+		add_filter( 'submenu_file', array( $this, 'set_campaign_submenu_file' ) );
 	}
 
 	/**
@@ -140,11 +126,11 @@ class AdminModule {
 	private function is_mission_screen( string $screen_id ): bool {
 		$mission_screens = array(
 			'toplevel_page_mission',
-			'mission_page_mission-campaigns',
-			'mission_page_mission-forms',
-			'mission_page_mission-donations',
+			'mission_page_mission-transactions',
 			'mission_page_mission-donors',
 			'mission_page_mission-settings',
+			'edit-mission_campaign',
+			'mission_campaign',
 		);
 
 		return in_array( $screen_id, $mission_screens, true );
@@ -182,26 +168,17 @@ class AdminModule {
 			__( 'Campaigns', 'mission' ),
 			__( 'Campaigns', 'mission' ),
 			'manage_options',
-			self::CAMPAIGNS_SLUG,
-			array( $this->pages['campaigns'], 'render' )
+			'edit.php?post_type=mission_campaign',
+			''
 		);
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Donation Forms', 'mission' ),
-			__( 'Donation Forms', 'mission' ),
+			__( 'Transactions', 'mission' ),
+			__( 'Transactions', 'mission' ),
 			'manage_options',
-			self::FORMS_SLUG,
-			array( $this->pages['forms'], 'render' )
-		);
-
-		add_submenu_page(
-			self::MENU_SLUG,
-			__( 'Donations', 'mission' ),
-			__( 'Donations', 'mission' ),
-			'manage_options',
-			self::DONATIONS_SLUG,
-			array( $this->pages['donations'], 'render' )
+			self::TRANSACTIONS_SLUG,
+			array( $this->pages['transactions'], 'render' )
 		);
 
 		add_submenu_page(
@@ -224,16 +201,16 @@ class AdminModule {
 	}
 
 	/**
-	 * Highlight the Mission menu when viewing the mission_form CPT screens.
+	 * Highlight the Mission menu when viewing campaign CPT screens.
 	 *
 	 * @param string $parent_file The parent file slug.
 	 *
 	 * @return string
 	 */
-	public function set_forms_parent_menu( string $parent_file ): string {
+	public function set_campaign_parent_menu( string $parent_file ): string {
 		$screen = get_current_screen();
 
-		if ( $screen && 'mission_form' === $screen->post_type ) {
+		if ( $screen && 'mission_campaign' === $screen->post_type ) {
 			return self::MENU_SLUG;
 		}
 
@@ -241,17 +218,17 @@ class AdminModule {
 	}
 
 	/**
-	 * Highlight the Donation Forms submenu when viewing the mission_form CPT screens.
+	 * Highlight the Campaigns submenu when viewing campaign CPT screens.
 	 *
 	 * @param string|null $submenu_file The submenu file slug.
 	 *
 	 * @return string|null
 	 */
-	public function set_forms_submenu_file( ?string $submenu_file ): ?string {
+	public function set_campaign_submenu_file( ?string $submenu_file ): ?string {
 		$screen = get_current_screen();
 
-		if ( $screen && 'mission_form' === $screen->post_type ) {
-			return self::FORMS_SLUG;
+		if ( $screen && 'mission_campaign' === $screen->post_type ) {
+			return 'edit.php?post_type=mission_campaign';
 		}
 
 		return $submenu_file;
