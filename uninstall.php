@@ -38,10 +38,10 @@ $wpdb->query(
 );
 
 // -------------------------------------------------------------------------
-// Form CPT posts and meta
+// Campaign CPT posts and meta
 // -------------------------------------------------------------------------
-$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'mission_form'" );
-$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'mission_form'" );
+$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'mission_campaign'" );
+$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'mission_campaign'" );
 
 // -------------------------------------------------------------------------
 // Custom tables
@@ -62,7 +62,7 @@ if ( file_exists( $autoloader ) ) {
 $capabilities = array(
 	'manage_mission',
 	'view_mission_reports',
-	'edit_mission_donations',
+	'edit_mission_transactions',
 );
 
 foreach ( wp_roles()->roles as $role_name => $role_info ) {
