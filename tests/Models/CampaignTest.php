@@ -22,12 +22,10 @@ class CampaignTest extends WP_UnitTestCase {
 		$campaign = new Campaign();
 
 		$this->assertNull( $campaign->id );
-		$this->assertSame( 'draft', $campaign->status );
-		$this->assertSame( '', $campaign->title );
-		$this->assertSame( '', $campaign->slug );
+		$this->assertSame( 0, $campaign->post_id );
 		$this->assertSame( 0, $campaign->goal_amount );
 		$this->assertSame( 0, $campaign->total_raised );
-		$this->assertSame( 0, $campaign->donation_count );
+		$this->assertSame( 0, $campaign->transaction_count );
 		$this->assertSame( 'usd', $campaign->currency );
 	}
 
@@ -38,20 +36,16 @@ class CampaignTest extends WP_UnitTestCase {
 		$campaign = new Campaign(
 			array(
 				'id'          => 3,
-				'status'      => 'active',
-				'title'       => 'Save the Whales',
-				'slug'        => 'save-the-whales',
-				'description' => 'Help us save whales.',
+				'post_id'     => 42,
 				'goal_amount' => 100000,
+				'currency'    => 'eur',
 			)
 		);
 
 		$this->assertSame( 3, $campaign->id );
-		$this->assertSame( 'active', $campaign->status );
-		$this->assertSame( 'Save the Whales', $campaign->title );
-		$this->assertSame( 'save-the-whales', $campaign->slug );
-		$this->assertSame( 'Help us save whales.', $campaign->description );
+		$this->assertSame( 42, $campaign->post_id );
 		$this->assertSame( 100000, $campaign->goal_amount );
+		$this->assertSame( 'eur', $campaign->currency );
 	}
 
 	/**
@@ -61,7 +55,6 @@ class CampaignTest extends WP_UnitTestCase {
 		$campaign = new Campaign();
 
 		$this->assertNull( $campaign->id );
-		$this->assertNull( $campaign->description );
 		$this->assertNull( $campaign->date_start );
 		$this->assertNull( $campaign->date_end );
 	}

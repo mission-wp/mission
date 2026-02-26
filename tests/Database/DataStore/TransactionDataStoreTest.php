@@ -30,6 +30,14 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 	 */
 	public static function set_up_before_class(): void {
 		parent::set_up_before_class();
+
+		// Drop and recreate to pick up schema changes (dbDelta can't drop columns/keys).
+		global $wpdb;
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaign_meta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
 		DatabaseModule::create_tables();
 	}
 
@@ -55,7 +63,6 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}mission_donors" );
 		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}mission_donor_meta" );
 		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}mission_campaigns" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}mission_campaign_meta" );
 
 		parent::tear_down();
 	}
@@ -88,9 +95,8 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 		$campaign = new Campaign(
 			array_merge(
 				array(
-					'title'  => 'Test Campaign',
-					'slug'   => 'test-campaign',
-					'status' => 'active',
+					'post_id'     => 1,
+					'goal_amount' => 100000,
 				),
 				$overrides
 			)

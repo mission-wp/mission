@@ -24,6 +24,12 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 	 */
 	public static function set_up_before_class(): void {
 		parent::set_up_before_class();
+
+		// Drop and recreate to pick up schema changes (dbDelta can't drop columns/keys).
+		global $wpdb;
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaign_meta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
 		DatabaseModule::create_tables();
 	}
 
@@ -42,7 +48,6 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}mission_campaigns" );
-		$wpdb->query( "TRUNCATE TABLE {$wpdb->prefix}mission_campaign_meta" );
 
 		parent::tear_down();
 	}
@@ -57,9 +62,7 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 		return new Campaign(
 			array_merge(
 				array(
-					'title'       => "Campaign {$counter}",
-					'slug'        => "campaign-{$counter}",
-					'status'      => 'active',
+					'post_id'     => $counter,
 					'goal_amount' => 100000,
 				),
 				$overrides
@@ -75,14 +78,14 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 	 * Test create and read.
 	 */
 	public function test_create_and_read(): void {
-		$campaign = $this->make_campaign( array( 'title' => 'Whale Fund' ) );
+		$campaign = $this->make_campaign( array( 'goal_amount' => 50000 ) );
 		$id       = $this->store->create( $campaign );
 
 		$this->assertGreaterThan( 0, $id );
 
 		$read = $this->store->read( $id );
 		$this->assertInstanceOf( Campaign::class, $read );
-		$this->assertSame( 'Whale Fund', $read->title );
+		$this->assertSame( 50000, $read->goal_amount );
 	}
 
 	/**
@@ -106,77 +109,56 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 		$campaign = $this->make_campaign();
 		$id       = $this->store->create( $campaign );
 
-		$this->store->add_meta( $id, 'test_key', 'test_value' );
 		$this->assertTrue( $this->store->delete( $id ) );
 		$this->assertNull( $this->store->read( $id ) );
-		$this->assertSame( '', $this->store->get_meta( $id, 'test_key' ) );
 	}
 
 	// -------------------------------------------------------------------------
-	// find_by_slug
+	// find_by_post_id
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test find by slug.
+	 * Test find by post ID.
 	 */
-	public function test_find_by_slug(): void {
-		$campaign = $this->make_campaign( array( 'slug' => 'unique-slug' ) );
+	public function test_find_by_post_id(): void {
+		$campaign = $this->make_campaign( array( 'post_id' => 999 ) );
 		$this->store->create( $campaign );
 
-		$found = $this->store->find_by_slug( 'unique-slug' );
+		$found = $this->store->find_by_post_id( 999 );
 		$this->assertInstanceOf( Campaign::class, $found );
-		$this->assertSame( 'unique-slug', $found->slug );
+		$this->assertSame( 999, $found->post_id );
+	}
+
+	/**
+	 * Test find by post ID returns null for nonexistent.
+	 */
+	public function test_find_by_post_id_returns_null_for_nonexistent(): void {
+		$this->assertNull( $this->store->find_by_post_id( 99999 ) );
 	}
 
 	// -------------------------------------------------------------------------
-	// Status transitions
+	// Query
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test status change fires hooks.
+	 * Test query by post_id.
 	 */
-	public function test_status_change_fires_hooks(): void {
-		$campaign = $this->make_campaign( array( 'status' => 'draft' ) );
-		$this->store->create( $campaign );
+	public function test_query_by_post_id(): void {
+		$this->store->create( $this->make_campaign( array( 'post_id' => 10 ) ) );
+		$this->store->create( $this->make_campaign( array( 'post_id' => 20 ) ) );
 
-		$fired = false;
-		add_action(
-			'mission_campaign_status_draft_to_active',
-			function () use ( &$fired ) {
-				$fired = true;
-			}
-		);
-
-		$campaign->status = 'active';
-		$this->store->update( $campaign );
-
-		$this->assertTrue( $fired, 'mission_campaign_status_draft_to_active hook did not fire.' );
+		$results = $this->store->query( array( 'post_id' => 10 ) );
+		$this->assertCount( 1, $results );
+		$this->assertSame( 10, $results[0]->post_id );
 	}
 
-	// -------------------------------------------------------------------------
-	// Meta
-	// -------------------------------------------------------------------------
-
 	/**
-	 * Test meta CRUD.
+	 * Test count.
 	 */
-	public function test_meta_crud(): void {
-		$campaign = $this->make_campaign();
-		$id       = $this->store->create( $campaign );
+	public function test_count(): void {
+		$this->store->create( $this->make_campaign( array( 'post_id' => 30 ) ) );
+		$this->store->create( $this->make_campaign( array( 'post_id' => 31 ) ) );
 
-		// Add.
-		$meta_id = $this->store->add_meta( $id, 'color', '#2FA36B' );
-		$this->assertIsInt( $meta_id );
-
-		// Get.
-		$this->assertSame( '#2FA36B', $this->store->get_meta( $id, 'color' ) );
-
-		// Update.
-		$this->store->update_meta( $id, 'color', '#000000' );
-		$this->assertSame( '#000000', $this->store->get_meta( $id, 'color' ) );
-
-		// Delete.
-		$this->assertTrue( $this->store->delete_meta( $id, 'color' ) );
-		$this->assertSame( '', $this->store->get_meta( $id, 'color' ) );
+		$this->assertSame( 2, $this->store->count() );
 	}
 }

@@ -35,19 +35,18 @@ class SchemaTest extends WP_UnitTestCase {
 	public function test_get_table_schemas_returns_all_tables(): void {
 		$schemas = $this->schema->get_table_schemas();
 
-		$this->assertCount( 7, $schemas );
+		$this->assertCount( 6, $schemas );
 
 		global $wpdb;
 		$prefix = $wpdb->prefix . 'mission_';
 
 		$expected = array(
-			"{$prefix}donations",
-			"{$prefix}donation_meta",
+			"{$prefix}transactions",
+			"{$prefix}transaction_meta",
 			"{$prefix}donors",
 			"{$prefix}donor_meta",
 			"{$prefix}subscriptions",
 			"{$prefix}campaigns",
-			"{$prefix}campaign_meta",
 		);
 
 		foreach ( $expected as $table ) {

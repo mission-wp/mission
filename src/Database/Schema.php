@@ -147,14 +147,11 @@ class Schema {
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
-			// Campaigns
+			// Campaigns (financial aggregates only — title/slug/status live in wp_posts)
 			// ----------------------------------------------------------------
 			"{$prefix}campaigns"        => "CREATE TABLE {$prefix}campaigns (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  status varchar(20) NOT NULL DEFAULT 'draft',
-  title varchar(255) NOT NULL DEFAULT '',
-  slug varchar(255) NOT NULL DEFAULT '',
-  description text,
+  post_id bigint(20) unsigned NOT NULL DEFAULT 0,
   goal_amount bigint(20) NOT NULL DEFAULT 0,
   total_raised bigint(20) NOT NULL DEFAULT 0,
   transaction_count int(10) unsigned NOT NULL DEFAULT 0,
@@ -164,21 +161,7 @@ class Schema {
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY  (id),
-  UNIQUE KEY slug (slug),
-  KEY status (status)
-) {$charset_collate};",
-
-			// ----------------------------------------------------------------
-			// Campaign Meta
-			// ----------------------------------------------------------------
-			"{$prefix}campaign_meta"    => "CREATE TABLE {$prefix}campaign_meta (
-  meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  campaign_id bigint(20) unsigned NOT NULL DEFAULT 0,
-  meta_key varchar(255) DEFAULT NULL,
-  meta_value longtext,
-  PRIMARY KEY  (meta_id),
-  KEY campaign_id (campaign_id),
-  KEY meta_key (meta_key(191))
+  UNIQUE KEY post_id (post_id)
 ) {$charset_collate};",
 		);
 	}

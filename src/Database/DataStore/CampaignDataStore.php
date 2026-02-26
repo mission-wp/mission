@@ -13,10 +13,11 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles CRUD operations for the campaigns table.
+ *
+ * The campaigns table stores only financial aggregates. Title, slug,
+ * description, and status live on the associated mission_campaign CPT post.
  */
 class CampaignDataStore implements DataStoreInterface {
-
-	use MetaTrait;
 
 	/**
 	 * Get the fully-prefixed table name.
@@ -26,21 +27,6 @@ class CampaignDataStore implements DataStoreInterface {
 	public function get_table_name(): string {
 		global $wpdb;
 		return $wpdb->prefix . 'mission_campaigns';
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function get_meta_table_name(): string {
-		global $wpdb;
-		return $wpdb->prefix . 'mission_campaign_meta';
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function get_meta_foreign_key(): string {
-		return 'campaign_id';
 	}
 
 	/**
@@ -92,20 +78,20 @@ class CampaignDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Find a campaign by its slug.
+	 * Find a campaign by its associated post ID.
 	 *
-	 * @param string $slug Campaign slug.
+	 * @param int $post_id The WP post ID.
 	 *
 	 * @return Campaign|null
 	 */
-	public function find_by_slug( string $slug ): ?Campaign {
+	public function find_by_post_id( int $post_id ): ?Campaign {
 		global $wpdb;
 
 		$table = $this->get_table_name();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE slug = %s", $slug ),
+			$wpdb->prepare( "SELECT * FROM {$table} WHERE post_id = %d", $post_id ),
 			ARRAY_A
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -140,16 +126,7 @@ class CampaignDataStore implements DataStoreInterface {
 			array( '%d' )
 		);
 
-		if ( false === $result ) {
-			return false;
-		}
-
-		if ( $old->status !== $model->status ) {
-			do_action( 'mission_campaign_status_transition', $model, $old->status, $model->status );
-			do_action( "mission_campaign_status_{$old->status}_to_{$model->status}", $model );
-		}
-
-		return true;
+		return false !== $result;
 	}
 
 	/**
@@ -161,10 +138,6 @@ class CampaignDataStore implements DataStoreInterface {
 	 */
 	public function delete( int $id ): bool {
 		global $wpdb;
-
-		$meta_table = $this->get_meta_table_name();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE campaign_id = %d", $id ) );
 
 		$result = $wpdb->delete( $this->get_table_name(), array( 'id' => $id ), array( '%d' ) );
 
@@ -221,16 +194,9 @@ class CampaignDataStore implements DataStoreInterface {
 		$where  = array();
 		$values = array();
 
-		if ( ! empty( $args['status'] ) ) {
-			$where[]  = 'status = %s';
-			$values[] = $args['status'];
-		}
-
-		if ( ! empty( $args['search'] ) ) {
-			$like     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]  = '(title LIKE %s OR slug LIKE %s)';
-			$values[] = $like;
-			$values[] = $like;
+		if ( ! empty( $args['post_id'] ) ) {
+			$where[]  = 'post_id = %d';
+			$values[] = $args['post_id'];
 		}
 
 		if ( ! empty( $args['date_after'] ) ) {
@@ -245,7 +211,7 @@ class CampaignDataStore implements DataStoreInterface {
 
 		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
 
-		$allowed_orderby = array( 'id', 'date_created', 'date_modified', 'total_raised', 'donation_count', 'title' );
+		$allowed_orderby = array( 'id', 'date_created', 'date_modified', 'total_raised', 'transaction_count' );
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order           = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
 
@@ -287,19 +253,16 @@ class CampaignDataStore implements DataStoreInterface {
 	 */
 	private function model_to_row( Campaign $model ): array {
 		return array(
-			'id'             => $model->id,
-			'status'         => $model->status,
-			'title'          => $model->title,
-			'slug'           => $model->slug,
-			'description'    => $model->description,
-			'goal_amount'    => $model->goal_amount,
-			'total_raised'   => $model->total_raised,
-			'donation_count' => $model->donation_count,
-			'currency'       => $model->currency,
-			'date_start'     => $model->date_start,
-			'date_end'       => $model->date_end,
-			'date_created'   => $model->date_created,
-			'date_modified'  => $model->date_modified,
+			'id'                => $model->id,
+			'post_id'           => $model->post_id,
+			'goal_amount'       => $model->goal_amount,
+			'total_raised'      => $model->total_raised,
+			'transaction_count' => $model->transaction_count,
+			'currency'          => $model->currency,
+			'date_start'        => $model->date_start,
+			'date_end'          => $model->date_end,
+			'date_created'      => $model->date_created,
+			'date_modified'     => $model->date_modified,
 		);
 	}
 }
