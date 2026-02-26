@@ -1,20 +1,20 @@
 <?php
 /**
- * Donation DataStore.
+ * Transaction DataStore.
  *
  * @package Mission
  */
 
 namespace Mission\Database\DataStore;
 
-use Mission\Models\Donation;
+use Mission\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Handles CRUD operations for the donations table.
+ * Handles CRUD operations for the transactions table.
  */
-class DonationDataStore implements DataStoreInterface {
+class TransactionDataStore implements DataStoreInterface {
 
 	use MetaTrait;
 
@@ -25,7 +25,7 @@ class DonationDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_donations';
+		return $wpdb->prefix . 'mission_transactions';
 	}
 
 	/**
@@ -33,22 +33,22 @@ class DonationDataStore implements DataStoreInterface {
 	 */
 	protected function get_meta_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_donation_meta';
+		return $wpdb->prefix . 'mission_transaction_meta';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected function get_meta_foreign_key(): string {
-		return 'donation_id';
+		return 'transaction_id';
 	}
 
 	/**
-	 * Create a donation.
+	 * Create a transaction.
 	 *
-	 * @param object $model Donation model.
+	 * @param object $model Transaction model.
 	 *
-	 * @return int New donation ID.
+	 * @return int New transaction ID.
 	 */
 	public function create( object $model ): int {
 		global $wpdb;
@@ -64,23 +64,23 @@ class DonationDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/**
-		 * Fires after a donation is created.
+		 * Fires after a transaction is created.
 		 *
-		 * @param Donation $model The donation.
+		 * @param Transaction $model The transaction.
 		 */
-		do_action( 'mission_donation_created', $model );
+		do_action( 'mission_transaction_created', $model );
 
 		return $model->id;
 	}
 
 	/**
-	 * Read a donation by ID.
+	 * Read a transaction by ID.
 	 *
-	 * @param int $id Donation ID.
+	 * @param int $id Transaction ID.
 	 *
-	 * @return Donation|null
+	 * @return Transaction|null
 	 */
-	public function read( int $id ): ?Donation {
+	public function read( int $id ): ?Transaction {
 		global $wpdb;
 
 		$table = $this->get_table_name();
@@ -96,9 +96,9 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Update a donation.
+	 * Update a transaction.
 	 *
-	 * @param object $model Donation model with updated values.
+	 * @param object $model Transaction model with updated values.
 	 *
 	 * @return bool
 	 */
@@ -135,9 +135,9 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Delete a donation by ID.
+	 * Delete a transaction by ID.
 	 *
-	 * @param int $id Donation ID.
+	 * @param int $id Transaction ID.
 	 *
 	 * @return bool
 	 */
@@ -147,7 +147,7 @@ class DonationDataStore implements DataStoreInterface {
 		// Delete associated meta first.
 		$meta_table = $this->get_meta_table_name();
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE donation_id = %d", $id ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE transaction_id = %d", $id ) );
 
 		$result = $wpdb->delete( $this->get_table_name(), array( 'id' => $id ), array( '%d' ) );
 
@@ -155,11 +155,11 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Query donations.
+	 * Query transactions.
 	 *
 	 * @param array<string, mixed> $args Query arguments.
 	 *
-	 * @return Donation[]
+	 * @return Transaction[]
 	 */
 	public function query( array $args = array() ): array {
 		global $wpdb;
@@ -173,7 +173,7 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Count donations matching filters.
+	 * Count transactions matching filters.
 	 *
 	 * @param array<string, mixed> $args Query arguments.
 	 *
@@ -224,9 +224,9 @@ class DonationDataStore implements DataStoreInterface {
 			$values[] = $args['subscription_id'];
 		}
 
-		if ( ! empty( $args['form_id'] ) ) {
-			$where[]  = 'form_id = %d';
-			$values[] = $args['form_id'];
+		if ( ! empty( $args['source_post_id'] ) ) {
+			$where[]  = 'source_post_id = %d';
+			$values[] = $args['source_post_id'];
 		}
 
 		if ( ! empty( $args['date_after'] ) ) {
@@ -264,82 +264,82 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Handle donation status transitions.
+	 * Handle transaction status transitions.
 	 *
-	 * @param Donation $donation   The donation.
-	 * @param string   $old_status Previous status.
-	 * @param string   $new_status New status.
+	 * @param Transaction $transaction The transaction.
+	 * @param string      $old_status  Previous status.
+	 * @param string      $new_status  New status.
 	 */
-	private function handle_status_transition( Donation $donation, string $old_status, string $new_status ): void {
+	private function handle_status_transition( Transaction $transaction, string $old_status, string $new_status ): void {
 		/**
-		 * Fires on any donation status change.
+		 * Fires on any transaction status change.
 		 *
-		 * @param Donation $donation   The donation.
-		 * @param string   $old_status Previous status.
-		 * @param string   $new_status New status.
+		 * @param Transaction $transaction The transaction.
+		 * @param string      $old_status  Previous status.
+		 * @param string      $new_status  New status.
 		 */
-		do_action( 'mission_donation_status_transition', $donation, $old_status, $new_status );
+		do_action( 'mission_transaction_status_transition', $transaction, $old_status, $new_status );
 
 		/**
-		 * Fires on a specific donation status transition.
+		 * Fires on a specific transaction status transition.
 		 *
-		 * @param Donation $donation The donation.
+		 * @param Transaction $transaction The transaction.
 		 */
-		do_action( "mission_donation_status_{$old_status}_to_{$new_status}", $donation );
+		do_action( "mission_transaction_status_{$old_status}_to_{$new_status}", $transaction );
 
 		// Update donor and campaign aggregates.
 		if ( 'completed' === $new_status ) {
-			$this->increment_aggregates( $donation );
+			$this->increment_aggregates( $transaction );
 		} elseif ( 'completed' === $old_status && in_array( $new_status, array( 'refunded', 'cancelled', 'failed' ), true ) ) {
-			$this->decrement_aggregates( $donation );
+			$this->decrement_aggregates( $transaction );
 		}
 	}
 
 	/**
-	 * Increment donor and campaign aggregates when a donation is completed.
+	 * Increment donor and campaign aggregates when a transaction is completed.
 	 *
-	 * @param Donation $donation The completed donation.
+	 * @param Transaction $transaction The completed transaction.
 	 */
-	private function increment_aggregates( Donation $donation ): void {
+	private function increment_aggregates( Transaction $transaction ): void {
 		global $wpdb;
 
 		$now = current_time( 'mysql', true );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		if ( $donation->donor_id ) {
+		if ( $transaction->donor_id ) {
 			$donor_table = $wpdb->prefix . 'mission_donors';
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE {$donor_table}
 					SET total_donated = total_donated + %d,
 						total_tip = total_tip + %d,
-						donation_count = donation_count + 1,
-						first_donation = COALESCE(NULLIF(first_donation, '0000-00-00 00:00:00'), %s),
-						last_donation = %s,
+						transaction_count = transaction_count + 1,
+						first_transaction = COALESCE(NULLIF(first_transaction, '0000-00-00 00:00:00'), %s),
+						last_transaction = %s,
 						date_modified = %s
 					WHERE id = %d",
-					$donation->amount,
-					$donation->tip_amount,
+					$transaction->amount,
+					$transaction->tip_amount,
 					$now,
 					$now,
 					$now,
-					$donation->donor_id
+					$transaction->donor_id
 				)
 			);
 		}
 
-		if ( $donation->campaign_id ) {
+		if ( $transaction->campaign_id ) {
 			$campaign_table = $wpdb->prefix . 'mission_campaigns';
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE {$campaign_table}
 					SET total_raised = total_raised + %d,
-						donation_count = donation_count + 1,
+						transaction_count = transaction_count + 1,
 						date_modified = %s
 					WHERE id = %d",
-					$donation->amount,
+					$transaction->amount,
 					$now,
-					$donation->campaign_id
+					$transaction->campaign_id
 				)
 			);
 		}
@@ -347,46 +347,46 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Decrement donor and campaign aggregates when a donation leaves completed status.
+	 * Decrement donor and campaign aggregates when a transaction leaves completed status.
 	 *
-	 * @param Donation $donation The donation.
+	 * @param Transaction $transaction The transaction.
 	 */
-	private function decrement_aggregates( Donation $donation ): void {
+	private function decrement_aggregates( Transaction $transaction ): void {
 		global $wpdb;
 
 		$now = current_time( 'mysql', true );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		if ( $donation->donor_id ) {
+		if ( $transaction->donor_id ) {
 			$donor_table = $wpdb->prefix . 'mission_donors';
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE {$donor_table}
 					SET total_donated = GREATEST(0, total_donated - %d),
 						total_tip = GREATEST(0, total_tip - %d),
-						donation_count = GREATEST(0, donation_count - 1),
+						transaction_count = GREATEST(0, transaction_count - 1),
 						date_modified = %s
 					WHERE id = %d",
-					$donation->amount,
-					$donation->tip_amount,
+					$transaction->amount,
+					$transaction->tip_amount,
 					$now,
-					$donation->donor_id
+					$transaction->donor_id
 				)
 			);
 		}
 
-		if ( $donation->campaign_id ) {
+		if ( $transaction->campaign_id ) {
 			$campaign_table = $wpdb->prefix . 'mission_campaigns';
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE {$campaign_table}
 					SET total_raised = GREATEST(0, total_raised - %d),
-						donation_count = GREATEST(0, donation_count - 1),
+						transaction_count = GREATEST(0, transaction_count - 1),
 						date_modified = %s
 					WHERE id = %d",
-					$donation->amount,
+					$transaction->amount,
 					$now,
-					$donation->campaign_id
+					$transaction->campaign_id
 				)
 			);
 		}
@@ -394,24 +394,24 @@ class DonationDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Map a database row to a Donation model.
+	 * Map a database row to a Transaction model.
 	 *
 	 * @param array<string, mixed> $row Database row.
 	 *
-	 * @return Donation
+	 * @return Transaction
 	 */
-	private function row_to_model( array $row ): Donation {
-		return new Donation( $row );
+	private function row_to_model( array $row ): Transaction {
+		return new Transaction( $row );
 	}
 
 	/**
-	 * Map a Donation model to a database row array.
+	 * Map a Transaction model to a database row array.
 	 *
-	 * @param Donation $model The model.
+	 * @param Transaction $model The model.
 	 *
 	 * @return array<string, mixed>
 	 */
-	private function model_to_row( Donation $model ): array {
+	private function model_to_row( Transaction $model ): array {
 		return array(
 			'id'                      => $model->id,
 			'status'                  => $model->status,
@@ -419,7 +419,7 @@ class DonationDataStore implements DataStoreInterface {
 			'donor_id'                => $model->donor_id,
 			'subscription_id'         => $model->subscription_id,
 			'parent_id'               => $model->parent_id,
-			'form_id'                 => $model->form_id,
+			'source_post_id'          => $model->source_post_id,
 			'campaign_id'             => $model->campaign_id,
 			'amount'                  => $model->amount,
 			'fee_amount'              => $model->fee_amount,

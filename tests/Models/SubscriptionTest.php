@@ -39,7 +39,7 @@ class SubscriptionTest extends WP_UnitTestCase {
 				'id'                      => 5,
 				'status'                  => 'active',
 				'donor_id'                => 2,
-				'form_id'                 => 1,
+				'source_post_id'                 => 1,
 				'amount'                  => 2500,
 				'total_amount'            => 2500,
 				'frequency'               => 'annually',
@@ -64,7 +64,7 @@ class SubscriptionTest extends WP_UnitTestCase {
 
 		$this->assertNull( $sub->id );
 		$this->assertNull( $sub->campaign_id );
-		$this->assertNull( $sub->initial_donation_id );
+		$this->assertNull( $sub->initial_transaction_id );
 		$this->assertNull( $sub->gateway_subscription_id );
 		$this->assertNull( $sub->gateway_customer_id );
 		$this->assertNull( $sub->date_next_renewal );

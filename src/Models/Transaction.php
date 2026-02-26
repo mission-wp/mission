@@ -1,6 +1,6 @@
 <?php
 /**
- * Donation model.
+ * Transaction model.
  *
  * @package Mission
  */
@@ -10,9 +10,9 @@ namespace Mission\Models;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Typed data object representing a single donation.
+ * Typed data object representing a single transaction.
  */
-class Donation {
+class Transaction {
 
 	public ?int $id;
 	public string $status;
@@ -20,7 +20,7 @@ class Donation {
 	public int $donor_id;
 	public ?int $subscription_id;
 	public ?int $parent_id;
-	public int $form_id;
+	public int $source_post_id;
 	public ?int $campaign_id;
 	public int $amount;
 	public int $fee_amount;
@@ -49,7 +49,7 @@ class Donation {
 		$this->donor_id                = (int) ( $data['donor_id'] ?? 0 );
 		$this->subscription_id         = isset( $data['subscription_id'] ) ? (int) $data['subscription_id'] : null;
 		$this->parent_id               = isset( $data['parent_id'] ) ? (int) $data['parent_id'] : null;
-		$this->form_id                 = (int) ( $data['form_id'] ?? 0 );
+		$this->source_post_id          = (int) ( $data['source_post_id'] ?? 0 );
 		$this->campaign_id             = isset( $data['campaign_id'] ) ? (int) $data['campaign_id'] : null;
 		$this->amount                  = (int) ( $data['amount'] ?? 0 );
 		$this->fee_amount              = (int) ( $data['fee_amount'] ?? 0 );

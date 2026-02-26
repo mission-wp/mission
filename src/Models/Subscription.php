@@ -17,9 +17,9 @@ class Subscription {
 	public ?int $id;
 	public string $status;
 	public int $donor_id;
-	public int $form_id;
+	public int $source_post_id;
 	public ?int $campaign_id;
-	public ?int $initial_donation_id;
+	public ?int $initial_transaction_id;
 	public int $amount;
 	public int $fee_amount;
 	public int $tip_amount;
@@ -46,9 +46,9 @@ class Subscription {
 		$this->id                      = isset( $data['id'] ) ? (int) $data['id'] : null;
 		$this->status                  = $data['status'] ?? 'pending';
 		$this->donor_id                = (int) ( $data['donor_id'] ?? 0 );
-		$this->form_id                 = (int) ( $data['form_id'] ?? 0 );
+		$this->source_post_id          = (int) ( $data['source_post_id'] ?? 0 );
 		$this->campaign_id             = isset( $data['campaign_id'] ) ? (int) $data['campaign_id'] : null;
-		$this->initial_donation_id     = isset( $data['initial_donation_id'] ) ? (int) $data['initial_donation_id'] : null;
+		$this->initial_transaction_id  = isset( $data['initial_transaction_id'] ) ? (int) $data['initial_transaction_id'] : null;
 		$this->amount                  = (int) ( $data['amount'] ?? 0 );
 		$this->fee_amount              = (int) ( $data['fee_amount'] ?? 0 );
 		$this->tip_amount              = (int) ( $data['tip_amount'] ?? 0 );

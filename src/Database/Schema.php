@@ -30,16 +30,16 @@ class Schema {
 
 		return array(
 			// ----------------------------------------------------------------
-			// Donations
+			// Transactions
 			// ----------------------------------------------------------------
-			"{$prefix}donations"     => "CREATE TABLE {$prefix}donations (
+			"{$prefix}transactions"     => "CREATE TABLE {$prefix}transactions (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   status varchar(20) NOT NULL DEFAULT 'pending',
   type varchar(20) NOT NULL DEFAULT 'one_time',
   donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
   subscription_id bigint(20) unsigned DEFAULT NULL,
   parent_id bigint(20) unsigned DEFAULT NULL,
-  form_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  source_post_id bigint(20) unsigned NOT NULL DEFAULT 0,
   campaign_id bigint(20) unsigned DEFAULT NULL,
   amount bigint(20) NOT NULL DEFAULT 0,
   fee_amount bigint(20) NOT NULL DEFAULT 0,
@@ -65,22 +65,22 @@ class Schema {
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
-			// Donation Meta
+			// Transaction Meta
 			// ----------------------------------------------------------------
-			"{$prefix}donation_meta" => "CREATE TABLE {$prefix}donation_meta (
+			"{$prefix}transaction_meta" => "CREATE TABLE {$prefix}transaction_meta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  donation_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  transaction_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
   meta_value longtext,
   PRIMARY KEY  (meta_id),
-  KEY donation_id (donation_id),
+  KEY transaction_id (transaction_id),
   KEY meta_key (meta_key(191))
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
 			// Donors
 			// ----------------------------------------------------------------
-			"{$prefix}donors"        => "CREATE TABLE {$prefix}donors (
+			"{$prefix}donors"           => "CREATE TABLE {$prefix}donors (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   user_id bigint(20) unsigned DEFAULT NULL,
   email varchar(255) NOT NULL DEFAULT '',
@@ -90,9 +90,9 @@ class Schema {
   phone varchar(30) NOT NULL DEFAULT '',
   total_donated bigint(20) NOT NULL DEFAULT 0,
   total_tip bigint(20) NOT NULL DEFAULT 0,
-  donation_count int(10) unsigned NOT NULL DEFAULT 0,
-  first_donation datetime DEFAULT NULL,
-  last_donation datetime DEFAULT NULL,
+  transaction_count int(10) unsigned NOT NULL DEFAULT 0,
+  first_transaction datetime DEFAULT NULL,
+  last_transaction datetime DEFAULT NULL,
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY  (id),
@@ -103,7 +103,7 @@ class Schema {
 			// ----------------------------------------------------------------
 			// Donor Meta
 			// ----------------------------------------------------------------
-			"{$prefix}donor_meta"    => "CREATE TABLE {$prefix}donor_meta (
+			"{$prefix}donor_meta"       => "CREATE TABLE {$prefix}donor_meta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
@@ -116,13 +116,13 @@ class Schema {
 			// ----------------------------------------------------------------
 			// Subscriptions
 			// ----------------------------------------------------------------
-			"{$prefix}subscriptions" => "CREATE TABLE {$prefix}subscriptions (
+			"{$prefix}subscriptions"    => "CREATE TABLE {$prefix}subscriptions (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   status varchar(20) NOT NULL DEFAULT 'pending',
   donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
-  form_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  source_post_id bigint(20) unsigned NOT NULL DEFAULT 0,
   campaign_id bigint(20) unsigned DEFAULT NULL,
-  initial_donation_id bigint(20) unsigned DEFAULT NULL,
+  initial_transaction_id bigint(20) unsigned DEFAULT NULL,
   amount bigint(20) NOT NULL DEFAULT 0,
   fee_amount bigint(20) NOT NULL DEFAULT 0,
   tip_amount bigint(20) NOT NULL DEFAULT 0,
@@ -149,7 +149,7 @@ class Schema {
 			// ----------------------------------------------------------------
 			// Campaigns
 			// ----------------------------------------------------------------
-			"{$prefix}campaigns"     => "CREATE TABLE {$prefix}campaigns (
+			"{$prefix}campaigns"        => "CREATE TABLE {$prefix}campaigns (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   status varchar(20) NOT NULL DEFAULT 'draft',
   title varchar(255) NOT NULL DEFAULT '',
@@ -157,7 +157,7 @@ class Schema {
   description text,
   goal_amount bigint(20) NOT NULL DEFAULT 0,
   total_raised bigint(20) NOT NULL DEFAULT 0,
-  donation_count int(10) unsigned NOT NULL DEFAULT 0,
+  transaction_count int(10) unsigned NOT NULL DEFAULT 0,
   currency varchar(3) NOT NULL DEFAULT 'usd',
   date_start datetime DEFAULT NULL,
   date_end datetime DEFAULT NULL,
@@ -171,7 +171,7 @@ class Schema {
 			// ----------------------------------------------------------------
 			// Campaign Meta
 			// ----------------------------------------------------------------
-			"{$prefix}campaign_meta" => "CREATE TABLE {$prefix}campaign_meta (
+			"{$prefix}campaign_meta"    => "CREATE TABLE {$prefix}campaign_meta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   campaign_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
