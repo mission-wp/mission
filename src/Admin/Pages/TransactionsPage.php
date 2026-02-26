@@ -1,6 +1,6 @@
 <?php
 /**
- * Donations admin page.
+ * Transactions admin page.
  *
  * @package Mission
  */
@@ -12,9 +12,9 @@ use Mission\Admin\AdminPage;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Donations page class.
+ * Transactions page class.
  */
-class DonationsPage extends AdminPage {
+class TransactionsPage extends AdminPage {
 
 	/**
 	 * Get the page slug.
@@ -22,6 +22,6 @@ class DonationsPage extends AdminPage {
 	 * @return string
 	 */
 	public function get_slug(): string {
-		return 'donations';
+		return 'transactions';
 	}
 }

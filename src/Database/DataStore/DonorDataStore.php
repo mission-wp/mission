@@ -232,7 +232,7 @@ class DonorDataStore implements DataStoreInterface {
 
 		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
 
-		$allowed_orderby = array( 'id', 'date_created', 'total_donated', 'donation_count', 'last_donation' );
+		$allowed_orderby = array( 'id', 'date_created', 'total_donated', 'transaction_count', 'last_transaction' );
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order           = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
 
@@ -274,20 +274,20 @@ class DonorDataStore implements DataStoreInterface {
 	 */
 	private function model_to_row( Donor $model ): array {
 		return array(
-			'id'             => $model->id,
-			'user_id'        => $model->user_id,
-			'email'          => $model->email,
-			'first_name'     => $model->first_name,
-			'last_name'      => $model->last_name,
-			'name_prefix'    => $model->name_prefix,
-			'phone'          => $model->phone,
-			'total_donated'  => $model->total_donated,
-			'total_tip'      => $model->total_tip,
-			'donation_count' => $model->donation_count,
-			'first_donation' => $model->first_donation,
-			'last_donation'  => $model->last_donation,
-			'date_created'   => $model->date_created,
-			'date_modified'  => $model->date_modified,
+			'id'                => $model->id,
+			'user_id'           => $model->user_id,
+			'email'             => $model->email,
+			'first_name'        => $model->first_name,
+			'last_name'         => $model->last_name,
+			'name_prefix'       => $model->name_prefix,
+			'phone'             => $model->phone,
+			'total_donated'     => $model->total_donated,
+			'total_tip'         => $model->total_tip,
+			'transaction_count' => $model->transaction_count,
+			'first_transaction' => $model->first_transaction,
+			'last_transaction'  => $model->last_transaction,
+			'date_created'      => $model->date_created,
+			'date_modified'     => $model->date_modified,
 		);
 	}
 }

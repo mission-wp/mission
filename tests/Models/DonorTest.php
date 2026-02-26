@@ -27,7 +27,7 @@ class DonorTest extends WP_UnitTestCase {
 		$this->assertSame( '', $donor->first_name );
 		$this->assertSame( '', $donor->last_name );
 		$this->assertSame( 0, $donor->total_donated );
-		$this->assertSame( 0, $donor->donation_count );
+		$this->assertSame( 0, $donor->transaction_count );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class DonorTest extends WP_UnitTestCase {
 
 		$this->assertNull( $donor->id );
 		$this->assertNull( $donor->user_id );
-		$this->assertNull( $donor->first_donation );
-		$this->assertNull( $donor->last_donation );
+		$this->assertNull( $donor->first_transaction );
+		$this->assertNull( $donor->last_transaction );
 	}
 }

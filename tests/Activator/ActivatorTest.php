@@ -30,7 +30,7 @@ class ActivatorTest extends WP_UnitTestCase {
 		if ( $admin ) {
 			$admin->remove_cap( 'manage_mission' );
 			$admin->remove_cap( 'view_mission_reports' );
-			$admin->remove_cap( 'edit_mission_donations' );
+			$admin->remove_cap( 'edit_mission_transactions' );
 		}
 
 		parent::tear_down();
@@ -64,7 +64,7 @@ class ActivatorTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $admin->has_cap( 'manage_mission' ) );
 		$this->assertTrue( $admin->has_cap( 'view_mission_reports' ) );
-		$this->assertTrue( $admin->has_cap( 'edit_mission_donations' ) );
+		$this->assertTrue( $admin->has_cap( 'edit_mission_transactions' ) );
 	}
 
 	/**

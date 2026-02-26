@@ -25,7 +25,7 @@ trait MetaTrait {
 	abstract protected function get_meta_table_name(): string;
 
 	/**
-	 * Get the foreign key column name in the meta table (e.g. 'donation_id').
+	 * Get the foreign key column name in the meta table (e.g. 'transaction_id').
 	 *
 	 * @return string
 	 */

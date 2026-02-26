@@ -87,7 +87,7 @@ class Activator {
 
 		$admin->add_cap( 'manage_mission' );
 		$admin->add_cap( 'view_mission_reports' );
-		$admin->add_cap( 'edit_mission_donations' );
+		$admin->add_cap( 'edit_mission_transactions' );
 	}
 
 	/**
