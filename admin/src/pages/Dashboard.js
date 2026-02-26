@@ -51,7 +51,7 @@ export default function Dashboard() {
 					} }
 				>
 					<StatCard
-						label={ __( 'Total Donations', 'mission' ) }
+						label={ __( 'Total Transactions', 'mission' ) }
 						value="0"
 					/>
 					<StatCard
@@ -73,7 +73,7 @@ export default function Dashboard() {
 							</Heading>
 							<Text>
 								{ __(
-									'Create your first donation form to start accepting contributions. Mission makes it easy to set up campaigns, track donors, and manage your fundraising — all for free.',
+									'Create your first campaign to start accepting donations. Mission makes it easy to set up campaigns, track donors, and manage your fundraising — all for free.',
 									'mission'
 								) }
 							</Text>
@@ -81,7 +81,7 @@ export default function Dashboard() {
 								<a
 									href={
 										window.missionAdmin?.adminUrl
-											? `${ window.missionAdmin.adminUrl }admin.php?page=mission-forms`
+											? `${ window.missionAdmin.adminUrl }post-new.php?post_type=mission_campaign`
 											: '#'
 									}
 									className="components-button is-primary"
@@ -91,10 +91,7 @@ export default function Dashboard() {
 										textDecoration: 'none',
 									} }
 								>
-									{ __(
-										'Create a Donation Form',
-										'mission'
-									) }
+									{ __( 'Create a Campaign', 'mission' ) }
 								</a>
 							</div>
 						</VStack>
