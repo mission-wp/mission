@@ -10,6 +10,48 @@
 	"supports": {
 		"html": false
 	},
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"amounts": {
+			"type": "array"
+		},
+		"customAmount": {
+			"type": "boolean"
+		},
+		"minimumAmount": {
+			"type": "number"
+		},
+		"recurringEnabled": {
+			"type": "boolean"
+		},
+		"recurringFrequencies": {
+			"type": "array"
+		},
+		"recurringDefault": {
+			"type": "string"
+		},
+		"feeRecovery": {
+			"type": "boolean"
+		},
+		"tipEnabled": {
+			"type": "boolean"
+		},
+		"tipPercentages": {
+			"type": "array"
+		},
+		"anonymousEnabled": {
+			"type": "boolean"
+		},
+		"tributeEnabled": {
+			"type": "boolean"
+		},
+		"confirmationMessage": {
+			"type": "string"
+		}
+	},
 	"textdomain": "mission",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
@@ -17,4 +59,3 @@
 	"viewScript": "file:./view.js",
 	"render": "file:./index.php"
 }
-
