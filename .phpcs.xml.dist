@@ -21,6 +21,8 @@
 	<rule ref="WordPress-Extra">
 		<!-- Allow short array syntax. -->
 		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+		<!-- Allow short ternary (?:) — it's clear and concise. -->
+		<exclude name="Universal.Operators.DisallowShortTernary"/>
 	</rule>
 
 	<!-- Check for PHP cross-version compatibility. -->

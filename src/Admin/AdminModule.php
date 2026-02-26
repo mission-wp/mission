@@ -75,6 +75,8 @@ class AdminModule {
 
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_filter( 'parent_file', array( $this, 'set_forms_parent_menu' ) );
+		add_filter( 'submenu_file', array( $this, 'set_forms_submenu_file' ) );
 	}
 
 	/**
@@ -189,8 +191,7 @@ class AdminModule {
 			__( 'Donation Forms', 'mission' ),
 			__( 'Donation Forms', 'mission' ),
 			'manage_options',
-			self::FORMS_SLUG,
-			array( $this->pages['forms'], 'render' )
+			'edit.php?post_type=mission_form'
 		);
 
 		add_submenu_page(
@@ -219,6 +220,40 @@ class AdminModule {
 			self::SETTINGS_SLUG,
 			array( $this->pages['settings'], 'render' )
 		);
+	}
+
+	/**
+	 * Highlight the Mission menu when viewing the mission_form CPT screens.
+	 *
+	 * @param string $parent_file The parent file slug.
+	 *
+	 * @return string
+	 */
+	public function set_forms_parent_menu( string $parent_file ): string {
+		$screen = get_current_screen();
+
+		if ( $screen && 'mission_form' === $screen->post_type ) {
+			return self::MENU_SLUG;
+		}
+
+		return $parent_file;
+	}
+
+	/**
+	 * Highlight the Donation Forms submenu when viewing the mission_form CPT screens.
+	 *
+	 * @param string|null $submenu_file The submenu file slug.
+	 *
+	 * @return string|null
+	 */
+	public function set_forms_submenu_file( ?string $submenu_file ): ?string {
+		$screen = get_current_screen();
+
+		if ( $screen && 'mission_form' === $screen->post_type ) {
+			return 'edit.php?post_type=mission_form';
+		}
+
+		return $submenu_file;
 	}
 
 	/**

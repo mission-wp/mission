@@ -38,6 +38,12 @@ $wpdb->query(
 );
 
 // -------------------------------------------------------------------------
+// Form CPT posts and meta
+// -------------------------------------------------------------------------
+$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'mission_form'" );
+$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'mission_form'" );
+
+// -------------------------------------------------------------------------
 // Custom tables
 // -------------------------------------------------------------------------
 // Load the Schema class to get table names dynamically.

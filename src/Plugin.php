@@ -57,6 +57,13 @@ class Plugin {
 	private ?Email\EmailModule $email_module = null;
 
 	/**
+	 * Form post type instance.
+	 *
+	 * @var Forms\FormPostType|null
+	 */
+	private ?Forms\FormPostType $form_post_type = null;
+
+	/**
 	 * Get plugin instance.
 	 *
 	 * @return Plugin
@@ -77,6 +84,10 @@ class Plugin {
 		// Initialize database module first (needed by other modules).
 		$this->database_module = new Database\DatabaseModule();
 		$this->database_module->init();
+
+		// Initialize form post type (must be before blocks module).
+		$this->form_post_type = new Forms\FormPostType();
+		$this->form_post_type->init();
 
 		// Initialize blocks module (registers custom blocks).
 		$this->blocks_module = new Blocks\BlocksModule();

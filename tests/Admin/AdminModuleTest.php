@@ -70,10 +70,11 @@ class AdminModuleTest extends WP_UnitTestCase {
 
 		$this->assertContains( AdminModule::MENU_SLUG, $submenu_slugs, 'Dashboard submenu missing.' );
 		$this->assertContains( AdminModule::CAMPAIGNS_SLUG, $submenu_slugs, 'Campaigns submenu missing.' );
+		$this->assertContains( 'edit.php?post_type=mission_form', $submenu_slugs, 'Donation Forms submenu missing.' );
 		$this->assertContains( AdminModule::DONATIONS_SLUG, $submenu_slugs, 'Donations submenu missing.' );
 		$this->assertContains( AdminModule::DONORS_SLUG, $submenu_slugs, 'Donors submenu missing.' );
 		$this->assertContains( AdminModule::SETTINGS_SLUG, $submenu_slugs, 'Settings submenu missing.' );
-		$this->assertCount( 5, $submenu[ AdminModule::MENU_SLUG ] );
+		$this->assertCount( 6, $submenu[ AdminModule::MENU_SLUG ] );
 	}
 
 	/**
@@ -86,8 +87,8 @@ class AdminModuleTest extends WP_UnitTestCase {
 		$page->render();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'class="wrap"', $output );
-		$this->assertStringContainsString( 'Dashboard coming soon.', $output );
+		$this->assertStringContainsString( 'id="mission-admin"', $output );
+		$this->assertStringContainsString( 'data-page="dashboard"', $output );
 	}
 
 	/**
@@ -100,8 +101,8 @@ class AdminModuleTest extends WP_UnitTestCase {
 		$page->render();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'class="wrap"', $output );
-		$this->assertStringContainsString( 'Campaigns coming soon.', $output );
+		$this->assertStringContainsString( 'id="mission-admin"', $output );
+		$this->assertStringContainsString( 'data-page="campaigns"', $output );
 	}
 
 	/**
@@ -114,8 +115,8 @@ class AdminModuleTest extends WP_UnitTestCase {
 		$page->render();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'class="wrap"', $output );
-		$this->assertStringContainsString( 'Donations coming soon.', $output );
+		$this->assertStringContainsString( 'id="mission-admin"', $output );
+		$this->assertStringContainsString( 'data-page="donations"', $output );
 	}
 
 	/**
@@ -128,8 +129,8 @@ class AdminModuleTest extends WP_UnitTestCase {
 		$page->render();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'class="wrap"', $output );
-		$this->assertStringContainsString( 'Donors coming soon.', $output );
+		$this->assertStringContainsString( 'id="mission-admin"', $output );
+		$this->assertStringContainsString( 'data-page="donors"', $output );
 	}
 
 	/**
@@ -142,7 +143,7 @@ class AdminModuleTest extends WP_UnitTestCase {
 		$page->render();
 		$output = ob_get_clean();
 
-		$this->assertStringContainsString( 'class="wrap"', $output );
-		$this->assertStringContainsString( 'Settings coming soon.', $output );
+		$this->assertStringContainsString( 'id="mission-admin"', $output );
+		$this->assertStringContainsString( 'data-page="settings"', $output );
 	}
 }
