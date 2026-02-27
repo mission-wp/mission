@@ -109,8 +109,15 @@ class Activator {
 	 */
 	private static function get_default_settings(): array {
 		return array(
-			'currency'    => 'USD',
-			'tip_enabled' => true,
+			'currency'                 => 'USD',
+			'tip_enabled'              => true,
+			'tip_default_percentage'   => 15,
+			'stripe_publishable_key'   => '',
+			'stripe_secret_key'        => '',
+			'stripe_account_id'        => '',
+			'stripe_connection_status' => 'disconnected',
+			'email_from_name'          => get_bloginfo( 'name' ),
+			'email_from_address'       => get_bloginfo( 'admin_email' ),
 		);
 	}
 }

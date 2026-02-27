@@ -78,6 +78,13 @@ class ActivatorTest extends WP_UnitTestCase {
 		$this->assertIsArray( $settings );
 		$this->assertSame( 'USD', $settings['currency'] );
 		$this->assertTrue( $settings['tip_enabled'] );
+		$this->assertSame( 15, $settings['tip_default_percentage'] );
+		$this->assertSame( '', $settings['stripe_publishable_key'] );
+		$this->assertSame( '', $settings['stripe_secret_key'] );
+		$this->assertSame( '', $settings['stripe_account_id'] );
+		$this->assertSame( 'disconnected', $settings['stripe_connection_status'] );
+		$this->assertArrayHasKey( 'email_from_name', $settings );
+		$this->assertArrayHasKey( 'email_from_address', $settings );
 	}
 
 	/**

@@ -7,6 +7,10 @@
 
 namespace Mission\Rest;
 
+use Mission\Rest\Endpoints\SettingsEndpoint;
+use Mission\Settings\SettingsService;
+use Mission\Settings\StripeConnectionVerifier;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -36,6 +40,9 @@ class RestModule {
 	 * @return void
 	 */
 	public function register_rest_routes(): void {
-		// Routes will be registered here as the plugin is built out.
+		$settings_service = new SettingsService();
+		$stripe_verifier  = new StripeConnectionVerifier();
+
+		( new SettingsEndpoint( $settings_service, $stripe_verifier ) )->register();
 	}
 }
