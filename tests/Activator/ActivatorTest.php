@@ -77,8 +77,6 @@ class ActivatorTest extends WP_UnitTestCase {
 
 		$this->assertIsArray( $settings );
 		$this->assertSame( 'USD', $settings['currency'] );
-		$this->assertTrue( $settings['tip_enabled'] );
-		$this->assertSame( 15, $settings['tip_default_percentage'] );
 		$this->assertSame( '', $settings['stripe_site_id'] );
 		$this->assertSame( '', $settings['stripe_site_token'] );
 		$this->assertSame( '', $settings['stripe_account_id'] );

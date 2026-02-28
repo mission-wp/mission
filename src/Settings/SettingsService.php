@@ -77,8 +77,6 @@ class SettingsService {
 	public function get_defaults(): array {
 		$defaults = array(
 			'currency'                 => 'USD',
-			'tip_enabled'              => true,
-			'tip_default_percentage'   => 15,
 			'stripe_site_id'           => '',
 			'stripe_site_token'        => '',
 			'stripe_account_id'        => '',

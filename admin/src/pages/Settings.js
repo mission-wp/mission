@@ -8,12 +8,10 @@ import {
 	Notice,
 	SelectControl,
 	TextControl,
-	ToggleControl,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	__experimentalNumberControl as NumberControl,
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
@@ -425,47 +423,6 @@ export default function Settings() {
 										</HStack>
 									) }
 								</VStack>
-							) }
-						</VStack>
-					</CardBody>
-				</Card>
-
-				{ /* Tips */ }
-				<Card>
-					<CardHeader>
-						<Heading level={ 2 }>
-							{ __( 'Tips', 'mission' ) }
-						</Heading>
-					</CardHeader>
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<ToggleControl
-								label={ __( 'Enable tips', 'mission' ) }
-								help={ __(
-									'Allow donors to leave an optional tip to support the plugin.',
-									'mission'
-								) }
-								checked={ settings.tip_enabled }
-								onChange={ ( value ) =>
-									updateField( 'tip_enabled', value )
-								}
-							/>
-							{ settings.tip_enabled && (
-								<NumberControl
-									label={ __(
-										'Default tip percentage',
-										'mission'
-									) }
-									value={ settings.tip_default_percentage }
-									min={ 0 }
-									max={ 100 }
-									onChange={ ( value ) =>
-										updateField(
-											'tip_default_percentage',
-											Number( value )
-										)
-									}
-								/>
 							) }
 						</VStack>
 					</CardBody>

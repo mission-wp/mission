@@ -110,8 +110,6 @@ class Activator {
 	private static function get_default_settings(): array {
 		return array(
 			'currency'                 => 'USD',
-			'tip_enabled'              => true,
-			'tip_default_percentage'   => 15,
 			'stripe_site_id'           => '',
 			'stripe_site_token'        => '',
 			'stripe_account_id'        => '',

@@ -138,10 +138,8 @@ class SettingsEndpoint {
 		}
 
 		return match ( $key ) {
-			'currency'               => strtoupper( sanitize_text_field( $value ) ),
-			'tip_enabled'            => (bool) $value,
-			'tip_default_percentage' => max( 0, min( 100, (int) $value ) ),
-			'email_from_name'        => sanitize_text_field( $value ),
+			'currency'           => strtoupper( sanitize_text_field( $value ) ),
+			'email_from_name'    => sanitize_text_field( $value ),
 			'email_from_address'     => sanitize_email( $value ),
 			default                  => sanitize_text_field( $value ),
 		};

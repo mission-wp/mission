@@ -97,7 +97,6 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertArrayHasKey( 'currency', $data );
-		$this->assertArrayHasKey( 'tip_enabled', $data );
 		$this->assertArrayHasKey( 'stripe_site_id', $data );
 		$this->assertArrayHasKey( 'stripe_connection_status', $data );
 		$this->assertArrayHasKey( 'stripe_display_name', $data );
