@@ -98,18 +98,19 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertArrayHasKey( 'currency', $data );
 		$this->assertArrayHasKey( 'tip_enabled', $data );
-		$this->assertArrayHasKey( 'stripe_publishable_key', $data );
+		$this->assertArrayHasKey( 'stripe_site_id', $data );
 		$this->assertArrayHasKey( 'stripe_connection_status', $data );
+		$this->assertArrayHasKey( 'stripe_display_name', $data );
 		$this->assertArrayHasKey( 'email_from_name', $data );
 	}
 
 	/**
-	 * Test GET masks the secret key.
+	 * Test GET excludes stripe_site_token from response.
 	 */
-	public function test_get_masks_secret_key(): void {
+	public function test_get_excludes_site_token(): void {
 		update_option(
 			SettingsService::OPTION_NAME,
-			array( 'stripe_secret_key' => 'sk_test_abc123xyz' )
+			array( 'stripe_site_token' => 'tok_secret_abc123' )
 		);
 
 		wp_set_current_user( $this->admin_id );
@@ -118,8 +119,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
-		$this->assertStringEndsWith( '3xyz', $data['stripe_secret_key'] );
-		$this->assertStringStartsWith( '•', $data['stripe_secret_key'] );
+		$this->assertArrayNotHasKey( 'stripe_site_token', $data );
 	}
 
 	/**
@@ -155,25 +155,21 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test POST skips masked secret key.
+	 * Test POST cannot set stripe_site_token via settings endpoint.
 	 */
-	public function test_post_skips_masked_secret_key(): void {
-		$original_key = 'sk_test_original_key_123';
-		update_option(
-			SettingsService::OPTION_NAME,
-			array( 'stripe_secret_key' => $original_key )
-		);
-
+	public function test_post_cannot_set_site_token(): void {
 		wp_set_current_user( $this->admin_id );
 
 		$request = new WP_REST_Request( 'POST', '/mission/v1/settings' );
 		$request->set_header( 'Content-Type', 'application/json' );
-		$request->set_body( wp_json_encode( array( 'stripe_secret_key' => '••••••••••••••••_123' ) ) );
+		$request->set_body( wp_json_encode( array( 'stripe_site_token' => 'tok_evil' ) ) );
 
 		$this->server->dispatch( $request );
 
 		$stored = get_option( SettingsService::OPTION_NAME );
-		$this->assertSame( $original_key, $stored['stripe_secret_key'] );
+		$this->assertTrue(
+			! isset( $stored['stripe_site_token'] ) || '' === $stored['stripe_site_token']
+		);
 	}
 
 	/**

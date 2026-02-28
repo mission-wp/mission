@@ -112,10 +112,11 @@ class Activator {
 			'currency'                 => 'USD',
 			'tip_enabled'              => true,
 			'tip_default_percentage'   => 15,
-			'stripe_publishable_key'   => '',
-			'stripe_secret_key'        => '',
+			'stripe_site_id'           => '',
+			'stripe_site_token'        => '',
 			'stripe_account_id'        => '',
 			'stripe_connection_status' => 'disconnected',
+			'stripe_display_name'      => '',
 			'email_from_name'          => get_bloginfo( 'name' ),
 			'email_from_address'       => get_bloginfo( 'admin_email' ),
 		);

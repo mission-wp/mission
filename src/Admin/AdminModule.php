@@ -114,11 +114,17 @@ class AdminModule {
 			'mission-admin',
 			'missionAdmin',
 			array(
-				'restUrl'   => rest_url( 'mission/v1/' ),
-				'restNonce' => wp_create_nonce( 'wp_rest' ),
-				'adminUrl'  => admin_url(),
-				'page'      => $screen->id,
-				'version'   => MISSION_VERSION,
+				'restUrl'          => rest_url( 'mission/v1/' ),
+				'restNonce'        => wp_create_nonce( 'wp_rest' ),
+				'adminUrl'         => admin_url(),
+				'page'             => $screen->id,
+				'version'          => MISSION_VERSION,
+				'stripeConnectUrl' => 'https://api.missionwp.com/connect/start?' . http_build_query(
+					array(
+						'domain'     => wp_parse_url( home_url(), PHP_URL_HOST ),
+						'return_url' => admin_url( 'admin.php?page=mission-settings' ),
+					)
+				),
 			)
 		);
 	}

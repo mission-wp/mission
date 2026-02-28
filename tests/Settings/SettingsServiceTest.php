@@ -48,8 +48,10 @@ class SettingsServiceTest extends WP_UnitTestCase {
 		$this->assertSame( 'USD', $all['currency'] );
 		$this->assertTrue( $all['tip_enabled'] );
 		$this->assertSame( 15, $all['tip_default_percentage'] );
-		$this->assertSame( '', $all['stripe_secret_key'] );
+		$this->assertSame( '', $all['stripe_site_id'] );
+		$this->assertSame( '', $all['stripe_site_token'] );
 		$this->assertSame( 'disconnected', $all['stripe_connection_status'] );
+		$this->assertSame( '', $all['stripe_display_name'] );
 	}
 
 	/**
@@ -63,7 +65,7 @@ class SettingsServiceTest extends WP_UnitTestCase {
 		$this->assertSame( 'EUR', $all['currency'] );
 		// Defaults still present for keys not in stored option.
 		$this->assertTrue( $all['tip_enabled'] );
-		$this->assertSame( '', $all['stripe_secret_key'] );
+		$this->assertSame( '', $all['stripe_site_id'] );
 	}
 
 	/**

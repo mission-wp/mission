@@ -9,7 +9,6 @@ namespace Mission\Rest\Endpoints;
 
 use Mission\Rest\RestModule;
 use Mission\Settings\SettingsService;
-use Mission\Settings\StripeConnectionVerifier;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -33,12 +32,10 @@ class SettingsEndpoint {
 	/**
 	 * Constructor.
 	 *
-	 * @param SettingsService          $settings Settings service.
-	 * @param StripeConnectionVerifier $stripe   Stripe connection verifier.
+	 * @param SettingsService $settings Settings service.
 	 */
 	public function __construct(
 		private readonly SettingsService $settings,
-		private readonly StripeConnectionVerifier $stripe,
 	) {}
 
 	/**
@@ -83,20 +80,20 @@ class SettingsEndpoint {
 	}
 
 	/**
-	 * GET handler — returns all settings with secret key masked.
+	 * GET handler — returns all settings (excludes site token).
 	 *
 	 * @return WP_REST_Response
 	 */
 	public function get_settings(): WP_REST_Response {
 		$all = $this->settings->get_all();
 
-		$all['stripe_secret_key'] = $this->mask_key( $all['stripe_secret_key'] );
+		unset( $all['stripe_site_token'] );
 
 		return new WP_REST_Response( $all, 200 );
 	}
 
 	/**
-	 * POST handler — partial update with validation and Stripe verification.
+	 * POST handler — partial update with validation.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
@@ -112,38 +109,17 @@ class SettingsEndpoint {
 				continue;
 			}
 
-			// Skip masked secret key (user didn't change it).
-			if ( 'stripe_secret_key' === $key && $this->is_masked( $value ) ) {
+			// Never allow site token to be set via general settings endpoint.
+			if ( 'stripe_site_token' === $key ) {
 				continue;
 			}
 
 			$values[ $key ] = $this->sanitize_value( $key, $value );
 		}
 
-		// Verify Stripe connection if secret key changed.
-		$stripe_key_changed = isset( $values['stripe_secret_key'] ) && '' !== $values['stripe_secret_key'];
-
-		if ( $stripe_key_changed ) {
-			$result = $this->stripe->verify( $values['stripe_secret_key'] );
-
-			if ( $result['connected'] ) {
-				$values['stripe_account_id']        = $result['account_id'];
-				$values['stripe_connection_status'] = 'connected';
-			} else {
-				$values['stripe_account_id']        = '';
-				$values['stripe_connection_status'] = 'error';
-			}
-		}
-
-		// If secret key was explicitly cleared, reset connection.
-		if ( array_key_exists( 'stripe_secret_key', $values ) && '' === $values['stripe_secret_key'] ) {
-			$values['stripe_account_id']        = '';
-			$values['stripe_connection_status'] = 'disconnected';
-		}
-
 		$updated = $this->settings->update( $values );
 
-		$updated['stripe_secret_key'] = $this->mask_key( $updated['stripe_secret_key'] );
+		unset( $updated['stripe_site_token'] );
 
 		return new WP_REST_Response( $updated, 200 );
 	}
@@ -167,33 +143,7 @@ class SettingsEndpoint {
 			'tip_default_percentage' => max( 0, min( 100, (int) $value ) ),
 			'email_from_name'        => sanitize_text_field( $value ),
 			'email_from_address'     => sanitize_email( $value ),
-			'stripe_publishable_key',
-			'stripe_secret_key'      => sanitize_text_field( $value ),
 			default                  => sanitize_text_field( $value ),
 		};
-	}
-
-	/**
-	 * Mask a secret key, showing only the last 4 characters.
-	 *
-	 * @param string $key The key to mask.
-	 * @return string Masked key or empty string.
-	 */
-	private function mask_key( string $key ): string {
-		if ( strlen( $key ) <= 4 ) {
-			return '' === $key ? '' : '••••';
-		}
-
-		return str_repeat( '•', strlen( $key ) - 4 ) . substr( $key, -4 );
-	}
-
-	/**
-	 * Check if a value looks like a masked key.
-	 *
-	 * @param mixed $value Value to check.
-	 * @return bool
-	 */
-	private function is_masked( mixed $value ): bool {
-		return is_string( $value ) && str_contains( $value, '•' );
 	}
 }
