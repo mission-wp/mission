@@ -7,20 +7,19 @@ test.describe( 'Admin Menu & Dashboard', () => {
 	test( 'Admin menu item exists', async ( { admin, page } ) => {
 		await admin.visitAdminPage( '/' );
 
-		const menuLink = page.locator(
-			'#adminmenu a[href="admin.php?page=mission"]'
-		);
+		const menuLink = page.locator( '#toplevel_page_mission > a' );
 		await expect( menuLink ).toBeVisible();
+		await expect( menuLink ).toHaveText( /Mission/ );
 	} );
 
 	test( 'Dashboard page loads', async ( { admin, page } ) => {
 		await admin.visitAdminPage( 'admin.php?page=mission' );
 
 		await expect(
-			page.locator( '.wrap h1', { hasText: 'Mission' } )
+			page.getByRole( 'heading', { name: 'Dashboard', level: 1 } )
 		).toBeVisible();
 		await expect(
-			page.locator( '.wrap', { hasText: 'Dashboard coming soon.' } )
+			page.getByText( "Here's an overview of your fundraising." )
 		).toBeVisible();
 	} );
 } );

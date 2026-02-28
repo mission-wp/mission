@@ -68,6 +68,7 @@ class AdminModule {
 
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'load-edit.php', array( $this, 'redirect_campaign_list' ) );
 		add_filter( 'parent_file', array( $this, 'set_campaign_parent_menu' ) );
 		add_filter( 'submenu_file', array( $this, 'set_campaign_submenu_file' ) );
 	}
@@ -104,9 +105,16 @@ class AdminModule {
 		);
 
 		wp_enqueue_style(
+			'mission-admin-vendor',
+			MISSION_URL . 'admin/build/style-mission-admin.css',
+			array(),
+			$asset['version']
+		);
+
+		wp_enqueue_style(
 			'mission-admin',
 			MISSION_URL . 'admin/build/mission-admin.css',
-			array( 'wp-components' ),
+			array( 'wp-components', 'mission-admin-vendor' ),
 			$asset['version']
 		);
 
@@ -211,6 +219,20 @@ class AdminModule {
 			self::SETTINGS_SLUG,
 			array( $this->pages['settings'], 'render' )
 		);
+	}
+
+	/**
+	 * Redirect the default CPT list table to the custom Campaigns page.
+	 *
+	 * @return void
+	 */
+	public function redirect_campaign_list(): void {
+		$screen = get_current_screen();
+
+		if ( $screen && 'mission_campaign' === $screen->post_type ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=' . self::CAMPAIGNS_SLUG ) );
+			exit;
+		}
 	}
 
 	/**

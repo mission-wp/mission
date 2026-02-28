@@ -12,6 +12,9 @@ admin/build/
 # Playwright artifacts (screenshots, videos, traces, auth state)
 artifacts/
 
+# Environment
+.env
+
 # OS files
 .DS_Store
 

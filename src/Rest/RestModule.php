@@ -7,6 +7,8 @@
 
 namespace Mission\Rest;
 
+use Mission\Database\DataStore\CampaignDataStore;
+use Mission\Rest\Endpoints\CampaignsEndpoint;
 use Mission\Rest\Endpoints\SettingsEndpoint;
 use Mission\Rest\Endpoints\StripeConnectEndpoint;
 use Mission\Settings\SettingsService;
@@ -42,6 +44,7 @@ class RestModule {
 	public function register_rest_routes(): void {
 		$settings_service = new SettingsService();
 
+		( new CampaignsEndpoint( new CampaignDataStore() ) )->register();
 		( new SettingsEndpoint( $settings_service ) )->register();
 		( new StripeConnectEndpoint( $settings_service ) )->register();
 	}

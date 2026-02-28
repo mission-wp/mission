@@ -24,5 +24,9 @@
 	},
 	"overrides": {
 		"simple-git": "3.31.1"
+	},
+	"dependencies": {
+		"@wordpress/dataviews": "^12.0.0",
+		"@wordpress/icons": "^11.7.0"
 	}
 }
