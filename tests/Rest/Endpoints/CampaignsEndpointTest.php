@@ -248,4 +248,68 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 404, $response->get_status() );
 	}
+
+	/**
+	 * Test batch delete requires manage_options capability.
+	 */
+	public function test_batch_delete_requires_manage_options(): void {
+		wp_set_current_user( $this->subscriber_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns/batch-delete' );
+		$request->set_body_params( array( 'ids' => array( 1 ) ) );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * Test batch delete trashes multiple campaigns.
+	 */
+	public function test_batch_delete_trashes_multiple_campaigns(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$post_ids = array();
+		for ( $i = 0; $i < 3; $i++ ) {
+			$post_ids[] = self::factory()->post->create( array(
+				'post_type'   => 'mission_campaign',
+				'post_title'  => "Campaign $i",
+				'post_status' => 'publish',
+			) );
+		}
+
+		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns/batch-delete' );
+		$request->set_body_params( array( 'ids' => $post_ids ) );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 3, $data['deleted'] );
+		$this->assertEmpty( $data['errors'] );
+
+		foreach ( $post_ids as $post_id ) {
+			$this->assertSame( 'trash', get_post_status( $post_id ) );
+		}
+	}
+
+	/**
+	 * Test batch delete reports errors for non-existent campaigns.
+	 */
+	public function test_batch_delete_reports_errors_for_missing(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$valid_id = self::factory()->post->create( array(
+			'post_type'   => 'mission_campaign',
+			'post_status' => 'publish',
+		) );
+
+		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns/batch-delete' );
+		$request->set_body_params( array( 'ids' => array( $valid_id, 999999 ) ) );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertContains( $valid_id, $data['deleted'] );
+		$this->assertContains( 999999, $data['errors'] );
+		$this->assertSame( 'trash', get_post_status( $valid_id ) );
+	}
 }

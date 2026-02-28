@@ -63,6 +63,28 @@ class CampaignsEndpoint {
 				),
 			)
 		);
+
+		register_rest_route(
+			RestModule::NAMESPACE,
+			'/campaigns/batch-delete',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'batch_delete_campaigns' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'ids' => array(
+						'type'              => 'array',
+						'required'          => true,
+						'items'             => array(
+							'type' => 'integer',
+						),
+						'sanitize_callback' => static function ( $ids ) {
+							return array_map( 'absint', $ids );
+						},
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -166,6 +188,43 @@ class CampaignsEndpoint {
 			array(
 				'deleted' => true,
 				'id'      => $post_id,
+			),
+			200
+		);
+	}
+
+	/**
+	 * POST handler — trashes multiple campaign posts.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response
+	 */
+	public function batch_delete_campaigns( WP_REST_Request $request ): WP_REST_Response {
+		$ids     = $request->get_param( 'ids' );
+		$deleted = array();
+		$errors  = array();
+
+		foreach ( $ids as $post_id ) {
+			$post = get_post( $post_id );
+
+			if ( ! $post || 'mission_campaign' !== $post->post_type ) {
+				$errors[] = $post_id;
+				continue;
+			}
+
+			$result = wp_trash_post( $post_id );
+
+			if ( $result ) {
+				$deleted[] = $post_id;
+			} else {
+				$errors[] = $post_id;
+			}
+		}
+
+		return new WP_REST_Response(
+			array(
+				'deleted' => $deleted,
+				'errors'  => $errors,
 			),
 			200
 		);

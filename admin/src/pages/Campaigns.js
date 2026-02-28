@@ -232,17 +232,25 @@ export default function Campaigns() {
 			label: __( 'Delete', 'mission' ),
 			icon: trash,
 			isDestructive: true,
+			supportsBulk: true,
 			RenderModal: ( { items, closeModal } ) => {
-				const campaign = items[ 0 ];
+				const isBulk = items.length > 1;
 				return (
 					<VStack spacing={ 4 }>
 						<Text>
-							{ __(
-								'Are you sure you want to delete this campaign? This action cannot be undone.',
-								'mission'
-							) }
+							{ isBulk
+								? __(
+										'Are you sure you want to delete these campaigns? This action cannot be undone.',
+										'mission'
+								  )
+								: __(
+										'Are you sure you want to delete this campaign? This action cannot be undone.',
+										'mission'
+								  ) }
 						</Text>
-						<Text variant="muted">{ campaign.title }</Text>
+						<Text variant="muted">
+							{ items.map( ( item ) => item.title ).join( ', ' ) }
+						</Text>
 						<HStack justify="flex-end">
 							<Button
 								variant="tertiary"
@@ -256,10 +264,22 @@ export default function Campaigns() {
 								isDestructive
 								__next40pxDefaultSize
 								onClick={ async () => {
-									await apiFetch( {
-										path: `/mission/v1/campaigns/${ campaign.id }`,
-										method: 'DELETE',
-									} );
+									if ( isBulk ) {
+										await apiFetch( {
+											path: '/mission/v1/campaigns/batch-delete',
+											method: 'POST',
+											data: {
+												ids: items.map(
+													( item ) => item.id
+												),
+											},
+										} );
+									} else {
+										await apiFetch( {
+											path: `/mission/v1/campaigns/${ items[ 0 ].id }`,
+											method: 'DELETE',
+										} );
+									}
 									closeModal();
 									fetchCampaigns();
 								} }

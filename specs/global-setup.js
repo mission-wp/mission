@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line import/no-extraneous-dependencies -- Provided by @wordpress/scripts.
 const { request } = require( '@playwright/test' );
 
 /**
