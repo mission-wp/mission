@@ -31,7 +31,7 @@ class DonationFormSettings {
 		'recurringDefault'     => 'one_time',
 		'feeRecovery'          => true,
 		'tipEnabled'           => true,
-		'tipPercentages'       => array( 5, 10, 15 ),
+		'tipPercentages'       => array( 5, 10, 15, 20 ),
 		'anonymousEnabled'     => false,
 		'tributeEnabled'       => false,
 		'confirmationMessage'  => '',
@@ -85,6 +85,9 @@ class DonationFormSettings {
 			// 3. Plugin defaults.
 			$settings[ $key ] = $default;
 		}
+
+		$settings['currency'] = get_option( 'mission_settings', [] )['currency'] ?? 'USD';
+		$settings['siteName'] = get_bloginfo( 'name' );
 
 		/**
 		 * Filters the resolved donation form settings.

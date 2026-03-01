@@ -1,4 +1,557 @@
 .mission-donation-form {
-	background-color: transparent;
+	--mission-primary: #2fa36b;
+	--mission-primary-hover: #268f5b;
+	--mission-primary-light: rgba(47, 163, 107, 0.08);
+	--mission-text: #1e1e1e;
+	--mission-text-secondary: #6b7280;
+	--mission-border: #e2e4e9;
+	--mission-bg: #fff;
+	--mission-radius: 8px;
+	--mission-transition: 200ms ease;
+
+	max-width: 560px;
+	margin: 0 auto;
+	background: var(--mission-bg);
+	border: 1px solid var(--mission-border);
+	border-radius: var(--mission-radius);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+	padding: 32px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+	color: var(--mission-text);
+	line-height: 1.5;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
 }
 
+// Step transitions.
+.mission-df-step {
+	opacity: 0;
+	transform: translateY(8px);
+	visibility: hidden;
+	transition: opacity var(--mission-transition), transform var(--mission-transition), visibility 0s var(--mission-transition);
+	max-height: 0;
+	overflow: hidden;
+
+	&.visible {
+		opacity: 1;
+		transform: translateY(0);
+		visibility: visible;
+		transition: opacity var(--mission-transition), transform var(--mission-transition), visibility 0s 0s;
+		max-height: none;
+		overflow: visible;
+	}
+}
+
+.mission-df-step-title {
+	font-size: 20px;
+	font-weight: 600;
+	margin: 0 0 20px;
+	color: var(--mission-text);
+}
+
+// Frequency toggle.
+.mission-df-frequency-toggle {
+	display: flex;
+	background: #f3f4f6;
+	border-radius: 9999px;
+	padding: 4px;
+	margin-bottom: 20px;
+	gap: 2px;
+}
+
+.mission-df-frequency-btn {
+	flex: 1;
+	padding: 8px 12px;
+	border: none;
+	border-radius: 9999px;
+	background: transparent;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--mission-text-secondary);
+	cursor: pointer;
+	transition: all var(--mission-transition);
+
+	&:hover {
+		color: var(--mission-text);
+	}
+
+	&.active {
+		background: var(--mission-bg);
+		color: var(--mission-text);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
+}
+
+// Recurring frequency selector.
+.mission-df-recurring-selector {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-bottom: 20px;
+	font-size: 14px;
+	color: var(--mission-text);
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height var(--mission-transition), opacity var(--mission-transition);
+
+	&.visible {
+		max-height: 50px;
+		opacity: 1;
+		overflow: visible;
+	}
+}
+
+.mission-df-recurring-dropdown {
+	position: relative;
+}
+
+.mission-df-recurring-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: none;
+	border: none;
+	color: var(--mission-primary);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	padding: 0;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.mission-df-recurring-arrow {
+	transition: transform var(--mission-transition);
+
+	&.open {
+		transform: rotate(180deg);
+	}
+}
+
+.mission-df-recurring-menu {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	background: var(--mission-bg);
+	border: 1px solid var(--mission-border);
+	border-radius: var(--mission-radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	min-width: 140px;
+	z-index: 10;
+	overflow: hidden;
+	opacity: 0;
+	transform: translateY(-4px);
+	transition: opacity var(--mission-transition), transform var(--mission-transition);
+
+	&.visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.mission-df-recurring-option {
+	display: block;
+	width: 100%;
+	padding: 8px 14px;
+	border: none;
+	background: none;
+	font-size: 14px;
+	color: var(--mission-text);
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: #f3f4f6;
+	}
+
+	&.active {
+		color: var(--mission-primary);
+		font-weight: 600;
+	}
+}
+
+// Amount grid.
+.mission-df-amount-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+.mission-df-amount-btn {
+	padding: 14px 8px;
+	border: 2px solid var(--mission-border);
+	border-radius: var(--mission-radius);
+	background: var(--mission-bg);
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--mission-text);
+	cursor: pointer;
+	transition: all var(--mission-transition);
+
+	&:hover {
+		border-color: var(--mission-primary);
+		background: var(--mission-primary-light);
+	}
+
+	&.active {
+		border-color: var(--mission-primary);
+		background: var(--mission-primary-light);
+		color: var(--mission-primary);
+	}
+}
+
+// Custom amount.
+.mission-df-custom-amount {
+	margin-bottom: 20px;
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height var(--mission-transition), opacity var(--mission-transition);
+
+	&.visible {
+		max-height: 100px;
+		opacity: 1;
+	}
+}
+
+.mission-df-input-with-prefix {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.mission-df-currency-symbol {
+	position: absolute;
+	left: 14px;
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--mission-text-secondary);
+	pointer-events: none;
+}
+
+.mission-df-custom-input {
+	width: 100%;
+	padding: 12px 14px 12px 30px;
+	border: 2px solid var(--mission-border);
+	border-radius: var(--mission-radius);
+	font-size: 16px;
+	color: var(--mission-text);
+	outline: none;
+	transition: border-color var(--mission-transition);
+
+	&:focus {
+		border-color: var(--mission-primary);
+		box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.15);
+	}
+
+	// Hide number input arrows.
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	-moz-appearance: textfield;
+}
+
+.mission-df-minimum-warning {
+	margin: 8px 0 0;
+	font-size: 13px;
+	color: #dc2626;
+}
+
+// Tribute.
+.mission-df-tribute {
+	margin-bottom: 20px;
+}
+
+.mission-df-tribute-fields {
+	margin-top: 12px;
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height var(--mission-transition), opacity var(--mission-transition);
+
+	&.visible {
+		max-height: 200px;
+		opacity: 1;
+	}
+}
+
+// Checkboxes.
+.mission-df-checkbox-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	color: var(--mission-text);
+	cursor: pointer;
+
+	input[type="checkbox"] {
+		width: 18px;
+		height: 18px;
+		accent-color: var(--mission-primary);
+		margin: 0;
+		flex-shrink: 0;
+	}
+}
+
+// Form fields.
+.mission-df-field {
+	margin-bottom: 16px;
+
+	label {
+		display: block;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--mission-text);
+		margin-bottom: 6px;
+	}
+
+	input[type="text"],
+	input[type="email"],
+	input[type="number"] {
+		width: 100%;
+		padding: 10px 14px;
+		border: 2px solid var(--mission-border);
+		border-radius: var(--mission-radius);
+		font-size: 14px;
+		color: var(--mission-text);
+		outline: none;
+		transition: border-color var(--mission-transition);
+
+		&:focus {
+			border-color: var(--mission-primary);
+			box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.15);
+		}
+	}
+}
+
+// Back link.
+.mission-df-back-link {
+	background: none;
+	border: none;
+	color: var(--mission-text-secondary);
+	font-size: 14px;
+	cursor: pointer;
+	padding: 0;
+	margin-bottom: 16px;
+
+	&:hover {
+		color: var(--mission-text);
+	}
+}
+
+// Amount headline.
+.mission-df-amount-headline {
+	margin-bottom: 4px;
+}
+
+.mission-df-amount-display {
+	font-size: 32px;
+	font-weight: 700;
+	color: var(--mission-text);
+	line-height: 1.2;
+}
+
+// Fee recovery.
+.mission-df-fee-recovery {
+	margin-bottom: 24px;
+}
+
+.mission-df-fee-line {
+	margin: 0 0 0;
+	font-size: 15px;
+	color: var(--mission-text-secondary);
+}
+
+.mission-df-fee-amount-text {
+	&.uncovered {
+		text-decoration: line-through;
+	}
+}
+
+.mission-df-fee-edit {
+	background: none;
+	border: none;
+	color: var(--mission-primary);
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	padding: 0;
+	margin-left: 4px;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.mission-df-fee-details {
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height var(--mission-transition), opacity var(--mission-transition);
+
+	&.visible {
+		max-height: 150px;
+		opacity: 1;
+	}
+
+	p {
+		margin: 12px 0 12px;
+		font-size: 14px;
+		color: var(--mission-text-secondary);
+		line-height: 1.5;
+	}
+}
+
+// Tip section.
+.mission-df-tip {
+	margin-bottom: 24px;
+}
+
+.mission-df-tip-card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	background: #f5f5f4;
+	border-radius: 12px;
+	padding: 20px;
+}
+
+.mission-df-tip-text {
+	flex: 1;
+	font-size: 14px;
+	color: var(--mission-text-secondary);
+	margin: 0;
+	line-height: 1.5;
+}
+
+.mission-df-tip-selector {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	flex-shrink: 0;
+}
+
+.mission-df-tip-arrow {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 24px;
+	background: none;
+	border: none;
+	color: var(--mission-text-secondary);
+	cursor: pointer;
+	padding: 0;
+	border-radius: 4px;
+	transition: color var(--mission-transition);
+
+	&:hover {
+		color: var(--mission-text);
+	}
+}
+
+.mission-df-tip-value {
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--mission-primary);
+	min-width: 40px;
+	text-align: center;
+}
+
+// Donor fields.
+.mission-df-donor-fields {
+	margin-bottom: 16px;
+}
+
+.mission-df-name-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+}
+
+// Anonymous checkbox.
+.mission-df-anonymous {
+	margin-bottom: 20px;
+}
+
+// Card element placeholder.
+.mission-df-card-element {
+	border: 2px dashed var(--mission-border);
+	border-radius: var(--mission-radius);
+	padding: 20px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.mission-df-card-placeholder {
+	margin: 0;
+	font-size: 14px;
+	color: var(--mission-text-secondary);
+}
+
+// Primary button.
+.mission-df-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	font-size: 16px;
+	font-weight: 600;
+	border: none;
+	border-radius: var(--mission-radius);
+	cursor: pointer;
+	transition: all var(--mission-transition);
+
+	&--primary {
+		width: 100%;
+		padding: 14px 24px;
+		background: var(--mission-primary);
+		color: #fff;
+
+		&:hover {
+			background: var(--mission-primary-hover);
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+	}
+}
+
+// Responsive.
+@media (max-width: 480px) {
+
+	.mission-donation-form {
+		padding: 20px 16px;
+	}
+
+	.mission-df-name-row {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+
+	.mission-df-amount-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.mission-df-tip-buttons {
+		flex-wrap: wrap;
+	}
+
+	.mission-df-tip-btn {
+		flex: 0 0 calc(50% - 4px);
+	}
+}

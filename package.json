@@ -4,10 +4,10 @@
 	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
 	"private": true,
 	"scripts": {
-		"build:blocks": "wp-scripts build --webpack-src-dir=blocks/src --output-path=blocks/build",
+		"build:blocks": "wp-scripts build --webpack-src-dir=blocks/src --output-path=blocks/build --experimental-modules",
 		"build:admin": "wp-scripts build --config webpack.admin.config.js",
 		"build": "npm run build:blocks && npm run build:admin",
-		"start:blocks": "wp-scripts start --webpack-src-dir=blocks/src --output-path=blocks/build",
+		"start:blocks": "wp-scripts start --webpack-src-dir=blocks/src --output-path=blocks/build --experimental-modules",
 		"start:admin": "wp-scripts start --config webpack.admin.config.js",
 		"start": "npm run start:blocks & npm run start:admin",
 		"env:start": "wp-env start",
