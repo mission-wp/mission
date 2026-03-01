@@ -81,7 +81,7 @@ export default function Dashboard() {
 								<a
 									href={
 										window.missionAdmin?.adminUrl
-											? `${ window.missionAdmin.adminUrl }post-new.php?post_type=mission_campaign`
+											? `${ window.missionAdmin.adminUrl }admin.php?page=mission-campaigns`
 											: '#'
 									}
 									className="components-button is-primary"
