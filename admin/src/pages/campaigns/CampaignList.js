@@ -13,24 +13,11 @@ import { pencil, trash } from '@wordpress/icons';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import CampaignCreateModal from './CampaignCreateModal';
+import { formatAmount } from '@shared/currency';
+
+export { formatAmount };
 
 const BRAND_COLOR = '#2FA36B';
-
-/**
- * Format cents as a dollar amount.
- *
- * @param {number} cents Amount in cents.
- * @return {string} Formatted string like "$12.50".
- */
-export function formatAmount( cents ) {
-	return (
-		'$' +
-		( cents / 100 ).toLocaleString( undefined, {
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		} )
-	);
-}
 
 const STATUS_STYLES = {
 	active: {

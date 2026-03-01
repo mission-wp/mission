@@ -30,6 +30,7 @@ const adminConfig = {
 		...defaultConfig.resolve,
 		alias: {
 			...( defaultConfig.resolve?.alias || {} ),
+			'@shared': path.resolve( __dirname, 'assets/shared' ),
 			'dataviews-style': path.resolve(
 				__dirname,
 				'node_modules/@wordpress/dataviews/build-style/style.css'

@@ -118,6 +118,8 @@ class AdminModule {
 			$asset['version']
 		);
 
+		$settings = get_option( 'mission_settings', array() );
+
 		wp_localize_script(
 			'mission-admin',
 			'missionAdmin',
@@ -127,6 +129,7 @@ class AdminModule {
 				'adminUrl'         => admin_url(),
 				'page'             => $screen->id,
 				'version'          => MISSION_VERSION,
+				'currency'         => $settings['currency'] ?? 'USD',
 				'stripeConnectUrl' => 'https://api.missionwp.com/connect/start?' . http_build_query(
 					array(
 						'domain'     => wp_parse_url( home_url(), PHP_URL_HOST ),
