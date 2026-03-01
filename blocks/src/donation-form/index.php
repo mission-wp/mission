@@ -114,7 +114,7 @@ $context = array(
 			<?php // Recurring frequency selector — visible when Ongoing is active. ?>
 			<div class="mission-df-recurring-selector" data-wp-bind--hidden="!state.isOngoing" data-wp-class--visible="state.isOngoing">
 				<span class="mission-df-recurring-label"><?php esc_html_e( 'Give', 'mission' ); ?></span>
-				<div class="mission-df-recurring-dropdown">
+				<div class="mission-df-recurring-dropdown" data-wp-on-document--click="actions.closeFrequencyDropdown">
 					<button type="button" class="mission-df-recurring-trigger" data-wp-on--click="actions.toggleFrequencyDropdown">
 						<span data-wp-text="callbacks.selectedFrequencyLabel"></span>
 						<svg class="mission-df-recurring-arrow" width="12" height="12" viewBox="0 0 12 12" data-wp-class--open="state.frequencyDropdownOpen">

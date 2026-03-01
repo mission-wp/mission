@@ -127,6 +127,9 @@ store( 'mission/donation-form', {
 			const ctx = getContext();
 			ctx.frequencyDropdownOpen = ! ctx.frequencyDropdownOpen;
 		},
+		closeFrequencyDropdown() {
+			getContext().frequencyDropdownOpen = false;
+		},
 		selectRecurringFrequency( event ) {
 			event.stopPropagation();
 			const ctx = getContext();
