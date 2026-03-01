@@ -22,5 +22,5 @@ if ( ! empty( $attributes['align'] ) ) {
 	<?php echo get_block_wrapper_attributes( array( 'class' => implode( ' ', $block_classes ) ) ); ?>
 	data-settings="<?php echo esc_attr( wp_json_encode( $settings ) ); ?>"
 >
-	<!-- Donation form will be rendered here by the Interactivity API -->
+	<p><?php esc_html_e( 'Donation form loading…', 'mission' ); ?></p>
 </section>

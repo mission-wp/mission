@@ -20,7 +20,26 @@ class BlocksModule {
 	 * @return void
 	 */
 	public function init(): void {
+		add_filter( 'block_categories_all', array( $this, 'register_block_category' ) );
 		add_action( 'init', array( $this, 'register_blocks' ) );
+	}
+
+	/**
+	 * Register a custom block category for Mission blocks.
+	 *
+	 * @param array $categories Existing block categories.
+	 * @return array
+	 */
+	public function register_block_category( array $categories ): array {
+		array_unshift(
+			$categories,
+			array(
+				'slug'  => 'mission',
+				'title' => __( 'Mission', 'mission' ),
+			)
+		);
+
+		return $categories;
 	}
 
 	/**

@@ -1,23 +1,26 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import metadata from './block.json';
 import './style.scss';
 import './editor.scss';
 
-registerBlockType( 'mission/donation-form', {
+registerBlockType( metadata.name, {
 	edit() {
 		return (
-			<div className="mission-donation-form">
-				<p>{ __( 'Donation Form', 'mission' ) }</p>
+			<div { ...useBlockProps() }>
+				<p>
+					<strong>
+						{ __( 'Mission Donation Form', 'mission' ) }
+					</strong>
+				</p>
 				<p>
 					{ __(
-						'This block outputs the donation form on the frontend.',
+						'The donation form will be displayed here on the frontend.',
 						'mission'
 					) }
 				</p>
 			</div>
 		);
-	},
-	save() {
-		return null; // Use PHP render
 	},
 } );

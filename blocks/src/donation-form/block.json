@@ -4,8 +4,8 @@
 	"name": "mission/donation-form",
 	"version": "0.1.0",
 	"title": "Donation Form",
-	"category": "widgets",
-	"icon": "dashicons-money-alt",
+	"category": "mission",
+	"icon": "money-alt",
 	"description": "Donation form",
 	"supports": {
 		"html": false
