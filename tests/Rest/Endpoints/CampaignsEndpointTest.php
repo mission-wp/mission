@@ -101,10 +101,11 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'total_raised', $campaign );
 		$this->assertArrayHasKey( 'transaction_count', $campaign );
 		$this->assertArrayHasKey( 'edit_url', $campaign );
-		$this->assertArrayHasKey( 'date_created', $campaign );
+		$this->assertArrayHasKey( 'date_start', $campaign );
+		$this->assertArrayHasKey( 'date_end', $campaign );
 
 		$this->assertSame( 'Test Campaign', $campaign['title'] );
-		$this->assertSame( 'publish', $campaign['status'] );
+		$this->assertSame( 'active', $campaign['status'] );
 	}
 
 	/**
@@ -170,32 +171,103 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test status filter works.
+	 * Test status filter returns only active campaigns.
 	 */
-	public function test_status_filter_works(): void {
+	public function test_status_filter_active(): void {
 		wp_set_current_user( $this->admin_id );
 
-		self::factory()->post->create( array(
+		$active_id = self::factory()->post->create( array(
 			'post_type'   => 'mission_campaign',
-			'post_title'  => 'Published Campaign',
+			'post_title'  => 'Active Campaign',
 			'post_status' => 'publish',
 		) );
 
-		self::factory()->post->create( array(
+		$ended_id = self::factory()->post->create( array(
 			'post_type'   => 'mission_campaign',
-			'post_title'  => 'Draft Campaign',
-			'post_status' => 'draft',
+			'post_title'  => 'Ended Campaign',
+			'post_status' => 'publish',
 		) );
 
+		// Set dates via the data store.
+		$store = new \Mission\Database\DataStore\CampaignDataStore();
+
+		$active_campaign = $store->find_by_post_id( $active_id );
+		if ( $active_campaign ) {
+			$active_campaign->date_start = wp_date( 'Y-m-d', strtotime( '-7 days' ) );
+			$active_campaign->date_end   = null;
+			$store->update( $active_campaign );
+		}
+
+		$ended_campaign = $store->find_by_post_id( $ended_id );
+		if ( $ended_campaign ) {
+			$ended_campaign->date_start = wp_date( 'Y-m-d', strtotime( '-30 days' ) );
+			$ended_campaign->date_end   = wp_date( 'Y-m-d', strtotime( '-1 day' ) );
+			$store->update( $ended_campaign );
+		}
+
 		$request = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
-		$request->set_param( 'status', 'draft' );
+		$request->set_param( 'status', 'active' );
 
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data );
-		$this->assertSame( 'Draft Campaign', $data[0]['title'] );
-		$this->assertSame( 'draft', $data[0]['status'] );
+		$this->assertSame( 'Active Campaign', $data[0]['title'] );
+		$this->assertSame( 'active', $data[0]['status'] );
+	}
+
+	/**
+	 * Test future date_start returns scheduled status.
+	 */
+	public function test_future_start_returns_scheduled(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$post_id = self::factory()->post->create( array(
+			'post_type'   => 'mission_campaign',
+			'post_title'  => 'Future Campaign',
+			'post_status' => 'publish',
+		) );
+
+		$store    = new \Mission\Database\DataStore\CampaignDataStore();
+		$campaign = $store->find_by_post_id( $post_id );
+		if ( $campaign ) {
+			$campaign->date_start = wp_date( 'Y-m-d', strtotime( '+7 days' ) );
+			$campaign->date_end   = wp_date( 'Y-m-d', strtotime( '+30 days' ) );
+			$store->update( $campaign );
+		}
+
+		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $post_id );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 'scheduled', $data['status'] );
+	}
+
+	/**
+	 * Test past date_end returns ended status.
+	 */
+	public function test_past_end_returns_ended(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$post_id = self::factory()->post->create( array(
+			'post_type'   => 'mission_campaign',
+			'post_title'  => 'Past Campaign',
+			'post_status' => 'publish',
+		) );
+
+		$store    = new \Mission\Database\DataStore\CampaignDataStore();
+		$campaign = $store->find_by_post_id( $post_id );
+		if ( $campaign ) {
+			$campaign->date_start = wp_date( 'Y-m-d', strtotime( '-30 days' ) );
+			$campaign->date_end   = wp_date( 'Y-m-d', strtotime( '-1 day' ) );
+			$store->update( $campaign );
+		}
+
+		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $post_id );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 'ended', $data['status'] );
 	}
 
 	/**
@@ -289,6 +361,113 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		foreach ( $post_ids as $post_id ) {
 			$this->assertSame( 'trash', get_post_status( $post_id ) );
 		}
+	}
+
+	/**
+	 * Test POST creates a campaign with expected fields.
+	 */
+	public function test_create_campaign_with_expected_fields(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns' );
+		$request->set_body_params( array(
+			'title'       => 'New Campaign',
+			'excerpt'     => 'A test campaign.',
+			'goal_amount' => 500000,
+			'amounts'     => array( 1000, 5000 ),
+		) );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( 'New Campaign', $data['title'] );
+		$this->assertSame( 'A test campaign.', $data['excerpt'] );
+		$this->assertSame( 'active', $data['status'] );
+		$this->assertSame( 500000, $data['goal_amount'] );
+		$this->assertStringStartsWith( wp_date( 'Y-m-d' ), $data['date_start'] );
+		$this->assertNull( $data['date_end'] );
+		$this->assertArrayHasKey( 'meta', $data );
+		$this->assertSame( array( 1000, 5000 ), $data['meta']['amounts'] );
+	}
+
+	/**
+	 * Test POST requires title.
+	 */
+	public function test_create_campaign_requires_title(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns' );
+		$request->set_body_params( array(
+			'excerpt' => 'Missing title.',
+		) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 400, $response->get_status() );
+	}
+
+	/**
+	 * Test POST requires manage_options capability.
+	 */
+	public function test_create_campaign_requires_manage_options(): void {
+		wp_set_current_user( $this->subscriber_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns' );
+		$request->set_body_params( array(
+			'title' => 'Forbidden Campaign',
+		) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * Test GET single returns full campaign data.
+	 */
+	public function test_get_single_returns_full_campaign_data(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$post_id = self::factory()->post->create( array(
+			'post_type'   => 'mission_campaign',
+			'post_title'  => 'Detail Campaign',
+			'post_status' => 'publish',
+		) );
+
+		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $post_id );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'Detail Campaign', $data['title'] );
+		$this->assertSame( 'active', $data['status'] );
+		$this->assertArrayHasKey( 'excerpt', $data );
+		$this->assertArrayHasKey( 'edit_url', $data );
+		$this->assertArrayHasKey( 'view_url', $data );
+		$this->assertArrayHasKey( 'goal_amount', $data );
+		$this->assertArrayHasKey( 'total_raised', $data );
+		$this->assertArrayHasKey( 'transaction_count', $data );
+		$this->assertArrayHasKey( 'currency', $data );
+		$this->assertArrayHasKey( 'date_start', $data );
+		$this->assertArrayHasKey( 'date_end', $data );
+		$this->assertArrayHasKey( 'meta', $data );
+		$this->assertArrayHasKey( 'amounts', $data['meta'] );
+		$this->assertArrayHasKey( 'custom_amount', $data['meta'] );
+		$this->assertArrayHasKey( 'recurring_enabled', $data['meta'] );
+		$this->assertArrayHasKey( 'fee_recovery', $data['meta'] );
+	}
+
+	/**
+	 * Test GET single returns 404 for missing campaign.
+	 */
+	public function test_get_single_returns_404_for_missing(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/999999' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 404, $response->get_status() );
 	}
 
 	/**

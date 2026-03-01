@@ -61,6 +61,47 @@ async function mockCampaignsApi( page, campaigns, headers = {} ) {
 						errors: [],
 					} ),
 				} );
+			} else if ( request.method() === 'POST' ) {
+				const body = request.postDataJSON();
+				await route.fulfill( {
+					status: 201,
+					contentType: 'application/json',
+					body: JSON.stringify( {
+						id: 99,
+						title: body.title,
+						excerpt: body.excerpt || '',
+						status: 'active',
+						edit_url: '/wp-admin/post.php?post=99&action=edit',
+						view_url: '/?p=99',
+						date_created: '2026-02-28 12:00:00',
+						goal_amount: body.goal_amount || 0,
+						total_raised: 0,
+						transaction_count: 0,
+						currency: 'usd',
+						date_start: null,
+						date_end: null,
+						meta: {
+							amounts: body.amounts || [
+								1000, 2500, 5000, 10000,
+							],
+							custom_amount: true,
+							minimum_amount: 500,
+							recurring_enabled: true,
+							recurring_frequencies: [
+								'monthly',
+								'quarterly',
+								'annually',
+							],
+							recurring_default: 'one_time',
+							fee_recovery: true,
+							tip_enabled: true,
+							tip_percentages: [ 5, 10, 15 ],
+							anonymous_enabled: false,
+							tribute_enabled: false,
+							confirmation_message: '',
+						},
+					} ),
+				} );
 			} else {
 				await route.continue();
 			}
@@ -72,24 +113,56 @@ const MOCK_CAMPAIGNS = [
 	{
 		id: 1,
 		title: 'Annual Fundraiser',
-		status: 'publish',
+		status: 'active',
 		goal_amount: 100000,
 		total_raised: 45000,
 		transaction_count: 23,
 		edit_url: '/wp-admin/post.php?post=1&action=edit',
-		date_created: '2026-01-15 12:00:00',
+		date_start: '2026-01-01',
+		date_end: '2026-12-31',
 	},
 	{
 		id: 2,
 		title: 'Emergency Relief',
-		status: 'draft',
+		status: 'scheduled',
 		goal_amount: 50000,
 		total_raised: 0,
 		transaction_count: 0,
 		edit_url: '/wp-admin/post.php?post=2&action=edit',
-		date_created: '2026-02-01 08:00:00',
+		date_start: '2027-01-01',
+		date_end: null,
 	},
 ];
+
+const MOCK_SINGLE_CAMPAIGN = {
+	id: 1,
+	title: 'Annual Fundraiser',
+	excerpt: 'Our yearly fundraiser.',
+	status: 'active',
+	edit_url: '/wp-admin/post.php?post=1&action=edit',
+	view_url: '/?p=1',
+	date_created: '2026-01-15 12:00:00',
+	goal_amount: 100000,
+	total_raised: 45000,
+	transaction_count: 23,
+	currency: 'usd',
+	date_start: '2026-01-01',
+	date_end: '2026-12-31',
+	meta: {
+		amounts: [ 1000, 2500, 5000, 10000 ],
+		custom_amount: true,
+		minimum_amount: 500,
+		recurring_enabled: true,
+		recurring_frequencies: [ 'monthly', 'quarterly', 'annually' ],
+		recurring_default: 'one_time',
+		fee_recovery: true,
+		tip_enabled: true,
+		tip_percentages: [ 5, 10, 15 ],
+		anonymous_enabled: false,
+		tribute_enabled: false,
+		confirmation_message: '',
+	},
+};
 
 test.describe( 'Campaigns Page', () => {
 	test( 'empty state renders with Create a Campaign button', async ( {
@@ -103,13 +176,23 @@ test.describe( 'Campaigns Page', () => {
 			page.getByRole( 'heading', { name: 'No campaigns yet' } )
 		).toBeVisible();
 
-		const createButton = page.getByRole( 'link', {
+		const createButton = page.getByRole( 'button', {
 			name: 'Create a Campaign',
 		} );
 		await expect( createButton ).toBeVisible();
+	} );
 
-		const href = await createButton.getAttribute( 'href' );
-		expect( href ).toContain( 'post-new.php?post_type=mission_campaign' );
+	test( 'Create a Campaign button opens modal', async ( { admin, page } ) => {
+		await mockCampaignsApi( page, [] );
+		await admin.visitAdminPage( CAMPAIGNS_PATH );
+
+		await page.getByRole( 'button', { name: 'Create a Campaign' } ).click();
+
+		const modal = page.getByRole( 'dialog' );
+		await expect( modal ).toBeVisible();
+		await expect(
+			modal.getByRole( 'heading', { name: 'Create a Campaign' } )
+		).toBeVisible();
 	} );
 
 	test( 'campaign list renders with data', async ( { admin, page } ) => {
@@ -124,20 +207,87 @@ test.describe( 'Campaigns Page', () => {
 		await expect( page.getByText( 'Emergency Relief' ) ).toBeVisible();
 
 		await expect( page.getByText( 'Active' ).first() ).toBeVisible();
-		await expect( page.getByText( 'Draft' ).first() ).toBeVisible();
+		await expect( page.getByText( 'Scheduled' ).first() ).toBeVisible();
 	} );
 
-	test( 'Add Campaign button links correctly', async ( { admin, page } ) => {
+	test( 'Add Campaign button opens modal', async ( { admin, page } ) => {
 		await mockCampaignsApi( page, MOCK_CAMPAIGNS );
 		await admin.visitAdminPage( CAMPAIGNS_PATH );
 
-		const addButton = page.getByRole( 'link', {
-			name: 'Add Campaign',
-		} );
-		await expect( addButton ).toBeVisible();
+		await page.getByRole( 'button', { name: 'Add Campaign' } ).click();
 
-		const href = await addButton.getAttribute( 'href' );
-		expect( href ).toContain( 'post-new.php?post_type=mission_campaign' );
+		const modal = page.getByRole( 'dialog' );
+		await expect( modal ).toBeVisible();
+	} );
+
+	test( 'modal steps navigate correctly', async ( { admin, page } ) => {
+		await mockCampaignsApi( page, MOCK_CAMPAIGNS );
+		await admin.visitAdminPage( CAMPAIGNS_PATH );
+
+		await page.getByRole( 'button', { name: 'Add Campaign' } ).click();
+
+		const modal = page.getByRole( 'dialog' );
+
+		// Step 1: Next should be disabled without title.
+		const nextButton = modal.getByRole( 'button', { name: 'Next' } );
+		await expect( nextButton ).toBeDisabled();
+
+		// Fill title and proceed.
+		await modal
+			.getByRole( 'textbox', { name: 'Campaign Title' } )
+			.fill( 'Test Campaign' );
+		await expect( nextButton ).toBeEnabled();
+		await nextButton.click();
+
+		// Step 2: Should see Goal Amount field.
+		await expect(
+			modal.getByRole( 'spinbutton', { name: /Goal Amount/ } )
+		).toBeVisible();
+		await nextButton.click();
+
+		// Step 3: Should see Create Campaign button.
+		await expect(
+			modal.getByRole( 'button', { name: 'Create Campaign' } )
+		).toBeVisible();
+
+		// Back button should go to step 2.
+		await modal.getByRole( 'button', { name: 'Back' } ).click();
+		await expect(
+			modal.getByRole( 'spinbutton', { name: /Goal Amount/ } )
+		).toBeVisible();
+	} );
+
+	test( 'campaign creation submits and redirects to detail view', async ( {
+		admin,
+		page,
+	} ) => {
+		await mockCampaignsApi( page, MOCK_CAMPAIGNS );
+		await admin.visitAdminPage( CAMPAIGNS_PATH );
+
+		await page.getByRole( 'button', { name: 'Add Campaign' } ).click();
+
+		const modal = page.getByRole( 'dialog' );
+
+		// Step 1.
+		await modal
+			.getByRole( 'textbox', { name: 'Campaign Title' } )
+			.fill( 'New Test Campaign' );
+		await modal.getByRole( 'button', { name: 'Next' } ).click();
+
+		// Step 2 — skip.
+		await modal.getByRole( 'button', { name: 'Next' } ).click();
+
+		// Step 3 — submit.
+		const submitButton = modal.getByRole( 'button', {
+			name: 'Create Campaign',
+		} );
+
+		// Expect navigation to detail view after submit.
+		const navigationPromise = page.waitForURL( /campaign=99/ );
+		await submitButton.click();
+		await navigationPromise;
+
+		expect( page.url() ).toContain( 'campaign=99' );
 	} );
 
 	test( 'delete action shows confirmation modal', async ( {
@@ -312,5 +462,87 @@ test.describe( 'Campaigns Page', () => {
 		await expect( page.getByText( 'Emergency Relief' ) ).not.toBeVisible();
 
 		expect( errors ).toHaveLength( 0 );
+	} );
+} );
+
+test.describe( 'Campaign Detail View', () => {
+	test( 'detail view renders stats and info', async ( { admin, page } ) => {
+		await page.route(
+			restRoute( '/mission/v1/campaigns' ),
+			async ( route, request ) => {
+				if (
+					request.method() === 'GET' &&
+					/campaigns(%2F|\/)\d+/.test( request.url() )
+				) {
+					await route.fulfill( {
+						status: 200,
+						contentType: 'application/json',
+						body: JSON.stringify( MOCK_SINGLE_CAMPAIGN ),
+					} );
+				} else {
+					await route.continue();
+				}
+			}
+		);
+
+		await admin.visitAdminPage( CAMPAIGNS_PATH + '&campaign=1' );
+
+		// Title and status.
+		await expect(
+			page.getByRole( 'heading', { name: 'Annual Fundraiser' } )
+		).toBeVisible();
+		await expect( page.getByText( 'Active' ).first() ).toBeVisible();
+
+		// Stats.
+		await expect( page.getByText( '$450.00' ) ).toBeVisible();
+		await expect( page.getByText( '45%' ).first() ).toBeVisible();
+		await expect( page.getByText( '23' ) ).toBeVisible();
+
+		// Campaign Info card.
+		await expect(
+			page.getByRole( 'heading', { name: 'Campaign Info' } )
+		).toBeVisible();
+
+		// Donation Settings card.
+		await expect(
+			page.getByRole( 'heading', { name: 'Donation Settings' } )
+		).toBeVisible();
+
+		// Recent Transactions placeholder.
+		await expect( page.getByText( 'Coming soon' ) ).toBeVisible();
+	} );
+
+	test( 'Edit Campaign Content links to block editor', async ( {
+		admin,
+		page,
+	} ) => {
+		await page.route(
+			restRoute( '/mission/v1/campaigns' ),
+			async ( route, request ) => {
+				if (
+					request.method() === 'GET' &&
+					/campaigns(%2F|\/)\d+/.test( request.url() )
+				) {
+					await route.fulfill( {
+						status: 200,
+						contentType: 'application/json',
+						body: JSON.stringify( MOCK_SINGLE_CAMPAIGN ),
+					} );
+				} else {
+					await route.continue();
+				}
+			}
+		);
+
+		await admin.visitAdminPage( CAMPAIGNS_PATH + '&campaign=1' );
+
+		const editLink = page.getByRole( 'link', {
+			name: 'Edit Campaign Content',
+		} );
+		await expect( editLink ).toBeVisible();
+
+		const href = await editLink.getAttribute( 'href' );
+		expect( href ).toContain( 'post.php' );
+		expect( href ).toContain( 'action=edit' );
 	} );
 } );
