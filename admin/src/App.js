@@ -1,21 +1,21 @@
-import { SlotFillProvider } from '@wordpress/components';
-import Campaigns from './pages/Campaigns';
-import Dashboard from './pages/Dashboard';
-import Settings from './pages/Settings';
+import { lazy, Suspense } from '@wordpress/element';
+import { SlotFillProvider, Spinner } from '@wordpress/components';
 
 const pages = {
-	campaigns: Campaigns,
-	dashboard: Dashboard,
-	settings: Settings,
+	campaigns: lazy( () => import( './pages/Campaigns' ) ),
+	dashboard: lazy( () => import( './pages/Dashboard' ) ),
+	settings: lazy( () => import( './pages/Settings' ) ),
 };
 
 export default function App( { container } ) {
 	const page = container.getAttribute( 'data-page' ) || 'dashboard';
-	const PageComponent = pages[ page ] || Dashboard;
+	const PageComponent = pages[ page ] || pages.dashboard;
 
 	return (
 		<SlotFillProvider>
-			<PageComponent />
+			<Suspense fallback={ <Spinner /> }>
+				<PageComponent />
+			</Suspense>
 		</SlotFillProvider>
 	);
 }
