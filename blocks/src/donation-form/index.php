@@ -91,7 +91,7 @@ $context = array(
 	<?php // ───── Step 1: Choose Your Gift ───── ?>
 	<div
 		class="mission-df-step mission-df-step-1"
-		data-wp-bind--hidden="!callbacks.isStep1"
+		data-wp-bind--hidden="callbacks.hideStep1"
 		data-wp-class--visible="callbacks.isStep1"
 	>
 		<h2 class="mission-df-step-title"><?php esc_html_e( 'Choose Your Gift', 'mission' ); ?></h2>
@@ -248,7 +248,7 @@ $context = array(
 	<?php // ───── Step 2: Payment ───── ?>
 	<div
 		class="mission-df-step mission-df-step-2"
-		data-wp-bind--hidden="!callbacks.isStep2"
+		data-wp-bind--hidden="callbacks.hideStep2"
 		data-wp-class--visible="callbacks.isStep2"
 	>
 		<button type="button" class="mission-df-back-link" data-wp-on--click="actions.prevStep">

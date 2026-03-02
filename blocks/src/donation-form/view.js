@@ -372,6 +372,14 @@ store( 'mission/donation-form', {
 		isStep2() {
 			return getContext().currentStep === 2;
 		},
+		hideStep1() {
+			const ctx = getContext();
+			return ctx.currentStep !== 1 || ctx.paymentSuccess;
+		},
+		hideStep2() {
+			const ctx = getContext();
+			return ctx.currentStep !== 2 || ctx.paymentSuccess;
+		},
 		isSelectedFrequency() {
 			const ctx = getContext();
 			return ctx.selectedFrequency === ctx.frequency;
