@@ -4,11 +4,17 @@
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
 /**
+ * Module-scope references for Stripe instances.
+ */
+let stripeInstance = null;
+let cardElement = null;
+
+/**
  * Format minor units (cents) as a currency string.
  *
- * @param {number}  minorUnits       Amount in minor units (e.g. 1000 = $10.00).
- * @param {string}  currencyCode     ISO 4217 currency code.
- * @param {boolean} stripZeroCents   Drop ".00" when the amount is a whole number.
+ * @param {number}  minorUnits     Amount in minor units (e.g. 1000 = $10.00).
+ * @param {string}  currencyCode   ISO 4217 currency code.
+ * @param {boolean} stripZeroCents Drop ".00" when the amount is a whole number.
  * @return {string}                  Formatted currency string.
  */
 function formatCurrency(
@@ -17,8 +23,7 @@ function formatCurrency(
 	stripZeroCents = false
 ) {
 	const major = minorUnits / 100;
-	const fractionDigits =
-		stripZeroCents && Number.isInteger( major ) ? 0 : 2;
+	const fractionDigits = stripZeroCents && Number.isInteger( major ) ? 0 : 2;
 	try {
 		return new Intl.NumberFormat( undefined, {
 			style: 'currency',
@@ -46,13 +51,20 @@ function getEffectiveAmount( ctx ) {
 
 /**
  * Calculate the Stripe processing fee in minor units.
- * Stripe standard: 2.9% + 30¢.
  *
- * @param {number} amount Amount in minor units.
+ * Covers the Stripe fee on the donation only. Mission absorbs the fee on
+ * its own tip server-side. Solving fee = 0.029 × (donation + fee) + 30:
+ *   fee = (0.029 × donation + 30) / 0.971
+ *
+ * @param {number} donationAmount Donation amount in minor units.
  * @return {number} Fee in minor units.
  */
-function calculateFee( amount ) {
-	return Math.round( amount * 0.029 + 30 );
+function calculateFee( donationAmount ) {
+	// Algebraic estimate of fee needed so donor covers Stripe's charge.
+	const estimate = Math.round( ( 0.029 * donationAmount + 30 ) / 0.971 );
+	// Correction pass: simulate Stripe's actual fee on the resulting charge
+	// to eliminate ±1¢ rounding drift from the algebraic formula.
+	return Math.round( ( donationAmount + estimate ) * 0.029 + 30 );
 }
 
 /**
@@ -106,6 +118,15 @@ store( 'mission/donation-form', {
 		},
 		get email() {
 			return getContext().email;
+		},
+		get isSubmitting() {
+			return getContext().isSubmitting;
+		},
+		get paymentError() {
+			return getContext().paymentError;
+		},
+		get paymentSuccess() {
+			return getContext().paymentSuccess;
 		},
 	},
 	actions: {
@@ -211,8 +232,137 @@ store( 'mission/donation-form', {
 		updateEmail( event ) {
 			getContext().email = event.target.value;
 		},
-		submit() {
-			// No-op — payment processing will be added later.
+		*submit() {
+			const ctx = getContext();
+
+			// Prevent double-submit.
+			if ( ctx.isSubmitting ) {
+				return;
+			}
+
+			ctx.isSubmitting = true;
+			ctx.paymentError = '';
+
+			try {
+				// Validate required fields.
+				if ( ! ctx.email || ! ctx.firstName || ! ctx.lastName ) {
+					ctx.paymentError = 'Please fill in all required fields.';
+					return;
+				}
+
+				if ( ! cardElement ) {
+					ctx.paymentError =
+						'Card element not loaded. Please refresh the page.';
+					return;
+				}
+
+				// Calculate amounts (tip first — fee depends on it).
+				const donationAmount = getEffectiveAmount( ctx );
+				const tipAmount = calculateTip(
+					donationAmount,
+					ctx.selectedTipPercent
+				);
+				const feeAmount = ctx.feeRecoveryChecked
+					? calculateFee( donationAmount )
+					: 0;
+
+				// Step 1: Create PaymentIntent via our REST endpoint.
+				const intentResponse = yield fetch(
+					`${ ctx.restUrl }donations/create-payment-intent`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-Nonce': ctx.restNonce,
+						},
+						body: JSON.stringify( {
+							donation_amount: donationAmount + feeAmount,
+							tip_amount: tipAmount,
+						} ),
+					}
+				);
+
+				const intentData = yield intentResponse.json();
+
+				if ( ! intentResponse.ok || ! intentData.client_secret ) {
+					ctx.paymentError =
+						intentData.message ||
+						'Failed to create payment. Please try again.';
+					return;
+				}
+
+				// Step 2: Confirm the card payment.
+				const { error, paymentIntent } =
+					yield stripeInstance.confirmCardPayment(
+						intentData.client_secret,
+						{
+							payment_method: {
+								card: cardElement,
+								billing_details: {
+									name: `${ ctx.firstName } ${ ctx.lastName }`,
+									email: ctx.email,
+								},
+							},
+						}
+					);
+
+				if ( error ) {
+					ctx.paymentError = error.message;
+					return;
+				}
+
+				if ( paymentIntent.status !== 'succeeded' ) {
+					ctx.paymentError =
+						'Payment was not completed. Please try again.';
+					return;
+				}
+
+				// Step 4: Record the donation in our database.
+				const confirmResponse = yield fetch(
+					`${ ctx.restUrl }donations/confirm`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-WP-Nonce': ctx.restNonce,
+						},
+						body: JSON.stringify( {
+							payment_intent_id: paymentIntent.id,
+							donor_email: ctx.email,
+							donor_first_name: ctx.firstName,
+							donor_last_name: ctx.lastName,
+							donation_amount: donationAmount,
+							fee_amount: feeAmount,
+							tip_amount: tipAmount,
+							currency: ctx.settings.currency || 'USD',
+							frequency: ctx.selectedFrequency,
+							campaign_id: ctx.campaignId || 0,
+							source_post_id: ctx.sourcePostId || 0,
+							is_anonymous: ctx.isAnonymous,
+						} ),
+					}
+				);
+
+				const confirmData = yield confirmResponse.json();
+
+				if ( ! confirmResponse.ok || ! confirmData.success ) {
+					// Payment succeeded but recording failed — don't show error to donor.
+					// eslint-disable-next-line no-console
+					console.error(
+						'Mission: Failed to record donation',
+						confirmData
+					);
+				}
+
+				// Step 5: Show success state.
+				ctx.paymentSuccess = true;
+			} catch ( err ) {
+				ctx.paymentError =
+					err.message ||
+					'An unexpected error occurred. Please try again.';
+			} finally {
+				ctx.isSubmitting = false;
+			}
 		},
 	},
 	callbacks: {
@@ -322,6 +472,54 @@ store( 'mission/donation-form', {
 					ref.focus();
 				}
 			}
+		},
+		*mountCardElement() {
+			const ctx = getContext();
+			const { ref } = getElement();
+
+			if ( ! ctx.stripePublishableKey || ! ref ) {
+				return;
+			}
+
+			// Fetch connected account ID for Stripe Connect direct charges.
+			const configResponse = yield fetch(
+				`${ ctx.restUrl }donations/payment-config`
+			);
+			const configData = yield configResponse.json();
+
+			if ( ! configData.connected_account_id ) {
+				ctx.paymentError =
+					'Payment processing is not available. The site owner needs to reconnect Stripe in the Mission settings.';
+				return;
+			}
+
+			stripeInstance = window.Stripe( ctx.stripePublishableKey, {
+				stripeAccount: configData.connected_account_id,
+			} );
+			const elements = stripeInstance.elements();
+
+			cardElement = elements.create( 'card', {
+				style: {
+					base: {
+						fontSize: '14px',
+						color: '#1e1e1e',
+						fontFamily:
+							'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+						'::placeholder': {
+							color: '#6b7280',
+						},
+					},
+					invalid: {
+						color: '#dc2626',
+					},
+				},
+			} );
+
+			cardElement.mount( ref );
+
+			cardElement.on( 'change', ( event ) => {
+				ctx.paymentError = event.error ? event.error.message : '';
+			} );
 		},
 	},
 } );

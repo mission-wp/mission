@@ -23,6 +23,7 @@ define( 'MISSION_FILE', __FILE__ );
 define( 'MISSION_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSION_URL', plugin_dir_url( __FILE__ ) );
 define( 'MISSION_BASENAME', plugin_basename( __FILE__ ) );
+define( 'MISSION_STRIPE_PK', 'pk_test_51T5DwxKmlUXgfwX1imygmc6bNNiXqdJT85CABLAMvanmATbQ6e1ol9RhzP85WyxOq1xmXKUI6LiyeXzbPStlRagi00YXxKtotb' );
 
 // Load Composer autoloader.
 $autoloader = __DIR__ . '/vendor/autoload.php';

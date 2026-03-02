@@ -22,6 +22,7 @@ class BlocksModule {
 	public function init(): void {
 		add_filter( 'block_categories_all', array( $this, 'register_block_category' ) );
 		add_action( 'init', array( $this, 'register_blocks' ) );
+		add_filter( 'render_block_mission/donation-form', array( $this, 'enqueue_stripe_js' ), 10, 2 );
 	}
 
 	/**
@@ -40,6 +41,23 @@ class BlocksModule {
 		);
 
 		return $categories;
+	}
+
+	/**
+	 * Enqueue Stripe.js when a donation form block is rendered.
+	 *
+	 * @param string $block_content Rendered block content.
+	 * @return string Unmodified block content.
+	 */
+	public function enqueue_stripe_js( string $block_content ): string {
+		wp_enqueue_script_module(
+			'@mission/stripe-js',
+			'https://js.stripe.com/v3/',
+			array(),
+			null
+		);
+
+		return $block_content;
 	}
 
 	/**

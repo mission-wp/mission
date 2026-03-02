@@ -72,6 +72,14 @@ $context = array(
 	'lastName'             => '',
 	'email'                => '',
 	'settings'             => $settings,
+	'stripePublishableKey' => defined( 'MISSION_STRIPE_PK' ) ? MISSION_STRIPE_PK : '',
+	'restUrl'              => trailingslashit( get_rest_url( null, 'mission/v1' ) ),
+	'restNonce'            => wp_create_nonce( 'wp_rest' ),
+	'campaignId'           => $settings['campaignId'] ?? 0,
+	'sourcePostId'         => get_the_ID() ?: 0,
+	'isSubmitting'         => false,
+	'paymentError'         => '',
+	'paymentSuccess'       => false,
 );
 ?>
 
@@ -326,10 +334,17 @@ $context = array(
 			</div>
 		<?php endif; ?>
 
-		<?php // Card element placeholder. ?>
-		<div class="mission-df-card-element" id="<?php echo esc_attr( $uid . 'card-element' ); ?>">
-			<p class="mission-df-card-placeholder"><?php esc_html_e( 'Card details will appear here', 'mission' ); ?></p>
-		</div>
+		<?php // Stripe card element. ?>
+		<div
+			class="mission-df-card-element"
+			id="<?php echo esc_attr( $uid . 'card-element' ); ?>"
+			data-wp-init="callbacks.mountCardElement"
+		></div>
+		<div
+			class="mission-df-card-error"
+			data-wp-bind--hidden="!state.paymentError"
+			data-wp-text="state.paymentError"
+		></div>
 
 		<?php // Tip section. ?>
 		<?php if ( ! empty( $settings['tipEnabled'] ) ) : ?>
@@ -362,8 +377,31 @@ $context = array(
 			type="button"
 			class="mission-df-btn mission-df-btn--primary mission-df-donate-btn"
 			data-wp-on--click="actions.submit"
+			data-wp-bind--disabled="state.isSubmitting"
+			data-wp-class--is-submitting="state.isSubmitting"
 		>
-			<?php esc_html_e( 'Donate', 'mission' ); ?> <span data-wp-text="callbacks.formattedTotalAmount"></span>
+			<span data-wp-bind--hidden="state.isSubmitting">
+				<?php esc_html_e( 'Donate', 'mission' ); ?> <span data-wp-text="callbacks.formattedTotalAmount"></span>
+			</span>
+			<span data-wp-bind--hidden="!state.isSubmitting">
+				<?php esc_html_e( 'Processing...', 'mission' ); ?>
+			</span>
 		</button>
+	</div>
+
+	<?php // ───── Success State ───── ?>
+	<div
+		class="mission-df-success"
+		data-wp-bind--hidden="!state.paymentSuccess"
+		data-wp-class--visible="state.paymentSuccess"
+	>
+		<div class="mission-df-success-icon">
+			<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+				<circle cx="24" cy="24" r="24" fill="var(--mission-primary)"/>
+				<path d="M15 25l6 6 12-12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</div>
+		<h2 class="mission-df-success-title"><?php esc_html_e( 'Thank you!', 'mission' ); ?></h2>
+		<p class="mission-df-success-text"><?php esc_html_e( 'Your donation has been processed successfully. You will receive a confirmation email shortly.', 'mission' ); ?></p>
 	</div>
 </section>

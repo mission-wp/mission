@@ -139,7 +139,7 @@ class StripeConnectEndpoint {
 			array(
 				'stripe_site_id'           => $site_id,
 				'stripe_site_token'        => $body['site_token'],
-				'stripe_account_id'        => $body['stripe_account_id'] ?? '',
+				'stripe_account_id'        => $body['account_id'] ?? $body['stripe_account_id'] ?? '',
 				'stripe_display_name'      => $body['display_name'] ?? '',
 				'stripe_connection_status' => 'connected',
 			)

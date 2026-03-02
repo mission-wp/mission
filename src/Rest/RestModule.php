@@ -8,7 +8,12 @@
 namespace Mission\Rest;
 
 use Mission\Database\DataStore\CampaignDataStore;
+use Mission\Database\DataStore\DonorDataStore;
+use Mission\Database\DataStore\TransactionDataStore;
 use Mission\Rest\Endpoints\CampaignsEndpoint;
+use Mission\Rest\Endpoints\ConfirmDonationEndpoint;
+use Mission\Rest\Endpoints\CreatePaymentIntentEndpoint;
+use Mission\Rest\Endpoints\PaymentConfigEndpoint;
 use Mission\Rest\Endpoints\SettingsEndpoint;
 use Mission\Rest\Endpoints\StripeConnectEndpoint;
 use Mission\Settings\SettingsService;
@@ -47,5 +52,8 @@ class RestModule {
 		( new CampaignsEndpoint( new CampaignDataStore() ) )->register();
 		( new SettingsEndpoint( $settings_service ) )->register();
 		( new StripeConnectEndpoint( $settings_service ) )->register();
+		( new CreatePaymentIntentEndpoint( $settings_service ) )->register();
+		( new ConfirmDonationEndpoint( new DonorDataStore(), new TransactionDataStore() ) )->register();
+		( new PaymentConfigEndpoint( $settings_service ) )->register();
 	}
 }
