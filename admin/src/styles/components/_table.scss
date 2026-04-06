@@ -1,0 +1,94 @@
+// Detail table — used in donor detail, subscription detail, etc.
+
+.mission-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b6b7b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #e8e6e1;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f2f0ec;
+  }
+}
+
+// Table-specific helper classes.
+
+.mission-detail-table__muted {
+  color: #9b9ba8;
+}
+
+.mission-detail-table__amount {
+  font-weight: 500;
+}
+
+.mission-detail-table__id {
+  color: #9b9ba8;
+  font-family: monospace;
+  font-size: 13px;
+  text-decoration: none;
+
+  &:hover {
+    color: #9b9ba8;
+    text-decoration: none;
+  }
+}
+
+.mission-detail-table__link {
+  color: #2fa36b;
+  text-decoration: none;
+
+  &:hover {
+    color: #2fa36b;
+    text-decoration: none;
+  }
+}
+
+.mission-detail-table__overflow {
+  overflow-x: auto;
+}
+
+.mission-detail-table__empty {
+  text-align: center;
+  padding: 24px;
+  color: #9b9ba8;
+}
+
+// Table name link.
+
+.mission-admin-page .mission-table-link {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+// Clickable table rows.
+
+.mission-clickable-rows .dataviews-view-table tbody tr,
+.mission-clickable-rows .mission-detail-table tbody tr {
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+}

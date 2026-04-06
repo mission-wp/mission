@@ -1,0 +1,318 @@
+// Donor Dashboard — Auth (logged-out) styles.
+
+:where(.mission-dd-auth-wrapper) {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px;
+}
+
+:where(.mission-dd-auth-card) {
+  max-width: 420px;
+  width: 100%;
+}
+
+:where(.mission-dd-auth-header) {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.mission-dd-auth-title {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+:where(.mission-dd-auth-subtitle) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 340px;
+}
+
+:where(.mission-dd-auth-form-card) {
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #ddd);
+  border-radius: 12px;
+  padding: 32px;
+}
+
+:where(.mission-dd-auth-field) {
+  margin-bottom: 20px;
+}
+
+:where(.mission-dd-auth-label) {
+  color: var(--mission-text, #1e1e1e);
+  display: block;
+  font-size: 14px;
+  font-weight: 550;
+  margin-bottom: 6px;
+}
+
+:where(.mission-dd-auth-input-wrap) {
+  position: relative;
+}
+
+:where(.mission-dd-auth-error) {
+  align-items: flex-start;
+  background: #fdf5f5;
+  border: 1px solid #f0d4d4;
+  border-radius: 8px;
+  color: #b85c5c;
+  display: flex;
+  font-size: 14px;
+  gap: 10px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+:where(.mission-dd-auth-input) {
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #ddd);
+  border-radius: 8px;
+  color: var(--mission-text, #1e1e1e);
+  font-family: inherit;
+  font-size: 15px;
+  height: 46px;
+  outline: none;
+  padding: 0 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+
+  &::placeholder {
+    color: #bbb;
+  }
+
+  &:focus {
+    border-color: var(--mission-primary, #2fa36b);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary, #2fa36b) 10%, transparent);
+  }
+}
+
+:where(.mission-dd-auth-input-has-toggle) {
+  padding-right: 46px;
+}
+
+// ── Password toggle ──
+
+:where(.mission-dd-auth-pw-toggle) {
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #999;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: color 0.15s;
+
+  &:hover {
+    color: #666;
+  }
+}
+
+// ── Password strength ──
+
+:where(.mission-dd-auth-pw-strength) {
+  margin-top: 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+:where(.mission-dd-auth-pw-strength-bar) {
+  background: #eee;
+  border-radius: 3px;
+  height: 3px;
+  overflow: hidden;
+}
+
+:where(.mission-dd-auth-pw-strength-fill) {
+  border-radius: 3px;
+  height: 100%;
+  transition: width 0.3s, background-color 0.3s;
+  width: 0;
+
+  &.weak {
+    background: #b85c5c;
+    width: 25%;
+  }
+
+  &.fair {
+    background: #d4a053;
+    width: 50%;
+  }
+
+  &.good {
+    background: #6a9e5c;
+    width: 75%;
+  }
+
+  &.strong {
+    background: var(--mission-primary, #2fa36b);
+    width: 100%;
+  }
+}
+
+:where(.mission-dd-auth-pw-strength-text) {
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+  min-height: 16px;
+}
+
+// ── Remember me / Forgot password ──
+
+:where(.mission-dd-auth-options) {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+:where(.mission-dd-auth-remember) {
+  align-items: center;
+  color: var(--mission-text-secondary, #6b7280);
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  gap: 8px;
+  user-select: none;
+
+  input[type="checkbox"] {
+    accent-color: var(--mission-primary, #2fa36b);
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+  }
+}
+
+:where(.mission-dd-auth-forgot) {
+  color: var(--mission-primary, #2fa36b);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ── Hint text (used in check-email view) ──
+
+:where(.mission-dd-auth-hint) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+// ── Mail icon (check-email view) ──
+
+:where(.mission-dd-auth-icon-mail) {
+  display: block;
+  margin: 0 auto 16px;
+}
+
+// ── Submit button ──
+
+:where(.mission-dd-auth-submit) {
+  align-items: center;
+  background: var(--mission-primary, #2fa36b);
+  border: none;
+  border-radius: 8px;
+  color: var(--mission-primary-text, #fff);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  gap: 8px;
+  height: 46px;
+  justify-content: center;
+  transition: background 0.15s;
+  width: 100%;
+
+  &:hover {
+    background: var(--mission-primary-hover, #29905e);
+  }
+
+  &:active {
+    transform: scale(0.995);
+  }
+
+  &.is-loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  &.mission-dd-auth-submit--secondary {
+    background: var(--mission-bg, #fff);
+    border: 1px solid var(--mission-border, #ddd);
+    color: var(--mission-text, #1e1e1e);
+
+    &:hover {
+      background: var(--mission-bg-secondary, #f9fafb);
+    }
+  }
+}
+
+// ── Secure badge ──
+
+:where(.mission-dd-auth-secure) {
+  align-items: center;
+  color: #999;
+  display: flex;
+  font-size: 12px;
+  gap: 5px;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  margin-top: 14px;
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  svg {
+    opacity: 0.6;
+  }
+}
+
+// ── Switch link ──
+
+:where(.mission-dd-auth-switch) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+  margin-top: 24px;
+  text-align: center;
+
+  a {
+    color: var(--mission-primary, #2fa36b);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

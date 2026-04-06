@@ -1,0 +1,113 @@
+// Stats row.
+
+.mission-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  &--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// Stat card.
+
+.mission-stat-card {
+  background: #fff;
+  border: 1px solid #e8e6e1;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+
+}
+
+.mission-stat-card__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6b7b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.mission-stat-card__value {
+  font-size: 26px;
+  font-weight: 600;
+  color: #1a1a2e;
+  line-height: 1.2;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mission-stat-card--text-value .mission-stat-card__value {
+  font-size: 20px;
+  line-height: calc(26px * 1.2); // match height of 26px values
+}
+
+.mission-stat-card__delta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.is-positive {
+    color: #5a7a64;
+  }
+
+  &.is-negative {
+    color: #b85c5c;
+  }
+
+  &.is-neutral {
+    color: #9b9ba8;
+  }
+}
+
+.mission-stat-card__subtitle {
+  font-size: 12px;
+  color: #9b9ba8;
+}
+
+// Skeleton overrides for dashboard.
+
+.mission-stat-card .mission-skeleton {
+  border-radius: 4px;
+  background: #eee9e3;
+}
+
+.mission-stat-card__value .mission-skeleton {
+  display: inline-block;
+  width: 70%;
+  height: 28px;
+}
+
+.mission-stat-card__delta .mission-skeleton {
+  display: inline-block;
+  width: 90px;
+  height: 14px;
+}
+
+// Responsive.
+
+@media (max-width: 768px) {
+
+  .mission-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+
+    &--4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+
+  .mission-stats-row {
+    grid-template-columns: 1fr;
+  }
+}

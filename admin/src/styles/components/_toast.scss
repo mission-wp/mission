@@ -1,0 +1,63 @@
+// Toast notification.
+.mission-toast {
+  position: fixed;
+  top: 46px; // below WP admin bar + breathing room
+  left: 50%;
+  transform: translateX(-50%) translateY(-120%);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 13.2px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: mission-toast-in 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+  pointer-events: none;
+
+  &.is-dismissing {
+    animation: mission-toast-out 0.3s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  }
+
+  &.is-success {
+    background: #0a2e1a;
+    color: #b4f0d0;
+  }
+
+  &.is-error {
+    background: #2e0a0a;
+    color: #f0b4b4;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: flex;
+  }
+}
+
+@keyframes mission-toast-in {
+
+  from {
+    transform: translateX(-50%) translateY(-120%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mission-toast-out {
+
+  from {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-50%) translateY(-120%);
+    opacity: 0;
+  }
+}

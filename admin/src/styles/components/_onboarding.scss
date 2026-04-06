@@ -1,0 +1,969 @@
+// Onboarding Modal — Setup Wizard Overlay.
+
+body.mission-onboarding-open {
+  overflow: hidden;
+}
+
+// ---- Overlay ----
+
+.mission-onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: missionOnboardingOverlayIn 0.3s ease;
+}
+
+@keyframes missionOnboardingOverlayIn {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.mission-onboarding-overlay.is-closing {
+  animation: missionOnboardingOverlayOut 0.25s ease forwards;
+}
+
+@keyframes missionOnboardingOverlayOut {
+
+  to {
+    opacity: 0;
+  }
+}
+
+// ---- Modal ----
+
+.mission-onboarding-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100vh - 48px);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  animation: missionOnboardingModalIn 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  // WP admin doesn't set border-box globally — scope it here so
+  // inputs with padding don't overflow their containers.
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+@keyframes missionOnboardingModalIn {
+
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mission-onboarding-overlay.is-closing .mission-onboarding-modal {
+  animation: missionOnboardingModalOut 0.25s ease forwards;
+}
+
+@keyframes missionOnboardingModalOut {
+
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+// ---- Modal Header ----
+
+.mission-onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px 0;
+}
+
+.mission-onboarding-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mission-onboarding-logo {
+  width: 28px;
+  height: 28px;
+  background: #2fa36b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.mission-onboarding-wordmark {
+  font-family: "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.01em;
+}
+
+.mission-onboarding-setup-tag {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: #9b9ba8;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mission-onboarding-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: #9b9ba8;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 0;
+
+  &:hover {
+    background: #ebebed;
+    color: #1a1a2e;
+  }
+}
+
+// ---- Step Indicators ----
+
+.mission-onboarding-steps-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 16px 28px 8px;
+}
+
+.mission-onboarding-step-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: default;
+}
+
+.mission-onboarding-step-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.06);
+  color: #9b9ba8;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+
+  .mission-onboarding-step-item.is-active & {
+    background: #2fa36b;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(47, 163, 107, 0.3);
+  }
+
+  .mission-onboarding-step-item.is-completed & {
+    background: #2fa36b;
+    color: #fff;
+  }
+}
+
+.mission-onboarding-step-label {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: #9b9ba8;
+  transition: color 0.3s;
+  white-space: nowrap;
+
+  .mission-onboarding-step-item.is-active & {
+    color: #1a1a2e;
+  }
+
+  .mission-onboarding-step-item.is-completed & {
+    color: #6b6b7b;
+  }
+}
+
+.mission-onboarding-connector {
+  flex: 1;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 8px;
+  position: relative;
+  flex-shrink: 0;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: #2fa36b;
+    transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  &.is-filled::after {
+    width: 100%;
+  }
+}
+
+// ---- Step Panels ----
+
+.mission-onboarding-steps-wrap {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex: 1;
+  min-height: 0;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d0d0d4;
+    border-radius: 2px;
+  }
+}
+
+.mission-onboarding-step {
+  padding: 32px 28px 28px;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  &.is-active {
+    visibility: visible;
+    position: relative;
+  }
+
+  &.is-measuring {
+    visibility: hidden;
+    position: relative;
+  }
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  &.is-slide-out-left {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+
+  &.is-slide-in-right {
+    transform: translateX(24px);
+  }
+
+  &.is-slide-in-left {
+    transform: translateX(-24px);
+  }
+}
+
+.mission-onboarding-step__heading {
+  font-family: "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.mission-onboarding-step__subheading {
+  font-size: 0.88rem;
+  color: #6b6b7b;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+// ---- Form Fields ----
+
+.mission-onboarding-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mission-onboarding-field__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b6b7b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mission-onboarding-field__optional {
+  font-weight: 400;
+  color: #9b9ba8;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.73rem;
+  margin-left: 4px;
+}
+
+input.mission-onboarding-field__input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a1a2e;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+
+  &::placeholder {
+    color: #9b9ba8;
+  }
+}
+
+select.mission-onboarding-field__select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a1a2e;
+  background: #fff;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239b9ba8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+}
+
+textarea.mission-onboarding-field__textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #1a1a2e;
+  background: #fff;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+
+  &::placeholder {
+    color: #9b9ba8;
+  }
+}
+
+.mission-onboarding-field__hint {
+  font-size: 0.75rem;
+  color: #9b9ba8;
+  line-height: 1.4;
+}
+
+.mission-onboarding-field__error {
+  font-size: 0.75rem;
+  color: #b85c5c;
+  line-height: 1.4;
+}
+
+.mission-onboarding-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.mission-onboarding-field-row-3 {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 14px;
+}
+
+// Currency input.
+.mission-onboarding-currency-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mission-onboarding-currency-symbol {
+  position: absolute;
+  left: 14px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #9b9ba8;
+  pointer-events: none;
+}
+
+.mission-onboarding-currency-wrap .mission-onboarding-field__input {
+  padding-left: 28px;
+  width: 100%;
+}
+
+// Image upload zone
+.mission-onboarding-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 16px;
+  border: 2px dashed #c5c8ce;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  text-align: center;
+
+  &:hover,
+  &:focus-visible {
+    border-color: #2fa36b;
+    background: rgba(47, 163, 107, 0.03);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.15);
+  }
+
+  &__icon {
+    color: #9ca3af;
+    margin-bottom: 4px;
+  }
+
+  &__text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  &__hint {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+}
+
+// Image preview
+.mission-onboarding-image-preview {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    object-fit: cover;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 10px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+  }
+}
+
+.mission-onboarding-image-btn {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+  }
+
+  &--danger {
+    color: #b85c5c;
+    border-color: #e5c2c2;
+
+    &:hover {
+      background: #fef2f2;
+      border-color: #b85c5c;
+    }
+  }
+}
+
+// Goal type picker within onboarding
+.mission-onboarding-field .mission-goal-type-picker {
+  margin-top: 4px;
+}
+
+// Error states — must come after all field selectors for specificity.
+.mission-onboarding-field.has-error .mission-onboarding-field__input,
+.mission-onboarding-field.has-error .mission-onboarding-field__select {
+  border-color: #b85c5c;
+  box-shadow: 0 0 0 3px rgba(184, 92, 92, 0.1);
+}
+
+// ---- Step 3: Stripe (Hero Step) ----
+
+.mission-onboarding-stripe-hero {
+  text-align: center;
+  padding: 4px 0 0;
+}
+
+.mission-onboarding-stripe-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #635bff 0%, #7c75ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 4px 20px rgba(99, 91, 255, 0.25);
+}
+
+.mission-onboarding-stripe-hero .mission-onboarding-step__heading {
+  font-size: 1.35rem;
+}
+
+.mission-onboarding-stripe-hero .mission-onboarding-step__subheading {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 24px;
+}
+
+.mission-onboarding-stripe-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, #635bff 0%, #7c75ff 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 2px 12px rgba(99, 91, 255, 0.25);
+  margin-bottom: 16px;
+  text-decoration: none;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(99, 91, 255, 0.35);
+    color: #fff;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.is-connected {
+    background: #2fa36b;
+    box-shadow: 0 2px 12px rgba(47, 163, 107, 0.25);
+    cursor: default;
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 2px 12px rgba(47, 163, 107, 0.25);
+    }
+  }
+}
+
+.mission-onboarding-stripe-error {
+  font-size: 0.82rem;
+  color: #b85c5c;
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 0 auto 16px;
+  text-align: center;
+}
+
+.mission-onboarding-stripe-note {
+  font-size: 0.78rem;
+  color: #9b9ba8;
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 0 auto 20px;
+
+  svg {
+    vertical-align: -2px;
+    margin-right: 4px;
+  }
+}
+
+.mission-onboarding-stripe-warning {
+  border-top: 1px solid #eae8e4;
+  padding-top: 16px;
+  margin-top: 4px;
+
+  p {
+    font-size: 0.8rem;
+    color: #b85c5c;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+}
+
+// ---- Step 5: Completion ----
+
+.mission-onboarding-completion {
+  text-align: center;
+}
+
+.mission-onboarding-completion-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(47, 163, 107, 0.1);
+  color: #2fa36b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px solid rgba(47, 163, 107, 0.15);
+    animation: missionOnboardingPulse 2s ease-out infinite;
+  }
+}
+
+@keyframes missionOnboardingPulse {
+
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+
+.mission-onboarding-completion .mission-onboarding-step__heading {
+  font-size: 1.55rem;
+  margin-bottom: 6px;
+}
+
+.mission-onboarding-completion .mission-onboarding-step__subheading {
+  margin-bottom: 24px;
+}
+
+.mission-onboarding-checklist {
+  text-align: left;
+  background: #fafaf7;
+  border: 1px solid #eae8e4;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+}
+
+.mission-onboarding-checklist__title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9b9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+}
+
+.mission-onboarding-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  font-size: 0.85rem;
+  color: #1a1a2e;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #eae8e4;
+  }
+}
+
+.mission-onboarding-checklist-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.is-success {
+    background: rgba(47, 163, 107, 0.12);
+    color: #2fa36b;
+  }
+
+  &.is-warning {
+    background: rgba(210, 160, 60, 0.12);
+    color: #b8860b;
+  }
+}
+
+.mission-onboarding-checklist-label {
+  flex: 1;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.mission-onboarding-checklist-link {
+  font-size: 0.78rem;
+  color: #2fa36b;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #278f5c;
+  }
+}
+
+.mission-onboarding-completion-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: #2fa36b;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 16px rgba(47, 163, 107, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+// ---- Modal Footer / Nav ----
+
+.mission-onboarding-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px 24px;
+  border-top: 1px solid #eae8e4;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+.mission-onboarding-nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b6b7b;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #1a1a2e;
+  }
+
+  &.is-invisible {
+    visibility: hidden;
+  }
+}
+
+.mission-onboarding-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mission-onboarding-nav-skip {
+  padding: 9px 16px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 0.82rem;
+  color: #9b9ba8;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+
+  &:hover {
+    color: #6b6b7b;
+    background: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.mission-onboarding-nav-continue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #2fa36b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 12px rgba(47, 163, 107, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    transition: transform 0.2s;
+  }
+
+  &:hover svg {
+    transform: translateX(2px);
+  }
+}
+
+// ---- Responsive ----
+
+@media (max-width: 640px) {
+
+  .mission-onboarding-overlay {
+    padding: 12px;
+    align-items: flex-start;
+    padding-top: 48px;
+  }
+
+  .mission-onboarding-modal {
+    max-height: calc(100vh - 60px);
+  }
+
+  .mission-onboarding-step-label {
+    display: none;
+  }
+
+  .mission-onboarding-connector {
+    width: 20px;
+    margin: 0 6px;
+  }
+
+  .mission-onboarding-step {
+    padding: 24px 20px 20px;
+  }
+
+  .mission-onboarding-nav {
+    padding: 12px 20px 20px;
+  }
+
+  .mission-onboarding-field-row,
+  .mission-onboarding-field-row-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-onboarding-stripe-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

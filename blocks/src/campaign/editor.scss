@@ -1,0 +1,67 @@
+.wp-block-mission-campaign {
+
+  .mission-cc {
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .mission-cc-bar__fill {
+    width: var(--bar-width);
+    animation: none;
+  }
+
+  .mission-cc-btn,
+  .mission-cc-title a,
+  a.mission-cc-image-wrap {
+    pointer-events: none;
+  }
+
+  .mission-cc-image-wrap img {
+
+    .mission-cc:hover & {
+      transform: none;
+    }
+  }
+
+  .mission-cc-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: #949494;
+    text-align: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .mission-cc-skeleton {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mission-cc-skeleton-bar {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: mission-cc-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mission-cc-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+}

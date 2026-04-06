@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mission/donor-wall",
+  "version": "0.1.0",
+  "title": "Donor Wall",
+  "category": "mission",
+  "icon": "groups",
+  "description": "Display a grid of donations for a campaign.",
+  "supports": {
+    "align": [ "wide", "full" ],
+    "html": false,
+    "interactivity": true
+  },
+  "attributes": {
+    "campaignId": { "type": "number", "default": 0 },
+    "columns": { "type": "number", "default": 2 },
+    "showName": { "type": "boolean", "default": true },
+    "showAnonymous": { "type": "boolean", "default": true },
+    "showAvatar": { "type": "boolean", "default": true },
+    "avatarWidth": { "type": "number", "default": 48 },
+    "donorsPerPage": { "type": "number", "default": 12 },
+    "showAmount": { "type": "boolean", "default": true },
+    "showDate": { "type": "boolean", "default": true },
+    "showComments": { "type": "boolean", "default": true },
+    "commentLength": { "type": "number", "default": 150 },
+    "readMoreText": { "type": "string", "default": "Read more" },
+    "showSortControls": { "type": "boolean", "default": true },
+    "defaultSort": { "type": "string", "default": "recent" },
+    "loadMoreText": { "type": "string", "default": "Show More Donations" }
+  },
+  "example": {},
+  "textdomain": "mission",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScriptModule": "file:./view.js",
+  "render": "file:./index.php"
+}

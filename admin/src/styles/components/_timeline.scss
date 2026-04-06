@@ -1,0 +1,150 @@
+// Timeline.
+.mission-timeline {
+  position: relative;
+  padding: 16px 16px 16px 40px;
+
+  &__item {
+    position: relative;
+    padding-bottom: 24px;
+
+    // Line connecting to next item's dot.
+    &::before {
+      content: "";
+      position: absolute;
+      left: -17px;
+      top: 18px;
+      bottom: 0;
+      width: 1px;
+      background: #dcdcde;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+
+      &::before {
+        display: none;
+      }
+    }
+  }
+
+  &__dot {
+    position: absolute;
+    left: -24px;
+    top: 3px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid #d0d0d4;
+    background: #fff;
+    z-index: 1;
+
+    &.is-reached,
+    &.is-success {
+      background: #2fa36b;
+      border-color: #2fa36b;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #fff;
+      }
+    }
+
+    &.is-negative {
+      background: #c0392b;
+      border-color: #c0392b;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #fff;
+      }
+    }
+
+    &.is-pending {
+      background: #4a7a9b;
+      border-color: #4a7a9b;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #fff;
+      }
+    }
+
+    &.is-refunded {
+      background: #b85c5c;
+      border-color: #b85c5c;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #fff;
+      }
+    }
+
+    &.is-cancelled {
+      background: #8a7e72;
+      border-color: #8a7e72;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #fff;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 13.2px;
+    font-weight: 500;
+    color: #1e1e1e;
+    margin-bottom: 2px;
+
+    .mission-timeline__item:not(.is-reached) & {
+      color: #9b9ba8;
+    }
+  }
+
+  &__subtitle {
+    font-size: 12px;
+    color: #6b6b7b;
+    margin-top: 2px;
+  }
+
+  &__date {
+    font-size: 11.7px;
+    color: #9b9ba8;
+  }
+
+  &__detail {
+    font-size: 12px;
+    color: #6b6b7b;
+    margin-top: 2px;
+  }
+}

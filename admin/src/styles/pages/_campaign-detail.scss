@@ -1,0 +1,297 @@
+// Campaign Detail page styles.
+@use "../../../../assets/shared/styles/form-controls";
+
+// Hero section.
+.mission-campaign-hero {
+  padding-bottom: 32px;
+  margin-bottom: 0;
+
+  &__layout {
+    display: flex;
+    gap: 40px;
+    align-items: stretch;
+  }
+
+  &__left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__right {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 220px;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+
+    h1 {
+      margin: 0;
+    }
+  }
+
+  &__desc {
+    font-size: 13.8px;
+    color: #6b6b7b;
+    line-height: 1.6;
+    max-width: 640px;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__url {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 11.7px;
+    color: #9b9ba8;
+
+    span {
+      padding: 4px 10px;
+      background: #e8e8ea;
+      border-radius: 6px;
+    }
+  }
+
+  &__icon-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    color: #9b9ba8;
+    cursor: pointer;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+      color: #2fa36b;
+      background: #e2f4eb;
+    }
+  }
+
+  &__copied {
+    font-size: 11.25px;
+    color: #2fa36b;
+    font-weight: 500;
+  }
+
+  &__progress {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  &__progress-raised {
+    margin-bottom: 6px;
+  }
+
+  &__progress-amount {
+    font-size: 20.25px;
+    font-weight: 700;
+    color: #1e1e1e;
+    line-height: 1;
+  }
+
+  &__progress-goal {
+    font-size: 12px;
+    color: #9b9ba8;
+    margin-left: 2px;
+  }
+
+  &__progress-bar {
+    width: 100%;
+    height: 5px;
+    background: #e8e8ea;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2fa36b, #5abf8a);
+    border-radius: 3px;
+    width: var(--bar-width);
+    animation: mission-bar-fill 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  &__progress-pct {
+    font-size: 11.25px;
+    color: #9b9ba8;
+    font-weight: 500;
+  }
+}
+
+// Overview grid.
+.mission-campaign-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+.mission-campaign-detail-grid--full {
+  grid-template-columns: 1fr;
+}
+
+// Block editor.
+.mission-block-editor {
+  margin-bottom: 32px;
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 12px;
+    border: 1px solid #dcdcde;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    background: #fff;
+    min-height: 48px;
+    position: sticky;
+    top: 32px; // Below WP admin bar.
+    z-index: 30;
+  }
+
+  &__toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    padding-left: 2px;
+
+    .block-editor-block-toolbar {
+      flex: 1;
+      border: none;
+      min-width: 0;
+      overflow: hidden;
+    }
+  }
+
+  &__toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: #e8e8ea;
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  &__fullscreen-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9b9ba8;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+
+    &:hover {
+      color: #2fa36b;
+      background: #e2f4eb;
+    }
+  }
+
+  &__canvas {
+    border: 1px solid #dcdcde;
+    border-radius: 0 0 10px 10px;
+    background: #fff;
+    min-height: 200px;
+    overflow-y: auto;
+    max-height: 500px;
+
+    .editor-styles-wrapper {
+      padding: 24px 32px;
+      min-height: 200px;
+      outline: none;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+  }
+
+  &__content {
+    border: 1px solid #dcdcde;
+    border-radius: 0 0 10px 10px;
+    background: #fff;
+    padding: 32px;
+    min-height: 200px;
+    font-size: 13.8px;
+    line-height: 1.7;
+    color: #1e1e1e;
+  }
+}
+
+// Responsive.
+@media (max-width: 1024px) {
+
+  .mission-campaign-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .mission-campaign-hero__layout {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mission-campaign-hero__right {
+    width: 100%;
+    align-items: flex-start;
+
+    .components-button.is-secondary {
+      display: none;
+    }
+  }
+
+  .mission-tab-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mission-tab-nav__item {
+    padding: 10px 16px;
+    font-size: 12.75px;
+    white-space: nowrap;
+  }
+
+
+  .mission-settings-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-amounts-tabbed {
+    align-self: stretch;
+    max-width: 100%;
+
+    &__tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    &__tab {
+      white-space: nowrap;
+      padding: 8px 14px;
+      font-size: 11.25px;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+// Radio group.
+.mission-radio-group {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.mission-radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-bottom: 1px solid #dcdcde;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #f6f6f7;
+  }
+
+  &.is-selected {
+    background: rgba(47, 163, 107, 0.04);
+  }
+
+  input {
+    display: none;
+  }
+
+  &__dot {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #dcdcde;
+    border-radius: 50%;
+    margin-top: 1px;
+    position: relative;
+    transition: border-color 0.15s;
+
+    .is-selected & {
+      border-color: #2fa36b;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 8px;
+        height: 8px;
+        background: #2fa36b;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &__label {
+    font-size: 13.2px;
+    font-weight: 500;
+    color: #1e1e1e;
+  }
+
+  &__hint {
+    font-size: 11.7px;
+    color: #9b9ba8;
+    margin-top: 2px;
+  }
+}

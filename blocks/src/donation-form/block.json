@@ -1,0 +1,109 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission/donation-form",
+	"version": "0.1.0",
+	"title": "Donation Form",
+	"category": "mission",
+	"icon": "money-alt",
+	"description": "Donation form",
+	"supports": {
+		"html": false,
+		"interactivity": true
+	},
+	"attributes": {
+		"formId": {
+			"type": "string"
+		},
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"amountsByFrequency": {
+			"type": "object"
+		},
+		"defaultAmounts": {
+			"type": "object"
+		},
+		"customAmount": {
+			"type": "boolean"
+		},
+		"minimumAmount": {
+			"type": "number"
+		},
+		"recurringEnabled": {
+			"type": "boolean"
+		},
+		"recurringFrequencies": {
+			"type": "array"
+		},
+		"recurringDefault": {
+			"type": "string"
+		},
+		"feeRecovery": {
+			"type": "boolean"
+		},
+		"feeMode": {
+			"type": "string"
+		},
+		"tipEnabled": {
+			"type": "boolean"
+		},
+		"tipPercentages": {
+			"type": "array"
+		},
+		"anonymousEnabled": {
+			"type": "boolean"
+		},
+		"tributeEnabled": {
+			"type": "boolean"
+		},
+		"collectAddress": {
+			"type": "boolean"
+		},
+		"commentsEnabled": {
+			"type": "boolean"
+		},
+		"phoneRequired": {
+			"type": "boolean"
+		},
+		"confirmationType": {
+			"type": "string"
+		},
+		"confirmationRedirectUrl": {
+			"type": "string"
+		},
+		"amountDescriptions": {
+			"type": "object"
+		},
+		"primaryColor": {
+			"type": "string"
+		},
+		"continueButtonText": {
+			"type": "string"
+		},
+		"donateButtonText": {
+			"type": "string"
+		},
+		"chooseGiftHeading": {
+			"type": "string"
+		},
+		"summaryHeading": {
+			"type": "string"
+		},
+		"additionalInfoHeading": {
+			"type": "string"
+		},
+		"customFields": {
+			"type": "array",
+			"default": []
+		}
+	},
+	"example": {},
+	"textdomain": "mission",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./index.php"
+}

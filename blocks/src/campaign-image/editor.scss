@@ -1,0 +1,29 @@
+.wp-block-mission-campaign-image {
+
+  .mission-campaign-image img {
+    min-height: 100px;
+  }
+
+  .mission-campaign-image-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 32px 24px;
+    background: #fff;
+    border: 2px dashed #c3c4c7;
+    border-radius: 8px;
+
+    svg {
+      color: #8c8c91;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1e1e1e;
+    }
+  }
+}

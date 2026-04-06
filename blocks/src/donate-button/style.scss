@@ -1,0 +1,89 @@
+// Donate Button — frontend styles.
+// Wrapped in :where() for low specificity so users can easily override.
+
+// Layout and alignment.
+:where(.wp-block-mission-donate-button) {
+  display: flex;
+
+  &.alignleft {
+    justify-content: flex-start;
+  }
+
+  &.aligncenter {
+    justify-content: center;
+  }
+
+  &.alignright {
+    justify-content: flex-end;
+  }
+}
+
+// Width classes — preset percentages.
+:where(.wp-block-mission-donate-button.has-custom-width) {
+
+  .mission-donate-button__link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+:where(.wp-block-mission-donate-button.mission-donate-button__width-25) {
+  width: 25%;
+}
+
+:where(.wp-block-mission-donate-button.mission-donate-button__width-50) {
+  width: 50%;
+}
+
+:where(.wp-block-mission-donate-button.mission-donate-button__width-75) {
+  width: 75%;
+}
+
+:where(.wp-block-mission-donate-button.mission-donate-button__width-100) {
+  width: 100%;
+}
+
+// Default (fill) button styles.
+:where(.wp-block-mission-donate-button .mission-donate-button__link) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--mission-primary, #2fa36b);
+  color: var(--mission-primary-text, #fff);
+  border-radius: var(--mission-radius, 6px);
+  padding: 12px 32px;
+  font-weight: 600;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition:
+    filter 200ms ease,
+    opacity 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+:where(.wp-block-mission-donate-button .mission-donate-button__link:hover) {
+  filter: brightness(0.92);
+}
+
+:where(.wp-block-mission-donate-button .mission-donate-button__link:focus-visible) {
+  outline: 2px solid var(--mission-primary, #2fa36b);
+  outline-offset: 2px;
+}
+
+// Outline variant.
+:where(.wp-block-mission-donate-button.is-style-outline .mission-donate-button__link) {
+  background-color: transparent;
+  border: 2px solid currentcolor;
+  color: var(--mission-primary, #2fa36b);
+}
+
+:where(.wp-block-mission-donate-button.is-style-outline .mission-donate-button__link:hover) {
+  background-color: var(--mission-primary, #2fa36b);
+  color: var(--mission-primary-text, #fff);
+  filter: none;
+}

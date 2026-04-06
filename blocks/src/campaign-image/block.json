@@ -1,0 +1,79 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission/campaign-image",
+	"version": "0.1.0",
+	"title": "Campaign Image",
+	"category": "mission",
+	"icon": "format-image",
+	"description": "Display the image associated with a campaign.",
+	"supports": {
+		"html": false,
+		"align": [ "left", "center", "right", "wide", "full" ],
+		"spacing": {
+			"margin": true
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"width": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"color": true,
+				"radius": true,
+				"width": true
+			}
+		},
+		"shadow": true,
+		"filter": {
+			"duotone": true
+		}
+	},
+	"selectors": {
+		"border": ".wp-block-mission-campaign-image img, .wp-block-mission-campaign-image .components-placeholder",
+		"shadow": ".wp-block-mission-campaign-image img, .wp-block-mission-campaign-image .components-placeholder",
+		"filter": {
+			"duotone": ".wp-block-mission-campaign-image img, .wp-block-mission-campaign-image .components-placeholder"
+		}
+	},
+	"styles": [
+		{ "name": "default", "label": "Default", "isDefault": true },
+		{ "name": "rounded", "label": "Rounded" }
+	],
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"alt": {
+			"type": "string",
+			"default": ""
+		},
+		"aspectRatio": {
+			"type": "string",
+			"default": ""
+		},
+		"width": {
+			"type": "string",
+			"default": ""
+		},
+		"height": {
+			"type": "string",
+			"default": ""
+		},
+		"scale": {
+			"type": "string",
+			"default": "cover"
+		},
+		"resolution": {
+			"type": "string",
+			"default": "large"
+		}
+	},
+	"example": {},
+	"textdomain": "mission",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

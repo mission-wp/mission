@@ -1,0 +1,47 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission/campaign-progress",
+	"version": "0.1.0",
+	"title": "Campaign Progress",
+	"category": "mission",
+	"icon": "chart-bar",
+	"description": "Display campaign fundraising progress with a progress bar and stats.",
+	"supports": {
+		"html": false,
+		"interactivity": true,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"donateButtonAction": {
+			"type": "string",
+			"default": "scroll"
+		},
+		"donateButtonUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"showDonors": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDaysRemaining": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"example": {},
+	"textdomain": "mission",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./index.php"
+}

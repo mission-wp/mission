@@ -1,0 +1,49 @@
+// Small toggle switch.
+.mission-toggle-sm {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+  vertical-align: middle;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+
+  &__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccccd0;
+    border-radius: 10px;
+    transition: background 0.3s;
+
+    &::before {
+      content: "";
+      position: absolute;
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  input:checked + .mission-toggle-sm__slider {
+    background: #2fa36b;
+  }
+
+  input:checked + .mission-toggle-sm__slider::before {
+    transform: translateX(16px);
+  }
+}

@@ -1,0 +1,77 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission/campaign-statistics",
+	"version": "0.1.0",
+	"title": "Campaign Statistic",
+	"category": "mission",
+	"icon": "chart-line",
+	"description": "Display a key statistic for a campaign, such as total raised or number of donors.",
+	"supports": {
+		"html": false,
+		"align": [ "left", "center", "right", "wide" ],
+		"color": {
+			"background": true,
+			"text": true,
+			"gradients": true,
+			"__experimentalDefaultControls": {
+				"text": true
+			}
+		},
+		"typography": {
+			"fontSize": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalLetterSpacing": true,
+			"lineHeight": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"statType": {
+			"type": "string",
+			"default": "total_raised"
+		},
+		"heading": {
+			"type": "string",
+			"default": "Total Raised"
+		},
+		"showHeading": {
+			"type": "boolean",
+			"default": true
+		},
+		"textAlign": {
+			"type": "string"
+		},
+		"headingFontSize": {
+			"type": "string",
+			"default": ""
+		},
+		"headingColor": {
+			"type": "string",
+			"default": ""
+		},
+		"headingTextTransform": {
+			"type": "string",
+			"default": "uppercase"
+		}
+	},
+	"example": {},
+	"textdomain": "mission",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

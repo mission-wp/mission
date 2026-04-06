@@ -1,0 +1,601 @@
+button.detail-clickable {
+  background: none;
+  border: none;
+  border-bottom: 1px dashed #ccccd0;
+  padding: 0 0 1px;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+
+  &:hover {
+    border-bottom-color: #2fa36b;
+  }
+}
+
+// Transaction header (status-colored container).
+
+.mission-txn-header {
+  --txn-accent: #9b9ba8;
+  --txn-bg: #f5f5f4;
+  --txn-amount: #1a1a2e;
+
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 24px 24px 20px;
+  background: var(--txn-bg);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--txn-accent);
+  }
+
+  &.is-completed {
+    --txn-accent: #5a7a64;
+    --txn-bg: #f0f5f1;
+    --txn-amount: #5a7a64;
+  }
+
+  &.is-pending {
+    --txn-accent: #4a7a9b;
+    --txn-bg: #eff5f8;
+    --txn-amount: #4a7a9b;
+  }
+
+  &.is-refunded {
+    --txn-accent: #b85c5c;
+    --txn-bg: #f8f0f0;
+    --txn-amount: #b85c5c;
+  }
+
+  &.is-failed {
+    --txn-accent: #c0392b;
+    --txn-bg: #faf0ee;
+    --txn-amount: #c0392b;
+  }
+
+  &.is-cancelled {
+    --txn-accent: #8a7e72;
+    --txn-bg: #f5f3f0;
+    --txn-amount: #8a7e72;
+  }
+
+  &.is-active {
+    --txn-accent: #5a7a64;
+    --txn-bg: #f0f5f1;
+    --txn-amount: #5a7a64;
+  }
+
+  &.is-past_due {
+    --txn-accent: #b8860b;
+    --txn-bg: #fdf8ef;
+    --txn-amount: #b8860b;
+  }
+
+  &.is-expired {
+    --txn-accent: #8a7e72;
+    --txn-bg: #f5f3f0;
+    --txn-amount: #8a7e72;
+  }
+
+  &__amount-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  &__amount {
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+    color: var(--txn-amount);
+
+    #mission-admin & {
+      font-size: 32px;
+    }
+  }
+
+  &__freq {
+    font-weight: 400;
+    font-size: 18px;
+    color: #9b9ba8;
+  }
+
+  &__meta {
+    color: #9b9ba8;
+    font-size: 13px;
+    margin: 0;
+  }
+}
+
+// --------------------------------
+// Dedication section
+// --------------------------------
+
+.mission-dedication-header-actions {
+  display: none;
+  gap: 8px;
+  margin-left: auto;
+  margin-right: 8px;
+
+  details[open] & {
+    display: flex;
+  }
+}
+
+.mission-dedication-action-link {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2fa36b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &--danger {
+    color: #b85c5c;
+  }
+}
+
+// View state.
+.mission-dedication-view {
+  padding: 16px 20px;
+}
+
+.mission-dedication-display {
+  padding-bottom: 0;
+}
+
+.mission-dedication-tribute {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mission-dedication-tribute-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mission-dedication-type {
+  font-size: 11.7px;
+  color: #9b9ba8;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mission-dedication-honoree {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e1e1e;
+  line-height: 1.3;
+}
+
+.mission-dedication-message {
+  font-size: 13.2px;
+  color: #6b6b7b;
+  line-height: 1.55;
+  font-style: italic;
+  border-left: 2px solid #d8d8dc;
+  padding-left: 14px;
+  margin: 0 0 14px;
+}
+
+.mission-dedication-notify-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #9b9ba8;
+  background: #f6f6f8;
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  strong {
+    font-weight: 600;
+    color: #6b6b7b;
+  }
+}
+
+.mission-dedication-mail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-dedication-mail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mission-dedication-mail-address {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: #6b6b7b;
+  line-height: 1.4;
+  padding-left: 1px;
+}
+
+.mission-dedication-mark-sent-btn {
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #2fa36b;
+  background: none;
+  border: 1px solid #2fa36b;
+  border-radius: 5px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #e2f4eb;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Edit state.
+.mission-dedication-edit {
+  padding: 16px 20px;
+}
+
+.mission-dedication-form-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.mission-dedication-form-label {
+  font-size: 12.3px;
+  color: #9b9ba8;
+  font-weight: 500;
+  flex: 0 0 90px;
+  padding-top: 7px;
+}
+
+.mission-dedication-form-sublabel {
+  font-size: 11.25px;
+  color: #9b9ba8;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+%mission-dedication-form-field {
+  width: 100%;
+  padding: 7px 12px;
+  border: 1px solid #dcdcde;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 12.75px;
+  color: #1e1e1e;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+}
+
+input.mission-dedication-form-input {
+
+  @extend %mission-dedication-form-field;
+}
+
+textarea.mission-dedication-form-textarea {
+
+  @extend %mission-dedication-form-field;
+  resize: vertical;
+  min-height: 48px;
+  line-height: 1.45;
+}
+
+select.mission-dedication-form-select {
+
+  @extend %mission-dedication-form-field;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 140px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239b9ba8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.mission-dedication-form-row .mission-dedication-form-input,
+.mission-dedication-form-row .mission-dedication-form-textarea,
+.mission-dedication-form-row .mission-dedication-notify-fields {
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-dedication-form-row-inline {
+  display: flex;
+  gap: 8px;
+}
+
+.mission-dedication-form-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+// Notification toggle & method.
+.mission-dedication-notify-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.mission-dedication-notify-toggle-label {
+  font-size: 12.3px;
+  color: #6b6b7b;
+}
+
+.mission-dedication-method-bar {
+  display: flex;
+  background: #f0f0f2;
+  border-radius: 7px;
+  padding: 3px;
+  margin-bottom: 10px;
+}
+
+.mission-dedication-method-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  font-family: inherit;
+  font-size: 11.7px;
+  font-weight: 500;
+  color: #9b9ba8;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    color: #6b6b7b;
+  }
+
+  &.is-active {
+    background: #fff;
+    color: #1e1e1e;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.mission-dedication-notify-panel {
+  animation: mission-dedication-fade-in 0.15s ease;
+}
+
+@keyframes mission-dedication-fade-in {
+
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Form actions.
+.mission-dedication-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #e4e4e6;
+  margin-top: 4px;
+}
+
+.mission-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #2fa36b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.75px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #279a5f;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.mission-btn-sm {
+  padding: 6px 14px;
+  font-size: 12px;
+  border-radius: 7px;
+}
+
+.mission-btn-text {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #9b9ba8;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: #1e1e1e;
+    background: #f6f6f8;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.mission-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #b85c5c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.75px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 12px rgba(184, 92, 92, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Remove confirmation.
+.mission-dedication-remove-confirm {
+  padding: 16px 20px;
+}
+
+.mission-dedication-remove-prompt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #f5e8e8;
+  border-radius: 8px;
+  margin-bottom: 14px;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+.mission-dedication-remove-prompt-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-size: 12.75px;
+    color: #1e1e1e;
+  }
+
+  span {
+    font-size: 12px;
+    color: #6b6b7b;
+  }
+}
+
+.mission-dedication-remove-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+// Empty state.
+.mission-dedication-empty {
+  padding: 8px 20px 16px;
+}
+
+.mission-dedication-empty-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.mission-dedication-empty-icon {
+  color: #9b9ba8;
+  opacity: 0.4;
+  margin-bottom: 8px;
+}
+
+.mission-dedication-empty-text {
+  font-size: 12.3px;
+  color: #9b9ba8;
+  margin: 0 0 12px;
+}
+
+.mission-dedication-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  font-size: 12.75px;
+  font-weight: 500;
+  color: #2fa36b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}

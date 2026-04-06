@@ -1,0 +1,98 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission/donate-button",
+	"version": "0.1.0",
+	"title": "Donate Button",
+	"category": "mission",
+	"icon": "button",
+	"description": "A customizable donate button that scrolls to a donation form or links to a URL.",
+	"supports": {
+		"html": false,
+		"interactivity": true,
+		"align": [ "left", "center", "right" ],
+		"color": {
+			"background": true,
+			"text": true,
+			"gradients": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		},
+		"typography": {
+			"fontSize": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalLetterSpacing": true,
+			"lineHeight": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"spacing": {
+			"padding": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"padding": true
+			}
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"color": true,
+				"radius": true,
+				"width": true
+			}
+		},
+		"shadow": true,
+		"dimensions": {
+			"width": true
+		}
+	},
+	"selectors": {
+		"root": ".wp-block-mission-donate-button .mission-donate-button__link"
+	},
+	"styles": [
+		{ "name": "fill", "label": "Fill", "isDefault": true },
+		{ "name": "outline", "label": "Outline" }
+	],
+	"attributes": {
+		"text": {
+			"type": "string",
+			"default": "Donate Now"
+		},
+		"donateButtonAction": {
+			"type": "string",
+			"default": "scroll"
+		},
+		"donateButtonUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"gradient": {
+			"type": "string"
+		}
+	},
+	"example": {},
+	"textdomain": "mission",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./index.php"
+}

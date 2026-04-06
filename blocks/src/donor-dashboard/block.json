@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mission/donor-dashboard",
+  "version": "0.1.0",
+  "title": "Donor Dashboard",
+  "category": "mission",
+  "icon": "id-alt",
+  "description": "A self-service portal where donors can view donation history, manage recurring gifts, download tax receipts, and update their profile.",
+  "supports": {
+    "align": [ "wide", "full" ],
+    "html": false,
+    "interactivity": true,
+    "multiple": false
+  },
+  "attributes": {
+    "primaryColor": { "type": "string", "default": "" }
+  },
+  "example": {},
+  "textdomain": "mission",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScriptModule": "file:./view.js",
+  "render": "file:./index.php"
+}

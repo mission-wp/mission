@@ -1,0 +1,408 @@
+// Donor Dashboard — Profile panel styles.
+
+// ── Sections ──
+
+:where(.mission-dd-profile-section) {
+  margin-bottom: 40px;
+}
+
+:where(.mission-dd-profile-section-title) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+:where(.mission-dd-profile-section-desc) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 13px;
+  margin: 0 0 20px;
+}
+
+// ── Form Grid ──
+
+:where(.mission-dd-profile-grid) {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+
+:where(.mission-dd-profile-group) {
+  display: flex;
+  flex-direction: column;
+}
+
+:where(.mission-dd-profile-group-full) {
+  grid-column: 1 / -1;
+}
+
+:where(.mission-dd-profile-group-address) {
+  display: grid;
+  gap: 16px;
+  grid-column: 1 / -1;
+  grid-template-columns: 3fr 1fr 2fr;
+}
+
+:where(.mission-dd-profile-label) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+:where(.mission-dd-profile-input) {
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #ddd);
+  border-radius: 6px;
+  color: var(--mission-text, #1e1e1e);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  padding: 10px 12px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+
+  &::placeholder {
+    color: #bbb;
+  }
+
+  &:focus {
+    border-color: var(--mission-primary, #2fa36b);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary, #2fa36b) 10%, transparent);
+  }
+
+  &:disabled {
+    background: var(--mission-bg-secondary, #f7f7f7);
+    color: var(--mission-text-secondary, #6b7280);
+    cursor: not-allowed;
+  }
+}
+
+// ── Inline validation ──
+
+:where(.mission-dd-input-error) {
+  border-color: var(--mission-error, #b85c5c);
+
+  &:focus {
+    border-color: var(--mission-error, #b85c5c);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-error, #b85c5c) 10%, transparent);
+  }
+}
+
+:where(.mission-dd-field-error) {
+  color: var(--mission-error, #b85c5c);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+:where(.mission-dd-profile-hint) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+// ── Email Change ──
+
+:where(.mission-dd-email-change-link) {
+  background: none;
+  border: none;
+  color: var(--mission-primary, #2fa36b);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  margin-top: 4px;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:where(.mission-dd-email-pending) {
+  align-items: center;
+  color: var(--mission-text-secondary, #6b7280);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+:where(.mission-dd-email-pending-cancel) {
+  background: none;
+  border: none;
+  color: var(--mission-error, #b85c5c);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:where(.mission-dd-email-change-actions) {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+:where(.mission-dd-btn-sm) {
+  font-size: 13px;
+  min-width: auto;
+  padding: 7px 14px;
+}
+
+// ── Error ──
+
+:where(.mission-dd-profile-error) {
+  background: #fdf5f5;
+  border: 1px solid #f0d4d4;
+  border-radius: 8px;
+  color: var(--mission-error, #b85c5c);
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+// ── Form Actions ──
+
+:where(.mission-dd-profile-actions) {
+  margin-top: 20px;
+}
+
+:where(.mission-dd-btn-primary) {
+  align-items: center;
+  background: var(--mission-primary, #2fa36b);
+  border: none;
+  border-radius: 6px;
+  color: var(--mission-primary-text, #fff);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 6px;
+  justify-content: center;
+  min-width: 140px;
+  padding: 10px 20px;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:hover:not(:disabled) {
+    background: var(--mission-primary-hover, #29905e);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+}
+
+// ── Divider ──
+
+:where(.mission-dd-divider) {
+  border: none;
+  border-top: 1px solid var(--mission-border, #eee);
+  margin: 32px 0;
+}
+
+// ── Toggle Switches ──
+
+:where(.mission-dd-toggle-row) {
+  align-items: center;
+  border-bottom: 1px solid var(--mission-border, #eee);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 14px 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+:where(.mission-dd-toggle-label) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+:where(.mission-dd-toggle-desc) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+:where(.mission-dd-toggle) {
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 24px;
+  padding: 0;
+  position: relative;
+  width: 44px;
+}
+
+:where(.mission-dd-toggle-slider) {
+  background: #ccc;
+  border-radius: 12px;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  transition: background 0.2s;
+
+  &::before {
+    background: var(--mission-bg, #fff);
+    border-radius: 50%;
+    bottom: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    content: "";
+    height: 18px;
+    left: 3px;
+    position: absolute;
+    transition: transform 0.2s;
+    width: 18px;
+  }
+}
+
+:where(.mission-dd-toggle.is-on .mission-dd-toggle-slider) {
+  background: var(--mission-primary, #2fa36b);
+}
+
+:where(.mission-dd-toggle.is-on .mission-dd-toggle-slider)::before {
+  transform: translateX(20px);
+}
+
+:where(.mission-dd-toggle:focus-visible .mission-dd-toggle-slider) {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary, #2fa36b) 15%, transparent);
+}
+
+// ── Payment Method Card ──
+
+:where(.mission-dd-payment-card) {
+  align-items: center;
+  background: var(--mission-bg-secondary, #f7f7f7);
+  border: 1px solid var(--mission-border, #eee);
+  border-radius: 8px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding: 16px 20px;
+}
+
+:where(.mission-dd-payment-card-info) {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+:where(.mission-dd-payment-card-icon) {
+  align-items: center;
+  background: linear-gradient(135deg, #1a1f71 0%, #2a3098 100%);
+  border-radius: 4px;
+  color: #fff;
+  display: flex;
+  font-size: 10px;
+  font-weight: 700;
+  height: 28px;
+  justify-content: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: 40px;
+}
+
+:where(.mission-dd-payment-card-number) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+:where(.mission-dd-payment-card-exp) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+  margin-top: 1px;
+}
+
+:where(.mission-dd-payment-note) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+}
+
+:where(.mission-dd-payment-empty) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+}
+
+:where(.mission-dd-btn-secondary) {
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #ddd);
+  border-radius: 6px;
+  color: var(--mission-text, #1e1e1e);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: var(--mission-bg-secondary, #f7f7f7);
+    border-color: var(--mission-text-secondary, #6b7280);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+}
+
+// ── Danger Zone ──
+
+:where(.mission-dd-danger-zone) {
+  border-top: 1px solid var(--mission-border, #eee);
+  margin-top: 40px;
+  padding-top: 24px;
+}
+
+:where(.mission-dd-danger-link) {
+  background: none;
+  border: none;
+  color: var(--mission-error, #b85c5c);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:where(.mission-dd-danger-desc) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+// ── Responsive ──
+
+@container (max-width: 600px) {
+
+  :where(.mission-dd-profile-grid) {
+    grid-template-columns: 1fr;
+  }
+
+  :where(.mission-dd-profile-group-address) {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+}

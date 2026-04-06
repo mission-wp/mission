@@ -1,0 +1,277 @@
+import { __ } from '@wordpress/i18n';
+import { Button, Icon } from '@wordpress/components';
+import { check } from '@wordpress/icons';
+import CampaignBlockEditor from '../components/CampaignBlockEditor';
+
+export default function EditPageTab( {
+  campaign,
+  formState,
+  setFormState,
+  onSave,
+  isSaving,
+  saveSuccess,
+  saveError,
+} ) {
+  const updateField = ( field, value ) => {
+    setFormState( ( prev ) => ( { ...prev, [ field ]: value } ) );
+  };
+
+  const handleKeyDown = ( e ) => {
+    if ( e.key === 'Enter' ) {
+      e.preventDefault();
+      onSave();
+    }
+  };
+
+  const siteUrl = campaign.url
+    ? campaign.url.replace( /\/[^/]*\/?$/, '/' )
+    : '';
+  const currentSlug = formState.slug || '';
+
+  const openMediaLibrary = () => {
+    const frame = wp.media( {
+      title: __( 'Select Campaign Image', 'mission' ),
+      library: { type: 'image' },
+      multiple: false,
+      button: { text: __( 'Use this image', 'mission' ) },
+    } );
+
+    frame.on( 'select', () => {
+      const attachment = frame.state().get( 'selection' ).first().toJSON();
+      updateField( 'image', attachment.id );
+      updateField(
+        'image_url',
+        attachment.sizes?.medium?.url || attachment.url
+      );
+    } );
+
+    frame.open();
+  };
+
+  const removeImage = () => {
+    updateField( 'image', null );
+    updateField( 'image_url', '' );
+  };
+
+  return (
+    <div className="mission-tab-panel">
+      { /* Visibility */ }
+      <div className="mission-card" style={ { marginBottom: 24 } }>
+        <h3 className="mission-settings-section__title">
+          { __( 'Visibility', 'mission' ) }
+        </h3>
+        <div className="mission-toggle-row">
+          { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
+          <label
+            className="mission-toggle-switch"
+            aria-label={ __( 'Campaign page', 'mission' ) }
+          >
+            <input
+              type="checkbox"
+              checked={ formState.has_campaign_page }
+              onChange={ ( e ) =>
+                updateField( 'has_campaign_page', e.target.checked )
+              }
+            />
+            <span className="mission-toggle-switch__slider" />
+          </label>
+          { /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+          <div
+            onClick={ () =>
+              updateField( 'has_campaign_page', ! formState.has_campaign_page )
+            }
+            style={ { cursor: 'pointer' } }
+          >
+            <div className="mission-toggle-row__label">
+              { __( 'Campaign page', 'mission' ) }
+            </div>
+            <div className="mission-toggle-row__hint">
+              { __(
+                'Give this campaign its own dedicated page where donors can learn more and give',
+                'mission'
+              ) }
+            </div>
+          </div>
+        </div>
+        <div className="mission-toggle-row" style={ { marginTop: 16 } }>
+          { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
+          <label
+            className="mission-toggle-switch"
+            aria-label={ __( 'Show in campaign listings', 'mission' ) }
+          >
+            <input
+              type="checkbox"
+              checked={ formState.show_in_listings }
+              onChange={ ( e ) =>
+                updateField( 'show_in_listings', e.target.checked )
+              }
+            />
+            <span className="mission-toggle-switch__slider" />
+          </label>
+          { /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */ }
+          <div
+            onClick={ () =>
+              updateField( 'show_in_listings', ! formState.show_in_listings )
+            }
+            style={ { cursor: 'pointer' } }
+          >
+            <div className="mission-toggle-row__label">
+              { __( 'Show in campaign listings', 'mission' ) }
+            </div>
+            <div className="mission-toggle-row__hint">
+              { __(
+                'Display this campaign on your public campaigns page',
+                'mission'
+              ) }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      { /* Page editor section — conditional on has_campaign_page */ }
+      { formState.has_campaign_page && (
+        <div>
+          { /* Slug */ }
+          <div className="mission-field-group" style={ { marginBottom: 24 } }>
+            <label className="mission-field-label" htmlFor="campaign-slug">
+              { __( 'Campaign URL', 'mission' ) }
+            </label>
+            <div className="mission-field-slug">
+              <span className="mission-field-slug__prefix">{ siteUrl }</span>
+              <input
+                id="campaign-slug"
+                type="text"
+                className="mission-field-input"
+                value={ currentSlug }
+                onChange={ ( e ) => updateField( 'slug', e.target.value ) }
+                onKeyDown={ handleKeyDown }
+                style={ {
+                  width: currentSlug
+                    ? `${ currentSlug.length + 3 }ch`
+                    : '165px',
+                } }
+              />
+            </div>
+          </div>
+
+          { /* Block editor */ }
+          <CampaignBlockEditor
+            postId={ campaign.post_id }
+            editUrl={ campaign.edit_url }
+          />
+
+          { /* Page fields */ }
+          <div className="mission-card" style={ { marginBottom: 24 } }>
+            <div className="mission-field-group" style={ { marginBottom: 24 } }>
+              <span className="mission-field-label">
+                { __( 'Campaign Image', 'mission' ) }
+              </span>
+              { formState.image_url ? (
+                <div className="mission-image-preview">
+                  <img
+                    src={ formState.image_url }
+                    alt={ __( 'Campaign image preview', 'mission' ) }
+                  />
+                  <div
+                    className="mission-image-preview__actions"
+                    style={ {
+                      display: 'flex',
+                      gap: 8,
+                      justifyContent: 'center',
+                      marginTop: 12,
+                    } }
+                  >
+                    <Button
+                      variant="secondary"
+                      size="compact"
+                      onClick={ openMediaLibrary }
+                    >
+                      { __( 'Replace', 'mission' ) }
+                    </Button>
+                    <Button
+                      variant="tertiary"
+                      size="compact"
+                      isDestructive
+                      onClick={ removeImage }
+                    >
+                      { __( 'Remove', 'mission' ) }
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className="mission-image-upload-zone"
+                  onClick={ openMediaLibrary }
+                  onKeyDown={ ( e ) => {
+                    if ( e.key === 'Enter' || e.key === ' ' ) {
+                      e.preventDefault();
+                      openMediaLibrary();
+                    }
+                  } }
+                  role="button"
+                  tabIndex={ 0 }
+                >
+                  <div className="mission-image-upload-zone__icon">
+                    <svg
+                      width="28"
+                      height="28"
+                      viewBox="0 0 28 28"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="2" y="4" width="24" height="20" rx="3" />
+                      <circle cx="9" cy="11" r="3" />
+                      <path d="M26 18l-7-7L5 25" />
+                    </svg>
+                  </div>
+                  <span className="mission-image-upload-zone__text">
+                    { __( 'Click to upload or drag and drop', 'mission' ) }
+                  </span>
+                  <span className="mission-image-upload-zone__hint">
+                    { __( 'PNG, JPG, or WebP up to 5MB', 'mission' ) }
+                  </span>
+                </div>
+              ) }
+            </div>
+
+            <div className="mission-field-group">
+              <label className="mission-field-label" htmlFor="campaign-excerpt">
+                { __( 'Short Description', 'mission' ) }
+              </label>
+              <textarea
+                id="campaign-excerpt"
+                className="mission-field-textarea"
+                placeholder={ __(
+                  'A brief summary shown in campaign listings and search results…',
+                  'mission'
+                ) }
+                value={ formState.excerpt }
+                onChange={ ( e ) => updateField( 'excerpt', e.target.value ) }
+              />
+            </div>
+          </div>
+        </div>
+      ) }
+
+      { /* Save button */ }
+      <div className="mission-form-actions">
+        <Button
+          variant="primary"
+          className={ saveError ? 'mission-btn-shake' : undefined }
+          onClick={ onSave }
+          isBusy={ isSaving }
+          disabled={ isSaving }
+          __next40pxDefaultSize
+        >
+          { saveSuccess && <Icon icon={ check } size={ 20 } /> }
+          { saveSuccess
+            ? __( 'Changes Saved', 'mission' )
+            : __( 'Save Changes', 'mission' ) }
+        </Button>
+      </div>
+    </div>
+  );
+}

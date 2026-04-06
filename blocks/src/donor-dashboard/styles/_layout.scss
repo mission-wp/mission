@@ -1,0 +1,456 @@
+// Donor Dashboard — Layout, sidebar, nav, content shell.
+
+:where(.mission-donor-dashboard) *,
+:where(.mission-donor-dashboard) *::before,
+:where(.mission-donor-dashboard) *::after {
+  box-sizing: border-box;
+}
+
+:where(.mission-donor-dashboard) [hidden] {
+  display: none;
+}
+
+// Explicit heading sizes so themes don't override with their own.
+// Uses .mission-donor-dashboard (not :where()) to beat theme specificity.
+// Margins are intentionally omitted — each heading class sets its own.
+.mission-donor-dashboard h1 {
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  padding: 0;
+  text-transform: none;
+}
+
+.mission-donor-dashboard h2 {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.3;
+  padding: 0;
+  text-transform: none;
+}
+
+.mission-donor-dashboard h3 {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.3;
+  padding: 0;
+  text-transform: none;
+}
+
+// ── Layout ──
+
+:where(.mission-dd-wrapper) {
+  container-type: inline-size;
+  margin: 0 auto;
+  max-width: 1020px;
+  position: relative;
+}
+
+// ── Toast ──
+
+:where(.mission-dd-toast) {
+  align-items: center;
+  animation: mission-dd-toast-in 0.3s ease both;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  display: flex;
+  font-size: 14px;
+  font-weight: 500;
+  gap: 8px;
+  left: 50%;
+  padding: 12px 20px;
+  position: fixed;
+  top: 24px;
+  transform: translateX(-50%);
+  z-index: 100001;
+}
+
+:where(.mission-dd-toast-success) {
+  background: var(--mission-primary, #2fa36b);
+  color: var(--mission-primary-text, #fff);
+}
+
+:where(.mission-dd-toast-error) {
+  background: var(--mission-error, #b85c5c);
+  color: #fff;
+}
+
+:where(.mission-dd-toast-dismissing) {
+  animation: mission-dd-toast-out 0.3s ease both;
+}
+
+:where(.mission-dd-toast-icon) {
+  display: flex;
+  flex-shrink: 0;
+}
+
+@keyframes mission-dd-toast-in {
+
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes mission-dd-toast-out {
+
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  :where(.mission-dd-toast) {
+    animation: none;
+  }
+
+  :where(.mission-dd-toast-dismissing) {
+    animation: none;
+  }
+}
+
+:where(.mission-dd-layout) {
+  display: flex;
+  gap: 32px;
+  min-height: 600px;
+  padding: 32px 0 60px;
+}
+
+// ── Sidebar ──
+
+:where(.mission-dd-sidebar) {
+  flex-shrink: 0;
+  width: 232px;
+}
+
+:where(.mission-dd-sidebar-inner) {
+  position: sticky;
+  top: 24px;
+}
+
+:where(.mission-dd-user) {
+  align-items: center;
+  border-bottom: 1px solid var(--mission-border, #eee);
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding-bottom: 20px;
+}
+
+:where(.mission-dd-avatar) {
+  align-items: center;
+  background: var(--mission-primary, #2fa36b);
+  border-radius: 50%;
+  color: var(--mission-primary-text, #fff);
+  display: flex;
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 600;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+:where(.mission-dd-user-name) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+:where(.mission-dd-user-email) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+// ── Nav ──
+
+:where(.mission-dd-nav) {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+}
+
+:where(.mission-dd-nav-item) {
+  margin-bottom: 2px;
+}
+
+:where(.mission-dd-nav-link) {
+  align-items: center;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--mission-text-secondary, #6b7280);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 450;
+  gap: 10px;
+  padding: 9px 12px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+
+  &:hover {
+    background: var(--mission-bg-secondary, #f7f7f7);
+    color: var(--mission-text, #1e1e1e);
+  }
+
+  &.active {
+    background: var(--mission-primary-light, color-mix(in srgb, #2fa36b 10%, transparent));
+    color: var(--mission-primary, #2fa36b);
+    font-weight: 550;
+  }
+
+  svg {
+    flex-shrink: 0;
+    opacity: 0.55;
+  }
+
+  &.active svg {
+    opacity: 1;
+  }
+}
+
+:where(.mission-dd-nav-divider) {
+  background: var(--mission-border, #eee);
+  height: 1px;
+  margin: 12px 0;
+}
+
+:where(.mission-dd-nav-link-logout) {
+  color: var(--mission-text-secondary, #999);
+  font-size: 13px;
+
+  &:hover {
+    background: #fdf5f5;
+    color: #b85c5c;
+  }
+}
+
+// ── Content ──
+
+:where(.mission-dd-content) {
+  flex: 1;
+  min-width: 0;
+}
+
+:where(.mission-dd-page-title) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// ── Mobile Toggle ──
+
+:where(.mission-dd-mobile-toggle) {
+  display: none;
+}
+
+// ── Overlay ──
+
+:where(.mission-dd-overlay) {
+  display: none;
+}
+
+// ── Sidebar Close ──
+
+:where(.mission-dd-sidebar-close) {
+  display: none;
+}
+
+// ── Screen reader text (self-contained — not relying on theme) ──
+
+:where(.mission-dd-panel) .screen-reader-text {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+  word-wrap: normal;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+// ── Panels ──
+
+:where(.mission-dd-panel) {
+  display: none;
+
+  &.active {
+    animation: mission-dd-panel-enter 0.25s ease both;
+    display: block;
+  }
+}
+
+@keyframes mission-dd-panel-enter {
+
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  :where(.mission-dd-panel.active) {
+    animation: none;
+  }
+}
+
+:where(.mission-dd-placeholder) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+}
+
+// ── Responsive — ≤700px ──
+
+@container (max-width: 700px) {
+
+  :where(.mission-dd-layout) {
+    gap: 20px;
+    padding: 24px 0 40px;
+  }
+
+  :where(.mission-dd-sidebar) {
+    width: 200px;
+  }
+}
+
+// ── Responsive — ≤600px: Sidebar drawer ──
+
+@container (max-width: 600px) {
+
+  :where(.mission-dd-layout) {
+    gap: 0;
+    min-height: auto;
+    padding: 16px 0 40px;
+    position: relative;
+  }
+
+  // Sidebar — off-screen drawer.
+  :where(.mission-dd-sidebar) {
+    background: var(--mission-bg, #fff);
+    bottom: 0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.1);
+    left: 0;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    visibility: hidden;
+    width: 260px;
+    z-index: 100000;
+  }
+
+  :where(.mission-dd-sidebar-inner) {
+    padding: 16px 20px 20px;
+    position: static;
+  }
+
+  .sidebar-open :where(.mission-dd-sidebar) {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  // Close button inside sidebar drawer.
+  :where(.mission-dd-sidebar-close) {
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--mission-text-secondary, #6b7280);
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 4px;
+    padding: 4px 0;
+    width: 100%;
+
+    &:hover {
+      color: var(--mission-text, #1e1e1e);
+    }
+  }
+
+  // Overlay dims content behind drawer.
+  :where(.mission-dd-overlay) {
+    background: rgba(26, 26, 46, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: block;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transition: opacity 0.25s ease;
+    visibility: hidden;
+    z-index: 99999;
+  }
+
+  .sidebar-open :where(.mission-dd-overlay) {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  // Mobile toggle replaces the page title.
+  :where(.mission-dd-mobile-toggle) {
+    align-items: center;
+    background: none;
+    border: 1px solid var(--mission-border, #eee);
+    border-radius: 8px;
+    color: var(--mission-text, #1e1e1e);
+    cursor: pointer;
+    display: flex;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    width: 100%;
+  }
+
+  :where(.mission-dd-page-title) {
+    display: none;
+  }
+
+  :where(.mission-dd-content) {
+    width: 100%;
+  }
+}

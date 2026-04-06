@@ -1,0 +1,51 @@
+{
+	"name": "mission",
+	"version": "1.0.0",
+	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
+	"private": true,
+	"scripts": {
+		"build:blocks": "wp-scripts build --config webpack.blocks.config.js --webpack-src-dir=blocks/src --output-path=blocks/build --experimental-modules --webpack-copy-php",
+		"build:admin": "wp-scripts build --config webpack.admin.config.js",
+		"build": "npm run build:blocks && npm run build:admin",
+		"start:blocks": "wp-scripts start --config webpack.blocks.config.js --webpack-src-dir=blocks/src --output-path=blocks/build --experimental-modules --webpack-copy-php",
+		"start:admin": "wp-scripts start --config webpack.admin.config.js",
+		"start": "npm run start:blocks & npm run start:admin",
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop",
+		"env:destroy": "wp-env destroy",
+		"env:cli": "wp-env run cli",
+		"wp": "wp-env run cli wp",
+		"test:unit:js": "wp-scripts test-unit-js",
+		"test:e2e": "wp-scripts test-playwright",
+		"lint:js": "wp-scripts lint-js blocks/src admin/src",
+		"lint:css": "wp-scripts lint-style 'blocks/src/**/*.scss' 'admin/src/**/*.scss'",
+		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/mission vendor/bin/phpunit",
+		"lint:php": "vendor/bin/phpcs",
+		"lint:php:fix": "vendor/bin/phpcbf",
+		"plugin-zip": "npm run build && find admin/build blocks/build -name '*.map' -delete && composer install --no-dev --optimize-autoloader && wp-scripts plugin-zip && composer install"
+	},
+	"devDependencies": {
+		"@testing-library/react": "^16.3.2",
+		"@wordpress/env": "^10.0.0",
+		"@wordpress/scripts": "^30.0.0",
+		"dotenv": "^17.4.0"
+	},
+	"overrides": {
+		"simple-git": "3.31.1"
+	},
+	"files": [
+		"mission.php",
+		"uninstall.php",
+		"readme.txt",
+		"README.md",
+		"src/",
+		"vendor/",
+		"admin/build/",
+		"blocks/build/",
+		"assets/img/"
+	],
+	"dependencies": {
+		"@wordpress/dataviews": "^12.0.0",
+		"@wordpress/icons": "^11.7.0"
+	}
+}

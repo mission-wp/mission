@@ -1,0 +1,51 @@
+.wp-block-mission-campaign-progress {
+
+  .mission-cp-bar__fill {
+    width: var(--bar-width);
+    animation: none;
+  }
+
+  .mission-cp-donate-btn {
+    pointer-events: none;
+  }
+
+  .mission-cp-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: #949494;
+    text-align: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .mission-cp-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mission-cp-skeleton-bar {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: mission-cp-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mission-cp-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+}

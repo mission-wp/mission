@@ -1,0 +1,49 @@
+// Tab navigation.
+.mission-tab-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e4e4e6;
+  margin-bottom: 28px;
+
+  &__item {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 14.25px;
+    font-weight: 500;
+    color: #9b9ba8;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    bottom: -2px;
+
+    &:hover {
+      color: #6b6b7b;
+    }
+
+    &.is-active {
+      color: #2fa36b;
+      font-weight: 600;
+      border-bottom-color: #2fa36b;
+    }
+  }
+}
+
+// Tab panel fade-in.
+@keyframes mission-tab-fade-in {
+
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mission-tab-panel {
+  animation: mission-tab-fade-in 0.25s ease;
+}

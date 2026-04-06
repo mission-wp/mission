@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mission/campaign-grid",
+  "version": "0.1.0",
+  "title": "Campaign Grid",
+  "category": "mission",
+  "icon": "grid-view",
+  "description": "Display multiple campaigns in a responsive grid layout.",
+  "supports": {
+    "align": ["wide", "full"],
+    "html": false,
+    "interactivity": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "attributes": {
+    "statusFilter": {
+      "type": "string",
+      "default": "active"
+    },
+    "columns": {
+      "type": "number",
+      "default": 2
+    },
+    "numberOfCampaigns": {
+      "type": "number",
+      "default": 6
+    },
+    "orderby": {
+      "type": "string",
+      "default": "date_created"
+    },
+    "order": {
+      "type": "string",
+      "default": "DESC"
+    },
+    "showImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "showTag": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "showProgressBar": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDonorCount": {
+      "type": "boolean",
+      "default": true
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "View Campaign"
+    }
+  },
+  "example": {},
+  "textdomain": "mission",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScriptModule": "file:./view.js",
+  "render": "file:./index.php"
+}

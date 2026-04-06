@@ -1,0 +1,48 @@
+name: Build Release ZIP
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Composer dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Remove source maps
+        run: find admin/build blocks/build -name '*.map' -delete
+
+      - name: Create plugin ZIP
+        run: npx wp-scripts plugin-zip
+
+      - name: Upload ZIP to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mission.zip

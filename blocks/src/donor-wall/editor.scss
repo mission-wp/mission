@@ -1,0 +1,280 @@
+// Donor Wall — Editor styles.
+
+.wp-block-mission-donor-wall {
+  // Skeleton loading state.
+  .mission-dw-skeleton {
+    padding: 20px;
+  }
+
+  .mission-dw-skeleton-grid {
+    display: grid;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .mission-dw-skeleton-card {
+    align-items: center;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .mission-dw-skeleton-bar {
+    animation: mission-dw-pulse 1.5s ease-in-out infinite;
+    background: #e0e0e0;
+    border-radius: 4px;
+    display: block;
+    height: 14px;
+  }
+
+  @keyframes mission-dw-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  // Empty state (no campaign selected).
+  .mission-dw-empty-editor {
+    align-items: center;
+    border: 1px dashed #c4c4c4;
+    border-radius: 8px;
+    color: #757575;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 40px 20px;
+    text-align: center;
+
+    p {
+      font-size: 13px;
+      margin: 0;
+    }
+
+    svg {
+      opacity: 0.5;
+    }
+  }
+
+  // Preview — disable interactive elements.
+  .mission-dw-sort,
+  .mission-dw-load-more {
+    pointer-events: none;
+  }
+
+  // Preview — card grid.
+  .mission-dw-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .mission-dw-avatar {
+    align-items: center;
+    background: #2fa36b;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    flex-shrink: 0;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1;
+
+    svg {
+      height: 50%;
+      width: 50%;
+    }
+  }
+
+  .mission-dw-name {
+    color: #1e1e1e;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mission-dw-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    display: flex;
+    gap: 14px;
+    padding: 20px;
+
+    &.is-anonymous {
+
+      .mission-dw-avatar {
+        background: #d5d5d5;
+        color: #999;
+      }
+
+      .mission-dw-name {
+        color: #6b7280;
+        font-style: italic;
+      }
+    }
+  }
+
+  .mission-dw-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .mission-dw-top {
+    align-items: baseline;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .mission-dw-amount {
+    color: #1e1e1e;
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .mission-dw-freq {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .mission-dw-meta {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
+
+  .mission-dw-date {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .mission-dw-recurring {
+    background: rgba(47, 163, 107, 0.12);
+    border-radius: 4px;
+    color: #2fa36b;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 3px 6px;
+  }
+
+  .mission-dw-comment {
+    border-left: 2px solid #2fa36b;
+    color: #6b7280;
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.5;
+    margin-top: 14px;
+    padding-left: 12px;
+  }
+
+  &.has-avatars .mission-dw-comment {
+    margin-left: -31px;
+  }
+
+  .mission-dw-read-more {
+    color: #2fa36b;
+    font-style: normal;
+    margin-left: 4px;
+  }
+
+  // Toolbar.
+  .mission-dw-toolbar {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .mission-dw-sort {
+    appearance: none;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #1e1e1e;
+    font-size: 14px;
+    left: 0;
+    line-height: 1.4;
+    opacity: 0.6;
+    padding: 7px 28px 7px 12px;
+    position: absolute;
+  }
+
+  // Footer.
+  .mission-dw-footer {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .mission-dw-count {
+    color: #6b7280;
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .mission-dw-load-more {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #1e1e1e;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.6;
+    padding: 10px 24px;
+  }
+
+  .mission-dw-sample-notice {
+    color: #9ca3af;
+    font-size: 12px;
+    font-style: italic;
+    margin: 0;
+  }
+
+  // Empty state (no donations).
+  .mission-dw-empty {
+    padding: 48px 20px;
+    text-align: center;
+  }
+
+  .mission-dw-empty__icon {
+    color: #6b7280;
+    font-size: 32px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .mission-dw-empty__title {
+    color: #1e1e1e;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .mission-dw-empty__subtitle {
+    color: #6b7280;
+    font-size: 14px;
+  }
+}

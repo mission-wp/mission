@@ -1,0 +1,134 @@
+// Shared donor list styles used by both top-donors and recent-donors blocks.
+
+.mission-donor-heading {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mission-text-secondary);
+  border-bottom: 2px solid var(--mission-primary);
+  padding-bottom: 10px;
+  margin: 0 0 12px;
+}
+
+.mission-donor-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+.mission-donor-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--mission-border);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.mission-donor-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.mission-donor-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--mission-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.mission-donor-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mission-donor-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mission-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mission-donor-dedication {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--mission-text-secondary);
+  margin-top: 2px;
+}
+
+.mission-donor-amount {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mission-text);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// Empty state.
+.mission-donor-empty {
+  text-align: center;
+  padding: 40px 24px;
+  border: 1px solid var(--mission-border);
+  border-radius: 6px;
+  background: var(--mission-bg-secondary);
+}
+
+.mission-donor-empty__icon {
+  font-size: 32px;
+  color: #ccc;
+  margin-bottom: 12px;
+}
+
+.mission-donor-empty__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mission-text);
+  margin: 0 0 4px;
+}
+
+.mission-donor-empty__subtitle {
+  font-size: 14px;
+  color: var(--mission-text-secondary);
+  margin: 0 0 16px;
+}
+
+.mission-donor-empty__btn {
+  display: inline-block;
+  padding: 8px 20px;
+  border: 1px solid var(--mission-primary);
+  border-radius: 4px;
+  color: var(--mission-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: var(--mission-primary);
+    color: var(--mission-primary-text, #fff);
+  }
+}

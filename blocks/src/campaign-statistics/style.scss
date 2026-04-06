@@ -1,0 +1,17 @@
+:where(.mission-cs-heading) {
+  font-size: var(--mission-cs-heading-size, 14px);
+  color: var(--mission-cs-heading-color, var(--mission-text-secondary, #6b7280));
+  font-weight: 500;
+  margin: 0 0 4px;
+  letter-spacing: 0.02em;
+  text-transform: var(--mission-cs-heading-case, uppercase);
+  line-height: 1.3;
+}
+
+:where(.mission-cs-value) {
+  display: block;
+  font-size: inherit;
+  color: inherit;
+  font-weight: 700;
+  line-height: 1.1;
+}

@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+blocks/build/
+admin/build/
+
+# WordPress environment
+.wp-env/
+
+# Playwright artifacts (screenshots, videos, traces, auth state)
+artifacts/
+
+# Environment
+.env
+
+# OS files
+.DS_Store
+
+
+# Logs
+logs/
+
+# IDE / tools
+.phpunit.result.cache
+.claude/
+.agents/
+
+# Markdown files (internal docs, task tracking, etc.)
+*.md
+!README.md
+
+# Plugin zip
+*.zip

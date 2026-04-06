@@ -1,0 +1,103 @@
+// Donor Dashboard — Annual Receipts panel.
+
+:where(.mission-dd-receipts-intro) {
+  font-size: 14px;
+  color: var(--mission-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+:where(.mission-dd-receipt-row) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--mission-border);
+  gap: 16px;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+:where(.mission-dd-receipt-year) {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--mission-text);
+  min-width: 60px;
+}
+
+:where(.mission-dd-badge-ytd) {
+  background: #e4eff5;
+  border-radius: 4px;
+  color: #4a7a9b;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 6px;
+  padding: 1px 6px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+:where(.mission-dd-receipt-summary) {
+  flex: 1;
+  font-size: 14px;
+  color: var(--mission-text-secondary);
+
+  strong {
+    color: var(--mission-text);
+    font-weight: 600;
+  }
+}
+
+:where(.mission-dd-receipt-download) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--mission-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mission-text);
+  background: var(--mission-bg);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color var(--mission-transition), background var(--mission-transition), color var(--mission-transition);
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--mission-primary);
+    color: var(--mission-primary);
+    background: var(--mission-primary-light);
+  }
+}
+
+// ── Responsive ──
+
+@container (max-width: 700px) {
+
+  :where(.mission-dd-receipt-row) {
+    flex-wrap: wrap;
+  }
+
+  :where(.mission-dd-receipt-summary) {
+    flex-basis: 100%;
+    order: 3;
+    margin-top: 4px;
+  }
+
+  :where(.mission-dd-receipt-download) {
+    order: 2;
+  }
+}

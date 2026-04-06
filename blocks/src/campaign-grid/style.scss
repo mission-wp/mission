@@ -1,0 +1,26 @@
+// Include campaign card styles so the grid is self-contained.
+@use "../campaign/style";
+
+// Grid container.
+.mission-cg-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--mission-cg-columns, 2), 1fr);
+  gap: 24px;
+}
+
+// Responsive: 3 columns → 2 on tablets.
+@media (max-width: 1024px) {
+
+  .mission-cg-grid {
+    grid-template-columns: repeat(min(var(--mission-cg-columns, 2), 2), 1fr);
+  }
+}
+
+// Responsive: always 1 column on mobile.
+@media (max-width: 768px) {
+
+  .mission-cg-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

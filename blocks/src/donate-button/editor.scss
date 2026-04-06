@@ -1,0 +1,10 @@
+.wp-block-mission-donate-button {
+
+  .mission-donate-button__link {
+    min-width: 80px;
+  }
+
+  .mission-donate-button__link[data-rich-text-placeholder]::after {
+    opacity: 0.62;
+  }
+}

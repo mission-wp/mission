@@ -1,0 +1,981 @@
+// Tools page — export-specific styles.
+// Layout, nav, and card classes are shared with Settings (_settings.scss).
+
+// --------------------------------
+// Field rows (two-column grids)
+// --------------------------------
+.mission-tools-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.mission-tools-date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 18px;
+  animation: mission-settings-fade-in 0.25s ease;
+}
+
+// --------------------------------
+// Record count bar
+// --------------------------------
+.mission-tools-record-count {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12.3px;
+  color: #6b6b7b;
+  padding: 10px 14px;
+  background: #f4f4f5;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+
+  svg {
+    color: #9b9ba8;
+    flex-shrink: 0;
+  }
+}
+
+// --------------------------------
+// Export actions (right-aligned button)
+// --------------------------------
+.mission-tools-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+// --------------------------------
+// Preview table
+// --------------------------------
+.mission-tools-table-wrap {
+  overflow-x: auto;
+}
+
+.mission-tools-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.3px;
+
+  thead th {
+    text-align: left;
+    font-weight: 500;
+    color: #9b9ba8;
+    font-size: 10.8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0 10px 10px;
+    border-bottom: 1px solid #dcdcde;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f2;
+    color: #1e1e1e;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: #fafafa;
+  }
+
+  &__strong {
+    font-weight: 600;
+  }
+}
+
+// --------------------------------
+// Export All card
+// --------------------------------
+.mission-tools-export-all {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #e4eff5;
+    color: #4a7a9b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 14.25px;
+    font-weight: 700;
+    color: #1e1e1e;
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+  }
+
+  &__desc {
+    font-size: 12.3px;
+    color: #9b9ba8;
+    line-height: 1.4;
+  }
+}
+
+// --------------------------------
+// Coming soon panel
+// --------------------------------
+.mission-tools-coming-soon {
+  text-align: center;
+  padding: 60px 40px 56px;
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 10.8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: linear-gradient(135deg, rgba(47, 163, 107, 0.1), rgba(47, 163, 107, 0.05));
+    color: #2fa36b;
+    border: 1px solid rgba(47, 163, 107, 0.15);
+    margin-bottom: 20px;
+
+    &::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #2fa36b;
+      animation: mission-coming-soon-pulse 2s ease-in-out infinite;
+    }
+  }
+
+  &__title {
+    font-size: 20.25px;
+    font-weight: 700;
+    color: #1e1e1e;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+
+  &__desc {
+    font-size: 13.8px;
+    color: #6b6b7b;
+    line-height: 1.6;
+    max-width: 440px;
+    margin: 0 auto 32px;
+  }
+
+  &__features {
+    display: flex;
+    flex-direction: column;
+    max-width: 380px;
+    margin: 0 auto 36px;
+    text-align: left;
+  }
+
+  &__feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid #f0f0f2;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    svg {
+      flex-shrink: 0;
+      color: #2fa36b;
+    }
+
+    span {
+      font-size: 13.2px;
+      color: #1e1e1e;
+      font-weight: 450;
+    }
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13.2px;
+    font-weight: 600;
+    color: #fff;
+    background: #2fa36b;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+
+    &:hover {
+      background: #268f5b;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(47, 163, 107, 0.3);
+      color: #fff;
+    }
+  }
+}
+
+// Notify email input row.
+.mission-notify-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  animation: mission-notify-slide-in 0.25s ease;
+}
+
+input.mission-notify-email-input {
+  flex: 1;
+  height: 42px;
+  padding: 0 14px;
+  border: 1.5px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.2px;
+  color: #1e1e1e;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+
+  &::placeholder {
+    color: #9b9ba8;
+  }
+
+  &.is-error {
+    border-color: #b85c5c;
+    box-shadow: 0 0 0 3px rgba(184, 92, 92, 0.08);
+  }
+}
+
+.mission-notify-submit {
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.2px;
+  font-weight: 600;
+  color: #fff;
+  background: #2fa36b;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #268f5b;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.mission-notify-cancel {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.75px;
+  font-weight: 500;
+  color: #6b6b7b;
+  background: none;
+  border: 1.5px solid #dcdcde;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: #ccc;
+    color: #1e1e1e;
+  }
+}
+
+// Subscribed confirmation.
+.mission-notify-subscribed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  animation: mission-notify-slide-in 0.3s ease;
+
+  &__check {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(47, 163, 107, 0.12), rgba(47, 163, 107, 0.06));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+    color: #2fa36b;
+  }
+
+  &__msg {
+    font-size: 13.2px;
+    color: #1e1e1e;
+    font-weight: 500;
+  }
+
+  &__email {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 12.3px;
+    color: #2fa36b;
+    font-weight: 500;
+  }
+}
+
+.mission-notify-unsubscribe {
+  margin-top: 8px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 11.7px;
+  color: #9b9ba8;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s;
+
+  &:hover {
+    color: #b85c5c;
+    background: rgba(184, 92, 92, 0.06);
+  }
+}
+
+@keyframes mission-notify-slide-in {
+
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mission-coming-soon-pulse {
+
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+// --------------------------------
+// Status panel
+// --------------------------------
+.mission-status-report-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mission-status-section {
+  padding: 0;
+}
+
+.mission-status-section__header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f2;
+  background: #fafafa;
+}
+
+.mission-status-section__title {
+  font-size: 13.2px;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin: 0;
+}
+
+/* stylelint-disable no-descending-specificity */
+.mission-status-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  tr {
+    border-bottom: 1px solid #f0f0f2;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+/* stylelint-enable no-descending-specificity */
+
+.mission-status-label {
+  padding: 10px 20px;
+  font-size: 12.3px;
+  font-weight: 500;
+  color: #9b9ba8;
+  width: 220px;
+  vertical-align: top;
+}
+
+.mission-status-value {
+  padding: 10px 20px;
+  font-size: 12.3px;
+  color: #1e1e1e;
+  vertical-align: top;
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 11.6px;
+    color: #4a7a9b;
+    background: #edf4f8;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+}
+
+.mission-status-muted {
+  color: #9b9ba8;
+}
+
+.mission-status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: 1px;
+}
+
+.mission-status-ok {
+  background: #2fa36b;
+}
+
+.mission-status-warn {
+  background: #d4a017;
+}
+
+.mission-status-err {
+  background: #b85c5c;
+}
+
+// --------------------------------
+// Cleanup
+// --------------------------------
+.mission-cleanup-action {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e8e8ea;
+
+  &:first-of-type {
+    padding-top: 0;
+  }
+
+  &:last-child,
+  &--last {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.mission-cleanup-action__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-cleanup-action__name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e1e1e;
+  margin-bottom: 2px;
+}
+
+.mission-cleanup-action__desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  line-height: 1.45;
+
+  strong {
+    font-weight: 600;
+    color: #4b5563;
+  }
+}
+
+.mission-cleanup-action__btn {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: #344054;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #f9fafb;
+    border-color: #98a2b3;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--warn {
+    color: #b8860b;
+    border-color: #e0c97a;
+
+    &:hover:not(:disabled) {
+      background: #fef9f0;
+      border-color: #d4a017;
+      color: #96700e;
+    }
+  }
+
+  &--danger {
+    color: #b85c5c;
+    border-color: #e0a0a0;
+
+    &:hover:not(:disabled) {
+      background: #fef2f2;
+      border-color: #b85c5c;
+      color: #8b3a3a;
+    }
+  }
+}
+
+.mission-cleanup-danger-card {
+  border-color: #e8c0c0;
+}
+
+.mission-cleanup-danger-title {
+  color: #b85c5c;
+}
+
+// Confirmation modal overrides.
+.mission-cleanup-modal {
+
+  .mission-cleanup-modal__message {
+    font-size: 0.88rem;
+    color: #4b5563;
+    line-height: 1.55;
+  }
+
+  .mission-cleanup-modal__confirm--danger {
+    background: #b85c5c;
+    border-color: #b85c5c;
+    color: #fff;
+
+    &:disabled {
+      opacity: 0.5;
+    }
+
+    &:hover:not(:disabled) {
+      background: #9e4a4a;
+    }
+  }
+}
+
+// --------------------------------
+// Logs panel
+// --------------------------------
+.mission-logs-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+}
+
+select.mission-logs-select {
+  height: 36px;
+  padding: 0 32px 0 12px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #fff url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b6b7b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  font-size: 12.8px;
+  color: #1e1e1e;
+  cursor: pointer;
+  appearance: none;
+
+  &:hover {
+    border-color: #98a2b3;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #4a7a9b;
+    box-shadow: 0 0 0 1px #4a7a9b;
+  }
+}
+
+.mission-logs-search {
+  position: relative;
+
+  svg {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9b9ba8;
+    pointer-events: none;
+  }
+
+  input#{&}__input {
+    height: 36px;
+    width: 200px;
+    padding: 0 12px 0 32px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    font-size: 12.8px;
+    color: #1e1e1e;
+    background: #fff;
+
+    &::placeholder {
+      color: #9b9ba8;
+    }
+
+    &:hover {
+      border-color: #98a2b3;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #4a7a9b;
+      box-shadow: 0 0 0 1px #4a7a9b;
+    }
+  }
+}
+
+.mission-logs-count {
+  font-size: 12.3px;
+  color: #9b9ba8;
+  white-space: nowrap;
+}
+
+.mission-logs-clear-btn {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 12.8px;
+  font-weight: 500;
+  color: #344054;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #98a2b3;
+  }
+}
+
+.mission-logs-list {
+  max-height: 640px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d0d5dd;
+    border-radius: 3px;
+  }
+}
+
+.mission-logs-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: none;
+  border-bottom: 1px solid #f0f0f2;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+  font-family: inherit;
+  font-size: inherit;
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #fafafa;
+  }
+
+  &.is-expanded {
+    background: #f8f9fa;
+    border-bottom-color: transparent;
+  }
+
+  &.is-skeleton {
+    cursor: default;
+
+    &:hover {
+      background: none;
+    }
+  }
+
+  .mission-logs-chevron {
+    flex-shrink: 0;
+    color: #9b9ba8;
+    transition: transform 0.2s;
+  }
+
+  &.is-expanded .mission-logs-chevron {
+    transform: rotate(90deg);
+  }
+}
+
+.mission-logs-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.is-info {
+    background: #4a7a9b;
+  }
+
+  &.is-warning {
+    background: #d4a017;
+  }
+
+  &.is-error {
+    background: #b85c5c;
+  }
+}
+
+.mission-logs-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mission-logs-message {
+  font-size: 13px;
+  color: #1e1e1e;
+  line-height: 1.4;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.mission-logs-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mission-logs-time {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11.2px;
+  color: #9b9ba8;
+}
+
+.mission-logs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 9px;
+  font-size: 10.4px;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.is-payment {
+    background: #e2f4eb;
+    color: #278f5c;
+  }
+
+  &.is-webhook {
+    background: #ede8f5;
+    color: #7a5a8e;
+  }
+
+  &.is-email {
+    background: #fce4ec;
+    color: #c0392b;
+  }
+
+  &.is-subscription {
+    background: #e4eff5;
+    color: #4a7a9b;
+  }
+
+  &.is-system {
+    background: #f0f0f2;
+    color: #6b6b7b;
+  }
+}
+
+.mission-logs-detail {
+  border-bottom: 1px solid #f0f0f2;
+  background: #f8f9fa;
+
+  &__inner {
+    padding: 8px 20px 16px 40px;
+  }
+
+  &__row {
+    display: flex;
+    padding: 5px 0;
+    font-size: 12.3px;
+    gap: 16px;
+  }
+
+  &__label {
+    width: 140px;
+    flex-shrink: 0;
+    font-weight: 500;
+    color: #9b9ba8;
+  }
+
+  &__value {
+    color: #1e1e1e;
+    word-break: break-all;
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 11.6px;
+      color: #4a7a9b;
+      background: #edf4f8;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+  }
+}
+
+.mission-logs-empty {
+  padding: 48px 20px;
+  text-align: center;
+  font-size: 13.2px;
+  color: #9b9ba8;
+}
+
+.mission-logs-load-more {
+  padding: 12px 20px;
+  text-align: center;
+  border-top: 1px solid #f0f0f2;
+
+  &__btn {
+    font-size: 12.8px;
+    font-weight: 500;
+    color: #4a7a9b;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 16px;
+    border-radius: 6px;
+    transition: background 0.12s;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background: #edf4f8;
+    }
+  }
+}
+
+// --------------------------------
+// Responsive
+// --------------------------------
+@media (max-width: 768px) {
+
+  .mission-tools-field-row,
+  .mission-tools-date-row {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-tools-export-all {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .mission-logs-filters {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__right {
+      justify-content: space-between;
+    }
+  }
+
+  .mission-logs-search__input {
+    width: 100%;
+  }
+}

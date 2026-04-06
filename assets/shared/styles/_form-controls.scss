@@ -1,0 +1,567 @@
+// Shared form control styles used by both admin and block editor.
+
+// Toggle row + toggle switch.
+.mission-toggle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8e8ea;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__label {
+    font-size: 13.2px;
+    color: #1e1e1e;
+  }
+
+  &__hint {
+    font-size: 11.7px;
+    color: #9b9ba8;
+    margin-top: 2px;
+  }
+}
+
+.mission-toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #ccccd0;
+    border-radius: 12px;
+    transition: all 0.3s;
+
+    &::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: all 0.3s;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  input:checked + &__slider {
+    background: #2fa36b;
+  }
+
+  input:checked + &__slider::before {
+    transform: translateX(20px);
+  }
+
+}
+
+// Button group (segmented toggle).
+.mission-button-group {
+  display: inline-flex;
+  border: 1px solid #e8e6e1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mission-button-group__btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b6b7b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:not(:last-child) {
+    border-right: 1px solid #e8e6e1;
+  }
+
+  &:hover {
+    color: #1a1a2e;
+  }
+
+  &.is-active {
+    background: #2fa36b;
+    color: #fff;
+  }
+}
+
+// Frequency chips.
+.mission-frequency-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mission-frequency-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border: 1px solid #dcdcde;
+  border-radius: 20px;
+  font-size: 12.75px;
+  font-weight: 500;
+  color: #6b6b7b;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  background: none;
+
+  &:hover {
+    border-color: #9b9ba8;
+  }
+
+  &.is-selected {
+    background: #2fa36b;
+    border-color: #2fa36b;
+    color: #fff;
+
+    &:hover {
+      background: #278f5c;
+      border-color: #278f5c;
+    }
+  }
+}
+
+// Amount chips.
+.mission-amount-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.mission-amount-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 20px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12.3px;
+  font-weight: 500;
+  color: #1e1e1e;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: #9b9ba8;
+  }
+
+  &.is-default {
+    border-color: #2fa36b;
+    background: rgba(47, 163, 107, 0.06);
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #2fa36b;
+      border-radius: 50%;
+      margin-right: 2px;
+    }
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: none;
+    background: none;
+    color: #9b9ba8;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 0;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+      color: #b85c5c;
+      background: rgba(184, 92, 92, 0.1);
+    }
+  }
+}
+
+.mission-amount-chip-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  border: 1px dashed #dcdcde;
+  border-radius: 20px;
+  padding: 6px 12px;
+  gap: 2px;
+  transition: border-color 0.15s;
+
+  &:focus-within {
+    border-color: #2fa36b;
+    border-style: solid;
+  }
+
+  &__prefix {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 12.3px;
+    color: #9b9ba8;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    background: none;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 12.3px;
+    color: #1e1e1e;
+    width: 72px;
+
+    &::placeholder {
+      color: #9b9ba8;
+    }
+  }
+}
+
+// Amounts tabbed.
+.mission-amounts-tabbed {
+  display: block;
+  width: 100%;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  background: #fff;
+
+  &__tabs {
+    display: flex;
+    border-bottom: 1px solid #dcdcde;
+    background: #f6f6f7;
+    border-radius: 10px 10px 0 0;
+  }
+
+  &__tab {
+    padding: 8px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #9b9ba8;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    position: relative;
+    bottom: -1px;
+
+    &:hover {
+      color: #6b6b7b;
+    }
+
+    &.is-active {
+      color: #2fa36b;
+      font-weight: 600;
+      border-bottom-color: #2fa36b;
+      background: #fff;
+    }
+
+    &:first-child {
+      border-radius: 10px 0 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 10px 0 0;
+    }
+
+    &.is-disabled {
+      color: #dcdcde;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  &__panel {
+    padding: 14px 16px;
+  }
+
+  &__copy-from {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+  }
+
+  &__copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    font-size: 11.7px;
+    font-weight: 500;
+    color: #9b9ba8;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+
+    &:hover {
+      color: #2fa36b;
+    }
+  }
+
+  &__copy-menu {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 4px;
+    z-index: 10;
+    min-width: 130px;
+  }
+
+  &__copy-menu-item {
+    display: block;
+    width: 100%;
+    padding: 7px 12px;
+    background: none;
+    border: none;
+    font-size: 12.3px;
+    color: #6b6b7b;
+    text-align: left;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.1s;
+
+    &:hover {
+      background: #f6f6f7;
+      color: #1e1e1e;
+    }
+  }
+}
+
+// Amount rows (description mode).
+.mission-amount-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mission-amount-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &__value {
+    min-width: 80px;
+    padding: 6px 12px;
+    background: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 20px;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 12.3px;
+    font-weight: 500;
+    color: #1e1e1e;
+    text-align: right;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+    user-select: none;
+
+    &:hover {
+      border-color: #9b9ba8;
+    }
+
+    &.is-default {
+      border-color: #2fa36b;
+      background: rgba(47, 163, 107, 0.06);
+    }
+
+    &--input {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      border-style: dashed;
+      cursor: default;
+
+      &:focus-within {
+        border-color: #2fa36b;
+        border-style: solid;
+      }
+
+      input {
+        border: none;
+        outline: none;
+        background: none;
+        font-family: ui-monospace, SFMono-Regular, monospace;
+        font-size: 12.3px;
+        color: #1e1e1e;
+        width: 52px;
+        text-align: right;
+
+        &::placeholder {
+          color: #9b9ba8;
+        }
+      }
+    }
+  }
+
+  &__desc {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    font-size: 12.3px;
+    color: #1e1e1e;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus {
+      border-color: #2fa36b;
+    }
+
+    &::placeholder {
+      color: #9b9ba8;
+    }
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    color: #9b9ba8;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 50%;
+    padding: 0;
+    flex-shrink: 0;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+      color: #b85c5c;
+      background: rgba(184, 92, 92, 0.1);
+    }
+  }
+}
+
+// Small toggle variant for inline use next to labels.
+.mission-toggle-switch--sm {
+  width: 32px;
+  height: 18px;
+
+  .mission-toggle-switch__slider {
+    border-radius: 9px;
+
+    &::before {
+      height: 12px;
+      width: 12px;
+      left: 3px;
+      bottom: 3px;
+    }
+  }
+
+  input:checked + .mission-toggle-switch__slider::before {
+    transform: translateX(14px);
+  }
+}
+
+// Fields.
+.mission-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mission-field-label {
+  font-size: 11.7px;
+  font-weight: 500;
+  color: #6b6b7b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mission-field-input {
+  padding: 10px 14px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-size: 13.2px;
+  color: #1e1e1e;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+
+  &::placeholder {
+    color: #9b9ba8;
+  }
+}
+
+.mission-field-currency {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__symbol {
+    position: absolute;
+    left: 14px;
+    font-size: 13.2px;
+    font-weight: 500;
+    color: #9b9ba8;
+    pointer-events: none;
+  }
+
+  .mission-field-input {
+    padding-left: 28px;
+    width: 100%;
+  }
+}
+
+.mission-field-hint {
+  font-size: 11.25px;
+  color: #9b9ba8;
+  margin-top: 4px;
+}
+
+.mission-field-select {
+  padding: 10px 36px 10px 14px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-size: 13.2px;
+  color: #1e1e1e;
+  background: #fff url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239b9ba8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+}

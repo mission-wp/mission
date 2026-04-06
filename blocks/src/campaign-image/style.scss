@@ -1,0 +1,25 @@
+.mission-campaign-image {
+  line-height: 0;
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+.wp-block-mission-campaign-image {
+
+  &.alignfull,
+  &.alignwide {
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &.is-style-rounded img {
+    border-radius: 9999px;
+  }
+}

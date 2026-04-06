@@ -1,0 +1,53 @@
+.mission-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100000;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.35, 0.75, 0, 1);
+
+  &.is-open {
+    opacity: 1;
+  }
+}
+
+.mission-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 36rem;
+  max-width: 100%;
+  background: #fff;
+  z-index: 100001;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.35, 0.75, 0, 1);
+
+  &.is-open {
+    transform: translateX(0);
+  }
+}
+
+.mission-drawer-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-drawer-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.mission-drawer-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  background: #f6f7f7;
+}

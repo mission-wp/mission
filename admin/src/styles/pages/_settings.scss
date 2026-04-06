@@ -1,0 +1,1146 @@
+// Settings page — tabbed layout with vertical nav.
+
+// Layout grid: sidebar nav + content panel.
+.mission-settings-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 28px;
+  max-width: 960px;
+}
+
+// --------------------------------
+// Vertical tab nav
+// --------------------------------
+.mission-settings-nav {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+}
+
+.mission-settings-nav__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+}
+
+.mission-settings-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #9b9ba8;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #1e1e1e;
+  }
+
+  &.is-active {
+    background: #e2f4eb;
+    color: #2fa36b;
+    font-weight: 600;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  &:hover svg {
+    opacity: 1;
+  }
+
+  &.is-active svg {
+    opacity: 1;
+    color: #2fa36b;
+  }
+}
+
+// --------------------------------
+// Settings panels
+// --------------------------------
+.mission-settings-panel {
+  min-width: 0;
+  animation: mission-settings-fade-in 0.25s ease;
+}
+
+@keyframes mission-settings-fade-in {
+
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// --------------------------------
+// Settings cards
+// --------------------------------
+.mission-settings-card {
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.mission-settings-card__header {
+  margin-bottom: 20px;
+}
+
+.mission-settings-card__title {
+  font-size: 15.75px;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.mission-settings-card__desc {
+  font-size: 12.75px;
+  color: #9b9ba8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+// --------------------------------
+// Form fields inside settings
+// --------------------------------
+.mission-settings-field {
+  margin-bottom: 18px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mission-settings-field__label {
+  display: block;
+  font-size: 12.75px;
+  font-weight: 600;
+  color: #1e1e1e;
+  margin-bottom: 6px;
+}
+
+.mission-settings-field__hint {
+  display: block;
+  font-size: 11.7px;
+  color: #9b9ba8;
+  margin-top: 4px;
+}
+
+input.mission-settings-field__input {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1e1e1e;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+
+  &::placeholder {
+    color: #9b9ba8;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+select.mission-settings-field__select {
+  width: 100%;
+  height: 40px;
+  padding: 0 36px 0 12px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1e1e1e;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%239b9ba8' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// --------------------------------
+// Stripe connection
+// --------------------------------
+.mission-settings-stripe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mission-settings-stripe__info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mission-settings-stripe__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e2f4eb;
+  color: #2fa36b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mission-settings-stripe__details {
+  display: flex;
+  flex-direction: column;
+}
+
+.mission-settings-stripe__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.75px;
+  font-weight: 600;
+  color: #5a7a64;
+}
+
+.mission-settings-stripe__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2fa36b;
+}
+
+.mission-settings-stripe__name {
+  font-size: 12px;
+  color: #9b9ba8;
+  margin-top: 1px;
+}
+
+.mission-settings-stripe__disconnect {
+  font-family: inherit;
+  font-size: 12px;
+  color: #9b9ba8;
+  background: none;
+  border: 1px solid #dcdcde;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+
+  &:hover {
+    color: #b85c5c;
+    border-color: #b85c5c;
+  }
+}
+
+.mission-settings-stripe-warning {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: #fef9ee;
+  border: 1px solid #f0ddb4;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #7c5c1e;
+
+  svg { /* stylelint-disable-line no-descending-specificity */
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #b8860b;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7c5c1e;
+    text-decoration: underline;
+
+    &:hover {
+      color: #5a4214;
+    }
+  }
+}
+
+// --------------------------------
+// Toggle row (label + description + toggle)
+// --------------------------------
+.mission-settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f2;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.mission-settings-toggle-row__text {
+  flex: 1;
+}
+
+.mission-settings-toggle-row__label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1e1e1e;
+}
+
+.mission-settings-toggle-row__desc {
+  font-size: 11.7px;
+  color: #9b9ba8;
+  margin-top: 1px;
+}
+
+// --------------------------------
+// Checkbox field (e.g. "Remove all data on uninstall")
+// --------------------------------
+
+.mission-settings-checkbox-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    border: 1.5px solid #dcdcde;
+    border-radius: 4px;
+    appearance: none;
+    background: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+
+    &:checked {
+      background: #b85c5c;
+      border-color: #b85c5c;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 5px;
+        height: 9px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 3px rgba(184, 92, 92, 0.15);
+    }
+  }
+
+  &__text {
+    flex: 1;
+  }
+
+  &__label {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1e1e1e;
+    display: block;
+  }
+
+  &__desc {
+    font-size: 11.7px;
+    color: #9b9ba8;
+    margin-top: 3px;
+    line-height: 1.45;
+  }
+}
+
+// --------------------------------
+// Save bar (sticky bottom)
+// --------------------------------
+.mission-settings-save-bar {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.mission-settings-save-bar__text {
+  font-size: 12.75px;
+  color: #9b9ba8;
+}
+
+.mission-settings-save-bar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: #2fa36b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #279a5f;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// --------------------------------
+// Email section
+// --------------------------------
+.mission-settings-email-group-title {
+  font-size: 11.7px;
+  font-weight: 700;
+  color: #9b9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 0 10px;
+  margin: 0;
+}
+
+.mission-settings-email-list {
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.mission-settings-email-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f2;
+  transition: background 0.1s;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #fafafa;
+  }
+}
+
+.mission-settings-email-row__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &--donation {
+    background: #e2f4eb;
+    color: #2fa36b;
+  }
+
+  &--account {
+    background: #e4eff5;
+    color: #4a7a9b;
+  }
+
+  &--alert {
+    background: #f5e8e8;
+    color: #b85c5c;
+  }
+
+  &--admin {
+    background: #f0eeeb;
+    color: #8a7e72;
+  }
+}
+
+.mission-settings-email-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-settings-email-row__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e1e1e;
+}
+
+.mission-settings-email-row__desc {
+  font-size: 11.7px;
+  color: #9b9ba8;
+  margin-top: 1px;
+}
+
+.mission-settings-email-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.mission-settings-email-row__edit {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2fa36b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+// --------------------------------
+// Admin email rows (expandable, with per-row recipients)
+// --------------------------------
+.mission-admin-email-row {
+  border-bottom: 1px solid #f0f0f2;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.mission-admin-email-row__summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: background 0.1s;
+
+  &:hover {
+    background: #fafafa;
+  }
+}
+
+.mission-admin-email-row__preview {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+}
+
+.mission-admin-email-row__preview-tag {
+  font-size: 10.8px;
+  color: #9b9ba8;
+  background: #f6f6f8;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid #ededf0;
+}
+
+.mission-admin-email-row__preview-more {
+  font-size: 10.8px;
+  color: #9b9ba8;
+}
+
+.mission-admin-email-row__chevron {
+  flex-shrink: 0;
+  color: #9b9ba8;
+  transition: transform 0.2s;
+  margin-left: -4px;
+
+  .is-expanded & {
+    transform: rotate(90deg);
+  }
+}
+
+.mission-admin-email-row__detail {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+
+  .is-expanded & {
+    max-height: 200px;
+  }
+}
+
+.mission-admin-email-row__detail-inner {
+  padding: 0 20px 16px 48px;
+}
+
+.mission-admin-email-row__tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  background: #fff;
+  min-height: 36px;
+  cursor: text;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus-within {
+    border-color: #2fa36b;
+    box-shadow: 0 0 0 3px rgba(47, 163, 107, 0.1);
+  }
+}
+
+.mission-admin-email-row__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 6px 3px 8px;
+  background: #f6f6f8;
+  border: 1px solid #e8e8ec;
+  border-radius: 5px;
+  font-size: 11.7px;
+  color: #1e1e1e;
+  line-height: 1;
+}
+
+.mission-admin-email-row__tag-default {
+  font-size: 9.75px;
+  font-weight: 600;
+  color: #9b9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mission-admin-email-row__tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  background: none;
+  color: #9b9ba8;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 0;
+  transition: all 0.1s;
+
+  &:hover {
+    background: #f5e8e8;
+    color: #b85c5c;
+  }
+}
+
+input.mission-admin-email-row__input {
+  flex: 1;
+  min-width: 120px;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: #1e1e1e;
+  background: transparent;
+  padding: 2px 0;
+
+  &::placeholder {
+    color: #9b9ba8;
+  }
+}
+
+.mission-admin-email-row__hint {
+  display: block;
+  font-size: 11.1px;
+  color: #9b9ba8;
+  margin-top: 6px;
+}
+
+// --------------------------------
+// Coming soon badge
+// --------------------------------
+.mission-settings-coming-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #9b9ba8;
+  background: #f0f0f2;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+// --------------------------------
+// Secondary button
+// --------------------------------
+
+.mission-settings-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  background: #fff;
+  color: #1a1a2e;
+  border: 1px solid #e0e0e2;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #9b9ba8;
+    background: #fafaf7;
+  }
+}
+
+// --------------------------------
+// Email editor slide-over
+// --------------------------------
+.mission-email-editor {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 580px;
+  max-width: 100vw;
+  height: 100vh;
+  background: #f0f0f1;
+  z-index: 100001;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.1);
+
+  &.is-open {
+    transform: translateX(0);
+  }
+}
+
+.mission-email-editor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: #fff;
+  border-bottom: 1px solid #dcdcde;
+  flex-shrink: 0;
+}
+
+.mission-email-editor__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mission-email-editor__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1e1e1e;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.mission-email-editor__subtitle {
+  font-size: 12px;
+  color: #9b9ba8;
+}
+
+.mission-email-editor__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #dcdcde;
+  background: #fff;
+  color: #9b9ba8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #1e1e1e;
+    border-color: #9b9ba8;
+  }
+}
+
+.mission-email-editor__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.mission-email-editor__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid #dcdcde;
+  flex-shrink: 0;
+}
+
+.mission-email-editor__section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mission-email-editor__section-label {
+  font-size: 11.7px;
+  font-weight: 600;
+  color: #9b9ba8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+// Subject field inside editor.
+.mission-email-editor__subject {
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  padding: 16px 18px;
+
+  .mission-settings-field__input {
+    border: none;
+    padding: 0;
+    height: auto;
+    font-size: 14px;
+    font-weight: 500;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+// Merge tag pills.
+.mission-email-editor__merge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.mission-email-editor__merge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: #f0f0f2;
+  border-radius: 5px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10.8px;
+  color: #6b6b7b;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #e2f4eb;
+    color: #2fa36b;
+  }
+}
+
+// Email preview frame.
+.mission-email-editor__preview-frame {
+  background: #fff;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.mission-email-editor__preview-bar {
+  height: 36px;
+  background: #f4f4f5;
+  border-bottom: 1px solid #dcdcde;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 6px;
+}
+
+.mission-email-editor__preview-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4d4d6;
+}
+
+.mission-email-editor__preview-content {
+  width: 100%;
+  min-height: 400px;
+  border: none;
+}
+
+// Done button in footer.
+.mission-email-editor__done-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: #2fa36b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #279a5f;
+  }
+}
+
+// Preview / Edit HTML toggle.
+.mission-email-editor__toggle {
+  display: flex;
+  background: #e8e8ea;
+  border-radius: 7px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.mission-email-editor__toggle-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b6b7b;
+  background: none;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &.is-active {
+    background: #fff;
+    color: #1e1e1e;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+}
+
+// HTML editor — CodeMirror wrapper.
+.mission-email-editor__code-editor-wrap {
+
+  .CodeMirror {
+    border: 1px solid #dcdcde;
+    border-radius: 10px;
+    min-height: 340px;
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  // Rounded top-left for line number gutter.
+  .CodeMirror-gutters {
+    border-radius: 10px 0 0 10px;
+  }
+}
+
+// Fallback textarea (if CodeMirror is not loaded).
+.mission-email-editor__html-editor {
+  width: 100%;
+  min-height: 340px;
+  padding: 16px;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11.7px;
+  line-height: 1.7;
+  color: #1e1e1e;
+  background: #fafaf8;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s;
+  tab-size: 2;
+
+  &:focus {
+    border-color: #2fa36b;
+  }
+}
+
+// Reset to default link.
+.mission-email-editor__reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  color: #9b9ba8;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+
+  &:hover {
+    color: #b85c5c;
+  }
+}
+
+// Send test email button (secondary style).
+.mission-email-editor__test-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: #fff;
+  color: #6b6b7b;
+  border: 1px solid #dcdcde;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.75px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    border-color: #9b9ba8;
+    color: #1e1e1e;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--sent {
+    color: #2fa36b;
+    border-color: #2fa36b;
+  }
+}
+
+// --------------------------------
+// Responsive
+// --------------------------------
+@media (max-width: 768px) {
+
+  .mission-settings-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .mission-settings-nav {
+    position: static;
+    margin-bottom: 20px;
+  }
+
+  .mission-settings-nav__list {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+
+  .mission-settings-nav__item {
+    white-space: nowrap;
+    padding: 8px 14px;
+  }
+
+  .mission-settings-stripe {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mission-settings-save-bar {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .mission-email-editor {
+    width: 100vw;
+  }
+}

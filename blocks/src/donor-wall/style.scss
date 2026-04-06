@@ -1,0 +1,317 @@
+// Donor Wall — Frontend styles.
+
+:where(.mission-donor-wall) {
+  --mission-dw-columns: 2;
+  --mission-dw-avatar-size: 48px;
+}
+
+// Toolbar / sort controls.
+:where(.mission-dw-toolbar) {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 16px;
+}
+
+:where(.mission-dw-sort) {
+  appearance: none;
+  background:
+    var(--mission-bg, #fff)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' fill='none' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  border: 1px solid var(--mission-border, #e5e7eb);
+  border-radius: 6px;
+  color: var(--mission-text, #1e1e1e);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 7px 28px 7px 12px;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    border-color: var(--mission-primary, #2fa36b);
+    outline: none;
+  }
+}
+
+// Card grid.
+:where(.mission-dw-grid) {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(var(--mission-dw-columns), 1fr);
+  transition: opacity 0.2s ease;
+
+  &.is-loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+// Card entrance animation.
+@keyframes mission-dw-fade-up {
+
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Individual card.
+:where(.mission-dw-card) {
+  animation: mission-dw-fade-up 0.45s ease forwards;
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #e5e7eb);
+  border-radius: var(--mission-radius, 8px);
+  display: flex;
+  gap: 14px;
+  opacity: 0;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--mission-text, #1e1e1e) 6%, transparent);
+    transform: translateY(-1px);
+  }
+}
+
+// Avatar.
+:where(.mission-dw-avatar) {
+  align-items: center;
+  background: var(--mission-primary, #2fa36b);
+  border-radius: 50%;
+  color: var(--mission-primary-text, #fff);
+  display: flex;
+  flex-shrink: 0;
+  font-size: calc(var(--mission-dw-avatar-size) * 0.35);
+  font-weight: 600;
+  height: var(--mission-dw-avatar-size);
+  justify-content: center;
+  line-height: 1;
+  overflow: hidden;
+  position: relative;
+  width: var(--mission-dw-avatar-size);
+}
+
+:where(.mission-dw-avatar-initials),
+:where(.mission-dw-avatar-icon) {
+  position: relative;
+  z-index: 0;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+:where(.mission-dw-avatar-img) {
+  height: 100%;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+:where(.mission-dw-card.is-anonymous) {
+
+  .mission-dw-avatar {
+    background: #d5d5d5;
+    color: #999;
+  }
+
+  .mission-dw-name {
+    color: var(--mission-text-secondary, #6b7280);
+    font-style: italic;
+  }
+}
+
+// Card body.
+:where(.mission-dw-body) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+:where(.mission-dw-top) {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+:where(.mission-dw-name) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:where(.mission-dw-amount) {
+  color: var(--mission-text, #1e1e1e);
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+:where(.mission-dw-freq) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+// Meta row (date + recurring badge).
+:where(.mission-dw-meta) {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+:where(.mission-dw-date) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+:where(.mission-dw-recurring) {
+  background: color-mix(in srgb, var(--mission-primary, #2fa36b) 12%, transparent);
+  border-radius: 4px;
+  color: var(--mission-primary, #2fa36b);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 6px;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+// Donor comment — pulled left to align under the avatar when shown.
+:where(.mission-dw-comment) {
+  border-left: 2px solid var(--mission-primary, #2fa36b);
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.5;
+  margin-top: 14px;
+  padding-left: 12px;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+:where(.has-avatars .mission-dw-comment) {
+  margin-left: calc(-0.5 * (var(--mission-dw-avatar-size) + 14px));
+}
+
+:where(.mission-dw-read-more) {
+  color: var(--mission-primary, #2fa36b);
+  cursor: pointer;
+  font-style: normal;
+  margin-left: 4px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Empty state.
+:where(.mission-dw-empty) {
+  padding: 48px 20px;
+  text-align: center;
+}
+
+:where(.mission-dw-empty__icon) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+:where(.mission-dw-empty__title) {
+  color: var(--mission-text, #1e1e1e);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+:where(.mission-dw-empty__subtitle) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+}
+
+// Footer / load more.
+:where(.mission-dw-footer) {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+:where(.mission-dw-count) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 13px;
+  margin: 0;
+}
+
+:where(.mission-dw-load-more) {
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #e5e7eb);
+  border-radius: 6px;
+  color: var(--mission-text, #1e1e1e);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 24px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    background: var(--mission-bg-secondary, #f9fafb);
+    border-color: var(--mission-primary, #2fa36b);
+  }
+
+  &.is-loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+// Responsive.
+@media (max-width: 600px) {
+
+  :where(.mission-dw-grid) {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+
+  :where(.mission-dw-grid) {
+    grid-template-columns: repeat(min(2, var(--mission-dw-columns)), 1fr);
+  }
+}

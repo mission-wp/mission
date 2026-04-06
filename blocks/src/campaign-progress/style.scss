@@ -1,0 +1,119 @@
+.mission-campaign-progress {
+  --mission-text: #1e1e1e;
+  --mission-text-secondary: #6b7280;
+  --mission-bg-secondary: #f3f4f6;
+  --mission-radius: 8px;
+
+  line-height: 1.5;
+}
+
+.mission-cp-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.mission-cp-raised {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--mission-text);
+  margin-right: 6px;
+}
+
+.mission-cp-goal {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--mission-text-secondary);
+}
+
+.mission-cp-percentage {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mission-text-secondary);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.mission-cp-bar {
+  height: 16px;
+  background: var(--mission-bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+@keyframes mission-bar-fill {
+
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--bar-width);
+  }
+}
+
+.mission-cp-bar__fill {
+  height: 100%;
+  background: var(--mission-primary);
+  border-radius: 8px;
+  width: 0;
+
+  .is-visible > & {
+    animation: mission-bar-fill 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+}
+
+.mission-cp-stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 20px;
+}
+
+.mission-cp-stat {
+  font-size: 14px;
+  color: var(--mission-text-secondary);
+}
+
+.mission-cp-stat__value {
+  font-weight: 600;
+  color: var(--mission-text);
+  margin-right: 4px;
+}
+
+.mission-cp-donate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mission-primary-text, #fff);
+  background: var(--mission-primary);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: background 200ms ease;
+
+  &:hover {
+    background: var(--mission-primary-hover);
+    text-decoration: none;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .mission-cp-raised {
+    width: 100%;
+    font-size: 24px;
+    margin-right: 0;
+  }
+
+  .mission-cp-stats {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}

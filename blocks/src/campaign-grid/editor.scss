@@ -1,0 +1,82 @@
+.wp-block-mission-campaign-grid {
+  // Grid layout in editor.
+  .mission-cg-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--mission-cg-columns, 2), 1fr);
+    gap: 24px;
+  }
+
+  // Disable hover effects in editor.
+  .mission-cc {
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  // Show bar at final width without animation.
+  .mission-cc-bar__fill {
+    width: var(--bar-width);
+    animation: none;
+  }
+
+  // Disable link interactions in editor.
+  .mission-cc-btn,
+  .mission-cc-title a,
+  a.mission-cc-image-wrap {
+    pointer-events: none;
+  }
+
+  .mission-cc-image-wrap img {
+
+    .mission-cc:hover & {
+      transform: none;
+    }
+  }
+
+  // Skeleton loading cards.
+  .mission-cg-skeleton-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .mission-cg-skeleton-bar {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: mission-cg-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mission-cg-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  // Empty state.
+  .mission-cg-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 32px;
+    color: #949494;
+    text-align: center;
+    gap: 8px;
+    grid-column: 1 / -1;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+}

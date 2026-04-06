@@ -1,0 +1,52 @@
+.wp-block-mission-recent-donors {
+
+  .mission-donor-empty__btn {
+    pointer-events: none;
+  }
+
+  .mission-rd-empty-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: #949494;
+    text-align: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .mission-rd-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mission-rd-skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mission-rd-skeleton-bar {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: mission-rd-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mission-rd-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+}

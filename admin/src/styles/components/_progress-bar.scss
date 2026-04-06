@@ -1,0 +1,38 @@
+@keyframes mission-bar-fill {
+
+  from {
+    width: 0;
+  }
+
+  to {
+    width: var(--bar-width);
+  }
+}
+
+// Progress bar (campaign table).
+
+.mission-progress-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mission-progress-bar__track {
+  width: 64px;
+  height: 5px;
+  background: #eee9e3;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mission-progress-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: #2fa36b;
+}
+
+.mission-progress-bar__text {
+  font-size: 12px;
+  color: #9b9ba8;
+}

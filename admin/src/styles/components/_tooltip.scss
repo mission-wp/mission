@@ -1,0 +1,51 @@
+// Info tooltip (CSS-only, shows on hover).
+.mission-info-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: #9b9ba8;
+  cursor: help;
+  vertical-align: middle;
+  margin-left: 2px;
+
+  &::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: -4px;
+    background: #1a1a2e;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    padding: 8px 12px;
+    border-radius: 8px;
+    width: 220px;
+    white-space: normal;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: calc(100% + -2px);
+    left: 2px;
+    border: 5px solid transparent;
+    border-top-color: #1a1a2e;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  &:hover::after,
+  &:hover::before {
+    opacity: 1;
+    visibility: visible;
+  }
+}

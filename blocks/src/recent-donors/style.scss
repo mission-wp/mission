@@ -1,0 +1,17 @@
+@use "../../../assets/shared/styles/donor-list";
+
+.mission-recent-donors {
+  --mission-text: #1e1e1e;
+  --mission-text-secondary: #6b7280;
+  --mission-bg-secondary: #f7f7f7;
+  --mission-border: #f0f0f0;
+  --mission-radius: 8px;
+
+  line-height: 1.5;
+}
+
+.mission-rd-time {
+  font-size: 12px;
+  color: #999;
+  margin-top: 1px;
+}

@@ -1,0 +1,71 @@
+// Status dropdown.
+
+.mission-detail-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  background-color: #f0f0f5;
+  color: #6b6b7b;
+
+  &.is-recurring {
+    background-color: #eafaf0;
+    color: #1a7338;
+  }
+}
+
+// Status badge (used in transaction header and detail rows).
+
+.mission-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  vertical-align: middle;
+  background-color: #f0f0f0;
+  color: #757575;
+
+  &.is-completed {
+    background-color: rgba(47, 163, 107, 0.12);
+    color: #278f5c;
+  }
+
+  &.is-pending {
+    background-color: #e4eff5;
+    color: #4a7a9b;
+  }
+
+  &.is-refunded {
+    background-color: #f5e8e8;
+    color: #b85c5c;
+  }
+
+  &.is-failed {
+    background-color: #fce8e8;
+    color: #c0392b;
+  }
+
+  &.is-cancelled {
+    background-color: #f0eeeb;
+    color: #8a7e72;
+  }
+
+  &.is-active {
+    background-color: rgba(47, 163, 107, 0.12);
+    color: #278f5c;
+  }
+
+  &.is-paused {
+    background-color: #ebebed;
+    color: #82828c;
+  }
+
+  &.is-past_due {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+
+}

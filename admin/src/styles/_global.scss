@@ -1,0 +1,38 @@
+#mission-admin,
+.components-modal__frame {
+  --wp-components-color-accent: #2fa36b;
+  --wp-components-color-accent-darker-10: #278f5c;
+  --wp-components-color-accent-darker-20: #1f7a4d;
+  --wp-components-color-accent-inverted: #fff;
+}
+
+#mission-admin {
+  max-width: 1200px;
+  margin: 20px 20px 20px 0;
+  padding: 0 12px;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+// Fix misaligned pagination select in DataViews.
+// The SelectControl doesn't pass __nextHasNoMarginBottom,
+// so BaseControl adds a default margin-bottom.
+.dataviews-pagination__page-select .components-base-control__field {
+  margin-bottom: 0;
+}
+
+// Row hover for DataViews tables.
+.dataviews-view-table tbody tr:hover {
+  background: #faf9f6;
+}

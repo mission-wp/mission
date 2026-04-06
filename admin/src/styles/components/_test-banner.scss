@@ -1,0 +1,35 @@
+.mission-test-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  background: #fef3cd;
+  border: 1px solid #f0d68a;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b5900;
+
+  .components-icon-control__icon,
+  svg {
+    fill: #946c00;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    flex: 1;
+  }
+
+  &__link {
+    flex-shrink: 0;
+    font-weight: 600;
+    color: #6b5900;
+    text-decoration: underline;
+    white-space: nowrap;
+
+    &:hover {
+      color: #453a00;
+    }
+  }
+}
