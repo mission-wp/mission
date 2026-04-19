@@ -207,21 +207,51 @@ class DonationFormPage {
   }
 
   /**
+   * Open the tip menu, retrying if the first click gets swallowed by the
+   * Interactivity API hydration race or by the `wp-on-document--click`
+   * outside-click handler firing against its own opening click.
+   */
+  async openTipMenu() {
+    const menu = this.form.locator( '.mission-df-tip-menu' );
+    const trigger = this.form.locator( '.mission-df-tip-trigger' );
+
+    if ( await menu.isVisible() ) {
+      return menu;
+    }
+
+    // Wait for the trigger to be fully interactive (not just attached) before
+    // clicking. Avoids the case where Interactivity API handlers haven't hooked up yet.
+    await trigger.waitFor( { state: 'visible' } );
+
+    for ( let attempt = 0; attempt < 3; attempt++ ) {
+      await trigger.click();
+      try {
+        await menu.waitFor( { state: 'visible', timeout: 1500 } );
+        return menu;
+      } catch {
+        // Click didn't open the menu. Brief pause before retry.
+        await this.page.waitForTimeout( 200 );
+      }
+    }
+
+    throw new Error( 'Tip menu did not open after 3 attempts.' );
+  }
+
+  /**
    * Open the tip menu and select a percentage.
    *
    * @param {number} percent Tip percentage (e.g. 15).
    */
   async selectTip( percent ) {
-    // Open the tip menu if it's closed.
-    const menu = this.form.locator( '.mission-df-tip-menu' );
-    if ( ! ( await menu.isVisible() ) ) {
-      await this.form.locator( '.mission-df-tip-trigger' ).click();
-      await menu.waitFor( { state: 'visible' } );
-    }
+    const menu = await this.openTipMenu();
+
     await this.form
       .locator( '.mission-df-tip-option' )
       .filter( { hasText: new RegExp( `^${ percent }%$` ) } )
       .click();
+
+    // Wait for the menu to close so a subsequent action sees a clean state.
+    await menu.waitFor( { state: 'hidden' } );
   }
 
   /**
@@ -230,14 +260,17 @@ class DonationFormPage {
    * @param {string} value Tip amount (e.g. "3").
    */
   async enterCustomTip( value ) {
-    const menu = this.form.locator( '.mission-df-tip-menu' );
-    if ( ! ( await menu.isVisible() ) ) {
-      await this.form.locator( '.mission-df-tip-trigger' ).click();
-      await menu.waitFor( { state: 'visible' } );
-    }
-    // Click the custom option.
+    const menu = await this.openTipMenu();
+
     await this.form.locator( '.mission-df-tip-option--other' ).click();
-    await this.form.locator( '.mission-df-tip-custom-input' ).fill( value );
+    await menu.waitFor( { state: 'hidden' } );
+
+    // Wait for the custom-tip input to actually become interactive before
+    // filling it — the Interactivity API toggles visibility reactively
+    // and Playwright's fill can race against that.
+    const input = this.form.locator( '.mission-df-tip-custom-input' );
+    await input.waitFor( { state: 'visible' } );
+    await input.fill( value );
   }
 
   /**
