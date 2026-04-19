@@ -43,6 +43,7 @@ use Mission\Rest\Endpoints\TransactionsEndpoint;
 use Mission\Rest\Endpoints\CleanupEndpoint;
 use Mission\Cleanup\CleanupService;
 use Mission\DonorDashboard\DonorAuthService;
+use Mission\Payments\PaymentIntentVerifier;
 use Mission\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -76,14 +77,15 @@ class RestModule {
 	public function register_rest_routes(): void {
 		$settings  = new SettingsService();
 		$reporting = new ReportingService( $settings );
+		$verifier  = new PaymentIntentVerifier( $settings );
 
 		( new CampaignsEndpoint( $reporting, $settings ) )->register();
 		( new SettingsEndpoint( $settings ) )->register();
 		( new StripeConnectEndpoint( $settings ) )->register();
 		( new CreatePaymentIntentEndpoint( $settings ) )->register();
-		( new ConfirmDonationEndpoint() )->register();
+		( new ConfirmDonationEndpoint( $verifier ) )->register();
 		( new CreateSubscriptionEndpoint( $settings ) )->register();
-		( new ConfirmSubscriptionEndpoint() )->register();
+		( new ConfirmSubscriptionEndpoint( $verifier ) )->register();
 		( new PaymentConfigEndpoint( $settings ) )->register();
 		( new DonorsEndpoint( $reporting, $settings ) )->register();
 		( new NotesEndpoint() )->register();

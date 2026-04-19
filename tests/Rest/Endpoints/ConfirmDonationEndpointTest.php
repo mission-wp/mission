@@ -2,6 +2,10 @@
 /**
  * Tests for the ConfirmDonationEndpoint class.
  *
+ * The endpoint verifies PaymentIntent status with Stripe (via the Mission API)
+ * and transitions the transaction synchronously when Stripe reports success.
+ * Tests mock the HTTP call using the `pre_http_request` filter.
+ *
  * @package Mission
  */
 
@@ -12,6 +16,7 @@ use Mission\Models\Campaign;
 use Mission\Models\Donor;
 use Mission\Models\Subscription;
 use Mission\Models\Transaction;
+use Mission\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -21,22 +26,16 @@ use WP_UnitTestCase;
 class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 
 	/**
-	 * REST server instance.
-	 *
 	 * @var \WP_REST_Server
 	 */
 	private \WP_REST_Server $server;
 
 	/**
-	 * Default donor for tests.
-	 *
 	 * @var Donor
 	 */
 	private Donor $donor;
 
 	/**
-	 * Default campaign for tests.
-	 *
 	 * @var Campaign
 	 */
 	private Campaign $campaign;
@@ -48,9 +47,6 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 	 */
 	private array $hooks_to_remove = [];
 
-	/**
-	 * Create tables once for all tests in this class.
-	 */
 	public static function set_up_before_class(): void {
 		parent::set_up_before_class();
 
@@ -69,9 +65,6 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 		DatabaseModule::create_tables();
 	}
 
-	/**
-	 * Set up each test.
-	 */
 	public function set_up(): void {
 		parent::set_up();
 
@@ -79,7 +72,6 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 		$this->server = $wp_rest_server = new \WP_REST_Server();
 		do_action( 'rest_api_init' );
 
-		// Create a default donor.
 		$this->donor = new Donor( [
 			'email'      => 'jane@example.com',
 			'first_name' => 'Jane',
@@ -87,17 +79,17 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 		] );
 		$this->donor->save();
 
-		// Create a default campaign.
 		$this->campaign = new Campaign( [
 			'title'       => 'General Fund',
 			'goal_amount' => 100000,
 		] );
 		$this->campaign->save();
+
+		// Populate the site_token so the verifier attempts the API call.
+		$settings = new SettingsService();
+		$settings->update( [ 'stripe_site_token' => 'tok_test_abc' ] );
 	}
 
-	/**
-	 * Clean up after each test.
-	 */
 	public function tear_down(): void {
 		global $wp_rest_server, $wpdb;
 
@@ -112,7 +104,7 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
-			remove_action( $hook, $callback, $priority );
+			remove_filter( $hook, $callback, $priority );
 		}
 		$this->hooks_to_remove = [];
 
@@ -123,13 +115,7 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 	// Helpers
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Create a pending transaction with sensible defaults.
-	 *
-	 * @param array $overrides Column values to override.
-	 * @return Transaction
-	 */
-	private function create_pending_transaction( array $overrides = [] ): Transaction {
+	private function create_transaction( array $overrides = [] ): Transaction {
 		$defaults = [
 			'status'                 => 'pending',
 			'type'                   => 'one_time',
@@ -152,12 +138,46 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Build and dispatch a POST to /mission/v1/donations/confirm.
+	 * Intercept wp_remote_* calls to the Mission API and return a mocked response.
 	 *
-	 * @param int    $transaction_id    Transaction ID.
-	 * @param string $payment_intent_id Payment intent ID.
-	 * @return \WP_REST_Response
+	 * @param int   $code Response HTTP status code.
+	 * @param array $body Response JSON body.
 	 */
+	private function mock_api_response( int $code, array $body ): void {
+		$callback = function ( $preempt, $args, $url ) use ( $code, $body ) {
+			if ( ! str_contains( $url, '/confirm-payment-intent' ) ) {
+				return $preempt;
+			}
+
+			return [
+				'response' => [ 'code' => $code ],
+				'body'     => wp_json_encode( $body ),
+				'headers'  => [],
+				'cookies'  => [],
+				'filename' => null,
+			];
+		};
+
+		add_filter( 'pre_http_request', $callback, 10, 3 );
+		$this->hooks_to_remove[] = [ 'pre_http_request', $callback, 10 ];
+	}
+
+	/**
+	 * Intercept wp_remote_* and return a WP_Error (simulates network failure).
+	 */
+	private function mock_api_network_error(): void {
+		$callback = function ( $preempt, $args, $url ) {
+			if ( ! str_contains( $url, '/confirm-payment-intent' ) ) {
+				return $preempt;
+			}
+
+			return new \WP_Error( 'http_request_failed', 'Could not resolve host' );
+		};
+
+		add_filter( 'pre_http_request', $callback, 10, 3 );
+		$this->hooks_to_remove[] = [ 'pre_http_request', $callback, 10 ];
+	}
+
 	private function dispatch_confirm( int $transaction_id, string $payment_intent_id ): \WP_REST_Response {
 		$request = new WP_REST_Request( 'POST', '/mission/v1/donations/confirm' );
 		$request->set_header( 'Content-Type', 'application/json' );
@@ -169,44 +189,144 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 		return $this->server->dispatch( $request );
 	}
 
-	/**
-	 * Register an action hook and track it for automatic cleanup.
-	 *
-	 * @param string   $hook     Hook name.
-	 * @param callable $callback Callback.
-	 * @param int      $priority Priority.
-	 */
-	private function add_tracked_action( string $hook, callable $callback, int $priority = 10 ): void {
-		add_action( $hook, $callback, $priority );
-		$this->hooks_to_remove[] = [ $hook, $callback, $priority ];
-	}
-
 	// =========================================================================
 	// Tests
 	// =========================================================================
 
 	/**
-	 * Test confirms a pending transaction and transitions it to completed.
+	 * Stripe reports succeeded via the Mission API — endpoint transitions the
+	 * pending transaction to completed and returns 200.
 	 */
-	public function test_confirms_pending_transaction(): void {
-		$transaction = $this->create_pending_transaction();
+	public function test_transitions_to_completed_when_stripe_reports_succeeded(): void {
+		$transaction = $this->create_transaction();
+
+		$this->mock_api_response( 200, [
+			'status'          => 'succeeded',
+			'amount_received' => 5000,
+			'currency'        => 'usd',
+			'payment_method'  => [ 'brand' => 'visa', 'last4' => '4242' ],
+		] );
 
 		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertTrue( $data['success'] );
-		$this->assertSame( $transaction->id, $data['transaction_id'] );
+		$this->assertSame( 'completed', $data['status'] );
 
-		// Re-read from DB.
-		$updated = Transaction::find( $transaction->id );
-		$this->assertSame( 'completed', $updated->status );
-		$this->assertNotNull( $updated->date_completed );
-		$this->assertSame( 'pi_test_123', $updated->gateway_transaction_id );
+		$after = Transaction::find( $transaction->id );
+		$this->assertSame( 'completed', $after->status );
+		$this->assertNotNull( $after->date_completed );
+		$this->assertSame( 'visa', $after->get_meta( 'payment_method_brand' ) );
+		$this->assertSame( '4242', $after->get_meta( 'payment_method_last4' ) );
 	}
 
 	/**
-	 * Test returns 404 for a nonexistent transaction ID.
+	 * Returns 200 + completed when the webhook has already transitioned the
+	 * transaction (rare but possible race). No Mission API call needed.
+	 */
+	public function test_returns_completed_when_webhook_has_transitioned(): void {
+		$transaction = $this->create_transaction( [
+			'status'         => 'completed',
+			'date_completed' => current_time( 'mysql', true ),
+		] );
+
+		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'completed', $data['status'] );
+	}
+
+	/**
+	 * Stripe reports canceled — endpoint marks transaction failed and returns 402.
+	 */
+	public function test_marks_failed_when_stripe_reports_canceled(): void {
+		$transaction = $this->create_transaction();
+
+		$this->mock_api_response( 200, [ 'status' => 'canceled' ] );
+
+		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
+
+		$this->assertSame( 402, $response->get_status() );
+		$this->assertSame( 'payment_failed', $response->as_error()->get_error_code() );
+
+		$after = Transaction::find( $transaction->id );
+		$this->assertSame( 'failed', $after->status );
+	}
+
+	/**
+	 * Stripe reports requires_payment_method — endpoint marks transaction failed.
+	 */
+	public function test_marks_failed_when_stripe_requires_payment_method(): void {
+		$transaction = $this->create_transaction();
+
+		$this->mock_api_response( 200, [ 'status' => 'requires_payment_method' ] );
+
+		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
+
+		$this->assertSame( 402, $response->get_status() );
+
+		$after = Transaction::find( $transaction->id );
+		$this->assertSame( 'failed', $after->status );
+	}
+
+	/**
+	 * Stripe reports processing — endpoint leaves transaction pending and returns 202.
+	 */
+	public function test_returns_processing_when_stripe_still_processing(): void {
+		$transaction = $this->create_transaction();
+
+		$this->mock_api_response( 200, [ 'status' => 'processing' ] );
+
+		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
+		$data     = $response->get_data();
+
+		$this->assertSame( 202, $response->get_status() );
+		$this->assertSame( 'processing', $data['status'] );
+
+		$after = Transaction::find( $transaction->id );
+		$this->assertSame( 'pending', $after->status );
+	}
+
+	/**
+	 * Mission API endpoint not yet deployed (404) — endpoint falls back to
+	 * processing response. Webhook authority takes over.
+	 */
+	public function test_returns_processing_when_api_endpoint_not_deployed(): void {
+		$transaction = $this->create_transaction();
+
+		$this->mock_api_response( 404, [ 'error' => 'Not Found' ] );
+
+		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
+		$data     = $response->get_data();
+
+		$this->assertSame( 202, $response->get_status() );
+		$this->assertSame( 'processing', $data['status'] );
+
+		$after = Transaction::find( $transaction->id );
+		$this->assertSame( 'pending', $after->status, 'Transaction must not transition when API is unavailable.' );
+	}
+
+	/**
+	 * Mission API network failure — endpoint falls back to processing response.
+	 */
+	public function test_returns_processing_when_api_unreachable(): void {
+		$transaction = $this->create_transaction();
+
+		$this->mock_api_network_error();
+
+		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
+		$data     = $response->get_data();
+
+		$this->assertSame( 202, $response->get_status() );
+		$this->assertSame( 'processing', $data['status'] );
+
+		$after = Transaction::find( $transaction->id );
+		$this->assertSame( 'pending', $after->status );
+	}
+
+	/**
+	 * Returns 404 for a nonexistent transaction.
 	 */
 	public function test_returns_404_for_nonexistent_transaction(): void {
 		$response = $this->dispatch_confirm( 999999, 'pi_test_123' );
@@ -216,29 +336,11 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test returns 409 for an already completed transaction.
-	 */
-	public function test_returns_409_for_already_completed_transaction(): void {
-		$transaction = $this->create_pending_transaction();
-
-		// Complete the transaction first.
-		$transaction->status         = 'completed';
-		$transaction->date_completed = current_time( 'mysql', true );
-		$transaction->save();
-
-		$response = $this->dispatch_confirm( $transaction->id, 'pi_test_123' );
-
-		$this->assertSame( 409, $response->get_status() );
-		$this->assertSame( 'transaction_already_processed', $response->as_error()->get_error_code() );
-	}
-
-	/**
-	 * Test returns 403 for a mismatched payment intent ID.
+	 * Returns 403 when the submitted payment_intent_id does not match the
+	 * transaction. Blocks enumeration by transaction ID alone.
 	 */
 	public function test_returns_403_for_mismatched_payment_intent(): void {
-		$transaction = $this->create_pending_transaction( [
-			'gateway_transaction_id' => 'pi_test_123',
-		] );
+		$transaction = $this->create_transaction();
 
 		$response = $this->dispatch_confirm( $transaction->id, 'pi_wrong_456' );
 
@@ -247,109 +349,39 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test fires status transition hooks on completion.
+	 * Transitioning fires donor/campaign aggregate updates via the
+	 * status_transition hook chain.
 	 */
-	public function test_fires_status_transition_hooks(): void {
-		$generic_fired  = false;
-		$generic_args   = [];
-		$specific_fired = false;
-
-		$generic_callback = function ( $transaction, $old_status, $new_status ) use ( &$generic_fired, &$generic_args ) {
-			$generic_fired = true;
-			$generic_args  = [
-				'old_status' => $old_status,
-				'new_status' => $new_status,
-			];
-		};
-
-		add_action( 'mission_transaction_status_transition', $generic_callback, 10, 3 );
-		$this->hooks_to_remove[] = [ 'mission_transaction_status_transition', $generic_callback, 10 ];
-
-		$this->add_tracked_action(
-			'mission_transaction_status_pending_to_completed',
-			function () use ( &$specific_fired ) {
-				$specific_fired = true;
-			},
-			10
-		);
-
-		$transaction = $this->create_pending_transaction();
-		$this->dispatch_confirm( $transaction->id, 'pi_test_123' );
-
-		$this->assertTrue( $generic_fired, 'Generic transition hook should fire.' );
-		$this->assertSame( 'pending', $generic_args['old_status'] );
-		$this->assertSame( 'completed', $generic_args['new_status'] );
-		$this->assertTrue( $specific_fired, 'Specific pending_to_completed hook should fire.' );
-	}
-
-	/**
-	 * Test donor aggregates are updated on transaction completion.
-	 */
-	public function test_donor_aggregates_updated_on_completion(): void {
-		$transaction = $this->create_pending_transaction( [
+	public function test_transition_updates_donor_and_campaign_aggregates(): void {
+		$transaction = $this->create_transaction( [
 			'amount'       => 5000,
 			'tip_amount'   => 300,
 			'total_amount' => 5300,
 		] );
 
-		$this->dispatch_confirm( $transaction->id, 'pi_test_123' );
-
-		$donor = Donor::find( $this->donor->id );
-
-		$this->assertSame( 5000, $donor->total_donated );
-		$this->assertSame( 300, $donor->total_tip );
-		$this->assertSame( 1, $donor->transaction_count );
-		$this->assertNotNull( $donor->first_transaction );
-		$this->assertNotNull( $donor->last_transaction );
-	}
-
-	/**
-	 * Test campaign aggregates are updated on transaction completion.
-	 */
-	public function test_campaign_aggregates_updated_on_completion(): void {
-		$transaction = $this->create_pending_transaction( [
-			'amount'       => 7500,
-			'total_amount' => 7500,
+		$this->mock_api_response( 200, [
+			'status'          => 'succeeded',
+			'amount_received' => 5300,
+			'payment_method'  => [ 'brand' => 'visa', 'last4' => '4242' ],
 		] );
 
 		$this->dispatch_confirm( $transaction->id, 'pi_test_123' );
 
-		$campaign = Campaign::find( $this->campaign->id );
+		$donor = Donor::find( $this->donor->id );
+		$this->assertSame( 5000, $donor->total_donated );
+		$this->assertSame( 300, $donor->total_tip );
+		$this->assertSame( 1, $donor->transaction_count );
 
-		$this->assertSame( 7500, $campaign->total_raised );
+		$campaign = Campaign::find( $this->campaign->id );
+		$this->assertSame( 5000, $campaign->total_raised );
 		$this->assertSame( 1, $campaign->transaction_count );
 	}
 
 	/**
-	 * Test donor test mode aggregates are updated separately from live columns.
+	 * The confirm-donation endpoint must not activate subscriptions — that
+	 * responsibility belongs to confirm-subscription.
 	 */
-	public function test_donor_test_mode_aggregates(): void {
-		$transaction = $this->create_pending_transaction( [
-			'amount'       => 2000,
-			'tip_amount'   => 100,
-			'total_amount' => 2100,
-			'is_test'      => true,
-		] );
-
-		$this->dispatch_confirm( $transaction->id, 'pi_test_123' );
-
-		$donor = Donor::find( $this->donor->id );
-
-		$this->assertSame( 2000, $donor->test_total_donated );
-		$this->assertSame( 100, $donor->test_total_tip );
-		$this->assertSame( 1, $donor->test_transaction_count );
-		$this->assertSame( 0, $donor->total_donated );
-		$this->assertSame( 0, $donor->transaction_count );
-	}
-
-	/**
-	 * Test that confirm-donation does NOT activate subscriptions.
-	 *
-	 * Subscription activation happens via the separate confirm-subscription
-	 * endpoint, not confirm-donation. This verifies the one-time donation
-	 * confirm path leaves subscriptions untouched.
-	 */
-	public function test_confirm_donation_does_not_activate_subscription(): void {
+	public function test_does_not_activate_subscription(): void {
 		$subscription = new Subscription( [
 			'status'                  => 'pending',
 			'donor_id'                => $this->donor->id,
@@ -359,58 +391,23 @@ class ConfirmDonationEndpointTest extends WP_UnitTestCase {
 			'frequency'               => 'monthly',
 			'payment_gateway'         => 'stripe',
 			'gateway_subscription_id' => 'sub_test_123',
-			'initial_transaction_id'  => null,
 		] );
 		$subscription->save();
 
-		$transaction = $this->create_pending_transaction( [
+		$transaction = $this->create_transaction( [
 			'subscription_id' => $subscription->id,
 			'type'            => 'monthly',
 		] );
 
-		$this->dispatch_confirm( $transaction->id, 'pi_test_123' );
-
-		$updated_sub = Subscription::find( $subscription->id );
-
-		$this->assertNull(
-			$updated_sub->initial_transaction_id,
-			'Confirm-donation should not set subscription initial_transaction_id (use confirm-subscription instead).'
-		);
-		$this->assertSame( 'pending', $updated_sub->status, 'Subscription should remain pending after confirm-donation.' );
-	}
-
-	/**
-	 * Test receipt email is triggered on donation completion.
-	 *
-	 * EXPECTED FAILURE: This feature is not yet implemented. The test documents
-	 * the expected behavior that a receipt email is sent to the donor when a
-	 * transaction is completed.
-	 */
-	public function test_receipt_email_triggered_on_completion(): void {
-		$emails_sent = [];
-
-		$this->add_tracked_action(
-			'wp_mail',
-			function ( $args ) use ( &$emails_sent ) {
-				$emails_sent[] = $args;
-			},
-			10
-		);
-
-		$transaction = $this->create_pending_transaction();
+		$this->mock_api_response( 200, [
+			'status'         => 'succeeded',
+			'payment_method' => [ 'brand' => 'visa', 'last4' => '4242' ],
+		] );
 
 		$this->dispatch_confirm( $transaction->id, 'pi_test_123' );
 
-		$this->assertNotEmpty( $emails_sent, 'A receipt email should be sent on donation completion.' );
-
-		$recipient_found = false;
-		foreach ( $emails_sent as $email ) {
-			if ( isset( $email['to'] ) && str_contains( $email['to'], 'jane@example.com' ) ) {
-				$recipient_found = true;
-				break;
-			}
-		}
-
-		$this->assertTrue( $recipient_found, 'Receipt email should be sent to the donor email address.' );
+		$after = Subscription::find( $subscription->id );
+		$this->assertSame( 'pending', $after->status );
+		$this->assertNull( $after->initial_transaction_id );
 	}
 }

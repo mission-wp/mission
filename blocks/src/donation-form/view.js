@@ -735,7 +735,12 @@ store( 'mission/donation-form', {
           return;
         }
 
-        // Step 4: Confirm the donation/subscription — transition pending → completed.
+        // Step 4: Confirm the donation. The server verifies PaymentIntent
+        // status with Stripe and transitions the transaction synchronously
+        // in the common case. If the server returns 202 (still processing),
+        // the webhook will complete the transaction asynchronously — we
+        // show the success UI either way because Stripe.js has already
+        // confirmed the payment client-side.
         const confirmEndpoint = isRecurring
           ? 'donations/confirm-subscription'
           : 'donations/confirm';
@@ -760,12 +765,14 @@ store( 'mission/donation-form', {
           }
         );
 
-        const confirmData = yield confirmResponse.json();
-
-        if ( ! confirmResponse.ok || ! confirmData.success ) {
-          // Payment succeeded but recording failed — don't show error to donor.
+        if ( ! confirmResponse.ok && confirmResponse.status !== 202 ) {
+          // 402/4xx/5xx — log but proceed to success UI. Stripe.js already
+          // confirmed payment, so the donor's card is charged regardless.
           // eslint-disable-next-line no-console
-          console.error( 'Mission: Failed to confirm donation', confirmData );
+          console.error(
+            'MissionWP: Unexpected confirm response',
+            confirmResponse.status
+          );
         }
 
         // Step 5: Handle confirmation — redirect or show success state.
@@ -1021,7 +1028,7 @@ store( 'mission/donation-form', {
 
       if ( ! configData.connected_account_id ) {
         ctx.paymentError =
-          'Payment processing is not available. The site owner needs to reconnect Stripe in the Mission settings.';
+          'Payment processing is not available. The site owner needs to reconnect Stripe in the MissionWP settings.';
         return;
       }
 

@@ -2,8 +2,10 @@
 /**
  * Handler for payment_intent.succeeded webhook events.
  *
- * Stores the card brand and last 4 digits on the transaction (and subscription
- * if applicable) so "Visa ending in 4242" can be displayed instead of "Stripe".
+ * Owns the authoritative transition of pending donation transactions to
+ * completed once Stripe confirms payment. Also activates the associated
+ * subscription for initial subscription payments, and stores card metadata
+ * (brand, last 4) for display in the admin and donor dashboard.
  *
  * @package Mission
  */
@@ -33,15 +35,8 @@ class PaymentIntentSucceededHandler {
 			return;
 		}
 
-		$payment_method = $data['payment_method'] ?? [];
-		$brand          = $payment_method['brand'] ?? '';
-		$last4          = $payment_method['last4'] ?? '';
-
-		if ( ! $brand && ! $last4 ) {
-			return;
-		}
-
-		// Find the transaction by gateway_transaction_id.
+		// Find the transaction created by the corresponding create-payment-intent
+		// or create-subscription request.
 		$transactions = Transaction::query(
 			[
 				'gateway_transaction_id' => $payment_intent_id,
@@ -55,7 +50,32 @@ class PaymentIntentSucceededHandler {
 
 		$transaction = $transactions[0];
 
-		// Store card details on the transaction.
+		// Complete the transaction if still pending. Idempotent — webhook may
+		// be redelivered; subsequent deliveries see a non-pending status and
+		// skip the transition. `save()` fires the status transition hooks
+		// that update donor/campaign aggregates and send receipt emails.
+		if ( 'pending' === $transaction->status ) {
+			$transaction->status         = 'completed';
+			$transaction->date_completed = current_time( 'mysql', true );
+			$transaction->save();
+		}
+
+		// Activate the subscription if this was the initial payment for one.
+		if ( $transaction->subscription_id ) {
+			$subscription = Subscription::find( $transaction->subscription_id );
+
+			if ( $subscription && 'pending' === $subscription->status ) {
+				$subscription->activate( $transaction->id );
+			}
+		}
+
+		// Store card metadata on the transaction and (if applicable) on the
+		// subscription so the donor dashboard can display "Visa ending in 4242"
+		// rather than "Stripe".
+		$payment_method = $data['payment_method'] ?? [];
+		$brand          = $payment_method['brand'] ?? '';
+		$last4          = $payment_method['last4'] ?? '';
+
 		if ( $brand ) {
 			$transaction->update_meta( 'payment_method_brand', $brand );
 		}
@@ -63,10 +83,8 @@ class PaymentIntentSucceededHandler {
 			$transaction->update_meta( 'payment_method_last4', $last4 );
 		}
 
-		// If this transaction belongs to a subscription, store card details there
-		// too so the donor dashboard can display the payment method on load.
-		if ( $transaction->subscription_id ) {
-			$subscription = Subscription::find( $transaction->subscription_id );
+		if ( $transaction->subscription_id && ( $brand || $last4 ) ) {
+			$subscription = $subscription ?? Subscription::find( $transaction->subscription_id );
 
 			if ( $subscription ) {
 				if ( $brand ) {
