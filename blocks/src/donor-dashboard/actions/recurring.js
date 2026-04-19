@@ -812,7 +812,7 @@ export const recurringActions = {
       }
     } catch ( err ) {
       // eslint-disable-next-line no-console -- Debugging aid.
-      console.error( '[Mission] openUpdatePayment error:', err );
+      console.error( '[MissionWP] openUpdatePayment error:', err );
       sub.updatePaymentError = 'Something went wrong. Please try again.';
     }
   },

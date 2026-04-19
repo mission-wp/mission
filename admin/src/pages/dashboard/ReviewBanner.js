@@ -73,7 +73,7 @@ export default function ReviewBanner( { totalRaised } ) {
         type="button"
         className="mission-review-banner__close"
         onClick={ dismiss }
-        title={ __( 'Dismiss', 'mission' ) }
+        title={ __( 'Dismiss', 'missionwp-donation-platform' ) }
       >
         <svg
           width="14"
@@ -90,23 +90,26 @@ export default function ReviewBanner( { totalRaised } ) {
 
       <div className="mission-review-banner__top">
         <h2 className="mission-review-banner__title">
-          { __( 'Enjoying Mission?', 'mission' ) }
+          { __( 'Enjoying MissionWP?', 'missionwp-donation-platform' ) }
         </h2>
         { state === 'default' && (
           <p className="mission-review-banner__desc">
-            { __( 'Congratulations on raising over', 'mission' ) }{ ' ' }
+            { __(
+              'Congratulations on raising over',
+              'missionwp-donation-platform'
+            ) }{ ' ' }
             <strong>{ formattedAmount }</strong>{ ' ' }
             { __(
-              'with Mission! How would you rate your experience?',
-              'mission'
+              'with MissionWP! How would you rate your experience?',
+              'missionwp-donation-platform'
             ) }
           </p>
         ) }
         { state === 'thankyou' && (
           <p className="mission-review-banner__thankyou">
             { __(
-              "Thank you for your feedback! We'll use it to make Mission better.",
-              'mission'
+              "Thank you for your feedback! We'll use it to make MissionWP better.",
+              'missionwp-donation-platform'
             ) }
           </p>
         ) }
@@ -138,7 +141,7 @@ export default function ReviewBanner( { totalRaised } ) {
             className="mission-review-banner__dismiss-text"
             onClick={ dismiss }
           >
-            { __( 'Dismiss', 'mission' ) }
+            { __( 'Dismiss', 'missionwp-donation-platform' ) }
           </button>
         </div>
       ) }

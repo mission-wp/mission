@@ -34,11 +34,11 @@ const RecurringIcon = () => (
 );
 
 const STATUS_LABELS = {
-  active: __( 'Active', 'mission' ),
-  pending: __( 'Pending', 'mission' ),
-  paused: __( 'Paused', 'mission' ),
-  cancelled: __( 'Cancelled', 'mission' ),
-  past_due: __( 'Past Due', 'mission' ),
+  active: __( 'Active', 'missionwp-donation-platform' ),
+  pending: __( 'Pending', 'missionwp-donation-platform' ),
+  paused: __( 'Paused', 'missionwp-donation-platform' ),
+  cancelled: __( 'Cancelled', 'missionwp-donation-platform' ),
+  past_due: __( 'Past Due', 'missionwp-donation-platform' ),
 };
 
 const FREQUENCY_SUFFIXES = {
@@ -147,7 +147,7 @@ function buildFields() {
   return [
     {
       id: 'subscription',
-      label: __( 'Subscription', 'mission' ),
+      label: __( 'Subscription', 'missionwp-donation-platform' ),
       enableSorting: false,
       enableHiding: false,
       render: ( { item } ) => {
@@ -194,7 +194,7 @@ function buildFields() {
     },
     {
       id: 'amount',
-      label: __( 'Amount', 'mission' ),
+      label: __( 'Amount', 'missionwp-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -210,7 +210,7 @@ function buildFields() {
     },
     {
       id: 'campaign_title',
-      label: __( 'Campaign', 'mission' ),
+      label: __( 'Campaign', 'missionwp-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -223,7 +223,7 @@ function buildFields() {
     },
     {
       id: 'date_created',
-      label: __( 'Started', 'mission' ),
+      label: __( 'Started', 'missionwp-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -236,7 +236,7 @@ function buildFields() {
     },
     {
       id: 'date_next_renewal',
-      label: __( 'Next Renewal', 'mission' ),
+      label: __( 'Next Renewal', 'missionwp-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -251,7 +251,7 @@ function buildFields() {
     },
     {
       id: 'status',
-      label: __( 'Status', 'mission' ),
+      label: __( 'Status', 'missionwp-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -262,11 +262,26 @@ function buildFields() {
           </span>
         ),
       elements: [
-        { value: 'active', label: __( 'Active', 'mission' ) },
-        { value: 'pending', label: __( 'Pending', 'mission' ) },
-        { value: 'paused', label: __( 'Paused', 'mission' ) },
-        { value: 'cancelled', label: __( 'Cancelled', 'mission' ) },
-        { value: 'past_due', label: __( 'Past Due', 'mission' ) },
+        {
+          value: 'active',
+          label: __( 'Active', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'pending',
+          label: __( 'Pending', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'paused',
+          label: __( 'Paused', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'cancelled',
+          label: __( 'Cancelled', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'past_due',
+          label: __( 'Past Due', 'missionwp-donation-platform' ),
+        },
       ],
       filterBy: {
         operators: [ 'is' ],
@@ -369,7 +384,7 @@ export default function SubscriptionList() {
   const mrrDelta = summary
     ? {
         ...getDelta( summary.mrr, summary.previous_mrr ),
-        label: __( 'vs last month', 'mission' ),
+        label: __( 'vs last month', 'missionwp-donation-platform' ),
       }
     : null;
 
@@ -381,36 +396,50 @@ export default function SubscriptionList() {
       <div className="mission-admin-page">
         <VStack spacing={ 6 }>
           <VStack spacing={ 1 }>
-            <Heading level={ 1 }>{ __( 'Subscriptions', 'mission' ) }</Heading>
+            <Heading level={ 1 }>
+              { __( 'Subscriptions', 'missionwp-donation-platform' ) }
+            </Heading>
             <Text variant="muted">
-              { __( 'Manage recurring donations.', 'mission' ) }
+              { __(
+                'Manage recurring donations.',
+                'missionwp-donation-platform'
+              ) }
             </Text>
           </VStack>
 
           <div className="mission-stats-row mission-stats-row--4">
             <StatCard
-              label={ __( 'Monthly Recurring', 'mission' ) }
+              label={ __( 'Monthly Recurring', 'missionwp-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
             <StatCard
-              label={ __( 'Active Subscriptions', 'mission' ) }
+              label={ __(
+                'Active Subscriptions',
+                'missionwp-donation-platform'
+              ) }
               value="0"
             />
             <StatCard
-              label={ __( 'Avg. Subscription', 'mission' ) }
+              label={ __( 'Avg. Subscription', 'missionwp-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
-            <StatCard label={ __( 'Churned', 'mission' ) } value="0" />
+            <StatCard
+              label={ __( 'Churned', 'missionwp-donation-platform' ) }
+              value="0"
+            />
           </div>
 
           <Card>
             <CardBody>
               <EmptyState
                 icon={ <RecurringIcon /> }
-                text={ __( 'No subscriptions yet', 'mission' ) }
+                text={ __(
+                  'No subscriptions yet',
+                  'missionwp-donation-platform'
+                ) }
                 hint={ __(
                   'Recurring donations will appear here once donors subscribe.',
-                  'mission'
+                  'missionwp-donation-platform'
                 ) }
               />
             </CardBody>
@@ -424,46 +453,54 @@ export default function SubscriptionList() {
     <div className="mission-admin-page">
       <VStack spacing={ 6 }>
         <VStack spacing={ 1 }>
-          <Heading level={ 1 }>{ __( 'Subscriptions', 'mission' ) }</Heading>
+          <Heading level={ 1 }>
+            { __( 'Subscriptions', 'missionwp-donation-platform' ) }
+          </Heading>
           <Text variant="muted">
-            { __( 'Manage recurring donations.', 'mission' ) }
+            { __(
+              'Manage recurring donations.',
+              'missionwp-donation-platform'
+            ) }
           </Text>
         </VStack>
 
         <div className="mission-stats-row mission-stats-row--4">
           <StatCard
-            label={ __( 'Monthly Recurring', 'mission' ) }
+            label={ __( 'Monthly Recurring', 'missionwp-donation-platform' ) }
             value={ summary ? formatAmount( summary.mrr ) : '' }
             delta={ mrrDelta }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Active Subscriptions', 'mission' ) }
+            label={ __(
+              'Active Subscriptions',
+              'missionwp-donation-platform'
+            ) }
             value={ summary ? String( summary.active ) : '' }
             subtitle={
               summary
                 ? `${ summary.new_this_month } ${ __(
                     'new this month',
-                    'mission'
+                    'missionwp-donation-platform'
                   ) }`
                 : ''
             }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Avg. Subscription', 'mission' ) }
+            label={ __( 'Avg. Subscription', 'missionwp-donation-platform' ) }
             value={ summary ? formatAmount( summary.average_monthly ) : '' }
-            subtitle={ __( 'Per month', 'mission' ) }
+            subtitle={ __( 'Per month', 'missionwp-donation-platform' ) }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Churned', 'mission' ) }
+            label={ __( 'Churned', 'missionwp-donation-platform' ) }
             value={ summary ? String( summary.churned ) : '' }
             subtitle={
               summary
                 ? `${ formatAmount( summary.churned_mrr ) }${ __(
                     '/mo lost',
-                    'mission'
+                    'missionwp-donation-platform'
                   ) }`
                 : ''
             }

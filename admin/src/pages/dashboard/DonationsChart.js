@@ -213,9 +213,12 @@ function drawChart( canvas, data, currencySymbol, hoverIndex ) {
 }
 
 const EMPTY_HINTS = {
-  today: __( 'No donations have come in today.', 'mission' ),
-  week: __( 'No donations this week.', 'mission' ),
-  month: __( 'No donations this month.', 'mission' ),
+  today: __(
+    'No donations have come in today.',
+    'missionwp-donation-platform'
+  ),
+  week: __( 'No donations this week.', 'missionwp-donation-platform' ),
+  month: __( 'No donations this month.', 'missionwp-donation-platform' ),
 };
 
 export default function DonationsChart( {
@@ -311,7 +314,7 @@ export default function DonationsChart( {
   return (
     <div className="mission-dashboard-card">
       <div className="mission-dashboard-card__header">
-        <h2>{ __( 'Donations Over Time', 'mission' ) }</h2>
+        <h2>{ __( 'Donations Over Time', 'missionwp-donation-platform' ) }</h2>
         <span className="mission-dashboard-card__badge">{ periodLabel }</span>
       </div>
 
@@ -331,12 +334,12 @@ export default function DonationsChart( {
       { ! isLoading && ! hasData && (
         <EmptyState
           icon={ <ChartLineIcon /> }
-          text={ __( 'No donations yet', 'mission' ) }
+          text={ __( 'No donations yet', 'missionwp-donation-platform' ) }
           hint={
             EMPTY_HINTS[ period ] ||
             __(
               'Donation trends will appear here once you receive your first gift.',
-              'mission'
+              'missionwp-donation-platform'
             )
           }
         />

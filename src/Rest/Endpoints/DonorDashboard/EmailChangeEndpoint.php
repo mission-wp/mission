@@ -113,7 +113,7 @@ class EmailChangeEndpoint {
 		if ( $new_email === $donor->email ) {
 			return new WP_Error(
 				'email_unchanged',
-				__( 'That is already your email address.', 'mission' ),
+				__( 'That is already your email address.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -123,7 +123,7 @@ class EmailChangeEndpoint {
 		if ( $existing_donor && $existing_donor->id !== $donor->id ) {
 			return new WP_Error(
 				'email_taken',
-				__( 'This email is already associated with another account.', 'mission' ),
+				__( 'This email is already associated with another account.', 'missionwp-donation-platform' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -133,7 +133,7 @@ class EmailChangeEndpoint {
 		if ( $existing_user_id && $existing_user_id !== $donor->user_id ) {
 			return new WP_Error(
 				'email_taken',
-				__( 'This email is already in use.', 'mission' ),
+				__( 'This email is already in use.', 'missionwp-donation-platform' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -164,17 +164,17 @@ class EmailChangeEndpoint {
 		$email_module = \Mission\Plugin::instance()->get_email_module();
 
 		if ( ! $email_module->is_email_enabled( 'email_change_verification' ) ) {
-			return new \WP_REST_Response( [ 'message' => __( 'Email change verification is disabled.', 'mission' ) ], 200 );
+			return new \WP_REST_Response( [ 'message' => __( 'Email change verification is disabled.', 'missionwp-donation-platform' ) ], 200 );
 		}
 
-		$subject = __( 'Verify your new email address', 'mission' );
+		$subject = __( 'Verify your new email address', 'missionwp-donation-platform' );
 
 		$custom_subject = $email_module->get_custom_subject( 'email_change_verification' );
 		if ( $custom_subject ) {
 			$subject = $email_module->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission' ),
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
 					'{new_email}'    => $new_email,
 					'{organization}' => ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
 				]
@@ -203,7 +203,7 @@ class EmailChangeEndpoint {
 		return new WP_REST_Response(
 			[
 				'pending_email' => $new_email,
-				'message'       => __( 'Verification email sent. Check your inbox.', 'mission' ),
+				'message'       => __( 'Verification email sent. Check your inbox.', 'missionwp-donation-platform' ),
 			]
 		);
 	}
@@ -229,7 +229,7 @@ class EmailChangeEndpoint {
 		if ( ! $donor ) {
 			return new WP_Error(
 				'invalid_request',
-				__( 'This verification link is invalid or has expired.', 'mission' ),
+				__( 'This verification link is invalid or has expired.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -241,7 +241,7 @@ class EmailChangeEndpoint {
 		if ( ! $stored_hash || ! $expires ) {
 			return new WP_Error(
 				'invalid_request',
-				__( 'This verification link is invalid or has expired.', 'mission' ),
+				__( 'This verification link is invalid or has expired.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -250,7 +250,7 @@ class EmailChangeEndpoint {
 			$this->cleanup_pending_meta( $donor );
 			return new WP_Error(
 				'token_expired',
-				__( 'This verification link has expired. Please request a new one.', 'mission' ),
+				__( 'This verification link has expired. Please request a new one.', 'missionwp-donation-platform' ),
 				[ 'status' => 410 ]
 			);
 		}
@@ -258,7 +258,7 @@ class EmailChangeEndpoint {
 		if ( ! wp_check_password( $token, $stored_hash ) ) {
 			return new WP_Error(
 				'invalid_token',
-				__( 'This verification link is invalid or has expired.', 'mission' ),
+				__( 'This verification link is invalid or has expired.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -267,7 +267,7 @@ class EmailChangeEndpoint {
 		if ( ! $new_email ) {
 			return new WP_Error(
 				'invalid_request',
-				__( 'No pending email change found.', 'mission' ),
+				__( 'No pending email change found.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -278,7 +278,7 @@ class EmailChangeEndpoint {
 			$this->cleanup_pending_meta( $donor );
 			return new WP_Error(
 				'email_taken',
-				__( 'This email is already associated with another account.', 'mission' ),
+				__( 'This email is already associated with another account.', 'missionwp-donation-platform' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -288,7 +288,7 @@ class EmailChangeEndpoint {
 			$this->cleanup_pending_meta( $donor );
 			return new WP_Error(
 				'email_taken',
-				__( 'This email is already in use.', 'mission' ),
+				__( 'This email is already in use.', 'missionwp-donation-platform' ),
 				[ 'status' => 409 ]
 			);
 		}
@@ -312,7 +312,7 @@ class EmailChangeEndpoint {
 		return new WP_REST_Response(
 			[
 				'email'   => $new_email,
-				'message' => __( 'Email address updated successfully.', 'mission' ),
+				'message' => __( 'Email address updated successfully.', 'missionwp-donation-platform' ),
 			]
 		);
 	}
@@ -330,7 +330,7 @@ class EmailChangeEndpoint {
 
 		$this->cleanup_pending_meta( $donor );
 
-		return new WP_REST_Response( [ 'message' => __( 'Email change cancelled.', 'mission' ) ] );
+		return new WP_REST_Response( [ 'message' => __( 'Email change cancelled.', 'missionwp-donation-platform' ) ] );
 	}
 
 	/**

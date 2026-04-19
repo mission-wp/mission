@@ -85,7 +85,8 @@ class AdminModule {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
 		add_action( 'admin_bar_menu', [ $this, 'add_test_mode_indicator' ], 999 );
-		add_action( 'admin_head', [ $this, 'test_mode_admin_bar_css' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_test_mode_admin_bar_css' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_test_mode_admin_bar_css' ] );
 		add_action( 'load-edit.php', [ $this, 'redirect_campaign_list' ] );
 		add_filter( 'parent_file', [ $this, 'set_campaign_parent_menu' ] );
 		add_filter( 'submenu_file', [ $this, 'set_campaign_submenu_file' ] );
@@ -110,7 +111,7 @@ class AdminModule {
 		wp_enqueue_media();
 
 		// Enqueue code editor (CodeMirror) for the email template HTML editor.
-		if ( 'mission_page_mission-settings' === $screen->id ) {
+		if ( 'missionwp_page_mission-settings' === $screen->id ) {
 			$code_editor_settings = wp_enqueue_code_editor( [ 'type' => 'text/html' ] );
 
 			if ( false !== $code_editor_settings ) {
@@ -194,7 +195,7 @@ class AdminModule {
 	 * @param \WP_Screen $screen The current admin screen.
 	 */
 	private function maybe_enqueue_block_editor( \WP_Screen $screen ): void {
-		if ( 'mission_page_mission-campaigns' !== $screen->id ) {
+		if ( 'missionwp_page_mission-campaigns' !== $screen->id ) {
 			return;
 		}
 
@@ -236,7 +237,7 @@ class AdminModule {
 			'( function() {' .
 				'var c = wp.blocks.getCategories();' .
 				'if ( ! c.some( function( cat ) { return cat.slug === "mission"; } ) ) {' .
-					'wp.blocks.setCategories( [ { slug: "mission", title: "Mission" } ].concat( c ) );' .
+					'wp.blocks.setCategories( [ { slug: "mission", title: "MissionWP" } ].concat( c ) );' .
 				'}' .
 			'} )();',
 			'after'
@@ -262,12 +263,12 @@ class AdminModule {
 	private function is_mission_screen( string $screen_id ): bool {
 		$mission_screens = [
 			'toplevel_page_mission',
-			'mission_page_mission-campaigns',
-			'mission_page_mission-transactions',
-			'mission_page_mission-donors',
-			'mission_page_mission-subscriptions',
-			'mission_page_mission-settings',
-			'mission_page_mission-tools',
+			'missionwp_page_mission-campaigns',
+			'missionwp_page_mission-transactions',
+			'missionwp_page_mission-donors',
+			'missionwp_page_mission-subscriptions',
+			'missionwp_page_mission-settings',
+			'missionwp_page_mission-tools',
 			'mission_campaign',
 		];
 
@@ -283,8 +284,8 @@ class AdminModule {
 		$icon_url = $this->get_menu_icon_url();
 
 		add_menu_page(
-			__( 'Mission', 'mission' ),
-			__( 'Mission', 'mission' ),
+			__( 'MissionWP', 'missionwp-donation-platform' ),
+			__( 'MissionWP', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this->pages['dashboard'], 'render' ],
@@ -294,8 +295,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Dashboard', 'mission' ),
-			__( 'Dashboard', 'mission' ),
+			__( 'Dashboard', 'missionwp-donation-platform' ),
+			__( 'Dashboard', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this->pages['dashboard'], 'render' ]
@@ -303,8 +304,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Campaigns', 'mission' ),
-			__( 'Campaigns', 'mission' ),
+			__( 'Campaigns', 'missionwp-donation-platform' ),
+			__( 'Campaigns', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::CAMPAIGNS_SLUG,
 			[ $this->pages['campaigns'], 'render' ]
@@ -312,8 +313,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Transactions', 'mission' ),
-			__( 'Transactions', 'mission' ),
+			__( 'Transactions', 'missionwp-donation-platform' ),
+			__( 'Transactions', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::TRANSACTIONS_SLUG,
 			[ $this->pages['transactions'], 'render' ]
@@ -321,8 +322,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Donors', 'mission' ),
-			__( 'Donors', 'mission' ),
+			__( 'Donors', 'missionwp-donation-platform' ),
+			__( 'Donors', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::DONORS_SLUG,
 			[ $this->pages['donors'], 'render' ]
@@ -330,8 +331,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Subscriptions', 'mission' ),
-			__( 'Subscriptions', 'mission' ),
+			__( 'Subscriptions', 'missionwp-donation-platform' ),
+			__( 'Subscriptions', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::SUBSCRIPTIONS_SLUG,
 			[ $this->pages['subscriptions'], 'render' ]
@@ -339,8 +340,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Settings', 'mission' ),
-			__( 'Settings', 'mission' ),
+			__( 'Settings', 'missionwp-donation-platform' ),
+			__( 'Settings', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::SETTINGS_SLUG,
 			[ $this->pages['settings'], 'render' ]
@@ -348,8 +349,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Tools', 'mission' ),
-			__( 'Tools', 'mission' ),
+			__( 'Tools', 'missionwp-donation-platform' ),
+			__( 'Tools', 'missionwp-donation-platform' ),
 			'manage_options',
 			self::TOOLS_SLUG,
 			[ $this->pages['tools'], 'render' ]
@@ -367,7 +368,7 @@ class AdminModule {
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
 			admin_url( 'admin.php?page=' . self::SETTINGS_SLUG ),
-			__( 'Settings', 'mission' )
+			__( 'Settings', 'missionwp-donation-platform' )
 		);
 
 		return [ 'settings' => $settings_link ] + $links;
@@ -436,7 +437,7 @@ class AdminModule {
 			[
 				'id'     => 'mission-test-mode',
 				'parent' => 'top-secondary',
-				'title'  => __( 'Mission Test Mode Active', 'mission' ),
+				'title'  => __( 'MissionWP Test Mode Active', 'missionwp-donation-platform' ),
 				'href'   => admin_url( 'admin.php?page=mission-settings' ),
 				'meta'   => [
 					'class' => 'mission-test-mode-indicator' . ( $is_test ? '' : ' hidden' ),
@@ -446,27 +447,20 @@ class AdminModule {
 	}
 
 	/**
-	 * Output CSS for the test mode admin bar indicator.
+	 * Attach inline CSS for the test mode admin bar indicator to the core admin-bar stylesheet.
 	 *
 	 * @return void
 	 */
-	public function test_mode_admin_bar_css(): void {
-		?>
-		<style>
-			#wpadminbar .mission-test-mode-indicator .ab-item {
-				background: #d63638 !important;
-				color: #fff !important;
-				font-weight: 600;
-			}
-			#wpadminbar .mission-test-mode-indicator:hover .ab-item {
-				background: #b32d2e !important;
-				color: #fff !important;
-			}
-			#wpadminbar .mission-test-mode-indicator.hidden {
-				display: none;
-			}
-		</style>
-		<?php
+	public function enqueue_test_mode_admin_bar_css(): void {
+		if ( ! is_admin_bar_showing() ) {
+			return;
+		}
+
+		$css = '#wpadminbar .mission-test-mode-indicator .ab-item{background:#d63638!important;color:#fff!important;font-weight:600}'
+			. '#wpadminbar .mission-test-mode-indicator:hover .ab-item{background:#b32d2e!important;color:#fff!important}'
+			. '#wpadminbar .mission-test-mode-indicator.hidden{display:none}';
+
+		wp_add_inline_style( 'admin-bar', $css );
 	}
 
 	/**

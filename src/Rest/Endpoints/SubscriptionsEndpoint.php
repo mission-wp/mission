@@ -165,7 +165,7 @@ class SubscriptionsEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage subscriptions.', 'mission' ),
+				__( 'You do not have permission to manage subscriptions.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -216,7 +216,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription ) {
 			return new WP_Error(
 				'subscription_not_found',
-				__( 'Subscription not found.', 'mission' ),
+				__( 'Subscription not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -236,7 +236,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription ) {
 			return new WP_Error(
 				'subscription_not_found',
-				__( 'Subscription not found.', 'mission' ),
+				__( 'Subscription not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -244,7 +244,7 @@ class SubscriptionsEndpoint {
 		if ( ! in_array( $subscription->status, [ 'active', 'past_due', 'pending' ], true ) ) {
 			return new WP_Error(
 				'subscription_not_cancellable',
-				__( 'This subscription cannot be cancelled.', 'mission' ),
+				__( 'This subscription cannot be cancelled.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -254,7 +254,7 @@ class SubscriptionsEndpoint {
 		if ( ! $cancelled ) {
 			return new WP_Error(
 				'cancellation_failed',
-				__( 'Failed to cancel subscription on Stripe.', 'mission' ),
+				__( 'Failed to cancel subscription on Stripe.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -281,7 +281,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription ) {
 			return new WP_Error(
 				'subscription_not_found',
-				__( 'Subscription not found.', 'mission' ),
+				__( 'Subscription not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -289,7 +289,7 @@ class SubscriptionsEndpoint {
 		if ( 'active' !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_pausable',
-				__( 'Only active subscriptions can be paused.', 'mission' ),
+				__( 'Only active subscriptions can be paused.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -297,7 +297,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription->pause() ) {
 			return new WP_Error(
 				'pause_failed',
-				__( 'Failed to pause subscription on Stripe.', 'mission' ),
+				__( 'Failed to pause subscription on Stripe.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -324,7 +324,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription ) {
 			return new WP_Error(
 				'subscription_not_found',
-				__( 'Subscription not found.', 'mission' ),
+				__( 'Subscription not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -332,7 +332,7 @@ class SubscriptionsEndpoint {
 		if ( 'paused' !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_resumable',
-				__( 'Only paused subscriptions can be resumed.', 'mission' ),
+				__( 'Only paused subscriptions can be resumed.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -340,7 +340,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription->resume() ) {
 			return new WP_Error(
 				'resume_failed',
-				__( 'Failed to resume subscription on Stripe.', 'mission' ),
+				__( 'Failed to resume subscription on Stripe.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -367,7 +367,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription ) {
 			return new WP_Error(
 				'subscription_not_found',
-				__( 'Subscription not found.', 'mission' ),
+				__( 'Subscription not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}

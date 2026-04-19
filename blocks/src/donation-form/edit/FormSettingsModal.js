@@ -11,12 +11,21 @@ import AppearanceTab from './tabs/AppearanceTab';
 import CustomFieldsTab, { findEmptyLabelField } from './tabs/CustomFieldsTab';
 
 const TABS = [
-  { id: 'amounts', label: __( 'Amounts', 'mission' ) },
-  { id: 'donor', label: __( 'Donor Info', 'mission' ) },
-  { id: 'fees', label: __( 'Fees', 'mission' ) },
-  { id: 'custom-fields', label: __( 'Custom Fields', 'mission' ) },
-  { id: 'confirmation', label: __( 'Confirmation', 'mission' ) },
-  { id: 'appearance', label: __( 'Appearance', 'mission' ) },
+  { id: 'amounts', label: __( 'Amounts', 'missionwp-donation-platform' ) },
+  { id: 'donor', label: __( 'Donor Info', 'missionwp-donation-platform' ) },
+  { id: 'fees', label: __( 'Fees', 'missionwp-donation-platform' ) },
+  {
+    id: 'custom-fields',
+    label: __( 'Custom Fields', 'missionwp-donation-platform' ),
+  },
+  {
+    id: 'confirmation',
+    label: __( 'Confirmation', 'missionwp-donation-platform' ),
+  },
+  {
+    id: 'appearance',
+    label: __( 'Appearance', 'missionwp-donation-platform' ),
+  },
 ];
 
 /**
@@ -478,7 +487,7 @@ export default function FormSettingsModal( {
 
   return (
     <Modal
-      title={ __( 'Donation Form Settings', 'mission' ) }
+      title={ __( 'Donation Form Settings', 'missionwp-donation-platform' ) }
       onRequestClose={ onClose }
       className="mission-form-settings-modal"
       size="large"
@@ -531,7 +540,7 @@ export default function FormSettingsModal( {
         </div>
         <div className="mission-form-settings-modal__footer">
           <Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
-            { __( 'Cancel', 'mission' ) }
+            { __( 'Cancel', 'missionwp-donation-platform' ) }
           </Button>
           <Button
             variant="primary"
@@ -542,7 +551,7 @@ export default function FormSettingsModal( {
             } }
             __next40pxDefaultSize
           >
-            { __( 'Save', 'mission' ) }
+            { __( 'Save', 'missionwp-donation-platform' ) }
           </Button>
         </div>
       </div>

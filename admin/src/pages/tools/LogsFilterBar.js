@@ -45,9 +45,12 @@ export default function LogsFilterBar( {
 
   const countText =
     total === 1
-      ? __( '1 entry', 'mission' )
-      : // translators: %s: number of log entries.
-        sprintf( __( '%s entries', 'mission' ), total.toLocaleString() );
+      ? __( '1 entry', 'missionwp-donation-platform' )
+      : sprintf(
+          // translators: %s: number of log entries.
+          __( '%s entries', 'missionwp-donation-platform' ),
+          total.toLocaleString()
+        );
 
   return (
     <div className="mission-logs-filters">
@@ -81,7 +84,7 @@ export default function LogsFilterBar( {
           <input
             type="text"
             className="mission-logs-search__input"
-            placeholder={ __( 'Search logs…', 'mission' ) }
+            placeholder={ __( 'Search logs…', 'missionwp-donation-platform' ) }
             value={ searchValue }
             onChange={ ( e ) => setSearchValue( e.target.value ) }
           />
@@ -96,7 +99,7 @@ export default function LogsFilterBar( {
           onClick={ onClear }
           disabled={ isClearDisabled }
         >
-          { __( 'Clear logs', 'mission' ) }
+          { __( 'Clear logs', 'missionwp-donation-platform' ) }
         </button>
       </div>
     </div>

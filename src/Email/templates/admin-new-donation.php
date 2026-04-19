@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 ?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
-	<?php esc_html_e( 'New Donation Received', 'mission' ); ?>
+	<?php esc_html_e( 'New Donation Received', 'missionwp-donation-platform' ); ?>
 </h1>
 
 <p style="margin: 0 0 16px;">
@@ -21,7 +21,7 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 		printf(
 			wp_kses(
 				/* translators: 1: donor name (bold), 2: frequency (e.g. "monthly"), 3: formatted amount (bold) */
-				__( '<strong>%1$s</strong> started a %2$s recurring donation of <strong>%3$s</strong>.', 'mission' ),
+				__( '<strong>%1$s</strong> started a %2$s recurring donation of <strong>%3$s</strong>.', 'missionwp-donation-platform' ),
 				[ 'strong' => [] ]
 			),
 			esc_html( $data['donor_name'] ),
@@ -32,7 +32,7 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 		printf(
 			wp_kses(
 				/* translators: 1: donor name (bold), 2: formatted amount (bold) */
-				__( '<strong>%1$s</strong> donated <strong>%2$s</strong>.', 'mission' ),
+				__( '<strong>%1$s</strong> donated <strong>%2$s</strong>.', 'missionwp-donation-platform' ),
 				[ 'strong' => [] ]
 			),
 			esc_html( $data['donor_name'] ),
@@ -45,7 +45,7 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0; border: 1px solid #e5e7eb; border-radius: 8px;">
 	<tr>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600; width: 40%;">
-			<?php esc_html_e( 'Donor', 'mission' ); ?>
+			<?php esc_html_e( 'Donor', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
 			<?php echo esc_html( $data['donor_name'] ); ?>
@@ -56,7 +56,7 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 	</tr>
 	<tr>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
-			<?php esc_html_e( 'Amount', 'mission' ); ?>
+			<?php esc_html_e( 'Amount', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
 			<?php echo esc_html( $data['amount_formatted'] ); ?>
@@ -64,25 +64,25 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 	</tr>
 	<tr>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
-			<?php esc_html_e( 'Type', 'mission' ); ?>
+			<?php esc_html_e( 'Type', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
 			<?php
 			if ( $is_recurring ) {
 				printf(
 					/* translators: %s: frequency label (e.g. "Monthly") */
-					esc_html__( 'Recurring — %s', 'mission' ),
+					esc_html__( 'Recurring — %s', 'missionwp-donation-platform' ),
 					esc_html( $data['frequency_label'] ?? '' )
 				);
 			} else {
-				esc_html_e( 'One-time', 'mission' );
+				esc_html_e( 'One-time', 'missionwp-donation-platform' );
 			}
 			?>
 		</td>
 	</tr>
 	<tr>
 		<td style="padding: 12px 16px; <?php echo ! empty( $data['campaign_name'] ) ? 'border-bottom: 1px solid #e5e7eb; ' : ''; ?>font-weight: 600;">
-			<?php esc_html_e( 'Date', 'mission' ); ?>
+			<?php esc_html_e( 'Date', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; <?php echo ! empty( $data['campaign_name'] ) ? 'border-bottom: 1px solid #e5e7eb; ' : ''; ?>">
 			<?php echo esc_html( $data['date_formatted'] ); ?>
@@ -91,7 +91,7 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 	<?php if ( ! empty( $data['campaign_name'] ) ) : ?>
 		<tr>
 			<td style="padding: 12px 16px; font-weight: 600;">
-				<?php esc_html_e( 'Campaign', 'mission' ); ?>
+				<?php esc_html_e( 'Campaign', 'missionwp-donation-platform' ); ?>
 			</td>
 			<td style="padding: 12px 16px;">
 				<?php echo esc_html( $data['campaign_name'] ); ?>
@@ -103,7 +103,7 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 <?php if ( ! empty( $data['admin_url'] ) ) : ?>
 	<p style="margin: 20px 0 0;">
 		<a href="<?php echo esc_url( $data['admin_url'] ); ?>" style="display: inline-block; padding: 10px 20px; background-color: #2fa36b; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
-			<?php esc_html_e( 'View in Dashboard', 'mission' ); ?>
+			<?php esc_html_e( 'View in Dashboard', 'missionwp-donation-platform' ); ?>
 		</a>
 	</p>
 <?php endif; ?>

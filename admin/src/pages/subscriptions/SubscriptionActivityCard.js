@@ -13,18 +13,30 @@ const FREQ_SUFFIXES = {
 };
 
 const EVENT_LABELS = {
-  subscription_created: __( 'Subscription created', 'mission' ),
-  subscription_cancelled: __( 'Subscription cancelled', 'mission' ),
-  subscription_paused: __( 'Subscription paused', 'mission' ),
-  subscription_resumed: __( 'Subscription resumed', 'mission' ),
-  subscription_renewed: __( 'Payment received', 'mission' ),
+  subscription_created: __(
+    'Subscription created',
+    'missionwp-donation-platform'
+  ),
+  subscription_cancelled: __(
+    'Subscription cancelled',
+    'missionwp-donation-platform'
+  ),
+  subscription_paused: __(
+    'Subscription paused',
+    'missionwp-donation-platform'
+  ),
+  subscription_resumed: __(
+    'Subscription resumed',
+    'missionwp-donation-platform'
+  ),
+  subscription_renewed: __( 'Payment received', 'missionwp-donation-platform' ),
   subscription_payment_method_updated: __(
     'Payment method updated',
-    'mission'
+    'missionwp-donation-platform'
   ),
-  payment_completed: __( 'Payment completed', 'mission' ),
-  payment_failed: __( 'Payment failed', 'mission' ),
-  status_changed: __( 'Status changed', 'mission' ),
+  payment_completed: __( 'Payment completed', 'missionwp-donation-platform' ),
+  payment_failed: __( 'Payment failed', 'missionwp-donation-platform' ),
+  status_changed: __( 'Status changed', 'missionwp-donation-platform' ),
 };
 
 const DOT_CLASSES = {
@@ -62,7 +74,7 @@ function getEventLabel( entry ) {
     const to = formatAmount( entry.data.new_amount ) + suffix;
     return sprintf(
       /* translators: 1: old amount with frequency, 2: new amount with frequency */
-      __( 'Amount increased from %1$s to %2$s', 'mission' ),
+      __( 'Amount increased from %1$s to %2$s', 'missionwp-donation-platform' ),
       from,
       to
     );
@@ -74,7 +86,7 @@ function getEventLabel( entry ) {
     const to = formatAmount( entry.data.new_amount ) + suffix;
     return sprintf(
       /* translators: 1: old amount with frequency, 2: new amount with frequency */
-      __( 'Amount decreased from %1$s to %2$s', 'mission' ),
+      __( 'Amount decreased from %1$s to %2$s', 'missionwp-donation-platform' ),
       from,
       to
     );
@@ -98,7 +110,7 @@ function deriveFallbackEvents( subscription ) {
 
   if ( subscription.date_cancelled ) {
     events.push( {
-      title: __( 'Subscription cancelled', 'mission' ),
+      title: __( 'Subscription cancelled', 'missionwp-donation-platform' ),
       date: formatDateTime( subscription.date_cancelled ),
       dotClass: 'is-cancelled',
     } );
@@ -109,7 +121,7 @@ function deriveFallbackEvents( subscription ) {
   transactions.forEach( ( txn ) => {
     if ( txn.status === 'completed' && txn.date_completed ) {
       events.push( {
-        title: __( 'Payment completed', 'mission' ),
+        title: __( 'Payment completed', 'missionwp-donation-platform' ),
         date: formatDateTime( txn.date_completed ),
         dotClass: 'is-success',
       } );
@@ -117,7 +129,7 @@ function deriveFallbackEvents( subscription ) {
   } );
 
   events.push( {
-    title: __( 'Subscription created', 'mission' ),
+    title: __( 'Subscription created', 'missionwp-donation-platform' ),
     date: formatDateTime( subscription.date_created ),
     dotClass: 'is-success',
   } );
@@ -156,7 +168,9 @@ export default function SubscriptionActivityCard( { subscription } ) {
 
   return (
     <div className="mission-card" style={ { padding: 0 } }>
-      <h2 className="mission-card__heading">{ __( 'Activity', 'mission' ) }</h2>
+      <h2 className="mission-card__heading">
+        { __( 'Activity', 'missionwp-donation-platform' ) }
+      </h2>
       { isLoading ? (
         <div style={ { padding: '24px', textAlign: 'center' } }>
           <Spinner />

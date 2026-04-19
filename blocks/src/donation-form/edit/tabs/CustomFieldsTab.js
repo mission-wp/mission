@@ -3,12 +3,15 @@ import { useCallback, useMemo } from '@wordpress/element';
 import ToggleRow from '@shared/components/ToggleRow';
 
 const FIELD_TYPES = [
-  { value: 'text', label: __( 'Text', 'mission' ) },
-  { value: 'textarea', label: __( 'Textarea', 'mission' ) },
-  { value: 'checkbox', label: __( 'Checkbox', 'mission' ) },
-  { value: 'select', label: __( 'Select', 'mission' ) },
-  { value: 'multiselect', label: __( 'Multiselect', 'mission' ) },
-  { value: 'radio', label: __( 'Radio', 'mission' ) },
+  { value: 'text', label: __( 'Text', 'missionwp-donation-platform' ) },
+  { value: 'textarea', label: __( 'Textarea', 'missionwp-donation-platform' ) },
+  { value: 'checkbox', label: __( 'Checkbox', 'missionwp-donation-platform' ) },
+  { value: 'select', label: __( 'Select', 'missionwp-donation-platform' ) },
+  {
+    value: 'multiselect',
+    label: __( 'Multiselect', 'missionwp-donation-platform' ),
+  },
+  { value: 'radio', label: __( 'Radio', 'missionwp-donation-platform' ) },
 ];
 
 const TYPES_WITH_PLACEHOLDER = [ 'text', 'textarea' ];
@@ -126,7 +129,7 @@ function FieldCard( {
           </span>
           { field.required && (
             <span className="mission-custom-fields-tab__required-badge">
-              { __( 'Required', 'mission' ) }
+              { __( 'Required', 'missionwp-donation-platform' ) }
             </span>
           ) }
         </div>
@@ -140,7 +143,7 @@ function FieldCard( {
                 e.stopPropagation();
                 onMove( index, index - 1 );
               } }
-              aria-label={ __( 'Move up', 'mission' ) }
+              aria-label={ __( 'Move up', 'missionwp-donation-platform' ) }
             >
               &uarr;
             </button>
@@ -152,7 +155,7 @@ function FieldCard( {
                 e.stopPropagation();
                 onMove( index, index + 1 );
               } }
-              aria-label={ __( 'Move down', 'mission' ) }
+              aria-label={ __( 'Move down', 'missionwp-donation-platform' ) }
             >
               &darr;
             </button>
@@ -166,7 +169,7 @@ function FieldCard( {
           <div className="mission-field-group">
             { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
             <label className="mission-field-label">
-              { __( 'Label', 'mission' ) }
+              { __( 'Label', 'missionwp-donation-platform' ) }
             </label>
             <input
               type="text"
@@ -177,11 +180,14 @@ function FieldCard( {
               }` }
               value={ field.label }
               onChange={ ( e ) => updateProp( 'label', e.target.value ) }
-              placeholder={ __( 'Enter a label\u2026', 'mission' ) }
+              placeholder={ __(
+                'Enter a label\u2026',
+                'missionwp-donation-platform'
+              ) }
             />
             { showLabelError && hasEmptyLabel && (
               <p className="mission-custom-fields-tab__error-msg">
-                { __( 'A label is required.', 'mission' ) }
+                { __( 'A label is required.', 'missionwp-donation-platform' ) }
               </p>
             ) }
           </div>
@@ -189,7 +195,7 @@ function FieldCard( {
           <div className="mission-field-group">
             { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
             <label className="mission-field-label">
-              { __( 'Type', 'mission' ) }
+              { __( 'Type', 'missionwp-donation-platform' ) }
             </label>
             <select
               className="mission-field-select"
@@ -218,7 +224,7 @@ function FieldCard( {
           </div>
 
           <ToggleRow
-            label={ __( 'Required', 'mission' ) }
+            label={ __( 'Required', 'missionwp-donation-platform' ) }
             checked={ field.required }
             onChange={ ( val ) => updateProp( 'required', val ) }
           />
@@ -227,7 +233,7 @@ function FieldCard( {
             <div className="mission-field-group">
               { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
               <label className="mission-field-label">
-                { __( 'Placeholder', 'mission' ) }
+                { __( 'Placeholder', 'missionwp-donation-platform' ) }
               </label>
               <input
                 type="text"
@@ -244,7 +250,7 @@ function FieldCard( {
             <div className="mission-field-group">
               { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
               <label className="mission-field-label">
-                { __( 'Options', 'mission' ) }
+                { __( 'Options', 'missionwp-donation-platform' ) }
               </label>
               <div className="mission-custom-fields-tab__options">
                 { ( field.options || [] ).map( ( opt, optIdx ) => (
@@ -256,9 +262,10 @@ function FieldCard( {
                       type="text"
                       className="mission-field-input"
                       value={ opt }
-                      placeholder={ `${ __( 'Option', 'mission' ) } ${
-                        optIdx + 1
-                      }` }
+                      placeholder={ `${ __(
+                        'Option',
+                        'missionwp-donation-platform'
+                      ) } ${ optIdx + 1 }` }
                       onChange={ ( e ) =>
                         updateOption( optIdx, e.target.value )
                       }
@@ -267,7 +274,10 @@ function FieldCard( {
                       type="button"
                       className="mission-custom-fields-tab__option-remove"
                       onClick={ () => removeOption( optIdx ) }
-                      aria-label={ __( 'Remove option', 'mission' ) }
+                      aria-label={ __(
+                        'Remove option',
+                        'missionwp-donation-platform'
+                      ) }
                     >
                       &times;
                     </button>
@@ -278,7 +288,7 @@ function FieldCard( {
                   className="mission-custom-fields-tab__option-add"
                   onClick={ addOption }
                 >
-                  + { __( 'Add option', 'mission' ) }
+                  + { __( 'Add option', 'missionwp-donation-platform' ) }
                 </button>
               </div>
             </div>
@@ -289,7 +299,7 @@ function FieldCard( {
             className="mission-custom-fields-tab__remove-btn"
             onClick={ () => onRemove( field.id ) }
           >
-            { __( 'Remove field', 'mission' ) }
+            { __( 'Remove field', 'missionwp-donation-platform' ) }
           </button>
         </div>
       ) }
@@ -387,7 +397,10 @@ export default function CustomFieldsTab( { localState, updateField } ) {
       { fields.length === 0 && (
         <div className="mission-custom-fields-tab__empty">
           <p>
-            { __( 'Collect additional information from donors.', 'mission' ) }
+            { __(
+              'Collect additional information from donors.',
+              'missionwp-donation-platform'
+            ) }
           </p>
         </div>
       ) }
@@ -413,7 +426,7 @@ export default function CustomFieldsTab( { localState, updateField } ) {
         onClick={ addField }
         disabled={ hasEmptyLabel }
       >
-        + { __( 'Add Field', 'mission' ) }
+        + { __( 'Add Field', 'missionwp-donation-platform' ) }
       </button>
     </div>
   );

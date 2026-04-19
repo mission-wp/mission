@@ -37,7 +37,7 @@ export default function AmountsTab( {
       { /* Donation Frequencies */ }
       <div className="mission-field-group" style={ { marginBottom: 24 } }>
         <span className="mission-field-label">
-          { __( 'Donation Frequencies', 'mission' ) }
+          { __( 'Donation Frequencies', 'missionwp-donation-platform' ) }
         </span>
         <FrequencyChips
           selected={ localState.frequencies }
@@ -46,7 +46,7 @@ export default function AmountsTab( {
         <span className="mission-field-hint">
           { __(
             'Select which frequencies are available on donation forms',
-            'mission'
+            'missionwp-donation-platform'
           ) }
         </span>
       </div>
@@ -61,16 +61,16 @@ export default function AmountsTab( {
           } }
         >
           <span className="mission-field-label" style={ { marginBottom: 0 } }>
-            { __( 'Suggested Amounts', 'mission' ) }
+            { __( 'Suggested Amounts', 'missionwp-donation-platform' ) }
           </span>
           <div style={ { display: 'flex', alignItems: 'center', gap: 8 } }>
             <span style={ { fontSize: '11.7px', color: '#9b9ba8' } }>
-              { __( 'With descriptions', 'mission' ) }
+              { __( 'With descriptions', 'missionwp-donation-platform' ) }
             </span>
             { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
             <label
               className="mission-toggle-switch mission-toggle-switch--sm"
-              title={ __( 'With descriptions', 'mission' ) }
+              title={ __( 'With descriptions', 'missionwp-donation-platform' ) }
             >
               <input
                 type="checkbox"
@@ -115,7 +115,7 @@ export default function AmountsTab( {
         <span className="mission-field-hint">
           { __(
             'Press Enter to add an amount. Click an amount to set it as the pre-selected default.',
-            'mission'
+            'missionwp-donation-platform'
           ) }
         </span>
       </div>
@@ -127,7 +127,7 @@ export default function AmountsTab( {
           style={ { marginBottom: 24, maxWidth: '50%' } }
         >
           <label className="mission-field-label" htmlFor="default-frequency">
-            { __( 'Default Frequency', 'mission' ) }
+            { __( 'Default Frequency', 'missionwp-donation-platform' ) }
           </label>
           <select
             id="default-frequency"
@@ -139,11 +139,11 @@ export default function AmountsTab( {
           >
             { localState.frequencies.map( ( f ) => {
               const labels = {
-                one_time: __( 'One-time', 'mission' ),
-                weekly: __( 'Weekly', 'mission' ),
-                monthly: __( 'Monthly', 'mission' ),
-                quarterly: __( 'Quarterly', 'mission' ),
-                annually: __( 'Annually', 'mission' ),
+                one_time: __( 'One-time', 'missionwp-donation-platform' ),
+                weekly: __( 'Weekly', 'missionwp-donation-platform' ),
+                monthly: __( 'Monthly', 'missionwp-donation-platform' ),
+                quarterly: __( 'Quarterly', 'missionwp-donation-platform' ),
+                annually: __( 'Annually', 'missionwp-donation-platform' ),
               };
               return (
                 <option key={ f } value={ f }>
@@ -153,7 +153,10 @@ export default function AmountsTab( {
             } ) }
           </select>
           <span className="mission-field-hint">
-            { __( 'Pre-selected frequency when the form loads', 'mission' ) }
+            { __(
+              'Pre-selected frequency when the form loads',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
       ) }
@@ -162,15 +165,18 @@ export default function AmountsTab( {
       <ToggleRow
         checked={ localState.customAmount }
         onChange={ ( val ) => updateField( 'customAmount', val ) }
-        label={ __( 'Allow custom amount', 'mission' ) }
-        hint={ __( 'Let donors enter their own amount', 'mission' ) }
+        label={ __( 'Allow custom amount', 'missionwp-donation-platform' ) }
+        hint={ __(
+          'Let donors enter their own amount',
+          'missionwp-donation-platform'
+        ) }
         style={ { marginBottom: 20 } }
       />
 
       { /* Minimum Donation */ }
       <div className="mission-field-group" style={ { maxWidth: '50%' } }>
         <label className="mission-field-label" htmlFor="min-donation">
-          { __( 'Minimum Donation', 'mission' ) }
+          { __( 'Minimum Donation', 'missionwp-donation-platform' ) }
         </label>
         <div className="mission-field-currency">
           <span className="mission-field-currency__symbol">

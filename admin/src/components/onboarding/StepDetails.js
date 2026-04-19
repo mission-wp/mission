@@ -8,18 +8,18 @@ export default function StepDetails( { data, updateData } ) {
   return (
     <>
       <h1 className="mission-onboarding-step__heading">
-        { __( 'Organization details', 'mission' ) }
+        { __( 'Organization details', 'missionwp-donation-platform' ) }
       </h1>
       <p className="mission-onboarding-step__subheading">
         { __(
           'This information appears on donation receipts and email footers.',
-          'mission'
+          'missionwp-donation-platform'
         ) }
       </p>
 
       <div className="mission-onboarding-field">
         <label className="mission-onboarding-field__label" htmlFor="ob-street">
-          { __( 'Street Address', 'mission' ) }
+          { __( 'Street Address', 'missionwp-donation-platform' ) }
         </label>
         <input
           type="text"
@@ -34,7 +34,7 @@ export default function StepDetails( { data, updateData } ) {
       <div className="mission-onboarding-field-row-3">
         <div className="mission-onboarding-field">
           <label className="mission-onboarding-field__label" htmlFor="ob-city">
-            { __( 'City', 'mission' ) }
+            { __( 'City', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -57,7 +57,7 @@ export default function StepDetails( { data, updateData } ) {
               onChange={ ( e ) => updateData( { org_state: e.target.value } ) }
             >
               <option value="" disabled>
-                { __( 'Select', 'mission' ) }
+                { __( 'Select', 'missionwp-donation-platform' ) }
               </option>
               { regionConfig.options.map( ( s ) => (
                 <option key={ s.value } value={ s.value }>
@@ -95,7 +95,7 @@ export default function StepDetails( { data, updateData } ) {
           className="mission-onboarding-field__label"
           htmlFor="ob-color-hex"
         >
-          { __( 'Brand Color', 'mission' ) }
+          { __( 'Brand Color', 'missionwp-donation-platform' ) }
         </label>
         <ColorPicker
           value={ data.primary_color }
@@ -103,7 +103,10 @@ export default function StepDetails( { data, updateData } ) {
           id="ob-color-hex"
         />
         <span className="mission-onboarding-field__hint">
-          { __( 'Used for donation forms, emails, and receipts.', 'mission' ) }
+          { __(
+            'Used for donation forms, emails, and receipts.',
+            'missionwp-donation-platform'
+          ) }
         </span>
       </div>
     </>

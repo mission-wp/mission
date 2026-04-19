@@ -10,7 +10,7 @@ import StatusPanel from './tools/StatusPanel';
 const TABS = [
   {
     id: 'export',
-    label: __( 'Export', 'mission' ),
+    label: __( 'Export', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -30,7 +30,7 @@ const TABS = [
   },
   {
     id: 'import',
-    label: __( 'Import', 'mission' ),
+    label: __( 'Import', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -50,7 +50,7 @@ const TABS = [
   },
   {
     id: 'migration',
-    label: __( 'Migration', 'mission' ),
+    label: __( 'Migration', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -71,7 +71,7 @@ const TABS = [
   },
   {
     id: 'features',
-    label: __( 'Features', 'mission' ),
+    label: __( 'Features', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -92,7 +92,7 @@ const TABS = [
   },
   {
     id: 'logs',
-    label: __( 'Logs', 'mission' ),
+    label: __( 'Logs', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -114,7 +114,7 @@ const TABS = [
   },
   {
     id: 'status',
-    label: __( 'Status', 'mission' ),
+    label: __( 'Status', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -134,7 +134,7 @@ const TABS = [
   },
   {
     id: 'cleanup',
-    label: __( 'Cleanup', 'mission' ),
+    label: __( 'Cleanup', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -182,10 +182,13 @@ export default function Tools() {
     <div className="mission-admin-page">
       <div style={ { marginBottom: '24px' } }>
         <h1 style={ { fontSize: '24px', fontWeight: 600, margin: 0 } }>
-          { __( 'Tools', 'mission' ) }
+          { __( 'Tools', 'missionwp-donation-platform' ) }
         </h1>
         <p style={ { fontSize: '13px', color: '#9b9ba8', margin: '4px 0 0' } }>
-          { __( 'Utilities and configuration for Mission', 'mission' ) }
+          { __(
+            'Utilities and configuration for MissionWP',
+            'missionwp-donation-platform'
+          ) }
         </p>
       </div>
 

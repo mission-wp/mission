@@ -89,7 +89,7 @@ $show_tag         = $attributes['showTag'] ?? true;
 $show_description = $attributes['showDescription'] ?? true;
 $show_progress_attr = $attributes['showProgressBar'] ?? true;
 $show_donor_count = $attributes['showDonorCount'] ?? true;
-$button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'mission' );
+$button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'missionwp-donation-platform' );
 
 /** This filter is documented in blocks/src/campaign/index.php */
 $ending_soon_days = (int) apply_filters( 'mission_campaign_card_ending_soon_days', 30 );
@@ -135,14 +135,14 @@ ob_start();
 			$tag_class = '';
 			if ( $show_tag ) {
 				if ( $is_ended || ( $has_end_date && 0 === $days_remaining ) ) {
-					$tag_text  = __( 'Ended', 'mission' );
+					$tag_text  = __( 'Ended', 'missionwp-donation-platform' );
 					$tag_class = 'mission-cc-tag--ended';
 				} elseif ( $has_goal && $goal_progress >= $goal_amount ) {
-					$tag_text  = __( 'Goal Reached', 'mission' );
+					$tag_text  = __( 'Goal Reached', 'missionwp-donation-platform' );
 					$tag_class = 'mission-cc-tag--goal-reached';
 				} elseif ( $has_end_date && null !== $days_remaining && $days_remaining <= $ending_soon_days ) {
 					/* translators: %d: number of days remaining */
-					$tag_text  = sprintf( _n( '%d Day Left', '%d Days Left', $days_remaining, 'mission' ), $days_remaining );
+					$tag_text  = sprintf( _n( '%d Day Left', '%d Days Left', $days_remaining, 'missionwp-donation-platform' ), $days_remaining );
 					$tag_class = 'mission-cc-tag--ending-soon';
 				}
 			}
@@ -154,25 +154,25 @@ ob_start();
 				$raised_text = Currency::format_amount( $goal_progress, $currency );
 				$goal_text   = $has_goal
 					/* translators: %s: formatted goal amount */
-					? sprintf( __( 'of %s', 'mission' ), Currency::format_amount( $goal_amount, $currency ) )
+					? sprintf( __( 'of %s', 'missionwp-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
 					: '';
 			} else {
 				$raised_text = number_format_i18n( $goal_progress );
 				$goal_text   = $has_goal
 					/* translators: %s: goal number */
-					? sprintf( __( 'of %s', 'mission' ), number_format_i18n( $goal_amount ) )
+					? sprintf( __( 'of %s', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
 					: '';
 			}
 
 			// Time text.
 			if ( $is_ended && $has_end_date ) {
 				/* translators: %s: formatted date */
-				$time_text = sprintf( __( 'Ended %s', 'mission' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
+				$time_text = sprintf( __( 'Ended %s', 'missionwp-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 			} elseif ( $has_end_date ) {
 				/* translators: %s: formatted date */
-				$time_text = sprintf( __( 'Ends %s', 'mission' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
+				$time_text = sprintf( __( 'Ends %s', 'missionwp-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 			} else {
-				$time_text = __( 'Ongoing', 'mission' );
+				$time_text = __( 'Ongoing', 'missionwp-donation-platform' );
 			}
 
 			// Campaign URL and image.
@@ -225,7 +225,7 @@ ob_start();
 								<?php if ( $show_donor_count ) : ?>
 									<span class="mission-cc-donors">
 										<strong><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></strong>
-										<?php esc_html_e( 'donors', 'mission' ); ?>
+										<?php esc_html_e( 'donors', 'missionwp-donation-platform' ); ?>
 									</span>
 								<?php endif; ?>
 								<span class="mission-cc-time"><?php echo esc_html( $time_text ); ?></span>

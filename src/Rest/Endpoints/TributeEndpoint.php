@@ -62,7 +62,7 @@ class TributeEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage tributes.', 'mission' ),
+				__( 'You do not have permission to manage tributes.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -83,7 +83,7 @@ class TributeEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'mission' ),
+				__( 'Transaction not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -138,7 +138,7 @@ class TributeEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'mission' ),
+				__( 'Transaction not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -148,7 +148,7 @@ class TributeEndpoint {
 		if ( ! $tribute ) {
 			return new WP_Error(
 				'tribute_not_found',
-				__( 'No tribute found on this transaction.', 'mission' ),
+				__( 'No tribute found on this transaction.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}

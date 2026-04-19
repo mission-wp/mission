@@ -29,27 +29,27 @@ const STATUS_STYLES = {
   completed: {
     backgroundColor: '#eafaf0',
     color: '#1a7338',
-    label: __( 'Completed', 'mission' ),
+    label: __( 'Completed', 'missionwp-donation-platform' ),
   },
   pending: {
     backgroundColor: '#fef3c7',
     color: '#92400e',
-    label: __( 'Pending', 'mission' ),
+    label: __( 'Pending', 'missionwp-donation-platform' ),
   },
   refunded: {
     backgroundColor: '#fef2f2',
     color: '#dc2626',
-    label: __( 'Refunded', 'mission' ),
+    label: __( 'Refunded', 'missionwp-donation-platform' ),
   },
   cancelled: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
-    label: __( 'Cancelled', 'mission' ),
+    label: __( 'Cancelled', 'missionwp-donation-platform' ),
   },
   failed: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
-    label: __( 'Failed', 'mission' ),
+    label: __( 'Failed', 'missionwp-donation-platform' ),
   },
 };
 
@@ -77,8 +77,8 @@ function TypeBadge( { type } ) {
   const bg = isRecurring ? '#eafaf0' : '#f0f0f5';
   const color = isRecurring ? '#1a7338' : '#6b6b7b';
   const label = isRecurring
-    ? __( 'Recurring', 'mission' )
-    : __( 'One-time', 'mission' );
+    ? __( 'Recurring', 'missionwp-donation-platform' )
+    : __( 'One-time', 'missionwp-donation-platform' );
 
   return (
     <span
@@ -120,7 +120,7 @@ const SKELETON_ROWS = Array.from( { length: 5 }, ( _, i ) => ( {
 const fields = [
   {
     id: 'donation',
-    label: __( 'Donation', 'mission' ),
+    label: __( 'Donation', 'missionwp-donation-platform' ),
     enableSorting: false,
     enableHiding: false,
     render: ( { item } ) => {
@@ -153,7 +153,8 @@ const fields = [
           </span>
           <div>
             <div style={ { fontWeight: 500, color: '#1a1a2e' } }>
-              { item.donor_name || __( 'Anonymous', 'mission' ) }
+              { item.donor_name ||
+                __( 'Anonymous', 'missionwp-donation-platform' ) }
             </div>
             { item.donor_email && (
               <div style={ { color: '#9b9ba8', fontSize: '12px' } }>
@@ -167,7 +168,7 @@ const fields = [
   },
   {
     id: 'amount',
-    label: __( 'Amount', 'mission' ),
+    label: __( 'Amount', 'missionwp-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -180,7 +181,7 @@ const fields = [
   },
   {
     id: 'date_created',
-    label: __( 'Date', 'mission' ),
+    label: __( 'Date', 'missionwp-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -193,7 +194,7 @@ const fields = [
   },
   {
     id: 'type',
-    label: __( 'Type', 'mission' ),
+    label: __( 'Type', 'missionwp-donation-platform' ),
     enableSorting: false,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -204,7 +205,7 @@ const fields = [
   },
   {
     id: 'status',
-    label: __( 'Status', 'mission' ),
+    label: __( 'Status', 'missionwp-donation-platform' ),
     enableSorting: false,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -213,11 +214,23 @@ const fields = [
         <StatusBadge status={ item.status } />
       ),
     elements: [
-      { value: 'pending', label: __( 'Pending', 'mission' ) },
-      { value: 'completed', label: __( 'Completed', 'mission' ) },
-      { value: 'refunded', label: __( 'Refunded', 'mission' ) },
-      { value: 'cancelled', label: __( 'Cancelled', 'mission' ) },
-      { value: 'failed', label: __( 'Failed', 'mission' ) },
+      {
+        value: 'pending',
+        label: __( 'Pending', 'missionwp-donation-platform' ),
+      },
+      {
+        value: 'completed',
+        label: __( 'Completed', 'missionwp-donation-platform' ),
+      },
+      {
+        value: 'refunded',
+        label: __( 'Refunded', 'missionwp-donation-platform' ),
+      },
+      {
+        value: 'cancelled',
+        label: __( 'Cancelled', 'missionwp-donation-platform' ),
+      },
+      { value: 'failed', label: __( 'Failed', 'missionwp-donation-platform' ) },
     ],
     filterBy: {
       operators: [ 'is' ],
@@ -239,28 +252,28 @@ const DEFAULT_VIEW = {
 
 const MILESTONE_LABELS = {
   created: {
-    reached: __( 'Campaign created', 'mission' ),
-    pending: __( 'Campaign created', 'mission' ),
+    reached: __( 'Campaign created', 'missionwp-donation-platform' ),
+    pending: __( 'Campaign created', 'missionwp-donation-platform' ),
   },
   'first-donation': {
-    reached: __( 'First donation received', 'mission' ),
-    pending: __( 'First donation received', 'mission' ),
+    reached: __( 'First donation received', 'missionwp-donation-platform' ),
+    pending: __( 'First donation received', 'missionwp-donation-platform' ),
   },
   '25-pct': {
-    reached: __( '25% milestone reached', 'mission' ),
-    pending: __( '25% milestone', 'mission' ),
+    reached: __( '25% milestone reached', 'missionwp-donation-platform' ),
+    pending: __( '25% milestone', 'missionwp-donation-platform' ),
   },
   '50-pct': {
-    reached: __( '50% milestone reached', 'mission' ),
-    pending: __( '50% milestone', 'mission' ),
+    reached: __( '50% milestone reached', 'missionwp-donation-platform' ),
+    pending: __( '50% milestone', 'missionwp-donation-platform' ),
   },
   '75-pct': {
-    reached: __( '75% milestone reached', 'mission' ),
-    pending: __( '75% milestone', 'mission' ),
+    reached: __( '75% milestone reached', 'missionwp-donation-platform' ),
+    pending: __( '75% milestone', 'missionwp-donation-platform' ),
   },
   '100-pct': {
-    reached: __( '100% \u2014 Goal reached!', 'mission' ),
-    pending: __( '100% \u2014 Goal reached!', 'mission' ),
+    reached: __( '100% \u2014 Goal reached!', 'missionwp-donation-platform' ),
+    pending: __( '100% \u2014 Goal reached!', 'missionwp-donation-platform' ),
   },
 };
 
@@ -280,12 +293,12 @@ function formatGoalValue( value, goalType ) {
 
 function goalUnit( goalType ) {
   if ( goalType === 'donors' ) {
-    return __( 'donors', 'mission' );
+    return __( 'donors', 'missionwp-donation-platform' );
   }
   if ( goalType === 'donations' ) {
-    return __( 'donations', 'mission' );
+    return __( 'donations', 'missionwp-donation-platform' );
   }
-  return __( 'raised', 'mission' );
+  return __( 'raised', 'missionwp-donation-platform' );
 }
 
 function prepareMilestones( campaign ) {
@@ -314,7 +327,7 @@ function prepareMilestones( campaign ) {
         milestone.detail =
           formatGoalValue( remaining, gType ) +
           ' ' +
-          __( 'more needed', 'mission' );
+          __( 'more needed', 'missionwp-donation-platform' );
       }
     }
 
@@ -397,14 +410,14 @@ export default function OverviewTab( { campaignId, campaign } ) {
           { ! isLoading && data.length === 0 ? (
             <>
               <h2 className="mission-card__heading">
-                { __( 'Donations', 'mission' ) }
+                { __( 'Donations', 'missionwp-donation-platform' ) }
               </h2>
               <EmptyState
                 icon={ <TableIcon /> }
-                text={ __( 'No donations yet', 'mission' ) }
+                text={ __( 'No donations yet', 'missionwp-donation-platform' ) }
                 hint={ __(
                   'Donations to this campaign will appear here as they come in',
-                  'mission'
+                  'missionwp-donation-platform'
                 ) }
               />
             </>
@@ -429,7 +442,7 @@ export default function OverviewTab( { campaignId, campaign } ) {
         { hasGoal && (
           <div className="mission-card" style={ { padding: 0 } }>
             <h2 className="mission-card__heading">
-              { __( 'Milestones', 'mission' ) }
+              { __( 'Milestones', 'missionwp-donation-platform' ) }
             </h2>
             <div className="mission-timeline">
               { milestones.map( ( milestone ) => (

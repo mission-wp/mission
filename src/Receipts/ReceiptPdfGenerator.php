@@ -49,9 +49,9 @@ class ReceiptPdfGenerator {
 			'year'         => $year,
 			'year_label'   => $is_current_year
 				/* translators: %d: calendar year */
-				? sprintf( __( 'Year to Date — %d', 'mission' ), $year )
+				? sprintf( __( 'Year to Date — %d', 'missionwp-donation-platform' ), $year )
 				/* translators: %d: calendar year */
-				: sprintf( __( 'Annual Donation Receipt — %d', 'mission' ), $year ),
+				: sprintf( __( 'Annual Donation Receipt — %d', 'missionwp-donation-platform' ), $year ),
 			'transactions' => $this->format_transactions( $receipt_data['transactions'], $currency ),
 			'total'        => Currency::format_amount( $receipt_data['total'], $currency ),
 			'count'        => $receipt_data['count'],
@@ -77,7 +77,7 @@ class ReceiptPdfGenerator {
 			'org'          => $this->get_org_data(),
 			'donor'        => $this->get_donor_data( $donor ),
 			'year'         => null,
-			'year_label'   => __( 'Donation Receipt', 'mission' ),
+			'year_label'   => __( 'Donation Receipt', 'missionwp-donation-platform' ),
 			'transactions' => $this->format_transactions( [ $transaction_data ], $currency ),
 			'total'        => Currency::format_amount( (int) $transaction_data['amount'], $currency ),
 			'count'        => 1,
@@ -164,7 +164,7 @@ class ReceiptPdfGenerator {
 	private function get_disclaimer(): string {
 		$disclaimer = __(
 			'No goods or services were provided in exchange for these contributions. All donations are tax-deductible to the extent allowed by law.',
-			'mission'
+			'missionwp-donation-platform'
 		);
 
 		return apply_filters( 'mission_receipt_disclaimer', $disclaimer );

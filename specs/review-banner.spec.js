@@ -152,7 +152,7 @@ test.describe( 'Review Banner', () => {
 
     const banner = page.locator( '.mission-review-banner' );
     await expect( banner ).toBeVisible( { timeout: 10_000 } );
-    await expect( banner.getByText( 'Enjoying Mission?' ) ).toBeVisible();
+    await expect( banner.getByText( 'Enjoying MissionWP?' ) ).toBeVisible();
     await expect( banner.getByText( /\$13,000/ ) ).toBeVisible();
     await expect(
       banner.getByText( 'How would you rate your experience?' )

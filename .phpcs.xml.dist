@@ -4,7 +4,7 @@
 
 	<!-- What to scan. -->
 	<file>./src</file>
-	<file>./mission.php</file>
+	<file>./missionwp-donation-platform.php</file>
 	<file>./uninstall.php</file>
 
 	<!-- Show progress and sniff codes in all reports. -->
@@ -38,7 +38,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="mission"/>
+				<element value="missionwp-donation-platform"/>
 			</property>
 		</properties>
 	</rule>

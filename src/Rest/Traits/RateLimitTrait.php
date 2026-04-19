@@ -50,7 +50,7 @@ trait RateLimitTrait {
 		if ( $attempts >= $limit ) {
 			return new WP_Error(
 				'rate_limited',
-				__( 'Too many attempts. Please try again in a few minutes.', 'mission' ),
+				__( 'Too many attempts. Please try again in a few minutes.', 'missionwp-donation-platform' ),
 				[ 'status' => 429 ]
 			);
 		}

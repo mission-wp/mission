@@ -42,7 +42,7 @@ if ( $activation_token && $activation_email && ! $is_donor ) {
 	$activation_token_valid = null !== $auth_service->validate_activation_token( $activation_email, $activation_token );
 
 	if ( ! $activation_token_valid ) {
-		$activation_token_error = __( 'This activation link is invalid or has expired. Please request a new one.', 'mission' );
+		$activation_token_error = __( 'This activation link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' );
 	}
 }
 
@@ -58,7 +58,7 @@ if ( 'reset-password' === $reset_action && $reset_key && $reset_login && ! $is_d
 	$reset_key_valid = null !== $auth_service->validate_reset_key( $reset_login, $reset_key );
 
 	if ( ! $reset_key_valid ) {
-		$reset_key_error = __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission' );
+		$reset_key_error = __( 'This password reset link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' );
 	}
 }
 
@@ -112,7 +112,7 @@ if ( ! $is_donor ) :
 			'isForgotPasswordSentView' => false,
 			'isResetPasswordView'      => 'reset-password' === $initial_view,
 			'passwordInputType'        => 'password',
-			'passwordToggleLabel'      => __( 'Show password', 'mission' ),
+			'passwordToggleLabel'      => __( 'Show password', 'missionwp-donation-platform' ),
 		]
 	);
 
@@ -123,27 +123,27 @@ else :
 	// ── Panels and navigation ──
 	$panels = [
 		'overview'  => [
-			'label' => __( 'Overview', 'mission' ),
+			'label' => __( 'Overview', 'missionwp-donation-platform' ),
 			'icon'  => 'grid',
 			'file'  => __DIR__ . '/parts/overview.php',
 		],
 		'history'   => [
-			'label' => __( 'Donation History', 'mission' ),
+			'label' => __( 'Donation History', 'missionwp-donation-platform' ),
 			'icon'  => 'clock',
 			'file'  => __DIR__ . '/parts/history.php',
 		],
 		'recurring' => [
-			'label' => __( 'Recurring Donations', 'mission' ),
+			'label' => __( 'Recurring Donations', 'missionwp-donation-platform' ),
 			'icon'  => 'refresh',
 			'file'  => __DIR__ . '/parts/recurring.php',
 		],
 		'receipts'  => [
-			'label' => __( 'Annual Receipts', 'mission' ),
+			'label' => __( 'Annual Receipts', 'missionwp-donation-platform' ),
 			'icon'  => 'receipt',
 			'file'  => __DIR__ . '/parts/receipts.php',
 		],
 		'profile'   => [
-			'label' => __( 'Profile', 'mission' ),
+			'label' => __( 'Profile', 'missionwp-donation-platform' ),
 			'icon'  => 'user',
 			'file'  => __DIR__ . '/parts/profile.php',
 		],
@@ -254,7 +254,7 @@ else :
 				<!-- Content -->
 				<main class="mission-dd-content">
 					<!-- Mobile toggle (visible ≤600px via container query) -->
-					<button class="mission-dd-mobile-toggle" data-wp-on--click="actions.openSidebar" aria-label="<?php esc_attr_e( 'Open menu', 'mission' ); ?>">
+					<button class="mission-dd-mobile-toggle" data-wp-on--click="actions.openSidebar" aria-label="<?php esc_attr_e( 'Open menu', 'missionwp-donation-platform' ); ?>">
 						<span class="mission-dd-icon mission-dd-icon-menu" aria-hidden="true"></span>
 						<span data-wp-text="state.panelTitle"></span>
 					</button>

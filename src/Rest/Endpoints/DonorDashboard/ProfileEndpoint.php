@@ -186,7 +186,7 @@ class ProfileEndpoint {
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Your account has been deleted. Your donation history has been preserved for the organization\'s records.', 'mission' ),
+				'message' => __( 'Your account has been deleted. Your donation history has been preserved for the organization\'s records.', 'missionwp-donation-platform' ),
 			]
 		);
 	}

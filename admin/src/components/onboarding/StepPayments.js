@@ -19,12 +19,15 @@ export default function StepPayments( {
       </div>
 
       <h1 className="mission-onboarding-step__heading">
-        { __( 'Connect your payment processor', 'mission' ) }
+        { __(
+          'Connect your payment processor',
+          'missionwp-donation-platform'
+        ) }
       </h1>
       <p className="mission-onboarding-step__subheading">
         { __(
           'Stripe handles all payment processing securely. Connect your existing Stripe account or create a new one \u2014 it only takes a minute.',
-          'mission'
+          'missionwp-donation-platform'
         ) }
       </p>
 
@@ -43,8 +46,11 @@ export default function StepPayments( {
             <polyline points="3,8 7,12 13,4" />
           </svg>
           { stripeDisplayName
-            ? `${ __( 'Connected', 'mission' ) } \u2014 ${ stripeDisplayName }`
-            : __( 'Connected', 'mission' ) }
+            ? `${ __(
+                'Connected',
+                'missionwp-donation-platform'
+              ) } \u2014 ${ stripeDisplayName }`
+            : __( 'Connected', 'missionwp-donation-platform' ) }
         </div>
       ) : (
         <>
@@ -66,7 +72,7 @@ export default function StepPayments( {
               >
                 <path d="M8 3v12M3 8h12" />
               </svg>
-              { __( 'Connect with Stripe', 'mission' ) }
+              { __( 'Connect with Stripe', 'missionwp-donation-platform' ) }
             </a>
           ) }
 
@@ -86,7 +92,7 @@ export default function StepPayments( {
             </svg>
             { __(
               'You\u2019ll be redirected to Stripe to connect or create an account, then returned here automatically.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
 
@@ -107,7 +113,7 @@ export default function StepPayments( {
               </svg>
               { __(
                 'You can skip this for now, but you won\u2019t be able to accept donations until Stripe is connected.',
-                'mission'
+                'missionwp-donation-platform'
               ) }
             </p>
           </div>

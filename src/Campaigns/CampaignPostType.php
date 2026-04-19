@@ -63,15 +63,15 @@ class CampaignPostType {
 		\register_block_template(
 			'mission//archive-' . self::POST_TYPE,
 			[
-				'title'       => __( 'Campaigns Archive', 'mission' ),
-				'description' => __( 'Displays all campaigns.', 'mission' ),
+				'title'       => __( 'Campaigns Archive', 'missionwp-donation-platform' ),
+				'description' => __( 'Displays all campaigns.', 'missionwp-donation-platform' ),
 				'content'     => '<!-- wp:template-part {"slug":"header","area":"header","tagName":"header"} /-->
 
 <!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
 <main class="wp-block-group">
 
 <!-- wp:heading {"level":1,"style":{"spacing":{"margin":{"bottom":"var:preset|spacing|40"}}}} -->
-<h1 class="wp-block-heading" style="margin-bottom:var(--wp--preset--spacing--40)">' . esc_html__( 'Campaigns', 'mission' ) . '</h1>
+<h1 class="wp-block-heading" style="margin-bottom:var(--wp--preset--spacing--40)">' . esc_html__( 'Campaigns', 'missionwp-donation-platform' ) . '</h1>
 <!-- /wp:heading -->
 
 <!-- wp:mission/campaign-grid {"statusFilter":"all","columns":2,"numberOfCampaigns":12,"align":"wide"} /-->
@@ -86,8 +86,8 @@ class CampaignPostType {
 		\register_block_template(
 			'mission//single-' . self::POST_TYPE,
 			[
-				'title'       => __( 'Campaign Page', 'mission' ),
-				'description' => __( 'Displays a single campaign page.', 'mission' ),
+				'title'       => __( 'Campaign Page', 'missionwp-donation-platform' ),
+				'description' => __( 'Displays a single campaign page.', 'missionwp-donation-platform' ),
 				'content'     => '<!-- wp:template-part {"slug":"header","area":"header","tagName":"header"} /-->
 
 <!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
@@ -184,17 +184,17 @@ class CampaignPostType {
 	 */
 	private function register_post_type(): void {
 		$labels = [
-			'name'               => __( 'Campaigns', 'mission' ),
-			'singular_name'      => __( 'Campaign', 'mission' ),
-			'add_new'            => __( 'Add New', 'mission' ),
-			'add_new_item'       => __( 'Add New Campaign', 'mission' ),
-			'edit_item'          => __( 'Edit Campaign', 'mission' ),
-			'new_item'           => __( 'New Campaign', 'mission' ),
-			'view_item'          => __( 'View Campaign', 'mission' ),
-			'search_items'       => __( 'Search Campaigns', 'mission' ),
-			'not_found'          => __( 'No campaigns found.', 'mission' ),
-			'not_found_in_trash' => __( 'No campaigns found in Trash.', 'mission' ),
-			'all_items'          => __( 'Campaigns', 'mission' ),
+			'name'               => __( 'Campaigns', 'missionwp-donation-platform' ),
+			'singular_name'      => __( 'Campaign', 'missionwp-donation-platform' ),
+			'add_new'            => __( 'Add New', 'missionwp-donation-platform' ),
+			'add_new_item'       => __( 'Add New Campaign', 'missionwp-donation-platform' ),
+			'edit_item'          => __( 'Edit Campaign', 'missionwp-donation-platform' ),
+			'new_item'           => __( 'New Campaign', 'missionwp-donation-platform' ),
+			'view_item'          => __( 'View Campaign', 'missionwp-donation-platform' ),
+			'search_items'       => __( 'Search Campaigns', 'missionwp-donation-platform' ),
+			'not_found'          => __( 'No campaigns found.', 'missionwp-donation-platform' ),
+			'not_found_in_trash' => __( 'No campaigns found in Trash.', 'missionwp-donation-platform' ),
+			'all_items'          => __( 'Campaigns', 'missionwp-donation-platform' ),
 		];
 
 		$args = [

@@ -117,7 +117,7 @@ class Donor extends Model {
 	public function create_user_account( string $password ): int {
 		if ( $this->user_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not rendered output.
-			throw new \RuntimeException( __( 'This donor already has an account.', 'mission' ) );
+			throw new \RuntimeException( __( 'This donor already has an account.', 'missionwp-donation-platform' ) );
 		}
 
 		// Use the donor email as the username.

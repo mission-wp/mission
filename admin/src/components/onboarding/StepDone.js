@@ -87,26 +87,29 @@ export default function StepDone( {
       </div>
 
       <h1 className="mission-onboarding-step__heading">
-        { __( 'You\u2019re all set!', 'mission' ) }
+        { __( 'You\u2019re all set!', 'missionwp-donation-platform' ) }
       </h1>
       <p className="mission-onboarding-step__subheading">
         { __(
-          'Mission is configured and ready to accept donations. Here\u2019s a summary of your setup.',
-          'mission'
+          'MissionWP is configured and ready to accept donations. Here\u2019s a summary of your setup.',
+          'missionwp-donation-platform'
         ) }
       </p>
 
       <div className="mission-onboarding-checklist">
         <div className="mission-onboarding-checklist__title">
-          { __( 'Configuration Summary', 'mission' ) }
+          { __( 'Configuration Summary', 'missionwp-donation-platform' ) }
         </div>
 
         <ChecklistItem
           success={ !! data.org_name.trim() }
           label={
             <>
-              <strong>{ __( 'Organization:', 'mission' ) }</strong>{ ' ' }
-              { data.org_name || __( 'Not set', 'mission' ) }
+              <strong>
+                { __( 'Organization:', 'missionwp-donation-platform' ) }
+              </strong>{ ' ' }
+              { data.org_name ||
+                __( 'Not set', 'missionwp-donation-platform' ) }
             </>
           }
         />
@@ -116,17 +119,21 @@ export default function StepDone( {
           label={
             hasAddress ? (
               <>
-                <strong>{ __( 'Address', 'mission' ) }</strong>{ ' ' }
-                { __( 'configured', 'mission' ) }
+                <strong>
+                  { __( 'Address', 'missionwp-donation-platform' ) }
+                </strong>{ ' ' }
+                { __( 'configured', 'missionwp-donation-platform' ) }
               </>
             ) : (
               <>
-                <strong>{ __( 'Address', 'mission' ) }</strong>{ ' ' }
-                { __( 'not configured', 'mission' ) }
+                <strong>
+                  { __( 'Address', 'missionwp-donation-platform' ) }
+                </strong>{ ' ' }
+                { __( 'not configured', 'missionwp-donation-platform' ) }
               </>
             )
           }
-          linkText={ __( 'Add now', 'mission' ) }
+          linkText={ __( 'Add now', 'missionwp-donation-platform' ) }
           onLink={ () => onGoToStep( 2 ) }
         />
 
@@ -135,17 +142,21 @@ export default function StepDone( {
           label={
             stripeConnected ? (
               <>
-                <strong>{ __( 'Stripe', 'mission' ) }</strong>{ ' ' }
-                { __( 'connected', 'mission' ) }
+                <strong>
+                  { __( 'Stripe', 'missionwp-donation-platform' ) }
+                </strong>{ ' ' }
+                { __( 'connected', 'missionwp-donation-platform' ) }
               </>
             ) : (
               <>
-                <strong>{ __( 'Stripe', 'mission' ) }</strong>{ ' ' }
-                { __( 'not connected', 'mission' ) }
+                <strong>
+                  { __( 'Stripe', 'missionwp-donation-platform' ) }
+                </strong>{ ' ' }
+                { __( 'not connected', 'missionwp-donation-platform' ) }
               </>
             )
           }
-          linkText={ __( 'Connect now', 'mission' ) }
+          linkText={ __( 'Connect now', 'missionwp-donation-platform' ) }
           onLink={ () => onGoToStep( 3 ) }
         />
 
@@ -154,17 +165,21 @@ export default function StepDone( {
           label={
             hasCampaign ? (
               <>
-                <strong>{ __( 'Campaign:', 'mission' ) }</strong>{ ' ' }
+                <strong>
+                  { __( 'Campaign:', 'missionwp-donation-platform' ) }
+                </strong>{ ' ' }
                 { data.campaign_name }
               </>
             ) : (
               <>
-                <strong>{ __( 'Campaign', 'mission' ) }</strong>{ ' ' }
-                { __( 'not created', 'mission' ) }
+                <strong>
+                  { __( 'Campaign', 'missionwp-donation-platform' ) }
+                </strong>{ ' ' }
+                { __( 'not created', 'missionwp-donation-platform' ) }
               </>
             )
           }
-          linkText={ __( 'Create now', 'mission' ) }
+          linkText={ __( 'Create now', 'missionwp-donation-platform' ) }
           onLink={ () => onGoToStep( 4 ) }
         />
       </div>
@@ -174,7 +189,7 @@ export default function StepDone( {
         className="mission-onboarding-completion-cta"
         onClick={ onComplete }
       >
-        { __( 'Go to Dashboard', 'mission' ) }
+        { __( 'Go to Dashboard', 'missionwp-donation-platform' ) }
         <svg
           width="16"
           height="16"

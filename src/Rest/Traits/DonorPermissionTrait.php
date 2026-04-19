@@ -23,13 +23,13 @@ trait DonorPermissionTrait {
 	 */
 	public function check_donor_permission(): bool|WP_Error {
 		if ( ! is_user_logged_in() ) {
-			return new WP_Error( 'rest_not_logged_in', __( 'You must be logged in.', 'mission' ), [ 'status' => 401 ] );
+			return new WP_Error( 'rest_not_logged_in', __( 'You must be logged in.', 'missionwp-donation-platform' ), [ 'status' => 401 ] );
 		}
 
 		$user = wp_get_current_user();
 
 		if ( ! in_array( 'mission_donor', $user->roles, true ) ) {
-			return new WP_Error( 'rest_forbidden', __( 'Access denied.', 'mission' ), [ 'status' => 403 ] );
+			return new WP_Error( 'rest_forbidden', __( 'Access denied.', 'missionwp-donation-platform' ), [ 'status' => 403 ] );
 		}
 
 		return true;

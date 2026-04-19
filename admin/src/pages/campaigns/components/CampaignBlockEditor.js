@@ -70,7 +70,7 @@ export default function CampaignBlockEditor( { postId, editUrl } ) {
           } }
         >
           <span style={ { color: '#9b9ba8' } }>
-            { __( 'Loading editor…', 'mission' ) }
+            { __( 'Loading editor…', 'missionwp-donation-platform' ) }
           </span>
         </div>
       </div>
@@ -88,7 +88,10 @@ function EditorToolbar( { editUrl } ) {
           renderToggle={ ( { onToggle, disabled } ) => (
             <Button
               icon={ plus }
-              label={ __( 'Toggle block inserter', 'mission' ) }
+              label={ __(
+                'Toggle block inserter',
+                'missionwp-donation-platform'
+              ) }
               onClick={ onToggle }
               disabled={ disabled }
               size="compact"
@@ -114,7 +117,7 @@ function EditorToolbar( { editUrl } ) {
             <path d="M11 7.5v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h4" />
             <path d="M7 7L12.5 1.5M10 1h3v3" />
           </svg>
-          { __( 'Open full editor', 'mission' ) }
+          { __( 'Open full editor', 'missionwp-donation-platform' ) }
         </a>
       ) }
     </div>

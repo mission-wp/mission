@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 
 const PERIODS = [
-  { value: 'today', label: __( 'Today', 'mission' ) },
-  { value: 'week', label: __( 'Week', 'mission' ) },
-  { value: 'month', label: __( 'Month', 'mission' ) },
+  { value: 'today', label: __( 'Today', 'missionwp-donation-platform' ) },
+  { value: 'week', label: __( 'Week', 'missionwp-donation-platform' ) },
+  { value: 'month', label: __( 'Month', 'missionwp-donation-platform' ) },
 ];
 
 export default function PeriodToggle( { period, onChange } ) {

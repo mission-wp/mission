@@ -18,9 +18,9 @@ const BRAND_COLOR = '#2FA36B';
 const TOTAL_STEPS = 3;
 
 const STEPS = [
-  { number: 1, label: __( 'Details', 'mission' ) },
-  { number: 2, label: __( 'Goal & Timeline', 'mission' ) },
-  { number: 3, label: __( 'Image', 'mission' ) },
+  { number: 1, label: __( 'Details', 'missionwp-donation-platform' ) },
+  { number: 2, label: __( 'Goal & Timeline', 'missionwp-donation-platform' ) },
+  { number: 3, label: __( 'Image', 'missionwp-donation-platform' ) },
 ];
 
 const DEFAULT_DATA = {
@@ -128,7 +128,10 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
     } catch ( err ) {
       setError(
         err.message ||
-          __( 'Something went wrong. Please try again.', 'mission' )
+          __(
+            'Something went wrong. Please try again.',
+            'missionwp-donation-platform'
+          )
       );
       setIsSubmitting( false );
     }
@@ -153,7 +156,7 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
 
   return (
     <Modal
-      title={ __( 'Create Campaign', 'mission' ) }
+      title={ __( 'Create Campaign', 'missionwp-donation-platform' ) }
       onRequestClose={ onClose }
       size="medium"
     >
@@ -177,7 +180,7 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
                 disabled={ isSubmitting }
                 __next40pxDefaultSize
               >
-                { __( 'Back', 'mission' ) }
+                { __( 'Back', 'missionwp-donation-platform' ) }
               </Button>
             ) }
           </div>
@@ -188,7 +191,7 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
               disabled={ isSubmitting }
               __next40pxDefaultSize
             >
-              { __( 'Cancel', 'mission' ) }
+              { __( 'Cancel', 'missionwp-donation-platform' ) }
             </Button>
             { step < TOTAL_STEPS ? (
               <Button
@@ -201,7 +204,7 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
                 } }
                 __next40pxDefaultSize
               >
-                { __( 'Continue', 'mission' ) }
+                { __( 'Continue', 'missionwp-donation-platform' ) }
               </Button>
             ) : (
               <Button
@@ -215,7 +218,7 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
                 } }
                 __next40pxDefaultSize
               >
-                { __( 'Create Campaign', 'mission' ) }
+                { __( 'Create Campaign', 'missionwp-donation-platform' ) }
               </Button>
             ) }
           </HStack>

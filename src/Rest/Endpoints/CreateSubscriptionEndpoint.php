@@ -246,7 +246,7 @@ class CreateSubscriptionEndpoint {
 		if ( ! is_email( $email ) ) {
 			return new WP_Error(
 				'invalid_email',
-				__( 'A valid email address is required.', 'mission' ),
+				__( 'A valid email address is required.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -256,7 +256,7 @@ class CreateSubscriptionEndpoint {
 		if ( ! in_array( $frequency, self::ALLOWED_FREQUENCIES, true ) ) {
 			return new WP_Error(
 				'invalid_frequency',
-				__( 'Invalid recurring frequency. Must be weekly, monthly, quarterly, or annually.', 'mission' ),
+				__( 'Invalid recurring frequency. Must be weekly, monthly, quarterly, or annually.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -290,7 +290,7 @@ class CreateSubscriptionEndpoint {
 		if ( empty( $site_token ) ) {
 			return new WP_Error(
 				'stripe_not_connected',
-				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'mission' ),
+				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -328,7 +328,7 @@ class CreateSubscriptionEndpoint {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'mission_api_error',
-				__( 'Could not reach the Mission API.', 'mission' ),
+				__( 'Could not reach the MissionWP API.', 'missionwp-donation-platform' ),
 				[ 'status' => 502 ]
 			);
 		}
@@ -339,7 +339,7 @@ class CreateSubscriptionEndpoint {
 		if ( 200 !== $code || empty( $body['client_secret'] ) || empty( $body['connected_account_id'] ) ) {
 			return new WP_Error(
 				'subscription_creation_failed',
-				$body['error'] ?? __( 'Failed to create subscription.', 'mission' ),
+				$body['error'] ?? __( 'Failed to create subscription.', 'missionwp-donation-platform' ),
 				[ 'status' => $code ?: 500 ]
 			);
 		}
@@ -550,19 +550,19 @@ class CreateSubscriptionEndpoint {
 		$donation_formatted = Currency::format_amount( $donation_amount, $currency_upper );
 
 		$frequency_labels = [
-			'weekly'    => __( 'weekly', 'mission' ),
-			'monthly'   => __( 'monthly', 'mission' ),
-			'quarterly' => __( 'quarterly', 'mission' ),
-			'annually'  => __( 'annual', 'mission' ),
+			'weekly'    => __( 'weekly', 'missionwp-donation-platform' ),
+			'monthly'   => __( 'monthly', 'missionwp-donation-platform' ),
+			'quarterly' => __( 'quarterly', 'missionwp-donation-platform' ),
+			'annually'  => __( 'annual', 'missionwp-donation-platform' ),
 		];
 
 		$frequency_label = $frequency_labels[ $frequency ] ?? $frequency;
 
 		/* translators: 1: formatted donation amount, 2: frequency label */
-		$description = sprintf( __( '%1$s %2$s recurring donation.', 'mission' ), $donation_formatted, $frequency_label );
+		$description = sprintf( __( '%1$s %2$s recurring donation.', 'missionwp-donation-platform' ), $donation_formatted, $frequency_label );
 
 		if ( $fee_amount > 0 ) {
-			$description .= ' ' . __( 'Donor covered processing fees.', 'mission' );
+			$description .= ' ' . __( 'Donor covered processing fees.', 'missionwp-donation-platform' );
 		}
 
 		if ( $tip_amount > 0 ) {
@@ -570,13 +570,13 @@ class CreateSubscriptionEndpoint {
 
 			$description .= ' ' . sprintf(
 				/* translators: %s: formatted tip amount */
-				__( 'The %s application fee is a tip from the donor to Mission, not a charge to your organization.', 'mission' ),
+				__( 'The %s application fee is a tip from the donor to MissionWP, not a charge to your organization.', 'missionwp-donation-platform' ),
 				$tip_formatted,
 			);
 		}
 
 		if ( 'flat' === $fee_mode ) {
-			$description .= ' ' . __( 'Includes 3% platform fee.', 'mission' );
+			$description .= ' ' . __( 'Includes 3% platform fee.', 'missionwp-donation-platform' );
 		}
 
 		/**

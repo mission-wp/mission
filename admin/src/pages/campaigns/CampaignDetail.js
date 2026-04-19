@@ -107,7 +107,10 @@ export default function CampaignDetail( { id } ) {
         setFormState( initial );
         savedFormState.current = initial;
       } catch ( err ) {
-        setError( err.message || __( 'Failed to load campaign.', 'mission' ) );
+        setError(
+          err.message ||
+            __( 'Failed to load campaign.', 'missionwp-donation-platform' )
+        );
       } finally {
         setIsLoading( false );
       }
@@ -172,7 +175,10 @@ export default function CampaignDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'error',
-        message: __( 'Goal amount cannot be negative.', 'mission' ),
+        message: __(
+          'Goal amount cannot be negative.',
+          'missionwp-donation-platform'
+        ),
       } );
       setIsSaving( false );
       return;
@@ -245,7 +251,7 @@ export default function CampaignDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Campaign saved.', 'mission' ),
+        message: __( 'Campaign saved.', 'missionwp-donation-platform' ),
       } );
     } catch ( err ) {
       setSaveError( true );
@@ -253,7 +259,9 @@ export default function CampaignDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'error',
-        message: err.message || __( 'Failed to save campaign.', 'mission' ),
+        message:
+          err.message ||
+          __( 'Failed to save campaign.', 'missionwp-donation-platform' ),
       } );
     } finally {
       setIsSaving( false );
@@ -282,9 +290,12 @@ export default function CampaignDetail( { id } ) {
             href={ campaignsUrl }
             style={ { color: BRAND_COLOR, textDecoration: 'none' } }
           >
-            { __( 'Back to Campaigns', 'mission' ) }
+            { __( 'Back to Campaigns', 'missionwp-donation-platform' ) }
           </a>
-          <Text>{ error || __( 'Campaign not found.', 'mission' ) }</Text>
+          <Text>
+            { error ||
+              __( 'Campaign not found.', 'missionwp-donation-platform' ) }
+          </Text>
         </VStack>
       </div>
     );
@@ -319,7 +330,7 @@ export default function CampaignDetail( { id } ) {
           >
             <path d="M9 11L4 7l5-4" />
           </svg>
-          { __( 'Back to Campaigns', 'mission' ) }
+          { __( 'Back to Campaigns', 'missionwp-donation-platform' ) }
         </a>
 
         <CampaignHero

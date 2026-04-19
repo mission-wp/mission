@@ -30,7 +30,7 @@ function EmailRow( { email, enabled, onToggle, onEdit } ) {
           onClick={ onEdit }
           type="button"
         >
-          { __( 'Edit', 'mission' ) }
+          { __( 'Edit', 'missionwp-donation-platform' ) }
         </button>
         { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
         <label className="mission-toggle-sm" aria-label={ email.name }>
@@ -149,7 +149,7 @@ function AdminEmailRow( {
                 <span className="mission-admin-email-row__preview-more">
                   { sprintf(
                     /* translators: %d: number of additional recipients */
-                    __( 'and %d others', 'mission' ),
+                    __( 'and %d others', 'missionwp-donation-platform' ),
                     overflowCount
                   ) }
                 </span>
@@ -200,7 +200,7 @@ function AdminEmailRow( {
                 { addr }
                 { addr === defaultEmail && recipients.length === 0 && (
                   <span className="mission-admin-email-row__tag-default">
-                    { __( 'default', 'mission' ) }
+                    { __( 'default', 'missionwp-donation-platform' ) }
                   </span>
                 ) }
                 <button
@@ -212,7 +212,7 @@ function AdminEmailRow( {
                   } }
                   aria-label={ sprintf(
                     /* translators: %s: email address */
-                    __( 'Remove %s', 'mission' ),
+                    __( 'Remove %s', 'missionwp-donation-platform' ),
                     addr
                   ) }
                 >
@@ -234,7 +234,7 @@ function AdminEmailRow( {
               ref={ inputRef }
               type="email"
               className="mission-admin-email-row__input"
-              placeholder={ __( 'Add email…', 'mission' ) }
+              placeholder={ __( 'Add email…', 'missionwp-donation-platform' ) }
               value={ inputValue }
               onChange={ ( e ) => setInputValue( e.target.value ) }
               onKeyDown={ handleKeyDown }
@@ -244,7 +244,7 @@ function AdminEmailRow( {
           <span className="mission-admin-email-row__hint">
             { __(
               'Press Enter to add. Default is your WordPress admin email.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </span>
         </div>
@@ -309,12 +309,12 @@ export default function EmailsPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Sender Details', 'mission' ) }
+            { __( 'Sender Details', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'Used as the \u201cfrom\u201d address on all outgoing emails.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -323,7 +323,7 @@ export default function EmailsPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-email-from-name"
           >
-            { __( 'From name', 'mission' ) }
+            { __( 'From name', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -340,7 +340,7 @@ export default function EmailsPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-email-from-address"
           >
-            { __( 'From email', 'mission' ) }
+            { __( 'From email', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="email"
@@ -357,7 +357,7 @@ export default function EmailsPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-email-reply-to"
           >
-            { __( 'Reply-to email', 'mission' ) }
+            { __( 'Reply-to email', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="email"
@@ -369,14 +369,17 @@ export default function EmailsPanel( {
             }
           />
           <span className="mission-settings-field__hint">
-            { __( 'Leave blank to use the from email address.', 'mission' ) }
+            { __(
+              'Leave blank to use the from email address.',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
       </div>
 
       { /* Donation Emails */ }
       <h3 className="mission-settings-email-group-title">
-        { __( 'Donation Emails', 'mission' ) }
+        { __( 'Donation Emails', 'missionwp-donation-platform' ) }
       </h3>
       <div className="mission-settings-email-list">
         { DONATION_EMAILS.map( ( email ) => (
@@ -394,7 +397,7 @@ export default function EmailsPanel( {
 
       { /* Account Emails */ }
       <h3 className="mission-settings-email-group-title">
-        { __( 'Account Emails', 'mission' ) }
+        { __( 'Account Emails', 'missionwp-donation-platform' ) }
       </h3>
       <div className="mission-settings-email-list">
         { ACCOUNT_EMAILS.map( ( email ) => (
@@ -412,7 +415,7 @@ export default function EmailsPanel( {
 
       { /* Admin Notifications */ }
       <h3 className="mission-settings-email-group-title">
-        { __( 'Admin Notifications', 'mission' ) }
+        { __( 'Admin Notifications', 'missionwp-donation-platform' ) }
       </h3>
       <div className="mission-settings-email-list">
         { ADMIN_EMAILS.map( ( email ) => (

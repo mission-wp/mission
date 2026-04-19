@@ -190,8 +190,11 @@ export default function LogsPanel() {
         { entries.length === 0 ? (
           <div className="mission-logs-empty">
             { filters.level || filters.category || filters.search
-              ? __( 'No log entries match your filters.', 'mission' )
-              : __( 'No log entries yet.', 'mission' ) }
+              ? __(
+                  'No log entries match your filters.',
+                  'missionwp-donation-platform'
+                )
+              : __( 'No log entries yet.', 'missionwp-donation-platform' ) }
           </div>
         ) : (
           <div className="mission-logs-list">
@@ -215,10 +218,13 @@ export default function LogsPanel() {
               disabled={ isLoadingMore }
             >
               { isLoadingMore
-                ? __( 'Loading…', 'mission' )
+                ? __( 'Loading…', 'missionwp-donation-platform' )
                 : sprintf(
                     // translators: %s: number of remaining log entries.
-                    __( 'Load more (%s remaining)', 'mission' ),
+                    __(
+                      'Load more (%s remaining)',
+                      'missionwp-donation-platform'
+                    ),
                     ( total - entries.length ).toLocaleString()
                   ) }
             </button>
@@ -228,13 +234,16 @@ export default function LogsPanel() {
 
       { showClearModal && (
         <ConfirmationModal
-          title={ __( 'Clear all logs', 'mission' ) }
+          title={ __( 'Clear all logs', 'missionwp-donation-platform' ) }
           message={ sprintf(
             // translators: %s: total number of log entries to delete.
-            __( 'This will permanently delete all %s log entries.', 'mission' ),
+            __(
+              'This will permanently delete all %s log entries.',
+              'missionwp-donation-platform'
+            ),
             total.toLocaleString()
           ) }
-          confirmLabel={ __( 'Clear logs', 'mission' ) }
+          confirmLabel={ __( 'Clear logs', 'missionwp-donation-platform' ) }
           isRunning={ isClearing }
           onConfirm={ handleClear }
           onCancel={ () => setShowClearModal( false ) }

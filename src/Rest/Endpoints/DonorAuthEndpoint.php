@@ -201,7 +201,7 @@ class DonorAuthEndpoint {
 
 		return new WP_REST_Response(
 			[
-				'message' => __( 'If a donor account exists for that email, a verification link has been sent.', 'mission' ),
+				'message' => __( 'If a donor account exists for that email, a verification link has been sent.', 'missionwp-donation-platform' ),
 			]
 		);
 	}
@@ -253,7 +253,7 @@ class DonorAuthEndpoint {
 
 		return new WP_REST_Response(
 			[
-				'message' => __( 'If an account exists for that email, a password reset link has been sent.', 'mission' ),
+				'message' => __( 'If an account exists for that email, a password reset link has been sent.', 'missionwp-donation-platform' ),
 			]
 		);
 	}
@@ -328,7 +328,7 @@ class DonorAuthEndpoint {
 		$donor = $this->auth->get_current_donor();
 
 		if ( ! $donor ) {
-			return new WP_Error( 'donor_not_found', __( 'Donor record not found.', 'mission' ), [ 'status' => 404 ] );
+			return new WP_Error( 'donor_not_found', __( 'Donor record not found.', 'missionwp-donation-platform' ), [ 'status' => 404 ] );
 		}
 
 		return new WP_REST_Response( $this->auth->format_donor_response( $donor ) );

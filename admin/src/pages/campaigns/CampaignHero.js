@@ -46,13 +46,13 @@ export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
               <span>{ campaign.url.replace( /^https?:\/\//, '' ) }</span>
               { copied ? (
                 <span className="mission-campaign-hero__copied">
-                  { __( 'Copied!', 'mission' ) }
+                  { __( 'Copied!', 'missionwp-donation-platform' ) }
                 </span>
               ) : (
                 <button
                   className="mission-campaign-hero__icon-btn"
                   onClick={ handleCopyUrl }
-                  title={ __( 'Copy URL', 'mission' ) }
+                  title={ __( 'Copy URL', 'missionwp-donation-platform' ) }
                   type="button"
                 >
                   <svg
@@ -83,7 +83,7 @@ export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
               icon={ external }
               style={ { textDecoration: 'none', flexShrink: 0 } }
             >
-              { __( 'View Campaign Page', 'mission' ) }
+              { __( 'View Campaign Page', 'missionwp-donation-platform' ) }
             </Button>
           ) }
           { campaign.goal_amount > 0 && (
@@ -95,13 +95,13 @@ export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
                     : goalProgress.toLocaleString() }
                 </span>
                 <span className="mission-campaign-hero__progress-goal">
-                  { __( 'of', 'mission' ) }{ ' ' }
+                  { __( 'of', 'missionwp-donation-platform' ) }{ ' ' }
                   { isAmount
                     ? formatAmount( campaign.goal_amount )
                     : `${ campaign.goal_amount.toLocaleString() } ${
                         gType === 'donors'
-                          ? __( 'donors', 'mission' )
-                          : __( 'donations', 'mission' )
+                          ? __( 'donors', 'missionwp-donation-platform' )
+                          : __( 'donations', 'missionwp-donation-platform' )
                       }` }
                 </span>
               </div>
@@ -112,7 +112,10 @@ export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
                 />
               </div>
               <span className="mission-campaign-hero__progress-pct">
-                { `${ percentage }% ${ __( 'funded', 'mission' ) }` }
+                { `${ percentage }% ${ __(
+                  'funded',
+                  'missionwp-donation-platform'
+                ) }` }
               </span>
             </div>
           ) }

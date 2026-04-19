@@ -44,8 +44,8 @@ function formFromTribute( tribute ) {
 
 function TypeLabel( { type } ) {
   return type === 'in_memory'
-    ? __( 'In memory of', 'mission' )
-    : __( 'In honor of', 'mission' );
+    ? __( 'In memory of', 'missionwp-donation-platform' )
+    : __( 'In honor of', 'missionwp-donation-platform' );
 }
 
 function NotifyStatusBadge( { tribute, transactionId, onTributeChange } ) {
@@ -87,7 +87,7 @@ function NotifyStatusBadge( { tribute, transactionId, onTributeChange } ) {
     <div className="mission-dedication-notify-status">
       { isEmail && (
         <span>
-          { __( 'Email notification sent to', 'mission' ) }{ ' ' }
+          { __( 'Email notification sent to', 'missionwp-donation-platform' ) }{ ' ' }
           <strong>{ tribute.notify_name }</strong>
           { tribute.notify_email && ` (${ tribute.notify_email })` }
         </span>
@@ -97,8 +97,14 @@ function NotifyStatusBadge( { tribute, transactionId, onTributeChange } ) {
           <div className="mission-dedication-mail-header">
             <span>
               { isSent
-                ? __( 'Mail notification sent to', 'mission' )
-                : __( 'Mail notification pending for', 'mission' ) }{ ' ' }
+                ? __(
+                    'Mail notification sent to',
+                    'missionwp-donation-platform'
+                  )
+                : __(
+                    'Mail notification pending for',
+                    'missionwp-donation-platform'
+                  ) }{ ' ' }
               <strong>{ tribute.notify_name }</strong>
             </span>
             { ! isSent && (
@@ -109,8 +115,8 @@ function NotifyStatusBadge( { tribute, transactionId, onTributeChange } ) {
                 disabled={ isMarking }
               >
                 { isMarking
-                  ? __( 'Marking\u2026', 'mission' )
-                  : __( 'Mark as sent', 'mission' ) }
+                  ? __( 'Marking\u2026', 'missionwp-donation-platform' )
+                  : __( 'Mark as sent', 'missionwp-donation-platform' ) }
               </button>
             ) }
           </div>
@@ -238,7 +244,7 @@ export default function DedicationSection( {
     <details className="mission-detail-section">
       <summary className="mission-detail-section__header">
         <h3 className="mission-detail-section__title">
-          { __( 'Dedication', 'mission' ) }
+          { __( 'Dedication', 'missionwp-donation-platform' ) }
         </h3>
         { mode === 'view' && (
           <div className="mission-dedication-header-actions">
@@ -250,7 +256,7 @@ export default function DedicationSection( {
                 handleEdit();
               } }
             >
-              { __( 'Edit', 'mission' ) }
+              { __( 'Edit', 'missionwp-donation-platform' ) }
             </button>
             <button
               type="button"
@@ -260,7 +266,7 @@ export default function DedicationSection( {
                 setMode( 'remove' );
               } }
             >
-              { __( 'Remove', 'mission' ) }
+              { __( 'Remove', 'missionwp-donation-platform' ) }
             </button>
           </div>
         ) }
@@ -314,7 +320,7 @@ export default function DedicationSection( {
           <div className="mission-dedication-form">
             <div className="mission-dedication-form-row">
               <label className="mission-dedication-form-label">
-                { __( 'Type', 'mission' ) }
+                { __( 'Type', 'missionwp-donation-platform' ) }
               </label>
               <select
                 className="mission-dedication-form-select"
@@ -324,16 +330,16 @@ export default function DedicationSection( {
                 }
               >
                 <option value="in_honor">
-                  { __( 'In honor of', 'mission' ) }
+                  { __( 'In honor of', 'missionwp-donation-platform' ) }
                 </option>
                 <option value="in_memory">
-                  { __( 'In memory of', 'mission' ) }
+                  { __( 'In memory of', 'missionwp-donation-platform' ) }
                 </option>
               </select>
             </div>
             <div className="mission-dedication-form-row">
               <label className="mission-dedication-form-label">
-                { __( 'Honoree', 'mission' ) }
+                { __( 'Honoree', 'missionwp-donation-platform' ) }
               </label>
               <input
                 type="text"
@@ -346,7 +352,7 @@ export default function DedicationSection( {
             </div>
             <div className="mission-dedication-form-row">
               <label className="mission-dedication-form-label">
-                { __( 'Message', 'mission' ) }
+                { __( 'Message', 'missionwp-donation-platform' ) }
               </label>
               <textarea
                 className="mission-dedication-form-textarea"
@@ -357,7 +363,7 @@ export default function DedicationSection( {
             </div>
             <div className="mission-dedication-form-row">
               <label className="mission-dedication-form-label">
-                { __( 'Notification', 'mission' ) }
+                { __( 'Notification', 'missionwp-donation-platform' ) }
               </label>
               <div className="mission-dedication-notify-fields">
                 <div className="mission-dedication-notify-toggle-row">
@@ -373,7 +379,7 @@ export default function DedicationSection( {
                     <span className="mission-toggle-sm__slider" />
                   </label>
                   <span className="mission-dedication-notify-toggle-label">
-                    { __( 'Send notification', 'mission' ) }
+                    { __( 'Send notification', 'missionwp-donation-platform' ) }
                   </span>
                 </div>
                 { form.notify_enabled && (
@@ -401,7 +407,7 @@ export default function DedicationSection( {
                           <rect x="1.5" y="3" width="13" height="10" rx="1.5" />
                           <path d="M1.5 4.5L8 9l6.5-4.5" />
                         </svg>
-                        { __( 'Email', 'mission' ) }
+                        { __( 'Email', 'missionwp-donation-platform' ) }
                       </button>
                       <button
                         type="button"
@@ -424,7 +430,7 @@ export default function DedicationSection( {
                           <rect x="1" y="2" width="14" height="11" rx="2" />
                           <path d="M2 10h3M2 7.5h2" />
                         </svg>
-                        { __( 'Mail', 'mission' ) }
+                        { __( 'Mail', 'missionwp-donation-platform' ) }
                       </button>
                     </div>
                     { form.notify_method === 'email' && (
@@ -432,7 +438,10 @@ export default function DedicationSection( {
                         <div className="mission-dedication-form-row-inline">
                           <div className="mission-dedication-form-field">
                             <label className="mission-dedication-form-sublabel">
-                              { __( 'Recipient name', 'mission' ) }
+                              { __(
+                                'Recipient name',
+                                'missionwp-donation-platform'
+                              ) }
                             </label>
                             <input
                               type="text"
@@ -445,7 +454,10 @@ export default function DedicationSection( {
                           </div>
                           <div className="mission-dedication-form-field">
                             <label className="mission-dedication-form-sublabel">
-                              { __( 'Email address', 'mission' ) }
+                              { __(
+                                'Email address',
+                                'missionwp-donation-platform'
+                              ) }
                             </label>
                             <input
                               type="email"
@@ -466,7 +478,10 @@ export default function DedicationSection( {
                           style={ { marginBottom: 8 } }
                         >
                           <label className="mission-dedication-form-sublabel">
-                            { __( 'Recipient name', 'mission' ) }
+                            { __(
+                              'Recipient name',
+                              'missionwp-donation-platform'
+                            ) }
                           </label>
                           <input
                             type="text"
@@ -482,7 +497,10 @@ export default function DedicationSection( {
                           style={ { marginBottom: 8 } }
                         >
                           <label className="mission-dedication-form-sublabel">
-                            { __( 'Street address', 'mission' ) }
+                            { __(
+                              'Street address',
+                              'missionwp-donation-platform'
+                            ) }
                           </label>
                           <input
                             type="text"
@@ -496,7 +514,7 @@ export default function DedicationSection( {
                         <div className="mission-dedication-form-row-inline">
                           <div className="mission-dedication-form-field">
                             <label className="mission-dedication-form-sublabel">
-                              { __( 'City', 'mission' ) }
+                              { __( 'City', 'missionwp-donation-platform' ) }
                             </label>
                             <input
                               type="text"
@@ -512,7 +530,7 @@ export default function DedicationSection( {
                             style={ { flex: '0 0 80px' } }
                           >
                             <label className="mission-dedication-form-sublabel">
-                              { __( 'State', 'mission' ) }
+                              { __( 'State', 'missionwp-donation-platform' ) }
                             </label>
                             <input
                               type="text"
@@ -528,7 +546,10 @@ export default function DedicationSection( {
                             style={ { flex: '0 0 100px' } }
                           >
                             <label className="mission-dedication-form-sublabel">
-                              { __( 'Postal code', 'mission' ) }
+                              { __(
+                                'Postal code',
+                                'missionwp-donation-platform'
+                              ) }
                             </label>
                             <input
                               type="text"
@@ -553,9 +574,14 @@ export default function DedicationSection( {
                 onClick={ handleSave }
                 disabled={ isSaving || ! form.honoree_name.trim() }
               >
-                { isSaving && __( 'Saving\u2026', 'mission' ) }
-                { ! isSaving && isAdding && __( 'Add Dedication', 'mission' ) }
-                { ! isSaving && ! isAdding && __( 'Save Changes', 'mission' ) }
+                { isSaving &&
+                  __( 'Saving\u2026', 'missionwp-donation-platform' ) }
+                { ! isSaving &&
+                  isAdding &&
+                  __( 'Add Dedication', 'missionwp-donation-platform' ) }
+                { ! isSaving &&
+                  ! isAdding &&
+                  __( 'Save Changes', 'missionwp-donation-platform' ) }
               </button>
               <button
                 type="button"
@@ -563,7 +589,7 @@ export default function DedicationSection( {
                 onClick={ handleCancel }
                 disabled={ isSaving }
               >
-                { __( 'Cancel', 'mission' ) }
+                { __( 'Cancel', 'missionwp-donation-platform' ) }
               </button>
             </div>
             { /* eslint-enable jsx-a11y/label-has-associated-control */ }
@@ -589,11 +615,16 @@ export default function DedicationSection( {
               <path d="M9 5.5v4M9 12.5h.01" />
             </svg>
             <div className="mission-dedication-remove-prompt-text">
-              <strong>{ __( 'Remove this dedication?', 'mission' ) }</strong>
+              <strong>
+                { __(
+                  'Remove this dedication?',
+                  'missionwp-donation-platform'
+                ) }
+              </strong>
               <span>
                 { __(
                   'This will permanently remove the dedication from this transaction.',
-                  'mission'
+                  'missionwp-donation-platform'
                 ) }
               </span>
             </div>
@@ -606,8 +637,8 @@ export default function DedicationSection( {
               disabled={ isRemoving }
             >
               { isRemoving
-                ? __( 'Removing\u2026', 'mission' )
-                : __( 'Remove Dedication', 'mission' ) }
+                ? __( 'Removing\u2026', 'missionwp-donation-platform' )
+                : __( 'Remove Dedication', 'missionwp-donation-platform' ) }
             </button>
             <button
               type="button"
@@ -615,7 +646,7 @@ export default function DedicationSection( {
               onClick={ () => setMode( 'view' ) }
               disabled={ isRemoving }
             >
-              { __( 'Cancel', 'mission' ) }
+              { __( 'Cancel', 'missionwp-donation-platform' ) }
             </button>
           </div>
         </div>
@@ -639,7 +670,10 @@ export default function DedicationSection( {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
             <p className="mission-dedication-empty-text">
-              { __( 'No dedication on this donation', 'mission' ) }
+              { __(
+                'No dedication on this donation',
+                'missionwp-donation-platform'
+              ) }
             </p>
             <button
               type="button"
@@ -658,7 +692,7 @@ export default function DedicationSection( {
               >
                 <path d="M7 2v10M2 7h10" />
               </svg>
-              { __( 'Add Dedication', 'mission' ) }
+              { __( 'Add Dedication', 'missionwp-donation-platform' ) }
             </button>
           </div>
         </div>

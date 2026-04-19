@@ -62,8 +62,8 @@ class Activator {
 		if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 			deactivate_plugins( MISSION_BASENAME );
 			wp_die(
-				esc_html__( 'Mission requires PHP 8.0 or higher.', 'mission' ),
-				esc_html__( 'Plugin Activation Error', 'mission' ),
+				esc_html__( 'MissionWP Donation Platform requires PHP 8.0 or higher.', 'missionwp-donation-platform' ),
+				esc_html__( 'Plugin Activation Error', 'missionwp-donation-platform' ),
 				[ 'back_link' => true ]
 			);
 		}
@@ -72,8 +72,8 @@ class Activator {
 		if ( version_compare( $wp_version, '6.7', '<' ) ) {
 			deactivate_plugins( MISSION_BASENAME );
 			wp_die(
-				esc_html__( 'Mission requires WordPress 6.7 or higher.', 'mission' ),
-				esc_html__( 'Plugin Activation Error', 'mission' ),
+				esc_html__( 'MissionWP Donation Platform requires WordPress 6.7 or higher.', 'missionwp-donation-platform' ),
+				esc_html__( 'Plugin Activation Error', 'missionwp-donation-platform' ),
 				[ 'back_link' => true ]
 			);
 		}
@@ -107,7 +107,7 @@ class Activator {
 
 		// Register the donor role (zero capabilities — only used to identify logged-in donors).
 		if ( ! get_role( 'mission_donor' ) ) {
-			add_role( 'mission_donor', __( 'Mission Donor', 'mission' ), [] );
+			add_role( 'mission_donor', __( 'MissionWP Donor', 'missionwp-donation-platform' ), [] );
 		}
 	}
 

@@ -71,7 +71,7 @@ class SettingsEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage settings.', 'mission' ),
+				__( 'You do not have permission to manage settings.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}

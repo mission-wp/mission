@@ -73,20 +73,20 @@ if ( 'amount' === $goal_type ) {
 	$progress_text = Currency::format_amount( $goal_progress, $currency );
 	$goal_text     = $has_goal
 		/* translators: %s: formatted goal amount */
-		? sprintf( __( 'raised of %s goal', 'mission' ), Currency::format_amount( $goal_amount, $currency ) )
-		: __( 'raised', 'mission' );
+		? sprintf( __( 'raised of %s goal', 'missionwp-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
+		: __( 'raised', 'missionwp-donation-platform' );
 } elseif ( 'donations' === $goal_type ) {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donations of %s goal', 'mission' ), number_format_i18n( $goal_amount ) )
-		: __( 'donations', 'mission' );
+		? sprintf( __( 'donations of %s goal', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: __( 'donations', 'missionwp-donation-platform' );
 } else {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donors of %s goal', 'mission' ), number_format_i18n( $goal_amount ) )
-		: __( 'donors', 'mission' );
+		? sprintf( __( 'donors of %s goal', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: __( 'donors', 'missionwp-donation-platform' );
 }
 
 // Primary color (same pattern as donation form).
@@ -142,13 +142,13 @@ ob_start();
 			<?php if ( $show_donors ) : ?>
 				<div class="mission-cp-stat">
 					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'mission' ); ?></span>
+					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'missionwp-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
 				<div class="mission-cp-stat">
 					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'days remaining', 'mission' ); ?></span>
+					<span class="mission-cp-stat__label"><?php esc_html_e( 'days remaining', 'missionwp-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -161,11 +161,11 @@ ob_start();
 				class="mission-cp-donate-btn"
 				data-wp-on--click="actions.scrollToForm"
 			>
-				<?php esc_html_e( 'Donate Now', 'mission' ); ?>
+				<?php esc_html_e( 'Donate Now', 'missionwp-donation-platform' ); ?>
 			</button>
 		<?php else : ?>
 			<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-cp-donate-btn">
-				<?php esc_html_e( 'Donate Now', 'mission' ); ?>
+				<?php esc_html_e( 'Donate Now', 'missionwp-donation-platform' ); ?>
 			</a>
 		<?php endif; ?>
 	<?php endif; ?>

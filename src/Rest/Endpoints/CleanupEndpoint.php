@@ -96,7 +96,7 @@ class CleanupEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to perform cleanup operations.', 'mission' ),
+				__( 'You do not have permission to perform cleanup operations.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -140,7 +140,7 @@ class CleanupEndpoint {
 			if ( 'DELETE' !== $confirmation ) {
 				return new WP_Error(
 					'confirmation_required',
-					__( 'You must type DELETE to confirm this action.', 'mission' ),
+					__( 'You must type DELETE to confirm this action.', 'missionwp-donation-platform' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -165,7 +165,7 @@ class CleanupEndpoint {
 		if ( ! $method ) {
 			return new WP_Error(
 				'invalid_action',
-				__( 'Invalid cleanup action.', 'mission' ),
+				__( 'Invalid cleanup action.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}

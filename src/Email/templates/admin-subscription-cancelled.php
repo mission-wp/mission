@@ -10,7 +10,7 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
-	<?php esc_html_e( 'Subscription Cancelled', 'mission' ); ?>
+	<?php esc_html_e( 'Subscription Cancelled', 'missionwp-donation-platform' ); ?>
 </h1>
 
 <p style="margin: 0 0 16px;">
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
 	printf(
 		wp_kses(
 			/* translators: 1: donor name, 2: formatted amount, 3: frequency (e.g. "monthly") */
-			__( '<strong>%1$s</strong> has cancelled their %2$s %3$s recurring donation.', 'mission' ),
+			__( '<strong>%1$s</strong> has cancelled their %2$s %3$s recurring donation.', 'missionwp-donation-platform' ),
 			[ 'strong' => [] ]
 		),
 		esc_html( $data['donor_name'] ),
@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
 <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: 20px 0; border: 1px solid #e5e7eb; border-radius: 8px;">
 	<tr>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600; width: 40%;">
-			<?php esc_html_e( 'Donor', 'mission' ); ?>
+			<?php esc_html_e( 'Donor', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
 			<?php echo esc_html( $data['donor_name'] ); ?>
@@ -42,7 +42,7 @@ defined( 'ABSPATH' ) || exit;
 	</tr>
 	<tr>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
-			<?php esc_html_e( 'Amount', 'mission' ); ?>
+			<?php esc_html_e( 'Amount', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
 			<?php
@@ -57,13 +57,13 @@ defined( 'ABSPATH' ) || exit;
 	</tr>
 	<tr>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb; font-weight: 600;">
-			<?php esc_html_e( 'Total collected', 'mission' ); ?>
+			<?php esc_html_e( 'Total collected', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
 			<?php
 			printf(
 				/* translators: 1: total amount collected, 2: number of renewals */
-				esc_html__( '%1$s over %2$s renewals', 'mission' ),
+				esc_html__( '%1$s over %2$s renewals', 'missionwp-donation-platform' ),
 				esc_html( $data['total_renewed_fmt'] ),
 				esc_html( (string) ( $data['renewal_count'] ?? 0 ) )
 			);
@@ -72,7 +72,7 @@ defined( 'ABSPATH' ) || exit;
 	</tr>
 	<tr>
 		<td style="padding: 12px 16px; <?php echo ! empty( $data['campaign_name'] ) ? 'border-bottom: 1px solid #e5e7eb; ' : ''; ?>font-weight: 600;">
-			<?php esc_html_e( 'Cancelled', 'mission' ); ?>
+			<?php esc_html_e( 'Cancelled', 'missionwp-donation-platform' ); ?>
 		</td>
 		<td style="padding: 12px 16px; <?php echo ! empty( $data['campaign_name'] ) ? 'border-bottom: 1px solid #e5e7eb; ' : ''; ?>">
 			<?php echo esc_html( $data['date_formatted'] ); ?>
@@ -81,7 +81,7 @@ defined( 'ABSPATH' ) || exit;
 	<?php if ( ! empty( $data['campaign_name'] ) ) : ?>
 		<tr>
 			<td style="padding: 12px 16px; font-weight: 600;">
-				<?php esc_html_e( 'Campaign', 'mission' ); ?>
+				<?php esc_html_e( 'Campaign', 'missionwp-donation-platform' ); ?>
 			</td>
 			<td style="padding: 12px 16px;">
 				<?php echo esc_html( $data['campaign_name'] ); ?>
@@ -93,7 +93,7 @@ defined( 'ABSPATH' ) || exit;
 <?php if ( ! empty( $data['admin_url'] ) ) : ?>
 	<p style="margin: 20px 0 0;">
 		<a href="<?php echo esc_url( $data['admin_url'] ); ?>" style="display: inline-block; padding: 10px 20px; background-color: #2fa36b; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
-			<?php esc_html_e( 'View in Dashboard', 'mission' ); ?>
+			<?php esc_html_e( 'View in Dashboard', 'missionwp-donation-platform' ); ?>
 		</a>
 	</p>
 <?php endif; ?>

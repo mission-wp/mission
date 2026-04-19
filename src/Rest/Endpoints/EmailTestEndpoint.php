@@ -102,7 +102,7 @@ class EmailTestEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to send test emails.', 'mission' ),
+				__( 'You do not have permission to send test emails.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -123,7 +123,7 @@ class EmailTestEndpoint {
 		if ( ! isset( self::TEMPLATE_MAP[ $email_type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
-				__( 'Unknown email type.', 'mission' ),
+				__( 'Unknown email type.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -150,7 +150,7 @@ class EmailTestEndpoint {
 		if ( ! $html ) {
 			return new WP_Error(
 				'render_failed',
-				__( 'Failed to render email template.', 'mission' ),
+				__( 'Failed to render email template.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -160,7 +160,7 @@ class EmailTestEndpoint {
 		if ( ! $sent ) {
 			return new WP_Error(
 				'send_failed',
-				__( 'Failed to send test email. Check your mail configuration.', 'mission' ),
+				__( 'Failed to send test email. Check your mail configuration.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -191,8 +191,8 @@ class EmailTestEndpoint {
 			'donor'                  => $donor,
 			'amount_formatted'       => Currency::format_amount( 5000, $currency ),
 			'date_formatted'         => wp_date( get_option( 'date_format' ) ),
-			'campaign_name'          => __( 'General Fund', 'mission' ),
-			'frequency_label'        => __( 'Monthly', 'mission' ),
+			'campaign_name'          => __( 'General Fund', 'missionwp-donation-platform' ),
+			'frequency_label'        => __( 'Monthly', 'missionwp-donation-platform' ),
 			'next_renewal_formatted' => wp_date( get_option( 'date_format' ), strtotime( '+1 month' ) ),
 		];
 

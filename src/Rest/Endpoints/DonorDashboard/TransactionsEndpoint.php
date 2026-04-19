@@ -200,7 +200,7 @@ class TransactionsEndpoint {
 		if ( empty( $receipt_data['transactions'] ) ) {
 			return new WP_Error(
 				'no_transactions',
-				__( 'No completed transactions found for this year.', 'mission' ),
+				__( 'No completed transactions found for this year.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -245,7 +245,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'mission' ),
+				__( 'Transaction not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -253,7 +253,7 @@ class TransactionsEndpoint {
 		if ( $transaction->donor_id !== $donor->id ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to access this transaction.', 'mission' ),
+				__( 'You do not have permission to access this transaction.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -261,7 +261,7 @@ class TransactionsEndpoint {
 		if ( 'completed' !== $transaction->status ) {
 			return new WP_Error(
 				'transaction_not_completed',
-				__( 'Receipts are only available for completed transactions.', 'mission' ),
+				__( 'Receipts are only available for completed transactions.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -272,7 +272,7 @@ class TransactionsEndpoint {
 			'id'              => $transaction->id,
 			'amount'          => $transaction->amount,
 			'currency'        => $transaction->currency,
-			'campaign_name'   => $campaign?->title ?? __( 'General Fund', 'mission' ),
+			'campaign_name'   => $campaign?->title ?? __( 'General Fund', 'missionwp-donation-platform' ),
 			'payment_gateway' => $transaction->payment_gateway,
 			'date_completed'  => $transaction->date_completed,
 		];

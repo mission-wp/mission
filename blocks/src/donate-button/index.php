@@ -23,7 +23,7 @@ $resolve_preset = static function ( string $value ): string {
 	return $value;
 };
 
-$text          = $attributes['text'] ?? __( 'Donate Now', 'mission' );
+$text          = $attributes['text'] ?? __( 'Donate Now', 'missionwp-donation-platform' );
 $donate_action = $attributes['donateButtonAction'] ?? 'scroll';
 $donate_url    = $attributes['donateButtonUrl'] ?? '';
 

@@ -71,7 +71,7 @@ class SubscriptionEmailListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: frequency label (e.g. "monthly") */
-			__( 'Thank you for your %1$s %2$s donation', 'mission' ),
+			__( 'Thank you for your %1$s %2$s donation', 'missionwp-donation-platform' ),
 			$data['amount_formatted'],
 			strtolower( $data['frequency_label'] ),
 		);
@@ -107,7 +107,7 @@ class SubscriptionEmailListener {
 
 		$subject = sprintf(
 			/* translators: 1: frequency label (e.g. "monthly"), 2: formatted amount */
-			__( 'Thank you for your %1$s gift of %2$s', 'mission' ),
+			__( 'Thank you for your %1$s gift of %2$s', 'missionwp-donation-platform' ),
 			strtolower( $data['frequency_label'] ),
 			$data['amount_formatted'],
 		);
@@ -142,7 +142,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = __( 'Action needed: Update your payment for your recurring donation', 'mission' );
+		$subject = __( 'Action needed: Update your payment for your recurring donation', 'missionwp-donation-platform' );
 
 		$custom_subject = $this->email->get_custom_subject( 'payment_failed' );
 		if ( $custom_subject ) {
@@ -171,7 +171,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = __( 'Your recurring donation has ended', 'mission' );
+		$subject = __( 'Your recurring donation has ended', 'missionwp-donation-platform' );
 
 		$custom_subject = $this->email->get_custom_subject( 'subscription_cancelled' );
 		if ( $custom_subject ) {
@@ -191,7 +191,7 @@ class SubscriptionEmailListener {
 	 */
 	private function build_subject_tags( array $data, \Mission\Models\Donor $donor ): array {
 		return [
-			'{donor_name}'        => $donor->first_name ?: __( 'Friend', 'mission' ),
+			'{donor_name}'        => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
 			'{amount}'            => $data['amount_formatted'],
 			'{frequency}'         => $data['frequency_label'],
 			'{next_renewal_date}' => $data['next_renewal_formatted'],
@@ -209,7 +209,7 @@ class SubscriptionEmailListener {
 	private function build_email_data( Subscription $subscription, \Mission\Models\Donor $donor ): array {
 		$next_renewal = $subscription->date_next_renewal
 			? wp_date( get_option( 'date_format' ), strtotime( $subscription->date_next_renewal ) )
-			: __( 'N/A', 'mission' );
+			: __( 'N/A', 'missionwp-donation-platform' );
 
 		return [
 			'subscription'           => $subscription,

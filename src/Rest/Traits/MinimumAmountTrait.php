@@ -42,7 +42,7 @@ trait MinimumAmountTrait {
 		if ( $amount < self::HARD_FLOOR ) {
 			return new WP_Error(
 				'donation_below_minimum',
-				__( 'Donation amount must be at least $1.00.', 'mission' ),
+				__( 'Donation amount must be at least $1.00.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -59,7 +59,7 @@ trait MinimumAmountTrait {
 				'donation_below_minimum',
 				sprintf(
 					/* translators: %s: formatted minimum amount */
-					__( 'Donation amount must be at least %s.', 'mission' ),
+					__( 'Donation amount must be at least %s.', 'missionwp-donation-platform' ),
 					'$' . number_format( $block_minimum / 100, 2 )
 				),
 				[ 'status' => 400 ]

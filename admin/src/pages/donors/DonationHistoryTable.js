@@ -17,11 +17,11 @@ export default function DonationHistoryTable( { transactions } ) {
   return (
     <div className="mission-card" style={ { padding: 0 } }>
       <h2 className="mission-card__heading">
-        { __( 'Donation History', 'mission' ) }
+        { __( 'Donation History', 'missionwp-donation-platform' ) }
       </h2>
       { ! transactions.length ? (
         <p className="mission-detail-table__empty">
-          { __( 'No donations yet.', 'mission' ) }
+          { __( 'No donations yet.', 'missionwp-donation-platform' ) }
         </p>
       ) : (
         <>
@@ -30,12 +30,12 @@ export default function DonationHistoryTable( { transactions } ) {
               <table className="mission-detail-table">
                 <thead>
                   <tr>
-                    <th>{ __( 'ID', 'mission' ) }</th>
-                    <th>{ __( 'Date', 'mission' ) }</th>
-                    <th>{ __( 'Amount', 'mission' ) }</th>
-                    <th>{ __( 'Campaign', 'mission' ) }</th>
-                    <th>{ __( 'Type', 'mission' ) }</th>
-                    <th>{ __( 'Status', 'mission' ) }</th>
+                    <th>{ __( 'ID', 'missionwp-donation-platform' ) }</th>
+                    <th>{ __( 'Date', 'missionwp-donation-platform' ) }</th>
+                    <th>{ __( 'Amount', 'missionwp-donation-platform' ) }</th>
+                    <th>{ __( 'Campaign', 'missionwp-donation-platform' ) }</th>
+                    <th>{ __( 'Type', 'missionwp-donation-platform' ) }</th>
+                    <th>{ __( 'Status', 'missionwp-donation-platform' ) }</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -77,8 +77,11 @@ export default function DonationHistoryTable( { transactions } ) {
                             }` }
                           >
                             { isRecurring
-                              ? __( 'Recurring', 'mission' )
-                              : __( 'One-time', 'mission' ) }
+                              ? __( 'Recurring', 'missionwp-donation-platform' )
+                              : __(
+                                  'One-time',
+                                  'missionwp-donation-platform'
+                                ) }
                           </span>
                         </td>
                         <td>

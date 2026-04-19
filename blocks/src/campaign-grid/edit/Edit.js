@@ -15,18 +15,42 @@ import apiFetch from '@wordpress/api-fetch';
 import GridPreview from './GridPreview';
 
 const SORT_OPTIONS = [
-  { label: __( 'Newest first', 'mission' ), value: 'date_created|DESC' },
-  { label: __( 'Oldest first', 'mission' ), value: 'date_created|ASC' },
-  { label: __( 'Most funded', 'mission' ), value: 'total_raised|DESC' },
-  { label: __( 'Most donors', 'mission' ), value: 'donor_count|DESC' },
-  { label: __( 'Ending soonest', 'mission' ), value: 'date_end|ASC' },
-  { label: __( 'Alphabetical', 'mission' ), value: 'title|ASC' },
+  {
+    label: __( 'Newest first', 'missionwp-donation-platform' ),
+    value: 'date_created|DESC',
+  },
+  {
+    label: __( 'Oldest first', 'missionwp-donation-platform' ),
+    value: 'date_created|ASC',
+  },
+  {
+    label: __( 'Most funded', 'missionwp-donation-platform' ),
+    value: 'total_raised|DESC',
+  },
+  {
+    label: __( 'Most donors', 'missionwp-donation-platform' ),
+    value: 'donor_count|DESC',
+  },
+  {
+    label: __( 'Ending soonest', 'missionwp-donation-platform' ),
+    value: 'date_end|ASC',
+  },
+  {
+    label: __( 'Alphabetical', 'missionwp-donation-platform' ),
+    value: 'title|ASC',
+  },
 ];
 
 const STATUS_OPTIONS = [
-  { label: __( 'Active campaigns', 'mission' ), value: 'active' },
-  { label: __( 'Ended campaigns', 'mission' ), value: 'ended' },
-  { label: __( 'All campaigns', 'mission' ), value: 'all' },
+  {
+    label: __( 'Active campaigns', 'missionwp-donation-platform' ),
+    value: 'active',
+  },
+  {
+    label: __( 'Ended campaigns', 'missionwp-donation-platform' ),
+    value: 'ended',
+  },
+  { label: __( 'All campaigns', 'missionwp-donation-platform' ), value: 'all' },
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
@@ -78,15 +102,15 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Content', 'mission' ) }>
+        <PanelBody title={ __( 'Content', 'missionwp-donation-platform' ) }>
           <SelectControl
-            label={ __( 'Show campaigns', 'mission' ) }
+            label={ __( 'Show campaigns', 'missionwp-donation-platform' ) }
             value={ statusFilter }
             options={ STATUS_OPTIONS }
             onChange={ ( val ) => setAttributes( { statusFilter: val } ) }
           />
           <TextControl
-            label={ __( 'Number of campaigns', 'mission' ) }
+            label={ __( 'Number of campaigns', 'missionwp-donation-platform' ) }
             type="number"
             min={ 1 }
             value={ numberOfCampaigns }
@@ -95,51 +119,54 @@ export default function Edit( { attributes, setAttributes } ) {
             }
           />
           <SelectControl
-            label={ __( 'Sort by', 'mission' ) }
+            label={ __( 'Sort by', 'missionwp-donation-platform' ) }
             value={ sortValue }
             options={ SORT_OPTIONS }
             onChange={ onSortChange }
           />
         </PanelBody>
-        <PanelBody title={ __( 'Display', 'mission' ) } initialOpen={ false }>
+        <PanelBody
+          title={ __( 'Display', 'missionwp-donation-platform' ) }
+          initialOpen={ false }
+        >
           <RangeControl
-            label={ __( 'Columns', 'mission' ) }
+            label={ __( 'Columns', 'missionwp-donation-platform' ) }
             value={ columns }
             onChange={ ( val ) => setAttributes( { columns: val } ) }
             min={ 1 }
             max={ 3 }
           />
           <ToggleControl
-            label={ __( 'Show image', 'mission' ) }
+            label={ __( 'Show image', 'missionwp-donation-platform' ) }
             checked={ showImage }
             onChange={ ( val ) => setAttributes( { showImage: val } ) }
           />
           { showImage && (
             <ToggleControl
-              label={ __( 'Show status tag', 'mission' ) }
+              label={ __( 'Show status tag', 'missionwp-donation-platform' ) }
               checked={ showTag }
               onChange={ ( val ) => setAttributes( { showTag: val } ) }
             />
           ) }
           <ToggleControl
-            label={ __( 'Show description', 'mission' ) }
+            label={ __( 'Show description', 'missionwp-donation-platform' ) }
             checked={ showDescription }
             onChange={ ( val ) => setAttributes( { showDescription: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show progress bar', 'mission' ) }
+            label={ __( 'Show progress bar', 'missionwp-donation-platform' ) }
             checked={ showProgressBar }
             onChange={ ( val ) => setAttributes( { showProgressBar: val } ) }
           />
           { showProgressBar && (
             <ToggleControl
-              label={ __( 'Show donor count', 'mission' ) }
+              label={ __( 'Show donor count', 'missionwp-donation-platform' ) }
               checked={ showDonorCount }
               onChange={ ( val ) => setAttributes( { showDonorCount: val } ) }
             />
           ) }
           <TextControl
-            label={ __( 'Button text', 'mission' ) }
+            label={ __( 'Button text', 'missionwp-donation-platform' ) }
             value={ buttonText }
             onChange={ ( val ) => setAttributes( { buttonText: val } ) }
           />

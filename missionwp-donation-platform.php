@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Mission
+ * Plugin Name: MissionWP Donation Platform
  * Plugin URI: https://MissionWP.com
  * Description: The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.
- * Version: 1.0.0
- * Author: Mission
+ * Version: 1.0.1
+ * Author: MissionWP
  * Author URI: https://github.com/mission-wp
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: mission
+ * Text Domain: missionwp-donation-platform
  * Requires at least: 6.7
  * Requires PHP: 8.0
  *
@@ -18,7 +18,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
-define( 'MISSION_VERSION', '1.0.0' );
+define( 'MISSION_VERSION', '1.0.1' );
 define( 'MISSION_FILE', __FILE__ );
 define( 'MISSION_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSION_URL', plugin_dir_url( __FILE__ ) );
@@ -38,8 +38,8 @@ if ( file_exists( $autoloader ) ) {
 			?>
 			<div class="notice notice-error">
 				<p>
-					<strong><?php esc_html_e( 'Mission:', 'mission' ); ?></strong>
-					<?php esc_html_e( 'Composer dependencies not found. Please run `composer install` in the plugin directory.', 'mission' ); ?>
+					<strong><?php esc_html_e( 'MissionWP:', 'missionwp-donation-platform' ); ?></strong>
+					<?php esc_html_e( 'Composer dependencies not found. Please run `composer install` in the plugin directory.', 'missionwp-donation-platform' ); ?>
 				</p>
 			</div>
 			<?php

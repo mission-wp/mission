@@ -102,7 +102,7 @@ class EmailTemplateEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view email templates.', 'mission' ),
+				__( 'You do not have permission to view email templates.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -122,7 +122,7 @@ class EmailTemplateEndpoint {
 		if ( ! isset( self::TEMPLATE_MAP[ $type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
-				__( 'Unknown email type.', 'mission' ),
+				__( 'Unknown email type.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}

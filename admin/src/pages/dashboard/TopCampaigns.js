@@ -29,19 +29,19 @@ export default function TopCampaigns( { campaigns, isLoading } ) {
   return (
     <div className="mission-dashboard-card">
       <div className="mission-dashboard-card__header">
-        <h2>{ __( 'Top Campaigns', 'mission' ) }</h2>
+        <h2>{ __( 'Top Campaigns', 'missionwp-donation-platform' ) }</h2>
         <span className="mission-dashboard-card__badge">
-          { __( 'By amount raised', 'mission' ) }
+          { __( 'By amount raised', 'missionwp-donation-platform' ) }
         </span>
       </div>
 
       { ! isLoading && ( ! campaigns || campaigns.length === 0 ) ? (
         <EmptyState
           icon={ <ChartIcon /> }
-          text={ __( 'No campaigns yet', 'mission' ) }
+          text={ __( 'No campaigns yet', 'missionwp-donation-platform' ) }
           hint={ __(
             'Create a campaign to start tracking donations.',
-            'mission'
+            'missionwp-donation-platform'
           ) }
         />
       ) : (
@@ -124,7 +124,7 @@ export default function TopCampaigns( { campaigns, isLoading } ) {
 
       <div className="mission-campaigns-footer">
         <a href={ campaignsUrl } className="mission-campaigns-footer__btn">
-          { __( 'View all campaigns', 'mission' ) }
+          { __( 'View all campaigns', 'missionwp-donation-platform' ) }
         </a>
       </div>
     </div>

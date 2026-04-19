@@ -47,7 +47,7 @@ class DonorDashboardModule {
 	 */
 	public function ensure_donor_role(): void {
 		if ( ! get_role( 'mission_donor' ) ) {
-			add_role( 'mission_donor', __( 'Mission Donor', 'mission' ), [] );
+			add_role( 'mission_donor', __( 'MissionWP Donor', 'missionwp-donation-platform' ), [] );
 		}
 	}
 
@@ -63,8 +63,8 @@ class DonorDashboardModule {
 		\register_block_template(
 			'mission//page-donor-dashboard',
 			[
-				'title'       => __( 'Donor Dashboard', 'mission' ),
-				'description' => __( 'A page template without the page title, designed for the Donor Dashboard block.', 'mission' ),
+				'title'       => __( 'Donor Dashboard', 'missionwp-donation-platform' ),
+				'description' => __( 'A page template without the page title, designed for the Donor Dashboard block.', 'missionwp-donation-platform' ),
 				'post_types'  => [ 'page' ],
 				'content'     => '<!-- wp:template-part {"slug":"header","area":"header","tagName":"header"} /-->
 
@@ -253,7 +253,7 @@ class DonorDashboardModule {
 		$dashboard_page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
 
 		if ( $dashboard_page_id && $post->ID === $dashboard_page_id ) {
-			$post_states['mission_donor_dashboard'] = __( 'Donor Dashboard Page', 'mission' );
+			$post_states['mission_donor_dashboard'] = __( 'Donor Dashboard Page', 'missionwp-donation-platform' );
 		}
 
 		return $post_states;
@@ -300,7 +300,7 @@ class DonorDashboardModule {
 
 		$page_id = wp_insert_post(
 			[
-				'post_title'   => __( 'Donor Dashboard', 'mission' ),
+				'post_title'   => __( 'Donor Dashboard', 'missionwp-donation-platform' ),
 				'post_name'    => 'donor-dashboard',
 				'post_content' => '<!-- wp:mission/donor-dashboard {"align":"wide"} /-->',
 				'post_status'  => 'publish',

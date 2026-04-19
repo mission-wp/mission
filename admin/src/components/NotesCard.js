@@ -126,7 +126,7 @@ export default function NotesCard( {
                 color: '#9b9ba8',
               } }
             >
-              { __( 'No notes yet.', 'mission' ) }
+              { __( 'No notes yet.', 'missionwp-donation-platform' ) }
             </Text>
           ) }
 
@@ -145,7 +145,10 @@ export default function NotesCard( {
                       className="mission-note__delete"
                       onClick={ () => handleDelete( note.id ) }
                       disabled={ deletingId === note.id }
-                      aria-label={ __( 'Delete note', 'mission' ) }
+                      aria-label={ __(
+                        'Delete note',
+                        'missionwp-donation-platform'
+                      ) }
                     >
                       { deletingId === note.id ? (
                         <Spinner
@@ -179,7 +182,10 @@ export default function NotesCard( {
             <div className="mission-note-form">
               <textarea
                 className="mission-note-form__textarea"
-                placeholder={ __( 'Write a note\u2026', 'mission' ) }
+                placeholder={ __(
+                  'Write a note\u2026',
+                  'missionwp-donation-platform'
+                ) }
                 value={ newNote }
                 onChange={ ( e ) => setNewNote( e.target.value ) }
                 rows={ 3 }
@@ -193,7 +199,7 @@ export default function NotesCard( {
                   } }
                   disabled={ isSaving }
                 >
-                  { __( 'Cancel', 'mission' ) }
+                  { __( 'Cancel', 'missionwp-donation-platform' ) }
                 </button>
                 <button
                   className="mission-note-footer__btn mission-note-footer__btn--primary"
@@ -205,8 +211,8 @@ export default function NotesCard( {
                   disabled={ isSaving || ! newNote.trim() }
                 >
                   { isSaving
-                    ? __( 'Saving\u2026', 'mission' )
-                    : __( 'Save', 'mission' ) }
+                    ? __( 'Saving\u2026', 'missionwp-donation-platform' )
+                    : __( 'Save', 'missionwp-donation-platform' ) }
                 </button>
               </HStack>
             </div>
@@ -228,7 +234,7 @@ export default function NotesCard( {
                 >
                   <path d="M7 2v10M2 7h10" />
                 </svg>
-                { __( 'Add a note', 'mission' ) }
+                { __( 'Add a note', 'missionwp-donation-platform' ) }
               </button>
             </div>
           ) }
@@ -249,7 +255,7 @@ export default function NotesCard( {
                 onClick={ () => setShowConfirm( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel', 'mission' ) }
+                { __( 'Cancel', 'missionwp-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"

@@ -11,23 +11,32 @@ export default function FeesTab( { localState, updateField } ) {
   const feeOptions = [
     {
       value: 'none',
-      label: __( 'Organization absorbs fees', 'mission' ),
-      hint: __( 'Your organization covers all processing fees', 'mission' ),
+      label: __( 'Organization absorbs fees', 'missionwp-donation-platform' ),
+      hint: __(
+        'Your organization covers all processing fees',
+        'missionwp-donation-platform'
+      ),
     },
     {
       value: 'optional',
-      label: __( 'Give donors the option to cover fees', 'mission' ),
+      label: __(
+        'Give donors the option to cover fees',
+        'missionwp-donation-platform'
+      ),
       hint: __(
         'Donors can choose to add processing fees to their donation',
-        'mission'
+        'missionwp-donation-platform'
       ),
     },
     {
       value: 'required',
-      label: __( 'Require donors to cover fees', 'mission' ),
+      label: __(
+        'Require donors to cover fees',
+        'missionwp-donation-platform'
+      ),
       hint: __(
         'Processing fees are automatically included in every donation',
-        'mission'
+        'missionwp-donation-platform'
       ),
     },
   ];
@@ -35,18 +44,18 @@ export default function FeesTab( { localState, updateField } ) {
   const platformOptions = [
     {
       value: true,
-      label: __( 'Optional donor tip', 'mission' ),
+      label: __( 'Optional donor tip', 'missionwp-donation-platform' ),
       hint: __(
-        'Donors can leave an optional tip to support the Mission platform',
-        'mission'
+        'Donors can leave an optional tip to support the MissionWP platform',
+        'missionwp-donation-platform'
       ),
     },
     {
       value: false,
-      label: __( 'Flat platform fee (3%)', 'mission' ),
+      label: __( 'Flat platform fee (3%)', 'missionwp-donation-platform' ),
       hint: __(
-        'A flat 3% of each donation goes to support Mission',
-        'mission'
+        'A flat 3% of each donation goes to support MissionWP',
+        'missionwp-donation-platform'
       ),
     },
   ];
@@ -56,14 +65,14 @@ export default function FeesTab( { localState, updateField } ) {
       { /* Processing Fees */ }
       <div className="mission-fees-tab__section">
         <span className="mission-field-label">
-          { __( 'Processing Fees', 'mission' ) }
+          { __( 'Processing Fees', 'missionwp-donation-platform' ) }
         </span>
         <p className="mission-fees-tab__section-hint">
           { sprintf(
             /* translators: 1: fee percentage, 2: currency symbol, 3: fixed fee amount */
             __(
               'Stripe charges %1$s%% + %2$s%3$s per transaction for payment processing.',
-              'mission'
+              'missionwp-donation-platform'
             ),
             feePercent,
             symbol,
@@ -102,12 +111,12 @@ export default function FeesTab( { localState, updateField } ) {
       { /* Platform Fee */ }
       <div className="mission-fees-tab__section">
         <span className="mission-field-label">
-          { __( 'Platform Fee', 'mission' ) }
+          { __( 'Platform Fee', 'missionwp-donation-platform' ) }
         </span>
         <p className="mission-fees-tab__section-hint">
           { __(
-            'Mission is funded by optional donor tips or a small platform fee — your choice.',
-            'mission'
+            'MissionWP is funded by optional donor tips or a small platform fee — your choice.',
+            'missionwp-donation-platform'
           ) }
         </p>
         <div className="mission-fees-tab__radio-group mission-fees-tab__radio-group--row">

@@ -27,12 +27,12 @@ export default function GeneralPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Payment Gateway', 'mission' ) }
+            { __( 'Payment Gateway', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'Connect your Stripe account to process donations.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function GeneralPanel( {
                 <div className="mission-settings-stripe__details">
                   <span className="mission-settings-stripe__status">
                     <span className="mission-settings-stripe__dot" />
-                    { __( 'Connected', 'mission' ) }
+                    { __( 'Connected', 'missionwp-donation-platform' ) }
                   </span>
                   { ( settings.stripe_display_name ||
                     settings.stripe_account_id ) && (
@@ -82,7 +82,7 @@ export default function GeneralPanel( {
                 disabled={ saving }
                 type="button"
               >
-                { __( 'Disconnect', 'mission' ) }
+                { __( 'Disconnect', 'missionwp-donation-platform' ) }
               </button>
             </div>
 
@@ -106,7 +106,7 @@ export default function GeneralPanel( {
                   <p>
                     { __(
                       'Your Stripe account is connected, but charges are not yet enabled. You\u2019ll need to finish setting up your Stripe account before you can accept donations.',
-                      'mission'
+                      'missionwp-donation-platform'
                     ) }
                   </p>
                   <a
@@ -114,7 +114,10 @@ export default function GeneralPanel( {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    { __( 'Go to Stripe Dashboard \u2192', 'mission' ) }
+                    { __(
+                      'Go to Stripe Dashboard \u2192',
+                      'missionwp-donation-platform'
+                    ) }
                   </a>
                 </div>
               </div>
@@ -133,24 +136,27 @@ export default function GeneralPanel( {
               >
                 <div className="mission-settings-toggle-row__text">
                   <div className="mission-settings-toggle-row__label">
-                    { __( 'Test mode', 'mission' ) }
+                    { __( 'Test mode', 'missionwp-donation-platform' ) }
                   </div>
                   <div className="mission-settings-toggle-row__desc">
                     { settings.test_mode
                       ? __(
                           'Using Stripe test keys \u2014 no real charges.',
-                          'mission'
+                          'missionwp-donation-platform'
                         )
                       : __(
                           'Using Stripe live keys \u2014 real charges.',
-                          'mission'
+                          'missionwp-donation-platform'
                         ) }
                   </div>
                 </div>
                 { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
                 <label
                   className="mission-toggle-sm"
-                  aria-label={ __( 'Test mode', 'mission' ) }
+                  aria-label={ __(
+                    'Test mode',
+                    'missionwp-donation-platform'
+                  ) }
                 >
                   <input
                     type="checkbox"
@@ -174,7 +180,10 @@ export default function GeneralPanel( {
                   marginBottom: '12px',
                 } }
               >
-                { __( 'Connection error \u2014 please try again.', 'mission' ) }
+                { __(
+                  'Connection error \u2014 please try again.',
+                  'missionwp-donation-platform'
+                ) }
               </p>
             ) }
             { stripeConnectUrl && (
@@ -183,7 +192,7 @@ export default function GeneralPanel( {
                 className="mission-settings-save-bar__btn"
                 style={ { textDecoration: 'none', display: 'inline-flex' } }
               >
-                { __( 'Connect to Stripe', 'mission' ) }
+                { __( 'Connect to Stripe', 'missionwp-donation-platform' ) }
               </a>
             ) }
           </div>
@@ -194,10 +203,13 @@ export default function GeneralPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Organization', 'mission' ) }
+            { __( 'Organization', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
-            { __( 'Used on donation receipts and tax documents.', 'mission' ) }
+            { __(
+              'Used on donation receipts and tax documents.',
+              'missionwp-donation-platform'
+            ) }
           </p>
         </div>
         <div className="mission-settings-field">
@@ -205,7 +217,7 @@ export default function GeneralPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-org-name"
           >
-            { __( 'Organization name', 'mission' ) }
+            { __( 'Organization name', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -217,7 +229,7 @@ export default function GeneralPanel( {
           <span className="mission-settings-field__hint">
             { __(
               'Shown on donation receipts, emails, and the donor dashboard. Defaults to your site name.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </span>
         </div>
@@ -226,7 +238,7 @@ export default function GeneralPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-org-country"
           >
-            { __( 'Country', 'mission' ) }
+            { __( 'Country', 'missionwp-donation-platform' ) }
           </label>
           <select
             id="mission-org-country"
@@ -246,7 +258,7 @@ export default function GeneralPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-org-street"
           >
-            { __( 'Street address', 'mission' ) }
+            { __( 'Street address', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -262,7 +274,7 @@ export default function GeneralPanel( {
               className="mission-settings-field__label"
               htmlFor="mission-org-city"
             >
-              { __( 'City', 'mission' ) }
+              { __( 'City', 'missionwp-donation-platform' ) }
             </label>
             <input
               type="text"
@@ -326,7 +338,7 @@ export default function GeneralPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-org-ein"
           >
-            { __( 'EIN', 'mission' ) }
+            { __( 'EIN', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -338,7 +350,7 @@ export default function GeneralPanel( {
           <span className="mission-settings-field__hint">
             { __(
               'Your Employer Identification Number for tax receipts.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </span>
         </div>
@@ -348,10 +360,13 @@ export default function GeneralPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Currency', 'mission' ) }
+            { __( 'Currency', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
-            { __( 'The currency used for all donations.', 'mission' ) }
+            { __(
+              'The currency used for all donations.',
+              'missionwp-donation-platform'
+            ) }
           </p>
         </div>
         <div className="mission-settings-field">
@@ -359,7 +374,7 @@ export default function GeneralPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-currency"
           >
-            { __( 'Currency', 'mission' ) }
+            { __( 'Currency', 'missionwp-donation-platform' ) }
           </label>
           <select
             id="mission-currency"
@@ -397,7 +412,7 @@ export default function GeneralPanel( {
                   className="mission-settings-field__label"
                   htmlFor="mission-fee-percent"
                 >
-                  { __( 'Percentage (%)', 'mission' ) }
+                  { __( 'Percentage (%)', 'missionwp-donation-platform' ) }
                 </label>
                 <input
                   type="number"
@@ -428,7 +443,7 @@ export default function GeneralPanel( {
                   className="mission-settings-field__label"
                   htmlFor="mission-fee-fixed"
                 >
-                  { __( 'Fixed fee', 'mission' ) }
+                  { __( 'Fixed fee', 'missionwp-donation-platform' ) }
                 </label>
                 <input
                   type="number"
@@ -463,7 +478,7 @@ export default function GeneralPanel( {
             <span className="mission-settings-field__hint">
               { __(
                 'Used when calculating fee recovery. Nonprofits may qualify for discounted Stripe rates.',
-                'mission'
+                'missionwp-donation-platform'
               ) }
             </span>
           </div>
@@ -474,10 +489,13 @@ export default function GeneralPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Appearance', 'mission' ) }
+            { __( 'Appearance', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
-            { __( 'Customize how Mission looks on your site.', 'mission' ) }
+            { __(
+              'Customize how MissionWP looks on your site.',
+              'missionwp-donation-platform'
+            ) }
           </p>
         </div>
         <div className="mission-settings-field">
@@ -485,7 +503,7 @@ export default function GeneralPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-primary-color"
           >
-            { __( 'Primary color', 'mission' ) }
+            { __( 'Primary color', 'missionwp-donation-platform' ) }
           </label>
           <ColorPicker
             value={ settings.primary_color }
@@ -494,8 +512,8 @@ export default function GeneralPanel( {
           />
           <span className="mission-settings-field__hint">
             { __(
-              'Used as the primary accent color throughout Mission.',
-              'mission'
+              'Used as the primary accent color throughout MissionWP.',
+              'missionwp-donation-platform'
             ) }
           </span>
         </div>
@@ -506,19 +524,25 @@ export default function GeneralPanel( {
         >
           <div className="mission-settings-toggle-row__text">
             <div className="mission-settings-toggle-row__label">
-              { __( 'Security badge', 'mission' ) }
+              { __(
+                'Show MissionWP credit on donation forms',
+                'missionwp-donation-platform'
+              ) }
             </div>
             <div className="mission-settings-toggle-row__desc">
               { __(
-                'Show a security badge below donation forms to build donor trust.',
-                'mission'
+                'Displays a "Secure donation powered by MissionWP" badge below donation forms that links to missionwp.com.',
+                'missionwp-donation-platform'
               ) }
             </div>
           </div>
           { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
           <label
             className="mission-toggle-sm"
-            aria-label={ __( 'Security badge', 'mission' ) }
+            aria-label={ __(
+              'Show MissionWP credit on donation forms',
+              'missionwp-donation-platform'
+            ) }
           >
             <input
               type="checkbox"
@@ -536,12 +560,12 @@ export default function GeneralPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Setup Wizard', 'mission' ) }
+            { __( 'Setup Wizard', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'Re-run the guided setup to update your organization details, reconnect Stripe, or create a campaign.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -575,7 +599,7 @@ export default function GeneralPanel( {
             <path d="M15 8a7 7 0 0 1-13.2 3.2" />
             <polyline points="2 15 2 11 6 11" />
           </svg>
-          { __( 'Run setup wizard', 'mission' ) }
+          { __( 'Run setup wizard', 'missionwp-donation-platform' ) }
         </button>
       </div>
 
@@ -583,12 +607,12 @@ export default function GeneralPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Data', 'mission' ) }
+            { __( 'Data', 'missionwp-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'Control what happens to your donation data when the plugin is removed.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -603,12 +627,15 @@ export default function GeneralPanel( {
           />
           <div className="mission-settings-checkbox-field__text">
             <span className="mission-settings-checkbox-field__label">
-              { __( 'Remove all data on uninstall', 'mission' ) }
+              { __(
+                'Remove all data on uninstall',
+                'missionwp-donation-platform'
+              ) }
             </span>
             <span className="mission-settings-checkbox-field__desc">
               { __(
                 'When enabled, all donation records, donor information, campaigns, and settings will be permanently deleted if the plugin is uninstalled. This cannot be undone.',
-                'mission'
+                'missionwp-donation-platform'
               ) }
             </span>
           </div>

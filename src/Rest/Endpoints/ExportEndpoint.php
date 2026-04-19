@@ -106,7 +106,7 @@ class ExportEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to export data.', 'mission' ),
+				__( 'You do not have permission to export data.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -172,7 +172,7 @@ class ExportEndpoint {
 		if ( ! $formatter ) {
 			return new WP_Error(
 				'invalid_format',
-				__( 'Invalid export format.', 'mission' ),
+				__( 'Invalid export format.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -203,7 +203,7 @@ class ExportEndpoint {
 		if ( ! $formatter ) {
 			return new WP_Error(
 				'invalid_format',
-				__( 'Invalid export format.', 'mission' ),
+				__( 'Invalid export format.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -211,7 +211,7 @@ class ExportEndpoint {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			return new WP_Error(
 				'zip_unavailable',
-				__( 'ZIP support is not available on this server.', 'mission' ),
+				__( 'ZIP support is not available on this server.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -226,7 +226,7 @@ class ExportEndpoint {
 		if ( true !== $zip->open( $tmp_file, ZipArchive::OVERWRITE ) ) {
 			return new WP_Error(
 				'zip_failed',
-				__( 'Failed to create ZIP file.', 'mission' ),
+				__( 'Failed to create ZIP file.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -367,7 +367,7 @@ class ExportEndpoint {
 	private function invalid_type_error(): WP_Error {
 		return new WP_Error(
 			'invalid_type',
-			__( 'Invalid export type. Must be one of: donors, transactions, campaigns, subscriptions, tributes.', 'mission' ),
+			__( 'Invalid export type. Must be one of: donors, transactions, campaigns, subscriptions, tributes.', 'missionwp-donation-platform' ),
 			[ 'status' => 400 ]
 		);
 	}

@@ -29,21 +29,33 @@ import './style.scss';
 import './editor.scss';
 
 const ASPECT_RATIO_OPTIONS = [
-  { label: __( 'Original', 'mission' ), value: '' },
-  { label: __( 'Square - 1:1', 'mission' ), value: '1/1' },
-  { label: __( 'Standard - 4:3', 'mission' ), value: '4/3' },
-  { label: __( 'Portrait - 3:4', 'mission' ), value: '3/4' },
-  { label: __( 'Classic - 3:2', 'mission' ), value: '3/2' },
-  { label: __( 'Classic Portrait - 2:3', 'mission' ), value: '2/3' },
-  { label: __( 'Wide - 16:9', 'mission' ), value: '16/9' },
-  { label: __( 'Tall - 9:16', 'mission' ), value: '9/16' },
+  { label: __( 'Original', 'missionwp-donation-platform' ), value: '' },
+  { label: __( 'Square - 1:1', 'missionwp-donation-platform' ), value: '1/1' },
+  {
+    label: __( 'Standard - 4:3', 'missionwp-donation-platform' ),
+    value: '4/3',
+  },
+  {
+    label: __( 'Portrait - 3:4', 'missionwp-donation-platform' ),
+    value: '3/4',
+  },
+  { label: __( 'Classic - 3:2', 'missionwp-donation-platform' ), value: '3/2' },
+  {
+    label: __( 'Classic Portrait - 2:3', 'missionwp-donation-platform' ),
+    value: '2/3',
+  },
+  { label: __( 'Wide - 16:9', 'missionwp-donation-platform' ), value: '16/9' },
+  { label: __( 'Tall - 9:16', 'missionwp-donation-platform' ), value: '9/16' },
 ];
 
 const RESOLUTION_OPTIONS = [
-  { label: __( 'Thumbnail', 'mission' ), value: 'thumbnail' },
-  { label: __( 'Medium', 'mission' ), value: 'medium' },
-  { label: __( 'Large', 'mission' ), value: 'large' },
-  { label: __( 'Full Size', 'mission' ), value: 'full' },
+  {
+    label: __( 'Thumbnail', 'missionwp-donation-platform' ),
+    value: 'thumbnail',
+  },
+  { label: __( 'Medium', 'missionwp-donation-platform' ), value: 'medium' },
+  { label: __( 'Large', 'missionwp-donation-platform' ), value: 'large' },
+  { label: __( 'Full Size', 'missionwp-donation-platform' ), value: 'full' },
 ];
 
 /**
@@ -202,7 +214,7 @@ function Edit( { attributes, setAttributes } ) {
       return (
         <Placeholder
           icon="format-image"
-          label={ __( 'Campaign Image', 'mission' ) }
+          label={ __( 'Campaign Image', 'missionwp-donation-platform' ) }
         >
           <Spinner />
         </Placeholder>
@@ -235,10 +247,10 @@ function Edit( { attributes, setAttributes } ) {
         </svg>
         <p>
           { effectiveId
-            ? __( 'No campaign image set.', 'mission' )
+            ? __( 'No campaign image set.', 'missionwp-donation-platform' )
             : __(
                 'Select a campaign or place this block on a campaign page.',
-                'mission'
+                'missionwp-donation-platform'
               ) }
         </p>
       </div>
@@ -248,9 +260,9 @@ function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'mission' ) }>
+        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'mission' ) }
+            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -259,84 +271,90 @@ function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'mission'
+                    'missionwp-donation-platform'
                   )
                 : undefined
             }
           />
           <TextareaControl
-            label={ __( 'Alternative text', 'mission' ) }
+            label={ __( 'Alternative text', 'missionwp-donation-platform' ) }
             value={ alt }
             onChange={ ( val ) => setAttributes( { alt: val } ) }
             help={ __(
               'Describe the purpose of the image. Leave empty if decorative.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
             rows={ 2 }
           />
           { ! isWideAligned && (
             <>
               <SelectControl
-                label={ __( 'Aspect ratio', 'mission' ) }
+                label={ __( 'Aspect ratio', 'missionwp-donation-platform' ) }
                 value={ aspectRatio }
                 options={ ASPECT_RATIO_OPTIONS }
                 onChange={ ( val ) => setAttributes( { aspectRatio: val } ) }
               />
               <div style={ { display: 'flex', gap: '8px' } }>
                 <UnitControl
-                  label={ __( 'Width', 'mission' ) }
+                  label={ __( 'Width', 'missionwp-donation-platform' ) }
                   value={ width }
                   onChange={ ( val ) => setAttributes( { width: val ?? '' } ) }
                   labelPosition="top"
                   min={ 0 }
-                  placeholder={ __( 'Auto', 'mission' ) }
+                  placeholder={ __( 'Auto', 'missionwp-donation-platform' ) }
                   units={ [ { value: 'px', label: 'px' } ] }
                   size="__unstable-large"
                 />
                 <UnitControl
-                  label={ __( 'Height', 'mission' ) }
+                  label={ __( 'Height', 'missionwp-donation-platform' ) }
                   value={ height }
                   onChange={ ( val ) => setAttributes( { height: val ?? '' } ) }
                   labelPosition="top"
                   min={ 0 }
-                  placeholder={ __( 'Auto', 'mission' ) }
+                  placeholder={ __( 'Auto', 'missionwp-donation-platform' ) }
                   units={ [ { value: 'px', label: 'px' } ] }
                   size="__unstable-large"
                 />
               </div>
               { showScaleControl && (
                 <ToggleGroupControl
-                  label={ __( 'Scale', 'mission' ) }
+                  label={ __( 'Scale', 'missionwp-donation-platform' ) }
                   value={ scale }
                   onChange={ ( val ) => setAttributes( { scale: val } ) }
                   isBlock
                   help={
                     scale === 'cover'
-                      ? __( 'Image covers the space evenly.', 'mission' )
+                      ? __(
+                          'Image covers the space evenly.',
+                          'missionwp-donation-platform'
+                        )
                       : __(
                           'Image is contained without distortion.',
-                          'mission'
+                          'missionwp-donation-platform'
                         )
                   }
                 >
                   <ToggleGroupControlOption
                     value="cover"
-                    label={ __( 'Cover', 'mission' ) }
+                    label={ __( 'Cover', 'missionwp-donation-platform' ) }
                   />
                   <ToggleGroupControlOption
                     value="contain"
-                    label={ __( 'Contain', 'mission' ) }
+                    label={ __( 'Contain', 'missionwp-donation-platform' ) }
                   />
                 </ToggleGroupControl>
               ) }
             </>
           ) }
           <SelectControl
-            label={ __( 'Resolution', 'mission' ) }
+            label={ __( 'Resolution', 'missionwp-donation-platform' ) }
             value={ resolution }
             options={ RESOLUTION_OPTIONS }
             onChange={ ( val ) => setAttributes( { resolution: val } ) }
-            help={ __( 'Select the size of the source image.', 'mission' ) }
+            help={ __(
+              'Select the size of the source image.',
+              'missionwp-donation-platform'
+            ) }
           />
         </PanelBody>
       </InspectorControls>

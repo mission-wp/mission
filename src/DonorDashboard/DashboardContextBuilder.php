@@ -66,17 +66,17 @@ class DashboardContextBuilder {
 		$this->reporting = new ReportingService();
 
 		$this->frequency_suffix = [
-			'weekly'    => __( '/ week', 'mission' ),
-			'monthly'   => __( '/ month', 'mission' ),
-			'quarterly' => __( '/ quarter', 'mission' ),
-			'annually'  => __( '/ year', 'mission' ),
+			'weekly'    => __( '/ week', 'missionwp-donation-platform' ),
+			'monthly'   => __( '/ month', 'missionwp-donation-platform' ),
+			'quarterly' => __( '/ quarter', 'missionwp-donation-platform' ),
+			'annually'  => __( '/ year', 'missionwp-donation-platform' ),
 		];
 
 		$this->frequency_labels = [
-			'weekly'    => __( 'Weekly', 'mission' ),
-			'monthly'   => __( 'Monthly', 'mission' ),
-			'quarterly' => __( 'Quarterly', 'mission' ),
-			'annually'  => __( 'Annually', 'mission' ),
+			'weekly'    => __( 'Weekly', 'missionwp-donation-platform' ),
+			'monthly'   => __( 'Monthly', 'missionwp-donation-platform' ),
+			'quarterly' => __( 'Quarterly', 'missionwp-donation-platform' ),
+			'annually'  => __( 'Annually', 'missionwp-donation-platform' ),
 		];
 	}
 
@@ -223,14 +223,14 @@ class DashboardContextBuilder {
 			'isRecurring'            => false,
 			'isReceipts'             => false,
 			'isProfile'              => false,
-			'panelTitle'             => __( 'Overview', 'mission' ),
+			'panelTitle'             => __( 'Overview', 'missionwp-donation-platform' ),
 			'historyIsEmpty'         => 0 === $history_total,
 			'historyHasOnePage'      => $history_total <= $history_per_page,
 			'historyIsFirstPage'     => true,
 			'historyIsLastPage'      => $history_total <= $history_per_page,
 			'historyPaginationLabel' => sprintf(
 				/* translators: 1: current page, 2: total pages */
-				__( 'Page %1$d of %2$d', 'mission' ),
+				__( 'Page %1$d of %2$d', 'missionwp-donation-platform' ),
 				1,
 				$history_per_page > 0 ? (int) ceil( $history_total / $history_per_page ) : 1
 			),
@@ -346,7 +346,7 @@ class DashboardContextBuilder {
 			'formattedDate'   => $txn->date_completed
 				? date_i18n( 'M j, Y', strtotime( $txn->date_completed ) )
 				: date_i18n( 'M j, Y', strtotime( $txn->date_created ) ),
-			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'mission' ),
+			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
 			'status'          => $txn->status,
 			'statusLabel'     => ucfirst( $txn->status ),
 			'isRecurring'     => $is_recurring,
@@ -360,7 +360,7 @@ class DashboardContextBuilder {
 			'id'              => $sub->id,
 			'formattedAmount' => Currency::format_amount( $sub->amount, $this->currency ),
 			'frequencySuffix' => $this->frequency_suffix[ $sub->frequency ] ?? $sub->frequency,
-			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'mission' ),
+			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
 			'nextPayment'     => $sub->date_next_renewal
 				? date_i18n( 'M j, Y', strtotime( $sub->date_next_renewal ) )
 				: '',
@@ -380,7 +380,7 @@ class DashboardContextBuilder {
 			'formattedAmount'          => Currency::format_amount( $sub->amount, $this->currency ),
 			'frequencySuffix'          => $this->frequency_suffix[ $sub->frequency ] ?? $sub->frequency,
 			'frequencyLabel'           => $this->frequency_labels[ $sub->frequency ] ?? ucfirst( $sub->frequency ),
-			'campaignName'             => $campaign?->title ?? __( 'Deleted Campaign', 'mission' ),
+			'campaignName'             => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
 			'paymentsMade'             => (string) ( 1 + $sub->renewal_count ),
 			'totalContributed'         => Currency::format_amount( $sub->total_amount + $sub->total_renewed, $this->currency ),
 			'started'                  => date_i18n( 'M j, Y', strtotime( $sub->date_created ) ),
@@ -389,7 +389,7 @@ class DashboardContextBuilder {
 				: '',
 			'paymentMethod'            => $pm_last4
 				? ucfirst( $sub->get_meta( 'payment_method_brand' ) ?: 'Card' ) . ' ending in ' . $pm_last4
-				: __( 'Card on file', 'mission' ),
+				: __( 'Card on file', 'missionwp-donation-platform' ),
 			'cancelLoading'            => false,
 			'pauseLoading'             => false,
 			'actionError'              => '',
@@ -429,7 +429,7 @@ class DashboardContextBuilder {
 			'formattedAmount'  => Currency::format_amount( $sub->amount, $this->currency ),
 			'frequencySuffix'  => $this->frequency_suffix[ $sub->frequency ] ?? $sub->frequency,
 			'frequencyLabel'   => $this->frequency_labels[ $sub->frequency ] ?? ucfirst( $sub->frequency ),
-			'campaignName'     => $campaign?->title ?? __( 'Deleted Campaign', 'mission' ),
+			'campaignName'     => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
 			'paymentsMade'     => (string) ( 1 + $sub->renewal_count ),
 			'totalContributed' => Currency::format_amount( $sub->total_amount + $sub->total_renewed, $this->currency ),
 			'period'           => $period,
@@ -449,11 +449,11 @@ class DashboardContextBuilder {
 			'formattedDate'   => $txn->date_completed
 				? date_i18n( 'M j, Y', strtotime( $txn->date_completed ) )
 				: date_i18n( 'M j, Y', strtotime( $txn->date_created ) ),
-			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'mission' ),
+			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
 			'status'          => $txn->status,
 			'statusLabel'     => ucfirst( $txn->status ),
 			'isRecurring'     => $is_recurring,
-			'typeLabel'       => $is_recurring ? __( 'Recurring', 'mission' ) : __( 'One-time', 'mission' ),
+			'typeLabel'       => $is_recurring ? __( 'Recurring', 'missionwp-donation-platform' ) : __( 'One-time', 'missionwp-donation-platform' ),
 		];
 	}
 
@@ -542,15 +542,15 @@ class DashboardContextBuilder {
 		$stats = [
 			[
 				'value' => (string) $transaction_count,
-				'label' => _n( 'Donation Made', 'Donations Made', $transaction_count, 'mission' ),
+				'label' => _n( 'Donation Made', 'Donations Made', $transaction_count, 'missionwp-donation-platform' ),
 			],
 			[
 				'value' => Currency::format_amount( $total_donated, $this->currency ),
-				'label' => __( 'Lifetime Given', 'mission' ),
+				'label' => __( 'Lifetime Given', 'missionwp-donation-platform' ),
 			],
 			[
 				'value' => Currency::format_amount( $average_donation, $this->currency ),
-				'label' => __( 'Avg. Donation', 'mission' ),
+				'label' => __( 'Avg. Donation', 'missionwp-donation-platform' ),
 			],
 		];
 

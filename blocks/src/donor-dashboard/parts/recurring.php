@@ -10,12 +10,12 @@ defined( 'ABSPATH' ) || exit;
 <div class="mission-dd-panel" data-wp-class--active="state.isRecurring">
 	<!-- Empty state -->
 	<div class="mission-dd-empty" data-wp-bind--hidden="context.recurring.hasAny">
-		<p><?php esc_html_e( 'You don\'t have any recurring donations yet. When you set up a recurring gift, it will appear here.', 'mission' ); ?></p>
+		<p><?php esc_html_e( 'You don\'t have any recurring donations yet. When you set up a recurring gift, it will appear here.', 'missionwp-donation-platform' ); ?></p>
 	</div>
 
 	<!-- Active Subscriptions -->
 	<div data-wp-bind--hidden="!context.recurring.hasActive">
-		<h2 class="mission-dd-section-title"><?php esc_html_e( 'Active', 'mission' ); ?></h2>
+		<h2 class="mission-dd-section-title"><?php esc_html_e( 'Active', 'missionwp-donation-platform' ); ?></h2>
 
 		<template data-wp-each--sub="context.recurring.activeSubscriptions">
 			<div class="mission-dd-subscription">
@@ -27,8 +27,8 @@ defined( 'ABSPATH' ) || exit;
 						</div>
 						<div class="mission-dd-subscription-campaign" data-wp-text="context.sub.campaignName"></div>
 					</div>
-					<span class="mission-dd-badge mission-dd-badge-active" data-wp-bind--hidden="state.subIsPaused"><?php esc_html_e( 'Active', 'mission' ); ?></span>
-					<span class="mission-dd-badge mission-dd-badge-paused" data-wp-bind--hidden="state.subIsActive"><?php esc_html_e( 'Paused', 'mission' ); ?></span>
+					<span class="mission-dd-badge mission-dd-badge-active" data-wp-bind--hidden="state.subIsPaused"><?php esc_html_e( 'Active', 'missionwp-donation-platform' ); ?></span>
+					<span class="mission-dd-badge mission-dd-badge-paused" data-wp-bind--hidden="state.subIsActive"><?php esc_html_e( 'Paused', 'missionwp-donation-platform' ); ?></span>
 				</div>
 
 				<!-- Error banner -->
@@ -38,28 +38,28 @@ defined( 'ABSPATH' ) || exit;
 
 				<div class="mission-dd-subscription-details">
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Frequency', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Frequency', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.frequencyLabel"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Started', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Started', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.started"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Next Payment', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Next Payment', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-bind--hidden="state.subIsPaused" data-wp-text="context.sub.nextPayment"></div>
-						<div class="mission-dd-subscription-detail-value" data-wp-bind--hidden="state.subIsActive"><?php esc_html_e( 'Paused', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-value" data-wp-bind--hidden="state.subIsActive"><?php esc_html_e( 'Paused', 'missionwp-donation-platform' ); ?></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Payments Made', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Payments Made', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.paymentsMade"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Total Contributed', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Total Contributed', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.totalContributed"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Payment Method', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Payment Method', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.paymentMethod"></div>
 					</div>
 				</div>
@@ -71,12 +71,12 @@ defined( 'ABSPATH' ) || exit;
 						data-wp-on--click="actions.openUpdatePayment"
 					>
 						<span class="mission-dd-icon mission-dd-icon-credit-card" aria-hidden="true"></span>
-						<?php esc_html_e( 'Update Payment Method', 'mission' ); ?>
+						<?php esc_html_e( 'Update Payment Method', 'missionwp-donation-platform' ); ?>
 					</button>
 					<?php endif; ?>
 					<button class="mission-dd-btn" data-wp-on--click="actions.openChangeAmount">
 						<span class="mission-dd-icon mission-dd-icon-pencil" aria-hidden="true"></span>
-						<?php esc_html_e( 'Change Amount', 'mission' ); ?>
+						<?php esc_html_e( 'Change Amount', 'missionwp-donation-platform' ); ?>
 					</button>
 					<!-- Pause (shown when active) -->
 					<button
@@ -86,7 +86,7 @@ defined( 'ABSPATH' ) || exit;
 						data-wp-bind--hidden="!state.subIsActive"
 					>
 						<span class="mission-dd-icon mission-dd-icon-pause" aria-hidden="true"></span>
-						<?php esc_html_e( 'Pause', 'mission' ); ?>
+						<?php esc_html_e( 'Pause', 'missionwp-donation-platform' ); ?>
 					</button>
 					<!-- Resume (shown when paused) -->
 					<button
@@ -96,7 +96,7 @@ defined( 'ABSPATH' ) || exit;
 						data-wp-bind--hidden="!state.subIsPaused"
 					>
 						<span class="mission-dd-icon mission-dd-icon-play" aria-hidden="true"></span>
-						<?php esc_html_e( 'Resume', 'mission' ); ?>
+						<?php esc_html_e( 'Resume', 'missionwp-donation-platform' ); ?>
 					</button>
 					<button
 						class="mission-dd-btn mission-dd-btn-danger"
@@ -104,7 +104,7 @@ defined( 'ABSPATH' ) || exit;
 						data-wp-bind--disabled="context.sub.cancelLoading"
 					>
 						<span class="mission-dd-icon mission-dd-icon-x-circle" aria-hidden="true"></span>
-						<?php esc_html_e( 'Cancel', 'mission' ); ?>
+						<?php esc_html_e( 'Cancel', 'missionwp-donation-platform' ); ?>
 					</button>
 				</div>
 
@@ -134,21 +134,21 @@ defined( 'ABSPATH' ) || exit;
 						<div class="mission-dd-ca-fee">
 							<p class="mission-dd-ca-fee-line">
 								<span class="mission-dd-ca-fee-text" data-wp-class--uncovered="!context.sub.changeFeeRecoveryChecked">+ <span data-wp-text="state.changeFormattedFeeAmount"></span>
-								<?php esc_html_e( 'processing fee', 'mission' ); ?></span>
+								<?php esc_html_e( 'processing fee', 'missionwp-donation-platform' ); ?></span>
 								<button type="button" class="mission-dd-ca-fee-edit" data-wp-on--click="actions.toggleChangeFeeDetails">
-									<?php esc_html_e( 'Edit', 'mission' ); ?>
+									<?php esc_html_e( 'Edit', 'missionwp-donation-platform' ); ?>
 								</button>
 							</p>
 							<div class="mission-dd-ca-fee-details" data-wp-bind--hidden="!context.sub.changeFeeDetailsOpen" data-wp-class--visible="context.sub.changeFeeDetailsOpen">
 								<div class="mission-dd-ca-fee-details-inner">
-									<p><?php esc_html_e( 'Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift goes directly to the cause you care about.', 'mission' ); ?></p>
+									<p><?php esc_html_e( 'Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift goes directly to the cause you care about.', 'missionwp-donation-platform' ); ?></p>
 									<label class="mission-dd-ca-checkbox-label">
 										<input
 											type="checkbox"
 											data-wp-on--change="actions.toggleChangeFeeRecovery"
 											data-wp-bind--checked="context.sub.changeFeeRecoveryChecked"
 										/>
-										<?php esc_html_e( 'I want to cover the fee', 'mission' ); ?>
+										<?php esc_html_e( 'I want to cover the fee', 'missionwp-donation-platform' ); ?>
 									</label>
 								</div>
 							</div>
@@ -159,7 +159,7 @@ defined( 'ABSPATH' ) || exit;
 							<div class="mission-dd-ca-tip-card">
 								<div class="mission-dd-ca-tip-header">
 									<p class="mission-dd-ca-tip-text">
-										<?php esc_html_e( 'An optional tip allows us to use Mission\'s free donation platform and keeps it running for all nonprofits. Thank you!', 'mission' ); ?>
+										<?php esc_html_e( 'An optional tip allows us to use Mission\'s free donation platform and keeps it running for all nonprofits. Thank you!', 'missionwp-donation-platform' ); ?>
 									</p>
 									<div class="mission-dd-ca-tip-trigger-wrap">
 										<button type="button" class="mission-dd-ca-tip-trigger" data-wp-on--click="actions.toggleChangeTipMenu">
@@ -176,7 +176,7 @@ defined( 'ABSPATH' ) || exit;
 											<button type="button" class="mission-dd-ca-tip-option" data-wp-context='{"changeTipPercent":15}' data-wp-on--click="actions.selectChangeTipPercent" data-wp-class--active="state.isChangeTipOptionActive">15%</button>
 											<button type="button" class="mission-dd-ca-tip-option" data-wp-context='{"changeTipPercent":10}' data-wp-on--click="actions.selectChangeTipPercent" data-wp-class--active="state.isChangeTipOptionActive">10%</button>
 											<button type="button" class="mission-dd-ca-tip-option mission-dd-ca-tip-option--other" data-wp-on--click="actions.selectChangeCustomTip" data-wp-class--active="context.sub.changeIsCustomTip">
-												<?php esc_html_e( 'Other', 'mission' ); ?>
+												<?php esc_html_e( 'Other', 'missionwp-donation-platform' ); ?>
 											</button>
 										</div>
 									</div>
@@ -187,10 +187,10 @@ defined( 'ABSPATH' ) || exit;
 											<span class="mission-dd-ca-tip-heart">
 												<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z"/></svg>
 											</span>
-											<?php esc_html_e( 'Help keep Mission free', 'mission' ); ?>
+											<?php esc_html_e( 'Help keep this platform free', 'missionwp-donation-platform' ); ?>
 										</div>
 										<div class="mission-dd-ca-tip-custom-row">
-											<button type="button" class="mission-dd-ca-tip-custom-btn" data-wp-on--click="actions.changeTipCustomDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'mission' ); ?>">&minus;</button>
+											<button type="button" class="mission-dd-ca-tip-custom-btn" data-wp-on--click="actions.changeTipCustomDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'missionwp-donation-platform' ); ?>">&minus;</button>
 											<div class="mission-dd-ca-tip-custom-input-wrap">
 												<span class="mission-dd-ca-tip-custom-prefix" data-wp-text="context.recurring.currencySymbol"></span>
 												<input
@@ -200,10 +200,10 @@ defined( 'ABSPATH' ) || exit;
 													step="1"
 													data-wp-on--input="actions.updateChangeCustomTipAmount"
 													data-wp-bind--value="state.changeCustomTipDisplayValue"
-													aria-label="<?php esc_attr_e( 'Custom tip amount', 'mission' ); ?>"
+													aria-label="<?php esc_attr_e( 'Custom tip amount', 'missionwp-donation-platform' ); ?>"
 												/>
 											</div>
-											<button type="button" class="mission-dd-ca-tip-custom-btn" data-wp-on--click="actions.changeTipCustomUp" aria-label="<?php esc_attr_e( 'Increase tip', 'mission' ); ?>">&plus;</button>
+											<button type="button" class="mission-dd-ca-tip-custom-btn" data-wp-on--click="actions.changeTipCustomUp" aria-label="<?php esc_attr_e( 'Increase tip', 'missionwp-donation-platform' ); ?>">&plus;</button>
 										</div>
 									</div>
 								</div>
@@ -221,7 +221,7 @@ defined( 'ABSPATH' ) || exit;
 								<span data-wp-text="state.changeUpdateButtonLabel"></span>
 							</button>
 							<button type="button" class="mission-dd-ca-cancel" data-wp-on--click="actions.closeChangeAmount">
-								<?php esc_html_e( 'Cancel', 'mission' ); ?>
+								<?php esc_html_e( 'Cancel', 'missionwp-donation-platform' ); ?>
 							</button>
 						</div>
 					</div>
@@ -232,7 +232,7 @@ defined( 'ABSPATH' ) || exit;
 				<div class="mission-dd-modal" data-wp-bind--hidden="!context.sub.updatePaymentOpen">
 					<div class="mission-dd-modal-backdrop" data-wp-on--click="actions.closeUpdatePayment"></div>
 					<div class="mission-dd-modal-content">
-						<h3 class="mission-dd-modal-title"><?php esc_html_e( 'Update Payment Method', 'mission' ); ?></h3>
+						<h3 class="mission-dd-modal-title"><?php esc_html_e( 'Update Payment Method', 'missionwp-donation-platform' ); ?></h3>
 
 						<div class="mission-dd-subscription-error" data-wp-bind--hidden="!context.sub.updatePaymentError" role="alert" aria-live="polite">
 							<span data-wp-text="context.sub.updatePaymentError"></span>
@@ -247,7 +247,7 @@ defined( 'ABSPATH' ) || exit;
 
 						<div class="mission-dd-modal-actions">
 							<button class="mission-dd-btn" data-wp-on--click="actions.closeUpdatePayment">
-								<?php esc_html_e( 'Cancel', 'mission' ); ?>
+								<?php esc_html_e( 'Cancel', 'missionwp-donation-platform' ); ?>
 							</button>
 							<button
 								class="mission-dd-btn mission-dd-btn-primary"
@@ -266,7 +266,7 @@ defined( 'ABSPATH' ) || exit;
 
 	<!-- Past / Cancelled Subscriptions -->
 	<div data-wp-bind--hidden="!context.recurring.hasCancelled">
-		<h2 class="mission-dd-section-title mission-dd-subscription-past-title"><?php esc_html_e( 'Past', 'mission' ); ?></h2>
+		<h2 class="mission-dd-section-title mission-dd-subscription-past-title"><?php esc_html_e( 'Past', 'missionwp-donation-platform' ); ?></h2>
 
 		<template data-wp-each--sub="context.recurring.cancelledSubscriptions">
 			<div class="mission-dd-subscription mission-dd-subscription-past">
@@ -278,28 +278,28 @@ defined( 'ABSPATH' ) || exit;
 						</div>
 						<div class="mission-dd-subscription-campaign" data-wp-text="context.sub.campaignName"></div>
 					</div>
-					<span class="mission-dd-badge mission-dd-badge-cancelled"><?php esc_html_e( 'Cancelled', 'mission' ); ?></span>
+					<span class="mission-dd-badge mission-dd-badge-cancelled"><?php esc_html_e( 'Cancelled', 'missionwp-donation-platform' ); ?></span>
 				</div>
 
 				<div class="mission-dd-subscription-details">
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Frequency', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Frequency', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.frequencyLabel"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Period', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Period', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.period"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Payments Made', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Payments Made', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.paymentsMade"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Total Contributed', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Total Contributed', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.totalContributed"></div>
 					</div>
 					<div class="mission-dd-subscription-detail">
-						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Cancelled', 'mission' ); ?></div>
+						<div class="mission-dd-subscription-detail-label"><?php esc_html_e( 'Cancelled', 'missionwp-donation-platform' ); ?></div>
 						<div class="mission-dd-subscription-detail-value" data-wp-text="context.sub.cancelled"></div>
 					</div>
 				</div>

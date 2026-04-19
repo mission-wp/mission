@@ -22,9 +22,12 @@ import apiFetch from '@wordpress/api-fetch';
 import { formatAmount } from '@shared/currency';
 
 const DONATE_BUTTON_OPTIONS = [
-  { label: __( 'Scroll to donation form', 'mission' ), value: 'scroll' },
-  { label: __( 'Custom URL', 'mission' ), value: 'url' },
-  { label: __( 'Hide', 'mission' ), value: 'hide' },
+  {
+    label: __( 'Scroll to donation form', 'missionwp-donation-platform' ),
+    value: 'scroll',
+  },
+  { label: __( 'Custom URL', 'missionwp-donation-platform' ), value: 'url' },
+  { label: __( 'Hide', 'missionwp-donation-platform' ), value: 'hide' },
 ];
 
 const SAMPLE_DONORS = [
@@ -171,7 +174,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <p>
             { __(
               'Select a campaign or place this block on a campaign page.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -185,7 +188,7 @@ export default function Edit( { attributes, setAttributes } ) {
           className="mission-donor-heading"
           value={ heading }
           onChange={ ( val ) => setAttributes( { heading: val } ) }
-          placeholder={ __( 'Recent Donors', 'mission' ) }
+          placeholder={ __( 'Recent Donors', 'missionwp-donation-platform' ) }
           allowedFormats={ [] }
         />
         <ul className="mission-donor-list">
@@ -220,9 +223,9 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'mission' ) }>
+        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'mission' ) }
+            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -231,13 +234,13 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'mission'
+                    'missionwp-donation-platform'
                   )
                 : undefined
             }
           />
           <RangeControl
-            label={ __( 'Number of donors', 'mission' ) }
+            label={ __( 'Number of donors', 'missionwp-donation-platform' ) }
             value={ numberOfDonors }
             onChange={ ( val ) => setAttributes( { numberOfDonors: val } ) }
             min={ 1 }
@@ -245,14 +248,17 @@ export default function Edit( { attributes, setAttributes } ) {
             step={ 1 }
           />
           <SelectControl
-            label={ __( 'Donate button (empty state)', 'mission' ) }
+            label={ __(
+              'Donate button (empty state)',
+              'missionwp-donation-platform'
+            ) }
             value={ donateButtonAction }
             options={ DONATE_BUTTON_OPTIONS }
             onChange={ ( val ) => setAttributes( { donateButtonAction: val } ) }
           />
           { donateButtonAction === 'url' && (
             <TextControl
-              label={ __( 'Donate URL', 'mission' ) }
+              label={ __( 'Donate URL', 'missionwp-donation-platform' ) }
               value={ donateButtonUrl }
               onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
               type="url"
@@ -260,12 +266,12 @@ export default function Edit( { attributes, setAttributes } ) {
             />
           ) }
           <ToggleControl
-            label={ __( 'Show avatars', 'mission' ) }
+            label={ __( 'Show avatars', 'missionwp-donation-platform' ) }
             checked={ showAvatars }
             onChange={ ( val ) => setAttributes( { showAvatars: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show dedications', 'mission' ) }
+            label={ __( 'Show dedications', 'missionwp-donation-platform' ) }
             checked={ showDedication }
             onChange={ ( val ) => setAttributes( { showDedication: val } ) }
           />

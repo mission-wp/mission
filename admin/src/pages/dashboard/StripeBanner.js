@@ -23,14 +23,19 @@ export default function StripeBanner() {
           </svg>
         </div>
         <div className="mission-stripe-banner__text">
-          <h2>{ __( 'Start accepting donations', 'mission' ) }</h2>
+          <h2>
+            { __( 'Start accepting donations', 'missionwp-donation-platform' ) }
+          </h2>
           <p>
             <a href={ connectUrl } className="mission-stripe-banner__link">
-              { __( 'Connect your Stripe account', 'mission' ) }
+              { __(
+                'Connect your Stripe account',
+                'missionwp-donation-platform'
+              ) }
             </a>{ ' ' }
             { __(
               "to begin processing donations securely. It only takes a couple of minutes and you'll be ready to receive your first gift.",
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -42,7 +47,7 @@ export default function StripeBanner() {
                 fill="currentColor"
               />
             </svg>
-            { __( 'Connect Stripe', 'mission' ) }
+            { __( 'Connect Stripe', 'missionwp-donation-platform' ) }
           </a>
         </div>
       </div>

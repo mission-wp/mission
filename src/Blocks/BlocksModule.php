@@ -93,7 +93,7 @@ class BlocksModule {
 			if ( $post_id ) {
 				$campaign = Campaign::find_by_post_id( $post_id );
 			}
-		} elseif ( 'mission_page_mission-campaigns' === $screen->id ) {
+		} elseif ( 'missionwp_page_mission-campaigns' === $screen->id ) {
 			// Campaign details admin page (?page=mission-campaigns&campaign=ID).
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check for page context.
 			$campaign_id = isset( $_GET['campaign'] ) ? absint( $_GET['campaign'] ) : 0;
@@ -197,7 +197,7 @@ class BlocksModule {
 			$categories,
 			[
 				'slug'  => 'mission',
-				'title' => __( 'Mission', 'mission' ),
+				'title' => __( 'MissionWP', 'missionwp-donation-platform' ),
 			]
 		);
 

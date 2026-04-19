@@ -8,9 +8,11 @@ export default function TransactionDonorCard( { donor } ) {
   if ( ! donor ) {
     return (
       <div className="mission-card" style={ { padding: 0 } }>
-        <h2 className="mission-card__heading">{ __( 'Donor', 'mission' ) }</h2>
+        <h2 className="mission-card__heading">
+          { __( 'Donor', 'missionwp-donation-platform' ) }
+        </h2>
         <p style={ { textAlign: 'center', color: '#9b9ba8', padding: '16px' } }>
-          { __( 'Anonymous or deleted donor', 'mission' ) }
+          { __( 'Anonymous or deleted donor', 'missionwp-donation-platform' ) }
         </p>
       </div>
     );
@@ -18,7 +20,7 @@ export default function TransactionDonorCard( { donor } ) {
 
   const fullName =
     [ donor.first_name, donor.last_name ].filter( Boolean ).join( ' ' ) ||
-    __( 'Anonymous', 'mission' );
+    __( 'Anonymous', 'missionwp-donation-platform' );
 
   const profileUrl = `${ adminUrl }admin.php?page=mission-donors&donor_id=${ donor.id }`;
 
@@ -32,13 +34,13 @@ export default function TransactionDonorCard( { donor } ) {
           alignItems: 'center',
         } }
       >
-        <span>{ __( 'Donor', 'mission' ) }</span>
+        <span>{ __( 'Donor', 'missionwp-donation-platform' ) }</span>
         <a
           href={ profileUrl }
           className="mission-table-link"
           style={ { fontSize: '13px', fontWeight: 400 } }
         >
-          { __( 'View profile', 'mission' ) }
+          { __( 'View profile', 'missionwp-donation-platform' ) }
         </a>
       </div>
       <div
@@ -78,15 +80,15 @@ export default function TransactionDonorCard( { donor } ) {
             <strong style={ { color: '#1a1a2e' } }>
               { formatAmount( donor.total_donated ) }
             </strong>{ ' ' }
-            { __( 'lifetime', 'mission' ) }
+            { __( 'lifetime', 'missionwp-donation-platform' ) }
           </div>
           <div>
             <strong style={ { color: '#1a1a2e' } }>
               { donor.transaction_count }
             </strong>{ ' ' }
             { donor.transaction_count === 1
-              ? __( 'donation', 'mission' )
-              : __( 'donations', 'mission' ) }
+              ? __( 'donation', 'missionwp-donation-platform' )
+              : __( 'donations', 'missionwp-donation-platform' ) }
           </div>
         </div>
       </div>

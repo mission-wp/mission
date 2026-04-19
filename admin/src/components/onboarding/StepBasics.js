@@ -6,12 +6,15 @@ export default function StepBasics( { data, updateData, errors } ) {
   return (
     <>
       <h1 className="mission-onboarding-step__heading">
-        { __( 'Welcome to Mission', 'mission' ) }
+        { __(
+          'Welcome to MissionWP Donation Platform',
+          'missionwp-donation-platform'
+        ) }
       </h1>
       <p className="mission-onboarding-step__subheading">
         { __(
           'Let\u2019s get your nonprofit set up to start accepting donations. This will only take a few minutes.',
-          'mission'
+          'missionwp-donation-platform'
         ) }
       </p>
 
@@ -24,7 +27,7 @@ export default function StepBasics( { data, updateData, errors } ) {
           className="mission-onboarding-field__label"
           htmlFor="ob-org-name"
         >
-          { __( 'Organization Name', 'mission' ) }
+          { __( 'Organization Name', 'missionwp-donation-platform' ) }
         </label>
         <input
           type="text"
@@ -46,7 +49,7 @@ export default function StepBasics( { data, updateData, errors } ) {
             className="mission-onboarding-field__label"
             htmlFor="ob-country"
           >
-            { __( 'Country', 'mission' ) }
+            { __( 'Country', 'missionwp-donation-platform' ) }
           </label>
           <select
             className="mission-onboarding-field__select"
@@ -66,7 +69,7 @@ export default function StepBasics( { data, updateData, errors } ) {
             className="mission-onboarding-field__label"
             htmlFor="ob-currency"
           >
-            { __( 'Currency', 'mission' ) }
+            { __( 'Currency', 'missionwp-donation-platform' ) }
           </label>
           <select
             className="mission-onboarding-field__select"
@@ -85,9 +88,9 @@ export default function StepBasics( { data, updateData, errors } ) {
 
       <div className="mission-onboarding-field">
         <label className="mission-onboarding-field__label" htmlFor="ob-ein">
-          { __( 'Tax ID / EIN', 'mission' ) }
+          { __( 'Tax ID / EIN', 'missionwp-donation-platform' ) }
           <span className="mission-onboarding-field__optional">
-            { __( '\u2014 optional', 'mission' ) }
+            { __( '\u2014 optional', 'missionwp-donation-platform' ) }
           </span>
         </label>
         <input
@@ -99,7 +102,10 @@ export default function StepBasics( { data, updateData, errors } ) {
           placeholder="e.g. 12-3456789"
         />
         <span className="mission-onboarding-field__hint">
-          { __( 'Used on tax receipts. You can add this later.', 'mission' ) }
+          { __(
+            'Used on tax receipts. You can add this later.',
+            'missionwp-donation-platform'
+          ) }
         </span>
       </div>
     </>

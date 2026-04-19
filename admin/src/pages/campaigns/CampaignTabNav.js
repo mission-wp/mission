@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 
 const TABS = [
-  { id: 'overview', label: __( 'Overview', 'mission' ) },
-  { id: 'edit-page', label: __( 'Edit Page', 'mission' ) },
-  { id: 'settings', label: __( 'Settings', 'mission' ) },
+  { id: 'overview', label: __( 'Overview', 'missionwp-donation-platform' ) },
+  { id: 'edit-page', label: __( 'Edit Page', 'missionwp-donation-platform' ) },
+  { id: 'settings', label: __( 'Settings', 'missionwp-donation-platform' ) },
 ];
 
 export default function CampaignTabNav( { activeTab, onTabChange } ) {

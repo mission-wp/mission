@@ -40,45 +40,76 @@ import { formatAmount } from '@shared/currency';
 
 const STAT_DEFAULTS = {
   total_raised: {
-    heading: __( 'Total Raised', 'mission' ),
+    heading: __( 'Total Raised', 'missionwp-donation-platform' ),
     sample: 125000,
     isCurrency: true,
   },
   donation_count: {
-    heading: __( 'Number of Donations', 'mission' ),
+    heading: __( 'Number of Donations', 'missionwp-donation-platform' ),
     sample: 42,
     isCurrency: false,
   },
   donor_count: {
-    heading: __( 'Number of Donors', 'mission' ),
+    heading: __( 'Number of Donors', 'missionwp-donation-platform' ),
     sample: 28,
     isCurrency: false,
   },
   average_donation: {
-    heading: __( 'Average Donation', 'mission' ),
+    heading: __( 'Average Donation', 'missionwp-donation-platform' ),
     sample: 7500,
     isCurrency: true,
   },
   top_donation: {
-    heading: __( 'Top Donation', 'mission' ),
+    heading: __( 'Top Donation', 'missionwp-donation-platform' ),
     sample: 50000,
     isCurrency: true,
   },
 };
 
 const STAT_TYPE_OPTIONS = [
-  { label: __( 'Total Raised', 'mission' ), value: 'total_raised' },
-  { label: __( 'Number of Donations', 'mission' ), value: 'donation_count' },
-  { label: __( 'Number of Donors', 'mission' ), value: 'donor_count' },
-  { label: __( 'Average Donation', 'mission' ), value: 'average_donation' },
-  { label: __( 'Top Donation', 'mission' ), value: 'top_donation' },
+  {
+    label: __( 'Total Raised', 'missionwp-donation-platform' ),
+    value: 'total_raised',
+  },
+  {
+    label: __( 'Number of Donations', 'missionwp-donation-platform' ),
+    value: 'donation_count',
+  },
+  {
+    label: __( 'Number of Donors', 'missionwp-donation-platform' ),
+    value: 'donor_count',
+  },
+  {
+    label: __( 'Average Donation', 'missionwp-donation-platform' ),
+    value: 'average_donation',
+  },
+  {
+    label: __( 'Top Donation', 'missionwp-donation-platform' ),
+    value: 'top_donation',
+  },
 ];
 
 const HEADING_FONT_SIZES = [
-  { name: __( 'Small', 'mission' ), slug: 'small', size: '12px' },
-  { name: __( 'Medium', 'mission' ), slug: 'medium', size: '14px' },
-  { name: __( 'Large', 'mission' ), slug: 'large', size: '18px' },
-  { name: __( 'Extra Large', 'mission' ), slug: 'x-large', size: '22px' },
+  {
+    name: __( 'Small', 'missionwp-donation-platform' ),
+    slug: 'small',
+    size: '12px',
+  },
+  {
+    name: __( 'Medium', 'missionwp-donation-platform' ),
+    slug: 'medium',
+    size: '14px',
+  },
+  {
+    name: __( 'Large', 'missionwp-donation-platform' ),
+    slug: 'large',
+    size: '18px',
+  },
+  {
+    name: __( 'Extra Large', 'missionwp-donation-platform' ),
+    slug: 'x-large',
+    size: '22px',
+  },
 ];
 
 /**
@@ -260,11 +291,11 @@ export default function Edit( { attributes, setAttributes } ) {
             </svg>
           </div>
           <h3 className="mission-cs-setup__title">
-            { __( 'Campaign Statistic', 'mission' ) }
+            { __( 'Campaign Statistic', 'missionwp-donation-platform' ) }
           </h3>
           <div className="mission-cs-setup__campaign">
             <ComboboxControl
-              label={ __( 'Select a Campaign', 'mission' ) }
+              label={ __( 'Select a Campaign', 'missionwp-donation-platform' ) }
               value={ campaignId || null }
               options={ campaignOptions }
               onChange={ onCampaignChange }
@@ -303,9 +334,9 @@ export default function Edit( { attributes, setAttributes } ) {
         />
       </BlockControls>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'mission' ) }>
+        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'mission' ) }
+            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -314,33 +345,33 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'mission'
+                    'missionwp-donation-platform'
                   )
                 : undefined
             }
           />
           <SelectControl
-            label={ __( 'Statistic', 'mission' ) }
+            label={ __( 'Statistic', 'missionwp-donation-platform' ) }
             value={ statType }
             options={ STAT_TYPE_OPTIONS }
             onChange={ onStatTypeChange }
           />
           <ToggleControl
-            label={ __( 'Show heading', 'mission' ) }
+            label={ __( 'Show heading', 'missionwp-donation-platform' ) }
             checked={ showHeading }
             onChange={ ( val ) => setAttributes( { showHeading: val } ) }
           />
         </PanelBody>
         { showHeading && (
           <PanelColorSettings
-            title={ __( 'Heading', 'mission' ) }
+            title={ __( 'Heading', 'missionwp-donation-platform' ) }
             initialOpen={ false }
             colorSettings={ [
               {
                 value: headingColor,
                 onChange: ( val ) =>
                   setAttributes( { headingColor: val || '' } ),
-                label: __( 'Color', 'mission' ),
+                label: __( 'Color', 'missionwp-donation-platform' ),
               },
             ] }
           >
@@ -355,7 +386,7 @@ export default function Edit( { attributes, setAttributes } ) {
             <div style={ { marginTop: 24 } }>
               <ToggleGroupControl
                 __nextHasNoMarginBottom
-                label={ __( 'Letter case', 'mission' ) }
+                label={ __( 'Letter case', 'missionwp-donation-platform' ) }
                 value={
                   headingTextTransform === 'none'
                     ? undefined
@@ -369,17 +400,17 @@ export default function Edit( { attributes, setAttributes } ) {
               >
                 <ToggleGroupControlOptionIcon
                   value="uppercase"
-                  label={ __( 'Uppercase', 'mission' ) }
+                  label={ __( 'Uppercase', 'missionwp-donation-platform' ) }
                   icon={ formatUppercase }
                 />
                 <ToggleGroupControlOptionIcon
                   value="lowercase"
-                  label={ __( 'Lowercase', 'mission' ) }
+                  label={ __( 'Lowercase', 'missionwp-donation-platform' ) }
                   icon={ formatLowercase }
                 />
                 <ToggleGroupControlOptionIcon
                   value="capitalize"
-                  label={ __( 'Capitalize', 'mission' ) }
+                  label={ __( 'Capitalize', 'missionwp-donation-platform' ) }
                   icon={ formatCapitalize }
                 />
               </ToggleGroupControl>

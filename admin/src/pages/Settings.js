@@ -11,7 +11,7 @@ import DonorPortalPanel from './settings/DonorPortalPanel';
 const TABS = [
   {
     id: 'general',
-    label: __( 'General', 'mission' ),
+    label: __( 'General', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -30,7 +30,7 @@ const TABS = [
   },
   {
     id: 'emails',
-    label: __( 'Emails', 'mission' ),
+    label: __( 'Emails', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -49,7 +49,7 @@ const TABS = [
   },
   {
     id: 'portal',
-    label: __( 'Donor Portal', 'mission' ),
+    label: __( 'Donor Portal', 'missionwp-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -140,7 +140,7 @@ export default function Settings() {
         type: 'error',
         message: __(
           'Stripe connection was cancelled. You can try again whenever you\u2019re ready.',
-          'mission'
+          'missionwp-donation-platform'
         ),
       };
     }
@@ -204,13 +204,16 @@ export default function Settings() {
             type: 'error',
             message: __(
               'Stripe connected, but your account isn\u2019t ready to accept payments yet. Finish setting up your account on the Stripe Dashboard.',
-              'mission'
+              'missionwp-donation-platform'
             ),
           } );
         } else {
           setToast( {
             type: 'success',
-            message: __( 'Stripe connected successfully!', 'mission' ),
+            message: __(
+              'Stripe connected successfully!',
+              'missionwp-donation-platform'
+            ),
           } );
         }
       } )
@@ -219,7 +222,8 @@ export default function Settings() {
         setToast( {
           type: 'error',
           message:
-            error.message || __( 'Failed to connect Stripe.', 'mission' ),
+            error.message ||
+            __( 'Failed to connect Stripe.', 'missionwp-donation-platform' ),
         } );
       } )
       .finally( () => {
@@ -265,7 +269,7 @@ export default function Settings() {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Settings saved.', 'mission' ),
+        message: __( 'Settings saved.', 'missionwp-donation-platform' ),
       } );
 
       const adminBarNode = document.getElementById(
@@ -278,7 +282,9 @@ export default function Settings() {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'error',
-        message: error.message || __( 'Failed to save settings.', 'mission' ),
+        message:
+          error.message ||
+          __( 'Failed to save settings.', 'missionwp-donation-platform' ),
       } );
     }
 
@@ -298,14 +304,15 @@ export default function Settings() {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Stripe disconnected.', 'mission' ),
+        message: __( 'Stripe disconnected.', 'missionwp-donation-platform' ),
       } );
     } catch ( error ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'error',
         message:
-          error.message || __( 'Failed to disconnect Stripe.', 'mission' ),
+          error.message ||
+          __( 'Failed to disconnect Stripe.', 'missionwp-donation-platform' ),
       } );
     }
 
@@ -334,10 +341,13 @@ export default function Settings() {
     <div className="mission-admin-page">
       <div style={ { marginBottom: '24px' } }>
         <h1 style={ { fontSize: '24px', fontWeight: 600, margin: 0 } }>
-          { __( 'Settings', 'mission' ) }
+          { __( 'Settings', 'missionwp-donation-platform' ) }
         </h1>
         <p style={ { fontSize: '13px', color: '#9b9ba8', margin: '4px 0 0' } }>
-          { __( 'Configure your Mission plugin', 'mission' ) }
+          { __(
+            'Configure your MissionWP plugin',
+            'missionwp-donation-platform'
+          ) }
         </p>
       </div>
 
@@ -346,7 +356,10 @@ export default function Settings() {
       { connecting && (
         <div style={ { marginBottom: '20px' } }>
           <Notice status="info" isDismissible={ false }>
-            { __( 'Connecting to Stripe\u2026', 'mission' ) }
+            { __(
+              'Connecting to Stripe\u2026',
+              'missionwp-donation-platform'
+            ) }
           </Notice>
         </div>
       ) }
@@ -401,14 +414,14 @@ export default function Settings() {
       { /* Currency change confirmation modal */ }
       { pendingCurrency && (
         <Modal
-          title={ __( 'Change Currency', 'mission' ) }
+          title={ __( 'Change Currency', 'missionwp-donation-platform' ) }
           onRequestClose={ () => setPendingCurrency( null ) }
           size="small"
         >
           <p style={ { margin: '0 0 16px' } }>
             { __(
               'Make sure this matches the default currency on your Stripe account. Mismatched currencies may cause payment failures.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
           <div
@@ -423,7 +436,7 @@ export default function Settings() {
               onClick={ () => setPendingCurrency( null ) }
               type="button"
             >
-              { __( 'Cancel', 'mission' ) }
+              { __( 'Cancel', 'missionwp-donation-platform' ) }
             </button>
             <button
               className="components-button is-primary"
@@ -434,7 +447,7 @@ export default function Settings() {
               style={ { backgroundColor: '#2fa36b', borderColor: '#2fa36b' } }
               type="button"
             >
-              { __( 'Change Currency', 'mission' ) }
+              { __( 'Change Currency', 'missionwp-donation-platform' ) }
             </button>
           </div>
         </Modal>
@@ -443,14 +456,14 @@ export default function Settings() {
       { /* Stripe disconnect confirmation modal */ }
       { showDisconnectModal && (
         <Modal
-          title={ __( 'Disconnect Stripe', 'mission' ) }
+          title={ __( 'Disconnect Stripe', 'missionwp-donation-platform' ) }
           onRequestClose={ () => setShowDisconnectModal( false ) }
           size="small"
         >
           <p style={ { margin: '0 0 16px' } }>
             { __(
               'Are you sure you want to disconnect your Stripe account? You will not be able to process donations until you reconnect.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
           <div
@@ -465,7 +478,7 @@ export default function Settings() {
               onClick={ () => setShowDisconnectModal( false ) }
               type="button"
             >
-              { __( 'Cancel', 'mission' ) }
+              { __( 'Cancel', 'missionwp-donation-platform' ) }
             </button>
             <button
               className="components-button is-primary is-destructive"
@@ -475,7 +488,7 @@ export default function Settings() {
               } }
               type="button"
             >
-              { __( 'Disconnect', 'mission' ) }
+              { __( 'Disconnect', 'missionwp-donation-platform' ) }
             </button>
           </div>
         </Modal>

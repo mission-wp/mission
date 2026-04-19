@@ -30,7 +30,7 @@
     "loadMoreText": { "type": "string", "default": "Show More Donations" }
   },
   "example": {},
-  "textdomain": "mission",
+  "textdomain": "missionwp-donation-platform",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",

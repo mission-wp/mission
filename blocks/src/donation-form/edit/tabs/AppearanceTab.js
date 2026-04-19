@@ -27,7 +27,7 @@ export default function AppearanceTab( {
           className="mission-field-label"
           htmlFor="mission-appearance-color"
         >
-          { __( 'Primary Color', 'mission' ) }
+          { __( 'Primary Color', 'missionwp-donation-platform' ) }
         </label>
         <div className="mission-appearance-tab__color-row">
           <input
@@ -51,14 +51,17 @@ export default function AppearanceTab( {
               className="mission-appearance-tab__color-reset"
               onClick={ () => updateField( 'primaryColor', '' ) }
             >
-              { __( 'Reset to global', 'mission' ) }
+              { __( 'Reset to global', 'missionwp-donation-platform' ) }
             </button>
           ) }
         </div>
         <span className="mission-field-hint">
           { hasCustomColor
-            ? __( 'Using a custom color for this form', 'mission' )
-            : __( 'Using global setting', 'mission' ) }
+            ? __(
+                'Using a custom color for this form',
+                'missionwp-donation-platform'
+              )
+            : __( 'Using global setting', 'missionwp-donation-platform' ) }
         </span>
       </div>
 
@@ -68,7 +71,7 @@ export default function AppearanceTab( {
             className="mission-field-label"
             htmlFor="mission-appearance-gift-heading"
           >
-            { __( 'Choose Gift Heading', 'mission' ) }
+            { __( 'Choose Gift Heading', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -78,12 +81,15 @@ export default function AppearanceTab( {
             onChange={ ( e ) =>
               updateField( 'chooseGiftHeading', e.target.value )
             }
-            placeholder={ __( 'Choose Your Gift', 'mission' ) }
+            placeholder={ __(
+              'Choose Your Gift',
+              'missionwp-donation-platform'
+            ) }
           />
           <span className="mission-field-hint">
             { __(
               'The heading shown on the first step of the form',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </span>
         </div>
@@ -93,7 +99,7 @@ export default function AppearanceTab( {
             className="mission-field-label"
             htmlFor="mission-appearance-continue"
           >
-            { __( 'Continue Button', 'mission' ) }
+            { __( 'Continue Button', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -103,10 +109,13 @@ export default function AppearanceTab( {
             onChange={ ( e ) =>
               updateField( 'continueButtonText', e.target.value )
             }
-            placeholder={ __( 'Continue', 'mission' ) }
+            placeholder={ __( 'Continue', 'missionwp-donation-platform' ) }
           />
           <span className="mission-field-hint">
-            { __( 'Text on the button that advances each step', 'mission' ) }
+            { __(
+              'Text on the button that advances each step',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
 
@@ -116,7 +125,7 @@ export default function AppearanceTab( {
               className="mission-field-label"
               htmlFor="mission-appearance-custom-fields-heading"
             >
-              { __( 'Additional Info Heading', 'mission' ) }
+              { __( 'Additional Info Heading', 'missionwp-donation-platform' ) }
             </label>
             <input
               type="text"
@@ -126,10 +135,16 @@ export default function AppearanceTab( {
               onChange={ ( e ) =>
                 updateField( 'additionalInfoHeading', e.target.value )
               }
-              placeholder={ __( 'Additional Information', 'mission' ) }
+              placeholder={ __(
+                'Additional Information',
+                'missionwp-donation-platform'
+              ) }
             />
             <span className="mission-field-hint">
-              { __( 'The heading shown on the custom fields step', 'mission' ) }
+              { __(
+                'The heading shown on the custom fields step',
+                'missionwp-donation-platform'
+              ) }
             </span>
           </div>
         ) }
@@ -139,7 +154,7 @@ export default function AppearanceTab( {
             className="mission-field-label"
             htmlFor="mission-appearance-summary-heading"
           >
-            { __( 'Summary Heading', 'mission' ) }
+            { __( 'Summary Heading', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -149,10 +164,13 @@ export default function AppearanceTab( {
             onChange={ ( e ) =>
               updateField( 'summaryHeading', e.target.value )
             }
-            placeholder={ __( 'Summary', 'mission' ) }
+            placeholder={ __( 'Summary', 'missionwp-donation-platform' ) }
           />
           <span className="mission-field-hint">
-            { __( 'The heading shown on the payment/summary step', 'mission' ) }
+            { __(
+              'The heading shown on the payment/summary step',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
 
@@ -161,7 +179,7 @@ export default function AppearanceTab( {
             className="mission-field-label"
             htmlFor="mission-appearance-donate"
           >
-            { __( 'Donate Button', 'mission' ) }
+            { __( 'Donate Button', 'missionwp-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -171,10 +189,13 @@ export default function AppearanceTab( {
             onChange={ ( e ) =>
               updateField( 'donateButtonText', e.target.value )
             }
-            placeholder={ __( 'Donate', 'mission' ) }
+            placeholder={ __( 'Donate', 'missionwp-donation-platform' ) }
           />
           <span className="mission-field-hint">
-            { __( 'Text on the final submit button', 'mission' ) }
+            { __(
+              'Text on the final submit button',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
       </div>

@@ -488,22 +488,22 @@ function getEventText( event ) {
   }
 
   if ( eventType === 'plugin_installed' ) {
-    return 'Mission plugin installed';
+    return 'MissionWP plugin installed';
   }
 
   if ( eventType === 'plugin_activated' ) {
-    return 'Mission plugin activated';
+    return 'MissionWP plugin activated';
   }
 
   if ( eventType === 'plugin_deactivated' ) {
-    return 'Mission plugin deactivated';
+    return 'MissionWP plugin deactivated';
   }
 
   if ( eventType === 'plugin_updated' ) {
     const version = data.new_version || '';
     return version
-      ? `Mission plugin updated to ${ version }`
-      : 'Mission plugin updated';
+      ? `MissionWP plugin updated to ${ version }`
+      : 'MissionWP plugin updated';
   }
 
   // Fallback: humanize the event name.
@@ -516,16 +516,16 @@ export default function ActivityFeed( { activity, isLoading, feedRef } ) {
   return (
     <div className="mission-dashboard-card mission-feed-card" ref={ feedRef }>
       <div className="mission-dashboard-card__header">
-        <h2>{ __( 'Recent Activity', 'mission' ) }</h2>
+        <h2>{ __( 'Recent Activity', 'missionwp-donation-platform' ) }</h2>
       </div>
 
       { ! isLoading && ( ! activity || activity.length === 0 ) ? (
         <EmptyState
           icon={ <ActivityIcon /> }
-          text={ __( 'No activity yet', 'mission' ) }
+          text={ __( 'No activity yet', 'missionwp-donation-platform' ) }
           hint={ __(
             'Activity will appear here as donations come in.',
-            'mission'
+            'missionwp-donation-platform'
           ) }
         />
       ) : (

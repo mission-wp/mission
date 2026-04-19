@@ -3,18 +3,18 @@ import { TextControl, TextareaControl } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 
 const SEASONS = [
-  __( 'Winter', 'mission' ),
-  __( 'Winter', 'mission' ),
-  __( 'Spring', 'mission' ),
-  __( 'Spring', 'mission' ),
-  __( 'Spring', 'mission' ),
-  __( 'Summer', 'mission' ),
-  __( 'Summer', 'mission' ),
-  __( 'Summer', 'mission' ),
-  __( 'Fall', 'mission' ),
-  __( 'Fall', 'mission' ),
-  __( 'Fall', 'mission' ),
-  __( 'Winter', 'mission' ),
+  __( 'Winter', 'missionwp-donation-platform' ),
+  __( 'Winter', 'missionwp-donation-platform' ),
+  __( 'Spring', 'missionwp-donation-platform' ),
+  __( 'Spring', 'missionwp-donation-platform' ),
+  __( 'Spring', 'missionwp-donation-platform' ),
+  __( 'Summer', 'missionwp-donation-platform' ),
+  __( 'Summer', 'missionwp-donation-platform' ),
+  __( 'Summer', 'missionwp-donation-platform' ),
+  __( 'Fall', 'missionwp-donation-platform' ),
+  __( 'Fall', 'missionwp-donation-platform' ),
+  __( 'Fall', 'missionwp-donation-platform' ),
+  __( 'Winter', 'missionwp-donation-platform' ),
 ];
 
 export default function CampaignCreateStepBasics( { data, onChange } ) {
@@ -23,7 +23,7 @@ export default function CampaignCreateStepBasics( { data, onChange } ) {
     const season = SEASONS[ now.getMonth() ];
     return sprintf(
       /* translators: 1: season name, 2: four-digit year */
-      __( 'e.g. %1$s Fundraiser %2$s', 'mission' ),
+      __( 'e.g. %1$s Fundraiser %2$s', 'missionwp-donation-platform' ),
       season,
       now.getFullYear()
     );
@@ -32,7 +32,7 @@ export default function CampaignCreateStepBasics( { data, onChange } ) {
   return (
     <>
       <TextControl
-        label={ __( 'Campaign Name', 'mission' ) }
+        label={ __( 'Campaign Name', 'missionwp-donation-platform' ) }
         value={ data.title }
         onChange={ ( value ) => onChange( { title: value } ) }
         placeholder={ placeholder }
@@ -41,12 +41,12 @@ export default function CampaignCreateStepBasics( { data, onChange } ) {
         __next40pxDefaultSize
       />
       <TextareaControl
-        label={ __( 'Short Description', 'mission' ) }
+        label={ __( 'Short Description', 'missionwp-donation-platform' ) }
         value={ data.excerpt }
         onChange={ ( value ) => onChange( { excerpt: value } ) }
         placeholder={ __(
           'Briefly describe the purpose of this campaign. This will be used as a starting point for your campaign page.',
-          'mission'
+          'missionwp-donation-platform'
         ) }
         rows={ 4 }
         __nextHasNoMarginBottom

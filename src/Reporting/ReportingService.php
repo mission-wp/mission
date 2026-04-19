@@ -449,7 +449,7 @@ class ReportingService {
 
 			$campaigns[] = [
 				'id'            => (int) $row['id'],
-				'title'         => $row['title'] ?: __( 'Untitled', 'mission' ),
+				'title'         => $row['title'] ?: __( 'Untitled', 'missionwp-donation-platform' ),
 				'total_raised'  => (int) $row['raised'],
 				'goal_amount'   => (int) $row['goal_amount'],
 				'goal_type'     => $goal_type,
@@ -576,7 +576,7 @@ class ReportingService {
 
 			$items[] = [
 				'id'             => (int) $row['id'],
-				'donor_name'     => $donor_name ?: __( 'Anonymous', 'mission' ),
+				'donor_name'     => $donor_name ?: __( 'Anonymous', 'missionwp-donation-platform' ),
 				'donor_email'    => $row['donor_email'] ?? '',
 				'amount'         => (int) $row['amount'],
 				'currency'       => $row['currency'],
@@ -706,7 +706,7 @@ class ReportingService {
 				'total_renewed'     => (int) $row['total_renewed'],
 				'date_created'      => $row['date_created'],
 				'date_next_renewal' => $row['date_next_renewal'],
-				'donor_name'        => $donor_name ?: __( 'Anonymous', 'mission' ),
+				'donor_name'        => $donor_name ?: __( 'Anonymous', 'missionwp-donation-platform' ),
 				'donor_email'       => $row['donor_email'] ?? '',
 				'donor_id'          => $row['donor_id'] ? (int) $row['donor_id'] : null,
 				'campaign_title'    => $campaign_map[ $row['campaign_id'] ?? 0 ] ?? '',
@@ -1321,7 +1321,7 @@ class ReportingService {
 					AND t.is_test = {$test_flag}
 					AND YEAR(t.date_completed) = %d
 				ORDER BY t.date_completed ASC",
-				__( 'General Fund', 'mission' ),
+				__( 'General Fund', 'missionwp-donation-platform' ),
 				$donor_id,
 				$year
 			),
@@ -1411,7 +1411,7 @@ class ReportingService {
 				LEFT JOIN {$cam_table} c ON c.id = t.campaign_id
 				WHERE t.donor_id = %d AND t.is_test = {$test_flag} AND t.campaign_id IS NOT NULL
 				ORDER BY name ASC",
-				__( 'Deleted Campaign', 'mission' ),
+				__( 'Deleted Campaign', 'missionwp-donation-platform' ),
 				$donor_id
 			),
 			ARRAY_A

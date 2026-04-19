@@ -146,7 +146,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <p>
             { __(
               'Select a campaign or place this block on a campaign page.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -206,7 +206,7 @@ export default function Edit( { attributes, setAttributes } ) {
                     <strong>
                       { ( campaign.donor_count || 0 ).toLocaleString() }
                     </strong>{ ' ' }
-                    { __( 'donors', 'mission' ) }
+                    { __( 'donors', 'missionwp-donation-platform' ) }
                   </span>
                 ) }
                 <span className="mission-cc-time">{ timeText }</span>
@@ -216,7 +216,8 @@ export default function Edit( { attributes, setAttributes } ) {
         </div>
         <div className="mission-cc-footer">
           <span className="mission-cc-btn">
-            { buttonText || __( 'View Campaign', 'mission' ) }
+            { buttonText ||
+              __( 'View Campaign', 'missionwp-donation-platform' ) }
           </span>
         </div>
       </div>
@@ -226,9 +227,9 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'mission' ) }>
+        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'mission' ) }
+            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -237,42 +238,42 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'mission'
+                    'missionwp-donation-platform'
                   )
                 : undefined
             }
           />
           <ToggleControl
-            label={ __( 'Show image', 'mission' ) }
+            label={ __( 'Show image', 'missionwp-donation-platform' ) }
             checked={ showImage }
             onChange={ ( val ) => setAttributes( { showImage: val } ) }
           />
           { showImage && (
             <ToggleControl
-              label={ __( 'Show status tag', 'mission' ) }
+              label={ __( 'Show status tag', 'missionwp-donation-platform' ) }
               checked={ showTag }
               onChange={ ( val ) => setAttributes( { showTag: val } ) }
             />
           ) }
           <ToggleControl
-            label={ __( 'Show description', 'mission' ) }
+            label={ __( 'Show description', 'missionwp-donation-platform' ) }
             checked={ showDescription }
             onChange={ ( val ) => setAttributes( { showDescription: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show progress bar', 'mission' ) }
+            label={ __( 'Show progress bar', 'missionwp-donation-platform' ) }
             checked={ showProgressBar }
             onChange={ ( val ) => setAttributes( { showProgressBar: val } ) }
           />
           { showProgressBar && (
             <ToggleControl
-              label={ __( 'Show donor count', 'mission' ) }
+              label={ __( 'Show donor count', 'missionwp-donation-platform' ) }
               checked={ showDonorCount }
               onChange={ ( val ) => setAttributes( { showDonorCount: val } ) }
             />
           ) }
           <TextControl
-            label={ __( 'Button text', 'mission' ) }
+            label={ __( 'Button text', 'missionwp-donation-platform' ) }
             value={ buttonText }
             onChange={ ( val ) => setAttributes( { buttonText: val } ) }
           />

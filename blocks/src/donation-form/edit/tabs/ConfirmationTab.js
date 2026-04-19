@@ -6,16 +6,22 @@ export default function ConfirmationTab( { localState, updateField } ) {
   const options = [
     {
       value: 'message',
-      label: __( 'Display a confirmation message', 'mission' ),
+      label: __(
+        'Display a confirmation message',
+        'missionwp-donation-platform'
+      ),
       hint: __(
         'Show a thank-you message after a successful donation',
-        'mission'
+        'missionwp-donation-platform'
       ),
     },
     {
       value: 'redirect',
-      label: __( 'Redirect to a URL', 'mission' ),
-      hint: __( 'Send donors to a specific page after donating', 'mission' ),
+      label: __( 'Redirect to a URL', 'missionwp-donation-platform' ),
+      hint: __(
+        'Send donors to a specific page after donating',
+        'missionwp-donation-platform'
+      ),
     },
   ];
 
@@ -23,12 +29,12 @@ export default function ConfirmationTab( { localState, updateField } ) {
     <div className="mission-confirmation-tab">
       <div className="mission-fees-tab__section">
         <span className="mission-field-label">
-          { __( 'After Donation', 'mission' ) }
+          { __( 'After Donation', 'missionwp-donation-platform' ) }
         </span>
         <p className="mission-fees-tab__section-hint">
           { __(
             'Choose what happens after a donor completes their donation.',
-            'mission'
+            'missionwp-donation-platform'
           ) }
         </p>
         <div className="mission-fees-tab__radio-group mission-fees-tab__radio-group--row">
@@ -94,7 +100,7 @@ export default function ConfirmationTab( { localState, updateField } ) {
           </svg>
           { __(
             'Tip: Use the "Edit Confirmation" button in the editor to customize the message.',
-            'mission'
+            'missionwp-donation-platform'
           ) }
         </div>
       ) }
@@ -103,7 +109,7 @@ export default function ConfirmationTab( { localState, updateField } ) {
         <div className="mission-fees-tab__section">
           <div className="mission-field-group">
             <span className="mission-field-label">
-              { __( 'Redirect URL', 'mission' ) }
+              { __( 'Redirect URL', 'missionwp-donation-platform' ) }
             </span>
             <div className="mission-confirmation-tab__link-control">
               <LinkControl
@@ -117,14 +123,14 @@ export default function ConfirmationTab( { localState, updateField } ) {
                 showInitialSuggestions
                 searchInputPlaceholder={ __(
                   'Search or type a URL',
-                  'mission'
+                  'missionwp-donation-platform'
                 ) }
               />
             </div>
             <span className="mission-field-hint">
               { __(
                 'Donors will be redirected to this page after a successful donation.',
-                'mission'
+                'missionwp-donation-platform'
               ) }
             </span>
           </div>

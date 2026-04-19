@@ -10,8 +10,8 @@ defined( 'ABSPATH' ) || exit;
 <div class="mission-dd-panel" data-wp-class--active="state.isProfile">
 	<!-- Personal Information -->
 	<div class="mission-dd-profile-section">
-		<h2 class="mission-dd-profile-section-title"><?php esc_html_e( 'Personal Information', 'mission' ); ?></h2>
-		<p class="mission-dd-profile-section-desc"><?php esc_html_e( 'Update your contact details and address.', 'mission' ); ?></p>
+		<h2 class="mission-dd-profile-section-title"><?php esc_html_e( 'Personal Information', 'missionwp-donation-platform' ); ?></h2>
+		<p class="mission-dd-profile-section-desc"><?php esc_html_e( 'Update your contact details and address.', 'missionwp-donation-platform' ); ?></p>
 
 		<div class="mission-dd-profile-error" data-wp-bind--hidden="!context.profile.error" role="alert" aria-live="polite">
 			<span data-wp-text="context.profile.error"></span>
@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 
 			<!-- First Name -->
 			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-first-name"><?php esc_html_e( 'First Name', 'mission' ); ?></label>
+				<label class="mission-dd-profile-label" for="mission-dd-first-name"><?php esc_html_e( 'First Name', 'missionwp-donation-platform' ); ?></label>
 				<input
 					type="text"
 					id="mission-dd-first-name"
@@ -32,12 +32,12 @@ defined( 'ABSPATH' ) || exit;
 					data-wp-class--mission-dd-input-error="state.firstNameEmpty"
 					data-wp-bind--aria-invalid="state.firstNameEmpty"
 				>
-				<span class="mission-dd-field-error" data-wp-bind--hidden="!state.firstNameEmpty"><?php esc_html_e( 'First name is required.', 'mission' ); ?></span>
+				<span class="mission-dd-field-error" data-wp-bind--hidden="!state.firstNameEmpty"><?php esc_html_e( 'First name is required.', 'missionwp-donation-platform' ); ?></span>
 			</div>
 
 			<!-- Last Name -->
 			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-last-name"><?php esc_html_e( 'Last Name', 'mission' ); ?></label>
+				<label class="mission-dd-profile-label" for="mission-dd-last-name"><?php esc_html_e( 'Last Name', 'missionwp-donation-platform' ); ?></label>
 				<input
 					type="text"
 					id="mission-dd-last-name"
@@ -48,12 +48,12 @@ defined( 'ABSPATH' ) || exit;
 					data-wp-class--mission-dd-input-error="state.lastNameEmpty"
 					data-wp-bind--aria-invalid="state.lastNameEmpty"
 				>
-				<span class="mission-dd-field-error" data-wp-bind--hidden="!state.lastNameEmpty"><?php esc_html_e( 'Last name is required.', 'mission' ); ?></span>
+				<span class="mission-dd-field-error" data-wp-bind--hidden="!state.lastNameEmpty"><?php esc_html_e( 'Last name is required.', 'missionwp-donation-platform' ); ?></span>
 			</div>
 
 			<!-- Email -->
 			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-email"><?php esc_html_e( 'Email', 'mission' ); ?></label>
+				<label class="mission-dd-profile-label" for="mission-dd-email"><?php esc_html_e( 'Email', 'missionwp-donation-platform' ); ?></label>
 
 				<!-- Display mode -->
 				<div data-wp-bind--hidden="context.profile.emailChangeEditing">
@@ -66,13 +66,13 @@ defined( 'ABSPATH' ) || exit;
 					>
 					<!-- Pending notice -->
 					<div class="mission-dd-email-pending" data-wp-bind--hidden="!context.profile.pendingEmail">
-						<span><?php esc_html_e( 'Verification sent to', 'mission' ); ?> </span>
+						<span><?php esc_html_e( 'Verification sent to', 'missionwp-donation-platform' ); ?> </span>
 						<strong data-wp-text="context.profile.pendingEmail"></strong>
 						<button
 							type="button"
 							class="mission-dd-email-pending-cancel"
 							data-wp-on--click="actions.cancelEmailChange"
-						><?php esc_html_e( 'Cancel', 'mission' ); ?></button>
+						><?php esc_html_e( 'Cancel', 'missionwp-donation-platform' ); ?></button>
 					</div>
 					<!-- Change link (hidden while pending) -->
 					<button
@@ -80,7 +80,7 @@ defined( 'ABSPATH' ) || exit;
 						class="mission-dd-email-change-link"
 						data-wp-bind--hidden="context.profile.pendingEmail"
 						data-wp-on--click="actions.startEmailChange"
-					><?php esc_html_e( 'Change email', 'mission' ); ?></button>
+					><?php esc_html_e( 'Change email', 'missionwp-donation-platform' ); ?></button>
 				</div>
 
 				<!-- Edit mode -->
@@ -92,7 +92,7 @@ defined( 'ABSPATH' ) || exit;
 						data-wp-bind--value="context.profile.newEmail"
 						data-wp-on--input="actions.updateNewEmail"
 						data-wp-bind--disabled="context.profile.emailChangeSending"
-						placeholder="<?php esc_attr_e( 'Enter new email address', 'mission' ); ?>"
+						placeholder="<?php esc_attr_e( 'Enter new email address', 'missionwp-donation-platform' ); ?>"
 					>
 					<div class="mission-dd-profile-error" data-wp-bind--hidden="!context.profile.emailChangeError" role="alert" aria-live="polite">
 						<span data-wp-text="context.profile.emailChangeError"></span>
@@ -111,14 +111,14 @@ defined( 'ABSPATH' ) || exit;
 							class="mission-dd-btn-secondary mission-dd-btn-sm"
 							data-wp-on--click="actions.cancelEmailEdit"
 							data-wp-bind--disabled="context.profile.emailChangeSending"
-						><?php esc_html_e( 'Cancel', 'mission' ); ?></button>
+						><?php esc_html_e( 'Cancel', 'missionwp-donation-platform' ); ?></button>
 					</div>
 				</div>
 			</div>
 
 			<!-- Phone -->
 			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-phone"><?php esc_html_e( 'Phone', 'mission' ); ?></label>
+				<label class="mission-dd-profile-label" for="mission-dd-phone"><?php esc_html_e( 'Phone', 'missionwp-donation-platform' ); ?></label>
 				<input
 					type="tel"
 					id="mission-dd-phone"
@@ -131,7 +131,7 @@ defined( 'ABSPATH' ) || exit;
 
 			<!-- Address (full width) -->
 			<div class="mission-dd-profile-group mission-dd-profile-group-full">
-				<label class="mission-dd-profile-label" for="mission-dd-address"><?php esc_html_e( 'Address', 'mission' ); ?></label>
+				<label class="mission-dd-profile-label" for="mission-dd-address"><?php esc_html_e( 'Address', 'missionwp-donation-platform' ); ?></label>
 				<input
 					type="text"
 					id="mission-dd-address"
@@ -145,7 +145,7 @@ defined( 'ABSPATH' ) || exit;
 			<!-- City / State / ZIP -->
 			<div class="mission-dd-profile-group-address">
 				<div class="mission-dd-profile-group">
-					<label class="mission-dd-profile-label" for="mission-dd-city"><?php esc_html_e( 'City', 'mission' ); ?></label>
+					<label class="mission-dd-profile-label" for="mission-dd-city"><?php esc_html_e( 'City', 'missionwp-donation-platform' ); ?></label>
 					<input
 						type="text"
 						id="mission-dd-city"
@@ -156,7 +156,7 @@ defined( 'ABSPATH' ) || exit;
 					>
 				</div>
 				<div class="mission-dd-profile-group">
-					<label class="mission-dd-profile-label" for="mission-dd-state"><?php esc_html_e( 'State', 'mission' ); ?></label>
+					<label class="mission-dd-profile-label" for="mission-dd-state"><?php esc_html_e( 'State', 'missionwp-donation-platform' ); ?></label>
 					<input
 						type="text"
 						id="mission-dd-state"
@@ -167,7 +167,7 @@ defined( 'ABSPATH' ) || exit;
 					>
 				</div>
 				<div class="mission-dd-profile-group">
-					<label class="mission-dd-profile-label" for="mission-dd-zip"><?php esc_html_e( 'ZIP Code', 'mission' ); ?></label>
+					<label class="mission-dd-profile-label" for="mission-dd-zip"><?php esc_html_e( 'ZIP Code', 'missionwp-donation-platform' ); ?></label>
 					<input
 						type="text"
 						id="mission-dd-zip"
@@ -197,8 +197,8 @@ defined( 'ABSPATH' ) || exit;
 
 	<!-- Communication Preferences -->
 	<div class="mission-dd-profile-section">
-		<h2 class="mission-dd-profile-section-title"><?php esc_html_e( 'Communication Preferences', 'mission' ); ?></h2>
-		<p class="mission-dd-profile-section-desc"><?php esc_html_e( 'Choose what emails you\'d like to receive.', 'mission' ); ?></p>
+		<h2 class="mission-dd-profile-section-title"><?php esc_html_e( 'Communication Preferences', 'missionwp-donation-platform' ); ?></h2>
+		<p class="mission-dd-profile-section-desc"><?php esc_html_e( 'Choose what emails you\'d like to receive.', 'missionwp-donation-platform' ); ?></p>
 
 		<div class="mission-dd-profile-error" data-wp-bind--hidden="!context.profile.prefError" role="alert" aria-live="polite">
 			<span data-wp-text="context.profile.prefError"></span>
@@ -207,8 +207,8 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Donation Receipts -->
 		<div class="mission-dd-toggle-row">
 			<div>
-				<div class="mission-dd-toggle-label"><?php esc_html_e( 'Donation Receipts', 'mission' ); ?></div>
-				<div class="mission-dd-toggle-desc"><?php esc_html_e( 'Receive a receipt after each donation', 'mission' ); ?></div>
+				<div class="mission-dd-toggle-label"><?php esc_html_e( 'Donation Receipts', 'missionwp-donation-platform' ); ?></div>
+				<div class="mission-dd-toggle-desc"><?php esc_html_e( 'Receive a receipt after each donation', 'missionwp-donation-platform' ); ?></div>
 			</div>
 			<button
 				type="button"
@@ -226,8 +226,8 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Campaign Updates -->
 		<div class="mission-dd-toggle-row">
 			<div>
-				<div class="mission-dd-toggle-label"><?php esc_html_e( 'Campaign Updates', 'mission' ); ?></div>
-				<div class="mission-dd-toggle-desc"><?php esc_html_e( 'Get notified about campaigns you\'ve donated to', 'mission' ); ?></div>
+				<div class="mission-dd-toggle-label"><?php esc_html_e( 'Campaign Updates', 'missionwp-donation-platform' ); ?></div>
+				<div class="mission-dd-toggle-desc"><?php esc_html_e( 'Get notified about campaigns you\'ve donated to', 'missionwp-donation-platform' ); ?></div>
 			</div>
 			<button
 				type="button"
@@ -245,8 +245,8 @@ defined( 'ABSPATH' ) || exit;
 		<!-- Annual Receipt Reminder -->
 		<div class="mission-dd-toggle-row">
 			<div>
-				<div class="mission-dd-toggle-label"><?php esc_html_e( 'Annual Receipt Reminder', 'mission' ); ?></div>
-				<div class="mission-dd-toggle-desc"><?php esc_html_e( 'Reminder to download your annual tax receipt in January', 'mission' ); ?></div>
+				<div class="mission-dd-toggle-label"><?php esc_html_e( 'Annual Receipt Reminder', 'missionwp-donation-platform' ); ?></div>
+				<div class="mission-dd-toggle-desc"><?php esc_html_e( 'Reminder to download your annual tax receipt in January', 'missionwp-donation-platform' ); ?></div>
 			</div>
 			<button
 				type="button"
@@ -266,8 +266,8 @@ defined( 'ABSPATH' ) || exit;
 
 	<!-- Payment Method -->
 	<div class="mission-dd-profile-section">
-		<h2 class="mission-dd-profile-section-title"><?php esc_html_e( 'Payment Method', 'mission' ); ?></h2>
-		<p class="mission-dd-profile-section-desc"><?php esc_html_e( 'Manage your saved payment method.', 'mission' ); ?></p>
+		<h2 class="mission-dd-profile-section-title"><?php esc_html_e( 'Payment Method', 'missionwp-donation-platform' ); ?></h2>
+		<p class="mission-dd-profile-section-desc"><?php esc_html_e( 'Manage your saved payment method.', 'missionwp-donation-platform' ); ?></p>
 
 		<div data-wp-bind--hidden="!context.profile.hasPaymentMethod">
 			<div class="mission-dd-payment-card">
@@ -279,14 +279,14 @@ defined( 'ABSPATH' ) || exit;
 					</div>
 				</div>
 				<a class="mission-dd-btn-secondary" href="#recurring" data-wp-on--click="actions.navigate" data-panel="recurring">
-					<?php esc_html_e( 'Manage', 'mission' ); ?>
+					<?php esc_html_e( 'Manage', 'missionwp-donation-platform' ); ?>
 				</a>
 			</div>
-			<div class="mission-dd-payment-note"><?php esc_html_e( 'Payment information is securely managed through Stripe. We never store your full card details.', 'mission' ); ?></div>
+			<div class="mission-dd-payment-note"><?php esc_html_e( 'Payment information is securely managed through Stripe. We never store your full card details.', 'missionwp-donation-platform' ); ?></div>
 		</div>
 
 		<div class="mission-dd-payment-empty" data-wp-bind--hidden="context.profile.hasPaymentMethod">
-			<p><?php esc_html_e( 'No payment method on file.', 'mission' ); ?></p>
+			<p><?php esc_html_e( 'No payment method on file.', 'missionwp-donation-platform' ); ?></p>
 		</div>
 	</div>
 
@@ -300,9 +300,9 @@ defined( 'ABSPATH' ) || exit;
 			data-wp-on--click="actions.deleteAccount"
 			data-wp-bind--disabled="context.profile.deleteLoading"
 		>
-			<?php esc_html_e( 'Delete my account', 'mission' ); ?>
+			<?php esc_html_e( 'Delete my account', 'missionwp-donation-platform' ); ?>
 		</button>
-		<div class="mission-dd-danger-desc"><?php esc_html_e( 'This will remove your login access. Your donation history will be preserved for the organization\'s records.', 'mission' ); ?></div>
+		<div class="mission-dd-danger-desc"><?php esc_html_e( 'This will remove your login access. Your donation history will be preserved for the organization\'s records.', 'missionwp-donation-platform' ); ?></div>
 	</div>
 
 </div>

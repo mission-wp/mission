@@ -145,7 +145,7 @@ export default function OnboardingModal( { onComplete } ) {
   useEffect( () => {
     const params = new URLSearchParams( window.location.search );
 
-    // Handle OAuth denial (user clicked "Return to Mission" on Stripe).
+    // Handle OAuth denial (user clicked "Return to MissionWP" on Stripe).
     if ( params.get( 'stripe_error' ) === 'access_denied' ) {
       const url = new URL( window.location.href );
       url.searchParams.delete( 'stripe_error' );
@@ -154,7 +154,7 @@ export default function OnboardingModal( { onComplete } ) {
       setConnectError(
         __(
           'Stripe connection was cancelled. You can try again whenever you\u2019re ready.',
-          'mission'
+          'missionwp-donation-platform'
         )
       );
       if ( step !== 3 ) {
@@ -197,7 +197,7 @@ export default function OnboardingModal( { onComplete } ) {
           setConnectError(
             __(
               'Stripe connected, but your account isn\u2019t ready to accept payments yet. Finish setting up your account on the Stripe Dashboard.',
-              'mission'
+              'missionwp-donation-platform'
             )
           );
         }
@@ -238,19 +238,28 @@ export default function OnboardingModal( { onComplete } ) {
 
     if ( targetStep === 1 ) {
       if ( ! data.org_name.trim() ) {
-        newErrors.org_name = __( 'Organization name is required.', 'mission' );
+        newErrors.org_name = __(
+          'Organization name is required.',
+          'missionwp-donation-platform'
+        );
       }
     }
 
     if ( targetStep === 4 ) {
       if ( ! data.campaign_name.trim() ) {
-        newErrors.campaign_name = __( 'Campaign name is required.', 'mission' );
+        newErrors.campaign_name = __(
+          'Campaign name is required.',
+          'missionwp-donation-platform'
+        );
       }
       const goalNum = parseFloat(
         data.campaign_goal.toString().replace( /,/g, '' )
       );
       if ( ! goalNum || goalNum <= 0 ) {
-        newErrors.campaign_goal = __( 'Goal amount is required.', 'mission' );
+        newErrors.campaign_goal = __(
+          'Goal amount is required.',
+          'missionwp-donation-platform'
+        );
       }
     }
 
@@ -464,17 +473,17 @@ export default function OnboardingModal( { onComplete } ) {
               <MissionLogo />
             </div>
             <span className="mission-onboarding-wordmark">
-              { __( 'Mission', 'mission' ) }
+              { __( 'MissionWP', 'missionwp-donation-platform' ) }
             </span>
             <span className="mission-onboarding-setup-tag">
-              { __( 'Setup', 'mission' ) }
+              { __( 'Setup', 'missionwp-donation-platform' ) }
             </span>
           </div>
           <button
             type="button"
             className="mission-onboarding-close"
             onClick={ handleDismiss }
-            title={ __( 'Close', 'mission' ) }
+            title={ __( 'Close', 'missionwp-donation-platform' ) }
           >
             <svg
               width="16"
@@ -564,7 +573,7 @@ export default function OnboardingModal( { onComplete } ) {
             >
               <path d="M11 7H3M7 3L3 7l4 4" />
             </svg>
-            { __( 'Back', 'mission' ) }
+            { __( 'Back', 'missionwp-donation-platform' ) }
           </button>
           <div className="mission-onboarding-nav-right">
             <button
@@ -572,14 +581,14 @@ export default function OnboardingModal( { onComplete } ) {
               className="mission-onboarding-nav-skip"
               onClick={ handleSkip }
             >
-              { __( 'Skip step', 'mission' ) }
+              { __( 'Skip step', 'missionwp-donation-platform' ) }
             </button>
             <button
               type="button"
               className="mission-onboarding-nav-continue"
               onClick={ handleContinue }
             >
-              { __( 'Continue', 'mission' ) }
+              { __( 'Continue', 'missionwp-donation-platform' ) }
               <svg
                 width="14"
                 height="14"

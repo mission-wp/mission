@@ -171,7 +171,7 @@ class CampaignsEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view campaigns.', 'mission' ),
+				__( 'You do not have permission to view campaigns.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -220,7 +220,7 @@ class CampaignsEndpoint {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_cannot_create',
-				__( 'The campaign could not be created.', 'mission' ),
+				__( 'The campaign could not be created.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -255,7 +255,7 @@ class CampaignsEndpoint {
 		if ( ! $campaign ) {
 			return new WP_Error(
 				'rest_not_found',
-				__( 'Campaign not found.', 'mission' ),
+				__( 'Campaign not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -427,7 +427,7 @@ class CampaignsEndpoint {
 		if ( ! $campaign ) {
 			return new WP_Error(
 				'rest_not_found',
-				__( 'Campaign not found.', 'mission' ),
+				__( 'Campaign not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -437,7 +437,7 @@ class CampaignsEndpoint {
 		if ( ! $result ) {
 			return new WP_Error(
 				'rest_cannot_delete',
-				__( 'The campaign could not be deleted.', 'mission' ),
+				__( 'The campaign could not be deleted.', 'missionwp-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -500,7 +500,7 @@ class CampaignsEndpoint {
 		if ( ! $campaign ) {
 			return new WP_Error(
 				'rest_not_found',
-				__( 'Campaign not found.', 'mission' ),
+				__( 'Campaign not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -522,7 +522,7 @@ class CampaignsEndpoint {
 			if ( $raw_goal < 0 ) {
 				return new WP_Error(
 					'rest_invalid_goal',
-					__( 'Goal amount cannot be negative.', 'mission' ),
+					__( 'Goal amount cannot be negative.', 'missionwp-donation-platform' ),
 					[ 'status' => 400 ]
 				);
 			}

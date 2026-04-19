@@ -66,7 +66,10 @@ export default function DonorDetail( { id } ) {
       setTransactions( txnData );
       setSubscriptions( subData );
     } catch ( err ) {
-      setError( err.message || __( 'Failed to load donor.', 'mission' ) );
+      setError(
+        err.message ||
+          __( 'Failed to load donor.', 'missionwp-donation-platform' )
+      );
     } finally {
       setIsLoading( false );
       hasLoaded.current = true;
@@ -99,9 +102,11 @@ export default function DonorDetail( { id } ) {
             href={ donorsUrl }
             style={ { color: BRAND_COLOR, textDecoration: 'none' } }
           >
-            { __( 'Back to Donors', 'mission' ) }
+            { __( 'Back to Donors', 'missionwp-donation-platform' ) }
           </a>
-          <Text>{ error || __( 'Donor not found.', 'mission' ) }</Text>
+          <Text>
+            { error || __( 'Donor not found.', 'missionwp-donation-platform' ) }
+          </Text>
         </VStack>
       </div>
     );
@@ -109,7 +114,7 @@ export default function DonorDetail( { id } ) {
 
   const fullName =
     [ donor.first_name, donor.last_name ].filter( Boolean ).join( ' ' ) ||
-    __( 'Anonymous', 'mission' );
+    __( 'Anonymous', 'missionwp-donation-platform' );
 
   const avgDonation =
     donor.transaction_count > 0
@@ -122,7 +127,7 @@ export default function DonorDetail( { id } ) {
         { /* Breadcrumb + Edit */ }
         <HStack justify="space-between" alignment="center">
           <a href={ donorsUrl } className="mission-back-link">
-            &larr; { __( 'Back to Donors', 'mission' ) }
+            &larr; { __( 'Back to Donors', 'missionwp-donation-platform' ) }
           </a>
           <Button
             variant="secondary"
@@ -132,7 +137,7 @@ export default function DonorDetail( { id } ) {
             } }
             __next40pxDefaultSize
           >
-            { __( 'Edit Donor', 'mission' ) }
+            { __( 'Edit Donor', 'missionwp-donation-platform' ) }
           </Button>
         </HStack>
 
@@ -151,17 +156,18 @@ export default function DonorDetail( { id } ) {
               <div className="mission-donor-profile__tags">
                 { donor.is_recurring && (
                   <Badge style={ { background: '#e2f4eb', color: '#2fa36b' } }>
-                    { __( 'Recurring', 'mission' ) }
+                    { __( 'Recurring', 'missionwp-donation-platform' ) }
                   </Badge>
                 ) }
                 { donor.is_top_donor && (
                   <Badge style={ { background: '#fef3cd', color: '#856404' } }>
-                    { __( 'Top Donor', 'mission' ) }
+                    { __( 'Top Donor', 'missionwp-donation-platform' ) }
                   </Badge>
                 ) }
                 { donor.since_label && (
                   <Badge style={ { background: '#f0ede8', color: '#6b6b7b' } }>
-                    { __( 'Since', 'mission' ) } { donor.since_label }
+                    { __( 'Since', 'missionwp-donation-platform' ) }{ ' ' }
+                    { donor.since_label }
                   </Badge>
                 ) }
               </div>
@@ -173,7 +179,7 @@ export default function DonorDetail( { id } ) {
                 { formatAmount( donor.total_donated ) }
               </span>
               <span className="mission-donor-profile__stat-label">
-                { __( 'Lifetime given', 'mission' ) }
+                { __( 'Lifetime given', 'missionwp-donation-platform' ) }
               </span>
             </div>
             <div className="mission-donor-profile__stat">
@@ -181,7 +187,7 @@ export default function DonorDetail( { id } ) {
                 { donor.transaction_count }
               </span>
               <span className="mission-donor-profile__stat-label">
-                { __( 'Donations', 'mission' ) }
+                { __( 'Donations', 'missionwp-donation-platform' ) }
               </span>
             </div>
             <div className="mission-donor-profile__stat">
@@ -189,7 +195,7 @@ export default function DonorDetail( { id } ) {
                 { formatAmount( avgDonation ) }
               </span>
               <span className="mission-donor-profile__stat-label">
-                { __( 'Avg. donation', 'mission' ) }
+                { __( 'Avg. donation', 'missionwp-donation-platform' ) }
               </span>
             </div>
           </div>
@@ -214,8 +220,11 @@ export default function DonorDetail( { id } ) {
             <NotesCard
               objectType="donors"
               objectId={ id }
-              title={ __( 'Internal Notes', 'mission' ) }
-              hint={ __( 'Only visible to your organization.', 'mission' ) }
+              title={ __( 'Internal Notes', 'missionwp-donation-platform' ) }
+              hint={ __(
+                'Only visible to your organization.',
+                'missionwp-donation-platform'
+              ) }
             />
           </VStack>
         </div>

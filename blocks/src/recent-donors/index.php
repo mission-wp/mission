@@ -38,7 +38,7 @@ $mission_settings = get_option( 'mission_settings', [] );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
 // Attributes.
-$heading         = $attributes['heading'] ?? __( 'Recent Donors', 'mission' );
+$heading         = $attributes['heading'] ?? __( 'Recent Donors', 'missionwp-donation-platform' );
 $show_avatars    = $attributes['showAvatars'] ?? true;
 $show_dedication = $attributes['showDedication'] ?? true;
 $donate_action   = $attributes['donateButtonAction'] ?? 'scroll';
@@ -87,8 +87,8 @@ ob_start();
 	<?php if ( empty( $donors ) ) : ?>
 		<div class="mission-donor-empty">
 			<div class="mission-donor-empty__icon">&#9829;</div>
-			<p class="mission-donor-empty__title"><?php esc_html_e( 'Nothing here yet!', 'mission' ); ?></p>
-			<p class="mission-donor-empty__subtitle"><?php esc_html_e( 'Your name could be the first one on this list.', 'mission' ); ?></p>
+			<p class="mission-donor-empty__title"><?php esc_html_e( 'Nothing here yet!', 'missionwp-donation-platform' ); ?></p>
+			<p class="mission-donor-empty__subtitle"><?php esc_html_e( 'Your name could be the first one on this list.', 'missionwp-donation-platform' ); ?></p>
 			<?php if ( 'hide' !== $donate_action ) : ?>
 				<?php if ( 'scroll' === $donate_action ) : ?>
 					<button
@@ -96,11 +96,11 @@ ob_start();
 						class="mission-donor-empty__btn"
 						data-wp-on--click="actions.scrollToForm"
 					>
-						<?php esc_html_e( 'Donate Now', 'mission' ); ?>
+						<?php esc_html_e( 'Donate Now', 'missionwp-donation-platform' ); ?>
 					</button>
 				<?php else : ?>
 					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-donor-empty__btn">
-						<?php esc_html_e( 'Donate Now', 'mission' ); ?>
+						<?php esc_html_e( 'Donate Now', 'missionwp-donation-platform' ); ?>
 					</a>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -110,14 +110,14 @@ ob_start();
 			<?php
 			foreach ( $donors as $donor ) :
 				if ( $donor['is_anonymous'] ) {
-					$name     = __( 'Anonymous', 'mission' );
+					$name     = __( 'Anonymous', 'missionwp-donation-platform' );
 					$initials = '?';
 				} else {
 					$first = $donor['first_name'] ?? '';
 					$last  = $donor['last_name'] ?? '';
 					$name  = trim( $first . ' ' . mb_substr( $last, 0, 1 ) . '.' );
 					if ( '.' === $name ) {
-						$name = __( 'Anonymous', 'mission' );
+						$name = __( 'Anonymous', 'missionwp-donation-platform' );
 					}
 					$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
 					if ( '' === trim( $initials ) ) {
@@ -128,15 +128,15 @@ ob_start();
 				$dedication = '';
 				if ( $show_dedication && ! empty( $donor['tribute_type'] ) ) {
 					$prefix     = 'in_memory' === $donor['tribute_type']
-						? __( 'In memory of', 'mission' )
-						: __( 'In honor of', 'mission' );
+						? __( 'In memory of', 'missionwp-donation-platform' )
+						: __( 'In honor of', 'missionwp-donation-platform' );
 					$dedication = $prefix . ' ' . ( $donor['honoree_name'] ?? '' );
 				}
 
 				$formatted_amount = Currency::format_amount( $donor['amount'], $currency );
 
 				/* translators: %s: human time diff, e.g. "2 hours" */
-				$time_ago = sprintf( __( '%s ago', 'mission' ), human_time_diff( strtotime( $donor['date_created'] ) ) );
+				$time_ago = sprintf( __( '%s ago', 'missionwp-donation-platform' ), human_time_diff( strtotime( $donor['date_created'] ) ) );
 				?>
 				<li class="mission-donor-item">
 					<div class="mission-donor-item-left">

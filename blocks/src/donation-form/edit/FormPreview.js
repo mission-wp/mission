@@ -85,16 +85,16 @@ export default function FormPreview( { attributes = {} } ) {
         <div className="mission-df-step mission-df-step-1 active">
           <h2 className="mission-df-step-title">
             { attributes.chooseGiftHeading ||
-              __( 'Choose Your Gift', 'mission' ) }
+              __( 'Choose Your Gift', 'missionwp-donation-platform' ) }
           </h2>
 
           { recurringEnabled && (
             <div className="mission-df-frequency-toggle">
               <button type="button" className="mission-df-frequency-btn active">
-                { __( 'One Time', 'mission' ) }
+                { __( 'One Time', 'missionwp-donation-platform' ) }
               </button>
               <button type="button" className="mission-df-frequency-btn">
-                { __( 'Ongoing', 'mission' ) }
+                { __( 'Ongoing', 'missionwp-donation-platform' ) }
               </button>
             </div>
           ) }
@@ -128,7 +128,7 @@ export default function FormPreview( { attributes = {} } ) {
                 type="button"
                 className="mission-df-amount-btn mission-df-amount-btn--other"
               >
-                { __( 'Other', 'mission' ) }
+                { __( 'Other', 'missionwp-donation-platform' ) }
               </button>
             ) }
           </div>
@@ -137,7 +137,8 @@ export default function FormPreview( { attributes = {} } ) {
             type="button"
             className="mission-df-btn mission-df-btn--primary"
           >
-            { attributes.continueButtonText || __( 'Continue', 'mission' ) }
+            { attributes.continueButtonText ||
+              __( 'Continue', 'missionwp-donation-platform' ) }
           </button>
         </div>
       </div>

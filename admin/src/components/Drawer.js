@@ -23,7 +23,7 @@ export default function Drawer( {
         <span style={ { fontSize: '16px', fontWeight: 600 } }>{ title }</span>
         <Button
           icon={ closeIcon }
-          label={ __( 'Close', 'mission' ) }
+          label={ __( 'Close', 'missionwp-donation-platform' ) }
           onClick={ onClose }
         />
       </div>

@@ -26,7 +26,7 @@ export default function ConfirmationModal( {
 
   return (
     <Modal
-      title={ title || __( 'Are you sure?', 'mission' ) }
+      title={ title || __( 'Are you sure?', 'missionwp-donation-platform' ) }
       onRequestClose={ onCancel }
       className={ `mission-cleanup-modal${
         isDanger ? ' mission-cleanup-modal--danger' : ''
@@ -40,8 +40,9 @@ export default function ConfirmationModal( {
           <TextControl
             label={
               <>
-                { __( 'Type', 'mission' ) } <strong>{ typedConfirm }</strong>{ ' ' }
-                { __( 'to confirm', 'mission' ) }
+                { __( 'Type', 'missionwp-donation-platform' ) }{ ' ' }
+                <strong>{ typedConfirm }</strong>{ ' ' }
+                { __( 'to confirm', 'missionwp-donation-platform' ) }
               </>
             }
             value={ typedValue }
@@ -56,7 +57,7 @@ export default function ConfirmationModal( {
             onClick={ onCancel }
             disabled={ isRunning }
           >
-            { __( 'Cancel', 'mission' ) }
+            { __( 'Cancel', 'missionwp-donation-platform' ) }
           </Button>
           <Button
             variant="primary"
@@ -67,7 +68,7 @@ export default function ConfirmationModal( {
               isDanger ? 'mission-cleanup-modal__confirm--danger' : ''
             }
           >
-            { confirmLabel || __( 'Confirm', 'mission' ) }
+            { confirmLabel || __( 'Confirm', 'missionwp-donation-platform' ) }
           </Button>
         </HStack>
       </VStack>

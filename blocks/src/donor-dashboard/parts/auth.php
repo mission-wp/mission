@@ -22,8 +22,8 @@ defined( 'ABSPATH' ) || exit;
 			<!-- ── Login View ── -->
 			<div data-wp-bind--hidden="!state.isLoginView">
 				<div class="mission-dd-auth-header">
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Donor Dashboard', 'mission' ); ?></h1>
-					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Log in to view your donation history, download tax receipts, and manage recurring gifts.', 'mission' ); ?></p>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Donor Dashboard', 'missionwp-donation-platform' ); ?></h1>
+					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Log in to view your donation history, download tax receipts, and manage recurring gifts.', 'missionwp-donation-platform' ); ?></p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
@@ -40,7 +40,7 @@ defined( 'ABSPATH' ) || exit;
 
 					<form data-wp-on--submit="actions.submitLogin" novalidate>
 						<div class="mission-dd-auth-field">
-							<label class="mission-dd-auth-label" for="mission-dd-login-email"><?php esc_html_e( 'Email address', 'mission' ); ?></label>
+							<label class="mission-dd-auth-label" for="mission-dd-login-email"><?php esc_html_e( 'Email address', 'missionwp-donation-platform' ); ?></label>
 							<div class="mission-dd-auth-input-wrap">
 								<input
 									type="email"
@@ -55,12 +55,12 @@ defined( 'ABSPATH' ) || exit;
 						</div>
 
 						<div class="mission-dd-auth-field">
-							<label class="mission-dd-auth-label" for="mission-dd-login-password"><?php esc_html_e( 'Password', 'mission' ); ?></label>
+							<label class="mission-dd-auth-label" for="mission-dd-login-password"><?php esc_html_e( 'Password', 'missionwp-donation-platform' ); ?></label>
 							<div class="mission-dd-auth-input-wrap">
 								<input
 									id="mission-dd-login-password"
 									class="mission-dd-auth-input mission-dd-auth-input-has-toggle"
-									placeholder="<?php esc_attr_e( 'Enter your password', 'mission' ); ?>"
+									placeholder="<?php esc_attr_e( 'Enter your password', 'missionwp-donation-platform' ); ?>"
 									autocomplete="current-password"
 									data-wp-bind--value="context.authPassword"
 									data-wp-bind--type="state.passwordInputType"
@@ -85,9 +85,9 @@ defined( 'ABSPATH' ) || exit;
 									data-wp-bind--checked="context.authRemember"
 									data-wp-on--change="actions.toggleRemember"
 								>
-								<?php esc_html_e( 'Remember me', 'mission' ); ?>
+								<?php esc_html_e( 'Remember me', 'missionwp-donation-platform' ); ?>
 							</label>
-							<a href="#forgot-password" class="mission-dd-auth-forgot"><?php esc_html_e( 'Forgot password?', 'mission' ); ?></a>
+							<a href="#forgot-password" class="mission-dd-auth-forgot"><?php esc_html_e( 'Forgot password?', 'missionwp-donation-platform' ); ?></a>
 						</div>
 
 						<button
@@ -96,13 +96,13 @@ defined( 'ABSPATH' ) || exit;
 							data-wp-class--is-loading="context.authLoading"
 							data-wp-bind--disabled="context.authLoading"
 						>
-							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Log in', 'mission' ); ?></span>
-							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Logging in...', 'mission' ); ?></span>
+							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Log in', 'missionwp-donation-platform' ); ?></span>
+							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Logging in...', 'missionwp-donation-platform' ); ?></span>
 						</button>
 
 						<div class="mission-dd-auth-secure">
 							<span class="mission-dd-icon mission-dd-icon-lock" aria-hidden="true"></span>
-							<?php esc_html_e( 'Secured with encryption', 'mission' ); ?>
+							<?php esc_html_e( 'Secured with encryption', 'missionwp-donation-platform' ); ?>
 						</div>
 					</form>
 				</div>
@@ -111,8 +111,8 @@ defined( 'ABSPATH' ) || exit;
 					<?php
 					printf(
 						/* translators: %s: activate account link */
-						esc_html__( 'First time here? %s', 'mission' ),
-						'<a href="#activate">' . esc_html__( 'Activate your account', 'mission' ) . '</a>'
+						esc_html__( 'First time here? %s', 'missionwp-donation-platform' ),
+						'<a href="#activate">' . esc_html__( 'Activate your account', 'missionwp-donation-platform' ) . '</a>'
 					);
 					?>
 				</div>
@@ -121,8 +121,8 @@ defined( 'ABSPATH' ) || exit;
 			<!-- ── Activate View (email only) ── -->
 			<div data-wp-bind--hidden="!state.isActivateView">
 				<div class="mission-dd-auth-header">
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Activate your account', 'mission' ); ?></h1>
-					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Enter the email you used when you donated and we\'ll send you a verification link.', 'mission' ); ?></p>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Activate your account', 'missionwp-donation-platform' ); ?></h1>
+					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Enter the email you used when you donated and we\'ll send you a verification link.', 'missionwp-donation-platform' ); ?></p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
@@ -139,7 +139,7 @@ defined( 'ABSPATH' ) || exit;
 
 					<form data-wp-on--submit="actions.submitActivate" novalidate>
 						<div class="mission-dd-auth-field">
-							<label class="mission-dd-auth-label" for="mission-dd-activate-email"><?php esc_html_e( 'Email address', 'mission' ); ?></label>
+							<label class="mission-dd-auth-label" for="mission-dd-activate-email"><?php esc_html_e( 'Email address', 'missionwp-donation-platform' ); ?></label>
 							<div class="mission-dd-auth-input-wrap">
 								<input
 									type="email"
@@ -159,13 +159,13 @@ defined( 'ABSPATH' ) || exit;
 							data-wp-class--is-loading="context.authLoading"
 							data-wp-bind--disabled="context.authLoading"
 						>
-							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Send verification email', 'mission' ); ?></span>
-							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Sending...', 'mission' ); ?></span>
+							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Send verification email', 'missionwp-donation-platform' ); ?></span>
+							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Sending...', 'missionwp-donation-platform' ); ?></span>
 						</button>
 
 						<div class="mission-dd-auth-secure">
 							<span class="mission-dd-icon mission-dd-icon-lock" aria-hidden="true"></span>
-							<?php esc_html_e( 'Secured with encryption', 'mission' ); ?>
+							<?php esc_html_e( 'Secured with encryption', 'missionwp-donation-platform' ); ?>
 						</div>
 					</form>
 				</div>
@@ -174,8 +174,8 @@ defined( 'ABSPATH' ) || exit;
 					<?php
 					printf(
 						/* translators: %s: log in link */
-						esc_html__( 'Already have an account? %s', 'mission' ),
-						'<a href="#login">' . esc_html__( 'Log in', 'mission' ) . '</a>'
+						esc_html__( 'Already have an account? %s', 'missionwp-donation-platform' ),
+						'<a href="#login">' . esc_html__( 'Log in', 'missionwp-donation-platform' ) . '</a>'
 					);
 					?>
 				</div>
@@ -185,22 +185,22 @@ defined( 'ABSPATH' ) || exit;
 			<div data-wp-bind--hidden="!state.isActivateSentView">
 				<div class="mission-dd-auth-header">
 					<span class="mission-dd-icon mission-dd-icon-mail mission-dd-auth-icon-mail" aria-hidden="true"></span>
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Check your email', 'mission' ); ?></h1>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Check your email', 'missionwp-donation-platform' ); ?></h1>
 					<p class="mission-dd-auth-subtitle">
-						<?php esc_html_e( 'If a donor account exists for that email, we\'ve sent a verification link. Click the link in the email to finish setting up your account.', 'mission' ); ?>
+						<?php esc_html_e( 'If a donor account exists for that email, we\'ve sent a verification link. Click the link in the email to finish setting up your account.', 'missionwp-donation-platform' ); ?>
 					</p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
 					<p class="mission-dd-auth-hint">
-						<?php esc_html_e( 'Didn\'t receive an email? Check your spam folder or try again with a different email address.', 'mission' ); ?>
+						<?php esc_html_e( 'Didn\'t receive an email? Check your spam folder or try again with a different email address.', 'missionwp-donation-platform' ); ?>
 					</p>
 					<button
 						type="button"
 						class="mission-dd-auth-submit mission-dd-auth-submit--secondary"
 						data-wp-on--click="actions.showActivate"
 					>
-						<?php esc_html_e( 'Try another email', 'mission' ); ?>
+						<?php esc_html_e( 'Try another email', 'missionwp-donation-platform' ); ?>
 					</button>
 				</div>
 
@@ -208,8 +208,8 @@ defined( 'ABSPATH' ) || exit;
 					<?php
 					printf(
 						/* translators: %s: log in link */
-						esc_html__( 'Already have an account? %s', 'mission' ),
-						'<a href="#login">' . esc_html__( 'Log in', 'mission' ) . '</a>'
+						esc_html__( 'Already have an account? %s', 'missionwp-donation-platform' ),
+						'<a href="#login">' . esc_html__( 'Log in', 'missionwp-donation-platform' ) . '</a>'
 					);
 					?>
 				</div>
@@ -218,8 +218,8 @@ defined( 'ABSPATH' ) || exit;
 			<!-- ── Set Password View (after email verification) ── -->
 			<div data-wp-bind--hidden="!state.isSetPasswordView">
 				<div class="mission-dd-auth-header">
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Set your password', 'mission' ); ?></h1>
-					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Your email has been verified. Choose a password to complete your account setup.', 'mission' ); ?></p>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Set your password', 'missionwp-donation-platform' ); ?></h1>
+					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Your email has been verified. Choose a password to complete your account setup.', 'missionwp-donation-platform' ); ?></p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
@@ -236,12 +236,12 @@ defined( 'ABSPATH' ) || exit;
 
 					<form data-wp-on--submit="actions.submitSetPassword" novalidate>
 						<div class="mission-dd-auth-field">
-							<label class="mission-dd-auth-label" for="mission-dd-set-password"><?php esc_html_e( 'Password', 'mission' ); ?></label>
+							<label class="mission-dd-auth-label" for="mission-dd-set-password"><?php esc_html_e( 'Password', 'missionwp-donation-platform' ); ?></label>
 							<div class="mission-dd-auth-input-wrap">
 								<input
 									id="mission-dd-set-password"
 									class="mission-dd-auth-input mission-dd-auth-input-has-toggle"
-									placeholder="<?php esc_attr_e( 'Create a password', 'mission' ); ?>"
+									placeholder="<?php esc_attr_e( 'Create a password', 'missionwp-donation-platform' ); ?>"
 									autocomplete="new-password"
 									data-wp-bind--value="context.authPassword"
 									data-wp-bind--type="state.passwordInputType"
@@ -278,13 +278,13 @@ defined( 'ABSPATH' ) || exit;
 							data-wp-class--is-loading="context.authLoading"
 							data-wp-bind--disabled="context.authLoading"
 						>
-							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Activate account', 'mission' ); ?></span>
-							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Activating...', 'mission' ); ?></span>
+							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Activate account', 'missionwp-donation-platform' ); ?></span>
+							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Activating...', 'missionwp-donation-platform' ); ?></span>
 						</button>
 
 						<div class="mission-dd-auth-secure">
 							<span class="mission-dd-icon mission-dd-icon-lock" aria-hidden="true"></span>
-							<?php esc_html_e( 'Secured with encryption', 'mission' ); ?>
+							<?php esc_html_e( 'Secured with encryption', 'missionwp-donation-platform' ); ?>
 						</div>
 					</form>
 				</div>
@@ -293,8 +293,8 @@ defined( 'ABSPATH' ) || exit;
 			<!-- ── Forgot Password View ── -->
 			<div data-wp-bind--hidden="!state.isForgotPasswordView">
 				<div class="mission-dd-auth-header">
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Forgot your password?', 'mission' ); ?></h1>
-					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Enter your email address and we\'ll send you a link to reset your password.', 'mission' ); ?></p>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Forgot your password?', 'missionwp-donation-platform' ); ?></h1>
+					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Enter your email address and we\'ll send you a link to reset your password.', 'missionwp-donation-platform' ); ?></p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
@@ -311,7 +311,7 @@ defined( 'ABSPATH' ) || exit;
 
 					<form data-wp-on--submit="actions.submitForgotPassword" novalidate>
 						<div class="mission-dd-auth-field">
-							<label class="mission-dd-auth-label" for="mission-dd-forgot-email"><?php esc_html_e( 'Email address', 'mission' ); ?></label>
+							<label class="mission-dd-auth-label" for="mission-dd-forgot-email"><?php esc_html_e( 'Email address', 'missionwp-donation-platform' ); ?></label>
 							<div class="mission-dd-auth-input-wrap">
 								<input
 									type="email"
@@ -331,8 +331,8 @@ defined( 'ABSPATH' ) || exit;
 							data-wp-class--is-loading="context.authLoading"
 							data-wp-bind--disabled="context.authLoading"
 						>
-							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Send reset link', 'mission' ); ?></span>
-							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Sending...', 'mission' ); ?></span>
+							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Send reset link', 'missionwp-donation-platform' ); ?></span>
+							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Sending...', 'missionwp-donation-platform' ); ?></span>
 						</button>
 					</form>
 				</div>
@@ -341,8 +341,8 @@ defined( 'ABSPATH' ) || exit;
 					<?php
 					printf(
 						/* translators: %s: log in link */
-						esc_html__( 'Remember your password? %s', 'mission' ),
-						'<a href="#login">' . esc_html__( 'Log in', 'mission' ) . '</a>'
+						esc_html__( 'Remember your password? %s', 'missionwp-donation-platform' ),
+						'<a href="#login">' . esc_html__( 'Log in', 'missionwp-donation-platform' ) . '</a>'
 					);
 					?>
 				</div>
@@ -351,22 +351,22 @@ defined( 'ABSPATH' ) || exit;
 			<!-- ── Forgot Password Email Sent View ── -->
 			<div data-wp-bind--hidden="!state.isForgotPasswordSentView">
 				<div class="mission-dd-auth-header">
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Check your email', 'mission' ); ?></h1>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Check your email', 'missionwp-donation-platform' ); ?></h1>
 					<p class="mission-dd-auth-subtitle">
-						<?php esc_html_e( 'If an account exists for that email, we\'ve sent a password reset link. Click the link in the email to choose a new password.', 'mission' ); ?>
+						<?php esc_html_e( 'If an account exists for that email, we\'ve sent a password reset link. Click the link in the email to choose a new password.', 'missionwp-donation-platform' ); ?>
 					</p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
 					<p class="mission-dd-auth-hint">
-						<?php esc_html_e( 'Didn\'t receive an email? Check your spam folder or try again with a different email address.', 'mission' ); ?>
+						<?php esc_html_e( 'Didn\'t receive an email? Check your spam folder or try again with a different email address.', 'missionwp-donation-platform' ); ?>
 					</p>
 					<button
 						type="button"
 						class="mission-dd-auth-submit mission-dd-auth-submit--secondary"
 						data-wp-on--click="actions.showForgotPassword"
 					>
-						<?php esc_html_e( 'Try another email', 'mission' ); ?>
+						<?php esc_html_e( 'Try another email', 'missionwp-donation-platform' ); ?>
 					</button>
 				</div>
 
@@ -374,8 +374,8 @@ defined( 'ABSPATH' ) || exit;
 					<?php
 					printf(
 						/* translators: %s: log in link */
-						esc_html__( 'Remember your password? %s', 'mission' ),
-						'<a href="#login">' . esc_html__( 'Log in', 'mission' ) . '</a>'
+						esc_html__( 'Remember your password? %s', 'missionwp-donation-platform' ),
+						'<a href="#login">' . esc_html__( 'Log in', 'missionwp-donation-platform' ) . '</a>'
 					);
 					?>
 				</div>
@@ -384,8 +384,8 @@ defined( 'ABSPATH' ) || exit;
 			<!-- ── Reset Password View (from email link) ── -->
 			<div data-wp-bind--hidden="!state.isResetPasswordView">
 				<div class="mission-dd-auth-header">
-					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Choose a new password', 'mission' ); ?></h1>
-					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Enter a new password for your donor account.', 'mission' ); ?></p>
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Choose a new password', 'missionwp-donation-platform' ); ?></h1>
+					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'Enter a new password for your donor account.', 'missionwp-donation-platform' ); ?></p>
 				</div>
 
 				<div class="mission-dd-auth-form-card">
@@ -402,12 +402,12 @@ defined( 'ABSPATH' ) || exit;
 
 					<form data-wp-on--submit="actions.submitResetPassword" novalidate>
 						<div class="mission-dd-auth-field">
-							<label class="mission-dd-auth-label" for="mission-dd-reset-password"><?php esc_html_e( 'New password', 'mission' ); ?></label>
+							<label class="mission-dd-auth-label" for="mission-dd-reset-password"><?php esc_html_e( 'New password', 'missionwp-donation-platform' ); ?></label>
 							<div class="mission-dd-auth-input-wrap">
 								<input
 									id="mission-dd-reset-password"
 									class="mission-dd-auth-input mission-dd-auth-input-has-toggle"
-									placeholder="<?php esc_attr_e( 'Enter a new password', 'mission' ); ?>"
+									placeholder="<?php esc_attr_e( 'Enter a new password', 'missionwp-donation-platform' ); ?>"
 									autocomplete="new-password"
 									data-wp-bind--value="context.authPassword"
 									data-wp-bind--type="state.passwordInputType"
@@ -444,13 +444,13 @@ defined( 'ABSPATH' ) || exit;
 							data-wp-class--is-loading="context.authLoading"
 							data-wp-bind--disabled="context.authLoading"
 						>
-							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Reset password', 'mission' ); ?></span>
-							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Resetting...', 'mission' ); ?></span>
+							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Reset password', 'missionwp-donation-platform' ); ?></span>
+							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Resetting...', 'missionwp-donation-platform' ); ?></span>
 						</button>
 
 						<div class="mission-dd-auth-secure">
 							<span class="mission-dd-icon mission-dd-icon-lock" aria-hidden="true"></span>
-							<?php esc_html_e( 'Secured with encryption', 'mission' ); ?>
+							<?php esc_html_e( 'Secured with encryption', 'missionwp-donation-platform' ); ?>
 						</div>
 					</form>
 				</div>

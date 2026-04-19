@@ -199,8 +199,8 @@ defined( 'ABSPATH' ) || exit;
 				<td class="receipt-label">
 					<?php
 					echo $data['is_single']
-						? esc_html__( 'DONATION RECEIPT', 'mission' )
-						: esc_html__( 'ANNUAL DONATION RECEIPT', 'mission' );
+						? esc_html__( 'DONATION RECEIPT', 'missionwp-donation-platform' )
+						: esc_html__( 'ANNUAL DONATION RECEIPT', 'missionwp-donation-platform' );
 					?>
 				</td>
 			</tr>
@@ -216,7 +216,7 @@ defined( 'ABSPATH' ) || exit;
 	<table class="info-table">
 		<tr>
 			<td style="width: 50%; vertical-align: top; padding-right: 20px;">
-				<div class="info-label"><?php esc_html_e( 'Donor', 'mission' ); ?></div>
+				<div class="info-label"><?php esc_html_e( 'Donor', 'missionwp-donation-platform' ); ?></div>
 				<div class="info-value">
 					<?php echo esc_html( $data['donor']['name'] ); ?>
 					<?php if ( $data['donor']['address'] ) : ?>
@@ -225,7 +225,7 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 			</td>
 			<td style="width: 50%; vertical-align: top; text-align: right;">
-				<div class="info-label"><?php esc_html_e( 'Organization', 'mission' ); ?></div>
+				<div class="info-label"><?php esc_html_e( 'Organization', 'missionwp-donation-platform' ); ?></div>
 				<div class="info-value">
 					<?php echo esc_html( $data['org']['name'] ); ?>
 					<?php if ( $data['org']['address'] ) : ?>
@@ -235,7 +235,7 @@ defined( 'ABSPATH' ) || exit;
 						<br>
 						<?php
 							/* translators: %s: EIN number */
-							printf( esc_html__( 'EIN: %s', 'mission' ), esc_html( $data['org']['ein'] ) );
+							printf( esc_html__( 'EIN: %s', 'missionwp-donation-platform' ), esc_html( $data['org']['ein'] ) );
 						?>
 					<?php endif; ?>
 				</div>
@@ -247,10 +247,10 @@ defined( 'ABSPATH' ) || exit;
 	<table class="txn-table">
 		<thead>
 			<tr>
-				<th><?php esc_html_e( 'Date', 'mission' ); ?></th>
-				<th class="amount-col"><?php esc_html_e( 'Amount', 'mission' ); ?></th>
-				<th><?php esc_html_e( 'Campaign', 'mission' ); ?></th>
-				<th><?php esc_html_e( 'Payment Method', 'mission' ); ?></th>
+				<th><?php esc_html_e( 'Date', 'missionwp-donation-platform' ); ?></th>
+				<th class="amount-col"><?php esc_html_e( 'Amount', 'missionwp-donation-platform' ); ?></th>
+				<th><?php esc_html_e( 'Campaign', 'missionwp-donation-platform' ); ?></th>
+				<th><?php esc_html_e( 'Payment Method', 'missionwp-donation-platform' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -265,13 +265,13 @@ defined( 'ABSPATH' ) || exit;
 
 			<!-- Total row -->
 			<tr class="total-row">
-				<td><?php esc_html_e( 'Total', 'mission' ); ?></td>
+				<td><?php esc_html_e( 'Total', 'missionwp-donation-platform' ); ?></td>
 				<td class="amount-cell"><?php echo esc_html( $data['total'] ); ?></td>
 				<td colspan="2">
 					<?php
 					printf(
 						/* translators: %d: number of donations */
-						esc_html( _n( '%d donation', '%d donations', $data['count'], 'mission' ) ),
+						esc_html( _n( '%d donation', '%d donations', $data['count'], 'missionwp-donation-platform' ) ),
 						(int) $data['count']
 					);
 					?>
@@ -283,14 +283,14 @@ defined( 'ABSPATH' ) || exit;
 	<!-- Disclaimer -->
 	<div class="disclaimer-box">
 		<div class="disclaimer-text">
-			<strong><?php esc_html_e( 'Tax-deductible contribution.', 'mission' ); ?></strong>
+			<strong><?php esc_html_e( 'Tax-deductible contribution.', 'missionwp-donation-platform' ); ?></strong>
 			<?php echo esc_html( $data['disclaimer'] ); ?>
 			<?php if ( $data['org']['ein'] ) : ?>
 				<br>
 				<?php
 					printf(
 						/* translators: 1: organization name 2: EIN */
-						esc_html__( '%1$s is a registered 501(c)(3) nonprofit organization. EIN: %2$s', 'mission' ),
+						esc_html__( '%1$s is a registered 501(c)(3) nonprofit organization. EIN: %2$s', 'missionwp-donation-platform' ),
 						esc_html( $data['org']['name'] ),
 						esc_html( $data['org']['ein'] )
 					);
@@ -309,7 +309,7 @@ defined( 'ABSPATH' ) || exit;
 			<?php
 			printf(
 				/* translators: %s: date */
-				esc_html__( 'Generated on %s', 'mission' ),
+				esc_html__( 'Generated on %s', 'missionwp-donation-platform' ),
 				esc_html( $data['generated_on'] )
 			);
 			?>

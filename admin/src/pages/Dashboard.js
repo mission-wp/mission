@@ -14,15 +14,15 @@ import OnboardingModal from '../components/OnboardingModal';
 const POLL_INTERVAL = 30000;
 
 const PERIOD_LABELS = {
-  today: __( 'vs yesterday', 'mission' ),
-  week: __( 'vs last week', 'mission' ),
-  month: __( 'vs last month', 'mission' ),
+  today: __( 'vs yesterday', 'missionwp-donation-platform' ),
+  week: __( 'vs last week', 'missionwp-donation-platform' ),
+  month: __( 'vs last month', 'missionwp-donation-platform' ),
 };
 
 const CHART_LABELS = {
-  today: __( 'Today', 'mission' ),
-  week: __( 'Last 7 days', 'mission' ),
-  month: __( 'Last 30 days', 'mission' ),
+  today: __( 'Today', 'missionwp-donation-platform' ),
+  week: __( 'Last 7 days', 'missionwp-donation-platform' ),
+  month: __( 'Last 30 days', 'missionwp-donation-platform' ),
 };
 
 export default function Dashboard() {
@@ -147,13 +147,16 @@ export default function Dashboard() {
       <div className="mission-dashboard-header">
         <div>
           <h1>
-            { __( 'Mission Dashboard', 'mission' ) }{ ' ' }
+            { __( 'MissionWP Dashboard', 'missionwp-donation-platform' ) }{ ' ' }
             <span className="mission-version-tag">
               { `v${ window.missionAdmin?.version || '' }` }
             </span>
           </h1>
           <span style={ { color: '#6b6b7b', fontSize: '14px' } }>
-            { __( 'Your donation activity at a glance', 'mission' ) }
+            { __(
+              'Your donation activity at a glance',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
         <PeriodToggle period={ period } onChange={ setPeriod } />
@@ -168,7 +171,7 @@ export default function Dashboard() {
           ) }
           <div className="mission-stats-row">
             <StatCard
-              label={ __( 'Total Donations', 'mission' ) }
+              label={ __( 'Total Donations', 'missionwp-donation-platform' ) }
               value={ stats ? formatAmount( stats.total_donations ) : '' }
               current={ stats?.total_donations }
               previous={ stats?.total_donations_previous }
@@ -176,7 +179,7 @@ export default function Dashboard() {
               isLoading={ isLoading }
             />
             <StatCard
-              label={ __( 'Total Donors', 'mission' ) }
+              label={ __( 'Total Donors', 'missionwp-donation-platform' ) }
               value={ stats ? stats.total_donors.toLocaleString() : '' }
               current={ stats?.total_donors }
               previous={ stats?.total_donors_previous }
@@ -184,7 +187,7 @@ export default function Dashboard() {
               isLoading={ isLoading }
             />
             <StatCard
-              label={ __( 'Avg. Donation', 'mission' ) }
+              label={ __( 'Avg. Donation', 'missionwp-donation-platform' ) }
               value={ stats ? formatAmount( stats.average_donation ) : '' }
               current={ stats?.average_donation }
               previous={ stats?.average_donation_previous }

@@ -107,7 +107,7 @@ class NotesEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage notes.', 'mission' ),
+				__( 'You do not have permission to manage notes.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -168,7 +168,7 @@ class NotesEndpoint {
 		if ( empty( trim( $content ) ) ) {
 			return new WP_Error(
 				'empty_content',
-				__( 'Note content cannot be empty.', 'mission' ),
+				__( 'Note content cannot be empty.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -204,7 +204,7 @@ class NotesEndpoint {
 		if ( ! $note || $note->object_type !== $object_type || $note->object_id !== $object_id ) {
 			return new WP_Error(
 				'note_not_found',
-				__( 'Note not found.', 'mission' ),
+				__( 'Note not found.', 'missionwp-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -227,7 +227,7 @@ class NotesEndpoint {
 		if ( ! $model_class ) {
 			return new WP_Error(
 				'invalid_object_type',
-				__( 'Invalid object type.', 'mission' ),
+				__( 'Invalid object type.', 'missionwp-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -238,7 +238,7 @@ class NotesEndpoint {
 			return new WP_Error(
 				"{$object_type}_not_found",
 				/* translators: %s: object type (e.g. "transaction", "donor") */
-				sprintf( __( '%s not found.', 'mission' ), ucfirst( $object_type ) ),
+				sprintf( __( '%s not found.', 'missionwp-donation-platform' ), ucfirst( $object_type ) ),
 				[ 'status' => 404 ]
 			);
 		}

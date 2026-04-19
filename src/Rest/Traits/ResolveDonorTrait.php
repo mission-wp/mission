@@ -28,7 +28,7 @@ trait ResolveDonorTrait {
 		$donor = Donor::find_by_user_id( get_current_user_id() );
 
 		if ( ! $donor ) {
-			return new WP_Error( 'donor_not_found', __( 'Donor record not found.', 'mission' ), [ 'status' => 404 ] );
+			return new WP_Error( 'donor_not_found', __( 'Donor record not found.', 'missionwp-donation-platform' ), [ 'status' => 404 ] );
 		}
 
 		return $donor;

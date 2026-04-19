@@ -177,7 +177,7 @@ class EmailModule {
 
 		return [
 			// Universal.
-			'{donor_name}'         => $donor->first_name ?? __( 'Friend', 'mission' ),
+			'{donor_name}'         => $donor->first_name ?? __( 'Friend', 'missionwp-donation-platform' ),
 			'{organization}'       => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
 			'{site_url}'           => home_url(),
 
@@ -283,11 +283,11 @@ class EmailModule {
 	 * @return string e.g. "Hi Jane," or "Hi Friend,".
 	 */
 	public function format_donor_greeting( Donor $donor ): string {
-		$first_name = $donor->first_name ?: __( 'Friend', 'mission' );
+		$first_name = $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' );
 
 		return sprintf(
 			/* translators: %s: donor first name */
-			__( 'Hi %s,', 'mission' ),
+			__( 'Hi %s,', 'missionwp-donation-platform' ),
 			$first_name
 		);
 	}

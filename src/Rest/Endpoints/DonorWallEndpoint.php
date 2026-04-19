@@ -124,7 +124,7 @@ class DonorWallEndpoint {
 	private function sanitize_item( array $item ): array {
 		if ( $item['is_anonymous'] ) {
 			return [
-				'name'          => __( 'Anonymous', 'mission' ),
+				'name'          => __( 'Anonymous', 'missionwp-donation-platform' ),
 				'initials'      => '?',
 				'is_anonymous'  => true,
 				'amount'        => $item['amount'],
@@ -142,7 +142,7 @@ class DonorWallEndpoint {
 		$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
 
 		if ( '.' === $name ) {
-			$name = __( 'Anonymous', 'mission' );
+			$name = __( 'Anonymous', 'missionwp-donation-platform' );
 		}
 		if ( '' === trim( $initials ) ) {
 			$initials = '?';

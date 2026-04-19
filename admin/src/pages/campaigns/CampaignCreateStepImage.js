@@ -9,10 +9,10 @@ import { __ } from '@wordpress/i18n';
 export default function CampaignCreateStepImage( { data, onChange } ) {
   const openMediaLibrary = () => {
     const frame = wp.media( {
-      title: __( 'Select Campaign Image', 'mission' ),
+      title: __( 'Select Campaign Image', 'missionwp-donation-platform' ),
       library: { type: 'image' },
       multiple: false,
-      button: { text: __( 'Use this image', 'mission' ) },
+      button: { text: __( 'Use this image', 'missionwp-donation-platform' ) },
     } );
 
     frame.on( 'select', () => {
@@ -36,14 +36,17 @@ export default function CampaignCreateStepImage( { data, onChange } ) {
   return (
     <VStack spacing={ 3 }>
       <Text as="label" weight="600" size="small" upperCase>
-        { __( 'Campaign Image', 'mission' ) }
+        { __( 'Campaign Image', 'missionwp-donation-platform' ) }
       </Text>
 
       { data.image_url ? (
         <div className="mission-image-preview">
           <img
             src={ data.image_url }
-            alt={ __( 'Campaign image preview', 'mission' ) }
+            alt={ __(
+              'Campaign image preview',
+              'missionwp-donation-platform'
+            ) }
           />
           <HStack
             spacing={ 2 }
@@ -55,7 +58,7 @@ export default function CampaignCreateStepImage( { data, onChange } ) {
               size="compact"
               onClick={ openMediaLibrary }
             >
-              { __( 'Replace', 'mission' ) }
+              { __( 'Replace', 'missionwp-donation-platform' ) }
             </Button>
             <Button
               variant="tertiary"
@@ -63,7 +66,7 @@ export default function CampaignCreateStepImage( { data, onChange } ) {
               isDestructive
               onClick={ removeImage }
             >
-              { __( 'Remove', 'mission' ) }
+              { __( 'Remove', 'missionwp-donation-platform' ) }
             </Button>
           </HStack>
         </div>
@@ -97,10 +100,16 @@ export default function CampaignCreateStepImage( { data, onChange } ) {
             </svg>
           </div>
           <span className="mission-image-upload-zone__text">
-            { __( 'Click to upload or drag and drop', 'mission' ) }
+            { __(
+              'Click to upload or drag and drop',
+              'missionwp-donation-platform'
+            ) }
           </span>
           <span className="mission-image-upload-zone__hint">
-            { __( 'PNG, JPG, or WebP up to 5MB', 'mission' ) }
+            { __(
+              'PNG, JPG, or WebP up to 5MB',
+              'missionwp-donation-platform'
+            ) }
           </span>
         </div>
       ) }
@@ -108,7 +117,7 @@ export default function CampaignCreateStepImage( { data, onChange } ) {
       <Text variant="muted" size="small">
         { __(
           'This image will appear on your campaign page and in listings',
-          'mission'
+          'missionwp-donation-platform'
         ) }
       </Text>
     </VStack>

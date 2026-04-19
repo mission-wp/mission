@@ -63,7 +63,7 @@ $formatted_value = $is_currency
 	: number_format_i18n( $raw_value );
 
 // Heading.
-$heading      = $attributes['heading'] ?? __( 'Total Raised', 'mission' );
+$heading      = $attributes['heading'] ?? __( 'Total Raised', 'missionwp-donation-platform' );
 $show_heading = $attributes['showHeading'] ?? true;
 
 // Wrapper classes and CSS custom properties.

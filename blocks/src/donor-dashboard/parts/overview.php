@@ -21,21 +21,21 @@ defined( 'ABSPATH' ) || exit;
 	<!-- Recent Donations -->
 	<div data-wp-bind--hidden="!context.overview.hasTransactions">
 		<div class="mission-dd-section-title-row">
-			<h2 class="mission-dd-section-title"><?php esc_html_e( 'Recent Donations', 'mission' ); ?></h2>
+			<h2 class="mission-dd-section-title"><?php esc_html_e( 'Recent Donations', 'missionwp-donation-platform' ); ?></h2>
 			<button
 				class="mission-dd-view-all"
 				data-wp-on--click="actions.navigate"
 				data-panel="history"
-			><?php esc_html_e( 'View all', 'mission' ); ?></button>
+			><?php esc_html_e( 'View all', 'missionwp-donation-platform' ); ?></button>
 		</div>
 		<div class="mission-dd-table-wrap">
-			<table class="mission-dd-table" aria-label="<?php esc_attr_e( 'Recent donations', 'mission' ); ?>">
+			<table class="mission-dd-table" aria-label="<?php esc_attr_e( 'Recent donations', 'missionwp-donation-platform' ); ?>">
 				<thead>
 					<tr>
-						<th><?php esc_html_e( 'Date', 'mission' ); ?></th>
-						<th><?php esc_html_e( 'Amount', 'mission' ); ?></th>
-						<th><?php esc_html_e( 'Campaign', 'mission' ); ?></th>
-						<th><?php esc_html_e( 'Status', 'mission' ); ?></th>
+						<th><?php esc_html_e( 'Date', 'missionwp-donation-platform' ); ?></th>
+						<th><?php esc_html_e( 'Amount', 'missionwp-donation-platform' ); ?></th>
+						<th><?php esc_html_e( 'Campaign', 'missionwp-donation-platform' ); ?></th>
+						<th><?php esc_html_e( 'Status', 'missionwp-donation-platform' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -63,14 +63,14 @@ defined( 'ABSPATH' ) || exit;
 
 	<!-- Empty state: no donations -->
 	<div class="mission-dd-empty" data-wp-bind--hidden="context.overview.hasTransactions">
-		<p><?php esc_html_e( 'No donations yet. Your donation history will appear here once you make your first gift.', 'mission' ); ?></p>
+		<p><?php esc_html_e( 'No donations yet. Your donation history will appear here once you make your first gift.', 'missionwp-donation-platform' ); ?></p>
 	</div>
 
 	<!-- Active Recurring Donations -->
 	<div data-wp-bind--hidden="!context.overview.hasSubscriptions">
 		<template data-wp-each--sub="context.overview.activeSubscriptions">
 			<div class="mission-dd-recurring-card">
-				<div class="mission-dd-section-title"><?php esc_html_e( 'Active Recurring Donation', 'mission' ); ?></div>
+				<div class="mission-dd-section-title"><?php esc_html_e( 'Active Recurring Donation', 'missionwp-donation-platform' ); ?></div>
 				<div class="mission-dd-recurring-card-header">
 					<div>
 						<div class="mission-dd-recurring-card-amount">
@@ -82,7 +82,7 @@ defined( 'ABSPATH' ) || exit;
 							<?php
 							printf(
 								/* translators: %s: next payment date */
-								esc_html__( 'Next payment: %s', 'mission' ),
+								esc_html__( 'Next payment: %s', 'missionwp-donation-platform' ),
 								'<span data-wp-text="context.sub.nextPayment"></span>'
 							);
 							?>
@@ -92,7 +92,7 @@ defined( 'ABSPATH' ) || exit;
 						class="mission-dd-recurring-card-link"
 						data-wp-on--click="actions.navigate"
 						data-panel="recurring"
-					><?php esc_html_e( 'Manage', 'mission' ); ?></button>
+					><?php esc_html_e( 'Manage', 'missionwp-donation-platform' ); ?></button>
 				</div>
 			</div>
 		</template>

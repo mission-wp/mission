@@ -14,31 +14,31 @@ import DedicationSection from './DedicationSection';
 const STATUS_OPTIONS = [
   {
     value: 'completed',
-    label: __( 'Completed', 'mission' ),
+    label: __( 'Completed', 'missionwp-donation-platform' ),
     backgroundColor: 'rgba(47, 163, 107, 0.12)',
     color: '#278f5c',
   },
   {
     value: 'pending',
-    label: __( 'Pending', 'mission' ),
+    label: __( 'Pending', 'missionwp-donation-platform' ),
     backgroundColor: '#e4eff5',
     color: '#4a7a9b',
   },
   {
     value: 'refunded',
-    label: __( 'Refunded', 'mission' ),
+    label: __( 'Refunded', 'missionwp-donation-platform' ),
     backgroundColor: '#f5e8e8',
     color: '#b85c5c',
   },
   {
     value: 'cancelled',
-    label: __( 'Cancelled', 'mission' ),
+    label: __( 'Cancelled', 'missionwp-donation-platform' ),
     backgroundColor: '#f0eeeb',
     color: '#8a7e72',
   },
   {
     value: 'failed',
-    label: __( 'Failed', 'mission' ),
+    label: __( 'Failed', 'missionwp-donation-platform' ),
     backgroundColor: '#fce8e8',
     color: '#c0392b',
   },
@@ -150,7 +150,9 @@ export function CampaignDropdown( { campaign, campaigns, onChange } ) {
     ? campaigns.filter( ( c ) => c.title.toLowerCase().includes( needle ) )
     : campaigns.slice( 0, CAMPAIGN_DROPDOWN_LIMIT );
 
-  const label = campaign ? campaign.title : __( 'No campaign', 'mission' );
+  const label = campaign
+    ? campaign.title
+    : __( 'No campaign', 'missionwp-donation-platform' );
 
   return (
     <div className="mission-detail-dropdown" ref={ ref }>
@@ -168,7 +170,10 @@ export function CampaignDropdown( { campaign, campaigns, onChange } ) {
               <input
                 ref={ inputRef }
                 type="text"
-                placeholder={ __( 'Search campaigns\u2026', 'mission' ) }
+                placeholder={ __(
+                  'Search campaigns\u2026',
+                  'missionwp-donation-platform'
+                ) }
                 value={ search }
                 onChange={ ( e ) => setSearch( e.target.value ) }
               />
@@ -184,7 +189,7 @@ export function CampaignDropdown( { campaign, campaigns, onChange } ) {
                 setIsOpen( false );
               } }
             >
-              { __( 'No campaign', 'mission' ) }
+              { __( 'No campaign', 'missionwp-donation-platform' ) }
             </button>
           ) }
           { filtered.map( ( c ) => (
@@ -208,7 +213,7 @@ export function CampaignDropdown( { campaign, campaigns, onChange } ) {
               className="mission-detail-dropdown__item"
               style={ { color: '#9b9ba8', cursor: 'default' } }
             >
-              { __( 'No results', 'mission' ) }
+              { __( 'No results', 'missionwp-donation-platform' ) }
             </span>
           ) }
         </div>
@@ -226,8 +231,8 @@ function TypeBadge( { type } ) {
   return (
     <span className={ className }>
       { isRecurring
-        ? __( 'Recurring', 'mission' )
-        : __( 'One-time', 'mission' ) }
+        ? __( 'Recurring', 'missionwp-donation-platform' )
+        : __( 'One-time', 'missionwp-donation-platform' ) }
     </span>
   );
 }
@@ -271,13 +276,13 @@ export default function TransactionDetailsCard( {
       <details className="mission-detail-section" open>
         <summary className="mission-detail-section__header">
           <h3 className="mission-detail-section__title">
-            { __( 'Transaction Details', 'mission' ) }
+            { __( 'Transaction Details', 'missionwp-donation-platform' ) }
           </h3>
           <Chevron />
         </summary>
         <div className="mission-detail-list">
           <DetailRow
-            label={ __( 'Donor', 'mission' ) }
+            label={ __( 'Donor', 'missionwp-donation-platform' ) }
             value={
               donor ? (
                 <a
@@ -287,16 +292,16 @@ export default function TransactionDetailsCard( {
                   { donorName }
                 </a>
               ) : (
-                __( 'Anonymous', 'mission' )
+                __( 'Anonymous', 'missionwp-donation-platform' )
               )
             }
           />
           <DetailRow
-            label={ __( 'Email', 'mission' ) }
+            label={ __( 'Email', 'missionwp-donation-platform' ) }
             value={ donor?.email }
           />
           <DetailRow
-            label={ __( 'Campaign', 'mission' ) }
+            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
             value={
               <CampaignDropdown
                 campaign={ campaign }
@@ -306,15 +311,15 @@ export default function TransactionDetailsCard( {
             }
           />
           <DetailRow
-            label={ __( 'Date', 'mission' ) }
+            label={ __( 'Date', 'missionwp-donation-platform' ) }
             value={ formatDateTime( transaction.date_created ) }
           />
           <DetailRow
-            label={ __( 'Payment method', 'mission' ) }
+            label={ __( 'Payment method', 'missionwp-donation-platform' ) }
             value={ gatewayLabel }
           />
           <DetailRow
-            label={ __( 'Billing address', 'mission' ) }
+            label={ __( 'Billing address', 'missionwp-donation-platform' ) }
             value={
               addressParts
                 ? addressParts.map( ( line, i ) => (
@@ -327,11 +332,11 @@ export default function TransactionDetailsCard( {
             }
           />
           <DetailRow
-            label={ __( 'Type', 'mission' ) }
+            label={ __( 'Type', 'missionwp-donation-platform' ) }
             value={ <TypeBadge type={ transaction.type } /> }
           />
           <DetailRow
-            label={ __( 'Status', 'mission' ) }
+            label={ __( 'Status', 'missionwp-donation-platform' ) }
             value={
               <StatusDropdown
                 status={ transaction.status }
@@ -344,7 +349,7 @@ export default function TransactionDetailsCard( {
             style={ { borderBottom: 'none', alignItems: 'center' } }
           >
             <span className="mission-detail-row__label">
-              { __( 'Anonymous', 'mission' ) }
+              { __( 'Anonymous', 'missionwp-donation-platform' ) }
             </span>
             <span className="mission-detail-row__value">
               <label
@@ -352,7 +357,7 @@ export default function TransactionDetailsCard( {
                 htmlFor="txn-anonymous-toggle"
               >
                 <span className="screen-reader-text">
-                  { __( 'Anonymous', 'mission' ) }
+                  { __( 'Anonymous', 'missionwp-donation-platform' ) }
                 </span>
                 <input
                   id="txn-anonymous-toggle"
@@ -374,24 +379,24 @@ export default function TransactionDetailsCard( {
         <details className="mission-detail-section">
           <summary className="mission-detail-section__header">
             <h3 className="mission-detail-section__title">
-              { __( 'Payment Breakdown', 'mission' ) }
+              { __( 'Payment Breakdown', 'missionwp-donation-platform' ) }
             </h3>
             <Chevron />
           </summary>
           <div className="mission-detail-list">
             <DetailRow
-              label={ __( 'Donation amount', 'mission' ) }
+              label={ __( 'Donation amount', 'missionwp-donation-platform' ) }
               value={ formatAmount( transaction.amount, transaction.currency ) }
             />
             { transaction.processing_fee > 0 && (
               <DetailRow
                 label={
                   <>
-                    { __( 'Processing fee', 'mission' ) }
+                    { __( 'Processing fee', 'missionwp-donation-platform' ) }
                     <InfoTooltip
                       text={ __(
                         'Stripe fees deducted from this payment',
-                        'mission'
+                        'missionwp-donation-platform'
                       ) }
                     />
                   </>
@@ -411,11 +416,11 @@ export default function TransactionDetailsCard( {
               <DetailRow
                 label={
                   <>
-                    { __( 'Fee recovered', 'mission' ) }
+                    { __( 'Fee recovered', 'missionwp-donation-platform' ) }
                     <InfoTooltip
                       text={ __(
                         'The donor covered processing fees so you receive the full donation.',
-                        'mission'
+                        'missionwp-donation-platform'
                       ) }
                     />
                   </>
@@ -435,11 +440,11 @@ export default function TransactionDetailsCard( {
               <DetailRow
                 label={
                   <>
-                    { __( 'Mission tip', 'mission' ) }
+                    { __( 'MissionWP tip', 'missionwp-donation-platform' ) }
                     <InfoTooltip
                       text={ __(
-                        "Optional tip from the donor to support the Mission platform. Doesn't affect your payout.",
-                        'mission'
+                        "Optional tip from the donor to support the MissionWP platform. Doesn't affect your payout.",
+                        'missionwp-donation-platform'
                       ) }
                     />
                   </>
@@ -466,7 +471,7 @@ export default function TransactionDetailsCard( {
                 className="mission-detail-row__label"
                 style={ { fontWeight: 600 } }
               >
-                { __( 'Net amount', 'mission' ) }
+                { __( 'Net amount', 'missionwp-donation-platform' ) }
               </span>
               <span
                 className="mission-detail-row__value"
@@ -490,7 +495,7 @@ export default function TransactionDetailsCard( {
       <details className="mission-detail-section">
         <summary className="mission-detail-section__header">
           <h3 className="mission-detail-section__title">
-            { __( 'Additional Info', 'mission' ) }
+            { __( 'Additional Info', 'missionwp-donation-platform' ) }
           </h3>
           <Chevron />
         </summary>
@@ -514,7 +519,10 @@ export default function TransactionDetailsCard( {
                     className="mission-detail-row__label"
                     style={ { color: '#9b9ba8' } }
                   >
-                    { __( 'No additional info', 'mission' ) }
+                    { __(
+                      'No additional info',
+                      'missionwp-donation-platform'
+                    ) }
                   </span>
                 </div>
               );
@@ -526,7 +534,9 @@ export default function TransactionDetailsCard( {
 
               if ( field.type === 'checkbox' ) {
                 display =
-                  raw === '1' ? __( 'Yes', 'mission' ) : __( 'No', 'mission' );
+                  raw === '1'
+                    ? __( 'Yes', 'missionwp-donation-platform' )
+                    : __( 'No', 'missionwp-donation-platform' );
               } else if ( field.type === 'multiselect' && raw ) {
                 try {
                   display = JSON.parse( raw ).join( ', ' );
@@ -553,18 +563,18 @@ export default function TransactionDetailsCard( {
         <details className="mission-detail-section">
           <summary className="mission-detail-section__header">
             <h3 className="mission-detail-section__title">
-              { __( 'Payment Data', 'mission' ) }
+              { __( 'Payment Data', 'missionwp-donation-platform' ) }
             </h3>
             <Chevron />
           </summary>
           <div className="mission-detail-list">
             <DetailRow
-              label={ __( 'Payment gateway', 'mission' ) }
+              label={ __( 'Payment gateway', 'missionwp-donation-platform' ) }
               value={ gatewayLabel }
             />
             { transaction.gateway_transaction_id && (
               <DetailRow
-                label={ __( 'Stripe payment', 'mission' ) }
+                label={ __( 'Stripe payment', 'missionwp-donation-platform' ) }
                 value={
                   <a
                     href={ `https://dashboard.stripe.com/${
@@ -582,7 +592,7 @@ export default function TransactionDetailsCard( {
             ) }
             { !! transaction.gateway_customer_id && (
               <DetailRow
-                label={ __( 'Stripe customer', 'mission' ) }
+                label={ __( 'Stripe customer', 'missionwp-donation-platform' ) }
                 value={
                   <a
                     href={ `https://dashboard.stripe.com/${
@@ -600,7 +610,7 @@ export default function TransactionDetailsCard( {
             ) }
             { !! transaction.source_post_id && (
               <DetailRow
-                label={ __( 'Source', 'mission' ) }
+                label={ __( 'Source', 'missionwp-donation-platform' ) }
                 value={
                   transaction.source_url ? (
                     <a
@@ -610,7 +620,7 @@ export default function TransactionDetailsCard( {
                       style={ { color: '#2FA36B', textDecoration: 'none' } }
                     >
                       { transaction.source_title ||
-                        __( 'View page', 'mission' ) }
+                        __( 'View page', 'missionwp-donation-platform' ) }
                       <ExternalLinkIcon />
                     </a>
                   ) : (
@@ -621,7 +631,7 @@ export default function TransactionDetailsCard( {
             ) }
             { transaction.donor_ip && (
               <DetailRow
-                label={ __( 'IP address', 'mission' ) }
+                label={ __( 'IP address', 'missionwp-donation-platform' ) }
                 value={
                   <span style={ { fontFamily: 'monospace', fontSize: '12px' } }>
                     { transaction.donor_ip }
@@ -631,7 +641,7 @@ export default function TransactionDetailsCard( {
             ) }
             { transaction.is_test && (
               <DetailRow
-                label={ __( 'Mode', 'mission' ) }
+                label={ __( 'Mode', 'missionwp-donation-platform' ) }
                 value={
                   <span
                     style={ {
@@ -644,7 +654,7 @@ export default function TransactionDetailsCard( {
                       color: '#92400e',
                     } }
                   >
-                    { __( 'Test', 'mission' ) }
+                    { __( 'Test', 'missionwp-donation-platform' ) }
                   </span>
                 }
                 isLast

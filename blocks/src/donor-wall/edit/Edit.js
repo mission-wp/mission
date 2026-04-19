@@ -18,9 +18,15 @@ import apiFetch from '@wordpress/api-fetch';
 import { formatAmount } from '@shared/currency';
 
 const SORT_OPTIONS = [
-  { label: __( 'Most Recent', 'mission' ), value: 'recent' },
-  { label: __( 'Highest Amount', 'mission' ), value: 'highest' },
-  { label: __( 'Earliest', 'mission' ), value: 'earliest' },
+  {
+    label: __( 'Most Recent', 'missionwp-donation-platform' ),
+    value: 'recent',
+  },
+  {
+    label: __( 'Highest Amount', 'missionwp-donation-platform' ),
+    value: 'highest',
+  },
+  { label: __( 'Earliest', 'missionwp-donation-platform' ), value: 'earliest' },
 ];
 
 const SAMPLE_DONORS = [
@@ -226,9 +232,9 @@ function formatHoursAgo( hoursAgo ) {
 }
 
 const FREQUENCY_LABELS = {
-  monthly: __( 'Monthly', 'mission' ),
-  quarterly: __( 'Quarterly', 'mission' ),
-  annually: __( 'Annually', 'mission' ),
+  monthly: __( 'Monthly', 'missionwp-donation-platform' ),
+  quarterly: __( 'Quarterly', 'missionwp-donation-platform' ),
+  annually: __( 'Annually', 'missionwp-donation-platform' ),
 };
 
 const FREQUENCY_SUFFIX = {
@@ -476,7 +482,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <p>
             { __(
               'Select a campaign or place this block on a campaign page.',
-              'mission'
+              'missionwp-donation-platform'
             ) }
           </p>
         </div>
@@ -504,7 +510,7 @@ export default function Edit( { attributes, setAttributes } ) {
             </select>
           ) }
           <span className="mission-dw-sample-notice">
-            { __( 'Preview uses sample data.', 'mission' ) }
+            { __( 'Preview uses sample data.', 'missionwp-donation-platform' ) }
           </span>
         </div>
         <div
@@ -519,9 +525,12 @@ export default function Edit( { attributes, setAttributes } ) {
               { loadMoreText }
             </button>
             <span className="mission-dw-count">
-              { `${ __( 'Showing', 'mission' ) } ${
+              { `${ __( 'Showing', 'missionwp-donation-platform' ) } ${
                 visibleDonors.length
-              } ${ __( 'of', 'mission' ) } ${ totalDonors }` }
+              } ${ __(
+                'of',
+                'missionwp-donation-platform'
+              ) } ${ totalDonors }` }
             </span>
           </div>
         ) }
@@ -532,9 +541,9 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'mission' ) }>
+        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'mission' ) }
+            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -543,13 +552,13 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'mission'
+                    'missionwp-donation-platform'
                   )
                 : undefined
             }
           />
           <RangeControl
-            label={ __( 'Columns', 'mission' ) }
+            label={ __( 'Columns', 'missionwp-donation-platform' ) }
             value={ columns }
             onChange={ ( val ) => setAttributes( { columns: val } ) }
             min={ 1 }
@@ -557,7 +566,7 @@ export default function Edit( { attributes, setAttributes } ) {
             step={ 1 }
           />
           <RangeControl
-            label={ __( 'Donors per page', 'mission' ) }
+            label={ __( 'Donors per page', 'missionwp-donation-platform' ) }
             value={ donorsPerPage }
             onChange={ ( val ) => setAttributes( { donorsPerPage: val } ) }
             min={ 4 }
@@ -565,36 +574,42 @@ export default function Edit( { attributes, setAttributes } ) {
             step={ 1 }
           />
           <SelectControl
-            label={ __( 'Default sort', 'mission' ) }
+            label={ __( 'Default sort', 'missionwp-donation-platform' ) }
             value={ defaultSort }
             options={ SORT_OPTIONS }
             onChange={ ( val ) => setAttributes( { defaultSort: val } ) }
           />
           <TextControl
-            label={ __( 'Load more text', 'mission' ) }
+            label={ __( 'Load more text', 'missionwp-donation-platform' ) }
             value={ loadMoreText }
             onChange={ ( val ) => setAttributes( { loadMoreText: val } ) }
           />
         </PanelBody>
-        <PanelBody title={ __( 'Display', 'mission' ) } initialOpen={ false }>
+        <PanelBody
+          title={ __( 'Display', 'missionwp-donation-platform' ) }
+          initialOpen={ false }
+        >
           <ToggleControl
-            label={ __( 'Show name', 'mission' ) }
+            label={ __( 'Show name', 'missionwp-donation-platform' ) }
             checked={ showName }
             onChange={ ( val ) => setAttributes( { showName: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show anonymous donations', 'mission' ) }
+            label={ __(
+              'Show anonymous donations',
+              'missionwp-donation-platform'
+            ) }
             checked={ showAnonymous }
             onChange={ ( val ) => setAttributes( { showAnonymous: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show avatar', 'mission' ) }
+            label={ __( 'Show avatar', 'missionwp-donation-platform' ) }
             checked={ showAvatar }
             onChange={ ( val ) => setAttributes( { showAvatar: val } ) }
           />
           { showAvatar && (
             <RangeControl
-              label={ __( 'Avatar size (px)', 'mission' ) }
+              label={ __( 'Avatar size (px)', 'missionwp-donation-platform' ) }
               value={ avatarWidth }
               onChange={ ( val ) => setAttributes( { avatarWidth: val } ) }
               min={ 24 }
@@ -603,29 +618,32 @@ export default function Edit( { attributes, setAttributes } ) {
             />
           ) }
           <ToggleControl
-            label={ __( 'Show donation amount', 'mission' ) }
+            label={ __(
+              'Show donation amount',
+              'missionwp-donation-platform'
+            ) }
             checked={ showAmount }
             onChange={ ( val ) => setAttributes( { showAmount: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show date', 'mission' ) }
+            label={ __( 'Show date', 'missionwp-donation-platform' ) }
             checked={ showDate }
             onChange={ ( val ) => setAttributes( { showDate: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show sort controls', 'mission' ) }
+            label={ __( 'Show sort controls', 'missionwp-donation-platform' ) }
             checked={ showSortControls }
             onChange={ ( val ) => setAttributes( { showSortControls: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show comments', 'mission' ) }
+            label={ __( 'Show comments', 'missionwp-donation-platform' ) }
             checked={ showComments }
             onChange={ ( val ) => setAttributes( { showComments: val } ) }
           />
           { showComments && (
             <>
               <TextControl
-                label={ __( 'Comment length', 'mission' ) }
+                label={ __( 'Comment length', 'missionwp-donation-platform' ) }
                 value={ String( commentLength ) }
                 onChange={ ( val ) =>
                   setAttributes( { commentLength: parseInt( val, 10 ) || 0 } )
@@ -634,7 +652,7 @@ export default function Edit( { attributes, setAttributes } ) {
                 min={ 0 }
               />
               <TextControl
-                label={ __( 'Read more text', 'mission' ) }
+                label={ __( 'Read more text', 'missionwp-donation-platform' ) }
                 value={ readMoreText }
                 onChange={ ( val ) => setAttributes( { readMoreText: val } ) }
               />

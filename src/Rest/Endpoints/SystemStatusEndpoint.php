@@ -63,7 +63,7 @@ class SystemStatusEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to perform this action.', 'mission' ),
+				__( 'You do not have permission to perform this action.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -135,7 +135,7 @@ class SystemStatusEndpoint {
 			'home_url'     => home_url(),
 			'version'      => get_bloginfo( 'version' ),
 			'multisite'    => is_multisite(),
-			'memory_limit' => defined( 'WP_MEMORY_LIMIT' ) ? WP_MEMORY_LIMIT : __( 'Unknown', 'mission' ),
+			'memory_limit' => defined( 'WP_MEMORY_LIMIT' ) ? WP_MEMORY_LIMIT : __( 'Unknown', 'missionwp-donation-platform' ),
 			'debug_mode'   => defined( 'WP_DEBUG' ) && WP_DEBUG,
 			'cron'         => ! ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ),
 			'language'     => get_locale(),
@@ -155,14 +155,14 @@ class SystemStatusEndpoint {
 		$curl_info = function_exists( 'curl_version' ) ? curl_version() : null;
 
 		return [
-			'software'               => sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ?? __( 'Unknown', 'mission' ) ) ),
+			'software'               => sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ?? __( 'Unknown', 'missionwp-donation-platform' ) ) ),
 			'php_version'            => phpversion(),
 			'php_memory_limit'       => ini_get( 'memory_limit' ),
 			'php_max_execution_time' => (int) ini_get( 'max_execution_time' ),
 			'php_max_input_vars'     => (int) ini_get( 'max_input_vars' ),
 			'php_max_upload_size'    => ini_get( 'upload_max_filesize' ),
 			'mysql_version'          => $wpdb->get_var( 'SELECT VERSION()' ), // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			'curl_version'           => $curl_info ? $curl_info['version'] . ', ' . $curl_info['ssl_version'] : __( 'Not available', 'mission' ),
+			'curl_version'           => $curl_info ? $curl_info['version'] . ', ' . $curl_info['ssl_version'] : __( 'Not available', 'missionwp-donation-platform' ),
 			'fsockopen'              => function_exists( 'fsockopen' ),
 			'curl'                   => function_exists( 'curl_init' ),
 			'domdocument'            => class_exists( 'DOMDocument' ),

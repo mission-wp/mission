@@ -11,7 +11,7 @@ export default function CampaignProgressBar( {
   const percentage =
     goal > 0 ? Math.min( Math.round( ( raised / goal ) * 100 ), 100 ) : 0;
 
-  const of = __( 'of', 'mission' );
+  const of = __( 'of', 'missionwp-donation-platform' );
   let label;
   if ( goalType === 'amount' ) {
     label = `${ formatAmount( raised ) } ${ of } ${ formatAmount(
@@ -20,8 +20,8 @@ export default function CampaignProgressBar( {
   } else {
     const unit =
       goalType === 'donors'
-        ? __( 'donors', 'mission' )
-        : __( 'donations', 'mission' );
+        ? __( 'donors', 'missionwp-donation-platform' )
+        : __( 'donations', 'missionwp-donation-platform' );
     label = `${ raised.toLocaleString() } ${ of } ${ goal.toLocaleString() } ${ unit } (${ percentage }%)`;
   }
 

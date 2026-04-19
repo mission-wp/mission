@@ -54,10 +54,10 @@ $show_amount        = $attributes['showAmount'] ?? true;
 $show_date          = $attributes['showDate'] ?? true;
 $show_comments      = $attributes['showComments'] ?? true;
 $comment_length     = (int) ( $attributes['commentLength'] ?? 150 );
-$read_more_text     = $attributes['readMoreText'] ?? __( 'Read more', 'mission' );
+$read_more_text     = $attributes['readMoreText'] ?? __( 'Read more', 'missionwp-donation-platform' );
 $show_sort_controls = $attributes['showSortControls'] ?? true;
 $default_sort       = $attributes['defaultSort'] ?? 'recent';
-$load_more_text     = $attributes['loadMoreText'] ?? __( 'Show More Donations', 'mission' );
+$load_more_text     = $attributes['loadMoreText'] ?? __( 'Show More Donations', 'missionwp-donation-platform' );
 
 // Map sort value to query params.
 $sort_map    = [
@@ -106,18 +106,18 @@ foreach ( $raw_items as $item ) {
 	$formatted_amount = $amount_formatted . $type_suffix;
 
 	/* translators: %s: human time diff, e.g. "2 hours" */
-	$formatted_date = sprintf( __( '%s ago', 'mission' ), human_time_diff( strtotime( $item['date'] ) ) );
+	$formatted_date = sprintf( __( '%s ago', 'missionwp-donation-platform' ), human_time_diff( strtotime( $item['date'] ) ) );
 
 	$freq_labels_map = [
-		'monthly'   => __( 'Monthly', 'mission' ),
-		'quarterly' => __( 'Quarterly', 'mission' ),
-		'annually'  => __( 'Annually', 'mission' ),
+		'monthly'   => __( 'Monthly', 'missionwp-donation-platform' ),
+		'quarterly' => __( 'Quarterly', 'missionwp-donation-platform' ),
+		'annually'  => __( 'Annually', 'missionwp-donation-platform' ),
 	];
 	$frequency_label = 'one_time' !== $item['type'] ? ( $freq_labels_map[ $item['type'] ] ?? '' ) : '';
 
 	if ( $item['is_anonymous'] ) {
 		$items[] = [
-			'name'            => __( 'Anonymous', 'mission' ),
+			'name'            => __( 'Anonymous', 'missionwp-donation-platform' ),
 			'initials'        => '?',
 			'is_anonymous'    => true,
 			'amount'          => $item['amount'],
@@ -140,7 +140,7 @@ foreach ( $raw_items as $item ) {
 	$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
 
 	if ( '.' === $name ) {
-		$name = __( 'Anonymous', 'mission' );
+		$name = __( 'Anonymous', 'missionwp-donation-platform' );
 	}
 	if ( '' === trim( $initials ) ) {
 		$initials = '?';
@@ -246,16 +246,16 @@ ob_start();
 			<select
 				class="mission-dw-sort"
 				data-wp-on--change="actions.changeSort"
-				aria-label="<?php esc_attr_e( 'Sort donations', 'mission' ); ?>"
+				aria-label="<?php esc_attr_e( 'Sort donations', 'missionwp-donation-platform' ); ?>"
 			>
 				<option value="recent"<?php selected( $default_sort, 'recent' ); ?>>
-					<?php esc_html_e( 'Most Recent', 'mission' ); ?>
+					<?php esc_html_e( 'Most Recent', 'missionwp-donation-platform' ); ?>
 				</option>
 				<option value="highest"<?php selected( $default_sort, 'highest' ); ?>>
-					<?php esc_html_e( 'Highest Amount', 'mission' ); ?>
+					<?php esc_html_e( 'Highest Amount', 'missionwp-donation-platform' ); ?>
 				</option>
 				<option value="earliest"<?php selected( $default_sort, 'earliest' ); ?>>
-					<?php esc_html_e( 'Earliest', 'mission' ); ?>
+					<?php esc_html_e( 'Earliest', 'missionwp-donation-platform' ); ?>
 				</option>
 			</select>
 		</div>
@@ -264,8 +264,8 @@ ob_start();
 	<?php if ( empty( $items ) ) : ?>
 		<div class="mission-dw-empty">
 			<div class="mission-dw-empty__icon">&#9829;</div>
-			<p class="mission-dw-empty__title"><?php esc_html_e( 'No donations yet', 'mission' ); ?></p>
-			<p class="mission-dw-empty__subtitle"><?php esc_html_e( 'Be the first to donate to this campaign!', 'mission' ); ?></p>
+			<p class="mission-dw-empty__title"><?php esc_html_e( 'No donations yet', 'missionwp-donation-platform' ); ?></p>
+			<p class="mission-dw-empty__subtitle"><?php esc_html_e( 'Be the first to donate to this campaign!', 'missionwp-donation-platform' ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="mission-dw-grid" data-wp-class--is-loading="context.isLoading">

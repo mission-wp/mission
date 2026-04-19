@@ -40,27 +40,27 @@ const STATUS_STYLES = {
   completed: {
     backgroundColor: '#eafaf0',
     color: '#1a7338',
-    label: __( 'Completed', 'mission' ),
+    label: __( 'Completed', 'missionwp-donation-platform' ),
   },
   pending: {
     backgroundColor: '#fef3c7',
     color: '#92400e',
-    label: __( 'Pending', 'mission' ),
+    label: __( 'Pending', 'missionwp-donation-platform' ),
   },
   refunded: {
     backgroundColor: '#fef2f2',
     color: '#dc2626',
-    label: __( 'Refunded', 'mission' ),
+    label: __( 'Refunded', 'missionwp-donation-platform' ),
   },
   cancelled: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
-    label: __( 'Cancelled', 'mission' ),
+    label: __( 'Cancelled', 'missionwp-donation-platform' ),
   },
   failed: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
-    label: __( 'Failed', 'mission' ),
+    label: __( 'Failed', 'missionwp-donation-platform' ),
   },
 };
 
@@ -88,8 +88,8 @@ function TypeBadge( { type } ) {
   const bg = isRecurring ? '#eafaf0' : '#f0f0f5';
   const color = isRecurring ? '#1a7338' : '#6b6b7b';
   const label = isRecurring
-    ? __( 'Recurring', 'mission' )
-    : __( 'One-time', 'mission' );
+    ? __( 'Recurring', 'missionwp-donation-platform' )
+    : __( 'One-time', 'missionwp-donation-platform' );
 
   return (
     <span
@@ -207,7 +207,7 @@ function buildFields( campaignElements ) {
   return [
     {
       id: 'donation',
-      label: __( 'Donation', 'mission' ),
+      label: __( 'Donation', 'missionwp-donation-platform' ),
       enableSorting: false,
       enableHiding: false,
       render: ( { item } ) => {
@@ -254,7 +254,7 @@ function buildFields( campaignElements ) {
     },
     {
       id: 'amount',
-      label: __( 'Amount', 'mission' ),
+      label: __( 'Amount', 'missionwp-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -267,7 +267,7 @@ function buildFields( campaignElements ) {
     },
     {
       id: 'campaign_id',
-      label: __( 'Campaign', 'mission' ),
+      label: __( 'Campaign', 'missionwp-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -282,7 +282,7 @@ function buildFields( campaignElements ) {
     },
     {
       id: 'date_created',
-      label: __( 'Date', 'mission' ),
+      label: __( 'Date', 'missionwp-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -295,7 +295,7 @@ function buildFields( campaignElements ) {
     },
     {
       id: 'type',
-      label: __( 'Type', 'mission' ),
+      label: __( 'Type', 'missionwp-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -306,7 +306,7 @@ function buildFields( campaignElements ) {
     },
     {
       id: 'status',
-      label: __( 'Status', 'mission' ),
+      label: __( 'Status', 'missionwp-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -315,11 +315,26 @@ function buildFields( campaignElements ) {
           <StatusBadge status={ item.status } />
         ),
       elements: [
-        { value: 'pending', label: __( 'Pending', 'mission' ) },
-        { value: 'completed', label: __( 'Completed', 'mission' ) },
-        { value: 'refunded', label: __( 'Refunded', 'mission' ) },
-        { value: 'cancelled', label: __( 'Cancelled', 'mission' ) },
-        { value: 'failed', label: __( 'Failed', 'mission' ) },
+        {
+          value: 'pending',
+          label: __( 'Pending', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'completed',
+          label: __( 'Completed', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'refunded',
+          label: __( 'Refunded', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'cancelled',
+          label: __( 'Cancelled', 'missionwp-donation-platform' ),
+        },
+        {
+          value: 'failed',
+          label: __( 'Failed', 'missionwp-donation-platform' ),
+        },
       ],
       filterBy: {
         operators: [ 'is' ],
@@ -327,21 +342,27 @@ function buildFields( campaignElements ) {
     },
     {
       id: 'dedication',
-      label: __( 'Dedication', 'mission' ),
+      label: __( 'Dedication', 'missionwp-donation-platform' ),
       enableSorting: false,
       enableHiding: false,
       render: () => null,
       elements: [
         {
           value: 'mail_pending',
-          label: __( 'Mail \u2014 pending', 'mission' ),
+          label: __( 'Mail \u2014 pending', 'missionwp-donation-platform' ),
         },
-        { value: 'mail_sent', label: __( 'Mail \u2014 sent', 'mission' ) },
+        {
+          value: 'mail_sent',
+          label: __( 'Mail \u2014 sent', 'missionwp-donation-platform' ),
+        },
         {
           value: 'email_sent',
-          label: __( 'Email \u2014 sent', 'mission' ),
+          label: __( 'Email \u2014 sent', 'missionwp-donation-platform' ),
         },
-        { value: 'any', label: __( 'Has dedication', 'mission' ) },
+        {
+          value: 'any',
+          label: __( 'Has dedication', 'missionwp-donation-platform' ),
+        },
       ],
       filterBy: {
         operators: [ 'is' ],
@@ -369,14 +390,14 @@ function buildSummaryCards( summary ) {
   const revenueDelta = summary
     ? {
         ...getDelta( summary.total_revenue, summary.previous_revenue ),
-        label: __( 'vs last month', 'mission' ),
+        label: __( 'vs last month', 'missionwp-donation-platform' ),
       }
     : null;
 
   const donationsDelta = summary
     ? {
         ...getDelta( summary.total_donations, summary.previous_donations ),
-        label: __( 'vs last month', 'mission' ),
+        label: __( 'vs last month', 'missionwp-donation-platform' ),
       }
     : null;
 
@@ -390,8 +411,8 @@ function buildSummaryCards( summary ) {
   const refundSubtitle = summary
     ? `${ summary.total_refunded } ${
         summary.total_refunded === 1
-          ? __( 'refund', 'mission' )
-          : __( 'refunds', 'mission' )
+          ? __( 'refund', 'missionwp-donation-platform' )
+          : __( 'refunds', 'missionwp-donation-platform' )
       } (${ refundPct }%)`
     : '';
 
@@ -509,25 +530,33 @@ export default function TransactionList() {
         <VStack spacing={ 6 }>
           <HStack justify="space-between" alignment="center">
             <VStack spacing={ 1 }>
-              <Heading level={ 1 }>{ __( 'Transactions', 'mission' ) }</Heading>
+              <Heading level={ 1 }>
+                { __( 'Transactions', 'missionwp-donation-platform' ) }
+              </Heading>
               <Text variant="muted">
-                { __( 'View and manage all donations.', 'mission' ) }
+                { __(
+                  'View and manage all donations.',
+                  'missionwp-donation-platform'
+                ) }
               </Text>
             </VStack>
           </HStack>
 
           <div className="mission-stats-row mission-stats-row--4">
             <StatCard
-              label={ __( 'Total Revenue', 'mission' ) }
-              value={ formatAmount( 0 ) }
-            />
-            <StatCard label={ __( 'Total Donations', 'mission' ) } value="0" />
-            <StatCard
-              label={ __( 'Average Donation', 'mission' ) }
+              label={ __( 'Total Revenue', 'missionwp-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
             <StatCard
-              label={ __( 'Refunds', 'mission' ) }
+              label={ __( 'Total Donations', 'missionwp-donation-platform' ) }
+              value="0"
+            />
+            <StatCard
+              label={ __( 'Average Donation', 'missionwp-donation-platform' ) }
+              value={ formatAmount( 0 ) }
+            />
+            <StatCard
+              label={ __( 'Refunds', 'missionwp-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
           </div>
@@ -536,10 +565,13 @@ export default function TransactionList() {
             <CardBody>
               <EmptyState
                 icon={ <ReceiptIcon /> }
-                text={ __( 'No transactions yet', 'mission' ) }
+                text={ __(
+                  'No transactions yet',
+                  'missionwp-donation-platform'
+                ) }
                 hint={ __(
                   'Transactions will appear here once donors start giving.',
-                  'mission'
+                  'missionwp-donation-platform'
                 ) }
               />
             </CardBody>
@@ -554,9 +586,14 @@ export default function TransactionList() {
       <VStack spacing={ 6 }>
         <HStack justify="space-between" alignment="center">
           <VStack spacing={ 1 }>
-            <Heading level={ 1 }>{ __( 'Transactions', 'mission' ) }</Heading>
+            <Heading level={ 1 }>
+              { __( 'Transactions', 'missionwp-donation-platform' ) }
+            </Heading>
             <Text variant="muted">
-              { __( 'View and manage all donations.', 'mission' ) }
+              { __(
+                'View and manage all donations.',
+                'missionwp-donation-platform'
+              ) }
             </Text>
           </VStack>
           <Button
@@ -568,31 +605,34 @@ export default function TransactionList() {
             onClick={ () => setShowDrawer( true ) }
             __next40pxDefaultSize
           >
-            { __( 'Add Donation', 'mission' ) }
+            { __( 'Add Donation', 'missionwp-donation-platform' ) }
           </Button>
         </HStack>
 
         <div className="mission-stats-row mission-stats-row--4">
           <StatCard
-            label={ __( 'Total Revenue', 'mission' ) }
+            label={ __( 'Total Revenue', 'missionwp-donation-platform' ) }
             value={ summary ? formatAmount( summary.total_revenue ) : '' }
             delta={ revenueDelta }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Total Donations', 'mission' ) }
+            label={ __( 'Total Donations', 'missionwp-donation-platform' ) }
             value={ summary ? summary.total_donations.toLocaleString() : '' }
             delta={ donationsDelta }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Average Donation', 'mission' ) }
+            label={ __( 'Average Donation', 'missionwp-donation-platform' ) }
             value={ summary ? formatAmount( summary.average_donation ) : '' }
-            subtitle={ __( 'Across all campaigns', 'mission' ) }
+            subtitle={ __(
+              'Across all campaigns',
+              'missionwp-donation-platform'
+            ) }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Refunds', 'mission' ) }
+            label={ __( 'Refunds', 'missionwp-donation-platform' ) }
             value={
               summary ? formatAmount( summary.total_refunded_amount ) : ''
             }

@@ -64,7 +64,7 @@ class ActivityFeedEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view the activity feed.', 'mission' ),
+				__( 'You do not have permission to view the activity feed.', 'missionwp-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}

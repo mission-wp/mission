@@ -32,12 +32,12 @@ export default function DangerZone( { campaignId, campaignTitle } ) {
   return (
     <div className="mission-card mission-danger-zone">
       <h3 className="mission-danger-zone__title">
-        { __( 'Danger Zone', 'mission' ) }
+        { __( 'Danger Zone', 'missionwp-donation-platform' ) }
       </h3>
       <p className="mission-danger-zone__desc">
         { __(
           'Permanently delete this campaign. This action cannot be undone.',
-          'mission'
+          'missionwp-donation-platform'
         ) }
       </p>
       <button
@@ -58,20 +58,26 @@ export default function DangerZone( { campaignId, campaignTitle } ) {
           <path d="M2 3.5h10M4.5 3.5V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1M11 3.5l-.5 8.5a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1L3 3.5" />
           <path d="M5.5 6v4M8.5 6v4" />
         </svg>
-        { __( 'Delete Campaign', 'mission' ) }
+        { __( 'Delete Campaign', 'missionwp-donation-platform' ) }
       </button>
 
       { showConfirm && (
         <Modal
-          title={ __( 'Delete Campaign', 'mission' ) }
+          title={ __( 'Delete Campaign', 'missionwp-donation-platform' ) }
           onRequestClose={ () => setShowConfirm( false ) }
           size="small"
         >
           <VStack spacing={ 4 }>
             <Text>
-              { __( 'Are you sure you want to delete', 'mission' ) }{ ' ' }
+              { __(
+                'Are you sure you want to delete',
+                'missionwp-donation-platform'
+              ) }{ ' ' }
               <strong>{ campaignTitle }</strong>?{ ' ' }
-              { __( 'This action cannot be undone.', 'mission' ) }
+              { __(
+                'This action cannot be undone.',
+                'missionwp-donation-platform'
+              ) }
             </Text>
             <HStack justify="flex-end">
               <Button
@@ -79,7 +85,7 @@ export default function DangerZone( { campaignId, campaignTitle } ) {
                 onClick={ () => setShowConfirm( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel', 'mission' ) }
+                { __( 'Cancel', 'missionwp-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -89,7 +95,7 @@ export default function DangerZone( { campaignId, campaignTitle } ) {
                 onClick={ handleDelete }
                 __next40pxDefaultSize
               >
-                { __( 'Delete', 'mission' ) }
+                { __( 'Delete', 'missionwp-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>

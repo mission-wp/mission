@@ -130,7 +130,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: donor name */
-			__( 'New donation: %1$s from %2$s', 'mission' ),
+			__( 'New donation: %1$s from %2$s', 'missionwp-donation-platform' ),
 			$amount_formatted,
 			$donor_name,
 		);
@@ -169,7 +169,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: frequency (e.g. "Monthly"), 3: donor name */
-			__( 'New recurring donation: %1$s/%2$s from %3$s', 'mission' ),
+			__( 'New recurring donation: %1$s/%2$s from %3$s', 'missionwp-donation-platform' ),
 			$amount_formatted,
 			strtolower( $frequency_label ),
 			$donor_name,
@@ -210,7 +210,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: donor name */
-			__( 'Recurring renewal: %1$s from %2$s', 'mission' ),
+			__( 'Recurring renewal: %1$s from %2$s', 'missionwp-donation-platform' ),
 			$amount_formatted,
 			$donor_name,
 		);
@@ -252,13 +252,13 @@ class AdminNotificationListener {
 		$subject = $is_full_refund
 			? sprintf(
 				/* translators: 1: formatted refund amount, 2: donor name */
-				__( 'Full refund: %1$s to %2$s', 'mission' ),
+				__( 'Full refund: %1$s to %2$s', 'missionwp-donation-platform' ),
 				$refund_formatted,
 				$donor_name,
 			)
 			: sprintf(
 				/* translators: 1: formatted refund amount, 2: donor name */
-				__( 'Partial refund: %1$s to %2$s', 'mission' ),
+				__( 'Partial refund: %1$s to %2$s', 'missionwp-donation-platform' ),
 				$refund_formatted,
 				$donor_name,
 			);
@@ -296,7 +296,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: donor name */
-			__( 'Failed payment: %1$s from %2$s', 'mission' ),
+			__( 'Failed payment: %1$s from %2$s', 'missionwp-donation-platform' ),
 			$amount_formatted,
 			$donor_name,
 		);
@@ -336,7 +336,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: frequency (e.g. "monthly"), 3: donor name */
-			__( 'Subscription cancelled: %1$s/%2$s from %3$s', 'mission' ),
+			__( 'Subscription cancelled: %1$s/%2$s from %3$s', 'missionwp-donation-platform' ),
 			$amount_formatted,
 			strtolower( $frequency_label ),
 			$donor_name,
@@ -391,7 +391,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: campaign name, 2: milestone label (e.g. "50%", "First donation") */
-			__( 'Campaign milestone: %1$s reached %2$s', 'mission' ),
+			__( 'Campaign milestone: %1$s reached %2$s', 'missionwp-donation-platform' ),
 			$campaign->title,
 			$milestone_label,
 		);
@@ -417,11 +417,11 @@ class AdminNotificationListener {
 
 		$donor            = $transaction->donor();
 		$donor_name       = $donor ? trim( $donor->first_name . ' ' . $donor->last_name ) : '';
-		$donor_name       = $donor_name ?: ( $donor->email ?? __( 'Anonymous', 'mission' ) );
+		$donor_name       = $donor_name ?: ( $donor->email ?? __( 'Anonymous', 'missionwp-donation-platform' ) );
 		$amount_formatted = $this->email->format_amount( $transaction->amount, $transaction->currency );
 		$type_label       = 'in_memory' === $tribute->tribute_type
-			? __( 'in memory of', 'mission' )
-			: __( 'in honor of', 'mission' );
+			? __( 'in memory of', 'missionwp-donation-platform' )
+			: __( 'in honor of', 'missionwp-donation-platform' );
 
 		$address_parts = array_filter(
 			[
@@ -446,7 +446,7 @@ class AdminNotificationListener {
 
 		$subject = sprintf(
 			/* translators: 1: honoree name, 2: donor name */
-			__( 'Mail dedication pending: %1$s (from %2$s)', 'mission' ),
+			__( 'Mail dedication pending: %1$s (from %2$s)', 'missionwp-donation-platform' ),
 			$tribute->honoree_name,
 			$donor_name,
 		);
