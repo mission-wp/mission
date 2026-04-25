@@ -23,7 +23,7 @@ define( 'MISSION_FILE', __FILE__ );
 define( 'MISSION_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSION_URL', plugin_dir_url( __FILE__ ) );
 define( 'MISSION_BASENAME', plugin_basename( __FILE__ ) );
-define( 'MISSION_STRIPE_PK_TEST', 'pk_test_51T5DwxKmlUXgfwX1imygmc6bNNiXqdJT85CABLAMvanmATbQ6e1ol9RhzP85WyxOq1xmXKUI6LiyeXzbPStlRagi00YXxKtotb' );
+define( 'MISSION_STRIPE_PK_TEST', 'pk_test_51T5DwoQLFYekpV0FSkXZtgzDJ9c1NxnIT0yXWzueakHgSaQyW5xSBwnIt6ysjmXMTlsHAQ0aX9KUTSk6h27PeonZ00kW2hnLQF' );
 define( 'MISSION_STRIPE_PK_LIVE', 'pk_live_51T5DwoQLFYekpV0Fmd9UBolXWaoBAnSvLud40NTmdRBkJlHgbhBbzEhIeXlDMrNe7KosZTskGSTY7KI1RejfBuRn00pnVlZyia' );
 
 // Load Composer autoloader.
