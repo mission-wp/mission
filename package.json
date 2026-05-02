@@ -1,6 +1,6 @@
 {
 	"name": "mission-donation-platform",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
 	"private": true,
 	"scripts": {

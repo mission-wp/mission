@@ -4,7 +4,7 @@ Tags: donations, fundraising, nonprofit, stripe, donation form
 Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable Tag: 1.0.1
+Stable Tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -91,6 +91,17 @@ The repository contains the original `.js`, `.jsx`, and `.scss` files. To build 
 See the README in the repository for full development setup, contribution guidelines, and a description of the build pipeline.
 
 == Changelog ==
+
+= 1.1.0 =
+* Renamed plugin slug to mission-donation-platform and prefixed all PHP/JS identifiers with missiondp_ per WordPress.org review
+* Refactored DataStore queries and Cleanup IN-clauses to use wpdb::prepare() with proper placeholders
+* Escaped block render output through wp_kses with an allowlist that preserves SVG icons and Interactivity API directives
+* Moved security checks into permission_callback for state-changing public REST endpoints (donation/subscription confirm, email-change confirm)
+* Added a Source Code section to the readme linking to the public GitHub repo with build instructions
+* Disclosed Gravatar usage under External Services in the readme
+* Removed unused stripe/stripe-php dependency
+* Added WordPress.org directory assets (banners, icons, screenshots)
+* Fixed MISSIONDP_STRIPE_PK_TEST to match the live platform Stripe account
 
 = 1.0.1 =
 * Renamed plugin to Mission Donation Platform per WordPress.org review team guidance
