@@ -32,10 +32,6 @@ Mission Donation Platform is a modern, open-source WordPress donation plugin bui
 3. Connect your Stripe account under Mission > Settings
 4. Create your first campaign and start accepting donations
 
-= Development =
-
-Source code, build instructions, and contribution guidelines are available on [GitHub](https://github.com/mission-wp/mission).
-
 == Frequently Asked Questions ==
 
 = How is Mission Donation Platform free? =
@@ -72,6 +68,20 @@ Mission connects to [api.missionwp.com](https://api.missionwp.com) (operated by 
 
 * [Mission Terms of Service](https://missionwp.com/terms)
 * [Mission Privacy Policy](https://missionwp.com/privacy)
+
+== Source Code ==
+
+The full, unminified source code for this plugin is publicly available on GitHub:
+
+**https://github.com/mission-wp/mission**
+
+The repository contains the original `.js`, `.jsx`, and `.scss` files. To build the plugin from source:
+
+`composer install`
+`npm install`
+`npm run build`
+
+See the README in the repository for full development setup, contribution guidelines, and a description of the build pipeline.
 
 == Changelog ==
 
