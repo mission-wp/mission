@@ -6,13 +6,13 @@
  * to the charge, so nonprofits never pay higher fees because of our tip. These
  * methods handle that fee absorption math in one place.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tip;
+namespace MissionDP\Tip;
 
-use Mission\Models\Transaction;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 

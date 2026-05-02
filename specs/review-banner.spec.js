@@ -10,7 +10,7 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 const { execSync } = require( 'child_process' );
 
-const DASHBOARD_PATH = 'admin.php?page=mission';
+const DASHBOARD_PATH = 'admin.php?page=mission-donation-platform';
 const DONATION_AMOUNT = 50000; // $500 in cents.
 const DONATION_COUNT = 26;
 const TOTAL_RAISED = DONATION_AMOUNT * DONATION_COUNT; // 1,300,000 cents = $13,000.
@@ -60,7 +60,7 @@ function wpCli( command ) {
  */
 function resetDismissal() {
   dbQuery(
-    "DELETE FROM wp_usermeta WHERE user_id = 1 AND meta_key = 'mission_review_banner_dismissed'"
+    "DELETE FROM wp_usermeta WHERE user_id = 1 AND meta_key = 'missiondp_review_banner_dismissed'"
   );
 }
 
@@ -68,25 +68,37 @@ test.describe( 'Review Banner', () => {
   let campaignId;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    // Clean up any stale "Review Banner Test" campaigns left over from a
+    // previous interrupted run. Without this, the SUM(total_raised) the
+    // banner displays accumulates across runs.
+    dbQuery(
+      'DELETE t FROM wp_missiondp_transactions t' +
+        ' INNER JOIN wp_missiondp_campaigns c ON c.id = t.campaign_id' +
+        " WHERE c.title = 'Review Banner Test'"
+    );
+    dbQuery(
+      "DELETE FROM wp_missiondp_campaigns WHERE title = 'Review Banner Test'"
+    );
+
     // Set the install date to 30 days ago so the 14-day gate passes.
     const thirtyDaysAgo = new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 );
     const dateStr = thirtyDaysAgo
       .toISOString()
       .slice( 0, 19 )
       .replace( 'T', ' ' );
-    wpCli( `option update mission_installed_at "${ dateStr }"` );
+    wpCli( `option update missiondp_installed_at "${ dateStr }"` );
 
     // Disable test mode so transactions count as "live",
     // and mark onboarding complete so the modal doesn't block tests.
     await requestUtils.rest( {
-      path: '/mission/v1/settings',
+      path: '/mission-donation-platform/v1/settings',
       method: 'POST',
       data: { test_mode: false, onboarding_completed: true },
     } );
 
     // Create a campaign to associate donations with.
     const campaign = await requestUtils.rest( {
-      path: '/mission/v1/campaigns',
+      path: '/mission-donation-platform/v1/campaigns',
       method: 'POST',
       data: { title: 'Review Banner Test', goal_amount: 5000000 },
     } );
@@ -100,14 +112,14 @@ test.describe( 'Review Banner', () => {
       );
     }
     dbQuery(
-      `INSERT INTO wp_mission_transactions (campaign_id, amount, currency, status, is_test, date_created, date_completed, date_modified) VALUES ${ rows.join(
+      `INSERT INTO wp_missiondp_transactions (campaign_id, amount, currency, status, is_test, date_created, date_completed, date_modified) VALUES ${ rows.join(
         ','
       ) }`
     );
 
     // Set the campaign's total_raised to match.
     dbQuery(
-      `UPDATE wp_mission_campaigns SET total_raised = ${ TOTAL_RAISED } WHERE id = ${ campaignId }`
+      `UPDATE wp_missiondp_campaigns SET total_raised = ${ TOTAL_RAISED } WHERE id = ${ campaignId }`
     );
 
     // Ensure no stale dismissal from a previous run.
@@ -120,24 +132,24 @@ test.describe( 'Review Banner', () => {
 
   test.afterAll( async ( { requestUtils } ) => {
     dbQuery(
-      `DELETE FROM wp_mission_transactions WHERE campaign_id = ${ campaignId }`
+      `DELETE FROM wp_missiondp_transactions WHERE campaign_id = ${ campaignId }`
     );
 
     if ( campaignId ) {
       await requestUtils.rest( {
-        path: `/mission/v1/campaigns/${ campaignId }`,
+        path: `/mission-donation-platform/v1/campaigns/${ campaignId }`,
         method: 'DELETE',
       } );
     }
 
     await requestUtils.rest( {
-      path: '/mission/v1/settings',
+      path: '/mission-donation-platform/v1/settings',
       method: 'POST',
       data: { test_mode: true },
     } );
 
     resetDismissal();
-    wpCli( 'option delete mission_installed_at' );
+    wpCli( 'option delete missiondp_installed_at' );
   } );
 
   // ---------------------------------------------------------------------------
@@ -152,7 +164,7 @@ test.describe( 'Review Banner', () => {
 
     const banner = page.locator( '.mission-review-banner' );
     await expect( banner ).toBeVisible( { timeout: 10_000 } );
-    await expect( banner.getByText( 'Enjoying MissionWP?' ) ).toBeVisible();
+    await expect( banner.getByText( 'Enjoying Mission?' ) ).toBeVisible();
     await expect( banner.getByText( /\$13,000/ ) ).toBeVisible();
     await expect(
       banner.getByText( 'How would you rate your experience?' )
@@ -232,7 +244,7 @@ test.describe( 'Review Banner', () => {
     let ratePayload = null;
 
     await page.route(
-      restRoute( '/mission/v1/review-banner/rate' ),
+      restRoute( '/mission-donation-platform/v1/review-banner/rate' ),
       async ( route, request ) => {
         ratePayload = request.postDataJSON();
         await route.fulfill( {
@@ -277,7 +289,7 @@ test.describe( 'Review Banner', () => {
   } ) => {
     // Mock the rate endpoint so the server doesn't fire the external API call.
     await page.route(
-      restRoute( '/mission/v1/review-banner/rate' ),
+      restRoute( '/mission-donation-platform/v1/review-banner/rate' ),
       async ( route ) => {
         await route.fulfill( {
           status: 200,
@@ -318,14 +330,14 @@ test.describe( 'Review Banner', () => {
     let rateCalled = false;
 
     await page.route(
-      restRoute( '/mission/v1/review-banner/dismiss' ),
+      restRoute( '/mission-donation-platform/v1/review-banner/dismiss' ),
       async ( route ) => {
         dismissCalled = true;
         await route.continue();
       }
     );
     await page.route(
-      restRoute( '/mission/v1/review-banner/rate' ),
+      restRoute( '/mission-donation-platform/v1/review-banner/rate' ),
       async ( route ) => {
         rateCalled = true;
         await route.fulfill( {

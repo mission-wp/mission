@@ -2,12 +2,12 @@
 /**
  * Campaigns admin page.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Admin\Pages;
+namespace MissionDP\Admin\Pages;
 
-use Mission\Admin\AdminPage;
+use MissionDP\Admin\AdminPage;
 
 defined( 'ABSPATH' ) || exit;
 

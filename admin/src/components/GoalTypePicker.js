@@ -52,17 +52,17 @@ const UsersIcon = () => (
 const GOAL_TYPES = [
   {
     value: 'amount',
-    label: __( 'Amount Raised', 'missionwp-donation-platform' ),
+    label: __( 'Amount Raised', 'mission-donation-platform' ),
     icon: DollarIcon,
   },
   {
     value: 'donations',
-    label: __( 'Number of Donations', 'missionwp-donation-platform' ),
+    label: __( 'Number of Donations', 'mission-donation-platform' ),
     icon: HeartIcon,
   },
   {
     value: 'donors',
-    label: __( 'Number of Donors', 'missionwp-donation-platform' ),
+    label: __( 'Number of Donors', 'mission-donation-platform' ),
     icon: UsersIcon,
   },
 ];

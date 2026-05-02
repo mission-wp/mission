@@ -43,8 +43,8 @@ export default function DonorDetail( { id } ) {
   const [ showDrawer, setShowDrawer ] = useState( false );
   const [ focusField, setFocusField ] = useState( null );
 
-  const adminUrl = window.missionAdmin?.adminUrl || '';
-  const donorsUrl = `${ adminUrl }admin.php?page=mission-donors`;
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
+  const donorsUrl = `${ adminUrl }admin.php?page=mission-donation-platform-donors`;
 
   const hasLoaded = useRef( false );
 
@@ -54,12 +54,12 @@ export default function DonorDetail( { id } ) {
     }
     try {
       const [ donorData, txnData, subData ] = await Promise.all( [
-        apiFetch( { path: `/mission/v1/donors/${ id }` } ),
+        apiFetch( { path: `/mission-donation-platform/v1/donors/${ id }` } ),
         apiFetch( {
-          path: `/mission/v1/transactions?donor_id=${ id }&per_page=100`,
+          path: `/mission-donation-platform/v1/transactions?donor_id=${ id }&per_page=100`,
         } ),
         apiFetch( {
-          path: `/mission/v1/subscriptions?donor_id=${ id }&per_page=100`,
+          path: `/mission-donation-platform/v1/subscriptions?donor_id=${ id }&per_page=100`,
         } ),
       ] );
       setDonor( donorData );
@@ -68,7 +68,7 @@ export default function DonorDetail( { id } ) {
     } catch ( err ) {
       setError(
         err.message ||
-          __( 'Failed to load donor.', 'missionwp-donation-platform' )
+          __( 'Failed to load donor.', 'mission-donation-platform' )
       );
     } finally {
       setIsLoading( false );
@@ -102,10 +102,10 @@ export default function DonorDetail( { id } ) {
             href={ donorsUrl }
             style={ { color: BRAND_COLOR, textDecoration: 'none' } }
           >
-            { __( 'Back to Donors', 'missionwp-donation-platform' ) }
+            { __( 'Back to Donors', 'mission-donation-platform' ) }
           </a>
           <Text>
-            { error || __( 'Donor not found.', 'missionwp-donation-platform' ) }
+            { error || __( 'Donor not found.', 'mission-donation-platform' ) }
           </Text>
         </VStack>
       </div>
@@ -114,7 +114,7 @@ export default function DonorDetail( { id } ) {
 
   const fullName =
     [ donor.first_name, donor.last_name ].filter( Boolean ).join( ' ' ) ||
-    __( 'Anonymous', 'missionwp-donation-platform' );
+    __( 'Anonymous', 'mission-donation-platform' );
 
   const avgDonation =
     donor.transaction_count > 0
@@ -127,7 +127,7 @@ export default function DonorDetail( { id } ) {
         { /* Breadcrumb + Edit */ }
         <HStack justify="space-between" alignment="center">
           <a href={ donorsUrl } className="mission-back-link">
-            &larr; { __( 'Back to Donors', 'missionwp-donation-platform' ) }
+            &larr; { __( 'Back to Donors', 'mission-donation-platform' ) }
           </a>
           <Button
             variant="secondary"
@@ -137,7 +137,7 @@ export default function DonorDetail( { id } ) {
             } }
             __next40pxDefaultSize
           >
-            { __( 'Edit Donor', 'missionwp-donation-platform' ) }
+            { __( 'Edit Donor', 'mission-donation-platform' ) }
           </Button>
         </HStack>
 
@@ -156,17 +156,17 @@ export default function DonorDetail( { id } ) {
               <div className="mission-donor-profile__tags">
                 { donor.is_recurring && (
                   <Badge style={ { background: '#e2f4eb', color: '#2fa36b' } }>
-                    { __( 'Recurring', 'missionwp-donation-platform' ) }
+                    { __( 'Recurring', 'mission-donation-platform' ) }
                   </Badge>
                 ) }
                 { donor.is_top_donor && (
                   <Badge style={ { background: '#fef3cd', color: '#856404' } }>
-                    { __( 'Top Donor', 'missionwp-donation-platform' ) }
+                    { __( 'Top Donor', 'mission-donation-platform' ) }
                   </Badge>
                 ) }
                 { donor.since_label && (
                   <Badge style={ { background: '#f0ede8', color: '#6b6b7b' } }>
-                    { __( 'Since', 'missionwp-donation-platform' ) }{ ' ' }
+                    { __( 'Since', 'mission-donation-platform' ) }{ ' ' }
                     { donor.since_label }
                   </Badge>
                 ) }
@@ -179,7 +179,7 @@ export default function DonorDetail( { id } ) {
                 { formatAmount( donor.total_donated ) }
               </span>
               <span className="mission-donor-profile__stat-label">
-                { __( 'Lifetime given', 'missionwp-donation-platform' ) }
+                { __( 'Lifetime given', 'mission-donation-platform' ) }
               </span>
             </div>
             <div className="mission-donor-profile__stat">
@@ -187,7 +187,7 @@ export default function DonorDetail( { id } ) {
                 { donor.transaction_count }
               </span>
               <span className="mission-donor-profile__stat-label">
-                { __( 'Donations', 'missionwp-donation-platform' ) }
+                { __( 'Donations', 'mission-donation-platform' ) }
               </span>
             </div>
             <div className="mission-donor-profile__stat">
@@ -195,7 +195,7 @@ export default function DonorDetail( { id } ) {
                 { formatAmount( avgDonation ) }
               </span>
               <span className="mission-donor-profile__stat-label">
-                { __( 'Avg. donation', 'missionwp-donation-platform' ) }
+                { __( 'Avg. donation', 'mission-donation-platform' ) }
               </span>
             </div>
           </div>
@@ -220,10 +220,10 @@ export default function DonorDetail( { id } ) {
             <NotesCard
               objectType="donors"
               objectId={ id }
-              title={ __( 'Internal Notes', 'missionwp-donation-platform' ) }
+              title={ __( 'Internal Notes', 'mission-donation-platform' ) }
               hint={ __(
                 'Only visible to your organization.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             />
           </VStack>

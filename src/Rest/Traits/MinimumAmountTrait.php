@@ -2,10 +2,10 @@
 /**
  * Trait for server-side minimum donation amount validation.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Traits;
+namespace MissionDP\Rest\Traits;
 
 use WP_Error;
 
@@ -42,7 +42,7 @@ trait MinimumAmountTrait {
 		if ( $amount < self::HARD_FLOOR ) {
 			return new WP_Error(
 				'donation_below_minimum',
-				__( 'Donation amount must be at least $1.00.', 'missionwp-donation-platform' ),
+				__( 'Donation amount must be at least $1.00.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -59,7 +59,7 @@ trait MinimumAmountTrait {
 				'donation_below_minimum',
 				sprintf(
 					/* translators: %s: formatted minimum amount */
-					__( 'Donation amount must be at least %s.', 'missionwp-donation-platform' ),
+					__( 'Donation amount must be at least %s.', 'mission-donation-platform' ),
 					'$' . number_format( $block_minimum / 100, 2 )
 				),
 				[ 'status' => 400 ]
@@ -97,7 +97,7 @@ trait MinimumAmountTrait {
 	 */
 	private function find_minimum_in_blocks( array $blocks, string $form_id ): ?int {
 		foreach ( $blocks as $block ) {
-			if ( 'mission/donation-form' === $block['blockName'] ) {
+			if ( 'mission-donation-platform/donation-form' === $block['blockName'] ) {
 				$block_form_id = $block['attrs']['formId'] ?? '';
 				if ( $block_form_id === $form_id ) {
 					return (int) ( $block['attrs']['minimumAmount'] ?? self::DEFAULT_BLOCK_MINIMUM );

@@ -9,15 +9,15 @@
  * falls back to a processing response and the Stripe webhook completes the
  * transaction asynchronously.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Transaction;
-use Mission\Payments\PaymentIntentVerifier;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\RateLimitTrait;
+use MissionDP\Models\Transaction;
+use MissionDP\Payments\PaymentIntentVerifier;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\RateLimitTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -86,7 +86,7 @@ class ConfirmDonationEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -98,7 +98,7 @@ class ConfirmDonationEndpoint {
 		if ( ! hash_equals( $transaction->gateway_transaction_id, $payment_intent_id ) ) {
 			return new WP_Error(
 				'transaction_mismatch',
-				__( 'Payment intent does not match this transaction.', 'missionwp-donation-platform' ),
+				__( 'Payment intent does not match this transaction.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -117,7 +117,7 @@ class ConfirmDonationEndpoint {
 		if ( in_array( $transaction->status, [ 'failed', 'cancelled' ], true ) ) {
 			return new WP_Error(
 				'payment_failed',
-				__( 'The payment was not successful.', 'missionwp-donation-platform' ),
+				__( 'The payment was not successful.', 'mission-donation-platform' ),
 				[ 'status' => 402 ]
 			);
 		}
@@ -158,7 +158,7 @@ class ConfirmDonationEndpoint {
 
 			return new WP_Error(
 				'payment_failed',
-				__( 'The payment was not successful.', 'missionwp-donation-platform' ),
+				__( 'The payment was not successful.', 'mission-donation-platform' ),
 				[ 'status' => 402 ]
 			);
 		}

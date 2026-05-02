@@ -17,12 +17,12 @@ import StepCampaign from './onboarding/StepCampaign';
 import StepDone from './onboarding/StepDone';
 
 const TOTAL_STEPS = 5;
-const DRAFT_KEY = 'mission_onboarding_draft';
+const DRAFT_KEY = 'missiondp_onboarding_draft';
 
 const DEFAULT_DATA = {
-  org_name: window.missionAdmin?.orgName || '',
+  org_name: window.missiondpAdmin?.orgName || '',
   org_country: 'US',
-  currency: window.missionAdmin?.currency || 'USD',
+  currency: window.missiondpAdmin?.currency || 'USD',
   org_ein: '',
   org_street: '',
   org_city: '',
@@ -83,7 +83,7 @@ export default function OnboardingModal( { onComplete } ) {
   );
   const [ errors, setErrors ] = useState( {} );
   const [ stripeConnected, setStripeConnected ] = useState(
-    window.missionAdmin?.stripeConnected ?? false
+    window.missiondpAdmin?.stripeConnected ?? false
   );
   const [ stripeDisplayName, setStripeDisplayName ] = useState( '' );
   const [ connectError, setConnectError ] = useState( '' );
@@ -115,8 +115,8 @@ export default function OnboardingModal( { onComplete } ) {
   // Fetch current settings on mount to pre-fill.
   useEffect( () => {
     apiFetch( {
-      path: '/mission/v1/settings',
-      headers: { 'X-WP-Nonce': window.missionAdmin.restNonce },
+      path: '/mission-donation-platform/v1/settings',
+      headers: { 'X-WP-Nonce': window.missiondpAdmin.restNonce },
     } )
       .then( ( settings ) => {
         setData( ( prev ) => ( {
@@ -145,7 +145,7 @@ export default function OnboardingModal( { onComplete } ) {
   useEffect( () => {
     const params = new URLSearchParams( window.location.search );
 
-    // Handle OAuth denial (user clicked "Return to MissionWP" on Stripe).
+    // Handle OAuth denial (user clicked "Return to Mission" on Stripe).
     if ( params.get( 'stripe_error' ) === 'access_denied' ) {
       const url = new URL( window.location.href );
       url.searchParams.delete( 'stripe_error' );
@@ -154,7 +154,7 @@ export default function OnboardingModal( { onComplete } ) {
       setConnectError(
         __(
           'Stripe connection was cancelled. You can try again whenever you\u2019re ready.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         )
       );
       if ( step !== 3 ) {
@@ -181,9 +181,9 @@ export default function OnboardingModal( { onComplete } ) {
 
     // Finalize Stripe connection.
     apiFetch( {
-      path: '/mission/v1/stripe/connect',
+      path: '/mission-donation-platform/v1/stripe/connect',
       method: 'POST',
-      headers: { 'X-WP-Nonce': window.missionAdmin.restNonce },
+      headers: { 'X-WP-Nonce': window.missiondpAdmin.restNonce },
       data: {
         setup_code: setupCode,
         site_id: siteId,
@@ -197,7 +197,7 @@ export default function OnboardingModal( { onComplete } ) {
           setConnectError(
             __(
               'Stripe connected, but your account isn\u2019t ready to accept payments yet. Finish setting up your account on the Stripe Dashboard.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             )
           );
         }
@@ -240,7 +240,7 @@ export default function OnboardingModal( { onComplete } ) {
       if ( ! data.org_name.trim() ) {
         newErrors.org_name = __(
           'Organization name is required.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       }
     }
@@ -249,7 +249,7 @@ export default function OnboardingModal( { onComplete } ) {
       if ( ! data.campaign_name.trim() ) {
         newErrors.campaign_name = __(
           'Campaign name is required.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       }
       const goalNum = parseFloat(
@@ -258,7 +258,7 @@ export default function OnboardingModal( { onComplete } ) {
       if ( ! goalNum || goalNum <= 0 ) {
         newErrors.campaign_goal = __(
           'Goal amount is required.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       }
     }
@@ -376,9 +376,9 @@ export default function OnboardingModal( { onComplete } ) {
     try {
       // Save settings.
       await apiFetch( {
-        path: '/mission/v1/settings',
+        path: '/mission-donation-platform/v1/settings',
         method: 'POST',
-        headers: { 'X-WP-Nonce': window.missionAdmin.restNonce },
+        headers: { 'X-WP-Nonce': window.missiondpAdmin.restNonce },
         data: {
           org_name: data.org_name,
           org_country: data.org_country,
@@ -421,9 +421,9 @@ export default function OnboardingModal( { onComplete } ) {
         }
 
         await apiFetch( {
-          path: '/mission/v1/campaigns',
+          path: '/mission-donation-platform/v1/campaigns',
           method: 'POST',
-          headers: { 'X-WP-Nonce': window.missionAdmin.restNonce },
+          headers: { 'X-WP-Nonce': window.missiondpAdmin.restNonce },
           data: campaignData,
         } );
       }
@@ -473,17 +473,17 @@ export default function OnboardingModal( { onComplete } ) {
               <MissionLogo />
             </div>
             <span className="mission-onboarding-wordmark">
-              { __( 'MissionWP', 'missionwp-donation-platform' ) }
+              { __( 'Mission', 'mission-donation-platform' ) }
             </span>
             <span className="mission-onboarding-setup-tag">
-              { __( 'Setup', 'missionwp-donation-platform' ) }
+              { __( 'Setup', 'mission-donation-platform' ) }
             </span>
           </div>
           <button
             type="button"
             className="mission-onboarding-close"
             onClick={ handleDismiss }
-            title={ __( 'Close', 'missionwp-donation-platform' ) }
+            title={ __( 'Close', 'mission-donation-platform' ) }
           >
             <svg
               width="16"
@@ -573,7 +573,7 @@ export default function OnboardingModal( { onComplete } ) {
             >
               <path d="M11 7H3M7 3L3 7l4 4" />
             </svg>
-            { __( 'Back', 'missionwp-donation-platform' ) }
+            { __( 'Back', 'mission-donation-platform' ) }
           </button>
           <div className="mission-onboarding-nav-right">
             <button
@@ -581,14 +581,14 @@ export default function OnboardingModal( { onComplete } ) {
               className="mission-onboarding-nav-skip"
               onClick={ handleSkip }
             >
-              { __( 'Skip step', 'missionwp-donation-platform' ) }
+              { __( 'Skip step', 'mission-donation-platform' ) }
             </button>
             <button
               type="button"
               className="mission-onboarding-nav-continue"
               onClick={ handleContinue }
             >
-              { __( 'Continue', 'missionwp-donation-platform' ) }
+              { __( 'Continue', 'mission-donation-platform' ) }
               <svg
                 width="14"
                 height="14"

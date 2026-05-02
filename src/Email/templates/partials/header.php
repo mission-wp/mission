@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$settings      = new \Mission\Settings\SettingsService();
+$settings      = new \MissionDP\Settings\SettingsService();
 $site_name     = $settings->get( 'org_name', get_bloginfo( 'name' ) );
 $subject       = $data['subject'] ?? $site_name;
 $primary_color = $settings->get( 'primary_color', '#2fa36b' );

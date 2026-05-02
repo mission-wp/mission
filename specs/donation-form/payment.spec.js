@@ -1,10 +1,10 @@
 /**
  * Donation form — payment submission tests.
  *
- * These tests require a Stripe test token. Set the MISSION_STRIPE_TEST_TOKEN
+ * These tests require a Stripe test token. Set the MISSIONDP_STRIPE_TEST_TOKEN
  * environment variable to your stripe_site_token value:
  *
- *   MISSION_STRIPE_TEST_TOKEN=your_token npx playwright test specs/donation-form/payment.spec.js
+ *   MISSIONDP_STRIPE_TEST_TOKEN=your_token npx playwright test specs/donation-form/payment.spec.js
  *
  * Tests are automatically skipped when the token is not available.
  */
@@ -39,7 +39,7 @@ test.describe( 'Donation Form: Payment', () => {
   } ) => {
     test.skip(
       ! stripeReady,
-      'Set MISSION_STRIPE_TEST_TOKEN to run payment tests'
+      'Set MISSIONDP_STRIPE_TEST_TOKEN to run payment tests'
     );
 
     const form = new DonationFormPage( page );
@@ -65,7 +65,7 @@ test.describe( 'Donation Form: Payment', () => {
   } ) => {
     test.skip(
       ! stripeReady,
-      'Set MISSION_STRIPE_TEST_TOKEN to run payment tests'
+      'Set MISSIONDP_STRIPE_TEST_TOKEN to run payment tests'
     );
 
     const { campaign: recurringCampaign, url: recurringUrl } =
@@ -101,7 +101,7 @@ test.describe( 'Donation Form: Payment', () => {
   } ) => {
     test.skip(
       ! stripeReady,
-      'Set MISSION_STRIPE_TEST_TOKEN to run payment tests'
+      'Set MISSIONDP_STRIPE_TEST_TOKEN to run payment tests'
     );
 
     const { campaign: noTipCampaign, url: noTipUrl } =
@@ -134,7 +134,7 @@ test.describe( 'Donation Form: Payment', () => {
   test( 'declined card shows error message', async ( { page } ) => {
     test.skip(
       ! stripeReady,
-      'Set MISSION_STRIPE_TEST_TOKEN to run payment tests'
+      'Set MISSIONDP_STRIPE_TEST_TOKEN to run payment tests'
     );
 
     const form = new DonationFormPage( page );

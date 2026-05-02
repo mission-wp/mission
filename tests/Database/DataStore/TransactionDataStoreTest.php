@@ -2,18 +2,18 @@
 /**
  * Tests for the TransactionDataStore class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Database\DataStore;
+namespace MissionDP\Tests\Database\DataStore;
 
-use Mission\Database\DatabaseModule;
-use Mission\Database\DataStore\CampaignDataStore;
-use Mission\Database\DataStore\TransactionDataStore;
-use Mission\Database\DataStore\DonorDataStore;
-use Mission\Models\Campaign;
-use Mission\Models\Transaction;
-use Mission\Models\Donor;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Database\DataStore\TransactionDataStore;
+use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Donor;
 use WP_UnitTestCase;
 
 /**
@@ -33,16 +33,16 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 
 		// Drop and recreate to pick up schema changes (dbDelta can't drop columns/keys).
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		DatabaseModule::create_tables();
 	}
@@ -64,11 +64,11 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		parent::tear_down();
 	}
@@ -299,7 +299,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 
 		$fired = false;
 		add_action(
-			'mission_transaction_status_transition',
+			'missiondp_transaction_status_transition',
 			function ( $d, $old, $new ) use ( &$fired ) {
 				$fired = true;
 				$this->assertSame( 'pending', $old );
@@ -312,7 +312,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 		$transaction->status = 'completed';
 		$this->store->update( $transaction );
 
-		$this->assertTrue( $fired, 'mission_transaction_status_transition hook did not fire.' );
+		$this->assertTrue( $fired, 'missiondp_transaction_status_transition hook did not fire.' );
 	}
 
 	/**
@@ -324,7 +324,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 
 		$fired = false;
 		add_action(
-			'mission_transaction_status_pending_to_completed',
+			'missiondp_transaction_status_pending_to_completed',
 			function () use ( &$fired ) {
 				$fired = true;
 			}
@@ -333,7 +333,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 		$transaction->status = 'completed';
 		$this->store->update( $transaction );
 
-		$this->assertTrue( $fired, 'mission_transaction_status_pending_to_completed hook did not fire.' );
+		$this->assertTrue( $fired, 'missiondp_transaction_status_pending_to_completed hook did not fire.' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -691,12 +691,12 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 
 		// Simulate a data inconsistency: totals are lower than the transaction amount.
 		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			"{$wpdb->prefix}mission_donors",
+			"{$wpdb->prefix}missiondp_donors",
 			[ 'total_donated' => 500, 'total_tip' => 50 ],
 			[ 'id' => $donor_id ]
 		);
 		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			"{$wpdb->prefix}mission_campaigns",
+			"{$wpdb->prefix}missiondp_campaigns",
 			[ 'total_raised' => 500 ],
 			[ 'id' => $campaign_id ]
 		);

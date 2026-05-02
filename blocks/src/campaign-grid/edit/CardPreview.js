@@ -74,7 +74,7 @@ export default function CardPreview( { campaign, attributes } ) {
                   <strong>
                     { ( campaign.donor_count || 0 ).toLocaleString() }
                   </strong>{ ' ' }
-                  { __( 'donors', 'missionwp-donation-platform' ) }
+                  { __( 'donors', 'mission-donation-platform' ) }
                 </span>
               ) }
               <span className="mission-cc-time">{ timeText }</span>
@@ -84,7 +84,7 @@ export default function CardPreview( { campaign, attributes } ) {
       </div>
       <div className="mission-cc-footer">
         <span className="mission-cc-btn">
-          { buttonText || __( 'View Campaign', 'missionwp-donation-platform' ) }
+          { buttonText || __( 'View Campaign', 'mission-donation-platform' ) }
         </span>
       </div>
     </div>

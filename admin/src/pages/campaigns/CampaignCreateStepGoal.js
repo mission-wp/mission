@@ -11,9 +11,9 @@ import { getCurrencySymbol } from '@shared/currency';
 import GoalTypePicker from '../../components/GoalTypePicker';
 
 const GOAL_LABELS = {
-  amount: __( 'Fundraising Goal', 'missionwp-donation-platform' ),
-  donations: __( 'Donation Goal', 'missionwp-donation-platform' ),
-  donors: __( 'Donor Goal', 'missionwp-donation-platform' ),
+  amount: __( 'Fundraising Goal', 'mission-donation-platform' ),
+  donations: __( 'Donation Goal', 'mission-donation-platform' ),
+  donors: __( 'Donor Goal', 'mission-donation-platform' ),
 };
 
 export default function CampaignCreateStepGoal( { data, onChange } ) {
@@ -28,7 +28,7 @@ export default function CampaignCreateStepGoal( { data, onChange } ) {
       <BaseControl
         id="mission-goal-amount"
         label={ GOAL_LABELS[ goalType ] }
-        help={ __( 'Enter a goal above zero', 'missionwp-donation-platform' ) }
+        help={ __( 'Enter a goal above zero', 'mission-donation-platform' ) }
         __nextHasNoMarginBottom
       >
         <InputControl
@@ -57,13 +57,13 @@ export default function CampaignCreateStepGoal( { data, onChange } ) {
       <HStack spacing={ 4 } alignment="top">
         <div style={ { flex: 1 } }>
           <TextControl
-            label={ __( 'Start Date', 'missionwp-donation-platform' ) }
+            label={ __( 'Start Date', 'mission-donation-platform' ) }
             type="date"
             value={ data.date_start }
             onChange={ ( value ) => onChange( { date_start: value } ) }
             help={ __(
               'Leave blank to start immediately',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
             __nextHasNoMarginBottom
             __next40pxDefaultSize
@@ -71,13 +71,13 @@ export default function CampaignCreateStepGoal( { data, onChange } ) {
         </div>
         <div style={ { flex: 1 } }>
           <TextControl
-            label={ __( 'End Date', 'missionwp-donation-platform' ) }
+            label={ __( 'End Date', 'mission-donation-platform' ) }
             type="date"
             value={ data.date_end }
             onChange={ ( value ) => onChange( { date_end: value } ) }
             help={ __(
               'Leave blank for an ongoing campaign',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
             __nextHasNoMarginBottom
             __next40pxDefaultSize

@@ -4,11 +4,11 @@ import { formatAmount, getCurrencySymbol, getCurrencyCode } from '../currency';
 
 describe( 'formatAmount', () => {
   beforeEach( () => {
-    window.missionAdmin = { currency: 'USD' };
+    window.missiondpAdmin = { currency: 'USD' };
   } );
 
   afterEach( () => {
-    delete window.missionAdmin;
+    delete window.missiondpAdmin;
   } );
 
   it( 'formats 1000 minor units as $10.00', () => {
@@ -22,11 +22,11 @@ describe( 'formatAmount', () => {
 
 describe( 'getCurrencySymbol', () => {
   beforeEach( () => {
-    window.missionAdmin = { currency: 'USD' };
+    window.missiondpAdmin = { currency: 'USD' };
   } );
 
   afterEach( () => {
-    delete window.missionAdmin;
+    delete window.missiondpAdmin;
   } );
 
   it( 'returns "$" for USD', () => {
@@ -34,34 +34,34 @@ describe( 'getCurrencySymbol', () => {
   } );
 
   it( 'returns correct symbols for EUR, GBP, JPY', () => {
-    window.missionAdmin.currency = 'EUR';
+    window.missiondpAdmin.currency = 'EUR';
     expect( getCurrencySymbol() ).toBe( '€' );
 
-    window.missionAdmin.currency = 'GBP';
+    window.missiondpAdmin.currency = 'GBP';
     expect( getCurrencySymbol() ).toBe( '£' );
 
-    window.missionAdmin.currency = 'JPY';
+    window.missiondpAdmin.currency = 'JPY';
     expect( getCurrencySymbol() ).toBe( '¥' );
   } );
 } );
 
 describe( 'getCurrencyCode', () => {
   afterEach( () => {
-    delete window.missionAdmin;
+    delete window.missiondpAdmin;
   } );
 
-  it( 'defaults to USD when missionAdmin is undefined', () => {
-    delete window.missionAdmin;
+  it( 'defaults to USD when missiondpAdmin is undefined', () => {
+    delete window.missiondpAdmin;
     expect( getCurrencyCode() ).toBe( 'USD' );
   } );
 
   it( 'defaults to USD when currency is falsy', () => {
-    window.missionAdmin = { currency: '' };
+    window.missiondpAdmin = { currency: '' };
     expect( getCurrencyCode() ).toBe( 'USD' );
   } );
 
   it( 'returns the configured currency', () => {
-    window.missionAdmin = { currency: 'EUR' };
+    window.missiondpAdmin = { currency: 'EUR' };
     expect( getCurrencyCode() ).toBe( 'EUR' );
   } );
 } );

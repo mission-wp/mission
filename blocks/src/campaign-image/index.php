@@ -3,15 +3,15 @@
  * Block Name: Campaign Image
  * Description: Display the image associated with a campaign.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 

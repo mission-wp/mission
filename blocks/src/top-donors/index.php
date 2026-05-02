@@ -3,17 +3,17 @@
  * Block Name: Top Donors
  * Description: Display a ranked list of top donors for a campaign.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
-use Mission\Reporting\ReportingService;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
+use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,11 +34,11 @@ if ( ! $campaign ) {
 }
 
 // Settings.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
 // Attributes.
-$heading         = $attributes['heading'] ?? __( 'Top Donors', 'missionwp-donation-platform' );
+$heading         = $attributes['heading'] ?? __( 'Top Donors', 'mission-donation-platform' );
 $show_avatars    = $attributes['showAvatars'] ?? true;
 $show_dedication = $attributes['showDedication'] ?? true;
 $show_ribbons    = $attributes['showRibbons'] ?? true;
@@ -79,7 +79,7 @@ ob_start();
 ?>
 <div
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-top-donors' ] ) ); ?>
-	data-wp-interactive="mission/top-donors"
+	data-wp-interactive="mission-donation-platform/top-donors"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
 	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>;"
 >
@@ -88,8 +88,8 @@ ob_start();
 	<?php if ( empty( $donors ) ) : ?>
 		<div class="mission-donor-empty">
 			<div class="mission-donor-empty__icon">&#9734;</div>
-			<p class="mission-donor-empty__title"><?php esc_html_e( 'This spot is wide open.', 'missionwp-donation-platform' ); ?></p>
-			<p class="mission-donor-empty__subtitle"><?php esc_html_e( 'Make a donation and claim the top of the list.', 'missionwp-donation-platform' ); ?></p>
+			<p class="mission-donor-empty__title"><?php esc_html_e( 'This spot is wide open.', 'mission-donation-platform' ); ?></p>
+			<p class="mission-donor-empty__subtitle"><?php esc_html_e( 'Make a donation and claim the top of the list.', 'mission-donation-platform' ); ?></p>
 			<?php if ( 'hide' !== $donate_action ) : ?>
 				<?php if ( 'scroll' === $donate_action ) : ?>
 					<button
@@ -97,11 +97,11 @@ ob_start();
 						class="mission-donor-empty__btn"
 						data-wp-on--click="actions.scrollToForm"
 					>
-						<?php esc_html_e( 'Be the First Donor', 'missionwp-donation-platform' ); ?>
+						<?php esc_html_e( 'Be the First Donor', 'mission-donation-platform' ); ?>
 					</button>
 				<?php else : ?>
 					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-donor-empty__btn">
-						<?php esc_html_e( 'Be the First Donor', 'missionwp-donation-platform' ); ?>
+						<?php esc_html_e( 'Be the First Donor', 'mission-donation-platform' ); ?>
 					</a>
 				<?php endif; ?>
 			<?php endif; ?>
@@ -114,14 +114,14 @@ ob_start();
 				++$rank;
 
 				if ( $donor['is_anonymous'] ) {
-					$name     = __( 'Anonymous', 'missionwp-donation-platform' );
+					$name     = __( 'Anonymous', 'mission-donation-platform' );
 					$initials = '?';
 				} else {
 					$first = $donor['first_name'] ?? '';
 					$last  = $donor['last_name'] ?? '';
 					$name  = trim( $first . ' ' . mb_substr( $last, 0, 1 ) . '.' );
 					if ( '.' === $name ) {
-						$name = __( 'Anonymous', 'missionwp-donation-platform' );
+						$name = __( 'Anonymous', 'mission-donation-platform' );
 					}
 					$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
 					if ( '' === trim( $initials ) ) {
@@ -132,8 +132,8 @@ ob_start();
 				$dedication = '';
 				if ( $show_dedication && ! empty( $donor['tribute_type'] ) ) {
 					$prefix     = 'in_memory' === $donor['tribute_type']
-						? __( 'In memory of', 'missionwp-donation-platform' )
-						: __( 'In honor of', 'missionwp-donation-platform' );
+						? __( 'In memory of', 'mission-donation-platform' )
+						: __( 'In honor of', 'mission-donation-platform' );
 					$dedication = $prefix . ' ' . ( $donor['honoree_name'] ?? '' );
 				}
 
@@ -181,4 +181,4 @@ $output = ob_get_clean();
  * @param array    $attributes Block attributes.
  */
 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_top_donors_output', $output, $campaign, $attributes );
+echo apply_filters( 'missiondp_top_donors_output', $output, $campaign, $attributes );

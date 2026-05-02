@@ -2,13 +2,13 @@
 /**
  * Transaction history model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Database\DataStore\DataStoreInterface;
-use Mission\Database\DataStore\TransactionHistoryDataStore;
+use MissionDP\Database\DataStore\DataStoreInterface;
+use MissionDP\Database\DataStore\TransactionHistoryDataStore;
 
 defined( 'ABSPATH' ) || exit;
 

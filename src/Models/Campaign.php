@@ -2,14 +2,14 @@
 /**
  * Campaign model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Database\DataStore\CampaignDataStore;
-use Mission\Database\DataStore\DataStoreInterface;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Database\DataStore\DataStoreInterface;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -154,7 +154,7 @@ class Campaign extends Model {
 	 */
 	private function build_default_page_content(): string {
 		$campaign_id = $this->id;
-		$org_name    = get_option( 'mission_settings' )['org_name'] ?? get_bloginfo( 'name' );
+		$org_name    = get_option( 'missiondp_settings' )['org_name'] ?? get_bloginfo( 'name' );
 		$description = $this->description ?? '';
 
 		ob_start();
@@ -169,7 +169,7 @@ class Campaign extends Model {
 		 * @param string   $content     The default block markup.
 		 * @param Campaign $campaign    The campaign being created.
 		 */
-		return apply_filters( 'mission_campaign_default_page_content', $content, $this );
+		return apply_filters( 'missiondp_campaign_default_page_content', $content, $this );
 	}
 
 	/**

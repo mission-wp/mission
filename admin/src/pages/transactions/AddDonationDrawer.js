@@ -28,7 +28,7 @@ import Drawer from '../../components/Drawer';
 
 const BRAND_COLOR = '#2FA36B';
 const ERROR_COLOR = '#dc2626';
-const isTestMode = !! window.missionAdmin?.testMode;
+const isTestMode = !! window.missiondpAdmin?.testMode;
 
 const errorStyle = {
   borderColor: ERROR_COLOR,
@@ -79,7 +79,7 @@ const INITIAL_FORM = {
   city: '',
   state: '',
   zip: '',
-  country: window.missionAdmin?.orgCountry || 'US',
+  country: window.missiondpAdmin?.orgCountry || 'US',
 };
 
 /**
@@ -140,7 +140,7 @@ function SelectedDonorCard( { donor, onRemove } ) {
       </div>
       <Button
         icon={ cancelCircleFilled }
-        label={ __( 'Remove donor', 'missionwp-donation-platform' ) }
+        label={ __( 'Remove donor', 'mission-donation-platform' ) }
         onClick={ onRemove }
         size="small"
         style={ { color: '#757575', flexShrink: 0 } }
@@ -194,7 +194,7 @@ export default function AddDonationDrawer( {
     searchTimer.current = setTimeout( async () => {
       try {
         const donors = await apiFetch( {
-          path: `/mission/v1/donors?search=${ encodeURIComponent(
+          path: `/mission-donation-platform/v1/donors?search=${ encodeURIComponent(
             query
           ) }&per_page=10`,
         } );
@@ -298,7 +298,7 @@ export default function AddDonationDrawer( {
     if ( donorMode === 'search' && ! selectedDonor ) {
       errors.donor = __(
         'Please select a donor.',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       );
     }
 
@@ -306,19 +306,19 @@ export default function AddDonationDrawer( {
       if ( ! form.email ) {
         errors.email = __(
           'This field is required.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       } else if ( ! isValidEmail( form.email ) ) {
         errors.email = __(
           'Please enter a valid email address.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       }
 
       if ( ! form.firstName ) {
         errors.firstName = __(
           'This field is required.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       }
     }
@@ -326,7 +326,7 @@ export default function AddDonationDrawer( {
     if ( ! form.amount ) {
       errors.amount = __(
         'This field is required.',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       );
     } else {
       const cents = majorToMinor(
@@ -336,7 +336,7 @@ export default function AddDonationDrawer( {
       if ( isNaN( cents ) || cents <= 0 ) {
         errors.amount = __(
           'Please enter a valid amount.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         );
       }
     }
@@ -354,7 +354,7 @@ export default function AddDonationDrawer( {
       setError(
         __(
           'Please fix the errors below and try again.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         )
       );
       bodyRef.current?.scrollTo( { top: 0, behavior: 'smooth' } );
@@ -366,7 +366,7 @@ export default function AddDonationDrawer( {
 
     try {
       await apiFetch( {
-        path: '/mission/v1/transactions',
+        path: '/mission-donation-platform/v1/transactions',
         method: 'POST',
         data: {
           donor_email: form.email,
@@ -392,7 +392,7 @@ export default function AddDonationDrawer( {
     } catch ( err ) {
       setError(
         err.message ||
-          __( 'Something went wrong.', 'missionwp-donation-platform' )
+          __( 'Something went wrong.', 'mission-donation-platform' )
       );
       bodyRef.current?.scrollTo( { top: 0, behavior: 'smooth' } );
     } finally {
@@ -429,7 +429,7 @@ export default function AddDonationDrawer( {
         disabled={ isSaving }
         __next40pxDefaultSize
       >
-        { __( 'Cancel', 'missionwp-donation-platform' ) }
+        { __( 'Cancel', 'mission-donation-platform' ) }
       </Button>
       <Button
         variant="primary"
@@ -442,14 +442,14 @@ export default function AddDonationDrawer( {
         } }
         __next40pxDefaultSize
       >
-        { __( 'Save Donation', 'missionwp-donation-platform' ) }
+        { __( 'Save Donation', 'mission-donation-platform' ) }
       </Button>
     </HStack>
   );
 
   return (
     <Drawer
-      title={ __( 'Add Donation', 'missionwp-donation-platform' ) }
+      title={ __( 'Add Donation', 'mission-donation-platform' ) }
       isOpen={ isOpen }
       onClose={ onClose }
       footer={ footer }
@@ -460,7 +460,7 @@ export default function AddDonationDrawer( {
           <Notice status="warning" isDismissible={ false }>
             { __(
               'Test mode is active. This donation will be recorded as a test transaction.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </Notice>
         ) }
@@ -478,7 +478,7 @@ export default function AddDonationDrawer( {
                 <ComboboxControl
                   label={
                     <RequiredLabel
-                      text={ __( 'Donor', 'missionwp-donation-platform' ) }
+                      text={ __( 'Donor', 'mission-donation-platform' ) }
                     />
                   }
                   value={ null }
@@ -490,7 +490,7 @@ export default function AddDonationDrawer( {
                   } }
                   placeholder={ __(
                     'Search by name or email…',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }
                   __next40pxDefaultSize
                   __nextHasNoMarginBottom
@@ -507,7 +507,7 @@ export default function AddDonationDrawer( {
                       color: '#757575',
                     } }
                   >
-                    { __( 'No donors found.', 'missionwp-donation-platform' ) }
+                    { __( 'No donors found.', 'mission-donation-platform' ) }
                   </p>
                 ) }
               </div>
@@ -527,7 +527,7 @@ export default function AddDonationDrawer( {
                 } }
               >
                 <Icon icon={ plus } size={ 18 } />
-                { __( 'Add a new donor', 'missionwp-donation-platform' ) }
+                { __( 'Add a new donor', 'mission-donation-platform' ) }
               </button>
             </>
           ) }
@@ -544,7 +544,7 @@ export default function AddDonationDrawer( {
                   marginBottom: '8px',
                 } }
               >
-                { __( 'Donor', 'missionwp-donation-platform' ) }
+                { __( 'Donor', 'mission-donation-platform' ) }
               </Text>
               <SelectedDonorCard
                 donor={ selectedDonor }
@@ -559,7 +559,7 @@ export default function AddDonationDrawer( {
                 <TextControl
                   label={
                     <RequiredLabel
-                      text={ __( 'Email', 'missionwp-donation-platform' ) }
+                      text={ __( 'Email', 'mission-donation-platform' ) }
                     />
                   }
                   type="email"
@@ -579,10 +579,7 @@ export default function AddDonationDrawer( {
                   <TextControl
                     label={
                       <RequiredLabel
-                        text={ __(
-                          'First Name',
-                          'missionwp-donation-platform'
-                        ) }
+                        text={ __( 'First Name', 'mission-donation-platform' ) }
                       />
                     }
                     value={ form.firstName }
@@ -598,7 +595,7 @@ export default function AddDonationDrawer( {
                 </div>
                 <div style={ { flex: 1 } }>
                   <TextControl
-                    label={ __( 'Last Name', 'missionwp-donation-platform' ) }
+                    label={ __( 'Last Name', 'mission-donation-platform' ) }
                     value={ form.lastName }
                     onChange={ setField( 'lastName' ) }
                     __next40pxDefaultSize
@@ -621,7 +618,7 @@ export default function AddDonationDrawer( {
                 >
                   { __(
                     'Select an existing donor instead',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }
                 </button>
               </div>
@@ -636,7 +633,7 @@ export default function AddDonationDrawer( {
               id="mission-donation-amount"
               label={
                 <RequiredLabel
-                  text={ __( 'Amount', 'missionwp-donation-platform' ) }
+                  text={ __( 'Amount', 'mission-donation-platform' ) }
                 />
               }
               __nextHasNoMarginBottom
@@ -664,7 +661,7 @@ export default function AddDonationDrawer( {
           </div>
           <div style={ { flex: 1 } }>
             <ComboboxControl
-              label={ __( 'Campaign', 'missionwp-donation-platform' ) }
+              label={ __( 'Campaign', 'mission-donation-platform' ) }
               value={ form.campaignId || null }
               options={ campaignOptions }
               onChange={ ( value ) => setField( 'campaignId' )( value || '' ) }
@@ -676,7 +673,7 @@ export default function AddDonationDrawer( {
         <HStack spacing={ 4 } alignment="top">
           <div style={ { flex: 1 } }>
             <TextControl
-              label={ __( 'Date', 'missionwp-donation-platform' ) }
+              label={ __( 'Date', 'mission-donation-platform' ) }
               type="date"
               value={ form.date }
               onChange={ setField( 'date' ) }
@@ -687,7 +684,7 @@ export default function AddDonationDrawer( {
           <div style={ { flex: 1 } } />
         </HStack>
         <TextareaControl
-          label={ __( 'Notes', 'missionwp-donation-platform' ) }
+          label={ __( 'Notes', 'mission-donation-platform' ) }
           value={ form.notes }
           onChange={ setField( 'notes' ) }
           __nextHasNoMarginBottom
@@ -706,11 +703,11 @@ export default function AddDonationDrawer( {
               marginBottom: '12px',
             } }
           >
-            { __( 'Billing Address', 'missionwp-donation-platform' ) }
+            { __( 'Billing Address', 'mission-donation-platform' ) }
           </Text>
           <VStack spacing={ 3 }>
             <SelectControl
-              label={ __( 'Country', 'missionwp-donation-platform' ) }
+              label={ __( 'Country', 'mission-donation-platform' ) }
               value={ form.country }
               options={ COUNTRIES }
               onChange={ handleCountryChange }
@@ -718,14 +715,14 @@ export default function AddDonationDrawer( {
               __nextHasNoMarginBottom
             />
             <TextControl
-              label={ __( 'Address Line 1', 'missionwp-donation-platform' ) }
+              label={ __( 'Address Line 1', 'mission-donation-platform' ) }
               value={ form.address1 }
               onChange={ setField( 'address1' ) }
               __next40pxDefaultSize
               __nextHasNoMarginBottom
             />
             <TextControl
-              label={ __( 'Address Line 2', 'missionwp-donation-platform' ) }
+              label={ __( 'Address Line 2', 'mission-donation-platform' ) }
               value={ form.address2 }
               onChange={ setField( 'address2' ) }
               __next40pxDefaultSize
@@ -734,7 +731,7 @@ export default function AddDonationDrawer( {
             <HStack spacing={ 4 } alignment="top">
               <div style={ { flex: 1 } }>
                 <TextControl
-                  label={ __( 'City', 'missionwp-donation-platform' ) }
+                  label={ __( 'City', 'mission-donation-platform' ) }
                   value={ form.city }
                   onChange={ setField( 'city' ) }
                   __next40pxDefaultSize
@@ -749,7 +746,7 @@ export default function AddDonationDrawer( {
                     options={ [
                       {
                         value: '',
-                        label: __( 'Select…', 'missionwp-donation-platform' ),
+                        label: __( 'Select…', 'mission-donation-platform' ),
                       },
                       ...regionConfig.options,
                     ] }
@@ -807,7 +804,7 @@ export default function AddDonationDrawer( {
           >
             { __(
               'Send donation receipt email to donor',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </label>
         </div>

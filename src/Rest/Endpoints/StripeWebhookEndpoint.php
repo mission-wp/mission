@@ -2,20 +2,20 @@
 /**
  * REST endpoint for receiving webhook events from the Mission API.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Transaction;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
-use Mission\Webhooks\AccountUpdatedHandler;
-use Mission\Webhooks\InvoicePaymentFailedHandler;
-use Mission\Webhooks\InvoicePaymentSucceededHandler;
-use Mission\Webhooks\PaymentIntentSucceededHandler;
-use Mission\Webhooks\SubscriptionDeletedHandler;
-use Mission\Webhooks\SubscriptionUpdatedHandler;
+use MissionDP\Models\Transaction;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
+use MissionDP\Webhooks\AccountUpdatedHandler;
+use MissionDP\Webhooks\InvoicePaymentFailedHandler;
+use MissionDP\Webhooks\InvoicePaymentSucceededHandler;
+use MissionDP\Webhooks\PaymentIntentSucceededHandler;
+use MissionDP\Webhooks\SubscriptionDeletedHandler;
+use MissionDP\Webhooks\SubscriptionUpdatedHandler;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -174,7 +174,7 @@ class StripeWebhookEndpoint {
 		 * @param array<string, mixed> $data       Event data.
 		 * @param array<string, mixed> $payload    Full event payload.
 		 */
-		do_action( 'mission_webhook_event', $event_type, $data, $payload );
+		do_action( 'missiondp_webhook_event', $event_type, $data, $payload );
 
 		match ( $event_type ) {
 			'account.updated'                => ( new AccountUpdatedHandler() )->handle( $data ),
@@ -197,7 +197,7 @@ class StripeWebhookEndpoint {
 		 * @param array<string, mixed> $data       Event data.
 		 * @param array<string, mixed> $payload    Full event payload.
 		 */
-		do_action( 'mission_webhook_event_processed', $event_type, $data, $payload );
+		do_action( 'missiondp_webhook_event_processed', $event_type, $data, $payload );
 	}
 
 	/**
@@ -267,6 +267,6 @@ class StripeWebhookEndpoint {
 		 *
 		 * @param array<string, mixed> $data Event data.
 		 */
-		do_action( "mission_webhook_{$event_type}", $data );
+		do_action( "missiondp_webhook_{$event_type}", $data );
 	}
 }

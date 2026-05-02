@@ -2,17 +2,17 @@
 /**
  * Tests for the MilestoneTracker class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Campaigns;
+namespace MissionDP\Tests\Campaigns;
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Campaigns\MilestoneTracker;
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Campaigns\MilestoneTracker;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
 /**
@@ -31,15 +31,15 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		DatabaseModule::create_tables();
@@ -65,12 +65,12 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		parent::tear_down();
@@ -318,7 +318,7 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 	 */
 	public function test_milestone_event_fires_action_hook(): void {
 		$campaign = new Campaign( [
-			'post_id'     => self::factory()->post->create( [ 'post_type' => 'mission_campaign' ] ),
+			'post_id'     => self::factory()->post->create( [ 'post_type' => 'missiondp_campaign' ] ),
 			'goal_amount' => 10000,
 		] );
 		$campaign->save();
@@ -327,7 +327,7 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		$donor = $this->create_donor();
 
 		$fired = [];
-		add_action( 'mission_campaign_milestone_reached', function ( $c, $id ) use ( &$fired ) {
+		add_action( 'missiondp_campaign_milestone_reached', function ( $c, $id ) use ( &$fired ) {
 			$fired[] = $id;
 		}, 10, 2 );
 

@@ -2,12 +2,12 @@
 /**
  * REST endpoints for the review banner.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Rest\RestModule;
+use MissionDP\Rest\RestModule;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -66,7 +66,7 @@ class ReviewBannerEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to perform this action.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to perform this action.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -80,7 +80,7 @@ class ReviewBannerEndpoint {
 	 * @return WP_REST_Response
 	 */
 	public function dismiss(): WP_REST_Response {
-		update_user_meta( get_current_user_id(), 'mission_review_banner_dismissed', 1 );
+		update_user_meta( get_current_user_id(), 'missiondp_review_banner_dismissed', 1 );
 
 		return new WP_REST_Response( [ 'success' => true ] );
 	}
@@ -94,7 +94,7 @@ class ReviewBannerEndpoint {
 	public function rate( WP_REST_Request $request ): WP_REST_Response {
 		$rating = $request->get_param( 'rating' );
 
-		update_user_meta( get_current_user_id(), 'mission_review_banner_dismissed', 1 );
+		update_user_meta( get_current_user_id(), 'missiondp_review_banner_dismissed', 1 );
 
 		// Send rating to Mission API (non-blocking).
 		wp_remote_post(
@@ -104,7 +104,7 @@ class ReviewBannerEndpoint {
 				'body'     => [
 					'rating'  => $rating,
 					'domain'  => wp_parse_url( home_url(), PHP_URL_HOST ),
-					'version' => MISSION_VERSION,
+					'version' => MISSIONDP_VERSION,
 				],
 			]
 		);

@@ -2,12 +2,12 @@
 /**
  * Campaign DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Campaign;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -29,7 +29,7 @@ class CampaignDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_campaigns';
+		return $wpdb->prefix . 'missiondp_campaigns';
 	}
 
 	/**
@@ -37,14 +37,14 @@ class CampaignDataStore implements DataStoreInterface {
 	 */
 	protected function get_meta_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_campaignmeta';
+		return $wpdb->prefix . 'missiondp_campaignmeta';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected function get_meta_type(): string {
-		return 'mission_campaign';
+		return 'missiondp_campaign';
 	}
 
 	/**
@@ -68,7 +68,7 @@ class CampaignDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Campaign $model The campaign. */
-		do_action( 'mission_campaign_created', $model );
+		do_action( 'missiondp_campaign_created', $model );
 
 		return $model->id;
 	}

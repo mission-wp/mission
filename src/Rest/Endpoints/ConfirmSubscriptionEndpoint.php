@@ -9,16 +9,16 @@
  * subscription. Falls back to webhook authority if the Mission API is
  * unavailable.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Payments\PaymentIntentVerifier;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\RateLimitTrait;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Payments\PaymentIntentVerifier;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\RateLimitTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -92,7 +92,7 @@ class ConfirmSubscriptionEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -103,7 +103,7 @@ class ConfirmSubscriptionEndpoint {
 		if ( ! hash_equals( $transaction->gateway_transaction_id, $payment_intent_id ) ) {
 			return new WP_Error(
 				'transaction_mismatch',
-				__( 'Payment intent does not match this transaction.', 'missionwp-donation-platform' ),
+				__( 'Payment intent does not match this transaction.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -114,7 +114,7 @@ class ConfirmSubscriptionEndpoint {
 		if ( (int) $transaction->subscription_id !== $subscription_id ) {
 			return new WP_Error(
 				'subscription_mismatch',
-				__( 'Subscription does not match this transaction.', 'missionwp-donation-platform' ),
+				__( 'Subscription does not match this transaction.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -134,7 +134,7 @@ class ConfirmSubscriptionEndpoint {
 		if ( in_array( $transaction->status, [ 'failed', 'cancelled' ], true ) ) {
 			return new WP_Error(
 				'payment_failed',
-				__( 'The payment was not successful.', 'missionwp-donation-platform' ),
+				__( 'The payment was not successful.', 'mission-donation-platform' ),
 				[ 'status' => 402 ]
 			);
 		}
@@ -174,7 +174,7 @@ class ConfirmSubscriptionEndpoint {
 
 			return new WP_Error(
 				'payment_failed',
-				__( 'The payment was not successful.', 'missionwp-donation-platform' ),
+				__( 'The payment was not successful.', 'mission-donation-platform' ),
 				[ 'status' => 402 ]
 			);
 		}

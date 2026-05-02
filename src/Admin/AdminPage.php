@@ -2,10 +2,10 @@
 /**
  * Base class for admin pages.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Admin;
+namespace MissionDP\Admin;
 
 defined( 'ABSPATH' ) || exit;
 

@@ -10,8 +10,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-use Mission\Blocks\DonationFormSettings;
-use Mission\Currency\Currency;
+use MissionDP\Blocks\DonationFormSettings;
+use MissionDP\Currency\Currency;
 
 $settings = DonationFormSettings::resolve( $attributes );
 
@@ -23,15 +23,15 @@ if ( ! empty( $attributes['align'] ) ) {
 // Recurring frequency options.
 $recurring_frequencies = [];
 $frequency_labels      = [
-	'one_time' => __( 'One Time', 'missionwp-donation-platform' ),
+	'one_time' => __( 'One Time', 'mission-donation-platform' ),
 ];
 
 if ( ! empty( $settings['recurringEnabled'] ) && ! empty( $settings['recurringFrequencies'] ) ) {
 	$label_map = [
-		'weekly'    => __( 'Weekly', 'missionwp-donation-platform' ),
-		'monthly'   => __( 'Monthly', 'missionwp-donation-platform' ),
-		'quarterly' => __( 'Quarterly', 'missionwp-donation-platform' ),
-		'annually'  => __( 'Annually', 'missionwp-donation-platform' ),
+		'weekly'    => __( 'Weekly', 'mission-donation-platform' ),
+		'monthly'   => __( 'Monthly', 'mission-donation-platform' ),
+		'quarterly' => __( 'Quarterly', 'mission-donation-platform' ),
+		'annually'  => __( 'Annually', 'mission-donation-platform' ),
 	];
 	// Sort recurring frequencies in a fixed canonical order.
 	$canonical_order = array_keys( $label_map );
@@ -65,7 +65,7 @@ $tip_percentages     = $settings['tipPercentages'] ?? [ 5, 10, 15, 20 ];
 $default_tip_percent = 15;
 
 // Primary color: per-form override wins, then global setting, then fallback.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $settings['primaryColor'] ) ? $settings['primaryColor'] : $global_primary;
 
@@ -141,9 +141,9 @@ $context = [
 	'comment'              => '',
 	'commentChecked'       => false,
 	'settings'             => $settings,
-	'stripePublishableKey' => ! empty( $mission_settings['test_mode'] ) ? MISSION_STRIPE_PK_TEST : MISSION_STRIPE_PK_LIVE,
+	'stripePublishableKey' => ! empty( $mission_settings['test_mode'] ) ? MISSIONDP_STRIPE_PK_TEST : MISSIONDP_STRIPE_PK_LIVE,
 	'chargesEnabled'       => ! empty( $mission_settings['stripe_charges_enabled'] ),
-	'restUrl'              => trailingslashit( get_rest_url( null, 'mission/v1' ) ),
+	'restUrl'              => trailingslashit( get_rest_url( null, 'mission-donation-platform/v1' ) ),
 	'restNonce'            => wp_create_nonce( 'wp_rest' ),
 	'formId'               => $attributes['formId'] ?? '',
 	'campaignId'           => $settings['campaignId'] ?? 0,
@@ -158,7 +158,7 @@ $context = [
 	'lastNameError'        => false,
 	'emailError'           => false,
 	'primaryColor'         => $primary_color,
-	'stripeAppearance'     => apply_filters( 'mission_stripe_appearance', [] ),
+	'stripeAppearance'     => apply_filters( 'missiondp_stripe_appearance', [] ),
 	'locale'               => str_replace( '_', '-', get_locale() ),
 	'stepDirection'            => 'forward',
 	'leavingStep'              => 0,
@@ -174,7 +174,7 @@ $context = [
 
 <section
 	<?php echo get_block_wrapper_attributes( [ 'class' => implode( ' ', $block_classes ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
-	data-wp-interactive="mission/donation-form"
+	data-wp-interactive="mission-donation-platform/donation-form"
 	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
 	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-light: <?php echo esc_attr( $primary_light ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>; --mission-primary-text-on-light: <?php echo esc_attr( $primary_text_on_light ); ?>;"
 >
@@ -186,7 +186,7 @@ $context = [
 				<line x1="12" y1="10" x2="12" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 				<circle cx="12" cy="17" r="1" fill="currentColor"/>
 			</svg>
-			<?php esc_html_e( 'Test mode active: Donations in test mode are not processed', 'missionwp-donation-platform' ); ?>
+			<?php esc_html_e( 'Test mode active: Donations in test mode are not processed', 'mission-donation-platform' ); ?>
 		</div>
 	<?php endif; ?>
 
@@ -212,7 +212,7 @@ $context = [
 		data-wp-class--active="callbacks.isStep1Active"
 		data-wp-class--leaving="callbacks.isStep1Leaving"
 	>
-		<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['chooseGiftHeading'] ) ? $settings['chooseGiftHeading'] : __( 'Choose Your Gift', 'missionwp-donation-platform' ) ); ?></h2>
+		<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['chooseGiftHeading'] ) ? $settings['chooseGiftHeading'] : __( 'Choose Your Gift', 'mission-donation-platform' ) ); ?></h2>
 
 		<?php // Frequency toggle (only if recurring is enabled). ?>
 		<?php if ( ! empty( $settings['recurringEnabled'] ) && ! empty( $recurring_frequencies ) ) : ?>
@@ -225,7 +225,7 @@ $context = [
 					data-wp-on--click="actions.selectOneTime"
 					data-wp-class--active="!state.isOngoing"
 				>
-					<?php esc_html_e( 'One Time', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'One Time', 'mission-donation-platform' ); ?>
 				</button>
 				<button
 					type="button"
@@ -238,7 +238,7 @@ $context = [
 					if ( 1 === count( $recurring_frequencies ) ) {
 						echo esc_html( $frequency_labels[ $recurring_frequencies[0] ] );
 					} else {
-						esc_html_e( 'Ongoing', 'missionwp-donation-platform' );
+						esc_html_e( 'Ongoing', 'mission-donation-platform' );
 					}
 					?>
 				</button>
@@ -246,14 +246,14 @@ $context = [
 
 			<?php // Recurring frequency selector — visible when Ongoing is active (hidden for single frequency). ?>
 			<div class="mission-df-recurring-selector<?php echo 1 === count( $recurring_frequencies ) ? ' mission-df-recurring-selector--single' : ''; ?>" data-wp-bind--hidden="!state.isOngoing" data-wp-class--visible="state.isOngoing">
-				<span class="mission-df-recurring-label"><?php esc_html_e( 'Give', 'missionwp-donation-platform' ); ?></span>
+				<span class="mission-df-recurring-label"><?php esc_html_e( 'Give', 'mission-donation-platform' ); ?></span>
 				<div class="mission-df-recurring-dropdown" data-wp-on-document--click="actions.closeFrequencyDropdown">
 					<button
 						type="button"
 						class="mission-df-recurring-trigger"
 						data-wp-on--click="actions.toggleFrequencyDropdown"
 						data-wp-bind--aria-expanded="state.frequencyDropdownOpen"
-						aria-label="<?php esc_attr_e( 'Select frequency', 'missionwp-donation-platform' ); ?>"
+						aria-label="<?php esc_attr_e( 'Select frequency', 'mission-donation-platform' ); ?>"
 					>
 						<span data-wp-text="callbacks.selectedFrequencyLabel"></span>
 						<span class="mission-df-recurring-arrow" data-wp-class--open="state.frequencyDropdownOpen"></span>
@@ -297,7 +297,7 @@ $context = [
 						data-wp-on--click="actions.toggleCustomAmount"
 						data-wp-bind--hidden="state.isCustomAmount"
 					>
-						<?php esc_html_e( 'Other', 'missionwp-donation-platform' ); ?>
+						<?php esc_html_e( 'Other', 'mission-donation-platform' ); ?>
 					</button>
 					<div class="mission-df-amount-btn--other-input" hidden data-wp-bind--hidden="!state.isCustomAmount">
 						<span class="mission-df-other-prefix"><?php echo esc_html( $currency_symbol ); ?></span>
@@ -309,7 +309,7 @@ $context = [
 							data-wp-on--input="actions.updateCustomAmount"
 							data-wp-on--blur="actions.blurCustomAmount"
 							data-wp-watch="callbacks.focusCustomInput"
-							aria-label="<?php esc_attr_e( 'Custom amount', 'missionwp-donation-platform' ); ?>"
+							aria-label="<?php esc_attr_e( 'Custom amount', 'mission-donation-platform' ); ?>"
 						/>
 					</div>
 				</div>
@@ -322,7 +322,7 @@ $context = [
 				<?php
 				printf(
 					/* translators: %s: formatted minimum amount */
-					esc_html__( 'Minimum donation is %s', 'missionwp-donation-platform' ),
+					esc_html__( 'Minimum donation is %s', 'mission-donation-platform' ),
 					'<span data-wp-text="callbacks.formattedMinimumAmount"></span>'
 				);
 				?>
@@ -338,7 +338,7 @@ $context = [
 					data-wp-on--change="actions.toggleTribute"
 					data-wp-bind--checked="state.tributeChecked"
 				/>
-				<?php esc_html_e( 'Dedicate this gift in honor or memory of someone', 'missionwp-donation-platform' ); ?>
+				<?php esc_html_e( 'Dedicate this gift in honor or memory of someone', 'mission-donation-platform' ); ?>
 			</label>
 
 			<div class="mission-df-tribute-fields" data-wp-bind--hidden="!state.tributeChecked" data-wp-class--visible="state.tributeChecked">
@@ -348,21 +348,21 @@ $context = [
 						data-wp-on--change="actions.selectTributeType"
 						data-wp-bind--value="state.tributeType"
 					>
-						<option value="in_honor"><?php esc_html_e( 'In honor of', 'missionwp-donation-platform' ); ?></option>
-						<option value="in_memory"><?php esc_html_e( 'In memory of', 'missionwp-donation-platform' ); ?></option>
+						<option value="in_honor"><?php esc_html_e( 'In honor of', 'mission-donation-platform' ); ?></option>
+						<option value="in_memory"><?php esc_html_e( 'In memory of', 'mission-donation-platform' ); ?></option>
 					</select>
 					<input
 						type="text"
 						class="mission-df-tribute-honoree"
 						id="<?php echo esc_attr( $uid . 'honoree-name' ); ?>"
-						placeholder="<?php esc_attr_e( 'Honoree name', 'missionwp-donation-platform' ); ?>"
+						placeholder="<?php esc_attr_e( 'Honoree name', 'mission-donation-platform' ); ?>"
 						data-wp-on--input="actions.updateHonoreeName"
 						data-wp-bind--value="state.honoreeName"
 						data-wp-bind--aria-invalid="state.honoreeNameError"
 						aria-describedby="<?php echo esc_attr( $uid . 'honoree-name-error' ); ?>"
 					/>
 				</div>
-				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'honoree-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.honoreeNameError"><?php esc_html_e( 'Please provide the honoree\'s name.', 'missionwp-donation-platform' ); ?></p>
+				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'honoree-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.honoreeNameError"><?php esc_html_e( 'Please provide the honoree\'s name.', 'mission-donation-platform' ); ?></p>
 
 				<div class="mission-df-tribute-notify" data-wp-bind--hidden="!state.notifyEnabled" data-wp-class--visible="state.notifyEnabled">
 					<div class="mission-df-notify-method-toggle">
@@ -375,7 +375,7 @@ $context = [
 							data-wp-class--active="callbacks.isNotifyEmail"
 						>
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M1.5 4.5L8 9l6.5-4.5"/></svg>
-							<?php esc_html_e( 'Email', 'missionwp-donation-platform' ); ?>
+							<?php esc_html_e( 'Email', 'mission-donation-platform' ); ?>
 						</button>
 						<button
 							type="button"
@@ -385,19 +385,19 @@ $context = [
 							data-wp-class--active="callbacks.isNotifyMail"
 						>
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M2 7h12M6 10h4"/></svg>
-							<?php esc_html_e( 'Mail', 'missionwp-donation-platform' ); ?>
+							<?php esc_html_e( 'Mail', 'mission-donation-platform' ); ?>
 						</button>
 					</div>
 
 					<?php // Personal message (optional, shared across email and mail). ?>
 					<div class="mission-df-field mission-df-tribute-message">
-						<label for="<?php echo esc_attr( $uid . 'tribute-message' ); ?>"><?php esc_html_e( 'Personal Message', 'missionwp-donation-platform' ); ?> <span class="mission-df-optional"><?php esc_html_e( '(optional)', 'missionwp-donation-platform' ); ?></span></label>
+						<label for="<?php echo esc_attr( $uid . 'tribute-message' ); ?>"><?php esc_html_e( 'Personal Message', 'mission-donation-platform' ); ?> <span class="mission-df-optional"><?php esc_html_e( '(optional)', 'mission-donation-platform' ); ?></span></label>
 						<textarea
 							id="<?php echo esc_attr( $uid . 'tribute-message' ); ?>"
 							rows="2"
 							data-wp-on--input="actions.updateTributeMessage"
 							data-wp-bind--value="context.tributeMessage"
-							placeholder="<?php esc_attr_e( 'Add a personal message to include in the notification', 'missionwp-donation-platform' ); ?>"
+							placeholder="<?php esc_attr_e( 'Add a personal message to include in the notification', 'mission-donation-platform' ); ?>"
 						></textarea>
 					</div>
 
@@ -405,7 +405,7 @@ $context = [
 					<div class="mission-df-notify-panel" data-wp-bind--hidden="!callbacks.isNotifyEmail" data-wp-class--active="callbacks.isNotifyEmail">
 						<div class="mission-df-notify-row">
 							<div class="mission-df-field">
-								<label for="<?php echo esc_attr( $uid . 'notify-name' ); ?>"><?php esc_html_e( 'Recipient Name', 'missionwp-donation-platform' ); ?></label>
+								<label for="<?php echo esc_attr( $uid . 'notify-name' ); ?>"><?php esc_html_e( 'Recipient Name', 'mission-donation-platform' ); ?></label>
 								<input
 									type="text"
 									id="<?php echo esc_attr( $uid . 'notify-name' ); ?>"
@@ -415,10 +415,10 @@ $context = [
 									data-wp-bind--aria-invalid="state.notifyNameError"
 									aria-describedby="<?php echo esc_attr( $uid . 'notify-name-error' ); ?>"
 								/>
-								<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'notify-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.notifyNameError"><?php esc_html_e( 'Please provide the recipient\'s name.', 'missionwp-donation-platform' ); ?></p>
+								<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'notify-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.notifyNameError"><?php esc_html_e( 'Please provide the recipient\'s name.', 'mission-donation-platform' ); ?></p>
 							</div>
 							<div class="mission-df-field">
-								<label for="<?php echo esc_attr( $uid . 'notify-email' ); ?>"><?php esc_html_e( 'Recipient Email', 'missionwp-donation-platform' ); ?></label>
+								<label for="<?php echo esc_attr( $uid . 'notify-email' ); ?>"><?php esc_html_e( 'Recipient Email', 'mission-donation-platform' ); ?></label>
 								<input
 									type="email"
 									id="<?php echo esc_attr( $uid . 'notify-email' ); ?>"
@@ -428,7 +428,7 @@ $context = [
 									data-wp-bind--aria-invalid="state.notifyEmailError"
 									aria-describedby="<?php echo esc_attr( $uid . 'notify-email-error' ); ?>"
 								/>
-								<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'notify-email-error' ); ?>" role="alert" data-wp-bind--hidden="!state.notifyEmailError"><?php esc_html_e( 'Please provide a valid email address.', 'missionwp-donation-platform' ); ?></p>
+								<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'notify-email-error' ); ?>" role="alert" data-wp-bind--hidden="!state.notifyEmailError"><?php esc_html_e( 'Please provide a valid email address.', 'mission-donation-platform' ); ?></p>
 							</div>
 						</div>
 					</div>
@@ -436,7 +436,7 @@ $context = [
 					<?php // Mail panel. ?>
 					<div class="mission-df-notify-panel" data-wp-bind--hidden="!callbacks.isNotifyMail" data-wp-class--active="callbacks.isNotifyMail">
 						<div class="mission-df-field">
-							<label for="<?php echo esc_attr( $uid . 'notify-name-mail' ); ?>"><?php esc_html_e( 'Recipient Name', 'missionwp-donation-platform' ); ?></label>
+							<label for="<?php echo esc_attr( $uid . 'notify-name-mail' ); ?>"><?php esc_html_e( 'Recipient Name', 'mission-donation-platform' ); ?></label>
 							<input
 								type="text"
 								id="<?php echo esc_attr( $uid . 'notify-name-mail' ); ?>"
@@ -446,37 +446,37 @@ $context = [
 								data-wp-bind--aria-invalid="state.notifyNameError"
 								aria-describedby="<?php echo esc_attr( $uid . 'notify-name-mail-error' ); ?>"
 							/>
-							<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'notify-name-mail-error' ); ?>" role="alert" data-wp-bind--hidden="!state.notifyNameError"><?php esc_html_e( 'Please provide the recipient\'s name.', 'missionwp-donation-platform' ); ?></p>
+							<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'notify-name-mail-error' ); ?>" role="alert" data-wp-bind--hidden="!state.notifyNameError"><?php esc_html_e( 'Please provide the recipient\'s name.', 'mission-donation-platform' ); ?></p>
 						</div>
 						<div class="mission-df-field">
-							<label><?php esc_html_e( 'Country', 'missionwp-donation-platform' ); ?></label>
+							<label><?php esc_html_e( 'Country', 'mission-donation-platform' ); ?></label>
 							<select class="mission-df-select" data-wp-on--change="actions.updateNotifyCountry">
-								<option value="US" selected><?php esc_html_e( 'United States', 'missionwp-donation-platform' ); ?></option>
-								<option value="CA"><?php esc_html_e( 'Canada', 'missionwp-donation-platform' ); ?></option>
-								<option value="GB"><?php esc_html_e( 'United Kingdom', 'missionwp-donation-platform' ); ?></option>
-								<option value="AU"><?php esc_html_e( 'Australia', 'missionwp-donation-platform' ); ?></option>
-								<option value="DE"><?php esc_html_e( 'Germany', 'missionwp-donation-platform' ); ?></option>
-								<option value="FR"><?php esc_html_e( 'France', 'missionwp-donation-platform' ); ?></option>
-								<option value="NZ"><?php esc_html_e( 'New Zealand', 'missionwp-donation-platform' ); ?></option>
-								<option value="IE"><?php esc_html_e( 'Ireland', 'missionwp-donation-platform' ); ?></option>
-								<option value="NL"><?php esc_html_e( 'Netherlands', 'missionwp-donation-platform' ); ?></option>
+								<option value="US" selected><?php esc_html_e( 'United States', 'mission-donation-platform' ); ?></option>
+								<option value="CA"><?php esc_html_e( 'Canada', 'mission-donation-platform' ); ?></option>
+								<option value="GB"><?php esc_html_e( 'United Kingdom', 'mission-donation-platform' ); ?></option>
+								<option value="AU"><?php esc_html_e( 'Australia', 'mission-donation-platform' ); ?></option>
+								<option value="DE"><?php esc_html_e( 'Germany', 'mission-donation-platform' ); ?></option>
+								<option value="FR"><?php esc_html_e( 'France', 'mission-donation-platform' ); ?></option>
+								<option value="NZ"><?php esc_html_e( 'New Zealand', 'mission-donation-platform' ); ?></option>
+								<option value="IE"><?php esc_html_e( 'Ireland', 'mission-donation-platform' ); ?></option>
+								<option value="NL"><?php esc_html_e( 'Netherlands', 'mission-donation-platform' ); ?></option>
 							</select>
 						</div>
 						<div class="mission-df-field">
-							<label><?php esc_html_e( 'Street Address', 'missionwp-donation-platform' ); ?></label>
+							<label><?php esc_html_e( 'Street Address', 'mission-donation-platform' ); ?></label>
 							<input type="text" data-wp-on--input="actions.updateNotifyAddress" data-wp-bind--value="context.notifyAddress" />
 						</div>
 						<div class="mission-df-notify-address-row">
 							<div class="mission-df-field">
-								<label><?php esc_html_e( 'City', 'missionwp-donation-platform' ); ?></label>
+								<label><?php esc_html_e( 'City', 'mission-donation-platform' ); ?></label>
 								<input type="text" data-wp-on--input="actions.updateNotifyCity" data-wp-bind--value="context.notifyCity" />
 							</div>
 							<div class="mission-df-field">
-								<label><?php esc_html_e( 'State / Province', 'missionwp-donation-platform' ); ?></label>
+								<label><?php esc_html_e( 'State / Province', 'mission-donation-platform' ); ?></label>
 								<input type="text" data-wp-on--input="actions.updateNotifyState" data-wp-bind--value="context.notifyState" />
 							</div>
 							<div class="mission-df-field">
-								<label><?php esc_html_e( 'Postal Code', 'missionwp-donation-platform' ); ?></label>
+								<label><?php esc_html_e( 'Postal Code', 'mission-donation-platform' ); ?></label>
 								<input type="text" data-wp-on--input="actions.updateNotifyZip" data-wp-bind--value="context.notifyZip" />
 							</div>
 						</div>
@@ -502,7 +502,7 @@ $context = [
 					data-wp-on--change="actions.toggleComment"
 					data-wp-bind--checked="state.commentChecked"
 				/>
-				<?php esc_html_e( 'Add a comment to my donation', 'missionwp-donation-platform' ); ?>
+				<?php esc_html_e( 'Add a comment to my donation', 'mission-donation-platform' ); ?>
 			</label>
 			<div class="mission-df-comment-field" data-wp-class--visible="state.commentChecked">
 				<textarea
@@ -511,7 +511,7 @@ $context = [
 					data-wp-on--input="actions.updateComment"
 					data-wp-bind--value="state.comment"
 					data-wp-watch="callbacks.focusComment"
-					placeholder="<?php esc_attr_e( 'Leave a message (optional)', 'missionwp-donation-platform' ); ?>"
+					placeholder="<?php esc_attr_e( 'Leave a message (optional)', 'mission-donation-platform' ); ?>"
 				></textarea>
 			</div>
 		</div>
@@ -522,7 +522,7 @@ $context = [
 			class="mission-df-btn mission-df-btn--primary"
 			data-wp-on--click="actions.nextStep"
 		>
-			<span><?php echo esc_html( ! empty( $settings['continueButtonText'] ) ? $settings['continueButtonText'] : __( 'Continue', 'missionwp-donation-platform' ) ); ?></span>
+			<span><?php echo esc_html( ! empty( $settings['continueButtonText'] ) ? $settings['continueButtonText'] : __( 'Continue', 'mission-donation-platform' ) ); ?></span>
 			<svg class="mission-df-btn-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
 		</button>
 	</div>
@@ -537,9 +537,9 @@ $context = [
 		<div class="mission-df-step-header">
 			<button type="button" class="mission-df-back-link" data-wp-on--click="actions.prevStep">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
-				<?php esc_html_e( 'Back', 'missionwp-donation-platform' ); ?>
+				<?php esc_html_e( 'Back', 'mission-donation-platform' ); ?>
 			</button>
-			<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['additionalInfoHeading'] ) ? $settings['additionalInfoHeading'] : __( 'Additional Information', 'missionwp-donation-platform' ) ); ?></h2>
+			<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['additionalInfoHeading'] ) ? $settings['additionalInfoHeading'] : __( 'Additional Information', 'mission-donation-platform' ) ); ?></h2>
 		</div>
 
 		<?php foreach ( $settings['customFields'] as $cf ) :
@@ -605,7 +605,7 @@ $context = [
 					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				>
-					<option value=""><?php esc_html_e( 'Select an option', 'missionwp-donation-platform' ); ?></option>
+					<option value=""><?php esc_html_e( 'Select an option', 'mission-donation-platform' ); ?></option>
 					<?php foreach ( $cf_options as $opt ) : ?>
 						<option value="<?php echo esc_attr( $opt ); ?>"><?php echo esc_html( $opt ); ?></option>
 					<?php endforeach; ?>
@@ -663,7 +663,7 @@ $context = [
 
 			<?php if ( 'checkbox' !== $cf_type ) : ?>
 				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>" role="alert" data-wp-bind--hidden="!callbacks.hasCustomFieldError">
-					<?php esc_html_e( 'This field is required.', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'This field is required.', 'mission-donation-platform' ); ?>
 				</p>
 			<?php endif; ?>
 		</div>
@@ -674,7 +674,7 @@ $context = [
 			class="mission-df-btn mission-df-btn--primary"
 			data-wp-on--click="actions.nextStep"
 		>
-			<span><?php echo esc_html( ! empty( $settings['continueButtonText'] ) ? $settings['continueButtonText'] : __( 'Continue', 'missionwp-donation-platform' ) ); ?></span>
+			<span><?php echo esc_html( ! empty( $settings['continueButtonText'] ) ? $settings['continueButtonText'] : __( 'Continue', 'mission-donation-platform' ) ); ?></span>
 			<svg class="mission-df-btn-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
 		</button>
 	</div>
@@ -689,9 +689,9 @@ $context = [
 		<div class="mission-df-step-header">
 			<button type="button" class="mission-df-back-link" data-wp-on--click="actions.prevStep">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
-				<?php esc_html_e( 'Back', 'missionwp-donation-platform' ); ?>
+				<?php esc_html_e( 'Back', 'mission-donation-platform' ); ?>
 			</button>
-			<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['summaryHeading'] ) ? $settings['summaryHeading'] : __( 'Complete Your Gift', 'missionwp-donation-platform' ) ); ?></h2>
+			<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['summaryHeading'] ) ? $settings['summaryHeading'] : __( 'Complete Your Gift', 'mission-donation-platform' ) ); ?></h2>
 		</div>
 
 		<?php // Donation amount headline. ?>
@@ -705,26 +705,26 @@ $context = [
 				<p class="mission-df-fee-line">
 					<?php if ( 'required' === ( $settings['feeMode'] ?? 'optional' ) ) : ?>
 						<span class="mission-df-fee-amount-text">+ <span data-wp-text="callbacks.formattedFeeAmount"></span>
-						<?php esc_html_e( 'processing fee', 'missionwp-donation-platform' ); ?></span>
+						<?php esc_html_e( 'processing fee', 'mission-donation-platform' ); ?></span>
 					<?php else : ?>
 						<span class="mission-df-fee-amount-text" data-wp-class--uncovered="!state.feeRecoveryChecked">+ <span data-wp-text="callbacks.formattedFeeAmount"></span>
-						<?php esc_html_e( 'processing fee', 'missionwp-donation-platform' ); ?></span>
+						<?php esc_html_e( 'processing fee', 'mission-donation-platform' ); ?></span>
 						<button type="button" class="mission-df-fee-edit" data-wp-on--click="actions.toggleFeeDetails">
-							<?php esc_html_e( 'Edit', 'missionwp-donation-platform' ); ?>
+							<?php esc_html_e( 'Edit', 'mission-donation-platform' ); ?>
 						</button>
 					<?php endif; ?>
 				</p>
 				<?php if ( 'required' !== ( $settings['feeMode'] ?? 'optional' ) ) : ?>
 					<div class="mission-df-fee-details" data-wp-bind--hidden="!state.showFeeDetails" data-wp-class--visible="state.showFeeDetails">
 						<div>
-							<p><?php esc_html_e( 'Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about.', 'missionwp-donation-platform' ); ?></p>
+							<p><?php esc_html_e( 'Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about.', 'mission-donation-platform' ); ?></p>
 							<label class="mission-df-checkbox-label">
 								<input
 									type="checkbox"
 									data-wp-on--change="actions.toggleFeeRecovery"
 									data-wp-bind--checked="state.feeRecoveryChecked"
 								/>
-								<?php esc_html_e( 'I want to cover the fee', 'missionwp-donation-platform' ); ?>
+								<?php esc_html_e( 'I want to cover the fee', 'mission-donation-platform' ); ?>
 							</label>
 						</div>
 					</div>
@@ -737,7 +737,7 @@ $context = [
 			<?php if ( empty( $settings['collectAddress'] ) ) : ?>
 			<div class="mission-df-name-row">
 				<div class="mission-df-field">
-					<label for="<?php echo esc_attr( $uid . 'first-name' ); ?>"><?php esc_html_e( 'First Name', 'missionwp-donation-platform' ); ?></label>
+					<label for="<?php echo esc_attr( $uid . 'first-name' ); ?>"><?php esc_html_e( 'First Name', 'mission-donation-platform' ); ?></label>
 					<input
 						type="text"
 						id="<?php echo esc_attr( $uid . 'first-name' ); ?>"
@@ -748,10 +748,10 @@ $context = [
 						data-wp-bind--aria-invalid="state.firstNameError"
 						aria-describedby="<?php echo esc_attr( $uid . 'first-name-error' ); ?>"
 					/>
-					<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'first-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.firstNameError"><?php esc_html_e( 'This field is incomplete.', 'missionwp-donation-platform' ); ?></p>
+					<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'first-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.firstNameError"><?php esc_html_e( 'This field is incomplete.', 'mission-donation-platform' ); ?></p>
 				</div>
 				<div class="mission-df-field">
-					<label for="<?php echo esc_attr( $uid . 'last-name' ); ?>"><?php esc_html_e( 'Last Name', 'missionwp-donation-platform' ); ?></label>
+					<label for="<?php echo esc_attr( $uid . 'last-name' ); ?>"><?php esc_html_e( 'Last Name', 'mission-donation-platform' ); ?></label>
 					<input
 						type="text"
 						id="<?php echo esc_attr( $uid . 'last-name' ); ?>"
@@ -762,12 +762,12 @@ $context = [
 						data-wp-bind--aria-invalid="state.lastNameError"
 						aria-describedby="<?php echo esc_attr( $uid . 'last-name-error' ); ?>"
 					/>
-					<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'last-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.lastNameError"><?php esc_html_e( 'This field is incomplete.', 'missionwp-donation-platform' ); ?></p>
+					<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'last-name-error' ); ?>" role="alert" data-wp-bind--hidden="!state.lastNameError"><?php esc_html_e( 'This field is incomplete.', 'mission-donation-platform' ); ?></p>
 				</div>
 			</div>
 			<?php endif; ?>
 			<div class="mission-df-field">
-				<label for="<?php echo esc_attr( $uid . 'email' ); ?>"><?php esc_html_e( 'Email Address', 'missionwp-donation-platform' ); ?></label>
+				<label for="<?php echo esc_attr( $uid . 'email' ); ?>"><?php esc_html_e( 'Email Address', 'mission-donation-platform' ); ?></label>
 				<input
 					type="email"
 					id="<?php echo esc_attr( $uid . 'email' ); ?>"
@@ -778,11 +778,11 @@ $context = [
 					data-wp-bind--aria-invalid="state.emailError"
 					aria-describedby="<?php echo esc_attr( $uid . 'email-error' ); ?>"
 				/>
-				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'email-error' ); ?>" role="alert" data-wp-bind--hidden="!state.emailError"><?php esc_html_e( 'Please provide a valid email address.', 'missionwp-donation-platform' ); ?></p>
+				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'email-error' ); ?>" role="alert" data-wp-bind--hidden="!state.emailError"><?php esc_html_e( 'Please provide a valid email address.', 'mission-donation-platform' ); ?></p>
 			</div>
 			<?php if ( ! empty( $settings['phoneRequired'] ) ) : ?>
 			<div class="mission-df-field">
-				<label for="<?php echo esc_attr( $uid . 'phone' ); ?>"><?php esc_html_e( 'Phone Number', 'missionwp-donation-platform' ); ?></label>
+				<label for="<?php echo esc_attr( $uid . 'phone' ); ?>"><?php esc_html_e( 'Phone Number', 'mission-donation-platform' ); ?></label>
 				<input
 					type="tel"
 					id="<?php echo esc_attr( $uid . 'phone' ); ?>"
@@ -793,7 +793,7 @@ $context = [
 					data-wp-bind--aria-invalid="state.phoneError"
 					aria-describedby="<?php echo esc_attr( $uid . 'phone-error' ); ?>"
 				/>
-				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'phone-error' ); ?>" role="alert" data-wp-bind--hidden="!state.phoneError"><?php esc_html_e( 'Please provide a phone number.', 'missionwp-donation-platform' ); ?></p>
+				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'phone-error' ); ?>" role="alert" data-wp-bind--hidden="!state.phoneError"><?php esc_html_e( 'Please provide a phone number.', 'mission-donation-platform' ); ?></p>
 			</div>
 			<?php endif; ?>
 		</div>
@@ -807,7 +807,7 @@ $context = [
 						data-wp-on--change="actions.toggleAnonymous"
 						data-wp-bind--checked="state.isAnonymous"
 					/>
-					<?php esc_html_e( 'Make my donation anonymous', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'Make my donation anonymous', 'mission-donation-platform' ); ?>
 				</label>
 			</div>
 		<?php endif; ?>
@@ -829,7 +829,7 @@ $context = [
 		></div>
 		<?php else : ?>
 		<div class="mission-df-charges-disabled">
-			<p><?php esc_html_e( 'Donations are not available right now. Please check back soon.', 'missionwp-donation-platform' ); ?></p>
+			<p><?php esc_html_e( 'Donations are not available right now. Please check back soon.', 'mission-donation-platform' ); ?></p>
 		</div>
 		<?php endif; ?>
 		<div
@@ -844,7 +844,7 @@ $context = [
 				<circle cx="12" cy="16.5" r="1" fill="currentColor"/>
 			</svg>
 			<span data-wp-text="state.paymentError"></span>
-			<button type="button" class="mission-df-card-error-dismiss" data-wp-on--click="actions.dismissError" aria-label="<?php esc_attr_e( 'Dismiss error', 'missionwp-donation-platform' ); ?>">
+			<button type="button" class="mission-df-card-error-dismiss" data-wp-on--click="actions.dismissError" aria-label="<?php esc_attr_e( 'Dismiss error', 'mission-donation-platform' ); ?>">
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 					<line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
 					<line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -858,7 +858,7 @@ $context = [
 				<div class="mission-df-tip-card">
 					<div class="mission-df-tip-header">
 						<p class="mission-df-tip-text">
-							<?php esc_html_e( 'An optional tip keeps this free donation platform running', 'missionwp-donation-platform' ); ?>
+							<?php esc_html_e( 'An optional tip keeps this free donation platform running', 'mission-donation-platform' ); ?>
 						</p>
 						<div class="mission-df-tip-trigger-wrap">
 							<button
@@ -866,7 +866,7 @@ $context = [
 								class="mission-df-tip-trigger"
 								data-wp-on--click="actions.toggleTipMenu"
 								data-wp-bind--aria-expanded="state.tipMenuOpen"
-								aria-label="<?php esc_attr_e( 'Select tip amount', 'missionwp-donation-platform' ); ?>"
+								aria-label="<?php esc_attr_e( 'Select tip amount', 'mission-donation-platform' ); ?>"
 							>
 								<span class="mission-df-tip-trigger-chevron">
 									<svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5L5 1 1 5"/></svg>
@@ -881,7 +881,7 @@ $context = [
 								<button type="button" class="mission-df-tip-option" data-wp-context='{"tipPercent":15}' data-wp-on--click="actions.selectTipPercent" data-wp-class--active="callbacks.isTipOptionActive">15%</button>
 								<button type="button" class="mission-df-tip-option" data-wp-context='{"tipPercent":10}' data-wp-on--click="actions.selectTipPercent" data-wp-class--active="callbacks.isTipOptionActive">10%</button>
 								<button type="button" class="mission-df-tip-option mission-df-tip-option--other" data-wp-on--click="actions.selectCustomTip" data-wp-class--active="state.isCustomTip">
-									<?php esc_html_e( 'Other', 'missionwp-donation-platform' ); ?>
+									<?php esc_html_e( 'Other', 'mission-donation-platform' ); ?>
 								</button>
 							</div>
 						</div>
@@ -892,10 +892,10 @@ $context = [
 								<span class="mission-df-tip-heart">
 									<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z"/></svg>
 								</span>
-								<?php esc_html_e( 'Help keep this platform free', 'missionwp-donation-platform' ); ?>
+								<?php esc_html_e( 'Help keep this platform free', 'mission-donation-platform' ); ?>
 							</div>
 							<div class="mission-df-tip-custom-row">
-								<button type="button" class="mission-df-tip-custom-btn" data-wp-on--click="actions.tipCustomDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'missionwp-donation-platform' ); ?>">&minus;</button>
+								<button type="button" class="mission-df-tip-custom-btn" data-wp-on--click="actions.tipCustomDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'mission-donation-platform' ); ?>">&minus;</button>
 								<div class="mission-df-tip-custom-input-wrap">
 									<span class="mission-df-tip-custom-prefix"><?php echo esc_html( $currency_symbol ); ?></span>
 									<input
@@ -905,10 +905,10 @@ $context = [
 										step="1"
 										data-wp-on--input="actions.updateCustomTipAmount"
 										data-wp-bind--value="callbacks.customTipDisplayValue"
-										aria-label="<?php esc_attr_e( 'Custom tip amount', 'missionwp-donation-platform' ); ?>"
+										aria-label="<?php esc_attr_e( 'Custom tip amount', 'mission-donation-platform' ); ?>"
 									/>
 								</div>
-								<button type="button" class="mission-df-tip-custom-btn" data-wp-on--click="actions.tipCustomUp" aria-label="<?php esc_attr_e( 'Increase tip', 'missionwp-donation-platform' ); ?>">&plus;</button>
+								<button type="button" class="mission-df-tip-custom-btn" data-wp-on--click="actions.tipCustomUp" aria-label="<?php esc_attr_e( 'Increase tip', 'mission-donation-platform' ); ?>">&plus;</button>
 							</div>
 						</div>
 					</div>
@@ -927,9 +927,9 @@ $context = [
 			data-wp-class--is-submitting="state.isSubmitting"
 		>
 			<span data-wp-bind--hidden="state.isSubmitting">
-				<?php echo esc_html( ! empty( $settings['donateButtonText'] ) ? $settings['donateButtonText'] : __( 'Donate', 'missionwp-donation-platform' ) ); ?> <span data-wp-text="callbacks.formattedTotalAmount"></span>
+				<?php echo esc_html( ! empty( $settings['donateButtonText'] ) ? $settings['donateButtonText'] : __( 'Donate', 'mission-donation-platform' ) ); ?> <span data-wp-text="callbacks.formattedTotalAmount"></span>
 			</span>
-			<span data-wp-bind--hidden="!state.isSubmitting"><?php esc_html_e( 'Processing', 'missionwp-donation-platform' ); ?></span>
+			<span data-wp-bind--hidden="!state.isSubmitting"><?php esc_html_e( 'Processing', 'mission-donation-platform' ); ?></span>
 			<span class="mission-df-spinner" data-wp-bind--hidden="!state.isSubmitting"></span>
 			<span class="mission-df-btn-arrow" data-wp-bind--hidden="state.isSubmitting"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
 		</button>
@@ -954,12 +954,12 @@ $context = [
 				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inner block content is already escaped by WordPress.
 			} else {
 				?>
-				<h2><?php esc_html_e( 'Thank you!', 'missionwp-donation-platform' ); ?></h2>
+				<h2><?php esc_html_e( 'Thank you!', 'mission-donation-platform' ); ?></h2>
 				<p data-wp-bind--hidden="state.isOngoing">
-					<?php esc_html_e( 'Your donation has been processed successfully. You will receive a confirmation email shortly.', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'Your donation has been processed successfully. You will receive a confirmation email shortly.', 'mission-donation-platform' ); ?>
 				</p>
 				<p data-wp-bind--hidden="!state.isOngoing">
-					<?php esc_html_e( 'Your recurring donation has been set up successfully. You will receive a confirmation email shortly.', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'Your recurring donation has been set up successfully. You will receive a confirmation email shortly.', 'mission-donation-platform' ); ?>
 				</p>
 				<?php
 			}
@@ -977,9 +977,9 @@ $context = [
 			</svg>
 			<?php
 			printf(
-				/* translators: %s: MissionWP brand name */
-				esc_html__( 'Secure donation powered by %s', 'missionwp-donation-platform' ),
-				'<span>MissionWP</span>'
+				/* translators: %s: Mission brand name */
+				esc_html__( 'Secure donation powered by %s', 'mission-donation-platform' ),
+				'<span>Mission</span>'
 			);
 			?>
 		</a>

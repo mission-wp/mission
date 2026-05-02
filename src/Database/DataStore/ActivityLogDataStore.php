@@ -2,12 +2,12 @@
 /**
  * Activity log DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\ActivityLog;
+use MissionDP\Models\ActivityLog;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_activity_log';
+		return $wpdb->prefix . 'missiondp_activity_log';
 	}
 
 	/**
@@ -49,7 +49,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 		 *
 		 * @param ActivityLog $model The activity log entry.
 		 */
-		do_action( 'mission_activity_log_created', $model );
+		do_action( 'missiondp_activity_log_created', $model );
 
 		return $model->id;
 	}

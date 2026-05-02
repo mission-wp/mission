@@ -2,14 +2,14 @@
 /**
  * REST endpoint for activity feed.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\ActivityLog;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\ActivityLog;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -64,7 +64,7 @@ class ActivityFeedEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view the activity feed.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to view the activity feed.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -126,7 +126,7 @@ class ActivityFeedEndpoint {
 	 * @return WP_REST_Response
 	 */
 	public function delete_items(): WP_REST_Response {
-		/** @var \Mission\Database\DataStore\ActivityLogDataStore $store */
+		/** @var \MissionDP\Database\DataStore\ActivityLogDataStore $store */
 		$store   = ActivityLog::store();
 		$deleted = $store->delete_all(
 			[

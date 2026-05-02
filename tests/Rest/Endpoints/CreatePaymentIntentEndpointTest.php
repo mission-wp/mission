@@ -2,17 +2,17 @@
 /**
  * Tests for the CreatePaymentIntentEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Models\Tribute;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -42,16 +42,16 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -99,13 +99,13 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 
 		$wp_rest_server = null;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
 
@@ -214,7 +214,7 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 
 		$params = array_merge( $defaults, $overrides );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/donations/create-payment-intent' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/donations/create-payment-intent' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( $params ) );
 
@@ -285,7 +285,7 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 
 		// Create a post containing a donation form block with a $10 minimum.
 		$post_id = self::factory()->post->create( [
-			'post_content' => '<!-- wp:mission/donation-form {"formId":"' . $form_id . '","minimumAmount":1000,"campaignId":' . $this->campaign_id . '} /-->',
+			'post_content' => '<!-- wp:mission-donation-platform/donation-form {"formId":"' . $form_id . '","minimumAmount":1000,"campaignId":' . $this->campaign_id . '} /-->',
 			'post_status'  => 'publish',
 		] );
 
@@ -333,7 +333,7 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 	 */
 	public function test_required_fields_rejected_when_missing(): void {
 		// Missing donation_amount.
-		$request = new WP_REST_Request( 'POST', '/mission/v1/donations/create-payment-intent' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/donations/create-payment-intent' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( [
 			'donor_email'      => 'jane@example.com',
@@ -346,7 +346,7 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 400, $response->get_status() );
 
 		// Missing email.
-		$request2 = new WP_REST_Request( 'POST', '/mission/v1/donations/create-payment-intent' );
+		$request2 = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/donations/create-payment-intent' );
 		$request2->set_header( 'Content-Type', 'application/json' );
 		$request2->set_body( wp_json_encode( [
 			'donation_amount'  => 5000,
@@ -372,7 +372,7 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$response = $this->make_request();
 
 		$this->assertSame( 502, $response->get_status() );
-		$this->assertSame( 'mission_api_error', $response->as_error()->get_error_code() );
+		$this->assertSame( 'missiondp_api_error', $response->as_error()->get_error_code() );
 	}
 
 	/**

@@ -10,7 +10,7 @@ import StatusPanel from './tools/StatusPanel';
 const TABS = [
   {
     id: 'export',
-    label: __( 'Export', 'missionwp-donation-platform' ),
+    label: __( 'Export', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -30,7 +30,7 @@ const TABS = [
   },
   {
     id: 'import',
-    label: __( 'Import', 'missionwp-donation-platform' ),
+    label: __( 'Import', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -50,7 +50,7 @@ const TABS = [
   },
   {
     id: 'migration',
-    label: __( 'Migration', 'missionwp-donation-platform' ),
+    label: __( 'Migration', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -71,7 +71,7 @@ const TABS = [
   },
   {
     id: 'features',
-    label: __( 'Features', 'missionwp-donation-platform' ),
+    label: __( 'Features', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -92,7 +92,7 @@ const TABS = [
   },
   {
     id: 'logs',
-    label: __( 'Logs', 'missionwp-donation-platform' ),
+    label: __( 'Logs', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -114,7 +114,7 @@ const TABS = [
   },
   {
     id: 'status',
-    label: __( 'Status', 'missionwp-donation-platform' ),
+    label: __( 'Status', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -134,7 +134,7 @@ const TABS = [
   },
   {
     id: 'cleanup',
-    label: __( 'Cleanup', 'missionwp-donation-platform' ),
+    label: __( 'Cleanup', 'mission-donation-platform' ),
     icon: (
       <svg
         width="18"
@@ -156,7 +156,7 @@ const TABS = [
   },
 ];
 
-const STORAGE_KEY = 'mission_tools_tab';
+const STORAGE_KEY = 'missiondp_tools_tab';
 
 function getInitialTab() {
   try {
@@ -182,12 +182,12 @@ export default function Tools() {
     <div className="mission-admin-page">
       <div style={ { marginBottom: '24px' } }>
         <h1 style={ { fontSize: '24px', fontWeight: 600, margin: 0 } }>
-          { __( 'Tools', 'missionwp-donation-platform' ) }
+          { __( 'Tools', 'mission-donation-platform' ) }
         </h1>
         <p style={ { fontSize: '13px', color: '#9b9ba8', margin: '4px 0 0' } }>
           { __(
-            'Utilities and configuration for MissionWP',
-            'missionwp-donation-platform'
+            'Utilities and configuration for Mission',
+            'mission-donation-platform'
           ) }
         </p>
       </div>

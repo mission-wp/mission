@@ -5,12 +5,12 @@
  * Handles recipient resolution, enabled checks, and dispatching
  * for all admin notification types.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Email;
+namespace MissionDP\Email;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -63,7 +63,7 @@ class AdminNotifier {
 		 * Return false to suppress the notification. Useful for conditional
 		 * logic like minimum donation amounts:
 		 *
-		 *     add_filter( 'mission_should_send_admin_notification', function ( $send, $type, $data ) {
+		 *     add_filter( 'missiondp_should_send_admin_notification', function ( $send, $type, $data ) {
 		 *         if ( 'admin_new_donation' === $type && isset( $data['transaction'] ) ) {
 		 *             return $data['transaction']->amount >= 10000; // $100+ only (amount is in cents).
 		 *         }
@@ -74,7 +74,7 @@ class AdminNotifier {
 		 * @param string $type Notification type key (e.g. 'admin_new_donation').
 		 * @param array  $data Template data including transaction/subscription objects.
 		 */
-		if ( ! apply_filters( 'mission_should_send_admin_notification', true, $type, $data ) ) {
+		if ( ! apply_filters( 'missiondp_should_send_admin_notification', true, $type, $data ) ) {
 			return false;
 		}
 
@@ -105,7 +105,7 @@ class AdminNotifier {
 			 * @param string[] $recipients Email addresses that were sent to.
 			 * @param array    $data       Template data.
 			 */
-			do_action( 'mission_admin_notification_sent', $type, $recipients, $data );
+			do_action( 'missiondp_admin_notification_sent', $type, $recipients, $data );
 		}
 
 		return $sent;
@@ -134,7 +134,7 @@ class AdminNotifier {
 		 * @param string[] $recipients Email addresses.
 		 * @param string   $type       Notification type key.
 		 */
-		return apply_filters( 'mission_admin_notification_recipients', $recipients, $type );
+		return apply_filters( 'missiondp_admin_notification_recipients', $recipients, $type );
 	}
 
 	/**

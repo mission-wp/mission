@@ -1,5 +1,5 @@
 {
-	"name": "missionwp-donation-platform",
+	"name": "mission-donation-platform",
 	"version": "1.0.1",
 	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
 	"private": true,
@@ -34,7 +34,7 @@
 		"simple-git": "3.31.1"
 	},
 	"files": [
-		"missionwp-donation-platform.php",
+		"mission-donation-platform.php",
 		"uninstall.php",
 		"readme.txt",
 		"README.md",

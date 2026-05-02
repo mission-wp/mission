@@ -100,7 +100,7 @@ export default function CampaignDetail( { id } ) {
     const fetchCampaign = async () => {
       try {
         const data = await apiFetch( {
-          path: `/mission/v1/campaigns/${ id }`,
+          path: `/mission-donation-platform/v1/campaigns/${ id }`,
         } );
         setCampaign( data );
         const initial = buildFormState( data );
@@ -109,7 +109,7 @@ export default function CampaignDetail( { id } ) {
       } catch ( err ) {
         setError(
           err.message ||
-            __( 'Failed to load campaign.', 'missionwp-donation-platform' )
+            __( 'Failed to load campaign.', 'mission-donation-platform' )
         );
       } finally {
         setIsLoading( false );
@@ -129,7 +129,7 @@ export default function CampaignDetail( { id } ) {
       }
       return select( coreStore ).hasEditsForEntityRecord(
         'postType',
-        'mission_campaign',
+        'missiondp_campaign',
         campaign.post_id
       );
     },
@@ -159,8 +159,8 @@ export default function CampaignDetail( { id } ) {
     };
   }, [ isDirty ] );
 
-  const adminUrl = window.missionAdmin?.adminUrl || '';
-  const campaignsUrl = `${ adminUrl }admin.php?page=mission-campaigns`;
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
+  const campaignsUrl = `${ adminUrl }admin.php?page=mission-donation-platform-campaigns`;
 
   const handleSave = async () => {
     setIsSaving( true );
@@ -177,7 +177,7 @@ export default function CampaignDetail( { id } ) {
         type: 'error',
         message: __(
           'Goal amount cannot be negative.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       } );
       setIsSaving( false );
@@ -217,13 +217,13 @@ export default function CampaignDetail( { id } ) {
       if ( campaign?.post_id ) {
         await saveEditedEntityRecord(
           'postType',
-          'mission_campaign',
+          'missiondp_campaign',
           campaign.post_id
         );
       }
 
       const updated = await apiFetch( {
-        path: `/mission/v1/campaigns/${ id }`,
+        path: `/mission-donation-platform/v1/campaigns/${ id }`,
         method: 'PUT',
         data: body,
       } );
@@ -234,7 +234,7 @@ export default function CampaignDetail( { id } ) {
 
       // Update preloaded campaign image data so the block editor
       // reflects the current image (or its removal).
-      window.missionCampaignImage = updated.image
+      window.missiondpCampaignImage = updated.image
         ? { campaignId: updated.id, imageUrls: updated.image_urls || {} }
         : null;
 
@@ -242,7 +242,7 @@ export default function CampaignDetail( { id } ) {
       if ( campaign?.post_id ) {
         invalidateResolution( 'getEntityRecord', [
           'postType',
-          'mission_campaign',
+          'missiondp_campaign',
           campaign.post_id,
         ] );
       }
@@ -251,7 +251,7 @@ export default function CampaignDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Campaign saved.', 'missionwp-donation-platform' ),
+        message: __( 'Campaign saved.', 'mission-donation-platform' ),
       } );
     } catch ( err ) {
       setSaveError( true );
@@ -261,7 +261,7 @@ export default function CampaignDetail( { id } ) {
         type: 'error',
         message:
           err.message ||
-          __( 'Failed to save campaign.', 'missionwp-donation-platform' ),
+          __( 'Failed to save campaign.', 'mission-donation-platform' ),
       } );
     } finally {
       setIsSaving( false );
@@ -290,11 +290,11 @@ export default function CampaignDetail( { id } ) {
             href={ campaignsUrl }
             style={ { color: BRAND_COLOR, textDecoration: 'none' } }
           >
-            { __( 'Back to Campaigns', 'missionwp-donation-platform' ) }
+            { __( 'Back to Campaigns', 'mission-donation-platform' ) }
           </a>
           <Text>
             { error ||
-              __( 'Campaign not found.', 'missionwp-donation-platform' ) }
+              __( 'Campaign not found.', 'mission-donation-platform' ) }
           </Text>
         </VStack>
       </div>
@@ -330,7 +330,7 @@ export default function CampaignDetail( { id } ) {
           >
             <path d="M9 11L4 7l5-4" />
           </svg>
-          { __( 'Back to Campaigns', 'missionwp-donation-platform' ) }
+          { __( 'Back to Campaigns', 'mission-donation-platform' ) }
         </a>
 
         <CampaignHero

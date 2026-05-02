@@ -2,7 +2,7 @@
 
 The free WordPress donation plugin for nonprofits. Beautiful forms, recurring donations, campaign management, donor tracking, and more — all in one plugin, no paid add-ons.
 
-**[Download the latest release](https://github.com/mission-wp/mission/releases/latest/download/mission.zip)**
+**[Download the latest release](https://github.com/mission-wp/mission/releases/latest/download/mission-donation-platform.zip)**
 
 ## Why Mission?
 
@@ -19,12 +19,12 @@ Most WordPress donation plugins make you pay for basic features like recurring d
 
 ## Installation
 
-1. Download `mission.zip` from the [latest release](https://github.com/mission-wp/mission/releases/latest/download/mission.zip)
+1. Download `mission-donation-platform.zip` from the [latest release](https://github.com/mission-wp/mission/releases/latest/download/mission-donation-platform.zip)
 2. In WordPress, go to Plugins > Add New > Upload Plugin
 3. Upload the zip file and activate
 4. Connect your Stripe account under Mission > Settings
 
-> **Note:** Do not download this repository directly — the plugin needs to be built first. Always use the zip from the [releases page](https://github.com/mission-wp/mission/releases/latest/download/mission.zip).
+> **Note:** Do not download this repository directly — the plugin needs to be built first. Always use the zip from the [releases page](https://github.com/mission-wp/mission/releases/latest/download/mission-donation-platform.zip).
 
 ## Development
 

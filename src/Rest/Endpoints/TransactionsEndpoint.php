@@ -2,18 +2,18 @@
 /**
  * REST endpoint for transactions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Receipts\ReceiptPdfGenerator;
-use Mission\Reporting\ReportingService;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
-use Mission\Tip\TipCalculator;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Receipts\ReceiptPdfGenerator;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
+use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -203,7 +203,7 @@ class TransactionsEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view transactions.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to view transactions.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -255,7 +255,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -269,7 +269,7 @@ class TransactionsEndpoint {
 	 * @return WP_REST_Response
 	 */
 	public function get_summary(): WP_REST_Response {
-		$currency = strtolower( get_option( 'mission_currency', 'usd' ) );
+		$currency = strtolower( get_option( 'missiondp_currency', 'usd' ) );
 
 		return new WP_REST_Response( $this->reporting->transaction_summary( $currency ), 200 );
 	}
@@ -286,7 +286,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -321,7 +321,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -343,7 +343,7 @@ class TransactionsEndpoint {
 		if ( ! is_email( $email ) ) {
 			return new WP_Error(
 				'invalid_email',
-				__( 'A valid email address is required.', 'missionwp-donation-platform' ),
+				__( 'A valid email address is required.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -377,7 +377,7 @@ class TransactionsEndpoint {
 				'fee_amount'      => 0,
 				'tip_amount'      => 0,
 				'total_amount'    => $amount,
-				'currency'        => strtolower( get_option( 'mission_currency', 'usd' ) ),
+				'currency'        => strtolower( get_option( 'missiondp_currency', 'usd' ) ),
 				'payment_gateway' => 'manual',
 				'is_test'         => (bool) $request->get_param( 'is_test' ),
 				'date_created'    => $this->resolve_date_created( $request->get_param( 'date_created' ), $now ),
@@ -737,7 +737,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -745,7 +745,7 @@ class TransactionsEndpoint {
 		if ( 'completed' !== $transaction->status ) {
 			return new WP_Error(
 				'not_refundable',
-				__( 'Only completed transactions can be refunded.', 'missionwp-donation-platform' ),
+				__( 'Only completed transactions can be refunded.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -753,7 +753,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction->gateway_transaction_id ) {
 			return new WP_Error(
 				'no_gateway_id',
-				__( 'This transaction has no payment gateway ID and cannot be refunded.', 'missionwp-donation-platform' ),
+				__( 'This transaction has no payment gateway ID and cannot be refunded.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -764,7 +764,7 @@ class TransactionsEndpoint {
 		if ( $refund_amount > $max_refundable ) {
 			return new WP_Error(
 				'amount_too_high',
-				__( 'Refund amount exceeds the refundable balance.', 'missionwp-donation-platform' ),
+				__( 'Refund amount exceeds the refundable balance.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -774,7 +774,7 @@ class TransactionsEndpoint {
 		if ( ! $site_token ) {
 			return new WP_Error(
 				'not_configured',
-				__( 'Stripe is not connected. Please connect Stripe before issuing refunds.', 'missionwp-donation-platform' ),
+				__( 'Stripe is not connected. Please connect Stripe before issuing refunds.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -801,7 +801,7 @@ class TransactionsEndpoint {
 			error_log( '[Mission] Refund API call failed: ' . $response->get_error_message() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return new WP_Error(
 				'refund_failed',
-				__( 'Failed to process refund. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to process refund. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -810,7 +810,7 @@ class TransactionsEndpoint {
 
 		if ( 200 !== $status_code ) {
 			$body    = json_decode( wp_remote_retrieve_body( $response ), true );
-			$message = $body['error'] ?? __( 'Failed to process refund. Please try again.', 'missionwp-donation-platform' );
+			$message = $body['error'] ?? __( 'Failed to process refund. Please try again.', 'mission-donation-platform' );
 
 			error_log( "[Mission] Refund API returned HTTP {$status_code}: " . wp_remote_retrieve_body( $response ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			return new WP_Error( 'refund_failed', $message, [ 'status' => $status_code ] );
@@ -842,7 +842,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -852,7 +852,7 @@ class TransactionsEndpoint {
 		if ( ! $donor ) {
 			return new WP_Error(
 				'no_donor',
-				__( 'No donor associated with this transaction.', 'missionwp-donation-platform' ),
+				__( 'No donor associated with this transaction.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -862,7 +862,7 @@ class TransactionsEndpoint {
 			'id'              => $transaction->id,
 			'amount'          => $transaction->amount,
 			'currency'        => $transaction->currency,
-			'campaign_name'   => $campaign?->title ?? __( 'General Fund', 'missionwp-donation-platform' ),
+			'campaign_name'   => $campaign?->title ?? __( 'General Fund', 'mission-donation-platform' ),
 			'payment_gateway' => $transaction->payment_gateway,
 			'date_completed'  => $transaction->date_completed ?: $transaction->date_created,
 		];
@@ -896,7 +896,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -906,12 +906,12 @@ class TransactionsEndpoint {
 		if ( ! $donor?->email ) {
 			return new WP_Error(
 				'no_email',
-				__( 'This donor has no email address on file.', 'missionwp-donation-platform' ),
+				__( 'This donor has no email address on file.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
 
-		$email_module = \Mission\Plugin::instance()->get_email_module();
+		$email_module = \MissionDP\Plugin::instance()->get_email_module();
 		$campaign     = $transaction->campaign();
 
 		$data = [
@@ -924,7 +924,7 @@ class TransactionsEndpoint {
 
 		$subject = sprintf(
 			/* translators: %s: formatted donation amount */
-			__( 'Thank you for your %s donation', 'missionwp-donation-platform' ),
+			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
 			$data['amount_formatted'],
 		);
 
@@ -933,7 +933,7 @@ class TransactionsEndpoint {
 			$subject = $email_module->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
 					'{amount}'       => $data['amount_formatted'],
 					'{campaign}'     => $data['campaign_name'] ?? '',
 					'{date}'         => $data['date_formatted'],
@@ -949,7 +949,7 @@ class TransactionsEndpoint {
 		if ( ! $sent ) {
 			return new WP_Error(
 				'send_failed',
-				__( 'Failed to send receipt email. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to send receipt email. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}

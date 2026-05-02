@@ -4,7 +4,7 @@
 /* global IntersectionObserver */
 import { store, getElement } from '@wordpress/interactivity';
 
-store( 'mission/campaign-progress', {
+store( 'mission-donation-platform/campaign-progress', {
   actions: {
     scrollToForm() {
       const form = document.querySelector( '.mission-donation-form' );

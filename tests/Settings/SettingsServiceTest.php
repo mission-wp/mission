@@ -2,12 +2,12 @@
 /**
  * Tests for the SettingsService class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Settings;
+namespace MissionDP\Tests\Settings;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 use WP_UnitTestCase;
 
 /**
@@ -103,7 +103,7 @@ class SettingsServiceTest extends WP_UnitTestCase {
 		$fired = false;
 
 		add_action(
-			'mission_settings_updated',
+			'missiondp_settings_updated',
 			static function ( $updated, $values, $previous ) use ( &$fired ) {
 				$fired = true;
 			},
@@ -121,7 +121,7 @@ class SettingsServiceTest extends WP_UnitTestCase {
 	 */
 	public function test_get_defaults_is_filterable(): void {
 		add_filter(
-			'mission_settings_defaults',
+			'missiondp_settings_defaults',
 			static function ( $defaults ) {
 				$defaults['custom_setting'] = 'custom_value';
 				return $defaults;
@@ -132,6 +132,6 @@ class SettingsServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( 'custom_value', $defaults['custom_setting'] );
 
-		remove_all_filters( 'mission_settings_defaults' );
+		remove_all_filters( 'missiondp_settings_defaults' );
 	}
 }

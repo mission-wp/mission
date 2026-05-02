@@ -2,14 +2,14 @@
 /**
  * Email module - handles email sending and notifications.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Email;
+namespace MissionDP\Email;
 
-use Mission\Currency\Currency;
-use Mission\Models\Donor;
-use Mission\Settings\SettingsService;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Donor;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -177,7 +177,7 @@ class EmailModule {
 
 		return [
 			// Universal.
-			'{donor_name}'         => $donor->first_name ?? __( 'Friend', 'missionwp-donation-platform' ),
+			'{donor_name}'         => $donor->first_name ?? __( 'Friend', 'mission-donation-platform' ),
 			'{organization}'       => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
 			'{site_url}'           => home_url(),
 
@@ -219,8 +219,8 @@ class EmailModule {
 		$from_name  = $this->settings->get( 'email_from_name', get_bloginfo( 'name' ) );
 		$from_email = $this->settings->get( 'email_from_address', get_bloginfo( 'admin_email' ) );
 
-		$from_name  = apply_filters( 'mission_email_from_name', $from_name );
-		$from_email = apply_filters( 'mission_email_from_email', $from_email );
+		$from_name  = apply_filters( 'missiondp_email_from_name', $from_name );
+		$from_email = apply_filters( 'missiondp_email_from_email', $from_email );
 
 		$reply_to = $this->settings->get( 'email_reply_to', '' );
 
@@ -233,7 +233,7 @@ class EmailModule {
 			$headers[] = 'Reply-To: ' . $reply_to;
 		}
 
-		return apply_filters( 'mission_email_headers', $headers );
+		return apply_filters( 'missiondp_email_headers', $headers );
 	}
 
 	/**
@@ -250,8 +250,8 @@ class EmailModule {
 			$headers = $this->get_default_headers();
 		}
 
-		$subject = apply_filters( 'mission_email_subject', $subject, $to );
-		$message = apply_filters( 'mission_email_message', $message, $to );
+		$subject = apply_filters( 'missiondp_email_subject', $subject, $to );
+		$message = apply_filters( 'missiondp_email_message', $message, $to );
 
 		$result = wp_mail( $to, $subject, $message, $headers );
 
@@ -262,7 +262,7 @@ class EmailModule {
 			 * @param string $to      Recipient email address.
 			 * @param string $subject Email subject.
 			 */
-			do_action( 'mission_email_sent', $to, $subject );
+			do_action( 'missiondp_email_sent', $to, $subject );
 		} else {
 			/**
 			 * Fires when an email fails to send.
@@ -270,7 +270,7 @@ class EmailModule {
 			 * @param string $to      Recipient email address.
 			 * @param string $subject Email subject.
 			 */
-			do_action( 'mission_email_failed', $to, $subject );
+			do_action( 'missiondp_email_failed', $to, $subject );
 		}
 
 		return $result;
@@ -283,11 +283,11 @@ class EmailModule {
 	 * @return string e.g. "Hi Jane," or "Hi Friend,".
 	 */
 	public function format_donor_greeting( Donor $donor ): string {
-		$first_name = $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' );
+		$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
 
 		return sprintf(
 			/* translators: %s: donor first name */
-			__( 'Hi %s,', 'missionwp-donation-platform' ),
+			__( 'Hi %s,', 'mission-donation-platform' ),
 			$first_name
 		);
 	}
@@ -309,7 +309,7 @@ class EmailModule {
 	 * @return string Dashboard URL, or home URL as fallback.
 	 */
 	public function get_dashboard_url(): string {
-		$page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		if ( $page_id ) {
 			$url = get_permalink( $page_id );

@@ -2,16 +2,16 @@
 /**
  * Tests for the TransactionHistoryModule class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\TransactionHistory;
+namespace MissionDP\Tests\TransactionHistory;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Models\TransactionHistory;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\TransactionHistory;
+use MissionDP\Settings\SettingsService;
 use WP_UnitTestCase;
 
 /**
@@ -33,16 +33,16 @@ class TransactionHistoryModuleTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -66,16 +66,16 @@ class TransactionHistoryModuleTest extends WP_UnitTestCase {
 		wp_set_current_user( 0 );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		delete_option( SettingsService::OPTION_NAME );

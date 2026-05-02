@@ -16,7 +16,7 @@ const CONFIRMATION_TEMPLATE = [
   [
     'core/heading',
     {
-      content: __( 'Thank you!', 'missionwp-donation-platform' ),
+      content: __( 'Thank you!', 'mission-donation-platform' ),
       level: 2,
     },
   ],
@@ -25,7 +25,7 @@ const CONFIRMATION_TEMPLATE = [
     {
       content: __(
         'Your donation has been processed successfully. You will receive a confirmation email shortly.',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
     },
   ],
@@ -58,7 +58,9 @@ export default function Edit( {
       const allBlocks = select( 'core/blocks' )
         .getBlockTypes()
         .map( ( block ) => block.name )
-        .filter( ( name ) => name !== 'mission/donation-form' );
+        .filter(
+          ( name ) => name !== 'mission-donation-platform/donation-form'
+        );
       return {
         currentPostType: editor?.getCurrentPostType?.() || '',
         currentPostId: editor?.getCurrentPostId?.() || 0,
@@ -76,7 +78,7 @@ export default function Edit( {
 
   // Fetch campaigns for the combobox.
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/campaigns?per_page=100' } )
+    apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( response ) => {
         setCampaigns( Array.isArray( response ) ? response : [] );
       } )
@@ -85,7 +87,7 @@ export default function Edit( {
 
   // Prefetch plugin defaults so the settings modal opens instantly.
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/donation-form-settings' } )
+    apiFetch( { path: '/mission-donation-platform/v1/donation-form-settings' } )
       .then( setPluginDefaults )
       .catch( () => {} );
   }, [] );
@@ -113,7 +115,7 @@ export default function Edit( {
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
-    currentPostType === 'mission_campaign' &&
+    currentPostType === 'missiondp_campaign' &&
     currentPostId &&
     campaigns.length
   ) {
@@ -157,9 +159,9 @@ export default function Edit( {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
+        <PanelBody title={ __( 'Settings', 'mission-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
+            label={ __( 'Campaign', 'mission-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -185,14 +187,11 @@ export default function Edit( {
               </svg>
             </div>
             <h3 className="mission-df-editor-controls__title">
-              { __( 'Donation Form', 'missionwp-donation-platform' ) }
+              { __( 'Donation Form', 'mission-donation-platform' ) }
             </h3>
             <div className="mission-df-editor-controls__campaign">
               <ComboboxControl
-                label={ __(
-                  'Select a Campaign',
-                  'missionwp-donation-platform'
-                ) }
+                label={ __( 'Select a Campaign', 'mission-donation-platform' ) }
                 value={ campaignId || null }
                 options={ campaignOptions }
                 onChange={ onCampaignChange }
@@ -218,7 +217,7 @@ export default function Edit( {
                   <circle cx="12" cy="12" r="3" />
                   <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
                 </svg>
-                { __( 'Form Settings', 'missionwp-donation-platform' ) }
+                { __( 'Form Settings', 'mission-donation-platform' ) }
               </button>
               { confirmationType !== 'redirect' && (
                 <button
@@ -239,7 +238,7 @@ export default function Edit( {
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                     <polyline points="22 4 12 14.01 9 11.01" />
                   </svg>
-                  { __( 'Edit Confirmation', 'missionwp-donation-platform' ) }
+                  { __( 'Edit Confirmation', 'mission-donation-platform' ) }
                 </button>
               ) }
             </div>
@@ -253,15 +252,15 @@ export default function Edit( {
               className="mission-df-editor-confirmation__back"
               onClick={ () => setEditorView( 'form' ) }
             >
-              &larr; { __( 'Back to form', 'missionwp-donation-platform' ) }
+              &larr; { __( 'Back to form', 'mission-donation-platform' ) }
             </button>
             <h3 className="mission-df-editor-confirmation__title">
-              { __( 'Confirmation Message', 'missionwp-donation-platform' ) }
+              { __( 'Confirmation Message', 'mission-donation-platform' ) }
             </h3>
             <p className="mission-df-editor-confirmation__hint">
               { __(
                 'This is displayed after a successful donation. Add any blocks you like.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </p>
           </div>

@@ -3,18 +3,18 @@
  * Block Name: Donor Wall
  * Description: Display a grid of donations for a campaign.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
-use Mission\Reporting\ReportingService;
-use Mission\Settings\SettingsService;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -40,7 +40,7 @@ if ( ! $campaign_id ) {
 }
 
 // Settings.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
 // Attributes.
@@ -54,10 +54,10 @@ $show_amount        = $attributes['showAmount'] ?? true;
 $show_date          = $attributes['showDate'] ?? true;
 $show_comments      = $attributes['showComments'] ?? true;
 $comment_length     = (int) ( $attributes['commentLength'] ?? 150 );
-$read_more_text     = $attributes['readMoreText'] ?? __( 'Read more', 'missionwp-donation-platform' );
+$read_more_text     = $attributes['readMoreText'] ?? __( 'Read more', 'mission-donation-platform' );
 $show_sort_controls = $attributes['showSortControls'] ?? true;
 $default_sort       = $attributes['defaultSort'] ?? 'recent';
-$load_more_text     = $attributes['loadMoreText'] ?? __( 'Show More Donations', 'missionwp-donation-platform' );
+$load_more_text     = $attributes['loadMoreText'] ?? __( 'Show More Donations', 'mission-donation-platform' );
 
 // Map sort value to query params.
 $sort_map    = [
@@ -106,18 +106,18 @@ foreach ( $raw_items as $item ) {
 	$formatted_amount = $amount_formatted . $type_suffix;
 
 	/* translators: %s: human time diff, e.g. "2 hours" */
-	$formatted_date = sprintf( __( '%s ago', 'missionwp-donation-platform' ), human_time_diff( strtotime( $item['date'] ) ) );
+	$formatted_date = sprintf( __( '%s ago', 'mission-donation-platform' ), human_time_diff( strtotime( $item['date'] ) ) );
 
 	$freq_labels_map = [
-		'monthly'   => __( 'Monthly', 'missionwp-donation-platform' ),
-		'quarterly' => __( 'Quarterly', 'missionwp-donation-platform' ),
-		'annually'  => __( 'Annually', 'missionwp-donation-platform' ),
+		'monthly'   => __( 'Monthly', 'mission-donation-platform' ),
+		'quarterly' => __( 'Quarterly', 'mission-donation-platform' ),
+		'annually'  => __( 'Annually', 'mission-donation-platform' ),
 	];
 	$frequency_label = 'one_time' !== $item['type'] ? ( $freq_labels_map[ $item['type'] ] ?? '' ) : '';
 
 	if ( $item['is_anonymous'] ) {
 		$items[] = [
-			'name'            => __( 'Anonymous', 'missionwp-donation-platform' ),
+			'name'            => __( 'Anonymous', 'mission-donation-platform' ),
 			'initials'        => '?',
 			'is_anonymous'    => true,
 			'amount'          => $item['amount'],
@@ -140,7 +140,7 @@ foreach ( $raw_items as $item ) {
 	$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
 
 	if ( '.' === $name ) {
-		$name = __( 'Anonymous', 'missionwp-donation-platform' );
+		$name = __( 'Anonymous', 'mission-donation-platform' );
 	}
 	if ( '' === trim( $initials ) ) {
 		$initials = '?';
@@ -220,7 +220,7 @@ $context = [
 	'showAnonymous' => $show_anonymous,
 	'commentLength' => $comment_length,
 	'readMoreText'  => $read_more_text,
-	'restUrl'       => rest_url( 'mission/v1/donor-wall' ),
+	'restUrl'       => rest_url( 'mission-donation-platform/v1/donor-wall' ),
 	'nonce'         => wp_create_nonce( 'wp_rest' ),
 ];
 
@@ -237,7 +237,7 @@ ob_start();
 ?>
 <div
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-donor-wall' . ( $show_avatar ? ' has-avatars' : '' ) ] ) ); ?>
-	data-wp-interactive="mission/donor-wall"
+	data-wp-interactive="mission-donation-platform/donor-wall"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
 	style="<?php echo esc_attr( implode( ';', $style_parts ) ); ?>"
 >
@@ -246,16 +246,16 @@ ob_start();
 			<select
 				class="mission-dw-sort"
 				data-wp-on--change="actions.changeSort"
-				aria-label="<?php esc_attr_e( 'Sort donations', 'missionwp-donation-platform' ); ?>"
+				aria-label="<?php esc_attr_e( 'Sort donations', 'mission-donation-platform' ); ?>"
 			>
 				<option value="recent"<?php selected( $default_sort, 'recent' ); ?>>
-					<?php esc_html_e( 'Most Recent', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'Most Recent', 'mission-donation-platform' ); ?>
 				</option>
 				<option value="highest"<?php selected( $default_sort, 'highest' ); ?>>
-					<?php esc_html_e( 'Highest Amount', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'Highest Amount', 'mission-donation-platform' ); ?>
 				</option>
 				<option value="earliest"<?php selected( $default_sort, 'earliest' ); ?>>
-					<?php esc_html_e( 'Earliest', 'missionwp-donation-platform' ); ?>
+					<?php esc_html_e( 'Earliest', 'mission-donation-platform' ); ?>
 				</option>
 			</select>
 		</div>
@@ -264,8 +264,8 @@ ob_start();
 	<?php if ( empty( $items ) ) : ?>
 		<div class="mission-dw-empty">
 			<div class="mission-dw-empty__icon">&#9829;</div>
-			<p class="mission-dw-empty__title"><?php esc_html_e( 'No donations yet', 'missionwp-donation-platform' ); ?></p>
-			<p class="mission-dw-empty__subtitle"><?php esc_html_e( 'Be the first to donate to this campaign!', 'missionwp-donation-platform' ); ?></p>
+			<p class="mission-dw-empty__title"><?php esc_html_e( 'No donations yet', 'mission-donation-platform' ); ?></p>
+			<p class="mission-dw-empty__subtitle"><?php esc_html_e( 'Be the first to donate to this campaign!', 'mission-donation-platform' ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="mission-dw-grid" data-wp-class--is-loading="context.isLoading">
@@ -367,4 +367,4 @@ $output = ob_get_clean();
  * @param array         $attributes Block attributes.
  */
 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_donor_wall_output', $output, $campaign, $attributes );
+echo apply_filters( 'missiondp_donor_wall_output', $output, $campaign, $attributes );

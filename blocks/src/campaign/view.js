@@ -4,7 +4,7 @@
 /* global IntersectionObserver */
 import { store, getElement } from '@wordpress/interactivity';
 
-store( 'mission/campaign', {
+store( 'mission-donation-platform/campaign', {
   callbacks: {
     animateBar() {
       const { ref } = getElement();

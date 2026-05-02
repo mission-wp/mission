@@ -5,10 +5,10 @@
  * Registers the donor role, redirects donors away from wp-admin,
  * and handles dashboard-specific hooks.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\DonorDashboard;
+namespace MissionDP\DonorDashboard;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,16 +28,16 @@ class DonorDashboardModule {
 		add_action( 'admin_init', [ $this, 'redirect_donor_from_admin' ] );
 		add_filter( 'login_redirect', [ $this, 'redirect_donor_after_login' ], 10, 3 );
 		add_action( 'delete_user', [ $this, 'unlink_donor_on_user_delete' ] );
-		add_action( 'mission_donor_profile_updated', [ $this, 'sync_donor_email_to_wp_user' ] );
+		add_action( 'missiondp_donor_profile_updated', [ $this, 'sync_donor_email_to_wp_user' ] );
 		add_action( 'profile_update', [ $this, 'sync_wp_user_email_to_donor' ], 10, 2 );
 		add_filter( 'retrieve_password_message', [ $this, 'filter_password_reset_url' ], 10, 4 );
 		add_filter( 'show_admin_bar', [ $this, 'hide_admin_bar_for_donors' ] );
 		add_filter( 'display_post_states', [ $this, 'add_dashboard_post_state' ], 10, 2 );
-		add_action( 'mission_settings_updated', [ $this, 'handle_portal_toggle' ], 10, 3 );
+		add_action( 'missiondp_settings_updated', [ $this, 'handle_portal_toggle' ], 10, 3 );
 	}
 
 	/**
-	 * Ensure the mission_donor role exists.
+	 * Ensure the missiondp_donor role exists.
 	 *
 	 * The role is created during plugin activation, but this serves as a
 	 * safety net in case the role was removed or the plugin was updated
@@ -46,8 +46,8 @@ class DonorDashboardModule {
 	 * @return void
 	 */
 	public function ensure_donor_role(): void {
-		if ( ! get_role( 'mission_donor' ) ) {
-			add_role( 'mission_donor', __( 'MissionWP Donor', 'missionwp-donation-platform' ), [] );
+		if ( ! get_role( 'missiondp_donor' ) ) {
+			add_role( 'missiondp_donor', __( 'Mission Donor', 'mission-donation-platform' ), [] );
 		}
 	}
 
@@ -61,10 +61,10 @@ class DonorDashboardModule {
 	 */
 	public function register_block_template(): void {
 		\register_block_template(
-			'mission//page-donor-dashboard',
+			'mission-donation-platform//page-donor-dashboard',
 			[
-				'title'       => __( 'Donor Dashboard', 'missionwp-donation-platform' ),
-				'description' => __( 'A page template without the page title, designed for the Donor Dashboard block.', 'missionwp-donation-platform' ),
+				'title'       => __( 'Donor Dashboard', 'mission-donation-platform' ),
+				'description' => __( 'A page template without the page title, designed for the Donor Dashboard block.', 'mission-donation-platform' ),
 				'post_types'  => [ 'page' ],
 				'content'     => '<!-- wp:template-part {"slug":"header","area":"header","tagName":"header"} /-->
 
@@ -126,7 +126,7 @@ class DonorDashboardModule {
 	 * @return void
 	 */
 	public function unlink_donor_on_user_delete( int $user_id ): void {
-		$donor = \Mission\Models\Donor::find_by_user_id( $user_id );
+		$donor = \MissionDP\Models\Donor::find_by_user_id( $user_id );
 
 		if ( ! $donor ) {
 			return;
@@ -141,10 +141,10 @@ class DonorDashboardModule {
 	 *
 	 * Fired when the donor profile is updated via REST.
 	 *
-	 * @param \Mission\Models\Donor $donor Updated donor.
+	 * @param \MissionDP\Models\Donor $donor Updated donor.
 	 * @return void
 	 */
-	public function sync_donor_email_to_wp_user( \Mission\Models\Donor $donor ): void {
+	public function sync_donor_email_to_wp_user( \MissionDP\Models\Donor $donor ): void {
 		if ( ! $donor->user_id ) {
 			return;
 		}
@@ -166,7 +166,7 @@ class DonorDashboardModule {
 	/**
 	 * Sync a WordPress user's email change to the linked donor record.
 	 *
-	 * Fired on the `profile_update` action for users with the mission_donor role.
+	 * Fired on the `profile_update` action for users with the missiondp_donor role.
 	 *
 	 * @param int      $user_id       User ID.
 	 * @param \WP_User $old_user_data User data before the update.
@@ -184,7 +184,7 @@ class DonorDashboardModule {
 			return;
 		}
 
-		$donor = \Mission\Models\Donor::find_by_user_id( $user_id );
+		$donor = \MissionDP\Models\Donor::find_by_user_id( $user_id );
 
 		if ( ! $donor || $donor->email === $user->user_email ) {
 			return;
@@ -250,10 +250,10 @@ class DonorDashboardModule {
 	 * @return string[]
 	 */
 	public function add_dashboard_post_state( array $post_states, \WP_Post $post ): array {
-		$dashboard_page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$dashboard_page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		if ( $dashboard_page_id && $post->ID === $dashboard_page_id ) {
-			$post_states['mission_donor_dashboard'] = __( 'Donor Dashboard Page', 'missionwp-donation-platform' );
+			$post_states['missiondp_donor_dashboard'] = __( 'Donor Dashboard Page', 'mission-donation-platform' );
 		}
 
 		return $post_states;
@@ -262,7 +262,7 @@ class DonorDashboardModule {
 	/**
 	 * Create or delete the dashboard page when the portal toggle changes.
 	 *
-	 * Listens to the `mission_settings_updated` action fired by SettingsService.
+	 * Listens to the `missiondp_settings_updated` action fired by SettingsService.
 	 *
 	 * @param array<string, mixed> $updated  Full settings after update.
 	 * @param array<string, mixed> $values   Only the changed values.
@@ -292,7 +292,7 @@ class DonorDashboardModule {
 	 * @return void
 	 */
 	public static function create_dashboard_page(): void {
-		$page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		if ( $page_id && 'publish' === get_post_status( $page_id ) ) {
 			return;
@@ -300,19 +300,19 @@ class DonorDashboardModule {
 
 		$page_id = wp_insert_post(
 			[
-				'post_title'   => __( 'Donor Dashboard', 'missionwp-donation-platform' ),
+				'post_title'   => __( 'Donor Dashboard', 'mission-donation-platform' ),
 				'post_name'    => 'donor-dashboard',
-				'post_content' => '<!-- wp:mission/donor-dashboard {"align":"wide"} /-->',
+				'post_content' => '<!-- wp:mission-donation-platform/donor-dashboard {"align":"wide"} /-->',
 				'post_status'  => 'publish',
 				'post_type'    => 'page',
 				'meta_input'   => [
-					'_wp_page_template' => 'mission//page-donor-dashboard',
+					'_wp_page_template' => 'mission-donation-platform//page-donor-dashboard',
 				],
 			]
 		);
 
 		if ( $page_id && ! is_wp_error( $page_id ) ) {
-			update_option( 'mission_dashboard_page_id', $page_id );
+			update_option( 'missiondp_dashboard_page_id', $page_id );
 		}
 	}
 
@@ -322,23 +322,23 @@ class DonorDashboardModule {
 	 * @return void
 	 */
 	private function delete_dashboard_page(): void {
-		$page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		if ( $page_id ) {
 			wp_delete_post( $page_id, true );
 		}
 
-		delete_option( 'mission_dashboard_page_id' );
+		delete_option( 'missiondp_dashboard_page_id' );
 	}
 
 	/**
-	 * Check if a user has only the mission_donor role.
+	 * Check if a user has only the missiondp_donor role.
 	 *
 	 * @param \WP_User $user WordPress user.
 	 * @return bool
 	 */
 	private function is_donor_user( \WP_User $user ): bool {
-		return in_array( 'mission_donor', $user->roles, true )
+		return in_array( 'missiondp_donor', $user->roles, true )
 			&& count( $user->roles ) === 1;
 	}
 
@@ -350,7 +350,7 @@ class DonorDashboardModule {
 	 * @return string
 	 */
 	private function get_dashboard_url(): string {
-		$page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		if ( $page_id ) {
 			$url = get_permalink( $page_id );

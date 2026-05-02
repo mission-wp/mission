@@ -2,7 +2,7 @@
 /**
  * Donor Dashboard — Sidebar navigation.
  *
- * @package Mission
+ * @package MissionDP
  *
  * Expected variables: $donor, $initials, $nav_items.
  */
@@ -24,7 +24,7 @@ $panel_state_map = [
 		<button
 			class="mission-dd-sidebar-close"
 			data-wp-on--click="actions.closeSidebar"
-			aria-label="<?php esc_attr_e( 'Close menu', 'missionwp-donation-platform' ); ?>"
+			aria-label="<?php esc_attr_e( 'Close menu', 'mission-donation-platform' ); ?>"
 		>
 			<span class="mission-dd-icon mission-dd-icon-close" aria-hidden="true"></span>
 		</button>
@@ -39,7 +39,7 @@ $panel_state_map = [
 		</div>
 
 		<!-- Nav -->
-		<nav aria-label="<?php esc_attr_e( 'Dashboard navigation', 'missionwp-donation-platform' ); ?>">
+		<nav aria-label="<?php esc_attr_e( 'Dashboard navigation', 'mission-donation-platform' ); ?>">
 			<ul class="mission-dd-nav">
 				<?php foreach ( $nav_items as $item ) : ?>
 					<?php
@@ -72,7 +72,7 @@ $panel_state_map = [
 						data-wp-on--click="actions.logout"
 					>
 						<span class="mission-dd-icon mission-dd-icon-logout" aria-hidden="true"></span>
-						<?php esc_html_e( 'Log Out', 'missionwp-donation-platform' ); ?>
+						<?php esc_html_e( 'Log Out', 'mission-donation-platform' ); ?>
 					</button>
 				</li>
 			</ul>

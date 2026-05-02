@@ -5,14 +5,14 @@
  * Returns the default PHP template rendered with merge tags as literal strings,
  * so the JS editor can display the default body without duplicating template HTML.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Donor;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Donor;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -102,7 +102,7 @@ class EmailTemplateEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view email templates.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to view email templates.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -122,12 +122,12 @@ class EmailTemplateEndpoint {
 		if ( ! isset( self::TEMPLATE_MAP[ $type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
-				__( 'Unknown email type.', 'missionwp-donation-platform' ),
+				__( 'Unknown email type.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
 
-		$email_module = \Mission\Plugin::instance()->get_email_module();
+		$email_module = \MissionDP\Plugin::instance()->get_email_module();
 		$template     = self::TEMPLATE_MAP[ $type ];
 		$subject      = self::DEFAULT_SUBJECTS[ $type ] ?? '';
 

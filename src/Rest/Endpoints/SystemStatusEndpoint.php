@@ -2,19 +2,19 @@
 /**
  * REST endpoint for the system status page.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Currency\Currency;
-use Mission\Database\DatabaseModule;
-use Mission\Database\Schema;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Currency\Currency;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\Schema;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Response;
 use WP_Error;
 
@@ -63,7 +63,7 @@ class SystemStatusEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to perform this action.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to perform this action.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -78,12 +78,12 @@ class SystemStatusEndpoint {
 	 */
 	public function get_status(): WP_REST_Response {
 		$data = [
-			'mission'   => $this->get_mission_environment(),
-			'wordpress' => $this->get_wordpress_environment(),
-			'server'    => $this->get_server_environment(),
-			'database'  => $this->get_database_info(),
-			'plugins'   => $this->get_active_plugins(),
-			'theme'     => $this->get_theme_info(),
+			'mission_donation_platform' => $this->get_mission_environment(),
+			'wordpress'                 => $this->get_wordpress_environment(),
+			'server'                    => $this->get_server_environment(),
+			'database'                  => $this->get_database_info(),
+			'plugins'                   => $this->get_active_plugins(),
+			'theme'                     => $this->get_theme_info(),
 		];
 
 		return new WP_REST_Response( $data, 200 );
@@ -103,7 +103,7 @@ class SystemStatusEndpoint {
 		$webhook    = ! empty( $this->settings->get( 'stripe_webhook_secret', '' ) );
 
 		return [
-			'version'                   => MISSION_VERSION,
+			'version'                   => MISSIONDP_VERSION,
 			'db_version'                => get_option( DatabaseModule::DB_VERSION_OPTION, '' ),
 			'stripe_connected'          => $connected,
 			'stripe_account_id'         => $connected ? $account_id : '',
@@ -135,7 +135,7 @@ class SystemStatusEndpoint {
 			'home_url'     => home_url(),
 			'version'      => get_bloginfo( 'version' ),
 			'multisite'    => is_multisite(),
-			'memory_limit' => defined( 'WP_MEMORY_LIMIT' ) ? WP_MEMORY_LIMIT : __( 'Unknown', 'missionwp-donation-platform' ),
+			'memory_limit' => defined( 'WP_MEMORY_LIMIT' ) ? WP_MEMORY_LIMIT : __( 'Unknown', 'mission-donation-platform' ),
 			'debug_mode'   => defined( 'WP_DEBUG' ) && WP_DEBUG,
 			'cron'         => ! ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON ),
 			'language'     => get_locale(),
@@ -155,14 +155,14 @@ class SystemStatusEndpoint {
 		$curl_info = function_exists( 'curl_version' ) ? curl_version() : null;
 
 		return [
-			'software'               => sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ?? __( 'Unknown', 'missionwp-donation-platform' ) ) ),
+			'software'               => sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ?? __( 'Unknown', 'mission-donation-platform' ) ) ),
 			'php_version'            => phpversion(),
 			'php_memory_limit'       => ini_get( 'memory_limit' ),
 			'php_max_execution_time' => (int) ini_get( 'max_execution_time' ),
 			'php_max_input_vars'     => (int) ini_get( 'max_input_vars' ),
 			'php_max_upload_size'    => ini_get( 'upload_max_filesize' ),
 			'mysql_version'          => $wpdb->get_var( 'SELECT VERSION()' ), // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			'curl_version'           => $curl_info ? $curl_info['version'] . ', ' . $curl_info['ssl_version'] : __( 'Not available', 'missionwp-donation-platform' ),
+			'curl_version'           => $curl_info ? $curl_info['version'] . ', ' . $curl_info['ssl_version'] : __( 'Not available', 'mission-donation-platform' ),
 			'fsockopen'              => function_exists( 'fsockopen' ),
 			'curl'                   => function_exists( 'curl_init' ),
 			'domdocument'            => class_exists( 'DOMDocument' ),
@@ -221,10 +221,10 @@ class SystemStatusEndpoint {
 		}
 
 		return [
-			'prefix'       => $wpdb->prefix,
-			'total_size'   => round( $total_size / 1024 / 1024, 2 ),
-			'mission_size' => round( $mission_size / 1024 / 1024, 2 ),
-			'tables'       => $tables,
+			'prefix'         => $wpdb->prefix,
+			'total_size'     => round( $total_size / 1024 / 1024, 2 ),
+			'missiondp_size' => round( $mission_size / 1024 / 1024, 2 ),
+			'tables'         => $tables,
 		];
 	}
 

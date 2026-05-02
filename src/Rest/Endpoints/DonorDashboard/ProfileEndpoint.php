@@ -2,14 +2,14 @@
 /**
  * Donor dashboard profile endpoint.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints\DonorDashboard;
+namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
-use Mission\Models\Donor;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\ResolveDonorTrait;
+use MissionDP\Models\Donor;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\ResolveDonorTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -122,7 +122,7 @@ class ProfileEndpoint {
 		 *
 		 * @param Donor $donor The updated donor.
 		 */
-		do_action( 'mission_donor_profile_updated', $donor );
+		do_action( 'missiondp_donor_profile_updated', $donor );
 
 		return new WP_REST_Response( $this->prepare_profile( $donor ) );
 	}
@@ -181,12 +181,12 @@ class ProfileEndpoint {
 		 * @param Donor $donor   The donor whose account was deleted.
 		 * @param int   $user_id The WP user ID that was deleted.
 		 */
-		do_action( 'mission_donor_account_deleted', $donor, $user_id );
+		do_action( 'missiondp_donor_account_deleted', $donor, $user_id );
 
 		return new WP_REST_Response(
 			[
 				'success' => true,
-				'message' => __( 'Your account has been deleted. Your donation history has been preserved for the organization\'s records.', 'missionwp-donation-platform' ),
+				'message' => __( 'Your account has been deleted. Your donation history has been preserved for the organization\'s records.', 'mission-donation-platform' ),
 			]
 		);
 	}

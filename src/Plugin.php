@@ -2,10 +2,10 @@
 /**
  * Main plugin class that bootstraps all modules.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission;
+namespace MissionDP;
 
 defined( 'ABSPATH' ) || exit;
 

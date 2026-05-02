@@ -5,49 +5,46 @@ export default function DonorInfoTab( { localState, updateField } ) {
   return (
     <div className="mission-form-settings-tab">
       <ToggleRow
-        label={ __(
-          'Allow anonymous donations',
-          'missionwp-donation-platform'
-        ) }
+        label={ __( 'Allow anonymous donations', 'mission-donation-platform' ) }
         hint={ __(
           'Let donors hide their name from public displays',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         checked={ localState.anonymousEnabled }
         onChange={ ( val ) => updateField( 'anonymousEnabled', val ) }
       />
       <ToggleRow
-        label={ __( 'Allow donor comments', 'missionwp-donation-platform' ) }
+        label={ __( 'Allow donor comments', 'mission-donation-platform' ) }
         hint={ __(
           'Show a comment field where donors can leave a message',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         checked={ localState.commentsEnabled }
         onChange={ ( val ) => updateField( 'commentsEnabled', val ) }
       />
       <ToggleRow
-        label={ __( 'Require phone number', 'missionwp-donation-platform' ) }
+        label={ __( 'Require phone number', 'mission-donation-platform' ) }
         hint={ __(
           'Show and require a phone number field',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         checked={ localState.phoneRequired }
         onChange={ ( val ) => updateField( 'phoneRequired', val ) }
       />
       <ToggleRow
-        label={ __( 'Require billing address', 'missionwp-donation-platform' ) }
+        label={ __( 'Require billing address', 'mission-donation-platform' ) }
         hint={ __(
           "Collect the donor's full billing address",
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         checked={ localState.collectAddress }
         onChange={ ( val ) => updateField( 'collectAddress', val ) }
       />
       <ToggleRow
-        label={ __( 'Allow dedications', 'missionwp-donation-platform' ) }
+        label={ __( 'Allow dedications', 'mission-donation-platform' ) }
         hint={ __(
           'Let donors dedicate their gift in honor or memory of someone',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         checked={ localState.tributeEnabled }
         onChange={ ( val ) => updateField( 'tributeEnabled', val ) }

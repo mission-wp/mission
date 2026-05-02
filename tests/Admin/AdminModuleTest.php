@@ -2,18 +2,18 @@
 /**
  * Tests for the AdminModule class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Admin;
+namespace MissionDP\Tests\Admin;
 
-use Mission\Admin\AdminModule;
-use Mission\Admin\Pages\CampaignsPage;
-use Mission\Admin\Pages\DashboardPage;
-use Mission\Admin\Pages\TransactionsPage;
-use Mission\Admin\Pages\DonorsPage;
-use Mission\Admin\Pages\SettingsPage;
-use Mission\Admin\Pages\ToolsPage;
+use MissionDP\Admin\AdminModule;
+use MissionDP\Admin\Pages\CampaignsPage;
+use MissionDP\Admin\Pages\DashboardPage;
+use MissionDP\Admin\Pages\TransactionsPage;
+use MissionDP\Admin\Pages\DonorsPage;
+use MissionDP\Admin\Pages\SettingsPage;
+use MissionDP\Admin\Pages\ToolsPage;
 use WP_UnitTestCase;
 
 /**

@@ -18,16 +18,16 @@ import SubscriptionActivityCard from './SubscriptionActivityCard';
 import NotesCard from '../../components/NotesCard';
 
 const FREQUENCY_SUFFIXES = {
-  weekly: __( '/wk', 'missionwp-donation-platform' ),
-  monthly: __( '/mo', 'missionwp-donation-platform' ),
-  quarterly: __( '/qtr', 'missionwp-donation-platform' ),
-  annually: __( '/yr', 'missionwp-donation-platform' ),
+  weekly: __( '/wk', 'mission-donation-platform' ),
+  monthly: __( '/mo', 'mission-donation-platform' ),
+  quarterly: __( '/qtr', 'mission-donation-platform' ),
+  annually: __( '/yr', 'mission-donation-platform' ),
 };
 
 function StatusBadge( { status } ) {
   const label = status
     ? status.replace( '_', ' ' ).replace( /\b\w/g, ( c ) => c.toUpperCase() )
-    : __( 'Pending', 'missionwp-donation-platform' );
+    : __( 'Pending', 'mission-donation-platform' );
   return (
     <span className={ `mission-status-badge is-${ status || 'pending' }` }>
       { label }
@@ -60,7 +60,7 @@ function ActionsDropdown( { status, onPause, onResume, onCancel } ) {
         className="mission-dropdown__toggle"
         onClick={ () => setIsOpen( ! isOpen ) }
       >
-        { __( 'Actions', 'missionwp-donation-platform' ) }
+        { __( 'Actions', 'mission-donation-platform' ) }
         <svg
           width="10"
           height="6"
@@ -96,7 +96,7 @@ function ActionsDropdown( { status, onPause, onResume, onCancel } ) {
               >
                 <polygon points="4.5,3 11,7 4.5,11" />
               </svg>
-              { __( 'Resume Subscription', 'missionwp-donation-platform' ) }
+              { __( 'Resume Subscription', 'mission-donation-platform' ) }
             </button>
           ) : (
             <button
@@ -119,7 +119,7 @@ function ActionsDropdown( { status, onPause, onResume, onCancel } ) {
                 <rect x="3" y="3" width="3" height="8" rx="0.5" />
                 <rect x="8" y="3" width="3" height="8" rx="0.5" />
               </svg>
-              { __( 'Pause Subscription', 'missionwp-donation-platform' ) }
+              { __( 'Pause Subscription', 'mission-donation-platform' ) }
             </button>
           ) }
           <div className="mission-dropdown__divider" />
@@ -143,7 +143,7 @@ function ActionsDropdown( { status, onPause, onResume, onCancel } ) {
               <circle cx="7" cy="7" r="6" />
               <path d="M9 5L5 9M5 5l4 4" />
             </svg>
-            { __( 'Cancel Subscription', 'missionwp-donation-platform' ) }
+            { __( 'Cancel Subscription', 'mission-donation-platform' ) }
           </button>
         </div>
       ) }
@@ -164,15 +164,17 @@ export default function SubscriptionDetail( { id } ) {
   const [ isPausing, setIsPausing ] = useState( false );
   const clearToast = useCallback( () => setToast( null ), [] );
 
-  const adminUrl = window.missionAdmin?.adminUrl || '';
-  const subscriptionsUrl = `${ adminUrl }admin.php?page=mission-subscriptions`;
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
+  const subscriptionsUrl = `${ adminUrl }admin.php?page=mission-donation-platform-subscriptions`;
 
   useEffect( () => {
     setIsLoading( true );
     Promise.all( [
-      apiFetch( { path: `/mission/v1/subscriptions/${ id }` } ),
       apiFetch( {
-        path: '/mission/v1/campaigns?per_page=100&orderby=title&order=ASC',
+        path: `/mission-donation-platform/v1/subscriptions/${ id }`,
+      } ),
+      apiFetch( {
+        path: '/mission-donation-platform/v1/campaigns?per_page=100&orderby=title&order=ASC',
       } ),
     ] )
       .then( ( [ sub, camps ] ) => {
@@ -182,7 +184,7 @@ export default function SubscriptionDetail( { id } ) {
       .catch( ( err ) => {
         setError(
           err.message ||
-            __( 'Failed to load subscription.', 'missionwp-donation-platform' )
+            __( 'Failed to load subscription.', 'mission-donation-platform' )
         );
       } )
       .finally( () => setIsLoading( false ) );
@@ -192,7 +194,7 @@ export default function SubscriptionDetail( { id } ) {
     setIsCancelling( true );
     try {
       await apiFetch( {
-        path: `/mission/v1/subscriptions/${ id }/cancel`,
+        path: `/mission-donation-platform/v1/subscriptions/${ id }/cancel`,
         method: 'POST',
       } );
       setSubscription( ( prev ) => ( {
@@ -204,7 +206,7 @@ export default function SubscriptionDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Subscription cancelled.', 'missionwp-donation-platform' ),
+        message: __( 'Subscription cancelled.', 'mission-donation-platform' ),
       } );
     } catch ( err ) {
       setToastKey( ( k ) => k + 1 );
@@ -212,7 +214,7 @@ export default function SubscriptionDetail( { id } ) {
         type: 'error',
         message:
           err.message ||
-          __( 'Failed to cancel subscription.', 'missionwp-donation-platform' ),
+          __( 'Failed to cancel subscription.', 'mission-donation-platform' ),
       } );
     } finally {
       setIsCancelling( false );
@@ -223,7 +225,7 @@ export default function SubscriptionDetail( { id } ) {
     setIsPausing( true );
     try {
       await apiFetch( {
-        path: `/mission/v1/subscriptions/${ id }/pause`,
+        path: `/mission-donation-platform/v1/subscriptions/${ id }/pause`,
         method: 'POST',
       } );
       setSubscription( ( prev ) => ( { ...prev, status: 'paused' } ) );
@@ -231,7 +233,7 @@ export default function SubscriptionDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Subscription paused.', 'missionwp-donation-platform' ),
+        message: __( 'Subscription paused.', 'mission-donation-platform' ),
       } );
     } catch ( err ) {
       setToastKey( ( k ) => k + 1 );
@@ -239,7 +241,7 @@ export default function SubscriptionDetail( { id } ) {
         type: 'error',
         message:
           err.message ||
-          __( 'Failed to pause subscription.', 'missionwp-donation-platform' ),
+          __( 'Failed to pause subscription.', 'mission-donation-platform' ),
       } );
     } finally {
       setIsPausing( false );
@@ -249,7 +251,7 @@ export default function SubscriptionDetail( { id } ) {
   const handleResume = async () => {
     try {
       const result = await apiFetch( {
-        path: `/mission/v1/subscriptions/${ id }/resume`,
+        path: `/mission-donation-platform/v1/subscriptions/${ id }/resume`,
         method: 'POST',
       } );
       setSubscription( ( prev ) => ( {
@@ -259,7 +261,7 @@ export default function SubscriptionDetail( { id } ) {
       setToastKey( ( k ) => k + 1 );
       setToast( {
         type: 'success',
-        message: __( 'Subscription resumed.', 'missionwp-donation-platform' ),
+        message: __( 'Subscription resumed.', 'mission-donation-platform' ),
       } );
     } catch ( err ) {
       setToastKey( ( k ) => k + 1 );
@@ -267,14 +269,14 @@ export default function SubscriptionDetail( { id } ) {
         type: 'error',
         message:
           err.message ||
-          __( 'Failed to resume subscription.', 'missionwp-donation-platform' ),
+          __( 'Failed to resume subscription.', 'mission-donation-platform' ),
       } );
     }
   };
 
   const handleStatusChange = ( newStatus ) => {
     apiFetch( {
-      path: `/mission/v1/subscriptions/${ id }`,
+      path: `/mission-donation-platform/v1/subscriptions/${ id }`,
       method: 'PATCH',
       data: { status: newStatus },
     } )
@@ -283,7 +285,7 @@ export default function SubscriptionDetail( { id } ) {
         setToastKey( ( k ) => k + 1 );
         setToast( {
           type: 'success',
-          message: __( 'Subscription updated.', 'missionwp-donation-platform' ),
+          message: __( 'Subscription updated.', 'mission-donation-platform' ),
         } );
       } )
       .catch( ( err ) => {
@@ -292,10 +294,7 @@ export default function SubscriptionDetail( { id } ) {
           type: 'error',
           message:
             err.message ||
-            __(
-              'Failed to update subscription.',
-              'missionwp-donation-platform'
-            ),
+            __( 'Failed to update subscription.', 'mission-donation-platform' ),
         } );
       } );
   };
@@ -304,7 +303,7 @@ export default function SubscriptionDetail( { id } ) {
     const campaignId = campaignObj ? campaignObj.id : null;
 
     apiFetch( {
-      path: `/mission/v1/subscriptions/${ id }`,
+      path: `/mission-donation-platform/v1/subscriptions/${ id }`,
       method: 'PATCH',
       data: { campaign_id: campaignId },
     } )
@@ -316,7 +315,7 @@ export default function SubscriptionDetail( { id } ) {
         setToastKey( ( k ) => k + 1 );
         setToast( {
           type: 'success',
-          message: __( 'Subscription updated.', 'missionwp-donation-platform' ),
+          message: __( 'Subscription updated.', 'mission-donation-platform' ),
         } );
       } )
       .catch( ( err ) => {
@@ -325,10 +324,7 @@ export default function SubscriptionDetail( { id } ) {
           type: 'error',
           message:
             err.message ||
-            __(
-              'Failed to update subscription.',
-              'missionwp-donation-platform'
-            ),
+            __( 'Failed to update subscription.', 'mission-donation-platform' ),
         } );
       } );
   };
@@ -353,11 +349,11 @@ export default function SubscriptionDetail( { id } ) {
         <VStack spacing={ 4 }>
           <a href={ subscriptionsUrl } className="mission-back-link">
             &larr;{ ' ' }
-            { __( 'Back to Subscriptions', 'missionwp-donation-platform' ) }
+            { __( 'Back to Subscriptions', 'mission-donation-platform' ) }
           </a>
           <Text>
             { error ||
-              __( 'Subscription not found.', 'missionwp-donation-platform' ) }
+              __( 'Subscription not found.', 'mission-donation-platform' ) }
           </Text>
         </VStack>
       </div>
@@ -381,7 +377,7 @@ export default function SubscriptionDetail( { id } ) {
         <HStack justify="space-between" alignment="center">
           <a href={ subscriptionsUrl } className="mission-back-link">
             &larr;{ ' ' }
-            { __( 'Back to Subscriptions', 'missionwp-donation-platform' ) }
+            { __( 'Back to Subscriptions', 'mission-donation-platform' ) }
           </a>
           { hasActions && (
             <ActionsDropdown
@@ -418,8 +414,8 @@ export default function SubscriptionDetail( { id } ) {
                     { ' \u00B7 ' }
                     { paymentCount }{ ' ' }
                     { paymentCount === 1
-                      ? __( 'payment', 'missionwp-donation-platform' )
-                      : __( 'payments', 'missionwp-donation-platform' ) }
+                      ? __( 'payment', 'mission-donation-platform' )
+                      : __( 'payments', 'mission-donation-platform' ) }
                   </>
                 ) }
               </p>
@@ -437,10 +433,10 @@ export default function SubscriptionDetail( { id } ) {
             <NotesCard
               objectType="subscriptions"
               objectId={ s.id }
-              title={ __( 'Internal Notes', 'missionwp-donation-platform' ) }
+              title={ __( 'Internal Notes', 'mission-donation-platform' ) }
               hint={ __(
                 'Only visible to your team.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             />
           </VStack>
@@ -449,7 +445,7 @@ export default function SubscriptionDetail( { id } ) {
 
       { showPauseModal && (
         <Modal
-          title={ __( 'Pause Subscription', 'missionwp-donation-platform' ) }
+          title={ __( 'Pause Subscription', 'mission-donation-platform' ) }
           onRequestClose={ () => setShowPauseModal( false ) }
           size="small"
         >
@@ -457,7 +453,7 @@ export default function SubscriptionDetail( { id } ) {
             <Text>
               { __(
                 'Pausing will stop future renewal charges until the subscription is resumed. The donor will not be charged during this time.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <HStack justify="flex-end" spacing={ 3 }>
@@ -466,7 +462,7 @@ export default function SubscriptionDetail( { id } ) {
                 onClick={ () => setShowPauseModal( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Keep Active', 'missionwp-donation-platform' ) }
+                { __( 'Keep Active', 'mission-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -479,7 +475,7 @@ export default function SubscriptionDetail( { id } ) {
                 } }
                 __next40pxDefaultSize
               >
-                { __( 'Pause Subscription', 'missionwp-donation-platform' ) }
+                { __( 'Pause Subscription', 'mission-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>
@@ -488,7 +484,7 @@ export default function SubscriptionDetail( { id } ) {
 
       { showCancelModal && (
         <Modal
-          title={ __( 'Cancel Subscription', 'missionwp-donation-platform' ) }
+          title={ __( 'Cancel Subscription', 'mission-donation-platform' ) }
           onRequestClose={ () => setShowCancelModal( false ) }
           size="small"
         >
@@ -496,7 +492,7 @@ export default function SubscriptionDetail( { id } ) {
             <Text>
               { __(
                 'Are you sure you want to cancel this subscription? This will also cancel the subscription on Stripe.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <HStack justify="flex-end" spacing={ 3 }>
@@ -505,7 +501,7 @@ export default function SubscriptionDetail( { id } ) {
                 onClick={ () => setShowCancelModal( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Keep Subscription', 'missionwp-donation-platform' ) }
+                { __( 'Keep Subscription', 'mission-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -515,7 +511,7 @@ export default function SubscriptionDetail( { id } ) {
                 onClick={ handleCancel }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel Subscription', 'missionwp-donation-platform' ) }
+                { __( 'Cancel Subscription', 'mission-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>

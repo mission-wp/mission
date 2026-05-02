@@ -2,15 +2,15 @@
 /**
  * Fired during plugin activation.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission;
+namespace MissionDP;
 
-use Mission\Campaigns\MilestoneTracker;
-use Mission\Database\DatabaseModule;
-use Mission\Models\ActivityLog;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\MilestoneTracker;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\ActivityLog;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class Activator {
 	 * @return void
 	 */
 	public static function activate(): void {
-		$is_fresh_install = ! get_option( 'mission_version' );
+		$is_fresh_install = ! get_option( 'missiondp_version' );
 
 		self::check_requirements();
 		self::create_tables();
@@ -36,17 +36,17 @@ class Activator {
 
 		if ( $is_fresh_install ) {
 			self::log_plugin_installed();
-			update_option( 'mission_installed_at', current_time( 'mysql', true ) );
-			set_transient( 'mission_do_activation_redirect', true, 30 );
+			update_option( 'missiondp_installed_at', current_time( 'mysql', true ) );
+			set_transient( 'missiondp_do_activation_redirect', true, 30 );
 		} else {
 			self::log_plugin_activated();
 		}
 
 		// Store the plugin version for future upgrade routines.
-		update_option( 'mission_version', MISSION_VERSION );
+		update_option( 'missiondp_version', MISSIONDP_VERSION );
 
 		// Set a transient to trigger a welcome/activation notice.
-		set_transient( 'mission_activated', true, 30 );
+		set_transient( 'missiondp_activated', true, 30 );
 
 		// Register the post type so its rewrite rules are included in the flush.
 		( new Campaigns\CampaignPostType() )->register();
@@ -60,20 +60,20 @@ class Activator {
 	 */
 	private static function check_requirements(): void {
 		if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
-			deactivate_plugins( MISSION_BASENAME );
+			deactivate_plugins( MISSIONDP_BASENAME );
 			wp_die(
-				esc_html__( 'MissionWP Donation Platform requires PHP 8.0 or higher.', 'missionwp-donation-platform' ),
-				esc_html__( 'Plugin Activation Error', 'missionwp-donation-platform' ),
+				esc_html__( 'Mission Donation Platform requires PHP 8.0 or higher.', 'mission-donation-platform' ),
+				esc_html__( 'Plugin Activation Error', 'mission-donation-platform' ),
 				[ 'back_link' => true ]
 			);
 		}
 
 		global $wp_version;
 		if ( version_compare( $wp_version, '6.7', '<' ) ) {
-			deactivate_plugins( MISSION_BASENAME );
+			deactivate_plugins( MISSIONDP_BASENAME );
 			wp_die(
-				esc_html__( 'MissionWP Donation Platform requires WordPress 6.7 or higher.', 'missionwp-donation-platform' ),
-				esc_html__( 'Plugin Activation Error', 'missionwp-donation-platform' ),
+				esc_html__( 'Mission Donation Platform requires WordPress 6.7 or higher.', 'mission-donation-platform' ),
+				esc_html__( 'Plugin Activation Error', 'mission-donation-platform' ),
 				[ 'back_link' => true ]
 			);
 		}
@@ -101,13 +101,13 @@ class Activator {
 			return;
 		}
 
-		$admin->add_cap( 'manage_mission' );
-		$admin->add_cap( 'view_mission_reports' );
-		$admin->add_cap( 'edit_mission_transactions' );
+		$admin->add_cap( 'manage_missiondp' );
+		$admin->add_cap( 'view_missiondp_reports' );
+		$admin->add_cap( 'edit_missiondp_transactions' );
 
 		// Register the donor role (zero capabilities — only used to identify logged-in donors).
-		if ( ! get_role( 'mission_donor' ) ) {
-			add_role( 'mission_donor', __( 'MissionWP Donor', 'missionwp-donation-platform' ), [] );
+		if ( ! get_role( 'missiondp_donor' ) ) {
+			add_role( 'missiondp_donor', __( 'Mission Donor', 'mission-donation-platform' ), [] );
 		}
 	}
 
@@ -118,8 +118,8 @@ class Activator {
 	 */
 	private static function set_default_options(): void {
 		// Only set defaults on fresh installs, not reactivations.
-		if ( false === get_option( 'mission_settings' ) ) {
-			add_option( 'mission_settings', self::get_default_settings() );
+		if ( false === get_option( 'missiondp_settings' ) ) {
+			add_option( 'missiondp_settings', self::get_default_settings() );
 		}
 	}
 
@@ -129,7 +129,7 @@ class Activator {
 	 * @return void
 	 */
 	private static function create_pages(): void {
-		\Mission\DonorDashboard\DonorDashboardModule::create_dashboard_page();
+		\MissionDP\DonorDashboard\DonorDashboardModule::create_dashboard_page();
 	}
 
 	/**
@@ -142,7 +142,7 @@ class Activator {
 			[
 				'event'       => 'plugin_installed',
 				'object_type' => 'settings',
-				'data'        => wp_json_encode( [ 'version' => MISSION_VERSION ] ),
+				'data'        => wp_json_encode( [ 'version' => MISSIONDP_VERSION ] ),
 			]
 		);
 		$entry->save();
@@ -158,7 +158,7 @@ class Activator {
 			[
 				'event'       => 'plugin_activated',
 				'object_type' => 'settings',
-				'data'        => wp_json_encode( [ 'version' => MISSION_VERSION ] ),
+				'data'        => wp_json_encode( [ 'version' => MISSIONDP_VERSION ] ),
 			]
 		);
 		$entry->save();

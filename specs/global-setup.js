@@ -37,12 +37,12 @@ async function globalSetup( config ) {
   } );
 
   const mission = plugins.find(
-    ( p ) => p.plugin === 'mission/missionwp-donation-platform'
+    ( p ) => p.plugin === 'mission/mission-donation-platform'
   );
 
   if ( mission && mission.status !== 'active' ) {
     await requestUtils.rest( {
-      path: `/wp/v2/plugins/mission/missionwp-donation-platform`,
+      path: `/wp/v2/plugins/mission/mission-donation-platform`,
       method: 'PUT',
       data: { status: 'active' },
     } );

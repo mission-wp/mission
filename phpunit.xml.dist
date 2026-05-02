@@ -8,10 +8,10 @@
 	convertWarningsToExceptions="true"
 >
 	<php>
-		<const name="MISSION_TESTING" value="true" />
+		<const name="MISSIONDP_TESTING" value="true" />
 	</php>
 	<testsuites>
-		<testsuite name="Mission Test Suite">
+		<testsuite name="MissionDP Test Suite">
 			<directory suffix="Test.php">./tests/</directory>
 		</testsuite>
 	</testsuites>

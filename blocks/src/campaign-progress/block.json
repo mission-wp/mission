@@ -1,10 +1,10 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission/campaign-progress",
+	"name": "mission-donation-platform/campaign-progress",
 	"version": "0.1.0",
 	"title": "Campaign Progress",
-	"category": "mission",
+	"category": "mission-donation-platform",
 	"icon": "chart-bar",
 	"description": "Display campaign fundraising progress with a progress bar and stats.",
 	"supports": {
@@ -38,7 +38,7 @@
 		}
 	},
 	"example": {},
-	"textdomain": "missionwp-donation-platform",
+	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

@@ -48,7 +48,7 @@ export default function LogsPanel() {
 
       try {
         const response = await apiFetch( {
-          path: `/mission/v1/activity?${ params }`,
+          path: `/mission-donation-platform/v1/activity?${ params }`,
           parse: false,
         } );
 
@@ -93,7 +93,7 @@ export default function LogsPanel() {
     setIsClearing( true );
     try {
       await apiFetch( {
-        path: '/mission/v1/activity',
+        path: '/mission-donation-platform/v1/activity',
         method: 'DELETE',
       } );
       setEntries( [] );
@@ -192,9 +192,9 @@ export default function LogsPanel() {
             { filters.level || filters.category || filters.search
               ? __(
                   'No log entries match your filters.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 )
-              : __( 'No log entries yet.', 'missionwp-donation-platform' ) }
+              : __( 'No log entries yet.', 'mission-donation-platform' ) }
           </div>
         ) : (
           <div className="mission-logs-list">
@@ -218,12 +218,12 @@ export default function LogsPanel() {
               disabled={ isLoadingMore }
             >
               { isLoadingMore
-                ? __( 'Loading…', 'missionwp-donation-platform' )
+                ? __( 'Loading…', 'mission-donation-platform' )
                 : sprintf(
                     // translators: %s: number of remaining log entries.
                     __(
                       'Load more (%s remaining)',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                     ( total - entries.length ).toLocaleString()
                   ) }
@@ -234,16 +234,16 @@ export default function LogsPanel() {
 
       { showClearModal && (
         <ConfirmationModal
-          title={ __( 'Clear all logs', 'missionwp-donation-platform' ) }
+          title={ __( 'Clear all logs', 'mission-donation-platform' ) }
           message={ sprintf(
             // translators: %s: total number of log entries to delete.
             __(
               'This will permanently delete all %s log entries.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             total.toLocaleString()
           ) }
-          confirmLabel={ __( 'Clear logs', 'missionwp-donation-platform' ) }
+          confirmLabel={ __( 'Clear logs', 'mission-donation-platform' ) }
           isRunning={ isClearing }
           onConfirm={ handleClear }
           onCancel={ () => setShowClearModal( false ) }

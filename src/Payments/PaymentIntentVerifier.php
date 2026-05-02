@@ -9,12 +9,12 @@
  * subscription lifecycle, etc.) but synchronous verification here avoids the
  * stuck-pending problem and lets the donor see an immediate success screen.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Payments;
+namespace MissionDP\Payments;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 

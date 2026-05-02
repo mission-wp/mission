@@ -2,15 +2,15 @@
 /**
  * REST endpoint for the admin dashboard.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\ActivityLog;
-use Mission\Reporting\ReportingService;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\ActivityLog;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -70,7 +70,7 @@ class DashboardEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view the dashboard.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to view the dashboard.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -106,7 +106,7 @@ class DashboardEndpoint {
 		 * @param array  $data   Dashboard data.
 		 * @param string $period The requested period.
 		 */
-		$data = apply_filters( 'mission_dashboard_data', $data, $period );
+		$data = apply_filters( 'missiondp_dashboard_data', $data, $period );
 
 		return new WP_REST_Response( $data, 200 );
 	}
@@ -157,7 +157,7 @@ class DashboardEndpoint {
 		 *
 		 * @param string[] $excluded Object types to hide (e.g. 'settings', 'donor').
 		 */
-		$excluded_types = apply_filters( 'mission_dashboard_activity_excluded_types', [ 'settings' ] );
+		$excluded_types = apply_filters( 'missiondp_dashboard_activity_excluded_types', [ 'settings' ] );
 
 		/**
 		 * Filters the event names excluded from the dashboard activity feed.
@@ -165,7 +165,7 @@ class DashboardEndpoint {
 		 * @param string[] $excluded Event names to hide (e.g. 'admin_notification_sent').
 		 */
 		$excluded_events = apply_filters(
-			'mission_dashboard_activity_excluded_events',
+			'missiondp_dashboard_activity_excluded_events',
 			[ 'admin_notification_sent' ]
 		);
 
@@ -209,12 +209,12 @@ class DashboardEndpoint {
 	private function get_review_banner_data(): array {
 		$user_id = get_current_user_id();
 
-		if ( get_user_meta( $user_id, 'mission_review_banner_dismissed', true ) ) {
+		if ( get_user_meta( $user_id, 'missiondp_review_banner_dismissed', true ) ) {
 			return [ 'show' => false ];
 		}
 
 		// Check activation date (14+ days ago).
-		$installed_at = get_option( 'mission_installed_at' );
+		$installed_at = get_option( 'missiondp_installed_at' );
 
 		if ( ! $installed_at ) {
 			$installed_at = $this->backfill_installed_at();
@@ -242,7 +242,7 @@ class DashboardEndpoint {
 	}
 
 	/**
-	 * Backfill the mission_installed_at option from the activity log.
+	 * Backfill the missiondp_installed_at option from the activity log.
 	 *
 	 * For sites that were installed before this option existed, we look up
 	 * the plugin_installed event timestamp. Falls back to now.
@@ -261,7 +261,7 @@ class DashboardEndpoint {
 
 		$date = ! empty( $entries ) ? $entries[0]->date_created : current_time( 'mysql', true );
 
-		update_option( 'mission_installed_at', $date );
+		update_option( 'missiondp_installed_at', $date );
 
 		return $date;
 	}

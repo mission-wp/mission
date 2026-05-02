@@ -2,10 +2,10 @@
 /**
  * Database module - handles custom tables and schema updates.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database;
+namespace MissionDP\Database;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,7 +26,7 @@ class DatabaseModule {
 	 *
 	 * @var string
 	 */
-	public const DB_VERSION_OPTION = 'mission_db_version';
+	public const DB_VERSION_OPTION = 'missiondp_db_version';
 
 	/**
 	 * Schema instance.
@@ -46,10 +46,10 @@ class DatabaseModule {
 	public static function register_meta_tables(): void {
 		global $wpdb;
 
-		$wpdb->mission_campaignmeta     = $wpdb->prefix . 'mission_campaignmeta';
-		$wpdb->mission_transactionmeta  = $wpdb->prefix . 'mission_transactionmeta';
-		$wpdb->mission_donormeta        = $wpdb->prefix . 'mission_donormeta';
-		$wpdb->mission_subscriptionmeta = $wpdb->prefix . 'mission_subscriptionmeta';
+		$wpdb->missiondp_campaignmeta     = $wpdb->prefix . 'missiondp_campaignmeta';
+		$wpdb->missiondp_transactionmeta  = $wpdb->prefix . 'missiondp_transactionmeta';
+		$wpdb->missiondp_donormeta        = $wpdb->prefix . 'missiondp_donormeta';
+		$wpdb->missiondp_subscriptionmeta = $wpdb->prefix . 'missiondp_subscriptionmeta';
 	}
 
 	/**

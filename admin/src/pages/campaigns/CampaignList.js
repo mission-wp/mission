@@ -44,17 +44,17 @@ const STATUS_STYLES = {
   active: {
     backgroundColor: 'rgba(47, 163, 107, 0.12)',
     color: '#278f5c',
-    label: __( 'Active', 'missionwp-donation-platform' ),
+    label: __( 'Active', 'mission-donation-platform' ),
   },
   scheduled: {
     backgroundColor: '#e4eff5',
     color: '#4a7a9b',
-    label: __( 'Scheduled', 'missionwp-donation-platform' ),
+    label: __( 'Scheduled', 'mission-donation-platform' ),
   },
   ended: {
     backgroundColor: '#f0eeeb',
     color: '#8a7e72',
-    label: __( 'Ended', 'missionwp-donation-platform' ),
+    label: __( 'Ended', 'mission-donation-platform' ),
   },
 };
 
@@ -128,16 +128,16 @@ const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
   _isSkeleton: true,
 } ) );
 
-const adminUrl = window.missionAdmin?.adminUrl || '';
+const adminUrl = window.missiondpAdmin?.adminUrl || '';
 
 function campaignDetailUrl( id ) {
-  return `${ adminUrl }admin.php?page=mission-campaigns&campaign=${ id }`;
+  return `${ adminUrl }admin.php?page=mission-donation-platform-campaigns&campaign=${ id }`;
 }
 
 const fields = [
   {
     id: 'title',
-    label: __( 'Campaign', 'missionwp-donation-platform' ),
+    label: __( 'Campaign', 'mission-donation-platform' ),
     enableGlobalSearch: true,
     enableSorting: true,
     enableHiding: false,
@@ -152,7 +152,7 @@ const fields = [
   },
   {
     id: 'status',
-    label: __( 'Status', 'missionwp-donation-platform' ),
+    label: __( 'Status', 'mission-donation-platform' ),
     enableSorting: false,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -161,12 +161,12 @@ const fields = [
         <StatusBadge status={ item.status } />
       ),
     elements: [
-      { value: 'active', label: __( 'Active', 'missionwp-donation-platform' ) },
+      { value: 'active', label: __( 'Active', 'mission-donation-platform' ) },
       {
         value: 'scheduled',
-        label: __( 'Scheduled', 'missionwp-donation-platform' ),
+        label: __( 'Scheduled', 'mission-donation-platform' ),
       },
-      { value: 'ended', label: __( 'Ended', 'missionwp-donation-platform' ) },
+      { value: 'ended', label: __( 'Ended', 'mission-donation-platform' ) },
     ],
     filterBy: {
       operators: [ 'is' ],
@@ -174,7 +174,7 @@ const fields = [
   },
   {
     id: 'total_raised',
-    label: __( 'Raised', 'missionwp-donation-platform' ),
+    label: __( 'Raised', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -189,7 +189,7 @@ const fields = [
   },
   {
     id: 'goal_amount',
-    label: __( 'Goal', 'missionwp-donation-platform' ),
+    label: __( 'Goal', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -213,7 +213,7 @@ const fields = [
   },
   {
     id: 'progress',
-    label: __( 'Progress', 'missionwp-donation-platform' ),
+    label: __( 'Progress', 'mission-donation-platform' ),
     enableSorting: false,
     enableHiding: true,
     render: ( { item } ) => {
@@ -243,7 +243,7 @@ const fields = [
   },
   {
     id: 'transaction_count',
-    label: __( 'Transactions', 'missionwp-donation-platform' ),
+    label: __( 'Transactions', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -256,7 +256,7 @@ const fields = [
   },
   {
     id: 'date_start',
-    label: __( 'Starts', 'missionwp-donation-platform' ),
+    label: __( 'Starts', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -269,7 +269,7 @@ const fields = [
   },
   {
     id: 'date_end',
-    label: __( 'Ends', 'missionwp-donation-platform' ),
+    label: __( 'Ends', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -317,15 +317,13 @@ function campaignStatusSubtitle( summary ) {
   }
 
   const parts = [
-    [ summary.active, __( 'active', 'missionwp-donation-platform' ) ],
-    [ summary.ended, __( 'ended', 'missionwp-donation-platform' ) ],
-    [ summary.scheduled, __( 'scheduled', 'missionwp-donation-platform' ) ],
+    [ summary.active, __( 'active', 'mission-donation-platform' ) ],
+    [ summary.ended, __( 'ended', 'mission-donation-platform' ) ],
+    [ summary.scheduled, __( 'scheduled', 'mission-donation-platform' ) ],
   ].filter( ( [ count ] ) => count > 0 );
 
   if ( parts.length === 1 ) {
-    return `${ __( 'All', 'missionwp-donation-platform' ) } ${
-      parts[ 0 ][ 1 ]
-    }`;
+    return `${ __( 'All', 'mission-donation-platform' ) } ${ parts[ 0 ][ 1 ] }`;
   }
 
   return parts
@@ -346,7 +344,7 @@ export default function CampaignList() {
   const [ summary, setSummary ] = useState( null );
 
   const fetchSummary = useCallback( () => {
-    apiFetch( { path: '/mission/v1/campaigns/summary' } )
+    apiFetch( { path: '/mission-donation-platform/v1/campaigns/summary' } )
       .then( setSummary )
       .catch( () => {} );
   }, [] );
@@ -376,7 +374,7 @@ export default function CampaignList() {
 
     try {
       const response = await apiFetch( {
-        path: `/mission/v1/campaigns?${ params.toString() }`,
+        path: `/mission-donation-platform/v1/campaigns?${ params.toString() }`,
         parse: false,
       } );
 
@@ -405,15 +403,15 @@ export default function CampaignList() {
   const actions = [
     {
       id: 'edit',
-      label: __( 'Edit', 'missionwp-donation-platform' ),
+      label: __( 'Edit', 'mission-donation-platform' ),
       icon: pencil,
       callback: ( items ) => {
-        window.location.href = `${ window.missionAdmin.adminUrl }admin.php?page=mission-campaigns&campaign=${ items[ 0 ].id }`;
+        window.location.href = `${ window.missiondpAdmin.adminUrl }admin.php?page=mission-donation-platform-campaigns&campaign=${ items[ 0 ].id }`;
       },
     },
     {
       id: 'view',
-      label: __( 'View', 'missionwp-donation-platform' ),
+      label: __( 'View', 'mission-donation-platform' ),
       icon: external,
       isEligible: ( item ) => !! item.url,
       callback: ( items ) => {
@@ -422,7 +420,7 @@ export default function CampaignList() {
     },
     {
       id: 'delete',
-      label: __( 'Delete', 'missionwp-donation-platform' ),
+      label: __( 'Delete', 'mission-donation-platform' ),
       icon: trash,
       isDestructive: true,
       RenderModal: ( { items, closeModal } ) => {
@@ -431,14 +429,14 @@ export default function CampaignList() {
             <Text>
               { __(
                 'Are you sure you want to delete this campaign?',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <Text variant="muted">{ items[ 0 ].title }</Text>
             <Text>
               { __(
                 'This action cannot be undone.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <HStack justify="flex-end">
@@ -447,7 +445,7 @@ export default function CampaignList() {
                 onClick={ closeModal }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel', 'missionwp-donation-platform' ) }
+                { __( 'Cancel', 'mission-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -455,14 +453,14 @@ export default function CampaignList() {
                 __next40pxDefaultSize
                 onClick={ async () => {
                   await apiFetch( {
-                    path: `/mission/v1/campaigns/${ items[ 0 ].id }`,
+                    path: `/mission-donation-platform/v1/campaigns/${ items[ 0 ].id }`,
                     method: 'DELETE',
                   } );
                   closeModal();
                   fetchCampaigns();
                 } }
               >
-                { __( 'Delete', 'missionwp-donation-platform' ) }
+                { __( 'Delete', 'mission-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>
@@ -483,34 +481,34 @@ export default function CampaignList() {
   const summaryCards = (
     <div className="mission-stats-row mission-stats-row--4">
       <StatCard
-        label={ __( 'Total Campaigns', 'missionwp-donation-platform' ) }
+        label={ __( 'Total Campaigns', 'mission-donation-platform' ) }
         value={ summary ? summary.total_campaigns.toLocaleString() : '' }
         subtitle={ summary ? campaignStatusSubtitle( summary ) : undefined }
         isLoading={ ! summary }
       />
       <StatCard
-        label={ __( 'Total Raised', 'missionwp-donation-platform' ) }
+        label={ __( 'Total Raised', 'mission-donation-platform' ) }
         value={ summary ? formatAmount( summary.total_raised ) : '' }
         isLoading={ ! summary }
       />
       <StatCard
-        label={ __( 'Avg. per Campaign', 'missionwp-donation-platform' ) }
+        label={ __( 'Avg. per Campaign', 'mission-donation-platform' ) }
         value={ summary ? formatAmount( summary.average_per_campaign ) : '' }
         subtitle={ __(
           'Across active campaigns',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         isLoading={ ! summary }
       />
       <StatCard
         className="mission-stat-card--text-value"
-        label={ __( 'Top Campaign', 'missionwp-donation-platform' ) }
+        label={ __( 'Top Campaign', 'mission-donation-platform' ) }
         value={ summary ? summary.top_campaign_name || '\u2014' : '' }
         subtitle={
           summary?.top_campaign_raised
             ? `${ formatAmount( summary.top_campaign_raised ) } ${ __(
                 'raised',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }`
             : undefined
         }
@@ -526,12 +524,12 @@ export default function CampaignList() {
           <HStack justify="space-between" alignment="center">
             <VStack spacing={ 1 }>
               <Heading level={ 1 }>
-                { __( 'Campaigns', 'missionwp-donation-platform' ) }
+                { __( 'Campaigns', 'mission-donation-platform' ) }
               </Heading>
               <Text variant="muted">
                 { __(
                   'Create and manage your fundraising campaigns.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               </Text>
             </VStack>
@@ -543,10 +541,10 @@ export default function CampaignList() {
             <CardBody>
               <EmptyState
                 icon={ <MegaphoneIcon /> }
-                text={ __( 'No campaigns yet', 'missionwp-donation-platform' ) }
+                text={ __( 'No campaigns yet', 'mission-donation-platform' ) }
                 hint={ __(
                   'Create your first campaign to start accepting donations.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
                 action={
                   <Button
@@ -558,7 +556,7 @@ export default function CampaignList() {
                     onClick={ () => setShowCreateModal( true ) }
                     __next40pxDefaultSize
                   >
-                    { __( 'Create a Campaign', 'missionwp-donation-platform' ) }
+                    { __( 'Create a Campaign', 'mission-donation-platform' ) }
                   </Button>
                 }
               />
@@ -582,12 +580,12 @@ export default function CampaignList() {
         <HStack justify="space-between" alignment="center">
           <VStack spacing={ 1 }>
             <Heading level={ 1 }>
-              { __( 'Campaigns', 'missionwp-donation-platform' ) }
+              { __( 'Campaigns', 'mission-donation-platform' ) }
             </Heading>
             <Text variant="muted">
               { __(
                 'Create and manage your fundraising campaigns.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
           </VStack>
@@ -600,7 +598,7 @@ export default function CampaignList() {
             onClick={ () => setShowCreateModal( true ) }
             __next40pxDefaultSize
           >
-            { __( 'Add Campaign', 'missionwp-donation-platform' ) }
+            { __( 'Add Campaign', 'mission-donation-platform' ) }
           </Button>
         </HStack>
 

@@ -1,10 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "mission/donor-dashboard",
+  "name": "mission-donation-platform/donor-dashboard",
   "version": "0.1.0",
   "title": "Donor Dashboard",
-  "category": "mission",
+  "category": "mission-donation-platform",
   "icon": "id-alt",
   "description": "A self-service portal where donors can view donation history, manage recurring gifts, download tax receipts, and update their profile.",
   "supports": {
@@ -17,7 +17,7 @@
     "primaryColor": { "type": "string", "default": "" }
   },
   "example": {},
-  "textdomain": "missionwp-donation-platform",
+  "textdomain": "mission-donation-platform",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",

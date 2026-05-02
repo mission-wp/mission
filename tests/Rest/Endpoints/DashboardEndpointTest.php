@@ -2,17 +2,17 @@
 /**
  * Tests for the DashboardEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\ActivityLog;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\ActivityLog;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -49,16 +49,16 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -94,16 +94,16 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 		wp_set_current_user( 0 );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		delete_option( SettingsService::OPTION_NAME );
@@ -174,7 +174,7 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( 5000, $donor1->id );
 		$this->create_transaction( 3000, $donor2->id );
 
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -202,7 +202,7 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 		] );
 		$entry->save();
 
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -222,7 +222,7 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 	public function test_get_accepts_period_parameter(): void {
 		// Just verify each valid period returns a 200 response with the expected shape.
 		foreach ( [ 'today', 'week', 'month' ] as $period ) {
-			$response = $this->dispatch_get( '/mission/v1/dashboard', [ 'period' => $period ] );
+			$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard', [ 'period' => $period ] );
 			$data     = $response->get_data();
 
 			$this->assertSame( 200, $response->get_status(), "Period '{$period}' should return 200." );
@@ -239,7 +239,7 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 	 * Test GET returns previous period comparison data.
 	 */
 	public function test_get_returns_previous_period_comparison(): void {
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -272,7 +272,7 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 		$test->save();
 
 		// In live mode, only live activity should appear.
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data['activity'] );
@@ -285,7 +285,7 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 			'stripe_site_token' => 'test_site_token_123',
 		] );
 
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data['activity'] );
@@ -301,14 +301,14 @@ class DashboardEndpointTest extends WP_UnitTestCase {
 	 */
 	public function test_permissions_unauthenticated_rejected(): void {
 		wp_set_current_user( 0 );
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
 
 		// Subscriber role.
 		wp_set_current_user( $this->subscriber_id );
-		$response = $this->dispatch_get( '/mission/v1/dashboard' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/dashboard' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );

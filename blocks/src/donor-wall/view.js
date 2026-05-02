@@ -136,7 +136,7 @@ function enrichItems( items, currency, startIndex = 0, commentLength = 150 ) {
   } );
 }
 
-const { state } = store( 'mission/donor-wall', {
+const { state } = store( 'mission-donation-platform/donor-wall', {
   state: {
     get hasMore() {
       const ctx = getContext();

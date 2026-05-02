@@ -2,16 +2,16 @@
 /**
  * Tests for the CampaignLifecycleModule class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Campaigns;
+namespace MissionDP\Tests\Campaigns;
 
-use Mission\Campaigns\CampaignLifecycleModule;
-use Mission\Campaigns\CampaignPostType;
-use Mission\Database\DatabaseModule;
-use Mission\Models\ActivityLog;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignLifecycleModule;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\ActivityLog;
+use MissionDP\Models\Campaign;
 use WP_UnitTestCase;
 
 /**
@@ -48,9 +48,9 @@ class CampaignLifecycleModuleTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		parent::tear_down();
@@ -334,7 +334,7 @@ class CampaignLifecycleModuleTest extends WP_UnitTestCase {
 	public function test_status_changed_hook_fires(): void {
 		$fired_args = null;
 
-		add_action( 'mission_campaign_status_changed', function () use ( &$fired_args ) {
+		add_action( 'missiondp_campaign_status_changed', function () use ( &$fired_args ) {
 			$fired_args = func_get_args();
 		}, 10, 4 );
 

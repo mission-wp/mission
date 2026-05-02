@@ -3,16 +3,16 @@ import { formatAmount } from '@shared/currency';
 import DonorAvatar from '../../components/DonorAvatar';
 
 export default function TransactionDonorCard( { donor } ) {
-  const adminUrl = window.missionAdmin?.adminUrl || '';
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
 
   if ( ! donor ) {
     return (
       <div className="mission-card" style={ { padding: 0 } }>
         <h2 className="mission-card__heading">
-          { __( 'Donor', 'missionwp-donation-platform' ) }
+          { __( 'Donor', 'mission-donation-platform' ) }
         </h2>
         <p style={ { textAlign: 'center', color: '#9b9ba8', padding: '16px' } }>
-          { __( 'Anonymous or deleted donor', 'missionwp-donation-platform' ) }
+          { __( 'Anonymous or deleted donor', 'mission-donation-platform' ) }
         </p>
       </div>
     );
@@ -20,9 +20,9 @@ export default function TransactionDonorCard( { donor } ) {
 
   const fullName =
     [ donor.first_name, donor.last_name ].filter( Boolean ).join( ' ' ) ||
-    __( 'Anonymous', 'missionwp-donation-platform' );
+    __( 'Anonymous', 'mission-donation-platform' );
 
-  const profileUrl = `${ adminUrl }admin.php?page=mission-donors&donor_id=${ donor.id }`;
+  const profileUrl = `${ adminUrl }admin.php?page=mission-donation-platform-donors&donor_id=${ donor.id }`;
 
   return (
     <div className="mission-card" style={ { padding: 0 } }>
@@ -34,13 +34,13 @@ export default function TransactionDonorCard( { donor } ) {
           alignItems: 'center',
         } }
       >
-        <span>{ __( 'Donor', 'missionwp-donation-platform' ) }</span>
+        <span>{ __( 'Donor', 'mission-donation-platform' ) }</span>
         <a
           href={ profileUrl }
           className="mission-table-link"
           style={ { fontSize: '13px', fontWeight: 400 } }
         >
-          { __( 'View profile', 'missionwp-donation-platform' ) }
+          { __( 'View profile', 'mission-donation-platform' ) }
         </a>
       </div>
       <div
@@ -80,15 +80,15 @@ export default function TransactionDonorCard( { donor } ) {
             <strong style={ { color: '#1a1a2e' } }>
               { formatAmount( donor.total_donated ) }
             </strong>{ ' ' }
-            { __( 'lifetime', 'missionwp-donation-platform' ) }
+            { __( 'lifetime', 'mission-donation-platform' ) }
           </div>
           <div>
             <strong style={ { color: '#1a1a2e' } }>
               { donor.transaction_count }
             </strong>{ ' ' }
             { donor.transaction_count === 1
-              ? __( 'donation', 'missionwp-donation-platform' )
-              : __( 'donations', 'missionwp-donation-platform' ) }
+              ? __( 'donation', 'mission-donation-platform' )
+              : __( 'donations', 'mission-donation-platform' ) }
           </div>
         </div>
       </div>

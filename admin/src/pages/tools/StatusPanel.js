@@ -60,53 +60,53 @@ function SkeletonBar( { width = '60%', height = '13px' } ) {
  */
 const SKELETON_SECTIONS = [
   {
-    title: __( 'MissionWP Environment', 'missionwp-donation-platform' ),
+    title: __( 'Mission Environment', 'mission-donation-platform' ),
     labels: [
-      __( 'MissionWP version', 'missionwp-donation-platform' ),
-      __( 'Database version', 'missionwp-donation-platform' ),
-      __( 'Stripe connection', 'missionwp-donation-platform' ),
-      __( 'Webhook endpoint', 'missionwp-donation-platform' ),
-      __( 'Test mode', 'missionwp-donation-platform' ),
-      __( 'Currency', 'missionwp-donation-platform' ),
-      __( 'Active campaigns', 'missionwp-donation-platform' ),
-      __( 'Total donors', 'missionwp-donation-platform' ),
-      __( 'Total transactions', 'missionwp-donation-platform' ),
-      __( 'Log directory', 'missionwp-donation-platform' ),
+      __( 'Mission version', 'mission-donation-platform' ),
+      __( 'Database version', 'mission-donation-platform' ),
+      __( 'Stripe connection', 'mission-donation-platform' ),
+      __( 'Webhook endpoint', 'mission-donation-platform' ),
+      __( 'Test mode', 'mission-donation-platform' ),
+      __( 'Currency', 'mission-donation-platform' ),
+      __( 'Active campaigns', 'mission-donation-platform' ),
+      __( 'Total donors', 'mission-donation-platform' ),
+      __( 'Total transactions', 'mission-donation-platform' ),
+      __( 'Log directory', 'mission-donation-platform' ),
     ],
   },
   {
-    title: __( 'WordPress Environment', 'missionwp-donation-platform' ),
+    title: __( 'WordPress Environment', 'mission-donation-platform' ),
     labels: [
-      __( 'Site URL', 'missionwp-donation-platform' ),
-      __( 'Home URL', 'missionwp-donation-platform' ),
-      __( 'WordPress version', 'missionwp-donation-platform' ),
-      __( 'Multisite', 'missionwp-donation-platform' ),
-      __( 'Memory limit', 'missionwp-donation-platform' ),
-      __( 'Debug mode', 'missionwp-donation-platform' ),
-      __( 'Cron', 'missionwp-donation-platform' ),
-      __( 'Language', 'missionwp-donation-platform' ),
-      __( 'Timezone', 'missionwp-donation-platform' ),
+      __( 'Site URL', 'mission-donation-platform' ),
+      __( 'Home URL', 'mission-donation-platform' ),
+      __( 'WordPress version', 'mission-donation-platform' ),
+      __( 'Multisite', 'mission-donation-platform' ),
+      __( 'Memory limit', 'mission-donation-platform' ),
+      __( 'Debug mode', 'mission-donation-platform' ),
+      __( 'Cron', 'mission-donation-platform' ),
+      __( 'Language', 'mission-donation-platform' ),
+      __( 'Timezone', 'mission-donation-platform' ),
     ],
   },
   {
-    title: __( 'Server Environment', 'missionwp-donation-platform' ),
+    title: __( 'Server Environment', 'mission-donation-platform' ),
     labels: [
-      __( 'Server software', 'missionwp-donation-platform' ),
-      __( 'PHP version', 'missionwp-donation-platform' ),
-      __( 'PHP memory limit', 'missionwp-donation-platform' ),
-      __( 'PHP max execution time', 'missionwp-donation-platform' ),
-      __( 'PHP max input vars', 'missionwp-donation-platform' ),
-      __( 'PHP max upload size', 'missionwp-donation-platform' ),
-      __( 'MySQL version', 'missionwp-donation-platform' ),
-      __( 'cURL version', 'missionwp-donation-platform' ),
-      __( 'fsockopen / cURL', 'missionwp-donation-platform' ),
+      __( 'Server software', 'mission-donation-platform' ),
+      __( 'PHP version', 'mission-donation-platform' ),
+      __( 'PHP memory limit', 'mission-donation-platform' ),
+      __( 'PHP max execution time', 'mission-donation-platform' ),
+      __( 'PHP max input vars', 'mission-donation-platform' ),
+      __( 'PHP max upload size', 'mission-donation-platform' ),
+      __( 'MySQL version', 'mission-donation-platform' ),
+      __( 'cURL version', 'mission-donation-platform' ),
+      __( 'fsockopen / cURL', 'mission-donation-platform' ),
       'DOMDocument',
       'GZip',
     ],
   },
-  { title: __( 'Database', 'missionwp-donation-platform' ), rows: 7 },
-  { title: __( 'Active Plugins', 'missionwp-donation-platform' ), rows: 3 },
-  { title: __( 'Theme', 'missionwp-donation-platform' ), rows: 5 },
+  { title: __( 'Database', 'mission-donation-platform' ), rows: 7 },
+  { title: __( 'Active Plugins', 'mission-donation-platform' ), rows: 3 },
+  { title: __( 'Theme', 'mission-donation-platform' ), rows: 5 },
 ];
 
 // Varied widths so skeleton values don't all look the same.
@@ -138,7 +138,7 @@ function StatusSkeleton() {
         <div className="mission-status-report-bar">
           <div>
             <div className="mission-settings-card__title">
-              { __( 'System Status', 'missionwp-donation-platform' ) }
+              { __( 'System Status', 'mission-donation-platform' ) }
             </div>
             <p
               className="mission-settings-card__desc"
@@ -146,7 +146,7 @@ function StatusSkeleton() {
             >
               { __(
                 'Copy this report when contacting support.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </p>
           </div>
@@ -168,7 +168,7 @@ function StatusSkeleton() {
               <rect x="5" y="5" width="9" height="9" rx="1.5" />
               <path d="M3.5 11H3a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 3 1h7a1.5 1.5 0 0 1 1.5 1.5V3" />
             </svg>
-            { __( 'Copy system report', 'missionwp-donation-platform' ) }
+            { __( 'Copy system report', 'mission-donation-platform' ) }
           </button>
         </div>
       </div>
@@ -236,76 +236,76 @@ function buildSections( data ) {
   const stripeStatus = mission.stripe_connected ? (
     <>
       <StatusDot status="ok" />
-      { ' ' + __( 'Connected', 'missionwp-donation-platform' ) }
+      { ' ' + __( 'Connected', 'mission-donation-platform' ) }
       <span className="mission-status-muted">
         { ` — ${ mission.stripe_account_id } (${ mission.stripe_mode } ${ __(
           'mode',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) })` }
       </span>
     </>
   ) : (
     <>
       <StatusDot status="err" />
-      { ' ' + __( 'Not connected', 'missionwp-donation-platform' ) }
+      { ' ' + __( 'Not connected', 'mission-donation-platform' ) }
     </>
   );
 
   const webhookStatus = mission.stripe_webhook_configured ? (
     <>
       <StatusDot status="ok" />
-      { ' ' + __( 'Active', 'missionwp-donation-platform' ) }
+      { ' ' + __( 'Active', 'mission-donation-platform' ) }
       <span className="mission-status-muted">{ ` — ${ mission.webhook_url }` }</span>
     </>
   ) : (
     <>
       <StatusDot status="err" />
-      { ' ' + __( 'Not configured', 'missionwp-donation-platform' ) }
+      { ' ' + __( 'Not configured', 'mission-donation-platform' ) }
     </>
   );
 
   const missionRows = [
     {
-      label: __( 'MissionWP version', 'missionwp-donation-platform' ),
+      label: __( 'Mission version', 'mission-donation-platform' ),
       value: <code>{ mission.version }</code>,
     },
     {
-      label: __( 'Database version', 'missionwp-donation-platform' ),
+      label: __( 'Database version', 'mission-donation-platform' ),
       value: <code>{ mission.db_version }</code>,
     },
     {
-      label: __( 'Stripe connection', 'missionwp-donation-platform' ),
+      label: __( 'Stripe connection', 'mission-donation-platform' ),
       value: stripeStatus,
     },
     {
-      label: __( 'Webhook endpoint', 'missionwp-donation-platform' ),
+      label: __( 'Webhook endpoint', 'mission-donation-platform' ),
       value: webhookStatus,
     },
     {
-      label: __( 'Test mode', 'missionwp-donation-platform' ),
+      label: __( 'Test mode', 'mission-donation-platform' ),
       value: mission.test_mode ? (
         <>
           <StatusDot status="warn" />{ ' ' }
-          { __( 'Enabled', 'missionwp-donation-platform' ) }
+          { __( 'Enabled', 'mission-donation-platform' ) }
         </>
       ) : (
-        __( 'Disabled', 'missionwp-donation-platform' )
+        __( 'Disabled', 'mission-donation-platform' )
       ),
     },
     {
-      label: __( 'Currency', 'missionwp-donation-platform' ),
+      label: __( 'Currency', 'mission-donation-platform' ),
       value: `${ mission.currency } (${ mission.currency_symbol })`,
     },
     {
-      label: __( 'Active campaigns', 'missionwp-donation-platform' ),
+      label: __( 'Active campaigns', 'mission-donation-platform' ),
       value: String( mission.active_campaigns ),
     },
     {
-      label: __( 'Total donors', 'missionwp-donation-platform' ),
+      label: __( 'Total donors', 'mission-donation-platform' ),
       value: Number( mission.total_donors ).toLocaleString(),
     },
     {
-      label: __( 'Total transactions', 'missionwp-donation-platform' ),
+      label: __( 'Total transactions', 'mission-donation-platform' ),
       value: Number( mission.total_transactions ).toLocaleString(),
     },
   ];
@@ -313,15 +313,15 @@ function buildSections( data ) {
   // --- WordPress Environment ---
   const wpRows = [
     {
-      label: __( 'Site URL', 'missionwp-donation-platform' ),
+      label: __( 'Site URL', 'mission-donation-platform' ),
       value: <code>{ wordpress.site_url }</code>,
     },
     {
-      label: __( 'Home URL', 'missionwp-donation-platform' ),
+      label: __( 'Home URL', 'mission-donation-platform' ),
       value: <code>{ wordpress.home_url }</code>,
     },
     {
-      label: __( 'WordPress version', 'missionwp-donation-platform' ),
+      label: __( 'WordPress version', 'mission-donation-platform' ),
       value: (
         <>
           <StatusDot status="ok" /> { wordpress.version }
@@ -329,13 +329,13 @@ function buildSections( data ) {
       ),
     },
     {
-      label: __( 'Multisite', 'missionwp-donation-platform' ),
+      label: __( 'Multisite', 'mission-donation-platform' ),
       value: wordpress.multisite
-        ? __( 'Yes', 'missionwp-donation-platform' )
-        : __( 'No', 'missionwp-donation-platform' ),
+        ? __( 'Yes', 'mission-donation-platform' )
+        : __( 'No', 'mission-donation-platform' ),
     },
     {
-      label: __( 'Memory limit', 'missionwp-donation-platform' ),
+      label: __( 'Memory limit', 'mission-donation-platform' ),
       value: (
         <>
           <StatusDot status="ok" /> { wordpress.memory_limit }
@@ -343,31 +343,31 @@ function buildSections( data ) {
       ),
     },
     {
-      label: __( 'Debug mode', 'missionwp-donation-platform' ),
+      label: __( 'Debug mode', 'mission-donation-platform' ),
       value: wordpress.debug_mode
-        ? __( 'Enabled', 'missionwp-donation-platform' )
-        : __( 'Disabled', 'missionwp-donation-platform' ),
+        ? __( 'Enabled', 'mission-donation-platform' )
+        : __( 'Disabled', 'mission-donation-platform' ),
     },
     {
-      label: __( 'Cron', 'missionwp-donation-platform' ),
+      label: __( 'Cron', 'mission-donation-platform' ),
       value: wordpress.cron ? (
         <>
           <StatusDot status="ok" />{ ' ' }
-          { __( 'Enabled', 'missionwp-donation-platform' ) }
+          { __( 'Enabled', 'mission-donation-platform' ) }
         </>
       ) : (
         <>
           <StatusDot status="err" />{ ' ' }
-          { __( 'Disabled', 'missionwp-donation-platform' ) }
+          { __( 'Disabled', 'mission-donation-platform' ) }
         </>
       ),
     },
     {
-      label: __( 'Language', 'missionwp-donation-platform' ),
+      label: __( 'Language', 'mission-donation-platform' ),
       value: wordpress.language,
     },
     {
-      label: __( 'Timezone', 'missionwp-donation-platform' ),
+      label: __( 'Timezone', 'mission-donation-platform' ),
       value: `${ wordpress.timezone } (${ wordpress.utc_offset })`,
     },
   ];
@@ -377,22 +377,22 @@ function buildSections( data ) {
     val ? (
       <>
         <StatusDot status="ok" />{ ' ' }
-        { __( 'Available', 'missionwp-donation-platform' ) }
+        { __( 'Available', 'mission-donation-platform' ) }
       </>
     ) : (
       <>
         <StatusDot status="err" />{ ' ' }
-        { __( 'Not available', 'missionwp-donation-platform' ) }
+        { __( 'Not available', 'mission-donation-platform' ) }
       </>
     );
 
   const serverRows = [
     {
-      label: __( 'Server software', 'missionwp-donation-platform' ),
+      label: __( 'Server software', 'mission-donation-platform' ),
       value: server.software,
     },
     {
-      label: __( 'PHP version', 'missionwp-donation-platform' ),
+      label: __( 'PHP version', 'mission-donation-platform' ),
       value: (
         <>
           <StatusDot status="ok" /> { server.php_version }
@@ -400,34 +400,34 @@ function buildSections( data ) {
       ),
     },
     {
-      label: __( 'PHP memory limit', 'missionwp-donation-platform' ),
+      label: __( 'PHP memory limit', 'mission-donation-platform' ),
       value: server.php_memory_limit,
     },
     {
-      label: __( 'PHP max execution time', 'missionwp-donation-platform' ),
+      label: __( 'PHP max execution time', 'mission-donation-platform' ),
       value: `${ server.php_max_execution_time } ${ __(
         'seconds',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ) }`,
     },
     {
-      label: __( 'PHP max input vars', 'missionwp-donation-platform' ),
+      label: __( 'PHP max input vars', 'mission-donation-platform' ),
       value: String( server.php_max_input_vars ),
     },
     {
-      label: __( 'PHP max upload size', 'missionwp-donation-platform' ),
+      label: __( 'PHP max upload size', 'mission-donation-platform' ),
       value: server.php_max_upload_size,
     },
     {
-      label: __( 'MySQL version', 'missionwp-donation-platform' ),
+      label: __( 'MySQL version', 'mission-donation-platform' ),
       value: server.mysql_version,
     },
     {
-      label: __( 'cURL version', 'missionwp-donation-platform' ),
+      label: __( 'cURL version', 'mission-donation-platform' ),
       value: server.curl_version,
     },
     {
-      label: __( 'fsockopen / cURL', 'missionwp-donation-platform' ),
+      label: __( 'fsockopen / cURL', 'mission-donation-platform' ),
       value: boolAvailable( server.fsockopen || server.curl ),
     },
     { label: 'DOMDocument', value: boolAvailable( server.domdocument ) },
@@ -437,15 +437,15 @@ function buildSections( data ) {
   // --- Database ---
   const dbRows = [
     {
-      label: __( 'Database prefix', 'missionwp-donation-platform' ),
+      label: __( 'Database prefix', 'mission-donation-platform' ),
       value: <code>{ database.prefix }</code>,
     },
     {
-      label: __( 'Total database size', 'missionwp-donation-platform' ),
+      label: __( 'Total database size', 'mission-donation-platform' ),
       value: `${ database.total_size } MB`,
     },
     {
-      label: __( 'MissionWP tables size', 'missionwp-donation-platform' ),
+      label: __( 'Mission tables size', 'mission-donation-platform' ),
       value: `${ database.mission_size } MB`,
     },
     ...database.tables.map( ( t ) => ( {
@@ -463,7 +463,7 @@ function buildSections( data ) {
     label: p.name,
     value: (
       <>
-        { `${ __( 'by', 'missionwp-donation-platform' ) } ${ p.author } — ` }
+        { `${ __( 'by', 'mission-donation-platform' ) } ${ p.author } — ` }
         <code>{ p.version }</code>
       </>
     ),
@@ -471,65 +471,67 @@ function buildSections( data ) {
 
   // --- Theme ---
   const themeRows = [
-    { label: __( 'Name', 'missionwp-donation-platform' ), value: theme.name },
+    { label: __( 'Name', 'mission-donation-platform' ), value: theme.name },
     {
-      label: __( 'Version', 'missionwp-donation-platform' ),
+      label: __( 'Version', 'mission-donation-platform' ),
       value: <code>{ theme.version }</code>,
     },
     {
-      label: __( 'Author', 'missionwp-donation-platform' ),
+      label: __( 'Author', 'mission-donation-platform' ),
       value: theme.author,
     },
     {
-      label: __( 'Child theme', 'missionwp-donation-platform' ),
+      label: __( 'Child theme', 'mission-donation-platform' ),
       value: theme.child_theme
-        ? __( 'Yes', 'missionwp-donation-platform' )
-        : __( 'No', 'missionwp-donation-platform' ),
+        ? __( 'Yes', 'mission-donation-platform' )
+        : __( 'No', 'mission-donation-platform' ),
     },
     {
-      label: __( 'Block theme', 'missionwp-donation-platform' ),
+      label: __( 'Block theme', 'mission-donation-platform' ),
       value: theme.block_theme ? (
         <>
-          <StatusDot status="ok" />{ ' ' }
-          { __( 'Yes', 'missionwp-donation-platform' ) }
+          <StatusDot status="ok" /> { __( 'Yes', 'mission-donation-platform' ) }
         </>
       ) : (
-        __( 'No', 'missionwp-donation-platform' )
+        __( 'No', 'mission-donation-platform' )
       ),
     },
   ];
 
   return [
     {
-      key: 'mission',
-      title: __( 'MissionWP Environment', 'missionwp-donation-platform' ),
+      key: 'mission_donation_platform',
+      title: __(
+        'Mission Donation Platform Environment',
+        'mission-donation-platform'
+      ),
       rows: missionRows,
     },
     {
       key: 'wordpress',
-      title: __( 'WordPress Environment', 'missionwp-donation-platform' ),
+      title: __( 'WordPress Environment', 'mission-donation-platform' ),
       rows: wpRows,
     },
     {
       key: 'server',
-      title: __( 'Server Environment', 'missionwp-donation-platform' ),
+      title: __( 'Server Environment', 'mission-donation-platform' ),
       rows: serverRows,
     },
     {
       key: 'database',
-      title: __( 'Database', 'missionwp-donation-platform' ),
+      title: __( 'Database', 'mission-donation-platform' ),
       rows: dbRows,
     },
     {
       key: 'plugins',
-      title: `${ __( 'Active Plugins', 'missionwp-donation-platform' ) } (${
+      title: `${ __( 'Active Plugins', 'mission-donation-platform' ) } (${
         plugins.length
       })`,
       rows: pluginRows,
     },
     {
       key: 'theme',
-      title: __( 'Theme', 'missionwp-donation-platform' ),
+      title: __( 'Theme', 'mission-donation-platform' ),
       rows: themeRows,
     },
   ];
@@ -543,7 +545,7 @@ function buildSections( data ) {
  */
 function buildPlainTextReport( data ) {
   const sections = buildSections( data );
-  let report = '### MissionWP System Status Report ###\n\n';
+  let report = '### Mission System Status Report ###\n\n';
 
   for ( const section of sections ) {
     report += `--- ${ section.title } ---\n`;
@@ -597,7 +599,7 @@ export default function StatusPanel() {
   const copyTimeoutRef = useRef( null );
 
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/system-status' } )
+    apiFetch( { path: '/mission-donation-platform/v1/system-status' } )
       .then( ( response ) => setData( response ) )
       .finally( () => setIsLoading( false ) );
   }, [] );
@@ -640,7 +642,7 @@ export default function StatusPanel() {
         <div className="mission-status-report-bar">
           <div>
             <div className="mission-settings-card__title">
-              { __( 'System Status', 'missionwp-donation-platform' ) }
+              { __( 'System Status', 'mission-donation-platform' ) }
             </div>
             <p
               className="mission-settings-card__desc"
@@ -648,7 +650,7 @@ export default function StatusPanel() {
             >
               { __(
                 'Copy this report when contacting support.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </p>
           </div>
@@ -686,8 +688,8 @@ export default function StatusPanel() {
               </svg>
             ) }
             { copied
-              ? __( 'Copied!', 'missionwp-donation-platform' )
-              : __( 'Copy system report', 'missionwp-donation-platform' ) }
+              ? __( 'Copied!', 'mission-donation-platform' )
+              : __( 'Copy system report', 'mission-donation-platform' ) }
           </button>
         </div>
       </div>

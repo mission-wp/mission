@@ -83,7 +83,7 @@ const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
 const fields = [
   {
     id: 'donor',
-    label: __( 'Donor', 'missionwp-donation-platform' ),
+    label: __( 'Donor', 'mission-donation-platform' ),
     enableSorting: false,
     enableHiding: false,
     render: ( { item } ) => {
@@ -93,8 +93,8 @@ const fields = [
       const name = [ item.first_name, item.last_name ]
         .filter( Boolean )
         .join( ' ' );
-      const adminUrl = window.missionAdmin?.adminUrl || '';
-      const detailUrl = `${ adminUrl }admin.php?page=mission-donors&donor_id=${ item.id }`;
+      const adminUrl = window.missiondpAdmin?.adminUrl || '';
+      const detailUrl = `${ adminUrl }admin.php?page=mission-donation-platform-donors&donor_id=${ item.id }`;
       return (
         <div className="mission-donor-cell">
           <DonorAvatar
@@ -110,7 +110,7 @@ const fields = [
               fontWeight: 500,
             } }
           >
-            { name || __( 'Anonymous', 'missionwp-donation-platform' ) }
+            { name || __( 'Anonymous', 'mission-donation-platform' ) }
           </a>
         </div>
       );
@@ -118,7 +118,7 @@ const fields = [
   },
   {
     id: 'email',
-    label: __( 'Email', 'missionwp-donation-platform' ),
+    label: __( 'Email', 'mission-donation-platform' ),
     enableSorting: false,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -129,7 +129,7 @@ const fields = [
   },
   {
     id: 'total_donated',
-    label: __( 'Total Donated', 'missionwp-donation-platform' ),
+    label: __( 'Total Donated', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -144,7 +144,7 @@ const fields = [
   },
   {
     id: 'transaction_count',
-    label: __( 'Donations', 'missionwp-donation-platform' ),
+    label: __( 'Donations', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -155,7 +155,7 @@ const fields = [
   },
   {
     id: 'last_transaction',
-    label: __( 'Last Donation', 'missionwp-donation-platform' ),
+    label: __( 'Last Donation', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -168,7 +168,7 @@ const fields = [
   },
   {
     id: 'date_created',
-    label: __( 'Date Added', 'missionwp-donation-platform' ),
+    label: __( 'Date Added', 'mission-donation-platform' ),
     enableSorting: true,
     render: ( { item } ) =>
       item._isSkeleton ? (
@@ -215,7 +215,7 @@ export default function DonorList() {
   const [ showDrawer, setShowDrawer ] = useState( false );
 
   const fetchSummary = useCallback( () => {
-    apiFetch( { path: '/mission/v1/donors/summary' } )
+    apiFetch( { path: '/mission-donation-platform/v1/donors/summary' } )
       .then( setSummary )
       .catch( () => {} );
   }, [] );
@@ -240,7 +240,7 @@ export default function DonorList() {
 
     try {
       const response = await apiFetch( {
-        path: `/mission/v1/donors?${ params.toString() }`,
+        path: `/mission-donation-platform/v1/donors?${ params.toString() }`,
         parse: false,
       } );
 
@@ -277,12 +277,12 @@ export default function DonorList() {
           <HStack justify="space-between" alignment="center">
             <VStack spacing={ 1 }>
               <Heading level={ 1 }>
-                { __( 'Donors', 'missionwp-donation-platform' ) }
+                { __( 'Donors', 'mission-donation-platform' ) }
               </Heading>
               <Text variant="muted">
                 { __(
                   'View and manage all donors.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               </Text>
             </VStack>
@@ -295,25 +295,25 @@ export default function DonorList() {
               onClick={ () => setShowDrawer( true ) }
               __next40pxDefaultSize
             >
-              { __( 'Add Donor', 'missionwp-donation-platform' ) }
+              { __( 'Add Donor', 'mission-donation-platform' ) }
             </Button>
           </HStack>
 
           <div className="mission-stats-row mission-stats-row--4">
             <StatCard
-              label={ __( 'Total Donors', 'missionwp-donation-platform' ) }
+              label={ __( 'Total Donors', 'mission-donation-platform' ) }
               value="0"
             />
             <StatCard
-              label={ __( 'Top Donor', 'missionwp-donation-platform' ) }
+              label={ __( 'Top Donor', 'mission-donation-platform' ) }
               value={ '\u2014' }
             />
             <StatCard
-              label={ __( 'Average Donated', 'missionwp-donation-platform' ) }
+              label={ __( 'Average Donated', 'mission-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
             <StatCard
-              label={ __( 'Repeat Donors', 'missionwp-donation-platform' ) }
+              label={ __( 'Repeat Donors', 'mission-donation-platform' ) }
               value="0"
             />
           </div>
@@ -322,10 +322,10 @@ export default function DonorList() {
             <CardBody>
               <EmptyState
                 icon={ <PeopleIcon /> }
-                text={ __( 'No donors yet.', 'missionwp-donation-platform' ) }
+                text={ __( 'No donors yet.', 'mission-donation-platform' ) }
                 hint={ __(
                   'Donors will appear here once people start giving.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               />
             </CardBody>
@@ -351,12 +351,12 @@ export default function DonorList() {
         <HStack justify="space-between" alignment="center">
           <VStack spacing={ 1 }>
             <Heading level={ 1 }>
-              { __( 'Donors', 'missionwp-donation-platform' ) }
+              { __( 'Donors', 'mission-donation-platform' ) }
             </Heading>
             <Text variant="muted">
               { __(
                 'View and manage all donors.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
           </VStack>
@@ -369,36 +369,36 @@ export default function DonorList() {
             onClick={ () => setShowDrawer( true ) }
             __next40pxDefaultSize
           >
-            { __( 'Add Donor', 'missionwp-donation-platform' ) }
+            { __( 'Add Donor', 'mission-donation-platform' ) }
           </Button>
         </HStack>
 
         <div className="mission-stats-row mission-stats-row--4">
           <StatCard
-            label={ __( 'Total Donors', 'missionwp-donation-platform' ) }
+            label={ __( 'Total Donors', 'mission-donation-platform' ) }
             value={ summary ? summary.total_donors.toLocaleString() : '' }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Top Donor', 'missionwp-donation-platform' ) }
+            label={ __( 'Top Donor', 'mission-donation-platform' ) }
             value={ summary ? summary.top_donor_name || '\u2014' : '' }
             subtitle={
               summary?.top_donor_total
                 ? `${ formatAmount( summary.top_donor_total ) } ${ __(
                     'lifetime',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }`
                 : undefined
             }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Average Donated', 'missionwp-donation-platform' ) }
+            label={ __( 'Average Donated', 'mission-donation-platform' ) }
             value={ summary ? formatAmount( summary.average_donated ) : '' }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Repeat Donors', 'missionwp-donation-platform' ) }
+            label={ __( 'Repeat Donors', 'mission-donation-platform' ) }
             value={ summary ? summary.repeat_donors.toLocaleString() : '' }
             subtitle={
               summary?.total_donors > 0
@@ -407,7 +407,7 @@ export default function DonorList() {
                     100
                   ).toFixed( 1 ) }% ${ __(
                     'of all donors',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }`
                 : undefined
             }

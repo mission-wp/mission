@@ -6,14 +6,14 @@ import { formatAmount } from '@shared/currency';
 import { formatDateTime } from '@shared/date';
 
 const EVENT_LABELS = {
-  payment_initiated: __( 'Payment initiated', 'missionwp-donation-platform' ),
-  payment_completed: __( 'Payment completed', 'missionwp-donation-platform' ),
-  payment_failed: __( 'Payment failed', 'missionwp-donation-platform' ),
-  refund_initiated: __( 'Refund initiated', 'missionwp-donation-platform' ),
-  refund_completed: __( 'Refund completed', 'missionwp-donation-platform' ),
-  partial_refund: __( 'Partial refund', 'missionwp-donation-platform' ),
-  receipt_sent: __( 'Receipt sent', 'missionwp-donation-platform' ),
-  status_changed: __( 'Status changed', 'missionwp-donation-platform' ),
+  payment_initiated: __( 'Payment initiated', 'mission-donation-platform' ),
+  payment_completed: __( 'Payment completed', 'mission-donation-platform' ),
+  payment_failed: __( 'Payment failed', 'mission-donation-platform' ),
+  refund_initiated: __( 'Refund initiated', 'mission-donation-platform' ),
+  refund_completed: __( 'Refund completed', 'mission-donation-platform' ),
+  partial_refund: __( 'Partial refund', 'mission-donation-platform' ),
+  receipt_sent: __( 'Receipt sent', 'mission-donation-platform' ),
+  status_changed: __( 'Status changed', 'mission-donation-platform' ),
 };
 
 const DOT_CLASSES = {
@@ -63,7 +63,7 @@ function getEventSubtitle( entry, currency ) {
 
     case 'receipt_sent':
       if ( ctx.email ) {
-        return `${ __( 'Sent to', 'missionwp-donation-platform' ) } ${
+        return `${ __( 'Sent to', 'mission-donation-platform' ) } ${
           ctx.email
         }`;
       }
@@ -71,7 +71,7 @@ function getEventSubtitle( entry, currency ) {
 
     case 'refund_initiated':
       if ( entry.actor_type === 'user' && entry.actor_name ) {
-        return `${ __( 'By', 'missionwp-donation-platform' ) } ${
+        return `${ __( 'By', 'mission-donation-platform' ) } ${
           entry.actor_name
         }`;
       }
@@ -81,13 +81,13 @@ function getEventSubtitle( entry, currency ) {
       if ( ctx.amount && ctx.payment_method ) {
         return `${ formatAmount( ctx.amount, currency ) } ${ __(
           'returned to',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) } ${ ctx.payment_method }`;
       }
       if ( ctx.amount ) {
         return `${ formatAmount( ctx.amount, currency ) } ${ __(
           'returned',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }`;
       }
       return null;
@@ -96,7 +96,7 @@ function getEventSubtitle( entry, currency ) {
       if ( ctx.amount ) {
         return `${ formatAmount( ctx.amount, currency ) } ${ __(
           'returned',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }`;
       }
       return null;
@@ -106,7 +106,7 @@ function getEventSubtitle( entry, currency ) {
 
     case 'status_changed':
       if ( entry.actor_type === 'user' && entry.actor_name ) {
-        return `${ __( 'By', 'missionwp-donation-platform' ) } ${
+        return `${ __( 'By', 'mission-donation-platform' ) } ${
           entry.actor_name
         }`;
       }
@@ -135,7 +135,7 @@ function deriveFallbackEvents( transaction ) {
 
   if ( transaction.date_refunded ) {
     events.push( {
-      title: __( 'Refund completed', 'missionwp-donation-platform' ),
+      title: __( 'Refund completed', 'mission-donation-platform' ),
       date: formatDateTime( transaction.date_refunded ),
       dotClass: 'is-refunded',
     } );
@@ -143,14 +143,14 @@ function deriveFallbackEvents( transaction ) {
 
   if ( transaction.date_completed ) {
     events.push( {
-      title: __( 'Payment completed', 'missionwp-donation-platform' ),
+      title: __( 'Payment completed', 'mission-donation-platform' ),
       date: formatDateTime( transaction.date_completed ),
       dotClass: 'is-success',
     } );
   }
 
   events.push( {
-    title: __( 'Payment initiated', 'missionwp-donation-platform' ),
+    title: __( 'Payment initiated', 'mission-donation-platform' ),
     date: formatDateTime( transaction.date_created ),
     dotClass: 'is-pending',
   } );
@@ -174,7 +174,9 @@ export default function TransactionActivityCard( {
       return;
     }
 
-    apiFetch( { path: `/mission/v1/transactions/${ id }/history` } )
+    apiFetch( {
+      path: `/mission-donation-platform/v1/transactions/${ id }/history`,
+    } )
       .then( ( data ) => {
         setEntries( data );
       } )
@@ -200,7 +202,7 @@ export default function TransactionActivityCard( {
   return (
     <div className="mission-card" style={ { padding: 0 } }>
       <h2 className="mission-card__heading">
-        { __( 'Activity', 'missionwp-donation-platform' ) }
+        { __( 'Activity', 'mission-donation-platform' ) }
       </h2>
       { isLoading ? (
         <div style={ { padding: '24px', textAlign: 'center' } }>

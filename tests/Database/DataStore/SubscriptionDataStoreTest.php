@@ -2,16 +2,16 @@
 /**
  * Tests for the SubscriptionDataStore class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Database\DataStore;
+namespace MissionDP\Tests\Database\DataStore;
 
-use Mission\Database\DatabaseModule;
-use Mission\Database\DataStore\DonorDataStore;
-use Mission\Database\DataStore\SubscriptionDataStore;
-use Mission\Models\Donor;
-use Mission\Models\Subscription;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Database\DataStore\SubscriptionDataStore;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Subscription;
 use WP_UnitTestCase;
 
 /**
@@ -45,10 +45,10 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 
 		parent::tear_down();
 	}
@@ -162,7 +162,7 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 		$specific_fired = false;
 
 		add_action(
-			'mission_subscription_status_transition',
+			'missiondp_subscription_status_transition',
 			function ( $s, $old, $new ) use ( &$generic_fired ) {
 				$generic_fired = true;
 				$this->assertSame( 'pending', $old );
@@ -173,7 +173,7 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 		);
 
 		add_action(
-			'mission_subscription_status_pending_to_active',
+			'missiondp_subscription_status_pending_to_active',
 			function () use ( &$specific_fired ) {
 				$specific_fired = true;
 			}
@@ -260,7 +260,7 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 		global $wpdb;
 		$count = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}mission_subscriptionmeta WHERE mission_subscription_id = %d",
+				"SELECT COUNT(*) FROM {$wpdb->prefix}missiondp_subscriptionmeta WHERE missiondp_subscription_id = %d",
 				$id
 			)
 		);

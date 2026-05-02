@@ -2,12 +2,12 @@
 /**
  * Tests for the DatabaseModule class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Database;
+namespace MissionDP\Tests\Database;
 
-use Mission\Database\DatabaseModule;
+use MissionDP\Database\DatabaseModule;
 use WP_UnitTestCase;
 
 /**
@@ -52,7 +52,7 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 		$module->init();
 
 		$this->assertInstanceOf(
-			\Mission\Database\Schema::class,
+			\MissionDP\Database\Schema::class,
 			$module->get_schema()
 		);
 	}

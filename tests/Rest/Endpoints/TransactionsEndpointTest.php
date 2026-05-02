@@ -2,16 +2,16 @@
 /**
  * Tests for the TransactionsEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -69,16 +69,16 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -121,7 +121,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		] );
 
 		// Set currency.
-		update_option( 'mission_currency', 'usd' );
+		update_option( 'missiondp_currency', 'usd' );
 	}
 
 	/**
@@ -133,19 +133,19 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$wp_rest_server = null;
 		wp_set_current_user( 0 );
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'mission_currency' );
+		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
@@ -271,7 +271,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction();
 		$this->create_transaction();
 
-		$response = $this->dispatch_get( '/mission/v1/transactions', [ 'per_page' => 2 ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'per_page' => 2 ] );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -299,7 +299,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'status' => 'completed' ] );
 		$this->create_transaction( [ 'status' => 'refunded' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions', [ 'status' => 'refunded' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'status' => 'refunded' ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -316,7 +316,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'campaign_id' => $this->campaign->id ] );
 		$this->create_transaction( [ 'campaign_id' => $campaign2->id ] );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions', [ 'campaign_id' => $campaign2->id ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'campaign_id' => $campaign2->id ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -337,7 +337,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'donor_id' => $this->donor->id ] );
 		$this->create_transaction( [ 'donor_id' => $donor2->id ] );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions', [ 'donor_id' => $donor2->id ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'donor_id' => $donor2->id ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -358,7 +358,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'donor_id' => $this->donor->id ] );
 		$this->create_transaction( [ 'donor_id' => $donor2->id ] );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions', [ 'search' => 'bob' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'search' => 'bob' ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -373,7 +373,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'is_test' => true ] );
 
 		// Live mode (default) — only live transactions.
-		$response = $this->dispatch_get( '/mission/v1/transactions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions' );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 
 		// Switch to test mode — only test transactions.
@@ -383,7 +383,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'stripe_fee_fixed'   => 30,
 		] );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions' );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 	}
 
@@ -397,7 +397,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	public function test_get_single_returns_full_transaction(): void {
 		$transaction = $this->create_transaction();
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$transaction->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -434,7 +434,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	 * Test GET single returns 404 for nonexistent transaction.
 	 */
 	public function test_get_single_404_for_nonexistent(): void {
-		$response = $this->dispatch_get( '/mission/v1/transactions/999999' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions/999999' );
 
 		$this->assertSame( 404, $response->get_status() );
 		$this->assertSame( 'transaction_not_found', $response->as_error()->get_error_code() );
@@ -456,7 +456,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'total_amount' => 5000,
 		] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$transaction->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 175, $data['processing_fee'] );
@@ -475,7 +475,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'total_amount' => 5175,
 		] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$transaction->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 175, $data['processing_fee'] );
@@ -492,7 +492,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'total_amount' => 5200,
 		] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$transaction->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $data['fee_recovered'] );
@@ -513,7 +513,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'total_amount' => 5675,
 		] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$transaction->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 485, $data['adjusted_tip'] );
@@ -527,7 +527,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	 * Test POST creates a manual transaction.
 	 */
 	public function test_post_create_manual_transaction(): void {
-		$response = $this->dispatch_post( '/mission/v1/transactions', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/transactions', [
 			'donor_email'      => 'newdonor@example.com',
 			'donor_first_name' => 'New',
 			'donor_last_name'  => 'Donor',
@@ -560,7 +560,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	 * The schema defines donation_amount as required. Omitting it returns 400.
 	 */
 	public function test_post_create_validates_amount(): void {
-		$response = $this->dispatch_post( '/mission/v1/transactions', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/transactions', [
 			'donor_email'      => 'test@example.com',
 			'donor_first_name' => 'Test',
 		] );
@@ -572,7 +572,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	 * Test POST validates email format.
 	 */
 	public function test_post_create_validates_email(): void {
-		$response = $this->dispatch_post( '/mission/v1/transactions', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/transactions', [
 			'donor_email'      => 'not-an-email',
 			'donor_first_name' => 'Test',
 			'donation_amount'  => 5000,
@@ -590,20 +590,20 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$hook_txn   = null;
 
 		$this->add_tracked_action(
-			'mission_transaction_created',
+			'missiondp_transaction_created',
 			function ( $transaction ) use ( &$hook_fired, &$hook_txn ) {
 				$hook_fired = true;
 				$hook_txn   = $transaction;
 			}
 		);
 
-		$this->dispatch_post( '/mission/v1/transactions', [
+		$this->dispatch_post( '/mission-donation-platform/v1/transactions', [
 			'donor_email'      => 'hooktest@example.com',
 			'donor_first_name' => 'Hook',
 			'donation_amount'  => 5000,
 		] );
 
-		$this->assertTrue( $hook_fired, 'mission_transaction_created hook should fire.' );
+		$this->assertTrue( $hook_fired, 'missiondp_transaction_created hook should fire.' );
 		$this->assertInstanceOf( Transaction::class, $hook_txn );
 		$this->assertSame( 'completed', $hook_txn->status );
 	}
@@ -612,7 +612,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	 * Test POST updates donor and campaign aggregates for completed transactions.
 	 */
 	public function test_post_create_updates_aggregates(): void {
-		$this->dispatch_post( '/mission/v1/transactions', [
+		$this->dispatch_post( '/mission-donation-platform/v1/transactions', [
 			'donor_email'      => 'jane@example.com',
 			'donor_first_name' => 'Jane',
 			'donation_amount'  => 7500,
@@ -644,7 +644,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'campaign_id'  => $this->campaign->id,
 		] );
 
-		$response = $this->dispatch_patch( "/mission/v1/transactions/{$transaction->id}", [
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/transactions/{$transaction->id}", [
 			'is_anonymous' => true,
 			'campaign_id'  => $campaign2->id,
 		] );
@@ -677,11 +677,11 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			];
 		};
 
-		add_action( 'mission_transaction_status_transition', $generic_callback, 10, 3 );
-		$this->hooks_to_remove[] = [ 'mission_transaction_status_transition', $generic_callback, 10 ];
+		add_action( 'missiondp_transaction_status_transition', $generic_callback, 10, 3 );
+		$this->hooks_to_remove[] = [ 'missiondp_transaction_status_transition', $generic_callback, 10 ];
 
 		$this->add_tracked_action(
-			'mission_transaction_status_completed_to_refunded',
+			'missiondp_transaction_status_completed_to_refunded',
 			function () use ( &$specific_fired ) {
 				$specific_fired = true;
 			},
@@ -690,7 +690,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 
 		$transaction = $this->create_transaction( [ 'status' => 'completed' ] );
 
-		$this->dispatch_patch( "/mission/v1/transactions/{$transaction->id}", [
+		$this->dispatch_patch( "/mission-donation-platform/v1/transactions/{$transaction->id}", [
 			'status' => 'refunded',
 		] );
 
@@ -710,7 +710,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	public function test_delete_removes_transaction(): void {
 		$transaction = $this->create_transaction();
 
-		$response = $this->dispatch_delete( "/mission/v1/transactions/{$transaction->id}" );
+		$response = $this->dispatch_delete( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertTrue( $response->get_data()['success'] );
@@ -736,7 +736,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 1, $campaign->transaction_count );
 
 		// Delete the transaction.
-		$this->dispatch_delete( "/mission/v1/transactions/{$transaction->id}" );
+		$this->dispatch_delete( "/mission-donation-platform/v1/transactions/{$transaction->id}" );
 
 		// Aggregates should be decremented.
 		$donor    = Donor::find( $this->donor->id );
@@ -759,7 +759,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'amount' => 7000, 'total_amount' => 7000, 'status' => 'completed' ] );
 		$this->create_transaction( [ 'amount' => 2000, 'total_amount' => 2000, 'status' => 'refunded' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions/summary' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions/summary' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -780,7 +780,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	public function test_unauthenticated_requests_rejected(): void {
 		wp_set_current_user( 0 );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
@@ -792,7 +792,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	public function test_subscriber_role_rejected(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$response = $this->dispatch_get( '/mission/v1/transactions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );

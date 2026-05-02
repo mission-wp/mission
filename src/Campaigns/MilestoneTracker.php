@@ -5,13 +5,13 @@
  * Computes and stores milestone data (with dates) in campaign meta.
  * Milestones are recompiled when aggregates change or the goal is updated.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Campaigns;
+namespace MissionDP\Campaigns;
 
-use Mission\Models\Campaign;
-use Mission\Models\Transaction;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -21,17 +21,17 @@ class MilestoneTracker {
 	 * Register event listeners.
 	 */
 	public function init(): void {
-		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
-		add_action( 'mission_campaign_aggregates_updated', [ $this, 'recompile' ], 10, 2 );
-		add_action( 'mission_campaign_goal_updated', [ $this, 'recompile' ] );
+		add_action( 'missiondp_campaign_created', [ $this, 'on_campaign_created' ] );
+		add_action( 'missiondp_campaign_aggregates_updated', [ $this, 'recompile' ], 10, 2 );
+		add_action( 'missiondp_campaign_goal_updated', [ $this, 'recompile' ] );
 	}
 
 	/**
 	 * Initialize milestones when a campaign is created.
 	 *
-	 * @param \Mission\Models\Campaign $campaign The campaign.
+	 * @param \MissionDP\Models\Campaign $campaign The campaign.
 	 */
-	public function on_campaign_created( \Mission\Models\Campaign $campaign ): void {
+	public function on_campaign_created( \MissionDP\Models\Campaign $campaign ): void {
 		$milestones = [
 			[
 				'id'      => 'created',
@@ -140,7 +140,7 @@ class MilestoneTracker {
 				 * @param string   $milestone_id Milestone ID (e.g. 'first-donation', '25-pct', '100-pct').
 				 * @param bool     $is_test      Whether the triggering transaction is a test.
 				 */
-				do_action( 'mission_campaign_milestone_reached', $campaign, $m['id'], $is_test );
+				do_action( 'missiondp_campaign_milestone_reached', $campaign, $m['id'], $is_test );
 			}
 		}
 	}

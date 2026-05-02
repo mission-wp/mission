@@ -5,12 +5,12 @@
  * Fired when a connected Stripe account's status changes — most commonly
  * when a nonprofit completes onboarding and charges_enabled flips to true.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Webhooks;
+namespace MissionDP\Webhooks;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -44,12 +44,12 @@ class AccountUpdatedHandler {
 			/**
 			 * Fires when a connected Stripe account becomes able to process charges.
 			 */
-			do_action( 'mission_stripe_charges_enabled' );
+			do_action( 'missiondp_stripe_charges_enabled' );
 		} else {
 			/**
 			 * Fires when a connected Stripe account loses the ability to process charges.
 			 */
-			do_action( 'mission_stripe_charges_disabled' );
+			do_action( 'missiondp_stripe_charges_disabled' );
 		}
 	}
 }

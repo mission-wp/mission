@@ -1,7 +1,7 @@
 /**
  * Currency utilities.
  *
- * Reads the site currency from the localized `missionAdmin.currency` value
+ * Reads the site currency from the localized `missiondpAdmin.currency` value
  * (defaults to USD) and provides formatting helpers.
  */
 import { getCurrencyDecimals, minorToMajor } from '@shared/currencies';
@@ -12,7 +12,7 @@ import { getCurrencyDecimals, minorToMajor } from '@shared/currencies';
  * @return {string} Uppercase ISO 4217 code (e.g. "USD").
  */
 export function getCurrencyCode() {
-  return window.missionAdmin?.currency || 'USD';
+  return window.missiondpAdmin?.currency || 'USD';
 }
 
 /**

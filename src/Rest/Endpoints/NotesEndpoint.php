@@ -2,16 +2,16 @@
 /**
  * Unified REST endpoint for notes on transactions, donors, and subscriptions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Donor;
-use Mission\Models\Note;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Rest\RestModule;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Note;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Rest\RestModule;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -107,7 +107,7 @@ class NotesEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage notes.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to manage notes.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -168,7 +168,7 @@ class NotesEndpoint {
 		if ( empty( trim( $content ) ) ) {
 			return new WP_Error(
 				'empty_content',
-				__( 'Note content cannot be empty.', 'missionwp-donation-platform' ),
+				__( 'Note content cannot be empty.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -204,7 +204,7 @@ class NotesEndpoint {
 		if ( ! $note || $note->object_type !== $object_type || $note->object_id !== $object_id ) {
 			return new WP_Error(
 				'note_not_found',
-				__( 'Note not found.', 'missionwp-donation-platform' ),
+				__( 'Note not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -219,15 +219,15 @@ class NotesEndpoint {
 	 *
 	 * @param string $object_type Object type.
 	 * @param int    $object_id   Object ID.
-	 * @return \Mission\Models\Model|WP_Error The parent model or error.
+	 * @return \MissionDP\Models\Model|WP_Error The parent model or error.
 	 */
-	private function find_parent( string $object_type, int $object_id ): \Mission\Models\Model|WP_Error {
+	private function find_parent( string $object_type, int $object_id ): \MissionDP\Models\Model|WP_Error {
 		$model_class = self::OBJECT_TYPES[ $object_type ]['class'] ?? null;
 
 		if ( ! $model_class ) {
 			return new WP_Error(
 				'invalid_object_type',
-				__( 'Invalid object type.', 'missionwp-donation-platform' ),
+				__( 'Invalid object type.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -238,7 +238,7 @@ class NotesEndpoint {
 			return new WP_Error(
 				"{$object_type}_not_found",
 				/* translators: %s: object type (e.g. "transaction", "donor") */
-				sprintf( __( '%s not found.', 'missionwp-donation-platform' ), ucfirst( $object_type ) ),
+				sprintf( __( '%s not found.', 'mission-donation-platform' ), ucfirst( $object_type ) ),
 				[ 'status' => 404 ]
 			);
 		}

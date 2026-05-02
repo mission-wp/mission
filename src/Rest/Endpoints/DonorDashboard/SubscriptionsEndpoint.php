@@ -2,18 +2,18 @@
 /**
  * Donor dashboard subscriptions endpoint.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints\DonorDashboard;
+namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
-use Mission\Currency\Currency;
-use Mission\Models\Donor;
-use Mission\Models\Subscription;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\DonorDashboardPrepareTrait;
-use Mission\Rest\Traits\ResolveDonorTrait;
-use Mission\Settings\SettingsService;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Subscription;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
+use MissionDP\Rest\Traits\ResolveDonorTrait;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -199,7 +199,7 @@ class SubscriptionsEndpoint {
 		if ( ! in_array( $subscription->status, [ 'active', 'paused', 'past_due' ], true ) ) {
 			return new WP_Error(
 				'subscription_not_cancellable',
-				__( 'This subscription cannot be cancelled.', 'missionwp-donation-platform' ),
+				__( 'This subscription cannot be cancelled.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -207,7 +207,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription->cancel() ) {
 			return new WP_Error(
 				'subscription_cancel_failed',
-				__( 'Failed to cancel subscription. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to cancel subscription. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -237,7 +237,7 @@ class SubscriptionsEndpoint {
 		if ( 'active' !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_pausable',
-				__( 'Only active subscriptions can be paused.', 'missionwp-donation-platform' ),
+				__( 'Only active subscriptions can be paused.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -245,7 +245,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription->pause() ) {
 			return new WP_Error(
 				'subscription_pause_failed',
-				__( 'Failed to pause subscription. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to pause subscription. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -275,7 +275,7 @@ class SubscriptionsEndpoint {
 		if ( 'paused' !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_resumable',
-				__( 'Only paused subscriptions can be resumed.', 'missionwp-donation-platform' ),
+				__( 'Only paused subscriptions can be resumed.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -283,7 +283,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription->resume() ) {
 			return new WP_Error(
 				'subscription_resume_failed',
-				__( 'Failed to resume subscription. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to resume subscription. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -313,7 +313,7 @@ class SubscriptionsEndpoint {
 		if ( ! in_array( $subscription->status, [ 'active', 'paused' ], true ) ) {
 			return new WP_Error(
 				'subscription_not_updatable',
-				__( 'Only active or paused subscriptions can be updated.', 'missionwp-donation-platform' ),
+				__( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -327,7 +327,7 @@ class SubscriptionsEndpoint {
 				'amount_too_low',
 				sprintf(
 					/* translators: %s: formatted minimum amount (e.g. "$1.00") */
-					__( 'Donation amount must be at least %s.', 'missionwp-donation-platform' ),
+					__( 'Donation amount must be at least %s.', 'mission-donation-platform' ),
 					Currency::format_amount( 100, $subscription->currency )
 				),
 				[ 'status' => 400 ]
@@ -337,7 +337,7 @@ class SubscriptionsEndpoint {
 		if ( $tip_amount < 0 ) {
 			return new WP_Error(
 				'invalid_tip',
-				__( 'Tip amount cannot be negative.', 'missionwp-donation-platform' ),
+				__( 'Tip amount cannot be negative.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -345,7 +345,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription->update_amount( $donation_amount, $tip_amount, $fee_amount ) ) {
 			return new WP_Error(
 				'subscription_update_failed',
-				__( 'Failed to update subscription amount. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to update subscription amount. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -369,7 +369,7 @@ class SubscriptionsEndpoint {
 		if ( ! in_array( $subscription->status, [ 'active', 'paused' ], true ) ) {
 			return new WP_Error(
 				'subscription_not_updatable',
-				__( 'Only active or paused subscriptions can be updated.', 'missionwp-donation-platform' ),
+				__( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -379,7 +379,7 @@ class SubscriptionsEndpoint {
 		if ( ! $result ) {
 			return new WP_Error(
 				'setup_intent_failed',
-				__( 'Failed to initialize payment update. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to initialize payment update. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -408,7 +408,7 @@ class SubscriptionsEndpoint {
 		if ( ! in_array( $subscription->status, [ 'active', 'paused' ], true ) ) {
 			return new WP_Error(
 				'subscription_not_updatable',
-				__( 'Only active or paused subscriptions can be updated.', 'missionwp-donation-platform' ),
+				__( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -418,7 +418,7 @@ class SubscriptionsEndpoint {
 		if ( ! $card ) {
 			return new WP_Error(
 				'payment_method_update_failed',
-				__( 'Failed to update payment method. Please try again.', 'missionwp-donation-platform' ),
+				__( 'Failed to update payment method. Please try again.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -428,7 +428,7 @@ class SubscriptionsEndpoint {
 		 *
 		 * @param Subscription $subscription The subscription.
 		 */
-		do_action( 'mission_subscription_payment_method_updated', $subscription );
+		do_action( 'missiondp_subscription_payment_method_updated', $subscription );
 
 		return new WP_REST_Response( $card );
 	}
@@ -451,7 +451,7 @@ class SubscriptionsEndpoint {
 		if ( ! $subscription ) {
 			return new WP_Error(
 				'subscription_not_found',
-				__( 'Subscription not found.', 'missionwp-donation-platform' ),
+				__( 'Subscription not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -459,7 +459,7 @@ class SubscriptionsEndpoint {
 		if ( $subscription->donor_id !== $donor->id ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage this subscription.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to manage this subscription.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}

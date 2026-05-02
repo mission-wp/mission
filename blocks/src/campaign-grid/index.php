@@ -3,15 +3,15 @@
  * Block Name: Campaign Grid
  * Description: Display multiple campaigns in a responsive grid layout.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -40,7 +40,7 @@ if ( 'all' === $status_filter ) {
  * @param array $query_args Query arguments for Campaign::query().
  * @param array $attributes Block attributes.
  */
-$query_args = apply_filters( 'mission_campaign_grid_query_args', $query_args, $attributes );
+$query_args = apply_filters( 'missiondp_campaign_grid_query_args', $query_args, $attributes );
 
 $campaigns = Campaign::query( $query_args );
 
@@ -50,14 +50,14 @@ $campaigns = Campaign::query( $query_args );
  * @param Campaign[] $campaigns  The queried campaigns.
  * @param array      $attributes Block attributes.
  */
-$campaigns = apply_filters( 'mission_campaign_grid_campaigns', $campaigns, $attributes );
+$campaigns = apply_filters( 'missiondp_campaign_grid_campaigns', $campaigns, $attributes );
 
 if ( empty( $campaigns ) ) {
 	return;
 }
 
 // Settings and test mode.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $is_test          = (bool) ( $mission_settings['test_mode'] ?? false );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
@@ -89,10 +89,10 @@ $show_tag         = $attributes['showTag'] ?? true;
 $show_description = $attributes['showDescription'] ?? true;
 $show_progress_attr = $attributes['showProgressBar'] ?? true;
 $show_donor_count = $attributes['showDonorCount'] ?? true;
-$button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'missionwp-donation-platform' );
+$button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'mission-donation-platform' );
 
 /** This filter is documented in blocks/src/campaign/index.php */
-$ending_soon_days = (int) apply_filters( 'mission_campaign_card_ending_soon_days', 30 );
+$ending_soon_days = (int) apply_filters( 'missiondp_campaign_card_ending_soon_days', 30 );
 
 // Build the output.
 ob_start();
@@ -103,7 +103,7 @@ ob_start();
 		get_block_wrapper_attributes( [ 'class' => 'mission-campaign-grid' ] )
 	);
 	?>
-	data-wp-interactive="mission/campaign"
+	data-wp-interactive="mission-donation-platform/campaign"
 	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>; --mission-cg-columns: <?php echo esc_attr( $columns ); ?>;"
 >
 	<div class="mission-cg-grid">
@@ -135,14 +135,14 @@ ob_start();
 			$tag_class = '';
 			if ( $show_tag ) {
 				if ( $is_ended || ( $has_end_date && 0 === $days_remaining ) ) {
-					$tag_text  = __( 'Ended', 'missionwp-donation-platform' );
+					$tag_text  = __( 'Ended', 'mission-donation-platform' );
 					$tag_class = 'mission-cc-tag--ended';
 				} elseif ( $has_goal && $goal_progress >= $goal_amount ) {
-					$tag_text  = __( 'Goal Reached', 'missionwp-donation-platform' );
+					$tag_text  = __( 'Goal Reached', 'mission-donation-platform' );
 					$tag_class = 'mission-cc-tag--goal-reached';
 				} elseif ( $has_end_date && null !== $days_remaining && $days_remaining <= $ending_soon_days ) {
 					/* translators: %d: number of days remaining */
-					$tag_text  = sprintf( _n( '%d Day Left', '%d Days Left', $days_remaining, 'missionwp-donation-platform' ), $days_remaining );
+					$tag_text  = sprintf( _n( '%d Day Left', '%d Days Left', $days_remaining, 'mission-donation-platform' ), $days_remaining );
 					$tag_class = 'mission-cc-tag--ending-soon';
 				}
 			}
@@ -154,25 +154,25 @@ ob_start();
 				$raised_text = Currency::format_amount( $goal_progress, $currency );
 				$goal_text   = $has_goal
 					/* translators: %s: formatted goal amount */
-					? sprintf( __( 'of %s', 'missionwp-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
+					? sprintf( __( 'of %s', 'mission-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
 					: '';
 			} else {
 				$raised_text = number_format_i18n( $goal_progress );
 				$goal_text   = $has_goal
 					/* translators: %s: goal number */
-					? sprintf( __( 'of %s', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
+					? sprintf( __( 'of %s', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
 					: '';
 			}
 
 			// Time text.
 			if ( $is_ended && $has_end_date ) {
 				/* translators: %s: formatted date */
-				$time_text = sprintf( __( 'Ended %s', 'missionwp-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
+				$time_text = sprintf( __( 'Ended %s', 'mission-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 			} elseif ( $has_end_date ) {
 				/* translators: %s: formatted date */
-				$time_text = sprintf( __( 'Ends %s', 'missionwp-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
+				$time_text = sprintf( __( 'Ends %s', 'mission-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 			} else {
-				$time_text = __( 'Ongoing', 'missionwp-donation-platform' );
+				$time_text = __( 'Ongoing', 'mission-donation-platform' );
 			}
 
 			// Campaign URL and image.
@@ -225,7 +225,7 @@ ob_start();
 								<?php if ( $show_donor_count ) : ?>
 									<span class="mission-cc-donors">
 										<strong><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></strong>
-										<?php esc_html_e( 'donors', 'missionwp-donation-platform' ); ?>
+										<?php esc_html_e( 'donors', 'mission-donation-platform' ); ?>
 									</span>
 								<?php endif; ?>
 								<span class="mission-cc-time"><?php echo esc_html( $time_text ); ?></span>
@@ -253,7 +253,7 @@ ob_start();
 			 * @param array    $attributes Block attributes.
 			 */
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo apply_filters( 'mission_campaign_grid_card_output', $card_html, $campaign, $attributes );
+			echo apply_filters( 'missiondp_campaign_grid_card_output', $card_html, $campaign, $attributes );
 			?>
 		<?php endforeach; ?>
 	</div>
@@ -269,4 +269,4 @@ $output = ob_get_clean();
  * @param array      $attributes Block attributes.
  */
 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_campaign_grid_output', $output, $campaigns, $attributes );
+echo apply_filters( 'missiondp_campaign_grid_output', $output, $campaigns, $attributes );

@@ -2,13 +2,13 @@
 /**
  * REST endpoint for plugin settings.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -71,7 +71,7 @@ class SettingsEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage settings.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to manage settings.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -110,7 +110,7 @@ class SettingsEndpoint {
 			$page_id = absint( $params['donor_portal_page_id'] );
 
 			if ( $page_id && 'publish' === get_post_status( $page_id ) ) {
-				update_option( 'mission_dashboard_page_id', $page_id );
+				update_option( 'missiondp_dashboard_page_id', $page_id );
 			}
 		}
 
@@ -253,7 +253,7 @@ class SettingsEndpoint {
 	 * @return void
 	 */
 	private function inject_page_keys( array &$settings ): void {
-		$page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		$settings['donor_portal_page_id']    = $page_id;
 		$settings['donor_portal_page_title'] = $page_id ? get_the_title( $page_id ) : '';

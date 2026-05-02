@@ -2,13 +2,13 @@
 /**
  * Donation form settings resolver.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Blocks;
+namespace MissionDP\Blocks;
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -75,10 +75,10 @@ class DonationFormSettings {
 		}
 
 		$settings['campaignId'] = $campaign_id;
-		$settings['currency']   = get_option( 'mission_settings', [] )['currency'] ?? 'USD';
-		$settings['siteName']   = ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
+		$settings['currency']   = get_option( 'missiondp_settings', [] )['currency'] ?? 'USD';
+		$settings['siteName']   = ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
 
-		$settings['globalPrimaryColor'] = get_option( 'mission_settings', [] )['primary_color'] ?? '#2fa36b';
+		$settings['globalPrimaryColor'] = get_option( 'missiondp_settings', [] )['primary_color'] ?? '#2fa36b';
 
 		if ( ! empty( $settings['primaryColor'] ) ) {
 			$settings['primaryColor'] = sanitize_hex_color( $settings['primaryColor'] ) ?: '';
@@ -91,7 +91,7 @@ class DonationFormSettings {
 		 * @param array<string, mixed> $attributes  Original block attributes.
 		 * @param int                  $campaign_id The campaign table ID (0 if none).
 		 */
-		return apply_filters( 'mission_donation_form_settings', $settings, $attributes, $campaign_id );
+		return apply_filters( 'missiondp_donation_form_settings', $settings, $attributes, $campaign_id );
 	}
 
 	/**
