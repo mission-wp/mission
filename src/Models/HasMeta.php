@@ -2,10 +2,10 @@
 /**
  * HasMeta trait for models with meta tables.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
 defined( 'ABSPATH' ) || exit;
 

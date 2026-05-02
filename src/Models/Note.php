@@ -2,13 +2,13 @@
 /**
  * Unified note model for transactions, donors, and subscriptions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Database\DataStore\DataStoreInterface;
-use Mission\Database\DataStore\NoteDataStore;
+use MissionDP\Database\DataStore\DataStoreInterface;
+use MissionDP\Database\DataStore\NoteDataStore;
 
 defined( 'ABSPATH' ) || exit;
 

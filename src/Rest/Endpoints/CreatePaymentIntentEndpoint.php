@@ -2,21 +2,21 @@
 /**
  * REST endpoint for creating a Stripe PaymentIntent via the Mission API.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Models\Tribute;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\MinimumAmountTrait;
-use Mission\Rest\Traits\RateLimitTrait;
-use Mission\Settings\SettingsService;
-use Mission\Tip\TipCalculator;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\MinimumAmountTrait;
+use MissionDP\Rest\Traits\RateLimitTrait;
+use MissionDP\Settings\SettingsService;
+use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -240,7 +240,7 @@ class CreatePaymentIntentEndpoint {
 		if ( ! is_email( $email ) ) {
 			return new WP_Error(
 				'invalid_email',
-				__( 'A valid email address is required.', 'missionwp-donation-platform' ),
+				__( 'A valid email address is required.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -254,7 +254,7 @@ class CreatePaymentIntentEndpoint {
 		if ( $fee_amount > $donation_amount ) {
 			return new WP_Error(
 				'invalid_fee',
-				__( 'Fee amount cannot exceed the donation amount.', 'missionwp-donation-platform' ),
+				__( 'Fee amount cannot exceed the donation amount.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -282,7 +282,7 @@ class CreatePaymentIntentEndpoint {
 		if ( empty( $site_token ) ) {
 			return new WP_Error(
 				'stripe_not_connected',
-				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'missionwp-donation-platform' ),
+				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -313,8 +313,8 @@ class CreatePaymentIntentEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
-				'mission_api_error',
-				__( 'Could not reach the MissionWP API.', 'missionwp-donation-platform' ),
+				'missiondp_api_error',
+				__( 'Could not reach the Mission API.', 'mission-donation-platform' ),
 				[ 'status' => 502 ]
 			);
 		}
@@ -325,7 +325,7 @@ class CreatePaymentIntentEndpoint {
 		if ( 200 !== $code || empty( $body['client_secret'] ) || empty( $body['connected_account_id'] ) ) {
 			return new WP_Error(
 				'payment_intent_failed',
-				$body['error'] ?? __( 'Failed to create payment intent.', 'missionwp-donation-platform' ),
+				$body['error'] ?? __( 'Failed to create payment intent.', 'mission-donation-platform' ),
 				[ 'status' => $code ?: 500 ]
 			);
 		}
@@ -510,10 +510,10 @@ class CreatePaymentIntentEndpoint {
 		$donation_formatted = $this->format_amount( $donation_amount, $currency_upper );
 
 		/* translators: %s: formatted donation amount (e.g. "$50.00") */
-		$description = sprintf( __( '%s donation.', 'missionwp-donation-platform' ), $donation_formatted );
+		$description = sprintf( __( '%s donation.', 'mission-donation-platform' ), $donation_formatted );
 
 		if ( $fee_amount > 0 ) {
-			$description .= ' ' . __( 'Donor covered processing fees.', 'missionwp-donation-platform' );
+			$description .= ' ' . __( 'Donor covered processing fees.', 'mission-donation-platform' );
 		}
 
 		if ( $tip_amount > 0 ) {
@@ -521,13 +521,13 @@ class CreatePaymentIntentEndpoint {
 
 			$description .= ' ' . sprintf(
 				/* translators: %s: formatted tip amount (e.g. "$1.23") */
-				__( 'The %s application fee is a tip from the donor to MissionWP, not a charge to your organization.', 'missionwp-donation-platform' ),
+				__( 'The %s application fee is a tip from the donor to Mission, not a charge to your organization.', 'mission-donation-platform' ),
 				$tip_formatted,
 			);
 		}
 
 		if ( 'flat' === $fee_mode ) {
-			$description .= ' ' . __( 'Includes 3% platform fee.', 'missionwp-donation-platform' );
+			$description .= ' ' . __( 'Includes 3% platform fee.', 'mission-donation-platform' );
 		}
 
 		/**
@@ -542,7 +542,7 @@ class CreatePaymentIntentEndpoint {
 		 * @param string $fee_mode         Platform fee mode: 'tip' or 'flat'.
 		 * @param string $currency         Lowercase ISO 4217 currency code.
 		 */
-		return apply_filters( 'mission_payment_intent_description', $description, $donation_amount, $fee_amount, $tip_amount, $fee_mode, $currency );
+		return apply_filters( 'missiondp_payment_intent_description', $description, $donation_amount, $fee_amount, $tip_amount, $fee_mode, $currency );
 	}
 
 	/**

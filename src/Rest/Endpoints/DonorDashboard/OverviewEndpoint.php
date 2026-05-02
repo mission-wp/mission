@@ -2,17 +2,17 @@
 /**
  * Donor dashboard overview endpoint.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints\DonorDashboard;
+namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
-use Mission\Models\Transaction;
-use Mission\Reporting\ReportingService;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\DonorDashboardPrepareTrait;
-use Mission\Rest\Traits\ResolveDonorTrait;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Transaction;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
+use MissionDP\Rest\Traits\ResolveDonorTrait;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Response;
 use WP_Error;
 

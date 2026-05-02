@@ -5,8 +5,8 @@ export default function SaveBar( { saving, isDirty, onSave } ) {
     <div className="mission-settings-save-bar">
       <span className="mission-settings-save-bar__text">
         { isDirty
-          ? __( 'You have unsaved changes.', 'missionwp-donation-platform' )
-          : __( 'All changes saved.', 'missionwp-donation-platform' ) }
+          ? __( 'You have unsaved changes.', 'mission-donation-platform' )
+          : __( 'All changes saved.', 'mission-donation-platform' ) }
       </span>
       <button
         className="mission-settings-save-bar__btn"
@@ -27,8 +27,8 @@ export default function SaveBar( { saving, isDirty, onSave } ) {
           <polyline points="12 5 6.5 11 4 8.5" />
         </svg>
         { saving
-          ? __( 'Saving\u2026', 'missionwp-donation-platform' )
-          : __( 'Save changes', 'missionwp-donation-platform' ) }
+          ? __( 'Saving\u2026', 'mission-donation-platform' )
+          : __( 'Save changes', 'mission-donation-platform' ) }
       </button>
     </div>
   );

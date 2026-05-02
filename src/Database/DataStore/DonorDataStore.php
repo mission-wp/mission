@@ -2,12 +2,12 @@
 /**
  * Donor DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Donor;
+use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class DonorDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_donors';
+		return $wpdb->prefix . 'missiondp_donors';
 	}
 
 	/**
@@ -33,14 +33,14 @@ class DonorDataStore implements DataStoreInterface {
 	 */
 	protected function get_meta_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_donormeta';
+		return $wpdb->prefix . 'missiondp_donormeta';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected function get_meta_type(): string {
-		return 'mission_donor';
+		return 'missiondp_donor';
 	}
 
 	/**
@@ -64,7 +64,7 @@ class DonorDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Donor $model The donor. */
-		do_action( 'mission_donor_created', $model );
+		do_action( 'missiondp_donor_created', $model );
 
 		return $model->id;
 	}
@@ -158,7 +158,7 @@ class DonorDataStore implements DataStoreInterface {
 
 		if ( false !== $result ) {
 			/** @param Donor $model The donor. */
-			do_action( 'mission_donor_updated', $model );
+			do_action( 'missiondp_donor_updated', $model );
 		}
 
 		return false !== $result;
@@ -176,7 +176,7 @@ class DonorDataStore implements DataStoreInterface {
 
 		$meta_table = $this->get_meta_table_name();
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE mission_donor_id = %d", $id ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE missiondp_donor_id = %d", $id ) );
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 

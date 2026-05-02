@@ -44,7 +44,7 @@ async function createCampaignWithForm(
 
   // Create the campaign via Mission REST API.
   const campaign = await requestUtils.rest( {
-    path: '/mission/v1/campaigns',
+    path: '/mission-donation-platform/v1/campaigns',
     method: 'POST',
     data: {
       title: campaignData.title || `Test Campaign ${ Date.now() }`,
@@ -56,11 +56,11 @@ async function createCampaignWithForm(
 
   // Build the block markup with attributes.
   const blockAttrs = JSON.stringify( { campaignId: campaign.id, ...attrs } );
-  const blockContent = `<!-- wp:mission/donation-form ${ blockAttrs } /-->`;
+  const blockContent = `<!-- wp:mission-donation-platform/donation-form ${ blockAttrs } /-->`;
 
   // Update the campaign post content with the donation form block.
   await requestUtils.rest( {
-    path: `/wp/v2/mission_campaign/${ campaign.post_id }`,
+    path: `/wp/v2/missiondp_campaign/${ campaign.post_id }`,
     method: 'PUT',
     data: {
       content: blockContent,
@@ -81,7 +81,7 @@ async function createCampaignWithForm(
  */
 async function deleteCampaign( requestUtils, campaignId ) {
   await requestUtils.rest( {
-    path: `/mission/v1/campaigns/${ campaignId }`,
+    path: `/mission-donation-platform/v1/campaigns/${ campaignId }`,
     method: 'DELETE',
   } );
 }
@@ -93,14 +93,14 @@ async function deleteCampaign( requestUtils, campaignId ) {
  */
 async function enableTestMode( requestUtils ) {
   await requestUtils.rest( {
-    path: '/mission/v1/settings',
+    path: '/mission-donation-platform/v1/settings',
     method: 'POST',
     data: { test_mode: true, stripe_charges_enabled: true },
   } );
 }
 
 /**
- * Configure Stripe for payment tests using the MISSION_STRIPE_TEST_TOKEN env var.
+ * Configure Stripe for payment tests using the MISSIONDP_STRIPE_TEST_TOKEN env var.
  *
  * Sets stripe_site_token and stripe_connection_status in the plugin's settings
  * option directly (the REST endpoint blocks token writes for security).
@@ -109,15 +109,15 @@ async function enableTestMode( requestUtils ) {
  * @return {Promise<boolean>} Whether Stripe was successfully configured.
  */
 async function configureStripe( requestUtils ) {
-  const token = process.env.MISSION_STRIPE_TEST_TOKEN;
-  const accountId = process.env.MISSION_STRIPE_ACCOUNT_ID;
+  const token = process.env.MISSIONDP_STRIPE_TEST_TOKEN;
+  const accountId = process.env.MISSIONDP_STRIPE_ACCOUNT_ID;
   if ( ! token || ! accountId ) {
     return false;
   }
 
   // Set connection status and account ID via the normal settings endpoint.
   await requestUtils.rest( {
-    path: '/mission/v1/settings',
+    path: '/mission-donation-platform/v1/settings',
     method: 'POST',
     data: {
       stripe_connection_status: 'connected',
@@ -131,7 +131,7 @@ async function configureStripe( requestUtils ) {
   const { execSync } = require( 'child_process' );
   try {
     execSync(
-      `npx wp-env run tests-cli -- wp option patch update mission_settings stripe_site_token '${ token }'`,
+      `npx wp-env run tests-cli -- wp option patch update missiondp_settings stripe_site_token '${ token }'`,
       { stdio: 'pipe', timeout: 15000 }
     );
     return true;

@@ -2,14 +2,14 @@
 /**
  * REST endpoint for managing tributes (dedications) on transactions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Transaction;
-use Mission\Models\Tribute;
-use Mission\Rest\RestModule;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
+use MissionDP\Rest\RestModule;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -62,7 +62,7 @@ class TributeEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage tributes.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to manage tributes.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -83,7 +83,7 @@ class TributeEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -138,7 +138,7 @@ class TributeEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -148,7 +148,7 @@ class TributeEndpoint {
 		if ( ! $tribute ) {
 			return new WP_Error(
 				'tribute_not_found',
-				__( 'No tribute found on this transaction.', 'missionwp-donation-platform' ),
+				__( 'No tribute found on this transaction.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}

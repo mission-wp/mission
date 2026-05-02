@@ -2,12 +2,12 @@
 /**
  * Abstract base model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Database\DataStore\DataStoreInterface;
+use MissionDP\Database\DataStore\DataStoreInterface;
 
 defined( 'ABSPATH' ) || exit;
 

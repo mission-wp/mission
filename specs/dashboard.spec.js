@@ -3,12 +3,12 @@
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
-const DASHBOARD_PATH = 'admin.php?page=mission';
+const DASHBOARD_PATH = 'admin.php?page=mission-donation-platform';
 
 /**
  * Regex that matches a REST route in both /wp-json/ and ?rest_route= formats.
  *
- * @param {string} route REST route path, e.g. '/mission/v1/dashboard'.
+ * @param {string} route REST route path, e.g. '/mission-donation-platform/v1/dashboard'.
  * @return {RegExp} Pattern for page.route().
  */
 function restRoute( route ) {
@@ -36,13 +36,16 @@ function utcTimestamp( offsetMs = 0 ) {
  * @param {Object}                          data Dashboard response data.
  */
 async function mockDashboardApi( page, data ) {
-  await page.route( restRoute( '/mission/v1/dashboard' ), async ( route ) => {
-    await route.fulfill( {
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify( data ),
-    } );
-  } );
+  await page.route(
+    restRoute( '/mission-donation-platform/v1/dashboard' ),
+    async ( route ) => {
+      await route.fulfill( {
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify( data ),
+      } );
+    }
+  );
 }
 
 /**
@@ -53,7 +56,7 @@ async function mockDashboardApi( page, data ) {
  */
 async function mockDashboardByPeriod( page, dataMap ) {
   await page.route(
-    restRoute( '/mission/v1/dashboard' ),
+    restRoute( '/mission-donation-platform/v1/dashboard' ),
     async ( route, request ) => {
       const url = request.url();
       let data = dataMap.month;
@@ -205,7 +208,7 @@ const MOCK_ZERO_PREVIOUS = {
 // Clear persisted period before each test so default is always "month".
 test.beforeEach( async ( { page } ) => {
   await page.addInitScript( () => {
-    localStorage.removeItem( 'mission_dashboard_period' );
+    localStorage.removeItem( 'missiondp_dashboard_period' );
   } );
 } );
 

@@ -1,10 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "mission/donor-wall",
+  "name": "mission-donation-platform/donor-wall",
   "version": "0.1.0",
   "title": "Donor Wall",
-  "category": "mission",
+  "category": "mission-donation-platform",
   "icon": "groups",
   "description": "Display a grid of donations for a campaign.",
   "supports": {
@@ -30,7 +30,7 @@
     "loadMoreText": { "type": "string", "default": "Show More Donations" }
   },
   "example": {},
-  "textdomain": "missionwp-donation-platform",
+  "textdomain": "mission-donation-platform",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",

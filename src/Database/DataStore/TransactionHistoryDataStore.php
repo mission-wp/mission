@@ -2,12 +2,12 @@
 /**
  * Transaction history DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\TransactionHistory;
+use MissionDP\Models\TransactionHistory;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_transaction_history';
+		return $wpdb->prefix . 'missiondp_transaction_history';
 	}
 
 	/**
@@ -49,7 +49,7 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 		 *
 		 * @param TransactionHistory $model The history entry.
 		 */
-		do_action( 'mission_transaction_history_created', $model );
+		do_action( 'missiondp_transaction_history_created', $model );
 
 		return $model->id;
 	}

@@ -1,10 +1,10 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission/campaign-statistics",
+	"name": "mission-donation-platform/campaign-statistics",
 	"version": "0.1.0",
 	"title": "Campaign Statistic",
-	"category": "mission",
+	"category": "mission-donation-platform",
 	"icon": "chart-line",
 	"description": "Display a key statistic for a campaign, such as total raised or number of donors.",
 	"supports": {
@@ -69,7 +69,7 @@
 		}
 	},
 	"example": {},
-	"textdomain": "missionwp-donation-platform",
+	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

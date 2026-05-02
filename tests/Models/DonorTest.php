@@ -2,13 +2,13 @@
 /**
  * Tests for the Donor model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Models;
+namespace MissionDP\Tests\Models;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Donor;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Donor;
 use WP_UnitTestCase;
 
 /**
@@ -31,8 +31,8 @@ class DonorTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		// phpcs:enable
 
 		parent::tear_down();
@@ -312,7 +312,7 @@ class DonorTest extends WP_UnitTestCase {
 		// Verify meta rows were cleaned up for the deleted donor.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$count = (int) $wpdb->get_var( $wpdb->prepare(
-			"SELECT COUNT(*) FROM {$wpdb->prefix}mission_donormeta WHERE mission_donor_id = %d",
+			"SELECT COUNT(*) FROM {$wpdb->prefix}missiondp_donormeta WHERE missiondp_donor_id = %d",
 			$id
 		) );
 		$this->assertSame( 0, $count );
@@ -443,10 +443,10 @@ class DonorTest extends WP_UnitTestCase {
 	/**
 	 * Test mission_donor_created action fires on insert.
 	 */
-	public function test_mission_donor_created_action_fires(): void {
+	public function test_missiondp_donor_created_action_fires(): void {
 		$fired = false;
 
-		add_action( 'mission_donor_created', function () use ( &$fired ) {
+		add_action( 'missiondp_donor_created', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
@@ -458,11 +458,11 @@ class DonorTest extends WP_UnitTestCase {
 	/**
 	 * Test mission_donor_updated action fires on update.
 	 */
-	public function test_mission_donor_updated_action_fires(): void {
+	public function test_missiondp_donor_updated_action_fires(): void {
 		$donor = $this->create_donor();
 		$fired = false;
 
-		add_action( 'mission_donor_updated', function () use ( &$fired ) {
+		add_action( 'missiondp_donor_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

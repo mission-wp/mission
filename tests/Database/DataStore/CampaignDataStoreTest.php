@@ -2,14 +2,14 @@
 /**
  * Tests for the CampaignDataStore class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Database\DataStore;
+namespace MissionDP\Tests\Database\DataStore;
 
-use Mission\Database\DatabaseModule;
-use Mission\Database\DataStore\CampaignDataStore;
-use Mission\Models\Campaign;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Models\Campaign;
 use WP_UnitTestCase;
 
 /**
@@ -27,8 +27,8 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 
 		// Drop and recreate to pick up schema changes (dbDelta can't drop columns/keys).
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		DatabaseModule::create_tables();
 	}
@@ -47,7 +47,7 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		parent::tear_down();
 	}
@@ -77,13 +77,13 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 	 */
 	private function make_campaign_with_post( array $overrides = array() ): Campaign {
 		// Remove save_post hook to avoid auto-creating a campaign row.
-		remove_all_actions( 'save_post_mission_campaign' );
+		remove_all_actions( 'save_post_missiondp_campaign' );
 
 		$title = $overrides['title'] ?? 'Test Campaign';
 
 		$post_id = self::factory()->post->create(
 			[
-				'post_type'   => 'mission_campaign',
+				'post_type'   => 'missiondp_campaign',
 				'post_status' => 'publish',
 				'post_title'  => $title,
 			]

@@ -2,12 +2,12 @@
 /**
  * Transaction DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Transaction;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class TransactionDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_transactions';
+		return $wpdb->prefix . 'missiondp_transactions';
 	}
 
 	/**
@@ -33,14 +33,14 @@ class TransactionDataStore implements DataStoreInterface {
 	 */
 	protected function get_meta_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_transactionmeta';
+		return $wpdb->prefix . 'missiondp_transactionmeta';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected function get_meta_type(): string {
-		return 'mission_transaction';
+		return 'missiondp_transaction';
 	}
 
 	/**
@@ -68,7 +68,7 @@ class TransactionDataStore implements DataStoreInterface {
 		 *
 		 * @param Transaction $model The transaction.
 		 */
-		do_action( 'mission_transaction_created', $model );
+		do_action( 'missiondp_transaction_created', $model );
 
 		// Update donor/campaign aggregates if created with a completed status.
 		if ( 'completed' === $model->status ) {
@@ -169,7 +169,7 @@ class TransactionDataStore implements DataStoreInterface {
 		// Delete associated meta.
 		$meta_table = $this->get_meta_table_name();
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE mission_transaction_id = %d", $id ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE missiondp_transaction_id = %d", $id ) );
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
@@ -325,14 +325,14 @@ class TransactionDataStore implements DataStoreInterface {
 		 * @param string      $old_status  Previous status.
 		 * @param string      $new_status  New status.
 		 */
-		do_action( 'mission_transaction_status_transition', $transaction, $old_status, $new_status );
+		do_action( 'missiondp_transaction_status_transition', $transaction, $old_status, $new_status );
 
 		/**
 		 * Fires on a specific transaction status transition.
 		 *
 		 * @param Transaction $transaction The transaction.
 		 */
-		do_action( "mission_transaction_status_{$old_status}_to_{$new_status}", $transaction );
+		do_action( "missiondp_transaction_status_{$old_status}_to_{$new_status}", $transaction );
 
 		// Update donor and campaign aggregates.
 		if ( 'completed' === $new_status ) {
@@ -361,7 +361,7 @@ class TransactionDataStore implements DataStoreInterface {
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
-			$donor_table = $wpdb->prefix . 'mission_donors';
+			$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 			if ( $transaction->is_test ) {
 				$wpdb->query(
@@ -405,7 +405,7 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		if ( $transaction->campaign_id ) {
-			$campaign_table = $wpdb->prefix . 'mission_campaigns';
+			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
 			$raised_col     = $transaction->is_test ? 'test_total_raised' : 'total_raised';
 			$count_col      = $transaction->is_test ? 'test_transaction_count' : 'transaction_count';
 
@@ -458,7 +458,7 @@ class TransactionDataStore implements DataStoreInterface {
 			 * @param int  $campaign_id The campaign ID.
 			 * @param bool $is_test     Whether the triggering transaction is a test.
 			 */
-			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
@@ -475,7 +475,7 @@ class TransactionDataStore implements DataStoreInterface {
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
-			$donor_table = $wpdb->prefix . 'mission_donors';
+			$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 			if ( $transaction->is_test ) {
 				$wpdb->query(
@@ -511,7 +511,7 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		if ( $transaction->campaign_id ) {
-			$campaign_table = $wpdb->prefix . 'mission_campaigns';
+			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
 			$raised_col     = $transaction->is_test ? 'test_total_raised' : 'total_raised';
 			$count_col      = $transaction->is_test ? 'test_transaction_count' : 'transaction_count';
 
@@ -564,7 +564,7 @@ class TransactionDataStore implements DataStoreInterface {
 			 * @param int  $campaign_id The campaign ID.
 			 * @param bool $is_test     Whether the triggering transaction is a test.
 			 */
-			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
@@ -592,7 +592,7 @@ class TransactionDataStore implements DataStoreInterface {
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
-			$donor_table = $wpdb->prefix . 'mission_donors';
+			$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 			if ( $transaction->is_test ) {
 				$wpdb->query(
@@ -626,7 +626,7 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		if ( $transaction->campaign_id ) {
-			$campaign_table = $wpdb->prefix . 'mission_campaigns';
+			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
 			$raised_col     = $transaction->is_test ? 'test_total_raised' : 'total_raised';
 
 			$wpdb->query(
@@ -642,7 +642,7 @@ class TransactionDataStore implements DataStoreInterface {
 			);
 
 			/** @param int $campaign_id @param bool $is_test */
-			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
@@ -654,7 +654,7 @@ class TransactionDataStore implements DataStoreInterface {
 		 * @param Transaction $transaction  The transaction.
 		 * @param int         $refund_delta Amount refunded in this event (minor units).
 		 */
-		do_action( 'mission_transaction_refund_applied', $transaction, $refund_delta );
+		do_action( 'missiondp_transaction_refund_applied', $transaction, $refund_delta );
 	}
 
 	/**
@@ -672,7 +672,7 @@ class TransactionDataStore implements DataStoreInterface {
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
-			$donor_table = $wpdb->prefix . 'mission_donors';
+			$donor_table = $wpdb->prefix . 'missiondp_donors';
 			$count_col   = $transaction->is_test ? 'test_transaction_count' : 'transaction_count';
 
 			$wpdb->query(
@@ -688,7 +688,7 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		if ( $transaction->campaign_id ) {
-			$campaign_table = $wpdb->prefix . 'mission_campaigns';
+			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
 			$count_col      = $transaction->is_test ? 'test_transaction_count' : 'transaction_count';
 
 			$wpdb->query(
@@ -735,7 +735,7 @@ class TransactionDataStore implements DataStoreInterface {
 			}
 
 			/** @param int $campaign_id @param bool $is_test */
-			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}

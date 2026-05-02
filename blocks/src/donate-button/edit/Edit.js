@@ -11,10 +11,10 @@ import { __ } from '@wordpress/i18n';
 
 const DONATE_BUTTON_OPTIONS = [
   {
-    label: __( 'Scroll to donation form', 'missionwp-donation-platform' ),
+    label: __( 'Scroll to donation form', 'mission-donation-platform' ),
     value: 'scroll',
   },
-  { label: __( 'Custom URL', 'missionwp-donation-platform' ), value: 'url' },
+  { label: __( 'Custom URL', 'mission-donation-platform' ), value: 'url' },
 ];
 
 /**
@@ -215,16 +215,16 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
+        <PanelBody title={ __( 'Settings', 'mission-donation-platform' ) }>
           <SelectControl
-            label={ __( 'Button action', 'missionwp-donation-platform' ) }
+            label={ __( 'Button action', 'mission-donation-platform' ) }
             value={ donateButtonAction }
             options={ DONATE_BUTTON_OPTIONS }
             onChange={ ( val ) => setAttributes( { donateButtonAction: val } ) }
           />
           { donateButtonAction === 'url' && (
             <TextControl
-              label={ __( 'URL', 'missionwp-donation-platform' ) }
+              label={ __( 'URL', 'mission-donation-platform' ) }
               value={ donateButtonUrl }
               onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
               type="url"
@@ -241,7 +241,7 @@ export default function Edit( { attributes, setAttributes } ) {
           value={ text }
           onChange={ ( val ) => setAttributes( { text: val } ) }
           withoutInteractiveFormatting
-          placeholder={ __( 'Add text…', 'missionwp-donation-platform' ) }
+          placeholder={ __( 'Add text…', 'mission-donation-platform' ) }
         />
       </div>
     </>

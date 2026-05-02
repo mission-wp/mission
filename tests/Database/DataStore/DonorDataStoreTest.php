@@ -2,14 +2,14 @@
 /**
  * Tests for the DonorDataStore class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Database\DataStore;
+namespace MissionDP\Tests\Database\DataStore;
 
-use Mission\Database\DatabaseModule;
-use Mission\Database\DataStore\DonorDataStore;
-use Mission\Models\Donor;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Models\Donor;
 use WP_UnitTestCase;
 
 /**
@@ -41,8 +41,8 @@ class DonorDataStoreTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 
 		parent::tear_down();
 	}

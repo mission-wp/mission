@@ -2,17 +2,17 @@
 /**
  * Tests for the DonorDashboardEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -70,23 +70,23 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 
-		// Ensure the mission_donor role exists for these tests.
-		if ( ! get_role( 'mission_donor' ) ) {
-			add_role( 'mission_donor', 'Donor', [] );
+		// Ensure the missiondp_donor role exists for these tests.
+		if ( ! get_role( 'missiondp_donor' ) ) {
+			add_role( 'missiondp_donor', 'Donor', [] );
 		}
 	}
 
@@ -103,9 +103,9 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		// Create admin user.
 		$this->admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 
-		// Create donor WP user with mission_donor role.
+		// Create donor WP user with missiondp_donor role.
 		$this->donor_user_id = self::factory()->user->create( [
-			'role'       => 'mission_donor',
+			'role'       => 'missiondp_donor',
 			'user_email' => 'jane@example.com',
 		] );
 
@@ -132,7 +132,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 
 		// Configure settings.
 		update_option( SettingsService::OPTION_NAME, [ 'test_mode' => false ] );
-		update_option( 'mission_currency', 'usd' );
+		update_option( 'missiondp_currency', 'usd' );
 
 		// Default: authenticate as donor.
 		wp_set_current_user( $this->donor_user_id );
@@ -147,20 +147,20 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$wp_rest_server = null;
 		wp_set_current_user( 0 );
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'mission_currency' );
+		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
@@ -311,7 +311,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_unauthenticated_returns_401(): void {
 		wp_set_current_user( 0 );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/overview' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/overview' );
 
 		$this->assertSame( 401, $response->get_status() );
 		$this->assertSame( 'rest_not_logged_in', $response->as_error()->get_error_code() );
@@ -323,7 +323,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_admin_returns_403(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/overview' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/overview' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
@@ -333,7 +333,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test donor user returns 200.
 	 */
 	public function test_donor_returns_200(): void {
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/overview' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/overview' );
 
 		$this->assertSame( 200, $response->get_status() );
 	}
@@ -356,7 +356,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->donor->transaction_count = 7;
 		$this->donor->save();
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/overview' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/overview' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -373,7 +373,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'status' => 'active' ] );
 		$this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/overview' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/overview' );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data['active_subscriptions'] );
@@ -384,7 +384,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test overview for donor with no data.
 	 */
 	public function test_overview_empty_donor(): void {
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/overview' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/overview' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 0, $data['stats']['total_donated'] );
@@ -406,7 +406,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			$this->create_transaction();
 		}
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/transactions', [ 'per_page' => 10 ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/transactions', [ 'per_page' => 10 ] );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -423,7 +423,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'date_created' => '2025-11-01 12:00:00' ] );
 		$this->create_transaction( [ 'date_created' => '2026-02-10 12:00:00' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/transactions', [ 'year' => 2025 ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/transactions', [ 'year' => 2025 ] );
 		$data     = $response->get_data();
 
 		$this->assertCount( 2, $data );
@@ -437,7 +437,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'type' => 'monthly' ] );
 		$this->create_transaction( [ 'type' => 'monthly' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/transactions', [ 'type' => 'monthly' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/transactions', [ 'type' => 'monthly' ] );
 		$data     = $response->get_data();
 
 		$this->assertCount( 2, $data );
@@ -452,7 +452,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'type' => 'monthly' ] );
 		$this->create_transaction( [ 'type' => 'quarterly' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/transactions', [ 'type' => 'recurring' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/transactions', [ 'type' => 'recurring' ] );
 		$data     = $response->get_data();
 
 		$this->assertCount( 2, $data );
@@ -472,7 +472,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'campaign_id' => $other_campaign->id ] );
 
 		$response = $this->dispatch_get(
-			'/mission/v1/donor-dashboard/transactions',
+			'/mission-donation-platform/v1/donor-dashboard/transactions',
 			[ 'campaign_id' => $this->campaign->id ]
 		);
 		$data = $response->get_data();
@@ -496,7 +496,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			'total_renewed' => 7500,
 		] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/subscriptions' );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data );
@@ -512,7 +512,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'is_test' => false ] );
 		$this->create_subscription( [ 'is_test' => true ] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/subscriptions' );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data );
@@ -537,7 +537,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			'date_completed' => '2026-02-10 12:00:00',
 		] );
 
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/receipts' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/receipts' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -557,7 +557,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test get profile returns fields and preference defaults.
 	 */
 	public function test_get_profile_returns_fields_and_preferences(): void {
-		$response = $this->dispatch_get( '/mission/v1/donor-dashboard/profile' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donor-dashboard/profile' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -576,7 +576,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test update profile saves fields.
 	 */
 	public function test_update_profile_saves_fields(): void {
-		$response = $this->dispatch_put( '/mission/v1/donor-dashboard/profile', [
+		$response = $this->dispatch_put( '/mission-donation-platform/v1/donor-dashboard/profile', [
 			'first_name' => 'Janet',
 			'last_name'  => 'Smith',
 			'city'       => 'Seattle',
@@ -597,7 +597,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test update profile does not accept email changes.
 	 */
 	public function test_update_profile_does_not_change_email(): void {
-		$this->dispatch_put( '/mission/v1/donor-dashboard/profile', [
+		$this->dispatch_put( '/mission-donation-platform/v1/donor-dashboard/profile', [
 			'email' => 'newemail@example.com',
 		] );
 
@@ -613,7 +613,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test update preferences saves meta.
 	 */
 	public function test_update_preferences_saves_meta(): void {
-		$response = $this->dispatch_put( '/mission/v1/donor-dashboard/preferences', [
+		$response = $this->dispatch_put( '/mission-donation-platform/v1/donor-dashboard/preferences', [
 			'email_receipts' => false,
 		] );
 		$data = $response->get_data();
@@ -634,7 +634,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test delete account unlinks WP user and preserves donor record.
 	 */
 	public function test_delete_account_unlinks_wp_user(): void {
-		$response = $this->dispatch_delete( '/mission/v1/donor-dashboard/account' );
+		$response = $this->dispatch_delete( '/mission-donation-platform/v1/donor-dashboard/account' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -656,7 +656,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$fired = false;
 
 		$this->add_tracked_action(
-			'mission_donor_account_deleted',
+			'missiondp_donor_account_deleted',
 			function ( $donor, $user_id ) use ( &$fired ) {
 				$fired = true;
 				$this->assertInstanceOf( Donor::class, $donor );
@@ -666,7 +666,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			2,
 		);
 
-		$this->dispatch_delete( '/mission/v1/donor-dashboard/account' );
+		$this->dispatch_delete( '/mission-donation-platform/v1/donor-dashboard/account' );
 
 		$this->assertTrue( $fired );
 	}
@@ -682,7 +682,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		wp_set_current_user( 0 );
 		$sub = $this->create_subscription();
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
 
 		$this->assertSame( 401, $response->get_status() );
 	}
@@ -694,7 +694,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		wp_set_current_user( $this->admin_id );
 		$sub = $this->create_subscription();
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
 
 		$this->assertSame( 403, $response->get_status() );
 	}
@@ -712,7 +712,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 
 		$sub = $this->create_subscription( [ 'donor_id' => $other_donor->id ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
 
 		$this->assertSame( 403, $response->get_status() );
 	}
@@ -726,7 +726,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			'gateway_subscription_id' => null,
 		] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -744,7 +744,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_cancel_subscription_already_cancelled(): void {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
 
 		$this->assertSame( 400, $response->get_status() );
 	}
@@ -753,7 +753,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	 * Test cancel subscription returns 404 for nonexistent ID.
 	 */
 	public function test_cancel_subscription_not_found(): void {
-		$response = $this->dispatch_post( '/mission/v1/donor-dashboard/subscriptions/99999/cancel' );
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/donor-dashboard/subscriptions/99999/cancel' );
 
 		$this->assertSame( 404, $response->get_status() );
 	}
@@ -771,7 +771,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			'gateway_subscription_id' => null,
 		] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -788,7 +788,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_pause_subscription_not_active(): void {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
 
 		$this->assertSame( 400, $response->get_status() );
 	}
@@ -799,7 +799,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_pause_subscription_already_paused(): void {
 		$sub = $this->create_subscription( [ 'status' => 'paused' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
 
 		$this->assertSame( 400, $response->get_status() );
 	}
@@ -817,7 +817,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 			'gateway_subscription_id' => null,
 		] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -835,7 +835,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_resume_subscription_not_paused(): void {
 		$sub = $this->create_subscription( [ 'status' => 'active' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
 
 		$this->assertSame( 400, $response->get_status() );
 	}
@@ -846,7 +846,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_resume_subscription_cancelled(): void {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
 
 		$this->assertSame( 400, $response->get_status() );
 	}
@@ -868,7 +868,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		] );
 
 		$response = $this->dispatch_put(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
 			[
 				'donation_amount' => 5000,
 				'tip_amount'      => 750,
@@ -900,7 +900,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		] );
 
 		$response = $this->dispatch_put(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
 			[
 				'donation_amount' => 10000,
 				'tip_amount'      => 0,
@@ -918,7 +918,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
 		$response = $this->dispatch_put(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
 			[
 				'donation_amount' => 5000,
 				'tip_amount'      => 0,
@@ -936,7 +936,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$sub = $this->create_subscription();
 
 		$response = $this->dispatch_put(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
 			[
 				'donation_amount' => 5000,
 				'tip_amount'      => 0,
@@ -959,7 +959,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$sub = $this->create_subscription( [ 'donor_id' => $other_donor->id ] );
 
 		$response = $this->dispatch_put(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
 			[
 				'donation_amount' => 5000,
 				'tip_amount'      => 0,
@@ -979,7 +979,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		] );
 
 		$response = $this->dispatch_put(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
 			[
 				'donation_amount' => 50,
 				'tip_amount'      => 0,
@@ -1000,7 +1000,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		wp_set_current_user( 0 );
 		$sub = $this->create_subscription();
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
 
 		$this->assertSame( 401, $response->get_status() );
 	}
@@ -1017,7 +1017,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 
 		$sub = $this->create_subscription( [ 'donor_id' => $other_donor->id ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
 
 		$this->assertSame( 403, $response->get_status() );
 	}
@@ -1028,7 +1028,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	public function test_setup_intent_fails_when_cancelled(): void {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
 
 		$this->assertSame( 400, $response->get_status() );
 	}
@@ -1056,7 +1056,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		add_filter( 'pre_http_request', $mock, 10, 3 );
 		$this->hooks_to_remove[] = [ 'pre_http_request', $mock, 10 ];
 
-		$response = $this->dispatch_post( "/mission/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/setup-intent" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -1076,7 +1076,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$sub = $this->create_subscription();
 
 		$response = $this->dispatch_post(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
 			[ 'payment_method_id' => 'pm_test' ]
 		);
 
@@ -1096,7 +1096,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$sub = $this->create_subscription( [ 'donor_id' => $other_donor->id ] );
 
 		$response = $this->dispatch_post(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
 			[ 'payment_method_id' => 'pm_test' ]
 		);
 
@@ -1110,7 +1110,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
 		$response = $this->dispatch_post(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
 			[ 'payment_method_id' => 'pm_test' ]
 		);
 
@@ -1146,7 +1146,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->hooks_to_remove[] = [ 'pre_http_request', $mock, 10 ];
 
 		$response = $this->dispatch_post(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
 			[ 'payment_method_id' => 'pm_new_card' ]
 		);
 		$data = $response->get_data();
@@ -1194,12 +1194,12 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->hooks_to_remove[] = [ 'pre_http_request', $mock, 10 ];
 
 		$fired = false;
-		$this->add_tracked_action( 'mission_subscription_payment_method_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'missiondp_subscription_payment_method_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
 		$this->dispatch_post(
-			"/mission/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/payment-method",
 			[ 'payment_method_id' => 'pm_hook_test' ]
 		);
 

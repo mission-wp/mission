@@ -3,12 +3,12 @@
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
-const CAMPAIGNS_PATH = 'admin.php?page=mission-campaigns';
+const CAMPAIGNS_PATH = 'admin.php?page=mission-donation-platform-campaigns';
 
 /**
  * Regex that matches a REST route in both /wp-json/ and ?rest_route= formats.
  *
- * @param {string} route REST route path, e.g. '/mission/v1/campaigns'.
+ * @param {string} route REST route path, e.g. '/mission-donation-platform/v1/campaigns'.
  * @return {RegExp} Pattern for page.route().
  */
 function restRoute( route ) {
@@ -50,7 +50,7 @@ function buildMockSummary( campaigns ) {
  */
 async function mockCampaignsApi( page, campaigns, headers = {} ) {
   await page.route(
-    restRoute( '/mission/v1/campaigns' ),
+    restRoute( '/mission-donation-platform/v1/campaigns' ),
     async ( route, request ) => {
       const url = request.url();
 
@@ -344,7 +344,7 @@ test.describe( 'Campaigns Page', () => {
     let deleteRequested = false;
 
     await page.route(
-      restRoute( '/mission/v1/campaigns' ),
+      restRoute( '/mission-donation-platform/v1/campaigns' ),
       async ( route, request ) => {
         const url = request.url();
 
@@ -424,7 +424,7 @@ test.describe( 'Campaign Detail View', () => {
    */
   async function mockDetailApis( page ) {
     await page.route(
-      restRoute( '/mission/v1/campaigns' ),
+      restRoute( '/mission-donation-platform/v1/campaigns' ),
       async ( route, request ) => {
         if (
           request.method() === 'GET' &&
@@ -444,7 +444,7 @@ test.describe( 'Campaign Detail View', () => {
 
     // OverviewTab fetches transactions for this campaign.
     await page.route(
-      restRoute( '/mission/v1/transactions' ),
+      restRoute( '/mission-donation-platform/v1/transactions' ),
       async ( route ) => {
         await route.fulfill( {
           status: 200,
@@ -466,7 +466,7 @@ test.describe( 'Campaign Detail View', () => {
     // Ensure we land on the Overview tab.
     await page.addInitScript( () => {
       try {
-        window.localStorage.removeItem( 'mission_campaign_tab_1' );
+        window.localStorage.removeItem( 'missiondp_campaign_tab_1' );
       } catch {}
     } );
 
@@ -503,7 +503,7 @@ test.describe( 'Campaign Detail View', () => {
     // Ensure we land on the Overview tab first.
     await page.addInitScript( () => {
       try {
-        window.localStorage.removeItem( 'mission_campaign_tab_1' );
+        window.localStorage.removeItem( 'missiondp_campaign_tab_1' );
       } catch {}
     } );
 

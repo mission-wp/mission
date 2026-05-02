@@ -12,138 +12,135 @@ import { __ } from '@wordpress/i18n';
 const GLOBAL_TAGS = [
   {
     tag: '{donor_name}',
-    label: __( 'Donor name', 'missionwp-donation-platform' ),
+    label: __( 'Donor name', 'mission-donation-platform' ),
   },
   {
     tag: '{organization}',
-    label: __( 'Organization', 'missionwp-donation-platform' ),
+    label: __( 'Organization', 'mission-donation-platform' ),
   },
 ];
 
 export const DONATION_EMAILS = [
   {
     id: 'donation_receipt',
-    name: __( 'One-time donation receipt', 'missionwp-donation-platform' ),
+    name: __( 'One-time donation receipt', 'mission-donation-platform' ),
     desc: __(
       'Sent after a completed one-time transaction',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'donation',
     defaultSubject: 'Thank you for your {amount} donation',
     mergeTags: [
       ...GLOBAL_TAGS,
-      { tag: '{amount}', label: __( 'Amount', 'missionwp-donation-platform' ) },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
       {
         tag: '{campaign}',
-        label: __( 'Campaign', 'missionwp-donation-platform' ),
+        label: __( 'Campaign', 'mission-donation-platform' ),
       },
-      { tag: '{date}', label: __( 'Date', 'missionwp-donation-platform' ) },
+      { tag: '{date}', label: __( 'Date', 'mission-donation-platform' ) },
       {
         tag: '{receipt_id}',
-        label: __( 'Receipt ID', 'missionwp-donation-platform' ),
+        label: __( 'Receipt ID', 'mission-donation-platform' ),
       },
     ],
   },
   {
     id: 'subscription_activated',
-    name: __( 'Subscription activated', 'missionwp-donation-platform' ),
+    name: __( 'Subscription activated', 'mission-donation-platform' ),
     desc: __(
       'Sent when a recurring donation goes active',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'donation',
     defaultSubject: 'Thank you for your {amount} {frequency} donation',
     mergeTags: [
       ...GLOBAL_TAGS,
-      { tag: '{amount}', label: __( 'Amount', 'missionwp-donation-platform' ) },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
       {
         tag: '{frequency}',
-        label: __( 'Frequency', 'missionwp-donation-platform' ),
+        label: __( 'Frequency', 'mission-donation-platform' ),
       },
       {
         tag: '{next_renewal_date}',
-        label: __( 'Next renewal', 'missionwp-donation-platform' ),
+        label: __( 'Next renewal', 'mission-donation-platform' ),
       },
       {
         tag: '{campaign}',
-        label: __( 'Campaign', 'missionwp-donation-platform' ),
+        label: __( 'Campaign', 'mission-donation-platform' ),
       },
     ],
   },
   {
     id: 'renewal_receipt',
-    name: __( 'Renewal receipt', 'missionwp-donation-platform' ),
+    name: __( 'Renewal receipt', 'mission-donation-platform' ),
     desc: __(
       'Sent each time a recurring payment is processed',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'donation',
     defaultSubject: 'Thank you for your {frequency} gift of {amount}',
     mergeTags: [
       ...GLOBAL_TAGS,
-      { tag: '{amount}', label: __( 'Amount', 'missionwp-donation-platform' ) },
-      { tag: '{date}', label: __( 'Date', 'missionwp-donation-platform' ) },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
+      { tag: '{date}', label: __( 'Date', 'mission-donation-platform' ) },
       {
         tag: '{receipt_id}',
-        label: __( 'Receipt ID', 'missionwp-donation-platform' ),
+        label: __( 'Receipt ID', 'mission-donation-platform' ),
       },
       {
         tag: '{frequency}',
-        label: __( 'Frequency', 'missionwp-donation-platform' ),
+        label: __( 'Frequency', 'mission-donation-platform' ),
       },
       {
         tag: '{next_renewal_date}',
-        label: __( 'Next renewal', 'missionwp-donation-platform' ),
+        label: __( 'Next renewal', 'mission-donation-platform' ),
       },
     ],
   },
   {
     id: 'payment_failed',
-    name: __( 'Payment failed', 'missionwp-donation-platform' ),
-    desc: __(
-      'Sent when a renewal charge fails',
-      'missionwp-donation-platform'
-    ),
+    name: __( 'Payment failed', 'mission-donation-platform' ),
+    desc: __( 'Sent when a renewal charge fails', 'mission-donation-platform' ),
     iconType: 'alert',
     defaultSubject:
       'Action needed: Update your payment for your recurring donation',
     mergeTags: [
       ...GLOBAL_TAGS,
-      { tag: '{amount}', label: __( 'Amount', 'missionwp-donation-platform' ) },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
       {
         tag: '{frequency}',
-        label: __( 'Frequency', 'missionwp-donation-platform' ),
+        label: __( 'Frequency', 'mission-donation-platform' ),
       },
       {
         tag: '{donor_dashboard}',
-        label: __( 'Donor dashboard URL', 'missionwp-donation-platform' ),
+        label: __( 'Donor dashboard URL', 'mission-donation-platform' ),
       },
     ],
   },
   {
     id: 'subscription_cancelled',
-    name: __( 'Subscription cancelled', 'missionwp-donation-platform' ),
+    name: __( 'Subscription cancelled', 'mission-donation-platform' ),
     desc: __(
       'Sent when a donor cancels their subscription',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'alert',
     defaultSubject: 'Your recurring donation has ended',
     mergeTags: [
       ...GLOBAL_TAGS,
-      { tag: '{amount}', label: __( 'Amount', 'missionwp-donation-platform' ) },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
       {
         tag: '{frequency}',
-        label: __( 'Frequency', 'missionwp-donation-platform' ),
+        label: __( 'Frequency', 'mission-donation-platform' ),
       },
     ],
   },
   {
     id: 'donor_note',
-    name: __( 'Donor note', 'missionwp-donation-platform' ),
+    name: __( 'Donor note', 'mission-donation-platform' ),
     desc: __(
       'Sent when a donor-visible note is added to a transaction',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'donation',
     defaultSubject: 'A note about your donation',
@@ -151,21 +148,21 @@ export const DONATION_EMAILS = [
       ...GLOBAL_TAGS,
       {
         tag: '{note_content}',
-        label: __( 'Note content', 'missionwp-donation-platform' ),
+        label: __( 'Note content', 'mission-donation-platform' ),
       },
-      { tag: '{amount}', label: __( 'Amount', 'missionwp-donation-platform' ) },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
       {
         tag: '{receipt_id}',
-        label: __( 'Receipt ID', 'missionwp-donation-platform' ),
+        label: __( 'Receipt ID', 'mission-donation-platform' ),
       },
     ],
   },
   {
     id: 'tribute_notification',
-    name: __( 'Tribute notification', 'missionwp-donation-platform' ),
+    name: __( 'Tribute notification', 'mission-donation-platform' ),
     desc: __(
       'Sent to the recipient of a dedication',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'donation',
     defaultSubject:
@@ -174,15 +171,15 @@ export const DONATION_EMAILS = [
       ...GLOBAL_TAGS,
       {
         tag: '{honoree_name}',
-        label: __( 'Honoree name', 'missionwp-donation-platform' ),
+        label: __( 'Honoree name', 'mission-donation-platform' ),
       },
       {
         tag: '{tribute_type_label}',
-        label: __( 'Tribute type', 'missionwp-donation-platform' ),
+        label: __( 'Tribute type', 'mission-donation-platform' ),
       },
       {
         tag: '{message}',
-        label: __( 'Personal message', 'missionwp-donation-platform' ),
+        label: __( 'Personal message', 'mission-donation-platform' ),
       },
     ],
   },
@@ -191,64 +188,64 @@ export const DONATION_EMAILS = [
 export const ADMIN_EMAILS = [
   {
     id: 'admin_new_donation',
-    name: __( 'New donation', 'missionwp-donation-platform' ),
+    name: __( 'New donation', 'mission-donation-platform' ),
     desc: __(
       'Sent when a one-time or first recurring donation is received',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'admin',
   },
   {
     id: 'admin_recurring_renewal',
-    name: __( 'Recurring renewal', 'missionwp-donation-platform' ),
+    name: __( 'Recurring renewal', 'mission-donation-platform' ),
     desc: __(
       'Sent each time a recurring donation renews',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'admin',
   },
   {
     id: 'admin_refund',
-    name: __( 'Refund processed', 'missionwp-donation-platform' ),
+    name: __( 'Refund processed', 'mission-donation-platform' ),
     desc: __(
       'Sent when a donation is fully or partially refunded',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'alert',
   },
   {
     id: 'admin_payment_failed',
-    name: __( 'Failed payment', 'missionwp-donation-platform' ),
+    name: __( 'Failed payment', 'mission-donation-platform' ),
     desc: __(
       'Sent when a recurring charge is declined',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'alert',
   },
   {
     id: 'admin_subscription_cancelled',
-    name: __( 'Subscription cancelled', 'missionwp-donation-platform' ),
+    name: __( 'Subscription cancelled', 'mission-donation-platform' ),
     desc: __(
       'Sent when a donor cancels their recurring donation',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'admin',
   },
   {
     id: 'admin_milestone',
-    name: __( 'Campaign milestone', 'missionwp-donation-platform' ),
+    name: __( 'Campaign milestone', 'mission-donation-platform' ),
     desc: __(
       'Sent when a campaign reaches 50%, 75%, or 100% of its goal',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'admin',
   },
   {
     id: 'admin_mail_dedication',
-    name: __( 'Mail dedication pending', 'missionwp-donation-platform' ),
+    name: __( 'Mail dedication pending', 'mission-donation-platform' ),
     desc: __(
       'Sent when a donation includes a dedication that needs to be mailed',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'admin',
   },
@@ -257,10 +254,10 @@ export const ADMIN_EMAILS = [
 export const ACCOUNT_EMAILS = [
   {
     id: 'account_activation',
-    name: __( 'Account activation', 'missionwp-donation-platform' ),
+    name: __( 'Account activation', 'mission-donation-platform' ),
     desc: __(
       'Email verification for the donor dashboard',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'account',
     defaultSubject: 'Verify your email to activate your donor account',
@@ -268,10 +265,10 @@ export const ACCOUNT_EMAILS = [
   },
   {
     id: 'password_reset',
-    name: __( 'Password reset', 'missionwp-donation-platform' ),
+    name: __( 'Password reset', 'mission-donation-platform' ),
     desc: __(
       'Sent when a donor requests a new password',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'account',
     defaultSubject: 'Reset your password',
@@ -279,10 +276,10 @@ export const ACCOUNT_EMAILS = [
   },
   {
     id: 'email_change_verification',
-    name: __( 'Email change verification', 'missionwp-donation-platform' ),
+    name: __( 'Email change verification', 'mission-donation-platform' ),
     desc: __(
       'Sent to the new address for confirmation',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     iconType: 'account',
     defaultSubject: 'Verify your new email address',
@@ -290,7 +287,7 @@ export const ACCOUNT_EMAILS = [
       ...GLOBAL_TAGS,
       {
         tag: '{new_email}',
-        label: __( 'New email', 'missionwp-donation-platform' ),
+        label: __( 'New email', 'mission-donation-platform' ),
       },
     ],
   },

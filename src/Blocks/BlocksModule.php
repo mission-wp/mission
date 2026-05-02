@@ -2,13 +2,13 @@
 /**
  * Blocks module - registers custom blocks.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Blocks;
+namespace MissionDP\Blocks;
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,8 +26,8 @@ class BlocksModule {
 		add_filter( 'block_categories_all', [ $this, 'register_block_category' ] );
 		add_action( 'init', [ $this, 'register_blocks' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
-		add_filter( 'render_block_mission/donation-form', [ $this, 'enqueue_stripe_js' ], 10, 2 );
-		add_filter( 'render_block_mission/donor-dashboard', [ $this, 'enqueue_stripe_js' ], 10, 2 );
+		add_filter( 'render_block_mission-donation-platform/donation-form', [ $this, 'enqueue_stripe_js' ], 10, 2 );
+		add_filter( 'render_block_mission-donation-platform/donor-dashboard', [ $this, 'enqueue_stripe_js' ], 10, 2 );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class BlocksModule {
 		$blocks   = glob( $blocks_dir . '/*', GLOB_ONLYDIR );
 
 		foreach ( $blocks as $block_path ) {
-			$name  = 'mission/' . basename( $block_path );
+			$name  = 'mission-donation-platform/' . basename( $block_path );
 			$block = $registry->get_registered( $name );
 
 			if ( ! $block ) {
@@ -93,8 +93,8 @@ class BlocksModule {
 			if ( $post_id ) {
 				$campaign = Campaign::find_by_post_id( $post_id );
 			}
-		} elseif ( 'missionwp_page_mission-campaigns' === $screen->id ) {
-			// Campaign details admin page (?page=mission-campaigns&campaign=ID).
+		} elseif ( 'mission_page_mission-donation-platform-campaigns' === $screen->id ) {
+			// Campaign details admin page (?page=mission-donation-platform-campaigns&campaign=ID).
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check for page context.
 			$campaign_id = isset( $_GET['campaign'] ) ? absint( $_GET['campaign'] ) : 0;
 			if ( $campaign_id ) {
@@ -106,7 +106,7 @@ class BlocksModule {
 			return;
 		}
 
-		$block  = \WP_Block_Type_Registry::get_instance()->get_registered( 'mission/campaign-image' );
+		$block  = \WP_Block_Type_Registry::get_instance()->get_registered( 'mission-donation-platform/campaign-image' );
 		$handle = $block?->editor_script_handles[0] ?? null;
 
 		if ( ! $handle ) {
@@ -135,7 +135,7 @@ class BlocksModule {
 
 		wp_localize_script(
 			$handle,
-			'missionCampaignImage',
+			'missiondpCampaignImage',
 			[
 				'campaignId' => $campaign->id,
 				'imageUrls'  => $urls,
@@ -149,18 +149,18 @@ class BlocksModule {
 	 * @return void
 	 */
 	private function localize_fee_settings(): void {
-		$block  = \WP_Block_Type_Registry::get_instance()->get_registered( 'mission/donation-form' );
+		$block  = \WP_Block_Type_Registry::get_instance()->get_registered( 'mission-donation-platform/donation-form' );
 		$handle = $block?->editor_script_handles[0] ?? null;
 
 		if ( ! $handle ) {
 			return;
 		}
 
-		$settings = get_option( 'mission_settings', [] );
+		$settings = get_option( 'missiondp_settings', [] );
 
 		wp_localize_script(
 			$handle,
-			'missionFeeSettings',
+			'missiondpFeeSettings',
 			[
 				'stripeFeePercent' => (float) ( $settings['stripe_fee_percent'] ?? 2.9 ),
 				'stripeFeeFixed'   => (int) ( $settings['stripe_fee_fixed'] ?? 30 ),
@@ -176,13 +176,13 @@ class BlocksModule {
 	 * @return void
 	 */
 	private function localize_primary_color(): void {
-		$settings = get_option( 'mission_settings', [] );
+		$settings = get_option( 'missiondp_settings', [] );
 		$color    = $settings['primary_color'] ?? '#2fa36b';
 
 		// Attach to wp-blocks which every block editor script depends on.
 		wp_add_inline_script(
 			'wp-blocks',
-			'window.missionBlockEditor = ' . wp_json_encode( [ 'primaryColor' => $color ] ) . ';'
+			'window.missiondpBlockEditor = ' . wp_json_encode( [ 'primaryColor' => $color ] ) . ';'
 		);
 	}
 
@@ -196,8 +196,8 @@ class BlocksModule {
 		array_unshift(
 			$categories,
 			[
-				'slug'  => 'mission',
-				'title' => __( 'MissionWP', 'missionwp-donation-platform' ),
+				'slug'  => 'mission-donation-platform',
+				'title' => __( 'Mission', 'mission-donation-platform' ),
 			]
 		);
 
@@ -212,7 +212,7 @@ class BlocksModule {
 	 */
 	public function enqueue_stripe_js( string $block_content ): string {
 		wp_enqueue_script_module(
-			'@mission/stripe-js',
+			'@mission-donation-platform/stripe-js',
 			'https://js.stripe.com/v3/',
 			[],
 			null

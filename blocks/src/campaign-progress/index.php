@@ -3,16 +3,16 @@
  * Block Name: Campaign Progress
  * Description: Display campaign fundraising progress with a progress bar and stats.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -33,7 +33,7 @@ if ( ! $campaign ) {
 }
 
 // Settings and test mode.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $is_test          = (bool) ( $mission_settings['test_mode'] ?? false );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
@@ -73,20 +73,20 @@ if ( 'amount' === $goal_type ) {
 	$progress_text = Currency::format_amount( $goal_progress, $currency );
 	$goal_text     = $has_goal
 		/* translators: %s: formatted goal amount */
-		? sprintf( __( 'raised of %s goal', 'missionwp-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
-		: __( 'raised', 'missionwp-donation-platform' );
+		? sprintf( __( 'raised of %s goal', 'mission-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
+		: __( 'raised', 'mission-donation-platform' );
 } elseif ( 'donations' === $goal_type ) {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donations of %s goal', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
-		: __( 'donations', 'missionwp-donation-platform' );
+		? sprintf( __( 'donations of %s goal', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: __( 'donations', 'mission-donation-platform' );
 } else {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donors of %s goal', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
-		: __( 'donors', 'missionwp-donation-platform' );
+		? sprintf( __( 'donors of %s goal', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: __( 'donors', 'mission-donation-platform' );
 }
 
 // Primary color (same pattern as donation form).
@@ -119,7 +119,7 @@ ob_start();
 ?>
 <div
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-campaign-progress' ] ) ); ?>
-	data-wp-interactive="mission/campaign-progress"
+	data-wp-interactive="mission-donation-platform/campaign-progress"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
 	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>;"
 >
@@ -142,13 +142,13 @@ ob_start();
 			<?php if ( $show_donors ) : ?>
 				<div class="mission-cp-stat">
 					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'missionwp-donation-platform' ); ?></span>
+					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
 				<div class="mission-cp-stat">
 					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'days remaining', 'missionwp-donation-platform' ); ?></span>
+					<span class="mission-cp-stat__label"><?php esc_html_e( 'days remaining', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -161,11 +161,11 @@ ob_start();
 				class="mission-cp-donate-btn"
 				data-wp-on--click="actions.scrollToForm"
 			>
-				<?php esc_html_e( 'Donate Now', 'missionwp-donation-platform' ); ?>
+				<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
 			</button>
 		<?php else : ?>
 			<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-cp-donate-btn">
-				<?php esc_html_e( 'Donate Now', 'missionwp-donation-platform' ); ?>
+				<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
 			</a>
 		<?php endif; ?>
 	<?php endif; ?>
@@ -181,4 +181,4 @@ $output = ob_get_clean();
  * @param array    $attributes Block attributes.
  */
 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_campaign_progress_output', $output, $campaign, $attributes );
+echo apply_filters( 'missiondp_campaign_progress_output', $output, $campaign, $attributes );

@@ -5,14 +5,14 @@
  * Safety net for missed webhooks — checks active subscriptions that haven't
  * renewed on time against Stripe via the Mission API.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Subscriptions;
+namespace MissionDP\Subscriptions;
 
-use Mission\Models\Subscription;
-use Mission\Plugin;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Subscription;
+use MissionDP\Plugin;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,7 +26,7 @@ class SubscriptionReconciler {
 	 *
 	 * @var string
 	 */
-	public const CRON_HOOK = 'mission_check_recurring_payments';
+	public const CRON_HOOK = 'missiondp_check_recurring_payments';
 
 	/**
 	 * API base URL.

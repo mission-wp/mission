@@ -2,12 +2,12 @@
 /**
  * Tribute DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Tribute;
+use MissionDP\Models\Tribute;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class TributeDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_tributes';
+		return $wpdb->prefix . 'missiondp_tributes';
 	}
 
 	/**
@@ -49,7 +49,7 @@ class TributeDataStore implements DataStoreInterface {
 		 *
 		 * @param Tribute $model The tribute.
 		 */
-		do_action( 'mission_tribute_created', $model );
+		do_action( 'missiondp_tribute_created', $model );
 
 		return $model->id;
 	}
@@ -106,7 +106,7 @@ class TributeDataStore implements DataStoreInterface {
 		 *
 		 * @param Tribute $model The tribute.
 		 */
-		do_action( 'mission_tribute_updated', $model );
+		do_action( 'missiondp_tribute_updated', $model );
 
 		return true;
 	}
@@ -131,7 +131,7 @@ class TributeDataStore implements DataStoreInterface {
 			 *
 			 * @param Tribute $tribute The deleted tribute.
 			 */
-			do_action( 'mission_tribute_deleted', $tribute );
+			do_action( 'missiondp_tribute_deleted', $tribute );
 		}
 
 		return false !== $result;

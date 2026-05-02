@@ -9,9 +9,9 @@ import ToggleRow from '@shared/components/ToggleRow';
 import DangerZone from './settings/DangerZone';
 
 const GOAL_LABELS = {
-  amount: __( 'Fundraising Goal', 'missionwp-donation-platform' ),
-  donations: __( 'Donation Goal', 'missionwp-donation-platform' ),
-  donors: __( 'Donor Goal', 'missionwp-donation-platform' ),
+  amount: __( 'Fundraising Goal', 'mission-donation-platform' ),
+  donations: __( 'Donation Goal', 'mission-donation-platform' ),
+  donors: __( 'Donor Goal', 'mission-donation-platform' ),
 };
 
 export default function SettingsTab( {
@@ -41,7 +41,7 @@ export default function SettingsTab( {
   const fetchCampaigns = useCallback( async () => {
     try {
       const items = await apiFetch( {
-        path: '/mission/v1/campaigns?per_page=100&status=active',
+        path: '/mission-donation-platform/v1/campaigns?per_page=100&status=active',
       } );
       setCampaigns( items.filter( ( c ) => c.id !== campaign.id ) );
     } catch {
@@ -64,13 +64,13 @@ export default function SettingsTab( {
         style={ { marginBottom: 32 } }
       >
         <h3 className="mission-settings-section__title">
-          { __( 'Campaign Details', 'missionwp-donation-platform' ) }
+          { __( 'Campaign Details', 'mission-donation-platform' ) }
         </h3>
 
         { /* Goal Type */ }
         <div className="mission-field-group" style={ { marginBottom: 20 } }>
           <span className="mission-field-label">
-            { __( 'Goal Type', 'missionwp-donation-platform' ) }
+            { __( 'Goal Type', 'mission-donation-platform' ) }
           </span>
           <GoalTypePicker
             value={ formState.goal_type || 'amount' }
@@ -113,7 +113,7 @@ export default function SettingsTab( {
             />
           ) }
           <span className="mission-field-hint">
-            { __( 'Leave blank for no goal', 'missionwp-donation-platform' ) }
+            { __( 'Leave blank for no goal', 'mission-donation-platform' ) }
           </span>
         </div>
 
@@ -123,7 +123,7 @@ export default function SettingsTab( {
           onChange={ ( val ) => updateField( 'close_on_goal', val ) }
           label={ __(
             'End campaign early when goal is reached',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
           style={ { marginBottom: 20 } }
         />
@@ -132,7 +132,7 @@ export default function SettingsTab( {
         <div className="mission-settings-fields">
           <div className="mission-field-group">
             <label className="mission-field-label" htmlFor="campaign-start">
-              { __( 'Start Date', 'missionwp-donation-platform' ) }
+              { __( 'Start Date', 'mission-donation-platform' ) }
             </label>
             <input
               id="campaign-start"
@@ -144,7 +144,7 @@ export default function SettingsTab( {
           </div>
           <div className="mission-field-group">
             <label className="mission-field-label" htmlFor="campaign-end">
-              { __( 'End Date', 'missionwp-donation-platform' ) }
+              { __( 'End Date', 'mission-donation-platform' ) }
             </label>
             <input
               id="campaign-end"
@@ -157,11 +157,11 @@ export default function SettingsTab( {
               { formState.close_on_goal
                 ? __(
                     'Campaign will also end when the goal is reached',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   )
                 : __(
                     'Leave blank for an ongoing campaign',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }
             </span>
           </div>
@@ -174,7 +174,7 @@ export default function SettingsTab( {
               className="mission-settings-section__title"
               style={ { marginTop: 24 } }
             >
-              { __( 'When Campaign Ends', 'missionwp-donation-platform' ) }
+              { __( 'When Campaign Ends', 'mission-donation-platform' ) }
             </h3>
 
             <ToggleRow
@@ -184,11 +184,11 @@ export default function SettingsTab( {
               }
               label={ __(
                 'Stop accepting donations',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
               hint={ __(
                 'Donation forms for this campaign will be disabled',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
               style={ { marginBottom: 16 } }
             />
@@ -199,11 +199,11 @@ export default function SettingsTab( {
                 onChange={ ( val ) => updateField( 'show_ended_message', val ) }
                 label={ __(
                   'Show "campaign ended" message',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
                 hint={ __(
                   'Replace the campaign page with a message and link to other active campaigns',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
                 style={ { marginBottom: 16 } }
               />
@@ -217,11 +217,11 @@ export default function SettingsTab( {
                 }
                 label={ __(
                   'Remove from campaign listings',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
                 hint={ __(
                   'Hide this campaign from the public campaigns page',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               />
             ) }
@@ -229,7 +229,7 @@ export default function SettingsTab( {
             { /* Recurring Donations */ }
             <div style={ { marginTop: 24 } }>
               <h3 className="mission-settings-section__title">
-                { __( 'Recurring Donations', 'missionwp-donation-platform' ) }
+                { __( 'Recurring Donations', 'mission-donation-platform' ) }
               </h3>
               <div className="mission-radio-group">
                 { [
@@ -237,33 +237,33 @@ export default function SettingsTab( {
                     value: 'keep',
                     label: __(
                       'Keep recurring donations active',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                     hint: __(
                       'Existing recurring donations will continue unchanged',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                   },
                   {
                     value: 'cancel',
                     label: __(
                       'Cancel recurring donations',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                     hint: __(
                       'Active subscriptions will be canceled and donors notified',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                   },
                   {
                     value: 'redirect',
                     label: __(
                       'Redirect funds to another campaign',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                     hint: __(
                       'Future recurring donations will be designated to another campaign',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                   },
                 ].map( ( option ) => (
@@ -309,7 +309,7 @@ export default function SettingsTab( {
                     className="mission-field-label"
                     htmlFor="recurring-redirect"
                   >
-                    { __( 'Redirect funds to', 'missionwp-donation-platform' ) }
+                    { __( 'Redirect funds to', 'mission-donation-platform' ) }
                   </label>
                   <select
                     id="recurring-redirect"
@@ -325,7 +325,7 @@ export default function SettingsTab( {
                     <option value="" disabled>
                       { __(
                         'Select a campaign…',
-                        'missionwp-donation-platform'
+                        'mission-donation-platform'
                       ) }
                     </option>
                     { campaigns.map( ( c ) => (
@@ -356,8 +356,8 @@ export default function SettingsTab( {
         >
           { saveSuccess && <Icon icon={ check } size={ 20 } /> }
           { saveSuccess
-            ? __( 'Settings Saved', 'missionwp-donation-platform' )
-            : __( 'Save Settings', 'missionwp-donation-platform' ) }
+            ? __( 'Settings Saved', 'mission-donation-platform' )
+            : __( 'Save Settings', 'mission-donation-platform' ) }
         </Button>
       </div>
     </div>

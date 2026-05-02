@@ -3,17 +3,17 @@
  * Block Name: Campaign Statistic
  * Description: Display a key statistic for a campaign.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
-use Mission\Reporting\ReportingService;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
+use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,7 +34,7 @@ if ( ! $campaign ) {
 }
 
 // Settings and test mode.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $is_test          = (bool) ( $mission_settings['test_mode'] ?? false );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
@@ -63,7 +63,7 @@ $formatted_value = $is_currency
 	: number_format_i18n( $raw_value );
 
 // Heading.
-$heading      = $attributes['heading'] ?? __( 'Total Raised', 'missionwp-donation-platform' );
+$heading      = $attributes['heading'] ?? __( 'Total Raised', 'mission-donation-platform' );
 $show_heading = $attributes['showHeading'] ?? true;
 
 // Wrapper classes and CSS custom properties.
@@ -116,4 +116,4 @@ $output = ob_get_clean();
  * @param array    $attributes Block attributes.
  */
 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_campaign_statistics_output', $output, $campaign, $attributes );
+echo apply_filters( 'missiondp_campaign_statistics_output', $output, $campaign, $attributes );

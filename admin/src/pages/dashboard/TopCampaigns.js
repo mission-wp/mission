@@ -22,26 +22,26 @@ const ChartIcon = () => (
 );
 
 export default function TopCampaigns( { campaigns, isLoading } ) {
-  const campaignsUrl = window.missionAdmin?.adminUrl
-    ? `${ window.missionAdmin.adminUrl }admin.php?page=mission-campaigns`
+  const campaignsUrl = window.missiondpAdmin?.adminUrl
+    ? `${ window.missiondpAdmin.adminUrl }admin.php?page=mission-donation-platform-campaigns`
     : '#';
 
   return (
     <div className="mission-dashboard-card">
       <div className="mission-dashboard-card__header">
-        <h2>{ __( 'Top Campaigns', 'missionwp-donation-platform' ) }</h2>
+        <h2>{ __( 'Top Campaigns', 'mission-donation-platform' ) }</h2>
         <span className="mission-dashboard-card__badge">
-          { __( 'By amount raised', 'missionwp-donation-platform' ) }
+          { __( 'By amount raised', 'mission-donation-platform' ) }
         </span>
       </div>
 
       { ! isLoading && ( ! campaigns || campaigns.length === 0 ) ? (
         <EmptyState
           icon={ <ChartIcon /> }
-          text={ __( 'No campaigns yet', 'missionwp-donation-platform' ) }
+          text={ __( 'No campaigns yet', 'mission-donation-platform' ) }
           hint={ __(
             'Create a campaign to start tracking donations.',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
         />
       ) : (
@@ -124,7 +124,7 @@ export default function TopCampaigns( { campaigns, isLoading } ) {
 
       <div className="mission-campaigns-footer">
         <a href={ campaignsUrl } className="mission-campaigns-footer__btn">
-          { __( 'View all campaigns', 'missionwp-donation-platform' ) }
+          { __( 'View all campaigns', 'mission-donation-platform' ) }
         </a>
       </div>
     </div>

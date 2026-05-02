@@ -22,27 +22,27 @@ import TransactionActivityCard from './TransactionActivityCard';
 import NotesCard from '../../components/NotesCard';
 
 function TransactionSubscriptionLink( { subscriptionId } ) {
-  const adminUrl = window.missionAdmin?.adminUrl || '';
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
   return (
     <Card>
       <CardHeader size="small">
         <Text weight={ 600 }>
-          { __( 'Subscription', 'missionwp-donation-platform' ) }
+          { __( 'Subscription', 'mission-donation-platform' ) }
         </Text>
       </CardHeader>
       <CardBody>
         <Text>
           { __(
             'This transaction is part of a recurring subscription.',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
         </Text>
         <div style={ { marginTop: '8px' } }>
           <a
-            href={ `${ adminUrl }admin.php?page=mission-subscriptions&subscription_id=${ subscriptionId }` }
+            href={ `${ adminUrl }admin.php?page=mission-donation-platform-subscriptions&subscription_id=${ subscriptionId }` }
             className="mission-back-link"
           >
-            { __( 'View Subscription', 'missionwp-donation-platform' ) } #
+            { __( 'View Subscription', 'mission-donation-platform' ) } #
             { subscriptionId } &rarr;
           </a>
         </div>
@@ -54,7 +54,7 @@ function TransactionSubscriptionLink( { subscriptionId } ) {
 function StatusBadge( { status } ) {
   const label = status
     ? status.charAt( 0 ).toUpperCase() + status.slice( 1 )
-    : __( 'Pending', 'missionwp-donation-platform' );
+    : __( 'Pending', 'mission-donation-platform' );
   return (
     <span className={ `mission-status-badge is-${ status || 'pending' }` }>
       { label }
@@ -91,7 +91,7 @@ function ActionsDropdown( {
         className="mission-dropdown__toggle"
         onClick={ () => setIsOpen( ! isOpen ) }
       >
-        { __( 'Actions', 'missionwp-donation-platform' ) }
+        { __( 'Actions', 'mission-donation-platform' ) }
         <svg
           width="10"
           height="6"
@@ -127,7 +127,7 @@ function ActionsDropdown( {
               <path d="M1 3.5l6 4 6-4" />
               <rect x="1" y="2" width="12" height="10" rx="1.5" />
             </svg>
-            { __( 'Resend Receipt', 'missionwp-donation-platform' ) }
+            { __( 'Resend Receipt', 'mission-donation-platform' ) }
           </button>
           <button
             className="mission-dropdown__item"
@@ -148,7 +148,7 @@ function ActionsDropdown( {
             >
               <path d="M2 7h8M6 3l-4 4 4 4" />
             </svg>
-            { __( 'Refund', 'missionwp-donation-platform' ) }
+            { __( 'Refund', 'mission-donation-platform' ) }
           </button>
           <button
             className="mission-dropdown__item"
@@ -170,7 +170,7 @@ function ActionsDropdown( {
               <path d="M7 1v9M4 7l3 3 3-3" />
               <path d="M1 11v1.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V11" />
             </svg>
-            { __( 'Download PDF', 'missionwp-donation-platform' ) }
+            { __( 'Download PDF', 'mission-donation-platform' ) }
           </button>
           <button
             className="mission-dropdown__item"
@@ -192,7 +192,7 @@ function ActionsDropdown( {
               <path d="M8 1H3.5A1.5 1.5 0 0 0 2 2.5v9A1.5 1.5 0 0 0 3.5 13h7a1.5 1.5 0 0 0 1.5-1.5V5L8 1z" />
               <path d="M8 1v4h4" />
             </svg>
-            { __( 'Export CSV', 'missionwp-donation-platform' ) }
+            { __( 'Export CSV', 'mission-donation-platform' ) }
           </button>
           <div className="mission-dropdown__divider" />
           <button
@@ -214,7 +214,7 @@ function ActionsDropdown( {
             >
               <path d="M2 3.5h10M4.5 3.5V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1M10 3.5l-.5 8.5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1L4 3.5" />
             </svg>
-            { __( 'Delete Transaction', 'missionwp-donation-platform' ) }
+            { __( 'Delete Transaction', 'mission-donation-platform' ) }
           </button>
         </div>
       ) }
@@ -238,15 +238,17 @@ export default function TransactionDetail( { id } ) {
   const [ refundError, setRefundError ] = useState( '' );
   const clearToast = useCallback( () => setToast( null ), [] );
 
-  const adminUrl = window.missionAdmin?.adminUrl || '';
-  const transactionsUrl = `${ adminUrl }admin.php?page=mission-transactions`;
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
+  const transactionsUrl = `${ adminUrl }admin.php?page=mission-donation-platform-transactions`;
 
   useEffect( () => {
     setIsLoading( true );
     Promise.all( [
-      apiFetch( { path: `/mission/v1/transactions/${ id }` } ),
       apiFetch( {
-        path: '/mission/v1/campaigns?per_page=100&orderby=title&order=ASC',
+        path: `/mission-donation-platform/v1/transactions/${ id }`,
+      } ),
+      apiFetch( {
+        path: '/mission-donation-platform/v1/campaigns?per_page=100&orderby=title&order=ASC',
       } ),
     ] )
       .then( ( [ txn, camps ] ) => {
@@ -256,7 +258,7 @@ export default function TransactionDetail( { id } ) {
       .catch( ( err ) => {
         setError(
           err.message ||
-            __( 'Failed to load transaction.', 'missionwp-donation-platform' )
+            __( 'Failed to load transaction.', 'mission-donation-platform' )
         );
       } )
       .finally( () => setIsLoading( false ) );
@@ -264,7 +266,7 @@ export default function TransactionDetail( { id } ) {
 
   const applyStatusChange = ( newStatus ) => {
     apiFetch( {
-      path: `/mission/v1/transactions/${ id }`,
+      path: `/mission-donation-platform/v1/transactions/${ id }`,
       method: 'PATCH',
       data: { status: newStatus },
     } )
@@ -273,7 +275,7 @@ export default function TransactionDetail( { id } ) {
         setToastKey( ( k ) => k + 1 );
         setToast( {
           type: 'success',
-          message: __( 'Transaction updated.', 'missionwp-donation-platform' ),
+          message: __( 'Transaction updated.', 'mission-donation-platform' ),
         } );
       } )
       .catch( ( err ) => {
@@ -282,10 +284,7 @@ export default function TransactionDetail( { id } ) {
           type: 'error',
           message:
             err.message ||
-            __(
-              'Failed to update transaction.',
-              'missionwp-donation-platform'
-            ),
+            __( 'Failed to update transaction.', 'mission-donation-platform' ),
         } );
       } );
   };
@@ -307,7 +306,7 @@ export default function TransactionDetail( { id } ) {
     setTransaction( { ...transaction, is_anonymous: newValue } );
 
     apiFetch( {
-      path: `/mission/v1/transactions/${ id }`,
+      path: `/mission-donation-platform/v1/transactions/${ id }`,
       method: 'PATCH',
       data: { is_anonymous: newValue },
     } )
@@ -315,7 +314,7 @@ export default function TransactionDetail( { id } ) {
         setToastKey( ( k ) => k + 1 );
         setToast( {
           type: 'success',
-          message: __( 'Transaction updated.', 'missionwp-donation-platform' ),
+          message: __( 'Transaction updated.', 'mission-donation-platform' ),
         } );
       } )
       .catch( ( err ) => {
@@ -328,10 +327,7 @@ export default function TransactionDetail( { id } ) {
           type: 'error',
           message:
             err.message ||
-            __(
-              'Failed to update transaction.',
-              'missionwp-donation-platform'
-            ),
+            __( 'Failed to update transaction.', 'mission-donation-platform' ),
         } );
       } );
   };
@@ -340,7 +336,7 @@ export default function TransactionDetail( { id } ) {
     const campaignId = campaignObj ? campaignObj.id : null;
 
     apiFetch( {
-      path: `/mission/v1/transactions/${ id }`,
+      path: `/mission-donation-platform/v1/transactions/${ id }`,
       method: 'PATCH',
       data: { campaign_id: campaignId },
     } )
@@ -352,7 +348,7 @@ export default function TransactionDetail( { id } ) {
         setToastKey( ( k ) => k + 1 );
         setToast( {
           type: 'success',
-          message: __( 'Transaction updated.', 'missionwp-donation-platform' ),
+          message: __( 'Transaction updated.', 'mission-donation-platform' ),
         } );
       } )
       .catch( ( err ) => {
@@ -361,10 +357,7 @@ export default function TransactionDetail( { id } ) {
           type: 'error',
           message:
             err.message ||
-            __(
-              'Failed to update transaction.',
-              'missionwp-donation-platform'
-            ),
+            __( 'Failed to update transaction.', 'mission-donation-platform' ),
         } );
       } );
   };
@@ -373,7 +366,7 @@ export default function TransactionDetail( { id } ) {
     setIsDeleting( true );
     try {
       await apiFetch( {
-        path: `/mission/v1/transactions/${ id }`,
+        path: `/mission-donation-platform/v1/transactions/${ id }`,
         method: 'DELETE',
       } );
       window.location.href = transactionsUrl;
@@ -402,12 +395,11 @@ export default function TransactionDetail( { id } ) {
       <div className="mission-admin-page">
         <VStack spacing={ 4 }>
           <a href={ transactionsUrl } className="mission-back-link">
-            &larr;{ ' ' }
-            { __( 'Back to Transactions', 'missionwp-donation-platform' ) }
+            &larr; { __( 'Back to Transactions', 'mission-donation-platform' ) }
           </a>
           <Text>
             { error ||
-              __( 'Transaction not found.', 'missionwp-donation-platform' ) }
+              __( 'Transaction not found.', 'mission-donation-platform' ) }
           </Text>
         </VStack>
       </div>
@@ -421,14 +413,13 @@ export default function TransactionDetail( { id } ) {
         { /* Breadcrumb + Actions */ }
         <HStack justify="space-between" alignment="center">
           <a href={ transactionsUrl } className="mission-back-link">
-            &larr;{ ' ' }
-            { __( 'Back to Transactions', 'missionwp-donation-platform' ) }
+            &larr; { __( 'Back to Transactions', 'mission-donation-platform' ) }
           </a>
           <ActionsDropdown
             onResendReceipt={ async () => {
               try {
                 const result = await apiFetch( {
-                  path: `/mission/v1/transactions/${ id }/resend-receipt`,
+                  path: `/mission-donation-platform/v1/transactions/${ id }/resend-receipt`,
                   method: 'POST',
                 } );
                 setToastKey( ( k ) => k + 1 );
@@ -436,7 +427,7 @@ export default function TransactionDetail( { id } ) {
                   type: 'success',
                   message: sprintf(
                     /* translators: %s: recipient email address */
-                    __( 'Receipt sent to %s', 'missionwp-donation-platform' ),
+                    __( 'Receipt sent to %s', 'mission-donation-platform' ),
                     result.sent_to
                   ),
                 } );
@@ -448,7 +439,7 @@ export default function TransactionDetail( { id } ) {
                     err.message ||
                     __(
                       'Failed to send receipt.',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ),
                 } );
               }
@@ -464,13 +455,13 @@ export default function TransactionDetail( { id } ) {
             } }
             onDownloadPdf={ () => {
               window.open(
-                `${ window.missionAdmin.restUrl }transactions/${ id }/receipt-pdf?_wpnonce=${ window.missionAdmin.restNonce }`,
+                `${ window.missiondpAdmin.restUrl }transactions/${ id }/receipt-pdf?_wpnonce=${ window.missiondpAdmin.restNonce }`,
                 '_blank'
               );
             } }
             onExportCsv={ () => {
               window.open(
-                `${ window.missionAdmin.restUrl }export/download?type=transactions&id=${ id }&format=csv&_wpnonce=${ window.missionAdmin.restNonce }`,
+                `${ window.missiondpAdmin.restUrl }export/download?type=transactions&id=${ id }&format=csv&_wpnonce=${ window.missiondpAdmin.restNonce }`,
                 '_blank'
               );
             } }
@@ -527,31 +518,28 @@ export default function TransactionDetail( { id } ) {
               objectType="transactions"
               objectId={ transaction.id }
               type="donor"
-              title={ __( 'Donor Notes', 'missionwp-donation-platform' ) }
+              title={ __( 'Donor Notes', 'mission-donation-platform' ) }
               hint={ __(
                 'Visible to the donor. Sent via email when added.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
               confirmBeforeSave={ {
-                title: __(
-                  'Send Note to Donor?',
-                  'missionwp-donation-platform'
-                ),
+                title: __( 'Send Note to Donor?', 'mission-donation-platform' ),
                 message: __(
                   'This note will be emailed to the donor. Are you sure you want to send it?',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ),
-                confirmLabel: __( 'Send Note', 'missionwp-donation-platform' ),
+                confirmLabel: __( 'Send Note', 'mission-donation-platform' ),
               } }
             />
             <NotesCard
               objectType="transactions"
               objectId={ transaction.id }
               type="internal"
-              title={ __( 'Internal Notes', 'missionwp-donation-platform' ) }
+              title={ __( 'Internal Notes', 'mission-donation-platform' ) }
               hint={ __(
                 'Only visible to your team.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             />
           </VStack>
@@ -560,7 +548,7 @@ export default function TransactionDetail( { id } ) {
 
       { showRefundModal && (
         <Modal
-          title={ __( 'Refund Transaction', 'missionwp-donation-platform' ) }
+          title={ __( 'Refund Transaction', 'mission-donation-platform' ) }
           onRequestClose={ () => setShowRefundModal( false ) }
           size="small"
         >
@@ -568,14 +556,14 @@ export default function TransactionDetail( { id } ) {
             <Text>
               { sprintf(
                 /* translators: %s: formatted total amount */
-                __( 'Original amount: %s', 'missionwp-donation-platform' ),
+                __( 'Original amount: %s', 'mission-donation-platform' ),
                 formatAmount( transaction.total_amount, transaction.currency )
               ) }
               { transaction.amount_refunded > 0 &&
                 ' · ' +
                   sprintf(
                     /* translators: %s: already refunded amount */
-                    __( '%s already refunded', 'missionwp-donation-platform' ),
+                    __( '%s already refunded', 'mission-donation-platform' ),
                     formatAmount(
                       transaction.amount_refunded,
                       transaction.currency
@@ -592,7 +580,7 @@ export default function TransactionDetail( { id } ) {
                   marginBottom: '6px',
                 } }
               >
-                { __( 'Refund amount', 'missionwp-donation-platform' ) }
+                { __( 'Refund amount', 'mission-donation-platform' ) }
               </label>
               <input
                 id="mission-refund-amount"
@@ -622,7 +610,7 @@ export default function TransactionDetail( { id } ) {
                 onClick={ () => setShowRefundModal( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel', 'missionwp-donation-platform' ) }
+                { __( 'Cancel', 'mission-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -642,7 +630,7 @@ export default function TransactionDetail( { id } ) {
                     setRefundError(
                       __(
                         'Please enter a valid amount.',
-                        'missionwp-donation-platform'
+                        'mission-donation-platform'
                       )
                     );
                     return;
@@ -652,7 +640,7 @@ export default function TransactionDetail( { id } ) {
                     setRefundError(
                       __(
                         'Amount exceeds refundable balance.',
-                        'missionwp-donation-platform'
+                        'mission-donation-platform'
                       )
                     );
                     return;
@@ -663,7 +651,7 @@ export default function TransactionDetail( { id } ) {
 
                   try {
                     const updated = await apiFetch( {
-                      path: `/mission/v1/transactions/${ id }/refund`,
+                      path: `/mission-donation-platform/v1/transactions/${ id }/refund`,
                       method: 'POST',
                       data: { amount: cents },
                     } );
@@ -676,7 +664,7 @@ export default function TransactionDetail( { id } ) {
                         /* translators: %s: refunded amount */
                         __(
                           '%s refunded successfully',
-                          'missionwp-donation-platform'
+                          'mission-donation-platform'
                         ),
                         formatAmount( cents, transaction.currency )
                       ),
@@ -686,7 +674,7 @@ export default function TransactionDetail( { id } ) {
                       err.message ||
                         __(
                           'Failed to process refund.',
-                          'missionwp-donation-platform'
+                          'mission-donation-platform'
                         )
                     );
                   }
@@ -695,7 +683,7 @@ export default function TransactionDetail( { id } ) {
                 } }
                 __next40pxDefaultSize
               >
-                { __( 'Process Refund', 'missionwp-donation-platform' ) }
+                { __( 'Process Refund', 'mission-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>
@@ -704,7 +692,7 @@ export default function TransactionDetail( { id } ) {
 
       { showDeleteConfirm && (
         <Modal
-          title={ __( 'Delete Transaction', 'missionwp-donation-platform' ) }
+          title={ __( 'Delete Transaction', 'mission-donation-platform' ) }
           onRequestClose={ () => setShowDeleteConfirm( false ) }
           size="small"
         >
@@ -712,12 +700,12 @@ export default function TransactionDetail( { id } ) {
             <Text>
               { __(
                 'Are you sure you want to delete transaction',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }{ ' ' }
               <strong>#{ transaction.id }</strong>?{ ' ' }
               { __(
                 'This action cannot be undone.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <HStack justify="flex-end">
@@ -726,7 +714,7 @@ export default function TransactionDetail( { id } ) {
                 onClick={ () => setShowDeleteConfirm( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel', 'missionwp-donation-platform' ) }
+                { __( 'Cancel', 'mission-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -736,7 +724,7 @@ export default function TransactionDetail( { id } ) {
                 onClick={ handleDelete }
                 __next40pxDefaultSize
               >
-                { __( 'Delete', 'missionwp-donation-platform' ) }
+                { __( 'Delete', 'mission-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>
@@ -747,7 +735,7 @@ export default function TransactionDetail( { id } ) {
         <Modal
           title={ __(
             'Change Status to Refunded?',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
           onRequestClose={ () => setShowRefundConfirm( false ) }
           size="small"
@@ -756,13 +744,13 @@ export default function TransactionDetail( { id } ) {
             <Text>
               { __(
                 'This will only update the status on this record — it will not issue a refund through Stripe. The donor will not receive any money back.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <Text>
               { __(
                 'To process an actual refund, use the Refund action from the Actions menu or refund directly in your Stripe dashboard.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
             <HStack justify="flex-end">
@@ -771,7 +759,7 @@ export default function TransactionDetail( { id } ) {
                 onClick={ () => setShowRefundConfirm( false ) }
                 __next40pxDefaultSize
               >
-                { __( 'Cancel', 'missionwp-donation-platform' ) }
+                { __( 'Cancel', 'mission-donation-platform' ) }
               </Button>
               <Button
                 variant="primary"
@@ -781,7 +769,7 @@ export default function TransactionDetail( { id } ) {
                 } }
                 __next40pxDefaultSize
               >
-                { __( 'Update Status Only', 'missionwp-donation-platform' ) }
+                { __( 'Update Status Only', 'mission-donation-platform' ) }
               </Button>
             </HStack>
           </VStack>

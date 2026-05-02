@@ -51,41 +51,41 @@ export default function DonorDetailsCard( { donor, onEdit } ) {
         className="mission-settings-section__title"
         style={ { padding: '20px 16px 10px', margin: 0 } }
       >
-        { __( 'Details', 'missionwp-donation-platform' ) }
+        { __( 'Details', 'mission-donation-platform' ) }
       </h2>
       <div className="mission-detail-list">
         <DetailRow
-          label={ __( 'Full name', 'missionwp-donation-platform' ) }
+          label={ __( 'Full name', 'mission-donation-platform' ) }
           value={ fullName }
-          addLabel={ __( '+ Add name', 'missionwp-donation-platform' ) }
+          addLabel={ __( '+ Add name', 'mission-donation-platform' ) }
           onAdd={ () => onEdit( 'firstName' ) }
         />
         <DetailRow
-          label={ __( 'Email', 'missionwp-donation-platform' ) }
+          label={ __( 'Email', 'mission-donation-platform' ) }
           value={ donor.email }
         />
         <DetailRow
-          label={ __( 'Phone', 'missionwp-donation-platform' ) }
+          label={ __( 'Phone', 'mission-donation-platform' ) }
           value={ donor.phone }
-          addLabel={ __( '+ Add phone', 'missionwp-donation-platform' ) }
+          addLabel={ __( '+ Add phone', 'mission-donation-platform' ) }
           onAdd={ () => onEdit( 'phone' ) }
         />
         <DetailRow
-          label={ __( 'Address', 'missionwp-donation-platform' ) }
+          label={ __( 'Address', 'mission-donation-platform' ) }
           value={
             address ? (
               <span style={ { whiteSpace: 'pre-line' } }>{ address }</span>
             ) : null
           }
-          addLabel={ __( '+ Add address', 'missionwp-donation-platform' ) }
+          addLabel={ __( '+ Add address', 'mission-donation-platform' ) }
           onAdd={ () => onEdit( 'address1' ) }
         />
         <DetailRow
-          label={ __( 'Country', 'missionwp-donation-platform' ) }
+          label={ __( 'Country', 'mission-donation-platform' ) }
           value={ countryName }
         />
         <DetailRow
-          label={ __( 'First donation', 'missionwp-donation-platform' ) }
+          label={ __( 'First donation', 'mission-donation-platform' ) }
           value={ formatDate( donor.first_transaction ) }
           isLast
         />

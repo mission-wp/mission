@@ -44,7 +44,9 @@ let elementsAppearance = null;
  * @param {Element} ref Element inside the form.
  */
 function focusPaymentError( ref ) {
-  const form = ref?.closest( '[data-wp-interactive="mission/donation-form"]' );
+  const form = ref?.closest(
+    '[data-wp-interactive="mission-donation-platform/donation-form"]'
+  );
   const errorEl = form?.querySelector( '.mission-df-card-error' );
   if ( errorEl ) {
     errorEl.setAttribute( 'tabindex', '-1' );
@@ -58,7 +60,9 @@ function focusPaymentError( ref ) {
  * @param {Element} ref Element inside the form.
  */
 function focusStepHeading( ref ) {
-  const form = ref?.closest( '[data-wp-interactive="mission/donation-form"]' );
+  const form = ref?.closest(
+    '[data-wp-interactive="mission-donation-platform/donation-form"]'
+  );
   const heading = form?.querySelector(
     '.mission-df-step.active .mission-df-step-title'
   );
@@ -68,7 +72,7 @@ function focusStepHeading( ref ) {
   }
 }
 
-store( 'mission/donation-form', {
+store( 'mission-donation-platform/donation-form', {
   state: {
     get currentAmounts() {
       const ctx = getContext();
@@ -285,7 +289,7 @@ store( 'mission/donation-form', {
           ) {
             const { ref } = getElement();
             const form = ref?.closest(
-              '[data-wp-interactive="mission/donation-form"]'
+              '[data-wp-interactive="mission-donation-platform/donation-form"]'
             );
             form?.querySelector( '[aria-invalid="true"]' )?.focus();
             return;
@@ -298,7 +302,7 @@ store( 'mission/donation-form', {
         if ( ! validateCustomFields( ctx ) ) {
           const { ref } = getElement();
           const form = ref?.closest(
-            '[data-wp-interactive="mission/donation-form"]'
+            '[data-wp-interactive="mission-donation-platform/donation-form"]'
           );
           form?.querySelector( '[aria-invalid="true"]' )?.focus();
           return;
@@ -597,7 +601,7 @@ store( 'mission/donation-form', {
           if ( hasOwnErrors ) {
             const { ref } = getElement();
             const form = ref?.closest(
-              '[data-wp-interactive="mission/donation-form"]'
+              '[data-wp-interactive="mission-donation-platform/donation-form"]'
             );
             form?.querySelector( '[aria-invalid="true"]' )?.focus();
           }
@@ -770,7 +774,7 @@ store( 'mission/donation-form', {
           // confirmed payment, so the donor's card is charged regardless.
           // eslint-disable-next-line no-console
           console.error(
-            'MissionWP: Unexpected confirm response',
+            'Mission: Unexpected confirm response',
             confirmResponse.status
           );
         }
@@ -788,7 +792,7 @@ store( 'mission/donation-form', {
 
         const { ref } = getElement();
         const container = ref?.closest(
-          '[data-wp-interactive="mission/donation-form"]'
+          '[data-wp-interactive="mission-donation-platform/donation-form"]'
         );
         if ( container ) {
           container.scrollIntoView( { behavior: 'smooth', block: 'start' } );
@@ -1028,7 +1032,7 @@ store( 'mission/donation-form', {
 
       if ( ! configData.connected_account_id ) {
         ctx.paymentError =
-          'Payment processing is not available. The site owner needs to reconnect Stripe in the MissionWP settings.';
+          'Payment processing is not available. The site owner needs to reconnect Stripe in the Mission settings.';
         return;
       }
 

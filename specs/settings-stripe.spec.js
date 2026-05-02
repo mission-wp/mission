@@ -3,7 +3,7 @@
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
-const SETTINGS_PATH = 'admin.php?page=mission-settings';
+const SETTINGS_PATH = 'admin.php?page=mission-donation-platform-settings';
 
 const DISCONNECTED_SETTINGS = {
   currency: 'USD',
@@ -27,7 +27,7 @@ const CONNECTED_SETTINGS = {
 /**
  * Regex that matches a REST route in both /wp-json/ and ?rest_route= formats.
  *
- * @param {string} route REST route path, e.g. '/mission/v1/settings'.
+ * @param {string} route REST route path, e.g. '/mission-donation-platform/v1/settings'.
  * @return {RegExp} Pattern for page.route().
  */
 function restRoute( route ) {
@@ -44,7 +44,7 @@ function restRoute( route ) {
  */
 async function mockSettingsGet( page, settings ) {
   await page.route(
-    restRoute( '/mission/v1/settings' ),
+    restRoute( '/mission-donation-platform/v1/settings' ),
     async ( route, request ) => {
       if ( request.method() === 'GET' ) {
         await route.fulfill( {
@@ -111,7 +111,7 @@ test.describe( 'Settings — Stripe Connection', () => {
       await mockSettingsGet( page, DISCONNECTED_SETTINGS );
 
       await page.route(
-        restRoute( '/mission/v1/stripe/connect' ),
+        restRoute( '/mission-donation-platform/v1/stripe/connect' ),
         async ( route ) => {
           await route.fulfill( {
             status: 200,
@@ -148,13 +148,13 @@ test.describe( 'Settings — Stripe Connection', () => {
       await mockSettingsGet( page, DISCONNECTED_SETTINGS );
 
       await page.route(
-        restRoute( '/mission/v1/stripe/connect' ),
+        restRoute( '/mission-donation-platform/v1/stripe/connect' ),
         async ( route ) => {
           await route.fulfill( {
             status: 400,
             contentType: 'application/json',
             body: JSON.stringify( {
-              code: 'mission_connect_failed',
+              code: 'missiondp_connect_failed',
               message: 'Invalid setup code.',
               data: { status: 400 },
             } ),
@@ -248,7 +248,7 @@ test.describe( 'Settings — Stripe Connection', () => {
       await mockSettingsGet( page, CONNECTED_SETTINGS );
 
       await page.route(
-        restRoute( '/mission/v1/stripe/disconnect' ),
+        restRoute( '/mission-donation-platform/v1/stripe/disconnect' ),
         async ( route ) => {
           await route.fulfill( {
             status: 200,

@@ -2,16 +2,16 @@
 /**
  * Tests for the TransactionHistoryEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Models\TransactionHistory;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\TransactionHistory;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -55,16 +55,16 @@ class TransactionHistoryEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -116,16 +116,16 @@ class TransactionHistoryEndpointTest extends WP_UnitTestCase {
 		wp_set_current_user( 0 );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		delete_option( SettingsService::OPTION_NAME );
@@ -188,7 +188,7 @@ class TransactionHistoryEndpointTest extends WP_UnitTestCase {
 		$this->create_entry( [ 'event_type' => 'status_change' ] );
 		$this->create_entry( [ 'event_type' => 'refund' ] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$this->transaction->id}/history" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$this->transaction->id}/history" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -226,7 +226,7 @@ class TransactionHistoryEndpointTest extends WP_UnitTestCase {
 			'created_at' => '2099-01-02 10:00:00',
 		] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$this->transaction->id}/history" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$this->transaction->id}/history" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -243,7 +243,7 @@ class TransactionHistoryEndpointTest extends WP_UnitTestCase {
 		$context_data = [ 'old_status' => 'pending', 'new_status' => 'completed' ];
 		$this->create_entry( [ 'context' => wp_json_encode( $context_data ) ] );
 
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$this->transaction->id}/history" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$this->transaction->id}/history" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -261,14 +261,14 @@ class TransactionHistoryEndpointTest extends WP_UnitTestCase {
 	 */
 	public function test_permissions_unauthenticated_rejected(): void {
 		wp_set_current_user( 0 );
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$this->transaction->id}/history" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$this->transaction->id}/history" );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
 
 		// Subscriber role.
 		wp_set_current_user( $this->subscriber_id );
-		$response = $this->dispatch_get( "/mission/v1/transactions/{$this->transaction->id}/history" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/transactions/{$this->transaction->id}/history" );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );

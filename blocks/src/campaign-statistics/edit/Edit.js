@@ -40,27 +40,27 @@ import { formatAmount } from '@shared/currency';
 
 const STAT_DEFAULTS = {
   total_raised: {
-    heading: __( 'Total Raised', 'missionwp-donation-platform' ),
+    heading: __( 'Total Raised', 'mission-donation-platform' ),
     sample: 125000,
     isCurrency: true,
   },
   donation_count: {
-    heading: __( 'Number of Donations', 'missionwp-donation-platform' ),
+    heading: __( 'Number of Donations', 'mission-donation-platform' ),
     sample: 42,
     isCurrency: false,
   },
   donor_count: {
-    heading: __( 'Number of Donors', 'missionwp-donation-platform' ),
+    heading: __( 'Number of Donors', 'mission-donation-platform' ),
     sample: 28,
     isCurrency: false,
   },
   average_donation: {
-    heading: __( 'Average Donation', 'missionwp-donation-platform' ),
+    heading: __( 'Average Donation', 'mission-donation-platform' ),
     sample: 7500,
     isCurrency: true,
   },
   top_donation: {
-    heading: __( 'Top Donation', 'missionwp-donation-platform' ),
+    heading: __( 'Top Donation', 'mission-donation-platform' ),
     sample: 50000,
     isCurrency: true,
   },
@@ -68,45 +68,45 @@ const STAT_DEFAULTS = {
 
 const STAT_TYPE_OPTIONS = [
   {
-    label: __( 'Total Raised', 'missionwp-donation-platform' ),
+    label: __( 'Total Raised', 'mission-donation-platform' ),
     value: 'total_raised',
   },
   {
-    label: __( 'Number of Donations', 'missionwp-donation-platform' ),
+    label: __( 'Number of Donations', 'mission-donation-platform' ),
     value: 'donation_count',
   },
   {
-    label: __( 'Number of Donors', 'missionwp-donation-platform' ),
+    label: __( 'Number of Donors', 'mission-donation-platform' ),
     value: 'donor_count',
   },
   {
-    label: __( 'Average Donation', 'missionwp-donation-platform' ),
+    label: __( 'Average Donation', 'mission-donation-platform' ),
     value: 'average_donation',
   },
   {
-    label: __( 'Top Donation', 'missionwp-donation-platform' ),
+    label: __( 'Top Donation', 'mission-donation-platform' ),
     value: 'top_donation',
   },
 ];
 
 const HEADING_FONT_SIZES = [
   {
-    name: __( 'Small', 'missionwp-donation-platform' ),
+    name: __( 'Small', 'mission-donation-platform' ),
     slug: 'small',
     size: '12px',
   },
   {
-    name: __( 'Medium', 'missionwp-donation-platform' ),
+    name: __( 'Medium', 'mission-donation-platform' ),
     slug: 'medium',
     size: '14px',
   },
   {
-    name: __( 'Large', 'missionwp-donation-platform' ),
+    name: __( 'Large', 'mission-donation-platform' ),
     slug: 'large',
     size: '18px',
   },
   {
-    name: __( 'Extra Large', 'missionwp-donation-platform' ),
+    name: __( 'Extra Large', 'mission-donation-platform' ),
     slug: 'x-large',
     size: '22px',
   },
@@ -159,7 +159,7 @@ export default function Edit( { attributes, setAttributes } ) {
   const prevStatType = useRef( statType );
 
   const primaryColorVars = useMemo( () => {
-    const color = window.missionBlockEditor?.primaryColor || '#2fa36b';
+    const color = window.missiondpBlockEditor?.primaryColor || '#2fa36b';
     return computePrimaryColorVars( color );
   }, [] );
 
@@ -172,7 +172,7 @@ export default function Edit( { attributes, setAttributes } ) {
   }, [] );
 
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/campaigns?per_page=100' } )
+    apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( response ) => {
         setCampaigns( Array.isArray( response ) ? response : [] );
       } )
@@ -184,7 +184,7 @@ export default function Edit( { attributes, setAttributes } ) {
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
-    currentPostType === 'mission_campaign' &&
+    currentPostType === 'missiondp_campaign' &&
     currentPostId &&
     ! isLoadingList
   ) {
@@ -291,11 +291,11 @@ export default function Edit( { attributes, setAttributes } ) {
             </svg>
           </div>
           <h3 className="mission-cs-setup__title">
-            { __( 'Campaign Statistic', 'missionwp-donation-platform' ) }
+            { __( 'Campaign Statistic', 'mission-donation-platform' ) }
           </h3>
           <div className="mission-cs-setup__campaign">
             <ComboboxControl
-              label={ __( 'Select a Campaign', 'missionwp-donation-platform' ) }
+              label={ __( 'Select a Campaign', 'mission-donation-platform' ) }
               value={ campaignId || null }
               options={ campaignOptions }
               onChange={ onCampaignChange }
@@ -334,9 +334,9 @@ export default function Edit( { attributes, setAttributes } ) {
         />
       </BlockControls>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
+        <PanelBody title={ __( 'Settings', 'mission-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
+            label={ __( 'Campaign', 'mission-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -345,33 +345,33 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   )
                 : undefined
             }
           />
           <SelectControl
-            label={ __( 'Statistic', 'missionwp-donation-platform' ) }
+            label={ __( 'Statistic', 'mission-donation-platform' ) }
             value={ statType }
             options={ STAT_TYPE_OPTIONS }
             onChange={ onStatTypeChange }
           />
           <ToggleControl
-            label={ __( 'Show heading', 'missionwp-donation-platform' ) }
+            label={ __( 'Show heading', 'mission-donation-platform' ) }
             checked={ showHeading }
             onChange={ ( val ) => setAttributes( { showHeading: val } ) }
           />
         </PanelBody>
         { showHeading && (
           <PanelColorSettings
-            title={ __( 'Heading', 'missionwp-donation-platform' ) }
+            title={ __( 'Heading', 'mission-donation-platform' ) }
             initialOpen={ false }
             colorSettings={ [
               {
                 value: headingColor,
                 onChange: ( val ) =>
                   setAttributes( { headingColor: val || '' } ),
-                label: __( 'Color', 'missionwp-donation-platform' ),
+                label: __( 'Color', 'mission-donation-platform' ),
               },
             ] }
           >
@@ -386,7 +386,7 @@ export default function Edit( { attributes, setAttributes } ) {
             <div style={ { marginTop: 24 } }>
               <ToggleGroupControl
                 __nextHasNoMarginBottom
-                label={ __( 'Letter case', 'missionwp-donation-platform' ) }
+                label={ __( 'Letter case', 'mission-donation-platform' ) }
                 value={
                   headingTextTransform === 'none'
                     ? undefined
@@ -400,17 +400,17 @@ export default function Edit( { attributes, setAttributes } ) {
               >
                 <ToggleGroupControlOptionIcon
                   value="uppercase"
-                  label={ __( 'Uppercase', 'missionwp-donation-platform' ) }
+                  label={ __( 'Uppercase', 'mission-donation-platform' ) }
                   icon={ formatUppercase }
                 />
                 <ToggleGroupControlOptionIcon
                   value="lowercase"
-                  label={ __( 'Lowercase', 'missionwp-donation-platform' ) }
+                  label={ __( 'Lowercase', 'mission-donation-platform' ) }
                   icon={ formatLowercase }
                 />
                 <ToggleGroupControlOptionIcon
                   value="capitalize"
-                  label={ __( 'Capitalize', 'missionwp-donation-platform' ) }
+                  label={ __( 'Capitalize', 'mission-donation-platform' ) }
                   icon={ formatCapitalize }
                 />
               </ToggleGroupControl>

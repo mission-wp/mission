@@ -26,7 +26,7 @@ export default function HtmlCodeEditor( { value, onChange, visible } ) {
       return;
     }
 
-    const settings = window.missionCodeEditor;
+    const settings = window.missiondpCodeEditor;
     const wpCodeEditor = window.wp?.codeEditor;
 
     if ( ! settings || ! wpCodeEditor ) {

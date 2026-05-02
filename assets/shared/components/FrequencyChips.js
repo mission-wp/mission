@@ -1,11 +1,11 @@
 import { __ } from '@wordpress/i18n';
 
 const FREQUENCIES = [
-  { id: 'one_time', label: __( 'One-time', 'missionwp-donation-platform' ) },
-  { id: 'weekly', label: __( 'Weekly', 'missionwp-donation-platform' ) },
-  { id: 'monthly', label: __( 'Monthly', 'missionwp-donation-platform' ) },
-  { id: 'quarterly', label: __( 'Quarterly', 'missionwp-donation-platform' ) },
-  { id: 'annually', label: __( 'Annually', 'missionwp-donation-platform' ) },
+  { id: 'one_time', label: __( 'One-time', 'mission-donation-platform' ) },
+  { id: 'weekly', label: __( 'Weekly', 'mission-donation-platform' ) },
+  { id: 'monthly', label: __( 'Monthly', 'mission-donation-platform' ) },
+  { id: 'quarterly', label: __( 'Quarterly', 'mission-donation-platform' ) },
+  { id: 'annually', label: __( 'Annually', 'mission-donation-platform' ) },
 ];
 
 export default function FrequencyChips( { selected, onChange } ) {

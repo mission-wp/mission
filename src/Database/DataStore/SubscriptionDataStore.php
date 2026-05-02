@@ -2,12 +2,12 @@
 /**
  * Subscription DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Subscription;
+use MissionDP\Models\Subscription;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class SubscriptionDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_subscriptions';
+		return $wpdb->prefix . 'missiondp_subscriptions';
 	}
 
 	/**
@@ -33,14 +33,14 @@ class SubscriptionDataStore implements DataStoreInterface {
 	 */
 	protected function get_meta_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_subscriptionmeta';
+		return $wpdb->prefix . 'missiondp_subscriptionmeta';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected function get_meta_type(): string {
-		return 'mission_subscription';
+		return 'missiondp_subscription';
 	}
 
 	/**
@@ -64,7 +64,7 @@ class SubscriptionDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Subscription $model The subscription. */
-		do_action( 'mission_subscription_created', $model );
+		do_action( 'missiondp_subscription_created', $model );
 
 		return $model->id;
 	}
@@ -130,14 +130,14 @@ class SubscriptionDataStore implements DataStoreInterface {
 			 * @param string       $old_status Previous status.
 			 * @param string       $new_status New status.
 			 */
-			do_action( 'mission_subscription_status_transition', $model, $old->status, $model->status );
+			do_action( 'missiondp_subscription_status_transition', $model, $old->status, $model->status );
 
 			/**
 			 * Fires on a specific subscription status transition.
 			 *
 			 * @param Subscription $model The subscription.
 			 */
-			do_action( "mission_subscription_status_{$old->status}_to_{$model->status}", $model );
+			do_action( "missiondp_subscription_status_{$old->status}_to_{$model->status}", $model );
 		}
 
 		return true;
@@ -155,7 +155,7 @@ class SubscriptionDataStore implements DataStoreInterface {
 
 		$meta_table = $this->get_meta_table_name();
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE mission_subscription_id = %d", $id ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE missiondp_subscription_id = %d", $id ) );
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 

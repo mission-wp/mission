@@ -216,7 +216,7 @@ function getEventMeta( event ) {
   return eventMetaMap[ event.event ] || defaultMeta;
 }
 
-const { adminUrl } = window.missionAdmin || {};
+const { adminUrl } = window.missiondpAdmin || {};
 
 /**
  * Build a link to a donor detail page, or bold text if no ID.
@@ -231,7 +231,7 @@ function donorLink( name, id ) {
   if ( ! id || ! adminUrl ) {
     return <strong>{ name }</strong>;
   }
-  const href = `${ adminUrl }admin.php?page=mission-donors&donor=${ id }`;
+  const href = `${ adminUrl }admin.php?page=mission-donation-platform-donors&donor=${ id }`;
   return (
     <a href={ href } className="mission-feed-link">
       { name }
@@ -252,7 +252,7 @@ function campaignLink( title, id ) {
   if ( ! id || ! adminUrl ) {
     return <strong>{ title }</strong>;
   }
-  const href = `${ adminUrl }admin.php?page=mission-campaigns&campaign=${ id }`;
+  const href = `${ adminUrl }admin.php?page=mission-donation-platform-campaigns&campaign=${ id }`;
   return (
     <a href={ href } className="mission-feed-link">
       { title }
@@ -488,22 +488,22 @@ function getEventText( event ) {
   }
 
   if ( eventType === 'plugin_installed' ) {
-    return 'MissionWP plugin installed';
+    return 'Mission plugin installed';
   }
 
   if ( eventType === 'plugin_activated' ) {
-    return 'MissionWP plugin activated';
+    return 'Mission plugin activated';
   }
 
   if ( eventType === 'plugin_deactivated' ) {
-    return 'MissionWP plugin deactivated';
+    return 'Mission plugin deactivated';
   }
 
   if ( eventType === 'plugin_updated' ) {
     const version = data.new_version || '';
     return version
-      ? `MissionWP plugin updated to ${ version }`
-      : 'MissionWP plugin updated';
+      ? `Mission plugin updated to ${ version }`
+      : 'Mission plugin updated';
   }
 
   // Fallback: humanize the event name.
@@ -516,16 +516,16 @@ export default function ActivityFeed( { activity, isLoading, feedRef } ) {
   return (
     <div className="mission-dashboard-card mission-feed-card" ref={ feedRef }>
       <div className="mission-dashboard-card__header">
-        <h2>{ __( 'Recent Activity', 'missionwp-donation-platform' ) }</h2>
+        <h2>{ __( 'Recent Activity', 'mission-donation-platform' ) }</h2>
       </div>
 
       { ! isLoading && ( ! activity || activity.length === 0 ) ? (
         <EmptyState
           icon={ <ActivityIcon /> }
-          text={ __( 'No activity yet', 'missionwp-donation-platform' ) }
+          text={ __( 'No activity yet', 'mission-donation-platform' ) }
           hint={ __(
             'Activity will appear here as donations come in.',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
         />
       ) : (

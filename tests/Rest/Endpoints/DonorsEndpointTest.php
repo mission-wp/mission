@@ -2,16 +2,16 @@
 /**
  * Tests for the DonorsEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -76,16 +76,16 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -133,7 +133,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		] );
 
 		// Set currency.
-		update_option( 'mission_currency', 'usd' );
+		update_option( 'missiondp_currency', 'usd' );
 	}
 
 	/**
@@ -145,19 +145,19 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$wp_rest_server = null;
 		wp_set_current_user( 0 );
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'mission_currency' );
+		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
@@ -303,7 +303,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$donor3 = $this->create_donor();
 		$this->create_transaction( [ 'donor_id' => $donor3->id ] );
 
-		$response = $this->dispatch_get( '/mission/v1/donors', [ 'per_page' => 2 ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors', [ 'per_page' => 2 ] );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -344,7 +344,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'donor_id' => $bob->id ] );
 
 		// Search by partial name.
-		$response = $this->dispatch_get( '/mission/v1/donors', [ 'search' => 'Alice' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors', [ 'search' => 'Alice' ] );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -352,7 +352,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'Alice', $data[0]['first_name'] );
 
 		// Search by email.
-		$response = $this->dispatch_get( '/mission/v1/donors', [ 'search' => 'bob@example.com' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors', [ 'search' => 'bob@example.com' ] );
 		$data     = $response->get_data();
 
 		$this->assertCount( 1, $data );
@@ -380,7 +380,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'donor_id' => $test_donor->id, 'is_test' => true, 'amount' => 3000 ] );
 
 		// All donors appear regardless of mode — mode only affects which stats are shown.
-		$response = $this->dispatch_get( '/mission/v1/donors' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors' );
 		$data     = $response->get_data();
 
 		// All 3 donors visible (Jane from setUp + Live + Test).
@@ -430,7 +430,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$this->create_transaction( [ 'donor_id' => $high->id, 'amount' => 50000, 'total_amount' => 50000 ] );
 
 		// ASC order — Jane (0) first, then Low, then High.
-		$response = $this->dispatch_get( '/mission/v1/donors', [
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors', [
 			'orderby' => 'total_donated',
 			'order'   => 'ASC',
 		] );
@@ -441,7 +441,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'High', $data[2]['first_name'] );
 
 		// DESC order — High first.
-		$response = $this->dispatch_get( '/mission/v1/donors', [
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors', [
 			'orderby' => 'total_donated',
 			'order'   => 'DESC',
 		] );
@@ -460,7 +460,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test GET single returns full donor with aggregates.
 	 */
 	public function test_get_single_returns_full_donor_with_aggregates(): void {
-		$response = $this->dispatch_get( "/mission/v1/donors/{$this->donor->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/donors/{$this->donor->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -501,7 +501,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test GET single returns 404 for nonexistent donor.
 	 */
 	public function test_get_single_404_for_nonexistent(): void {
-		$response = $this->dispatch_get( '/mission/v1/donors/999999' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors/999999' );
 
 		$this->assertSame( 404, $response->get_status() );
 		$this->assertSame( 'donor_not_found', $response->as_error()->get_error_code() );
@@ -515,7 +515,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test POST create with required fields.
 	 */
 	public function test_post_create_with_required_fields(): void {
-		$response = $this->dispatch_post( '/mission/v1/donors', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/donors', [
 			'email'      => 'new@example.com',
 			'first_name' => 'New',
 			'last_name'  => 'Person',
@@ -538,7 +538,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test POST create rejects duplicate email.
 	 */
 	public function test_post_create_rejects_duplicate_email(): void {
-		$response = $this->dispatch_post( '/mission/v1/donors', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/donors', [
 			'email'      => 'jane@example.com', // Already exists from set_up().
 			'first_name' => 'Another',
 			'last_name'  => 'Jane',
@@ -552,7 +552,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test POST create validates email format.
 	 */
 	public function test_post_create_validates_email_format(): void {
-		$response = $this->dispatch_post( '/mission/v1/donors', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/donors', [
 			'email'      => 'not-an-email',
 			'first_name' => 'Bad',
 		] );
@@ -569,7 +569,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test PUT update allowed fields.
 	 */
 	public function test_put_update_allowed_fields(): void {
-		$response = $this->dispatch_put( "/mission/v1/donors/{$this->donor->id}", [
+		$response = $this->dispatch_put( "/mission-donation-platform/v1/donors/{$this->donor->id}", [
 			'first_name' => 'Janet',
 			'last_name'  => 'Smith',
 			'phone'      => '555-1234',
@@ -608,7 +608,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 		] );
 
 		// Try to change default donor's email to one that already exists.
-		$response = $this->dispatch_put( "/mission/v1/donors/{$this->donor->id}", [
+		$response = $this->dispatch_put( "/mission-donation-platform/v1/donors/{$this->donor->id}", [
 			'email' => 'other@example.com',
 		] );
 
@@ -624,7 +624,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test GET summary returns donor stats.
 	 */
 	public function test_get_summary_returns_donor_stats(): void {
-		$response = $this->dispatch_get( '/mission/v1/donors/summary' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors/summary' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -645,7 +645,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	public function test_unauthenticated_requests_rejected(): void {
 		wp_set_current_user( 0 );
 
-		$response = $this->dispatch_get( '/mission/v1/donors' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
@@ -657,7 +657,7 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	public function test_subscriber_role_rejected(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$response = $this->dispatch_get( '/mission/v1/donors' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );

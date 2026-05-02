@@ -2,12 +2,12 @@
 /**
  * CSV export formatter.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Export\Formatters;
+namespace MissionDP\Export\Formatters;
 
-use Mission\Currency\Currency;
+use MissionDP\Currency\Currency;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -50,7 +50,7 @@ class CsvFormatter implements FormatterInterface {
 		 * @param array  $columns Column definitions.
 		 * @param array  $rows    Row data.
 		 */
-		return apply_filters( "mission_export_{$type}_csv", $csv, $columns, $rows );
+		return apply_filters( "missiondp_export_{$type}_csv", $csv, $columns, $rows );
 	}
 
 	/**

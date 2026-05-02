@@ -2,14 +2,14 @@
 /**
  * Tests for the CampaignPostType class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Campaigns;
+namespace MissionDP\Tests\Campaigns;
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
 use WP_UnitTestCase;
 
 /**
@@ -24,8 +24,8 @@ class CampaignPostTypeTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		DatabaseModule::create_tables();
 	}
@@ -46,8 +46,8 @@ class CampaignPostTypeTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		parent::tear_down();
 	}

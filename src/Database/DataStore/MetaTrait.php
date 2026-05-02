@@ -2,10 +2,10 @@
 /**
  * Shared meta CRUD trait for DataStore classes.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ trait MetaTrait {
 	abstract protected function get_meta_table_name(): string;
 
 	/**
-	 * Get the WP meta type (e.g. 'mission_campaign').
+	 * Get the WP meta type (e.g. 'missiondp_campaign').
 	 *
 	 * This is used with WordPress metadata API functions and must match
 	 * the $wpdb property name without the 'meta' suffix.

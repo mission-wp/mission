@@ -1,4 +1,4 @@
-=== MissionWP Donation Platform ===
+=== Mission Donation Platform ===
 Contributors: missionwp
 Tags: donations, fundraising, nonprofit, stripe, donation form
 Requires at least: 6.7
@@ -12,7 +12,7 @@ The free donation plugin for nonprofits. Powerful features, modern forms, no add
 
 == Description ==
 
-MissionWP Donation Platform is a modern, open-source WordPress donation plugin built for nonprofits. It provides beautiful donation forms, Stripe payment processing, campaign management, donor tracking, and more — all without paid add-ons.
+Mission Donation Platform is a modern, open-source WordPress donation plugin built for nonprofits. It provides beautiful donation forms, Stripe payment processing, campaign management, donor tracking, and more — all without paid add-ons.
 
 = Features =
 
@@ -27,9 +27,9 @@ MissionWP Donation Platform is a modern, open-source WordPress donation plugin b
 
 == Installation ==
 
-1. Upload the `missionwp-donation-platform` folder to `/wp-content/plugins/`
+1. Upload the `mission-donation-platform` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Connect your Stripe account under MissionWP > Settings
+3. Connect your Stripe account under Mission > Settings
 4. Create your first campaign and start accepting donations
 
 = Development =
@@ -38,13 +38,13 @@ Source code, build instructions, and contribution guidelines are available on [G
 
 == Frequently Asked Questions ==
 
-= How is MissionWP Donation Platform free? =
+= How is Mission Donation Platform free? =
 
-MissionWP is funded by optional donor tips, not paid add-ons. All features are included for free.
+Mission is funded by optional donor tips, not paid add-ons. All features are included for free.
 
 = What payment gateways are supported? =
 
-MissionWP currently supports Stripe via Stripe Connect with direct charges.
+Mission currently supports Stripe via Stripe Connect with direct charges.
 
 = What are the minimum requirements? =
 
@@ -56,27 +56,27 @@ This plugin connects to the following third-party services:
 
 = Stripe =
 
-MissionWP uses [Stripe](https://stripe.com) to process donations. When a donor submits a donation form, payment data is sent directly from the donor's browser to Stripe's servers via Stripe.js. The plugin also receives webhook notifications from Stripe for payment confirmations, refunds, and subscription updates.
+Mission uses [Stripe](https://stripe.com) to process donations. When a donor submits a donation form, payment data is sent directly from the donor's browser to Stripe's servers via Stripe.js. The plugin also receives webhook notifications from Stripe for payment confirmations, refunds, and subscription updates.
 
 * [Stripe Terms of Service](https://stripe.com/legal)
 * [Stripe Privacy Policy](https://stripe.com/privacy)
 
-= MissionWP API =
+= Mission API =
 
-MissionWP connects to [api.missionwp.com](https://api.missionwp.com) (operated by the plugin author) for the following:
+Mission connects to [api.missionwp.com](https://api.missionwp.com) (operated by the plugin author) for the following:
 
-* **Stripe Connect onboarding** — When you connect your Stripe account, the OAuth flow is handled through the MissionWP API as a proxy.
-* **Payment processing** — Donation and subscription requests are routed through the MissionWP API to your connected Stripe account.
-* **Webhook forwarding** — Stripe webhook events are forwarded from the MissionWP API to your WordPress site.
-* **Feature signup** — If you opt in to notifications about upcoming features (under Tools > Features), your email is sent to the MissionWP API.
+* **Stripe Connect onboarding** — When you connect your Stripe account, the OAuth flow is handled through the Mission API as a proxy.
+* **Payment processing** — Donation and subscription requests are routed through the Mission API to your connected Stripe account.
+* **Webhook forwarding** — Stripe webhook events are forwarded from the Mission API to your WordPress site.
+* **Feature signup** — If you opt in to notifications about upcoming features (under Tools > Features), your email is sent to the Mission API.
 
-* [MissionWP Terms of Service](https://missionwp.com/terms)
-* [MissionWP Privacy Policy](https://missionwp.com/privacy)
+* [Mission Terms of Service](https://missionwp.com/terms)
+* [Mission Privacy Policy](https://missionwp.com/privacy)
 
 == Changelog ==
 
 = 1.0.1 =
-* Renamed plugin to MissionWP Donation Platform per WordPress.org review team guidance
+* Renamed plugin to Mission Donation Platform per WordPress.org review team guidance
 
 = 1.0.0 =
 * Initial release

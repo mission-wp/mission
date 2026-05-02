@@ -2,22 +2,22 @@ import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 
 export const LEVEL_OPTIONS = [
-  { value: '', label: __( 'All levels', 'missionwp-donation-platform' ) },
-  { value: 'info', label: __( 'Info', 'missionwp-donation-platform' ) },
-  { value: 'warning', label: __( 'Warnings', 'missionwp-donation-platform' ) },
-  { value: 'error', label: __( 'Errors', 'missionwp-donation-platform' ) },
+  { value: '', label: __( 'All levels', 'mission-donation-platform' ) },
+  { value: 'info', label: __( 'Info', 'mission-donation-platform' ) },
+  { value: 'warning', label: __( 'Warnings', 'mission-donation-platform' ) },
+  { value: 'error', label: __( 'Errors', 'mission-donation-platform' ) },
 ];
 
 export const CATEGORY_OPTIONS = [
-  { value: '', label: __( 'All categories', 'missionwp-donation-platform' ) },
-  { value: 'payment', label: __( 'Payment', 'missionwp-donation-platform' ) },
-  { value: 'webhook', label: __( 'Webhook', 'missionwp-donation-platform' ) },
-  { value: 'email', label: __( 'Email', 'missionwp-donation-platform' ) },
+  { value: '', label: __( 'All categories', 'mission-donation-platform' ) },
+  { value: 'payment', label: __( 'Payment', 'mission-donation-platform' ) },
+  { value: 'webhook', label: __( 'Webhook', 'mission-donation-platform' ) },
+  { value: 'email', label: __( 'Email', 'mission-donation-platform' ) },
   {
     value: 'subscription',
-    label: __( 'Subscription', 'missionwp-donation-platform' ),
+    label: __( 'Subscription', 'mission-donation-platform' ),
   },
-  { value: 'system', label: __( 'System', 'missionwp-donation-platform' ) },
+  { value: 'system', label: __( 'System', 'mission-donation-platform' ) },
 ];
 
 const freqLabels = {
@@ -155,18 +155,18 @@ export function buildLogMessage( entry ) {
     case 'plugin_updated': {
       const version = data.new_version || '';
       return version
-        ? `MissionWP plugin updated to <strong>${ version }</strong>`
-        : 'MissionWP plugin updated';
+        ? `Mission plugin updated to <strong>${ version }</strong>`
+        : 'Mission plugin updated';
     }
 
     case 'plugin_installed':
-      return `MissionWP plugin <strong>installed</strong>`;
+      return `Mission plugin <strong>installed</strong>`;
 
     case 'plugin_activated':
-      return `MissionWP plugin <strong>activated</strong>`;
+      return `Mission plugin <strong>activated</strong>`;
 
     case 'plugin_deactivated':
-      return `MissionWP plugin <strong>deactivated</strong>`;
+      return `Mission plugin <strong>deactivated</strong>`;
 
     case 'settings_updated': {
       const keys = data.changed_keys || [];

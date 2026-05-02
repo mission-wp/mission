@@ -2,12 +2,12 @@
 /**
  * Unified note DataStore for transactions, donors, and subscriptions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Note;
+use MissionDP\Models\Note;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class NoteDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_notes';
+		return $wpdb->prefix . 'missiondp_notes';
 	}
 
 	/**
@@ -48,7 +48,7 @@ class NoteDataStore implements DataStoreInterface {
 		 *
 		 * @param Note $model The note.
 		 */
-		do_action( 'mission_note_created', $model );
+		do_action( 'missiondp_note_created', $model );
 
 		return $model->id;
 	}
@@ -103,7 +103,7 @@ class NoteDataStore implements DataStoreInterface {
 			 *
 			 * @param Note $note The deleted note.
 			 */
-			do_action( 'mission_note_deleted', $note );
+			do_action( 'missiondp_note_deleted', $note );
 		}
 
 		return false !== $result;

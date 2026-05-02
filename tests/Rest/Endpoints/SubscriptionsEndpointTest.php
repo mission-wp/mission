@@ -2,17 +2,17 @@
 /**
  * Tests for the SubscriptionsEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -77,16 +77,16 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -134,7 +134,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		] );
 
 		// Set currency.
-		update_option( 'mission_currency', 'usd' );
+		update_option( 'missiondp_currency', 'usd' );
 
 		// Default HTTP mock: cancel API returns 200.
 		$this->add_tracked_filter(
@@ -161,19 +161,19 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$wp_rest_server = null;
 		wp_set_current_user( 0 );
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'mission_currency' );
+		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
@@ -333,7 +333,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription();
 		$this->create_subscription();
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions', [ 'per_page' => 2 ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions', [ 'per_page' => 2 ] );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -370,7 +370,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'status' => 'active' ] );
 		$this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions', [ 'status' => 'cancelled' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions', [ 'status' => 'cancelled' ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -387,7 +387,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'campaign_id' => $this->campaign->id ] );
 		$this->create_subscription( [ 'campaign_id' => $campaign2->id ] );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions', [ 'campaign_id' => $campaign2->id ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions', [ 'campaign_id' => $campaign2->id ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -408,7 +408,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'donor_id' => $this->donor->id ] );
 		$this->create_subscription( [ 'donor_id' => $donor2->id ] );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions', [ 'donor_id' => $donor2->id ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions', [ 'donor_id' => $donor2->id ] );
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
@@ -430,13 +430,13 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'donor_id' => $donor2->id ] );
 
 		// Search by first name.
-		$response = $this->dispatch_get( '/mission/v1/subscriptions', [ 'search' => 'Alice' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions', [ 'search' => 'Alice' ] );
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 		$this->assertSame( 'Alice Wonder', $response->get_data()[0]['donor_name'] );
 
 		// Search by email.
-		$response = $this->dispatch_get( '/mission/v1/subscriptions', [ 'search' => 'alice@example.com' ] );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions', [ 'search' => 'alice@example.com' ] );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 		$this->assertSame( 'alice@example.com', $response->get_data()[0]['donor_email'] );
 	}
@@ -449,7 +449,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'is_test' => true ] );
 
 		// Live mode (default) — only live subscriptions.
-		$response = $this->dispatch_get( '/mission/v1/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions' );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 
 		// Switch to test mode — only test subscriptions.
@@ -458,7 +458,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 			'stripe_site_token' => 'test_site_token_123',
 		] );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions' );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 	}
 
@@ -468,7 +468,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_get_list_includes_donor_and_campaign_data(): void {
 		$this->create_subscription();
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions' );
 		$item     = $response->get_data()[0];
 
 		$this->assertSame( 'Jane Doe', $item['donor_name'] );
@@ -483,7 +483,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'frequency' => 'monthly' ] );
 		$this->create_subscription( [ 'frequency' => 'annually' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions' );
 		$data     = $response->get_data();
 
 		$this->assertArrayHasKey( 'frequency', $data[0] );
@@ -509,7 +509,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 
 		$subscription = $this->create_subscription( [ 'source_post_id' => $post_id ] );
 
-		$response = $this->dispatch_get( "/mission/v1/subscriptions/{$subscription->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/subscriptions/{$subscription->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -551,7 +551,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_get_single_donor_object_fields(): void {
 		$subscription = $this->create_subscription();
 
-		$response = $this->dispatch_get( "/mission/v1/subscriptions/{$subscription->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/subscriptions/{$subscription->id}" );
 		$donor    = $response->get_data()['donor'];
 
 		$this->assertSame( $this->donor->id, $donor['id'] );
@@ -580,7 +580,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 
 		$subscription = $this->create_subscription( [ 'source_post_id' => $post_id ] );
 
-		$response = $this->dispatch_get( "/mission/v1/subscriptions/{$subscription->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/subscriptions/{$subscription->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 'Donate Now', $data['source_title'] );
@@ -608,7 +608,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$txn->add_meta( 'stripe_fee_percent', '2.9' );
 		$txn->add_meta( 'stripe_fee_fixed', '30' );
 
-		$response = $this->dispatch_get( "/mission/v1/subscriptions/{$subscription->id}" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/subscriptions/{$subscription->id}" );
 		$data     = $response->get_data();
 		$t        = $data['transactions'][0];
 
@@ -628,7 +628,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	 * Test GET single returns 404 for nonexistent subscription.
 	 */
 	public function test_get_single_404_for_nonexistent(): void {
-		$response = $this->dispatch_get( '/mission/v1/subscriptions/999999' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions/999999' );
 
 		$this->assertSame( 404, $response->get_status() );
 		$this->assertSame( 'subscription_not_found', $response->as_error()->get_error_code() );
@@ -647,7 +647,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 
 		$subscription = $this->create_subscription( [ 'campaign_id' => $this->campaign->id ] );
 
-		$response = $this->dispatch_patch( "/mission/v1/subscriptions/{$subscription->id}", [
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/subscriptions/{$subscription->id}", [
 			'campaign_id' => $campaign2->id,
 		] );
 
@@ -667,7 +667,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_patch_updates_status(): void {
 		$subscription = $this->create_subscription( [ 'status' => 'active' ] );
 
-		$response = $this->dispatch_patch( "/mission/v1/subscriptions/{$subscription->id}", [
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/subscriptions/{$subscription->id}", [
 			'status' => 'cancelled',
 		] );
 
@@ -687,7 +687,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_patch_returns_detail_response(): void {
 		$subscription = $this->create_subscription();
 
-		$response = $this->dispatch_patch( "/mission/v1/subscriptions/{$subscription->id}", [
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/subscriptions/{$subscription->id}", [
 			'status' => 'cancelled',
 		] );
 
@@ -706,7 +706,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	 * Test PATCH returns 404 for nonexistent subscription.
 	 */
 	public function test_patch_404_for_nonexistent(): void {
-		$response = $this->dispatch_patch( '/mission/v1/subscriptions/999999', [
+		$response = $this->dispatch_patch( '/mission-donation-platform/v1/subscriptions/999999', [
 			'status' => 'cancelled',
 		] );
 
@@ -724,7 +724,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_cancel_transitions_active_to_cancelled(): void {
 		$subscription = $this->create_subscription( [ 'status' => 'active' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/subscriptions/{$subscription->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/cancel" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -743,7 +743,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_cancel_rejects_already_cancelled(): void {
 		$subscription = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
-		$response = $this->dispatch_post( "/mission/v1/subscriptions/{$subscription->id}/cancel" );
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/cancel" );
 
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'subscription_not_cancellable', $response->as_error()->get_error_code() );
@@ -757,7 +757,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	 * Test GET summary returns expected keys.
 	 */
 	public function test_get_summary_returns_expected_keys(): void {
-		$response = $this->dispatch_get( '/mission/v1/subscriptions/summary' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions/summary' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -777,7 +777,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$this->create_subscription( [ 'amount' => 1000, 'total_amount' => 1000, 'frequency' => 'monthly' ] );
 		$this->create_subscription( [ 'amount' => 2000, 'total_amount' => 2000, 'frequency' => 'monthly' ] );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions/summary' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions/summary' );
 		$data     = $response->get_data();
 
 		$this->assertSame( 3000, $data['mrr'] );
@@ -795,7 +795,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_unauthenticated_requests_rejected(): void {
 		wp_set_current_user( 0 );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
@@ -807,7 +807,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	public function test_subscriber_role_rejected(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$response = $this->dispatch_get( '/mission/v1/subscriptions' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/subscriptions' );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );

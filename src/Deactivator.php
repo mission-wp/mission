@@ -2,10 +2,10 @@
 /**
  * Fired during plugin deactivation.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission;
+namespace MissionDP;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class Deactivator {
 		/**
 		 * Fires before the plugin is deactivated.
 		 */
-		do_action( 'mission_plugin_deactivating' );
+		do_action( 'missiondp_plugin_deactivating' );
 
 		self::clear_scheduled_events();
 		self::clear_transients();
@@ -40,9 +40,9 @@ class Deactivator {
 	 */
 	private static function clear_scheduled_events(): void {
 		$scheduled_hooks = [
-			'mission_daily_cleanup',
-			'mission_check_recurring_payments',
-			'mission_campaign_lifecycle',
+			'missiondp_daily_cleanup',
+			'missiondp_check_recurring_payments',
+			'missiondp_campaign_lifecycle',
 		];
 
 		foreach ( $scheduled_hooks as $hook ) {
@@ -56,13 +56,13 @@ class Deactivator {
 	 * @return void
 	 */
 	private static function clear_transients(): void {
-		delete_transient( 'mission_activated' );
+		delete_transient( 'missiondp_activated' );
 
 		global $wpdb;
 		$wpdb->query(
 			"DELETE FROM {$wpdb->options}
-			WHERE option_name LIKE '_transient_mission_%'
-			OR option_name LIKE '_transient_timeout_mission_%'"
+			WHERE option_name LIKE '_transient_missiondp_%'
+			OR option_name LIKE '_transient_timeout_missiondp_%'"
 		);
 	}
 }

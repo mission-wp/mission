@@ -2,13 +2,13 @@
 /**
  * Tests for the Campaign model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Models;
+namespace MissionDP\Tests\Models;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
 use WP_UnitTestCase;
 
 /**
@@ -31,8 +31,8 @@ class CampaignTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		parent::tear_down();
@@ -548,10 +548,10 @@ class CampaignTest extends WP_UnitTestCase {
 	/**
 	 * Test mission_campaign_created action fires on insert.
 	 */
-	public function test_mission_campaign_created_action_fires(): void {
+	public function test_missiondp_campaign_created_action_fires(): void {
 		$fired = false;
 
-		add_action( 'mission_campaign_created', function () use ( &$fired ) {
+		add_action( 'missiondp_campaign_created', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

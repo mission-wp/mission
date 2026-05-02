@@ -69,7 +69,7 @@ function focusActivePanel() {
   } );
 }
 
-store( 'mission/donor-dashboard', {
+store( 'mission-donation-platform/donor-dashboard', {
   state: mergeState( authState, historyState, recurringState, profileState, {
     // ── Toast ──
     get toastIsSuccess() {

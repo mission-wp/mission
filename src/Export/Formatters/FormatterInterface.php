@@ -2,10 +2,10 @@
 /**
  * Export formatter interface.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Export\Formatters;
+namespace MissionDP\Export\Formatters;
 
 defined( 'ABSPATH' ) || exit;
 

@@ -2,13 +2,13 @@
 /**
  * Tests for the Schema class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Database;
+namespace MissionDP\Tests\Database;
 
-use Mission\Database\DatabaseModule;
-use Mission\Database\Schema;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\Schema;
 use WP_UnitTestCase;
 
 /**
@@ -38,7 +38,7 @@ class SchemaTest extends WP_UnitTestCase {
 		$this->assertCount( 12, $schemas );
 
 		global $wpdb;
-		$prefix = $wpdb->prefix . 'mission_';
+		$prefix = $wpdb->prefix . 'missiondp_';
 
 		$expected = array(
 			"{$prefix}transactions",

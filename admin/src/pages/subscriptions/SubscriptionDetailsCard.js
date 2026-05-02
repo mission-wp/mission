@@ -14,47 +14,47 @@ import {
 import { CampaignDropdown } from '../transactions/TransactionDetailsCard';
 
 const FREQUENCY_LABELS = {
-  weekly: __( 'Weekly', 'missionwp-donation-platform' ),
-  monthly: __( 'Monthly', 'missionwp-donation-platform' ),
-  quarterly: __( 'Quarterly', 'missionwp-donation-platform' ),
-  annually: __( 'Annually', 'missionwp-donation-platform' ),
+  weekly: __( 'Weekly', 'mission-donation-platform' ),
+  monthly: __( 'Monthly', 'mission-donation-platform' ),
+  quarterly: __( 'Quarterly', 'mission-donation-platform' ),
+  annually: __( 'Annually', 'mission-donation-platform' ),
 };
 
 const FREQUENCY_SUFFIXES = {
-  weekly: __( '/wk', 'missionwp-donation-platform' ),
-  monthly: __( '/mo', 'missionwp-donation-platform' ),
-  quarterly: __( '/qtr', 'missionwp-donation-platform' ),
-  annually: __( '/yr', 'missionwp-donation-platform' ),
+  weekly: __( '/wk', 'mission-donation-platform' ),
+  monthly: __( '/mo', 'mission-donation-platform' ),
+  quarterly: __( '/qtr', 'mission-donation-platform' ),
+  annually: __( '/yr', 'mission-donation-platform' ),
 };
 
 const STATUS_OPTIONS = [
   {
     value: 'active',
-    label: __( 'Active', 'missionwp-donation-platform' ),
+    label: __( 'Active', 'mission-donation-platform' ),
     backgroundColor: 'rgba(47, 163, 107, 0.12)',
     color: '#278f5c',
   },
   {
     value: 'pending',
-    label: __( 'Pending', 'missionwp-donation-platform' ),
+    label: __( 'Pending', 'mission-donation-platform' ),
     backgroundColor: '#e4eff5',
     color: '#4a7a9b',
   },
   {
     value: 'past_due',
-    label: __( 'Past Due', 'missionwp-donation-platform' ),
+    label: __( 'Past Due', 'mission-donation-platform' ),
     backgroundColor: '#fdf8ef',
     color: '#b8860b',
   },
   {
     value: 'paused',
-    label: __( 'Paused', 'missionwp-donation-platform' ),
+    label: __( 'Paused', 'mission-donation-platform' ),
     backgroundColor: '#ebebed',
     color: '#82828c',
   },
   {
     value: 'cancelled',
-    label: __( 'Cancelled', 'missionwp-donation-platform' ),
+    label: __( 'Cancelled', 'mission-donation-platform' ),
     backgroundColor: '#f0eeeb',
     color: '#8a7e72',
   },
@@ -63,31 +63,31 @@ const STATUS_OPTIONS = [
 const TRANSACTION_STATUS_OPTIONS = [
   {
     value: 'completed',
-    label: __( 'Completed', 'missionwp-donation-platform' ),
+    label: __( 'Completed', 'mission-donation-platform' ),
     backgroundColor: 'rgba(47, 163, 107, 0.12)',
     color: '#278f5c',
   },
   {
     value: 'pending',
-    label: __( 'Pending', 'missionwp-donation-platform' ),
+    label: __( 'Pending', 'mission-donation-platform' ),
     backgroundColor: '#e4eff5',
     color: '#4a7a9b',
   },
   {
     value: 'refunded',
-    label: __( 'Refunded', 'missionwp-donation-platform' ),
+    label: __( 'Refunded', 'mission-donation-platform' ),
     backgroundColor: '#f5e8e8',
     color: '#b85c5c',
   },
   {
     value: 'failed',
-    label: __( 'Failed', 'missionwp-donation-platform' ),
+    label: __( 'Failed', 'mission-donation-platform' ),
     backgroundColor: '#fce8e8',
     color: '#c0392b',
   },
   {
     value: 'cancelled',
-    label: __( 'Cancelled', 'missionwp-donation-platform' ),
+    label: __( 'Cancelled', 'mission-donation-platform' ),
     backgroundColor: '#f0eeeb',
     color: '#8a7e72',
   },
@@ -197,10 +197,10 @@ function PaymentHistorySection( {
     <details className="mission-detail-section" open>
       <summary className="mission-detail-section__header">
         <h3 className="mission-detail-section__title">
-          { __( 'Payment History', 'missionwp-donation-platform' ) }
+          { __( 'Payment History', 'mission-donation-platform' ) }
           <span className="mission-detail-section__badge">
             { formatAmount( totalGiven, currency ) }{ ' ' }
-            { __( 'total', 'missionwp-donation-platform' ) }
+            { __( 'total', 'mission-donation-platform' ) }
           </span>
         </h3>
         <Chevron />
@@ -210,10 +210,10 @@ function PaymentHistorySection( {
           <table className="mission-detail-table">
             <thead>
               <tr>
-                <th>{ __( 'Date', 'missionwp-donation-platform' ) }</th>
-                <th>{ __( 'Amount', 'missionwp-donation-platform' ) }</th>
-                <th>{ __( 'Transaction', 'missionwp-donation-platform' ) }</th>
-                <th>{ __( 'Status', 'missionwp-donation-platform' ) }</th>
+                <th>{ __( 'Date', 'mission-donation-platform' ) }</th>
+                <th>{ __( 'Amount', 'mission-donation-platform' ) }</th>
+                <th>{ __( 'Transaction', 'mission-donation-platform' ) }</th>
+                <th>{ __( 'Status', 'mission-donation-platform' ) }</th>
               </tr>
             </thead>
             <tbody>
@@ -229,7 +229,7 @@ function PaymentHistorySection( {
                   </td>
                   <td>
                     <a
-                      href={ `${ adminUrl }admin.php?page=mission-transactions&transaction_id=${ txn.id }` }
+                      href={ `${ adminUrl }admin.php?page=mission-donation-platform-transactions&transaction_id=${ txn.id }` }
                       className="mission-detail-table__id"
                     >
                       #{ txn.id }
@@ -267,7 +267,7 @@ export default function SubscriptionDetailsCard( {
   onStatusChange,
 } ) {
   const [ txnPage, setTxnPage ] = useState( 1 );
-  const adminUrl = window.missionAdmin?.adminUrl || '';
+  const adminUrl = window.missiondpAdmin?.adminUrl || '';
   const s = subscription;
   const donor = s.donor;
   const campaign = s.campaign;
@@ -331,32 +331,32 @@ export default function SubscriptionDetailsCard( {
       <details className="mission-detail-section" open>
         <summary className="mission-detail-section__header">
           <h3 className="mission-detail-section__title">
-            { __( 'Subscription Details', 'missionwp-donation-platform' ) }
+            { __( 'Subscription Details', 'mission-donation-platform' ) }
           </h3>
           <Chevron />
         </summary>
         <div className="mission-detail-list">
           <DetailRow
-            label={ __( 'Donor', 'missionwp-donation-platform' ) }
+            label={ __( 'Donor', 'mission-donation-platform' ) }
             value={
               donor ? (
                 <a
-                  href={ `${ adminUrl }admin.php?page=mission-donors&donor_id=${ donor.id }` }
+                  href={ `${ adminUrl }admin.php?page=mission-donation-platform-donors&donor_id=${ donor.id }` }
                   style={ { color: '#2FA36B', textDecoration: 'none' } }
                 >
                   { donorName }
                 </a>
               ) : (
-                __( 'Anonymous', 'missionwp-donation-platform' )
+                __( 'Anonymous', 'mission-donation-platform' )
               )
             }
           />
           <DetailRow
-            label={ __( 'Email', 'missionwp-donation-platform' ) }
+            label={ __( 'Email', 'mission-donation-platform' ) }
             value={ donor?.email }
           />
           <DetailRow
-            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
+            label={ __( 'Campaign', 'mission-donation-platform' ) }
             value={
               <CampaignDropdown
                 campaign={ campaign }
@@ -366,30 +366,30 @@ export default function SubscriptionDetailsCard( {
             }
           />
           <DetailRow
-            label={ __( 'Frequency', 'missionwp-donation-platform' ) }
+            label={ __( 'Frequency', 'mission-donation-platform' ) }
             value={ FREQUENCY_LABELS[ s.frequency ] || s.frequency }
           />
           <DetailRow
-            label={ __( 'Amount', 'missionwp-donation-platform' ) }
+            label={ __( 'Amount', 'mission-donation-platform' ) }
             value={ `${ formatAmount( s.amount, s.currency ) }${ freqSuffix }` }
           />
           <DetailRow
-            label={ __( 'Started', 'missionwp-donation-platform' ) }
+            label={ __( 'Started', 'mission-donation-platform' ) }
             value={ formatDateTime( s.date_created ) }
           />
           { s.date_next_renewal && (
             <DetailRow
-              label={ __( 'Next payment', 'missionwp-donation-platform' ) }
+              label={ __( 'Next payment', 'mission-donation-platform' ) }
               value={ formatDate( s.date_next_renewal ) }
             />
           ) }
           <DetailRow
-            label={ __( 'Payment method', 'missionwp-donation-platform' ) }
+            label={ __( 'Payment method', 'mission-donation-platform' ) }
             value={ gatewayLabel }
           />
           { addressParts && (
             <DetailRow
-              label={ __( 'Billing address', 'missionwp-donation-platform' ) }
+              label={ __( 'Billing address', 'mission-donation-platform' ) }
               value={ addressParts.map( ( line, i ) => (
                 <span key={ i }>
                   { i > 0 && <br /> }
@@ -399,7 +399,7 @@ export default function SubscriptionDetailsCard( {
             />
           ) }
           <DetailRow
-            label={ __( 'Status', 'missionwp-donation-platform' ) }
+            label={ __( 'Status', 'mission-donation-platform' ) }
             value={
               <StatusDropdown status={ s.status } onChange={ onStatusChange } />
             }
@@ -425,24 +425,24 @@ export default function SubscriptionDetailsCard( {
         <details className="mission-detail-section">
           <summary className="mission-detail-section__header">
             <h3 className="mission-detail-section__title">
-              { __( 'Fee Summary', 'missionwp-donation-platform' ) }
+              { __( 'Fee Summary', 'mission-donation-platform' ) }
             </h3>
             <Chevron />
           </summary>
           <div className="mission-detail-list">
             <DetailRow
-              label={ __( 'Donation amount', 'missionwp-donation-platform' ) }
+              label={ __( 'Donation amount', 'mission-donation-platform' ) }
               value={ formatAmount( totalDonation, s.currency ) }
             />
             { totalProcessingFees > 0 && (
               <DetailRow
                 label={
                   <>
-                    { __( 'Processing fees', 'missionwp-donation-platform' ) }
+                    { __( 'Processing fees', 'mission-donation-platform' ) }
                     <InfoTooltip
                       text={ __(
                         'Stripe fees deducted from payments',
-                        'missionwp-donation-platform'
+                        'mission-donation-platform'
                       ) }
                     />
                   </>
@@ -458,11 +458,11 @@ export default function SubscriptionDetailsCard( {
               <DetailRow
                 label={
                   <>
-                    { __( 'Fees recovered', 'missionwp-donation-platform' ) }
+                    { __( 'Fees recovered', 'mission-donation-platform' ) }
                     <InfoTooltip
                       text={ __(
                         'The donor covered processing fees so you receive the full donation.',
-                        'missionwp-donation-platform'
+                        'mission-donation-platform'
                       ) }
                     />
                   </>
@@ -478,11 +478,11 @@ export default function SubscriptionDetailsCard( {
               <DetailRow
                 label={
                   <>
-                    { __( 'MissionWP tips', 'missionwp-donation-platform' ) }
+                    { __( 'Mission tips', 'mission-donation-platform' ) }
                     <InfoTooltip
                       text={ __(
-                        "Optional tips from the donor to support the MissionWP platform. Doesn't affect your payout.",
-                        'missionwp-donation-platform'
+                        "Optional tips from the donor to support the Mission platform. Doesn't affect your payout.",
+                        'mission-donation-platform'
                       ) }
                     />
                   </>
@@ -506,7 +506,7 @@ export default function SubscriptionDetailsCard( {
                 className="mission-detail-row__label"
                 style={ { fontWeight: 600 } }
               >
-                { __( 'Net amount', 'missionwp-donation-platform' ) }
+                { __( 'Net amount', 'mission-donation-platform' ) }
               </span>
               <span
                 className="mission-detail-row__value"
@@ -523,17 +523,14 @@ export default function SubscriptionDetailsCard( {
       <details className="mission-detail-section">
         <summary className="mission-detail-section__header">
           <h3 className="mission-detail-section__title">
-            { __( 'Payment Data', 'missionwp-donation-platform' ) }
+            { __( 'Payment Data', 'mission-donation-platform' ) }
           </h3>
           <Chevron />
         </summary>
         <div className="mission-detail-list">
           { s.gateway_subscription_id && (
             <DetailRow
-              label={ __(
-                'Stripe subscription',
-                'missionwp-donation-platform'
-              ) }
+              label={ __( 'Stripe subscription', 'mission-donation-platform' ) }
               value={
                 <a
                   href={ `${ stripeDashboard }subscriptions/${ s.gateway_subscription_id }` }
@@ -549,7 +546,7 @@ export default function SubscriptionDetailsCard( {
           ) }
           { s.gateway_customer_id && (
             <DetailRow
-              label={ __( 'Stripe customer', 'missionwp-donation-platform' ) }
+              label={ __( 'Stripe customer', 'mission-donation-platform' ) }
               value={
                 <a
                   href={ `${ stripeDashboard }customers/${ s.gateway_customer_id }` }
@@ -565,7 +562,7 @@ export default function SubscriptionDetailsCard( {
           ) }
           { !! s.source_post_id && (
             <DetailRow
-              label={ __( 'Source', 'missionwp-donation-platform' ) }
+              label={ __( 'Source', 'mission-donation-platform' ) }
               value={
                 s.source_url ? (
                   <a
@@ -575,7 +572,7 @@ export default function SubscriptionDetailsCard( {
                     style={ { color: '#2FA36B', textDecoration: 'none' } }
                   >
                     { s.source_title ||
-                      __( 'View page', 'missionwp-donation-platform' ) }
+                      __( 'View page', 'mission-donation-platform' ) }
                     <ExternalLinkIcon />
                   </a>
                 ) : (
@@ -586,7 +583,7 @@ export default function SubscriptionDetailsCard( {
           ) }
           { s.is_test && (
             <DetailRow
-              label={ __( 'Mode', 'missionwp-donation-platform' ) }
+              label={ __( 'Mode', 'mission-donation-platform' ) }
               value={
                 <span
                   style={ {
@@ -599,7 +596,7 @@ export default function SubscriptionDetailsCard( {
                     color: '#92400e',
                   } }
                 >
-                  { __( 'Test', 'missionwp-donation-platform' ) }
+                  { __( 'Test', 'mission-donation-platform' ) }
                 </span>
               }
               isLast

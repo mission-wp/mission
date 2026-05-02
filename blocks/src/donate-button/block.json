@@ -1,10 +1,10 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission/donate-button",
+	"name": "mission-donation-platform/donate-button",
 	"version": "0.1.0",
 	"title": "Donate Button",
-	"category": "mission",
+	"category": "mission-donation-platform",
 	"icon": "button",
 	"description": "A customizable donate button that scrolls to a donation form or links to a URL.",
 	"supports": {
@@ -89,7 +89,7 @@
 		}
 	},
 	"example": {},
-	"textdomain": "missionwp-donation-platform",
+	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

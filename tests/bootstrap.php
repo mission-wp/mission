@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file for Mission plugin tests.
  *
- * @package Mission
+ * @package MissionDP
  */
 
 // Load Yoast PHPUnit Polyfills.
@@ -24,7 +24,7 @@ require_once $_tests_dir . '/includes/functions.php';
 tests_add_filter(
 	'muplugins_loaded',
 	static function () {
-		require dirname( __DIR__ ) . '/missionwp-donation-platform.php';
+		require dirname( __DIR__ ) . '/mission-donation-platform.php';
 	}
 );
 

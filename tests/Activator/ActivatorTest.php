@@ -2,13 +2,13 @@
 /**
  * Tests for the Activator class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Activator;
+namespace MissionDP\Tests\Activator;
 
-use Mission\Activator;
-use Mission\Database\DatabaseModule;
+use MissionDP\Activator;
+use MissionDP\Database\DatabaseModule;
 use WP_UnitTestCase;
 
 /**
@@ -20,17 +20,17 @@ class ActivatorTest extends WP_UnitTestCase {
 	 * Clean up after each test.
 	 */
 	public function tear_down(): void {
-		delete_option( 'mission_version' );
-		delete_option( 'mission_settings' );
+		delete_option( 'missiondp_version' );
+		delete_option( 'missiondp_settings' );
 		delete_option( DatabaseModule::DB_VERSION_OPTION );
-		delete_transient( 'mission_activated' );
+		delete_transient( 'missiondp_activated' );
 
 		// Remove capabilities.
 		$admin = get_role( 'administrator' );
 		if ( $admin ) {
-			$admin->remove_cap( 'manage_mission' );
-			$admin->remove_cap( 'view_mission_reports' );
-			$admin->remove_cap( 'edit_mission_transactions' );
+			$admin->remove_cap( 'manage_missiondp' );
+			$admin->remove_cap( 'view_missiondp_reports' );
+			$admin->remove_cap( 'edit_missiondp_transactions' );
 		}
 
 		parent::tear_down();
@@ -42,7 +42,7 @@ class ActivatorTest extends WP_UnitTestCase {
 	public function test_stores_plugin_version(): void {
 		Activator::activate();
 
-		$this->assertSame( MISSION_VERSION, get_option( 'mission_version' ) );
+		$this->assertSame( MISSIONDP_VERSION, get_option( 'missiondp_version' ) );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class ActivatorTest extends WP_UnitTestCase {
 	public function test_sets_activated_transient(): void {
 		Activator::activate();
 
-		$this->assertTrue( (bool) get_transient( 'mission_activated' ) );
+		$this->assertTrue( (bool) get_transient( 'missiondp_activated' ) );
 	}
 
 	/**
@@ -62,9 +62,9 @@ class ActivatorTest extends WP_UnitTestCase {
 
 		$admin = get_role( 'administrator' );
 
-		$this->assertTrue( $admin->has_cap( 'manage_mission' ) );
-		$this->assertTrue( $admin->has_cap( 'view_mission_reports' ) );
-		$this->assertTrue( $admin->has_cap( 'edit_mission_transactions' ) );
+		$this->assertTrue( $admin->has_cap( 'manage_missiondp' ) );
+		$this->assertTrue( $admin->has_cap( 'view_missiondp_reports' ) );
+		$this->assertTrue( $admin->has_cap( 'edit_missiondp_transactions' ) );
 	}
 
 	/**
@@ -73,7 +73,7 @@ class ActivatorTest extends WP_UnitTestCase {
 	public function test_sets_default_settings_on_fresh_install(): void {
 		Activator::activate();
 
-		$settings = get_option( 'mission_settings' );
+		$settings = get_option( 'missiondp_settings' );
 
 		$this->assertIsArray( $settings );
 		$this->assertSame( 'USD', $settings['currency'] );
@@ -94,11 +94,11 @@ class ActivatorTest extends WP_UnitTestCase {
 			'currency'    => 'EUR',
 			'tip_enabled' => false,
 		);
-		update_option( 'mission_settings', $custom_settings );
+		update_option( 'missiondp_settings', $custom_settings );
 
 		Activator::activate();
 
-		$settings = get_option( 'mission_settings' );
+		$settings = get_option( 'missiondp_settings' );
 		$this->assertSame( 'EUR', $settings['currency'] );
 		$this->assertFalse( $settings['tip_enabled'] );
 	}

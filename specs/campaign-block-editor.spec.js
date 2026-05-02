@@ -8,12 +8,12 @@ let detailPath;
 test.beforeAll( async ( { requestUtils } ) => {
   // Create a campaign for these tests.
   const campaign = await requestUtils.rest( {
-    path: '/mission/v1/campaigns',
+    path: '/mission-donation-platform/v1/campaigns',
     method: 'POST',
     data: { title: 'Block Editor Test' },
   } );
 
-  detailPath = `admin.php?page=mission-campaigns&campaign=${ campaign.id }`;
+  detailPath = `admin.php?page=mission-donation-platform-campaigns&campaign=${ campaign.id }`;
 } );
 
 test.describe( 'Campaign Block Editor', () => {
@@ -75,7 +75,7 @@ test.describe( 'Campaign Block Editor', () => {
     // Check that the donation-form editor script tag is present in the HTML.
     // This verifies BlocksModule::enqueue_block_editor_assets() works.
     const scriptTag = page.locator(
-      'script#mission-donation-form-editor-script-js'
+      'script#mission-donation-platform-donation-form-editor-script-js'
     );
     await expect( scriptTag ).toBeAttached();
   } );

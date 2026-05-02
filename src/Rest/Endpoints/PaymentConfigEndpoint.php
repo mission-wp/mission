@@ -2,13 +2,13 @@
 /**
  * REST endpoint for public payment configuration.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Response;
 
 defined( 'ABSPATH' ) || exit;

@@ -11,20 +11,20 @@ import AppearanceTab from './tabs/AppearanceTab';
 import CustomFieldsTab, { findEmptyLabelField } from './tabs/CustomFieldsTab';
 
 const TABS = [
-  { id: 'amounts', label: __( 'Amounts', 'missionwp-donation-platform' ) },
-  { id: 'donor', label: __( 'Donor Info', 'missionwp-donation-platform' ) },
-  { id: 'fees', label: __( 'Fees', 'missionwp-donation-platform' ) },
+  { id: 'amounts', label: __( 'Amounts', 'mission-donation-platform' ) },
+  { id: 'donor', label: __( 'Donor Info', 'mission-donation-platform' ) },
+  { id: 'fees', label: __( 'Fees', 'mission-donation-platform' ) },
   {
     id: 'custom-fields',
-    label: __( 'Custom Fields', 'missionwp-donation-platform' ),
+    label: __( 'Custom Fields', 'mission-donation-platform' ),
   },
   {
     id: 'confirmation',
-    label: __( 'Confirmation', 'missionwp-donation-platform' ),
+    label: __( 'Confirmation', 'mission-donation-platform' ),
   },
   {
     id: 'appearance',
-    label: __( 'Appearance', 'missionwp-donation-platform' ),
+    label: __( 'Appearance', 'mission-donation-platform' ),
   },
 ];
 
@@ -487,7 +487,7 @@ export default function FormSettingsModal( {
 
   return (
     <Modal
-      title={ __( 'Donation Form Settings', 'missionwp-donation-platform' ) }
+      title={ __( 'Donation Form Settings', 'mission-donation-platform' ) }
       onRequestClose={ onClose }
       className="mission-form-settings-modal"
       size="large"
@@ -540,7 +540,7 @@ export default function FormSettingsModal( {
         </div>
         <div className="mission-form-settings-modal__footer">
           <Button variant="tertiary" onClick={ onClose } __next40pxDefaultSize>
-            { __( 'Cancel', 'missionwp-donation-platform' ) }
+            { __( 'Cancel', 'mission-donation-platform' ) }
           </Button>
           <Button
             variant="primary"
@@ -551,7 +551,7 @@ export default function FormSettingsModal( {
             } }
             __next40pxDefaultSize
           >
-            { __( 'Save', 'missionwp-donation-platform' ) }
+            { __( 'Save', 'mission-donation-platform' ) }
           </Button>
         </div>
       </div>

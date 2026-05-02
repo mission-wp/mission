@@ -17,11 +17,11 @@ export default function DonationHistoryTable( { transactions } ) {
   return (
     <div className="mission-card" style={ { padding: 0 } }>
       <h2 className="mission-card__heading">
-        { __( 'Donation History', 'missionwp-donation-platform' ) }
+        { __( 'Donation History', 'mission-donation-platform' ) }
       </h2>
       { ! transactions.length ? (
         <p className="mission-detail-table__empty">
-          { __( 'No donations yet.', 'missionwp-donation-platform' ) }
+          { __( 'No donations yet.', 'mission-donation-platform' ) }
         </p>
       ) : (
         <>
@@ -30,12 +30,12 @@ export default function DonationHistoryTable( { transactions } ) {
               <table className="mission-detail-table">
                 <thead>
                   <tr>
-                    <th>{ __( 'ID', 'missionwp-donation-platform' ) }</th>
-                    <th>{ __( 'Date', 'missionwp-donation-platform' ) }</th>
-                    <th>{ __( 'Amount', 'missionwp-donation-platform' ) }</th>
-                    <th>{ __( 'Campaign', 'missionwp-donation-platform' ) }</th>
-                    <th>{ __( 'Type', 'missionwp-donation-platform' ) }</th>
-                    <th>{ __( 'Status', 'missionwp-donation-platform' ) }</th>
+                    <th>{ __( 'ID', 'mission-donation-platform' ) }</th>
+                    <th>{ __( 'Date', 'mission-donation-platform' ) }</th>
+                    <th>{ __( 'Amount', 'mission-donation-platform' ) }</th>
+                    <th>{ __( 'Campaign', 'mission-donation-platform' ) }</th>
+                    <th>{ __( 'Type', 'mission-donation-platform' ) }</th>
+                    <th>{ __( 'Status', 'mission-donation-platform' ) }</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -50,8 +50,8 @@ export default function DonationHistoryTable( { transactions } ) {
                         <td>
                           <a
                             href={ `${
-                              window.missionAdmin?.adminUrl || ''
-                            }admin.php?page=mission-transactions&transaction_id=${
+                              window.missiondpAdmin?.adminUrl || ''
+                            }admin.php?page=mission-donation-platform-transactions&transaction_id=${
                               txn.id
                             }` }
                             className="mission-detail-table__id"
@@ -77,11 +77,8 @@ export default function DonationHistoryTable( { transactions } ) {
                             }` }
                           >
                             { isRecurring
-                              ? __( 'Recurring', 'missionwp-donation-platform' )
-                              : __(
-                                  'One-time',
-                                  'missionwp-donation-platform'
-                                ) }
+                              ? __( 'Recurring', 'mission-donation-platform' )
+                              : __( 'One-time', 'mission-donation-platform' ) }
                           </span>
                         </td>
                         <td>

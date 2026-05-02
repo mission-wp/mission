@@ -7,13 +7,13 @@
  * subscription for initial subscription payments, and stores card metadata
  * (brand, last 4) for display in the admin and donor dashboard.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Webhooks;
+namespace MissionDP\Webhooks;
 
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 

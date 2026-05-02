@@ -2,17 +2,17 @@
 /**
  * Tests for the Plugin class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Plugin;
+namespace MissionDP\Tests\Plugin;
 
-use Mission\Plugin;
-use Mission\Database\DatabaseModule;
-use Mission\Admin\AdminModule;
-use Mission\Blocks\BlocksModule;
-use Mission\Rest\RestModule;
-use Mission\Email\EmailModule;
+use MissionDP\Plugin;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Admin\AdminModule;
+use MissionDP\Blocks\BlocksModule;
+use MissionDP\Rest\RestModule;
+use MissionDP\Email\EmailModule;
 use WP_UnitTestCase;
 
 /**

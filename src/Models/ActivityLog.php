@@ -2,13 +2,13 @@
 /**
  * Activity log model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Database\DataStore\ActivityLogDataStore;
-use Mission\Database\DataStore\DataStoreInterface;
+use MissionDP\Database\DataStore\ActivityLogDataStore;
+use MissionDP\Database\DataStore\DataStoreInterface;
 
 defined( 'ABSPATH' ) || exit;
 

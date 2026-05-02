@@ -8,11 +8,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$settings      = new \Mission\Settings\SettingsService();
+$settings      = new \MissionDP\Settings\SettingsService();
 $primary_color = $settings->get( 'primary_color', '#2fa36b' );
 $org_name      = $data['organization'] ?? get_bloginfo( 'name' );
-$donor_name    = $data['donor']->first_name ?? __( 'Someone', 'missionwp-donation-platform' );
-$type_label    = $data['tribute_type_label'] ?? __( 'in honor of', 'missionwp-donation-platform' );
+$donor_name    = $data['donor']->first_name ?? __( 'Someone', 'mission-donation-platform' );
+$type_label    = $data['tribute_type_label'] ?? __( 'in honor of', 'mission-donation-platform' );
 $honoree_name  = $data['honoree_name'] ?? '';
 $message       = $data['message'] ?? '';
 ?>
@@ -21,7 +21,7 @@ $message       = $data['message'] ?? '';
 		<?php
 		printf(
 			/* translators: %s: donor first name */
-			esc_html__( '%s has dedicated a donation to', 'missionwp-donation-platform' ),
+			esc_html__( '%s has dedicated a donation to', 'mission-donation-platform' ),
 			esc_html( $donor_name )
 		);
 		?>
@@ -51,7 +51,7 @@ $message       = $data['message'] ?? '';
 		<?php
 		printf(
 			/* translators: %s: organization name */
-			esc_html__( 'This generous act of kindness will help %s continue making a difference.', 'missionwp-donation-platform' ),
+			esc_html__( 'This generous act of kindness will help %s continue making a difference.', 'mission-donation-platform' ),
 			esc_html( $org_name )
 		);
 		?>

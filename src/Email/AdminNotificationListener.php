@@ -2,15 +2,15 @@
 /**
  * Listens for plugin events and sends admin notification emails.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Email;
+namespace MissionDP\Email;
 
-use Mission\Models\Campaign;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Models\Tribute;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -57,32 +57,32 @@ class AdminNotificationListener {
 		$this->email    = $email;
 
 		// New donation (one-time).
-		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
-		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
+		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
 
 		// New donation (first recurring).
-		add_action( 'mission_subscription_status_pending_to_active', [ $this, 'on_first_recurring_donation' ] );
+		add_action( 'missiondp_subscription_status_pending_to_active', [ $this, 'on_first_recurring_donation' ] );
 
 		// Recurring renewal.
-		add_action( 'mission_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
+		add_action( 'missiondp_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
 
 		// Refund processed.
-		add_action( 'mission_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
+		add_action( 'missiondp_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
 
 		// Failed payment.
-		add_action( 'mission_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'missiondp_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
 
 		// Subscription cancelled.
-		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'missiondp_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'missiondp_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'missiondp_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'missiondp_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
 		// Campaign milestone.
-		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone' ], 10, 3 );
+		add_action( 'missiondp_campaign_milestone_reached', [ $this, 'on_campaign_milestone' ], 10, 3 );
 
 		// Mail dedication pending.
-		add_action( 'mission_tribute_created', [ $this, 'on_mail_dedication' ] );
+		add_action( 'missiondp_tribute_created', [ $this, 'on_mail_dedication' ] );
 	}
 
 	/**
@@ -125,12 +125,12 @@ class AdminNotificationListener {
 			'date_formatted'   => wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ?: $transaction->date_created ) ),
 			'campaign_name'    => $campaign?->title,
 			'donation_type'    => 'one_time',
-			'admin_url'        => admin_url( 'admin.php?page=mission-transactions&transaction=' . $transaction->id ),
+			'admin_url'        => admin_url( 'admin.php?page=mission-donation-platform-transactions&transaction=' . $transaction->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: donor name */
-			__( 'New donation: %1$s from %2$s', 'missionwp-donation-platform' ),
+			__( 'New donation: %1$s from %2$s', 'mission-donation-platform' ),
 			$amount_formatted,
 			$donor_name,
 		);
@@ -164,12 +164,12 @@ class AdminNotificationListener {
 			'campaign_name'    => $campaign?->title,
 			'donation_type'    => 'recurring',
 			'frequency_label'  => $frequency_label,
-			'admin_url'        => admin_url( 'admin.php?page=mission-transactions&subscription=' . $subscription->id ),
+			'admin_url'        => admin_url( 'admin.php?page=mission-donation-platform-transactions&subscription=' . $subscription->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: frequency (e.g. "Monthly"), 3: donor name */
-			__( 'New recurring donation: %1$s/%2$s from %3$s', 'missionwp-donation-platform' ),
+			__( 'New recurring donation: %1$s/%2$s from %3$s', 'mission-donation-platform' ),
 			$amount_formatted,
 			strtolower( $frequency_label ),
 			$donor_name,
@@ -205,12 +205,12 @@ class AdminNotificationListener {
 			'date_formatted'   => wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ?: $transaction->date_created ) ),
 			'campaign_name'    => $campaign?->title,
 			'frequency_label'  => $frequency_label,
-			'admin_url'        => admin_url( 'admin.php?page=mission-transactions&transaction=' . $transaction->id ),
+			'admin_url'        => admin_url( 'admin.php?page=mission-donation-platform-transactions&transaction=' . $transaction->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: donor name */
-			__( 'Recurring renewal: %1$s from %2$s', 'missionwp-donation-platform' ),
+			__( 'Recurring renewal: %1$s from %2$s', 'mission-donation-platform' ),
 			$amount_formatted,
 			$donor_name,
 		);
@@ -246,19 +246,19 @@ class AdminNotificationListener {
 			'date_formatted'     => wp_date( get_option( 'date_format' ) ),
 			'campaign_name'      => $campaign?->title,
 			'is_full_refund'     => $is_full_refund,
-			'admin_url'          => admin_url( 'admin.php?page=mission-transactions&transaction=' . $transaction->id ),
+			'admin_url'          => admin_url( 'admin.php?page=mission-donation-platform-transactions&transaction=' . $transaction->id ),
 		];
 
 		$subject = $is_full_refund
 			? sprintf(
 				/* translators: 1: formatted refund amount, 2: donor name */
-				__( 'Full refund: %1$s to %2$s', 'missionwp-donation-platform' ),
+				__( 'Full refund: %1$s to %2$s', 'mission-donation-platform' ),
 				$refund_formatted,
 				$donor_name,
 			)
 			: sprintf(
 				/* translators: 1: formatted refund amount, 2: donor name */
-				__( 'Partial refund: %1$s to %2$s', 'missionwp-donation-platform' ),
+				__( 'Partial refund: %1$s to %2$s', 'mission-donation-platform' ),
 				$refund_formatted,
 				$donor_name,
 			);
@@ -291,12 +291,12 @@ class AdminNotificationListener {
 			'date_formatted'   => wp_date( get_option( 'date_format' ) ),
 			'campaign_name'    => $campaign?->title,
 			'frequency_label'  => $frequency_label,
-			'admin_url'        => admin_url( 'admin.php?page=mission-transactions&subscription=' . $subscription->id ),
+			'admin_url'        => admin_url( 'admin.php?page=mission-donation-platform-transactions&subscription=' . $subscription->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: donor name */
-			__( 'Failed payment: %1$s from %2$s', 'missionwp-donation-platform' ),
+			__( 'Failed payment: %1$s from %2$s', 'mission-donation-platform' ),
 			$amount_formatted,
 			$donor_name,
 		);
@@ -331,12 +331,12 @@ class AdminNotificationListener {
 			'frequency_label'   => $frequency_label,
 			'renewal_count'     => $subscription->renewal_count,
 			'total_renewed_fmt' => $this->email->format_amount( $subscription->total_renewed, $subscription->currency ),
-			'admin_url'         => admin_url( 'admin.php?page=mission-transactions&subscription=' . $subscription->id ),
+			'admin_url'         => admin_url( 'admin.php?page=mission-donation-platform-transactions&subscription=' . $subscription->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: frequency (e.g. "monthly"), 3: donor name */
-			__( 'Subscription cancelled: %1$s/%2$s from %3$s', 'missionwp-donation-platform' ),
+			__( 'Subscription cancelled: %1$s/%2$s from %3$s', 'mission-donation-platform' ),
 			$amount_formatted,
 			strtolower( $frequency_label ),
 			$donor_name,
@@ -386,12 +386,12 @@ class AdminNotificationListener {
 			'goal_formatted'   => $goal_formatted,
 			'raised_formatted' => $raised_formatted,
 			'date_formatted'   => wp_date( get_option( 'date_format' ) ),
-			'admin_url'        => admin_url( 'admin.php?page=mission-campaigns&campaign=' . $campaign->id ),
+			'admin_url'        => admin_url( 'admin.php?page=mission-donation-platform-campaigns&campaign=' . $campaign->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: campaign name, 2: milestone label (e.g. "50%", "First donation") */
-			__( 'Campaign milestone: %1$s reached %2$s', 'missionwp-donation-platform' ),
+			__( 'Campaign milestone: %1$s reached %2$s', 'mission-donation-platform' ),
 			$campaign->title,
 			$milestone_label,
 		);
@@ -417,11 +417,11 @@ class AdminNotificationListener {
 
 		$donor            = $transaction->donor();
 		$donor_name       = $donor ? trim( $donor->first_name . ' ' . $donor->last_name ) : '';
-		$donor_name       = $donor_name ?: ( $donor->email ?? __( 'Anonymous', 'missionwp-donation-platform' ) );
+		$donor_name       = $donor_name ?: ( $donor->email ?? __( 'Anonymous', 'mission-donation-platform' ) );
 		$amount_formatted = $this->email->format_amount( $transaction->amount, $transaction->currency );
 		$type_label       = 'in_memory' === $tribute->tribute_type
-			? __( 'in memory of', 'missionwp-donation-platform' )
-			: __( 'in honor of', 'missionwp-donation-platform' );
+			? __( 'in memory of', 'mission-donation-platform' )
+			: __( 'in honor of', 'mission-donation-platform' );
 
 		$address_parts = array_filter(
 			[
@@ -441,12 +441,12 @@ class AdminNotificationListener {
 			'tribute_type_label' => $type_label,
 			'notify_name'        => $tribute->notify_name,
 			'notify_address'     => implode( ', ', $address_parts ),
-			'admin_url'          => admin_url( 'admin.php?page=mission-transactions&transaction=' . $transaction->id ),
+			'admin_url'          => admin_url( 'admin.php?page=mission-donation-platform-transactions&transaction=' . $transaction->id ),
 		];
 
 		$subject = sprintf(
 			/* translators: 1: honoree name, 2: donor name */
-			__( 'Mail dedication pending: %1$s (from %2$s)', 'missionwp-donation-platform' ),
+			__( 'Mail dedication pending: %1$s (from %2$s)', 'mission-donation-platform' ),
 			$tribute->honoree_name,
 			$donor_name,
 		);

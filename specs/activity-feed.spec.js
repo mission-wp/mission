@@ -9,7 +9,7 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 const { execSync } = require( 'child_process' );
 
-const DASHBOARD_PATH = 'admin.php?page=mission';
+const DASHBOARD_PATH = 'admin.php?page=mission-donation-platform';
 
 const CAMPAIGN_TITLE = 'Activity Feed Test Campaign';
 const CAMPAIGN_GOAL = 100000; // $1,000 in cents.
@@ -52,20 +52,20 @@ test.describe( 'Activity Feed — donations and milestones', () => {
   test.beforeAll( async ( { requestUtils } ) => {
     // Clear stale activity log entries from previous runs.
     execSync(
-      'npx @wordpress/env run tests-cli -- wp db query "DELETE FROM wp_mission_activity_log" --quiet',
+      'npx @wordpress/env run tests-cli -- wp db query "DELETE FROM wp_missiondp_activity_log" --quiet',
       { stdio: 'pipe' }
     );
 
     // Disable test mode and mark onboarding complete so the dashboard is visible.
     await requestUtils.rest( {
-      path: '/mission/v1/settings',
+      path: '/mission-donation-platform/v1/settings',
       method: 'POST',
       data: { test_mode: false, onboarding_completed: true },
     } );
 
     // Create a campaign with a $1,000 goal via REST.
     const campaign = await requestUtils.rest( {
-      path: '/mission/v1/campaigns',
+      path: '/mission-donation-platform/v1/campaigns',
       method: 'POST',
       data: {
         title: CAMPAIGN_TITLE,
@@ -77,7 +77,7 @@ test.describe( 'Activity Feed — donations and milestones', () => {
     // Add donations sequentially (each triggers milestone checks).
     for ( const donation of DONATIONS ) {
       await requestUtils.rest( {
-        path: '/mission/v1/transactions',
+        path: '/mission-donation-platform/v1/transactions',
         method: 'POST',
         data: {
           ...donation,
@@ -91,14 +91,14 @@ test.describe( 'Activity Feed — donations and milestones', () => {
   test.afterAll( async ( { requestUtils } ) => {
     if ( campaignId ) {
       await requestUtils.rest( {
-        path: `/mission/v1/campaigns/${ campaignId }`,
+        path: `/mission-donation-platform/v1/campaigns/${ campaignId }`,
         method: 'DELETE',
       } );
     }
 
     // Restore test mode for other test suites.
     await requestUtils.rest( {
-      path: '/mission/v1/settings',
+      path: '/mission-donation-platform/v1/settings',
       method: 'POST',
       data: { test_mode: true },
     } );
@@ -173,7 +173,9 @@ test.describe( 'Activity Feed — donations and milestones', () => {
 
     // Donor names should be links to donor detail pages.
     const donorLink = feed
-      .locator( 'a.mission-feed-link[href*="mission-donors"]' )
+      .locator(
+        'a.mission-feed-link[href*="mission-donation-platform-donors"]'
+      )
       .first();
     await expect( donorLink ).toBeVisible();
     await expect( donorLink ).toHaveAttribute( 'href', /donor=\d+/ );

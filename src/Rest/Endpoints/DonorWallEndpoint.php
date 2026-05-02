@@ -2,15 +2,15 @@
 /**
  * Donor wall REST endpoint.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Donor;
-use Mission\Reporting\ReportingService;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Donor;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -124,7 +124,7 @@ class DonorWallEndpoint {
 	private function sanitize_item( array $item ): array {
 		if ( $item['is_anonymous'] ) {
 			return [
-				'name'          => __( 'Anonymous', 'missionwp-donation-platform' ),
+				'name'          => __( 'Anonymous', 'mission-donation-platform' ),
 				'initials'      => '?',
 				'is_anonymous'  => true,
 				'amount'        => $item['amount'],
@@ -142,7 +142,7 @@ class DonorWallEndpoint {
 		$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
 
 		if ( '.' === $name ) {
-			$name = __( 'Anonymous', 'missionwp-donation-platform' );
+			$name = __( 'Anonymous', 'mission-donation-platform' );
 		}
 		if ( '' === trim( $initials ) ) {
 			$initials = '?';

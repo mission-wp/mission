@@ -5,15 +5,15 @@
  * Handles account activation (with email verification), login, logout,
  * and current donor lookup.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\DonorDashboard\DonorAuthService;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\DonorPermissionTrait;
-use Mission\Rest\Traits\RateLimitTrait;
+use MissionDP\DonorDashboard\DonorAuthService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\DonorPermissionTrait;
+use MissionDP\Rest\Traits\RateLimitTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -201,7 +201,7 @@ class DonorAuthEndpoint {
 
 		return new WP_REST_Response(
 			[
-				'message' => __( 'If a donor account exists for that email, a verification link has been sent.', 'missionwp-donation-platform' ),
+				'message' => __( 'If a donor account exists for that email, a verification link has been sent.', 'mission-donation-platform' ),
 			]
 		);
 	}
@@ -253,7 +253,7 @@ class DonorAuthEndpoint {
 
 		return new WP_REST_Response(
 			[
-				'message' => __( 'If an account exists for that email, a password reset link has been sent.', 'missionwp-donation-platform' ),
+				'message' => __( 'If an account exists for that email, a password reset link has been sent.', 'mission-donation-platform' ),
 			]
 		);
 	}
@@ -328,7 +328,7 @@ class DonorAuthEndpoint {
 		$donor = $this->auth->get_current_donor();
 
 		if ( ! $donor ) {
-			return new WP_Error( 'donor_not_found', __( 'Donor record not found.', 'missionwp-donation-platform' ), [ 'status' => 404 ] );
+			return new WP_Error( 'donor_not_found', __( 'Donor record not found.', 'mission-donation-platform' ), [ 'status' => 404 ] );
 		}
 
 		return new WP_REST_Response( $this->auth->format_donor_response( $donor ) );

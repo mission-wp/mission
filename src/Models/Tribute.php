@@ -2,13 +2,13 @@
 /**
  * Tribute model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Database\DataStore\DataStoreInterface;
-use Mission\Database\DataStore\TributeDataStore;
+use MissionDP\Database\DataStore\DataStoreInterface;
+use MissionDP\Database\DataStore\TributeDataStore;
 
 defined( 'ABSPATH' ) || exit;
 

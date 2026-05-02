@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 export default function StripeBanner() {
-  const connectUrl = window.missionAdmin?.stripeConnectUrl || '#';
+  const connectUrl = window.missiondpAdmin?.stripeConnectUrl || '#';
 
   return (
     <div className="mission-stripe-banner">
@@ -24,18 +24,18 @@ export default function StripeBanner() {
         </div>
         <div className="mission-stripe-banner__text">
           <h2>
-            { __( 'Start accepting donations', 'missionwp-donation-platform' ) }
+            { __( 'Start accepting donations', 'mission-donation-platform' ) }
           </h2>
           <p>
             <a href={ connectUrl } className="mission-stripe-banner__link">
               { __(
                 'Connect your Stripe account',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </a>{ ' ' }
             { __(
               "to begin processing donations securely. It only takes a couple of minutes and you'll be ready to receive your first gift.",
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function StripeBanner() {
                 fill="currentColor"
               />
             </svg>
-            { __( 'Connect Stripe', 'missionwp-donation-platform' ) }
+            { __( 'Connect Stripe', 'mission-donation-platform' ) }
           </a>
         </div>
       </div>

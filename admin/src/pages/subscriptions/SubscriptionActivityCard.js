@@ -15,28 +15,25 @@ const FREQ_SUFFIXES = {
 const EVENT_LABELS = {
   subscription_created: __(
     'Subscription created',
-    'missionwp-donation-platform'
+    'mission-donation-platform'
   ),
   subscription_cancelled: __(
     'Subscription cancelled',
-    'missionwp-donation-platform'
+    'mission-donation-platform'
   ),
-  subscription_paused: __(
-    'Subscription paused',
-    'missionwp-donation-platform'
-  ),
+  subscription_paused: __( 'Subscription paused', 'mission-donation-platform' ),
   subscription_resumed: __(
     'Subscription resumed',
-    'missionwp-donation-platform'
+    'mission-donation-platform'
   ),
-  subscription_renewed: __( 'Payment received', 'missionwp-donation-platform' ),
+  subscription_renewed: __( 'Payment received', 'mission-donation-platform' ),
   subscription_payment_method_updated: __(
     'Payment method updated',
-    'missionwp-donation-platform'
+    'mission-donation-platform'
   ),
-  payment_completed: __( 'Payment completed', 'missionwp-donation-platform' ),
-  payment_failed: __( 'Payment failed', 'missionwp-donation-platform' ),
-  status_changed: __( 'Status changed', 'missionwp-donation-platform' ),
+  payment_completed: __( 'Payment completed', 'mission-donation-platform' ),
+  payment_failed: __( 'Payment failed', 'mission-donation-platform' ),
+  status_changed: __( 'Status changed', 'mission-donation-platform' ),
 };
 
 const DOT_CLASSES = {
@@ -74,7 +71,7 @@ function getEventLabel( entry ) {
     const to = formatAmount( entry.data.new_amount ) + suffix;
     return sprintf(
       /* translators: 1: old amount with frequency, 2: new amount with frequency */
-      __( 'Amount increased from %1$s to %2$s', 'missionwp-donation-platform' ),
+      __( 'Amount increased from %1$s to %2$s', 'mission-donation-platform' ),
       from,
       to
     );
@@ -86,7 +83,7 @@ function getEventLabel( entry ) {
     const to = formatAmount( entry.data.new_amount ) + suffix;
     return sprintf(
       /* translators: 1: old amount with frequency, 2: new amount with frequency */
-      __( 'Amount decreased from %1$s to %2$s', 'missionwp-donation-platform' ),
+      __( 'Amount decreased from %1$s to %2$s', 'mission-donation-platform' ),
       from,
       to
     );
@@ -110,7 +107,7 @@ function deriveFallbackEvents( subscription ) {
 
   if ( subscription.date_cancelled ) {
     events.push( {
-      title: __( 'Subscription cancelled', 'missionwp-donation-platform' ),
+      title: __( 'Subscription cancelled', 'mission-donation-platform' ),
       date: formatDateTime( subscription.date_cancelled ),
       dotClass: 'is-cancelled',
     } );
@@ -121,7 +118,7 @@ function deriveFallbackEvents( subscription ) {
   transactions.forEach( ( txn ) => {
     if ( txn.status === 'completed' && txn.date_completed ) {
       events.push( {
-        title: __( 'Payment completed', 'missionwp-donation-platform' ),
+        title: __( 'Payment completed', 'mission-donation-platform' ),
         date: formatDateTime( txn.date_completed ),
         dotClass: 'is-success',
       } );
@@ -129,7 +126,7 @@ function deriveFallbackEvents( subscription ) {
   } );
 
   events.push( {
-    title: __( 'Subscription created', 'missionwp-donation-platform' ),
+    title: __( 'Subscription created', 'mission-donation-platform' ),
     date: formatDateTime( subscription.date_created ),
     dotClass: 'is-success',
   } );
@@ -150,7 +147,7 @@ export default function SubscriptionActivityCard( { subscription } ) {
     }
 
     apiFetch( {
-      path: `/mission/v1/activity?object_type=subscription&object_id=${ id }&per_page=25`,
+      path: `/mission-donation-platform/v1/activity?object_type=subscription&object_id=${ id }&per_page=25`,
     } )
       .then( ( data ) => setEntries( data ) )
       .catch( () => setEntries( null ) )
@@ -169,7 +166,7 @@ export default function SubscriptionActivityCard( { subscription } ) {
   return (
     <div className="mission-card" style={ { padding: 0 } }>
       <h2 className="mission-card__heading">
-        { __( 'Activity', 'missionwp-donation-platform' ) }
+        { __( 'Activity', 'mission-donation-platform' ) }
       </h2>
       { isLoading ? (
         <div style={ { padding: '24px', textAlign: 'center' } }>

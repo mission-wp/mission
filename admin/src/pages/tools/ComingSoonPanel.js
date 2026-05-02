@@ -23,27 +23,27 @@ const COMING_SOON_DATA = {
       </svg>
     ),
     iconStyle: { background: '#e2f4eb', color: '#2fa36b' },
-    title: __( 'Bring your data home', 'missionwp-donation-platform' ),
+    title: __( 'Bring your data home', 'mission-donation-platform' ),
     desc: __(
       'Import donors, transactions, campaigns, and subscriptions from a CSV or JSON file.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     features: [
       __(
         'Automatic column detection and field mapping',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
       __(
         'Duplicate detection to avoid double-counting donors',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
       __(
         'Preview your import before anything changes',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
       __(
         'Downloadable CSV templates for each data type',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
     ],
   },
@@ -66,25 +66,25 @@ const COMING_SOON_DATA = {
       </svg>
     ),
     iconStyle: { background: '#ede8f5', color: '#7a5a8e' },
-    title: __( 'Switch from another plugin', 'missionwp-donation-platform' ),
+    title: __( 'Switch from another plugin', 'mission-donation-platform' ),
     desc: __(
       'Already using a different donation plugin? The migration tool moves your donors, transactions, campaigns, and subscriptions over automatically.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     features: [
       __(
         'One-click migration from GiveWP, Charitable, and more',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
       __(
         'Moves donors, transactions, campaigns, and subscriptions',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
       __(
         'Automatic field mapping between plugins',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
-      __( 'Your old data stays untouched', 'missionwp-donation-platform' ),
+      __( 'Your old data stays untouched', 'mission-donation-platform' ),
     ],
   },
   features: {
@@ -106,20 +106,17 @@ const COMING_SOON_DATA = {
       </svg>
     ),
     iconStyle: { background: '#fef3e2', color: '#c07d20' },
-    title: __(
-      'No add-ons. Everything is free.',
-      'missionwp-donation-platform'
-    ),
+    title: __( 'No add-ons. Everything is free.', 'mission-donation-platform' ),
     desc: __(
-      'Other donation plugins charge for recurring donations, donor management, and custom fields. MissionWP includes all of that in one plugin at no cost. Bigger features are on the way, and they will be free too.',
-      'missionwp-donation-platform'
+      'Other donation plugins charge for recurring donations, donor management, and custom fields. Mission includes all of that in one plugin at no cost. Bigger features are on the way, and they will be free too.',
+      'mission-donation-platform'
     ),
     features: [
-      __( 'Peer-to-peer fundraising', 'missionwp-donation-platform' ),
-      __( 'Designated funds', 'missionwp-donation-platform' ),
-      __( 'Ticketed events', 'missionwp-donation-platform' ),
+      __( 'Peer-to-peer fundraising', 'mission-donation-platform' ),
+      __( 'Designated funds', 'mission-donation-platform' ),
+      __( 'Ticketed events', 'mission-donation-platform' ),
     ],
-    cta: __( 'Get notified when they ship', 'missionwp-donation-platform' ),
+    cta: __( 'Get notified when they ship', 'mission-donation-platform' ),
   },
 };
 
@@ -182,12 +179,12 @@ function deleteUserMeta( feature ) {
 }
 
 function NotifySection( { tabId, ctaText } ) {
-  const existingEmail = window.missionAdmin?.featureSignups?.[ tabId ] || '';
+  const existingEmail = window.missiondpAdmin?.featureSignups?.[ tabId ] || '';
 
   // 'cta' | 'input' | 'subscribed'
   const [ view, setView ] = useState( existingEmail ? 'subscribed' : 'cta' );
   const [ email, setEmail ] = useState(
-    existingEmail || window.missionAdmin?.adminEmail || ''
+    existingEmail || window.missiondpAdmin?.adminEmail || ''
   );
   const [ error, setError ] = useState( false );
   const [ submitting, setSubmitting ] = useState( false );
@@ -261,7 +258,7 @@ function NotifySection( { tabId, ctaText } ) {
           { subscribedCheckIcon }
         </div>
         <span className="mission-notify-subscribed__msg">
-          { __( 'You\u2019re on the list', 'missionwp-donation-platform' ) }
+          { __( 'You\u2019re on the list', 'mission-donation-platform' ) }
         </span>
         <span className="mission-notify-subscribed__email">
           { subscribedEmail }
@@ -271,10 +268,7 @@ function NotifySection( { tabId, ctaText } ) {
           className="mission-notify-unsubscribe"
           onClick={ handleUnsubscribe }
         >
-          { __(
-            'Remove me from notifications',
-            'missionwp-donation-platform'
-          ) }
+          { __( 'Remove me from notifications', 'mission-donation-platform' ) }
         </button>
       </div>
     );
@@ -308,8 +302,8 @@ function NotifySection( { tabId, ctaText } ) {
           disabled={ submitting }
         >
           { submitting
-            ? __( 'Saving\u2026', 'missionwp-donation-platform' )
-            : __( 'Notify me', 'missionwp-donation-platform' ) }
+            ? __( 'Saving\u2026', 'mission-donation-platform' )
+            : __( 'Notify me', 'mission-donation-platform' ) }
         </button>
         <button
           type="button"
@@ -319,7 +313,7 @@ function NotifySection( { tabId, ctaText } ) {
             setError( false );
           } }
         >
-          { __( 'Cancel', 'missionwp-donation-platform' ) }
+          { __( 'Cancel', 'mission-donation-platform' ) }
         </button>
       </div>
     );
@@ -355,7 +349,7 @@ export default function ComingSoonPanel( { tabId } ) {
             { data.icon }
           </div>
           <div className="mission-tools-coming-soon__badge">
-            { __( 'Coming Soon', 'missionwp-donation-platform' ) }
+            { __( 'Coming Soon', 'mission-donation-platform' ) }
           </div>
           <h2 className="mission-tools-coming-soon__title">{ data.title }</h2>
           <p className="mission-tools-coming-soon__desc">{ data.desc }</p>
@@ -374,7 +368,7 @@ export default function ComingSoonPanel( { tabId } ) {
             tabId={ tabId }
             ctaText={
               data.cta ||
-              __( 'Get notified when it ships', 'missionwp-donation-platform' )
+              __( 'Get notified when it ships', 'mission-donation-platform' )
             }
           />
         </div>

@@ -2,14 +2,14 @@
 /**
  * REST endpoint for transaction history.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Transaction;
-use Mission\Models\TransactionHistory;
-use Mission\Rest\RestModule;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\TransactionHistory;
+use MissionDP\Rest\RestModule;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -64,7 +64,7 @@ class TransactionHistoryEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view transaction history.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to view transaction history.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -85,7 +85,7 @@ class TransactionHistoryEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}

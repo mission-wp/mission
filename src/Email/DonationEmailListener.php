@@ -2,14 +2,14 @@
 /**
  * Listens for one-time donation events and sends receipt emails.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Email;
+namespace MissionDP\Email;
 
-use Mission\Models\Note;
-use Mission\Models\Transaction;
-use Mission\Models\Tribute;
+use MissionDP\Models\Note;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,11 +34,11 @@ class DonationEmailListener {
 	public function init( EmailModule $email ): void {
 		$this->email = $email;
 
-		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
-		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
-		add_action( 'mission_note_created', [ $this, 'on_donor_note_created' ] );
-		add_action( 'mission_tribute_created', [ $this, 'on_tribute_saved' ] );
-		add_action( 'mission_tribute_updated', [ $this, 'on_tribute_saved' ] );
+		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
+		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'missiondp_note_created', [ $this, 'on_donor_note_created' ] );
+		add_action( 'missiondp_tribute_created', [ $this, 'on_tribute_saved' ] );
+		add_action( 'missiondp_tribute_updated', [ $this, 'on_tribute_saved' ] );
 	}
 
 	/**
@@ -89,7 +89,7 @@ class DonationEmailListener {
 
 		$subject = sprintf(
 			/* translators: %s: formatted donation amount */
-			__( 'Thank you for your %s donation', 'missionwp-donation-platform' ),
+			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
 			$data['amount_formatted'],
 		);
 
@@ -98,11 +98,11 @@ class DonationEmailListener {
 			$subject = $this->email->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
 					'{amount}'       => $data['amount_formatted'],
 					'{campaign}'     => $data['campaign_name'] ?? '',
 					'{date}'         => $data['date_formatted'],
-					'{organization}' => ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
 					'{receipt_id}'   => (string) $transaction->id,
 				]
 			);
@@ -137,7 +137,7 @@ class DonationEmailListener {
 			return;
 		}
 
-		$org_name = ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
+		$org_name = ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
 
 		$data = [
 			'note'             => $note,
@@ -147,14 +147,14 @@ class DonationEmailListener {
 			'amount_formatted' => $this->email->format_amount( $transaction->amount, $transaction->currency ),
 		];
 
-		$subject = __( 'A note about your donation', 'missionwp-donation-platform' );
+		$subject = __( 'A note about your donation', 'mission-donation-platform' );
 
 		$custom_subject = $this->email->get_custom_subject( 'donor_note' );
 		if ( $custom_subject ) {
 			$subject = $this->email->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
 					'{organization}' => $org_name,
 					'{note_content}' => $note->content,
 					'{amount}'       => $data['amount_formatted'],
@@ -190,11 +190,11 @@ class DonationEmailListener {
 
 		$transaction = $tribute->transaction();
 		$donor       = $transaction?->donor();
-		$org_name    = ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
+		$org_name    = ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
 
 		$type_label = 'in_memory' === $tribute->tribute_type
-			? __( 'in memory of', 'missionwp-donation-platform' )
-			: __( 'in honor of', 'missionwp-donation-platform' );
+			? __( 'in memory of', 'mission-donation-platform' )
+			: __( 'in honor of', 'mission-donation-platform' );
 
 		$data = [
 			'tribute'            => $tribute,
@@ -208,7 +208,7 @@ class DonationEmailListener {
 
 		$subject = sprintf(
 			/* translators: 1: tribute type label (e.g. "in honor of"), 2: honoree name */
-			__( 'A donation has been made %1$s %2$s', 'missionwp-donation-platform' ),
+			__( 'A donation has been made %1$s %2$s', 'mission-donation-platform' ),
 			$type_label,
 			$tribute->honoree_name,
 		);
@@ -218,7 +218,7 @@ class DonationEmailListener {
 			$subject = $this->email->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'         => $donor?->first_name ?: __( 'Someone', 'missionwp-donation-platform' ),
+					'{donor_name}'         => $donor?->first_name ?: __( 'Someone', 'mission-donation-platform' ),
 					'{organization}'       => $org_name,
 					'{tribute_type_label}' => $type_label,
 					'{honoree_name}'       => $tribute->honoree_name,
