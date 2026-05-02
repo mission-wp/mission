@@ -2,13 +2,13 @@
 /**
  * Listens for subscription lifecycle events and sends email notifications.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Email;
+namespace MissionDP\Email;
 
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -45,10 +45,10 @@ class SubscriptionEmailListener {
 	public function init( EmailModule $email ): void {
 		$this->email = $email;
 
-		add_action( 'mission_subscription_status_pending_to_active', [ $this, 'on_subscription_activated' ] );
-		add_action( 'mission_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
-		add_action( 'mission_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
-		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'missiondp_subscription_status_pending_to_active', [ $this, 'on_subscription_activated' ] );
+		add_action( 'missiondp_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
+		add_action( 'missiondp_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'missiondp_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class SubscriptionEmailListener {
 
 		$subject = sprintf(
 			/* translators: 1: formatted amount, 2: frequency label (e.g. "monthly") */
-			__( 'Thank you for your %1$s %2$s donation', 'missionwp-donation-platform' ),
+			__( 'Thank you for your %1$s %2$s donation', 'mission-donation-platform' ),
 			$data['amount_formatted'],
 			strtolower( $data['frequency_label'] ),
 		);
@@ -107,7 +107,7 @@ class SubscriptionEmailListener {
 
 		$subject = sprintf(
 			/* translators: 1: frequency label (e.g. "monthly"), 2: formatted amount */
-			__( 'Thank you for your %1$s gift of %2$s', 'missionwp-donation-platform' ),
+			__( 'Thank you for your %1$s gift of %2$s', 'mission-donation-platform' ),
 			strtolower( $data['frequency_label'] ),
 			$data['amount_formatted'],
 		);
@@ -142,7 +142,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = __( 'Action needed: Update your payment for your recurring donation', 'missionwp-donation-platform' );
+		$subject = __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' );
 
 		$custom_subject = $this->email->get_custom_subject( 'payment_failed' );
 		if ( $custom_subject ) {
@@ -171,7 +171,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = __( 'Your recurring donation has ended', 'missionwp-donation-platform' );
+		$subject = __( 'Your recurring donation has ended', 'mission-donation-platform' );
 
 		$custom_subject = $this->email->get_custom_subject( 'subscription_cancelled' );
 		if ( $custom_subject ) {
@@ -186,16 +186,16 @@ class SubscriptionEmailListener {
 	 * Build merge tag map for custom subjects.
 	 *
 	 * @param array<string, mixed>  $data  Email template data.
-	 * @param \Mission\Models\Donor $donor The donor.
+	 * @param \MissionDP\Models\Donor $donor The donor.
 	 * @return array<string, string>
 	 */
-	private function build_subject_tags( array $data, \Mission\Models\Donor $donor ): array {
+	private function build_subject_tags( array $data, \MissionDP\Models\Donor $donor ): array {
 		return [
-			'{donor_name}'        => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
+			'{donor_name}'        => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
 			'{amount}'            => $data['amount_formatted'],
 			'{frequency}'         => $data['frequency_label'],
 			'{next_renewal_date}' => $data['next_renewal_formatted'],
-			'{organization}'      => ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+			'{organization}'      => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
 		];
 	}
 
@@ -203,13 +203,13 @@ class SubscriptionEmailListener {
 	 * Build common email template data from a subscription.
 	 *
 	 * @param Subscription         $subscription The subscription.
-	 * @param \Mission\Models\Donor $donor        The donor.
+	 * @param \MissionDP\Models\Donor $donor        The donor.
 	 * @return array<string, mixed>
 	 */
-	private function build_email_data( Subscription $subscription, \Mission\Models\Donor $donor ): array {
+	private function build_email_data( Subscription $subscription, \MissionDP\Models\Donor $donor ): array {
 		$next_renewal = $subscription->date_next_renewal
 			? wp_date( get_option( 'date_format' ), strtotime( $subscription->date_next_renewal ) )
-			: __( 'N/A', 'missionwp-donation-platform' );
+			: __( 'N/A', 'mission-donation-platform' );
 
 		return [
 			'subscription'           => $subscription,

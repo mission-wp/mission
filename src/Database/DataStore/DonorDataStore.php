@@ -2,12 +2,12 @@
 /**
  * Donor DataStore.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
-use Mission\Models\Donor;
+use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,7 +25,7 @@ class DonorDataStore implements DataStoreInterface {
 	 */
 	public function get_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_donors';
+		return $wpdb->prefix . 'missiondp_donors';
 	}
 
 	/**
@@ -33,14 +33,14 @@ class DonorDataStore implements DataStoreInterface {
 	 */
 	protected function get_meta_table_name(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'mission_donormeta';
+		return $wpdb->prefix . 'missiondp_donormeta';
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected function get_meta_type(): string {
-		return 'mission_donor';
+		return 'missiondp_donor';
 	}
 
 	/**
@@ -64,7 +64,7 @@ class DonorDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Donor $model The donor. */
-		do_action( 'mission_donor_created', $model );
+		do_action( 'missiondp_donor_created', $model );
 
 		return $model->id;
 	}
@@ -158,7 +158,7 @@ class DonorDataStore implements DataStoreInterface {
 
 		if ( false !== $result ) {
 			/** @param Donor $model The donor. */
-			do_action( 'mission_donor_updated', $model );
+			do_action( 'missiondp_donor_updated', $model );
 		}
 
 		return false !== $result;
@@ -176,7 +176,7 @@ class DonorDataStore implements DataStoreInterface {
 
 		$meta_table = $this->get_meta_table_name();
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE mission_donor_id = %d", $id ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE missiondp_donor_id = %d", $id ) );
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
@@ -193,9 +193,14 @@ class DonorDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		$sql = $this->build_query_sql( 'SELECT *', $args );
+		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( $values ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
+			$sql = $wpdb->prepare( $sql, $values );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
 		$rows = $wpdb->get_results( $sql, ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
@@ -212,9 +217,14 @@ class DonorDataStore implements DataStoreInterface {
 		global $wpdb;
 
 		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		$sql = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( $values ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
+			$sql = $wpdb->prepare( $sql, $values );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
 		return (int) $wpdb->get_var( $sql );
 	}
 
@@ -226,7 +236,12 @@ class DonorDataStore implements DataStoreInterface {
 	 *
 	 * @return string
 	 */
-	private function build_query_sql( string $select, array $args ): string {
+	/**
+	 * Returns [ sql_template, values ] — caller passes through wpdb::prepare().
+	 *
+	 * @return array{0: string, 1: array<int, mixed>}
+	 */
+	private function build_query_sql( string $select, array $args ): array {
 		global $wpdb;
 
 		$table  = $this->get_table_name();
@@ -273,19 +288,14 @@ class DonorDataStore implements DataStoreInterface {
 		$sql = "{$select} FROM {$table} {$where_clause} ORDER BY {$orderby} {$order}";
 
 		if ( isset( $args['per_page'] ) ) {
+			$sql     .= ' LIMIT %d OFFSET %d';
 			$per_page = max( 1, (int) $args['per_page'] );
 			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$offset   = ( $page - 1 ) * $per_page;
-
-			$sql .= " LIMIT {$per_page} OFFSET {$offset}";
+			$values[] = $per_page;
+			$values[] = ( $page - 1 ) * $per_page;
 		}
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		return $sql;
+		return [ $sql, $values ];
 	}
 
 	/**

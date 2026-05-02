@@ -30,7 +30,7 @@ function EmailRow( { email, enabled, onToggle, onEdit } ) {
           onClick={ onEdit }
           type="button"
         >
-          { __( 'Edit', 'missionwp-donation-platform' ) }
+          { __( 'Edit', 'mission-donation-platform' ) }
         </button>
         { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
         <label className="mission-toggle-sm" aria-label={ email.name }>
@@ -60,7 +60,7 @@ function AdminEmailRow( {
   const [ inputValue, setInputValue ] = useState( '' );
   const inputRef = useRef( null );
 
-  const defaultEmail = window.missionAdmin?.adminEmail || '';
+  const defaultEmail = window.missiondpAdmin?.adminEmail || '';
   const fallbackRecipients = defaultEmail ? [ defaultEmail ] : [];
   const displayRecipients = recipients.length ? recipients : fallbackRecipients;
 
@@ -149,7 +149,7 @@ function AdminEmailRow( {
                 <span className="mission-admin-email-row__preview-more">
                   { sprintf(
                     /* translators: %d: number of additional recipients */
-                    __( 'and %d others', 'missionwp-donation-platform' ),
+                    __( 'and %d others', 'mission-donation-platform' ),
                     overflowCount
                   ) }
                 </span>
@@ -200,7 +200,7 @@ function AdminEmailRow( {
                 { addr }
                 { addr === defaultEmail && recipients.length === 0 && (
                   <span className="mission-admin-email-row__tag-default">
-                    { __( 'default', 'missionwp-donation-platform' ) }
+                    { __( 'default', 'mission-donation-platform' ) }
                   </span>
                 ) }
                 <button
@@ -212,7 +212,7 @@ function AdminEmailRow( {
                   } }
                   aria-label={ sprintf(
                     /* translators: %s: email address */
-                    __( 'Remove %s', 'missionwp-donation-platform' ),
+                    __( 'Remove %s', 'mission-donation-platform' ),
                     addr
                   ) }
                 >
@@ -234,7 +234,7 @@ function AdminEmailRow( {
               ref={ inputRef }
               type="email"
               className="mission-admin-email-row__input"
-              placeholder={ __( 'Add email…', 'missionwp-donation-platform' ) }
+              placeholder={ __( 'Add email…', 'mission-donation-platform' ) }
               value={ inputValue }
               onChange={ ( e ) => setInputValue( e.target.value ) }
               onKeyDown={ handleKeyDown }
@@ -244,7 +244,7 @@ function AdminEmailRow( {
           <span className="mission-admin-email-row__hint">
             { __(
               'Press Enter to add. Default is your WordPress admin email.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </span>
         </div>
@@ -309,12 +309,12 @@ export default function EmailsPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Sender Details', 'missionwp-donation-platform' ) }
+            { __( 'Sender Details', 'mission-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'Used as the \u201cfrom\u201d address on all outgoing emails.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -323,7 +323,7 @@ export default function EmailsPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-email-from-name"
           >
-            { __( 'From name', 'missionwp-donation-platform' ) }
+            { __( 'From name', 'mission-donation-platform' ) }
           </label>
           <input
             type="text"
@@ -340,7 +340,7 @@ export default function EmailsPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-email-from-address"
           >
-            { __( 'From email', 'missionwp-donation-platform' ) }
+            { __( 'From email', 'mission-donation-platform' ) }
           </label>
           <input
             type="email"
@@ -357,7 +357,7 @@ export default function EmailsPanel( {
             className="mission-settings-field__label"
             htmlFor="mission-email-reply-to"
           >
-            { __( 'Reply-to email', 'missionwp-donation-platform' ) }
+            { __( 'Reply-to email', 'mission-donation-platform' ) }
           </label>
           <input
             type="email"
@@ -371,7 +371,7 @@ export default function EmailsPanel( {
           <span className="mission-settings-field__hint">
             { __(
               'Leave blank to use the from email address.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </span>
         </div>
@@ -379,7 +379,7 @@ export default function EmailsPanel( {
 
       { /* Donation Emails */ }
       <h3 className="mission-settings-email-group-title">
-        { __( 'Donation Emails', 'missionwp-donation-platform' ) }
+        { __( 'Donation Emails', 'mission-donation-platform' ) }
       </h3>
       <div className="mission-settings-email-list">
         { DONATION_EMAILS.map( ( email ) => (
@@ -397,7 +397,7 @@ export default function EmailsPanel( {
 
       { /* Account Emails */ }
       <h3 className="mission-settings-email-group-title">
-        { __( 'Account Emails', 'missionwp-donation-platform' ) }
+        { __( 'Account Emails', 'mission-donation-platform' ) }
       </h3>
       <div className="mission-settings-email-list">
         { ACCOUNT_EMAILS.map( ( email ) => (
@@ -415,7 +415,7 @@ export default function EmailsPanel( {
 
       { /* Admin Notifications */ }
       <h3 className="mission-settings-email-group-title">
-        { __( 'Admin Notifications', 'missionwp-donation-platform' ) }
+        { __( 'Admin Notifications', 'mission-donation-platform' ) }
       </h3>
       <div className="mission-settings-email-list">
         { ADMIN_EMAILS.map( ( email ) => (

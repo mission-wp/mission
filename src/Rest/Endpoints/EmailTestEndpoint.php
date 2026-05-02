@@ -2,16 +2,16 @@
 /**
  * REST endpoint for sending test emails.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Currency\Currency;
-use Mission\Email\EmailModule;
-use Mission\Models\Donor;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Currency\Currency;
+use MissionDP\Email\EmailModule;
+use MissionDP\Models\Donor;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -102,7 +102,7 @@ class EmailTestEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to send test emails.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to send test emails.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -123,7 +123,7 @@ class EmailTestEndpoint {
 		if ( ! isset( self::TEMPLATE_MAP[ $email_type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
-				__( 'Unknown email type.', 'missionwp-donation-platform' ),
+				__( 'Unknown email type.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -132,7 +132,7 @@ class EmailTestEndpoint {
 			$to = wp_get_current_user()->user_email;
 		}
 
-		$email_module = \Mission\Plugin::instance()->get_email_module();
+		$email_module = \MissionDP\Plugin::instance()->get_email_module();
 		$data         = $this->build_sample_data( $email_type, $to );
 		$template     = self::TEMPLATE_MAP[ $email_type ];
 
@@ -150,7 +150,7 @@ class EmailTestEndpoint {
 		if ( ! $html ) {
 			return new WP_Error(
 				'render_failed',
-				__( 'Failed to render email template.', 'missionwp-donation-platform' ),
+				__( 'Failed to render email template.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -160,7 +160,7 @@ class EmailTestEndpoint {
 		if ( ! $sent ) {
 			return new WP_Error(
 				'send_failed',
-				__( 'Failed to send test email. Check your mail configuration.', 'missionwp-donation-platform' ),
+				__( 'Failed to send test email. Check your mail configuration.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
 		}
@@ -191,8 +191,8 @@ class EmailTestEndpoint {
 			'donor'                  => $donor,
 			'amount_formatted'       => Currency::format_amount( 5000, $currency ),
 			'date_formatted'         => wp_date( get_option( 'date_format' ) ),
-			'campaign_name'          => __( 'General Fund', 'missionwp-donation-platform' ),
-			'frequency_label'        => __( 'Monthly', 'missionwp-donation-platform' ),
+			'campaign_name'          => __( 'General Fund', 'mission-donation-platform' ),
+			'frequency_label'        => __( 'Monthly', 'mission-donation-platform' ),
 			'next_renewal_formatted' => wp_date( get_option( 'date_format' ), strtotime( '+1 month' ) ),
 		];
 

@@ -1,10 +1,10 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission/campaign",
+	"name": "mission-donation-platform/campaign",
 	"version": "0.1.0",
 	"title": "Campaign Card",
-	"category": "mission",
+	"category": "mission-donation-platform",
 	"icon": "megaphone",
 	"description": "Display a campaign as a card with image, progress, and a link to its page.",
 	"supports": {
@@ -46,7 +46,7 @@
 		}
 	},
 	"example": {},
-	"textdomain": "missionwp-donation-platform",
+	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

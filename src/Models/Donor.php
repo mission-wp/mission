@@ -2,13 +2,13 @@
 /**
  * Donor model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Models;
+namespace MissionDP\Models;
 
-use Mission\Database\DataStore\DataStoreInterface;
-use Mission\Database\DataStore\DonorDataStore;
+use MissionDP\Database\DataStore\DataStoreInterface;
+use MissionDP\Database\DataStore\DonorDataStore;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -117,7 +117,7 @@ class Donor extends Model {
 	public function create_user_account( string $password ): int {
 		if ( $this->user_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not rendered output.
-			throw new \RuntimeException( __( 'This donor already has an account.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'This donor already has an account.', 'mission-donation-platform' ) );
 		}
 
 		// Use the donor email as the username.
@@ -128,7 +128,7 @@ class Donor extends Model {
 				'user_pass'  => $password,
 				'first_name' => $this->first_name,
 				'last_name'  => $this->last_name,
-				'role'       => 'mission_donor',
+				'role'       => 'missiondp_donor',
 			]
 		);
 

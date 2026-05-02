@@ -8,42 +8,42 @@ import SaveBar from './SaveBar';
 const PORTAL_FEATURES = [
   {
     key: 'donation_history',
-    label: __( 'Donation history', 'missionwp-donation-platform' ),
+    label: __( 'Donation history', 'mission-donation-platform' ),
     desc: __(
       'Let donors view past donations and download receipts.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
   },
   {
     key: 'manage_recurring',
-    label: __( 'Manage recurring gifts', 'missionwp-donation-platform' ),
+    label: __( 'Manage recurring gifts', 'mission-donation-platform' ),
     desc: __(
       'Allow donors to pause, resume, or cancel their recurring donations.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
   },
   {
     key: 'update_payment',
-    label: __( 'Update payment method', 'missionwp-donation-platform' ),
+    label: __( 'Update payment method', 'mission-donation-platform' ),
     desc: __(
       'Let donors update the card on file for recurring donations.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
   },
   {
     key: 'profile_editing',
-    label: __( 'Profile editing', 'missionwp-donation-platform' ),
+    label: __( 'Profile editing', 'mission-donation-platform' ),
     desc: __(
       'Allow donors to update their name, email, and mailing address.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
   },
   {
     key: 'annual_tax_summary',
-    label: __( 'Annual tax summary', 'missionwp-donation-platform' ),
+    label: __( 'Annual tax summary', 'mission-donation-platform' ),
     desc: __(
       'Provide a downloadable year-end giving summary for tax purposes.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
   },
 ];
@@ -132,12 +132,12 @@ export default function DonorPortalPanel( {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Donor Portal', 'missionwp-donation-platform' ) }
+            { __( 'Donor Portal', 'mission-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'Let donors manage their account on your site.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -151,12 +151,12 @@ export default function DonorPortalPanel( {
         >
           <div className="mission-settings-toggle-row__text">
             <div className="mission-settings-toggle-row__label">
-              { __( 'Enable donor portal', 'missionwp-donation-platform' ) }
+              { __( 'Enable donor portal', 'mission-donation-platform' ) }
             </div>
             <div className="mission-settings-toggle-row__desc">
               { __(
                 'Allow donors to create accounts, view donation history, and manage recurring gifts.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </div>
           </div>
@@ -165,7 +165,7 @@ export default function DonorPortalPanel( {
             className="mission-toggle-sm"
             aria-label={ __(
               'Enable donor portal',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           >
             <input
@@ -183,7 +183,7 @@ export default function DonorPortalPanel( {
           <div style={ { marginTop: '18px' } }>
             <div className="mission-settings-field">
               <ComboboxControl
-                label={ __( 'Dashboard page', 'missionwp-donation-platform' ) }
+                label={ __( 'Dashboard page', 'mission-donation-platform' ) }
                 value={
                   settings.donor_portal_page_id
                     ? String( settings.donor_portal_page_id )
@@ -203,7 +203,7 @@ export default function DonorPortalPanel( {
               <span className="mission-settings-field__hint">
                 { __(
                   'The page where the donor dashboard block is placed.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               </span>
             </div>
@@ -216,12 +216,12 @@ export default function DonorPortalPanel( {
         <div className="mission-settings-card">
           <div className="mission-settings-card__header">
             <h2 className="mission-settings-card__title">
-              { __( 'Portal Features', 'missionwp-donation-platform' ) }
+              { __( 'Portal Features', 'mission-donation-platform' ) }
             </h2>
             <p className="mission-settings-card__desc">
               { __(
                 'Control what donors can do from their dashboard.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </p>
           </div>

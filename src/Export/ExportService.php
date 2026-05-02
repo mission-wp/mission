@@ -2,22 +2,22 @@
 /**
  * Export service — coordinates data export across models and formatters.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Export;
+namespace MissionDP\Export;
 
-use Mission\Currency\Currency;
-use Mission\Export\Formatters\CsvFormatter;
-use Mission\Export\Formatters\FormatterInterface;
-use Mission\Export\Formatters\JsonFormatter;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Model;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Models\Tribute;
-use Mission\Settings\SettingsService;
+use MissionDP\Currency\Currency;
+use MissionDP\Export\Formatters\CsvFormatter;
+use MissionDP\Export\Formatters\FormatterInterface;
+use MissionDP\Export\Formatters\JsonFormatter;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Model;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -75,7 +75,7 @@ class ExportService {
 		 *
 		 * @param array  $columns Column definitions.
 		 */
-		return apply_filters( "mission_export_{$type}_columns", $columns );
+		return apply_filters( "missiondp_export_{$type}_columns", $columns );
 	}
 
 	/**
@@ -94,145 +94,145 @@ class ExportService {
 			'donors' => [
 				[
 					'key'   => 'name',
-					'label' => __( 'Name', 'missionwp-donation-platform' ),
+					'label' => __( 'Name', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'email',
-					'label' => __( 'Email', 'missionwp-donation-platform' ),
+					'label' => __( 'Email', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => $is_test ? 'test_total_donated' : 'total_donated',
-					'label' => __( 'Total Given', 'missionwp-donation-platform' ),
+					'label' => __( 'Total Given', 'mission-donation-platform' ),
 					'type'  => 'amount',
 				],
 				[
 					'key'   => $is_test ? 'test_transaction_count' : 'transaction_count',
-					'label' => __( 'Donations', 'missionwp-donation-platform' ),
+					'label' => __( 'Donations', 'mission-donation-platform' ),
 					'type'  => 'int',
 				],
 				[
 					'key'   => $is_test ? 'test_first_transaction' : 'first_transaction',
-					'label' => __( 'First Donation', 'missionwp-donation-platform' ),
+					'label' => __( 'First Donation', 'mission-donation-platform' ),
 					'type'  => 'date',
 				],
 			],
 			'transactions' => [
 				[
 					'key'   => 'id',
-					'label' => __( 'ID', 'missionwp-donation-platform' ),
+					'label' => __( 'ID', 'mission-donation-platform' ),
 					'type'  => 'int',
 				],
 				[
 					'key'   => 'donor_name',
-					'label' => __( 'Donor', 'missionwp-donation-platform' ),
+					'label' => __( 'Donor', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'amount',
-					'label' => __( 'Amount', 'missionwp-donation-platform' ),
+					'label' => __( 'Amount', 'mission-donation-platform' ),
 					'type'  => 'amount',
 				],
 				[
 					'key'   => 'campaign_title',
-					'label' => __( 'Campaign', 'missionwp-donation-platform' ),
+					'label' => __( 'Campaign', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'date_created',
-					'label' => __( 'Date', 'missionwp-donation-platform' ),
+					'label' => __( 'Date', 'mission-donation-platform' ),
 					'type'  => 'date',
 				],
 				[
 					'key'   => 'status',
-					'label' => __( 'Status', 'missionwp-donation-platform' ),
+					'label' => __( 'Status', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 			],
 			'campaigns' => [
 				[
 					'key'   => 'title',
-					'label' => __( 'Name', 'missionwp-donation-platform' ),
+					'label' => __( 'Name', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'goal_amount',
-					'label' => __( 'Goal', 'missionwp-donation-platform' ),
+					'label' => __( 'Goal', 'mission-donation-platform' ),
 					'type'  => 'amount',
 				],
 				[
 					'key'   => $is_test ? 'test_total_raised' : 'total_raised',
-					'label' => __( 'Raised', 'missionwp-donation-platform' ),
+					'label' => __( 'Raised', 'mission-donation-platform' ),
 					'type'  => 'amount',
 				],
 				[
 					'key'   => $is_test ? 'test_donor_count' : 'donor_count',
-					'label' => __( 'Donors', 'missionwp-donation-platform' ),
+					'label' => __( 'Donors', 'mission-donation-platform' ),
 					'type'  => 'int',
 				],
 				[
 					'key'   => 'status',
-					'label' => __( 'Status', 'missionwp-donation-platform' ),
+					'label' => __( 'Status', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 			],
 			'subscriptions' => [
 				[
 					'key'   => 'id',
-					'label' => __( 'ID', 'missionwp-donation-platform' ),
+					'label' => __( 'ID', 'mission-donation-platform' ),
 					'type'  => 'int',
 				],
 				[
 					'key'   => 'donor_name',
-					'label' => __( 'Donor', 'missionwp-donation-platform' ),
+					'label' => __( 'Donor', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'amount',
-					'label' => __( 'Amount', 'missionwp-donation-platform' ),
+					'label' => __( 'Amount', 'mission-donation-platform' ),
 					'type'  => 'amount',
 				],
 				[
 					'key'   => 'frequency',
-					'label' => __( 'Frequency', 'missionwp-donation-platform' ),
+					'label' => __( 'Frequency', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'status',
-					'label' => __( 'Status', 'missionwp-donation-platform' ),
+					'label' => __( 'Status', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 			],
 			'tributes' => [
 				[
 					'key'   => 'transaction_id',
-					'label' => __( 'Transaction', 'missionwp-donation-platform' ),
+					'label' => __( 'Transaction', 'mission-donation-platform' ),
 					'type'  => 'int',
 				],
 				[
 					'key'   => 'donor_name',
-					'label' => __( 'Donor', 'missionwp-donation-platform' ),
+					'label' => __( 'Donor', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'tribute_type',
-					'label' => __( 'Type', 'missionwp-donation-platform' ),
+					'label' => __( 'Type', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'honoree_name',
-					'label' => __( 'Honoree', 'missionwp-donation-platform' ),
+					'label' => __( 'Honoree', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'notify_method',
-					'label' => __( 'Notify Method', 'missionwp-donation-platform' ),
+					'label' => __( 'Notify Method', 'mission-donation-platform' ),
 					'type'  => 'string',
 				],
 				[
 					'key'   => 'date_created',
-					'label' => __( 'Date', 'missionwp-donation-platform' ),
+					'label' => __( 'Date', 'mission-donation-platform' ),
 					'type'  => 'date',
 				],
 			],
@@ -244,7 +244,7 @@ class ExportService {
 		 *
 		 * @param array $columns Preview column definitions.
 		 */
-		return apply_filters( "mission_export_{$type}_preview_columns", $columns );
+		return apply_filters( "missiondp_export_{$type}_preview_columns", $columns );
 	}
 
 	/**
@@ -361,7 +361,7 @@ class ExportService {
 			 * @param array $row   Row data keyed by column key.
 			 * @param Model $model The source model instance.
 			 */
-			$rows[] = apply_filters( "mission_export_{$type}_row", $row, $model );
+			$rows[] = apply_filters( "missiondp_export_{$type}_row", $row, $model );
 		}
 
 		return [
@@ -390,7 +390,7 @@ class ExportService {
 		 *
 		 * @param array<string, FormatterInterface> $formatters Keyed by format identifier.
 		 */
-		$formatters = apply_filters( 'mission_export_formats', $formatters );
+		$formatters = apply_filters( 'missiondp_export_formats', $formatters );
 
 		return $formatters[ $format ] ?? null;
 	}
@@ -446,7 +446,7 @@ class ExportService {
 		 * @param array $query_args The query arguments for Model::query().
 		 * @param array $params     The original request parameters.
 		 */
-		return apply_filters( "mission_export_{$type}_query_args", $query_args, $params );
+		return apply_filters( "missiondp_export_{$type}_query_args", $query_args, $params );
 	}
 
 	/**
@@ -1128,7 +1128,7 @@ class ExportService {
 		return match ( $col_type ) {
 			'amount' => Currency::format_amount( (int) $value, $currency ),
 			'date'   => date_i18n( 'M j, Y', strtotime( (string) $value ) ),
-			'bool'   => $value ? __( 'Yes', 'missionwp-donation-platform' ) : __( 'No', 'missionwp-donation-platform' ),
+			'bool'   => $value ? __( 'Yes', 'mission-donation-platform' ) : __( 'No', 'mission-donation-platform' ),
 			'int'    => number_format_i18n( (int) $value ),
 			default  => (string) $value,
 		};
@@ -1210,6 +1210,6 @@ class ExportService {
 		 *
 		 * @param string[] $meta_keys Sorted meta key names.
 		 */
-		return apply_filters( "mission_export_{$type}_meta_keys", $meta_keys );
+		return apply_filters( "missiondp_export_{$type}_meta_keys", $meta_keys );
 	}
 }

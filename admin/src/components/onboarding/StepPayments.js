@@ -5,7 +5,7 @@ export default function StepPayments( {
   stripeDisplayName,
   connectError,
 } ) {
-  const connectUrl = window.missionAdmin?.stripeConnectUrlDashboard;
+  const connectUrl = window.missiondpAdmin?.stripeConnectUrlDashboard;
 
   return (
     <div className="mission-onboarding-stripe-hero">
@@ -19,15 +19,12 @@ export default function StepPayments( {
       </div>
 
       <h1 className="mission-onboarding-step__heading">
-        { __(
-          'Connect your payment processor',
-          'missionwp-donation-platform'
-        ) }
+        { __( 'Connect your payment processor', 'mission-donation-platform' ) }
       </h1>
       <p className="mission-onboarding-step__subheading">
         { __(
           'Stripe handles all payment processing securely. Connect your existing Stripe account or create a new one \u2014 it only takes a minute.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
       </p>
 
@@ -48,9 +45,9 @@ export default function StepPayments( {
           { stripeDisplayName
             ? `${ __(
                 'Connected',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) } \u2014 ${ stripeDisplayName }`
-            : __( 'Connected', 'missionwp-donation-platform' ) }
+            : __( 'Connected', 'mission-donation-platform' ) }
         </div>
       ) : (
         <>
@@ -72,7 +69,7 @@ export default function StepPayments( {
               >
                 <path d="M8 3v12M3 8h12" />
               </svg>
-              { __( 'Connect with Stripe', 'missionwp-donation-platform' ) }
+              { __( 'Connect with Stripe', 'mission-donation-platform' ) }
             </a>
           ) }
 
@@ -92,7 +89,7 @@ export default function StepPayments( {
             </svg>
             { __(
               'You\u2019ll be redirected to Stripe to connect or create an account, then returned here automatically.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
 
@@ -113,7 +110,7 @@ export default function StepPayments( {
               </svg>
               { __(
                 'You can skip this for now, but you won\u2019t be able to accept donations until Stripe is connected.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </p>
           </div>

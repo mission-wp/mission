@@ -2,11 +2,11 @@ import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 const STEPS = [
-  { number: 1, label: __( 'Basics', 'missionwp-donation-platform' ) },
-  { number: 2, label: __( 'Details', 'missionwp-donation-platform' ) },
-  { number: 3, label: __( 'Payments', 'missionwp-donation-platform' ) },
-  { number: 4, label: __( 'Campaign', 'missionwp-donation-platform' ) },
-  { number: 5, label: __( 'Done', 'missionwp-donation-platform' ) },
+  { number: 1, label: __( 'Basics', 'mission-donation-platform' ) },
+  { number: 2, label: __( 'Details', 'mission-donation-platform' ) },
+  { number: 3, label: __( 'Payments', 'mission-donation-platform' ) },
+  { number: 4, label: __( 'Campaign', 'mission-donation-platform' ) },
+  { number: 5, label: __( 'Done', 'mission-donation-platform' ) },
 ];
 
 const checkSvg = (

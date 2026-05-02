@@ -2,13 +2,13 @@
 /**
  * REST endpoint for Stripe Connect OAuth flow.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -84,7 +84,7 @@ class StripeConnectEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to manage settings.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to manage settings.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -118,8 +118,8 @@ class StripeConnectEndpoint {
 
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
-				'mission_connect_failed',
-				__( 'Could not reach the MissionWP API.', 'missionwp-donation-platform' ),
+				'missiondp_connect_failed',
+				__( 'Could not reach the Mission API.', 'mission-donation-platform' ),
 				[ 'status' => 502 ]
 			);
 		}
@@ -129,8 +129,8 @@ class StripeConnectEndpoint {
 
 		if ( 200 !== $code || empty( $body['site_token'] ) ) {
 			return new WP_Error(
-				'mission_connect_failed',
-				$body['error'] ?? __( 'Stripe connection failed.', 'missionwp-donation-platform' ),
+				'missiondp_connect_failed',
+				$body['error'] ?? __( 'Stripe connection failed.', 'mission-donation-platform' ),
 				[ 'status' => $code ?: 500 ]
 			);
 		}
@@ -200,7 +200,7 @@ class StripeConnectEndpoint {
 		if ( is_wp_error( $response ) ) {
 			return new WP_Error(
 				'webhook_registration_failed',
-				__( 'Stripe connected but webhook registration failed. Please try reconnecting.', 'missionwp-donation-platform' ),
+				__( 'Stripe connected but webhook registration failed. Please try reconnecting.', 'mission-donation-platform' ),
 				[ 'status' => 502 ]
 			);
 		}
@@ -210,7 +210,7 @@ class StripeConnectEndpoint {
 		if ( empty( $body['webhook_secret'] ) ) {
 			return new WP_Error(
 				'webhook_registration_failed',
-				__( 'Stripe connected but webhook registration failed. Please try reconnecting.', 'missionwp-donation-platform' ),
+				__( 'Stripe connected but webhook registration failed. Please try reconnecting.', 'mission-donation-platform' ),
 				[ 'status' => 502 ]
 			);
 		}

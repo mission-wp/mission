@@ -30,10 +30,10 @@ export default function EditPageTab( {
 
   const openMediaLibrary = () => {
     const frame = wp.media( {
-      title: __( 'Select Campaign Image', 'missionwp-donation-platform' ),
+      title: __( 'Select Campaign Image', 'mission-donation-platform' ),
       library: { type: 'image' },
       multiple: false,
-      button: { text: __( 'Use this image', 'missionwp-donation-platform' ) },
+      button: { text: __( 'Use this image', 'mission-donation-platform' ) },
     } );
 
     frame.on( 'select', () => {
@@ -58,13 +58,13 @@ export default function EditPageTab( {
       { /* Visibility */ }
       <div className="mission-card" style={ { marginBottom: 24 } }>
         <h3 className="mission-settings-section__title">
-          { __( 'Visibility', 'missionwp-donation-platform' ) }
+          { __( 'Visibility', 'mission-donation-platform' ) }
         </h3>
         <div className="mission-toggle-row">
           { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
           <label
             className="mission-toggle-switch"
-            aria-label={ __( 'Campaign page', 'missionwp-donation-platform' ) }
+            aria-label={ __( 'Campaign page', 'mission-donation-platform' ) }
           >
             <input
               type="checkbox"
@@ -83,12 +83,12 @@ export default function EditPageTab( {
             style={ { cursor: 'pointer' } }
           >
             <div className="mission-toggle-row__label">
-              { __( 'Campaign page', 'missionwp-donation-platform' ) }
+              { __( 'Campaign page', 'mission-donation-platform' ) }
             </div>
             <div className="mission-toggle-row__hint">
               { __(
                 'Give this campaign its own dedicated page where donors can learn more and give',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </div>
           </div>
@@ -99,7 +99,7 @@ export default function EditPageTab( {
             className="mission-toggle-switch"
             aria-label={ __(
               'Show in campaign listings',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           >
             <input
@@ -119,15 +119,12 @@ export default function EditPageTab( {
             style={ { cursor: 'pointer' } }
           >
             <div className="mission-toggle-row__label">
-              { __(
-                'Show in campaign listings',
-                'missionwp-donation-platform'
-              ) }
+              { __( 'Show in campaign listings', 'mission-donation-platform' ) }
             </div>
             <div className="mission-toggle-row__hint">
               { __(
                 'Display this campaign on your public campaigns page',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </div>
           </div>
@@ -140,7 +137,7 @@ export default function EditPageTab( {
           { /* Slug */ }
           <div className="mission-field-group" style={ { marginBottom: 24 } }>
             <label className="mission-field-label" htmlFor="campaign-slug">
-              { __( 'Campaign URL', 'missionwp-donation-platform' ) }
+              { __( 'Campaign URL', 'mission-donation-platform' ) }
             </label>
             <div className="mission-field-slug">
               <span className="mission-field-slug__prefix">{ siteUrl }</span>
@@ -170,7 +167,7 @@ export default function EditPageTab( {
           <div className="mission-card" style={ { marginBottom: 24 } }>
             <div className="mission-field-group" style={ { marginBottom: 24 } }>
               <span className="mission-field-label">
-                { __( 'Campaign Image', 'missionwp-donation-platform' ) }
+                { __( 'Campaign Image', 'mission-donation-platform' ) }
               </span>
               { formState.image_url ? (
                 <div className="mission-image-preview">
@@ -178,7 +175,7 @@ export default function EditPageTab( {
                     src={ formState.image_url }
                     alt={ __(
                       'Campaign image preview',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ) }
                   />
                   <div
@@ -195,7 +192,7 @@ export default function EditPageTab( {
                       size="compact"
                       onClick={ openMediaLibrary }
                     >
-                      { __( 'Replace', 'missionwp-donation-platform' ) }
+                      { __( 'Replace', 'mission-donation-platform' ) }
                     </Button>
                     <Button
                       variant="tertiary"
@@ -203,7 +200,7 @@ export default function EditPageTab( {
                       isDestructive
                       onClick={ removeImage }
                     >
-                      { __( 'Remove', 'missionwp-donation-platform' ) }
+                      { __( 'Remove', 'mission-donation-platform' ) }
                     </Button>
                   </div>
                 </div>
@@ -239,13 +236,13 @@ export default function EditPageTab( {
                   <span className="mission-image-upload-zone__text">
                     { __(
                       'Click to upload or drag and drop',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ) }
                   </span>
                   <span className="mission-image-upload-zone__hint">
                     { __(
                       'PNG, JPG, or WebP up to 5MB',
-                      'missionwp-donation-platform'
+                      'mission-donation-platform'
                     ) }
                   </span>
                 </div>
@@ -254,14 +251,14 @@ export default function EditPageTab( {
 
             <div className="mission-field-group">
               <label className="mission-field-label" htmlFor="campaign-excerpt">
-                { __( 'Short Description', 'missionwp-donation-platform' ) }
+                { __( 'Short Description', 'mission-donation-platform' ) }
               </label>
               <textarea
                 id="campaign-excerpt"
                 className="mission-field-textarea"
                 placeholder={ __(
                   'A brief summary shown in campaign listings and search results…',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
                 value={ formState.excerpt }
                 onChange={ ( e ) => updateField( 'excerpt', e.target.value ) }
@@ -283,8 +280,8 @@ export default function EditPageTab( {
         >
           { saveSuccess && <Icon icon={ check } size={ 20 } /> }
           { saveSuccess
-            ? __( 'Changes Saved', 'missionwp-donation-platform' )
-            : __( 'Save Changes', 'missionwp-donation-platform' ) }
+            ? __( 'Changes Saved', 'mission-donation-platform' )
+            : __( 'Save Changes', 'mission-donation-platform' ) }
         </Button>
       </div>
     </div>

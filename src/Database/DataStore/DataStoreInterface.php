@@ -2,10 +2,10 @@
 /**
  * DataStore interface for CRUD operations.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database\DataStore;
+namespace MissionDP\Database\DataStore;
 
 defined( 'ABSPATH' ) || exit;
 

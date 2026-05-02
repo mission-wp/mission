@@ -3,16 +3,16 @@
  * Block Name: Campaign Card
  * Description: Display a campaign as a card with image, progress, and a link to its page.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
  * @var WP_Block $block      Block instance.
  */
 
-use Mission\Campaigns\CampaignPostType;
-use Mission\Currency\Currency;
-use Mission\Models\Campaign;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -33,7 +33,7 @@ if ( ! $campaign ) {
 }
 
 // Settings and test mode.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $is_test          = (bool) ( $mission_settings['test_mode'] ?? false );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
@@ -65,7 +65,7 @@ $show_tag         = $attributes['showTag'] ?? true;
 $show_description = $attributes['showDescription'] ?? true;
 $show_progress    = ( $attributes['showProgressBar'] ?? true ) && $has_goal;
 $show_donor_count = $attributes['showDonorCount'] ?? true;
-$button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'missionwp-donation-platform' );
+$button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'mission-donation-platform' );
 
 // Campaign URL and image.
 $campaign_url = $campaign->get_url();
@@ -83,17 +83,17 @@ if ( $show_tag ) {
 	 *
 	 * @param int $days Threshold in days. Default 30.
 	 */
-	$ending_soon_days = (int) apply_filters( 'mission_campaign_card_ending_soon_days', 30 );
+	$ending_soon_days = (int) apply_filters( 'missiondp_campaign_card_ending_soon_days', 30 );
 
 	if ( $is_ended || ( $has_end_date && 0 === $days_remaining ) ) {
-		$tag_text  = __( 'Ended', 'missionwp-donation-platform' );
+		$tag_text  = __( 'Ended', 'mission-donation-platform' );
 		$tag_class = 'mission-cc-tag--ended';
 	} elseif ( $has_goal && $goal_progress >= $goal_amount ) {
-		$tag_text  = __( 'Goal Reached', 'missionwp-donation-platform' );
+		$tag_text  = __( 'Goal Reached', 'mission-donation-platform' );
 		$tag_class = 'mission-cc-tag--goal-reached';
 	} elseif ( $has_end_date && null !== $days_remaining && $days_remaining <= $ending_soon_days ) {
 		/* translators: %d: number of days remaining */
-		$tag_text  = sprintf( _n( '%d Day Left', '%d Days Left', $days_remaining, 'missionwp-donation-platform' ), $days_remaining );
+		$tag_text  = sprintf( _n( '%d Day Left', '%d Days Left', $days_remaining, 'mission-donation-platform' ), $days_remaining );
 		$tag_class = 'mission-cc-tag--ending-soon';
 	}
 }
@@ -103,31 +103,31 @@ if ( 'amount' === $goal_type ) {
 	$raised_text = Currency::format_amount( $goal_progress, $currency );
 	$goal_text   = $has_goal
 		/* translators: %s: formatted goal amount */
-		? sprintf( __( 'of %s', 'missionwp-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
+		? sprintf( __( 'of %s', 'mission-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
 		: '';
 } elseif ( 'donations' === $goal_type ) {
 	$raised_text = number_format_i18n( $goal_progress );
 	$goal_text   = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'of %s', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
+		? sprintf( __( 'of %s', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
 		: '';
 } else {
 	$raised_text = number_format_i18n( $goal_progress );
 	$goal_text   = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'of %s', 'missionwp-donation-platform' ), number_format_i18n( $goal_amount ) )
+		? sprintf( __( 'of %s', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
 		: '';
 }
 
 // End date display text for meta row.
 if ( $is_ended && $has_end_date ) {
 	/* translators: %s: formatted date */
-	$time_text = sprintf( __( 'Ended %s', 'missionwp-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
+	$time_text = sprintf( __( 'Ended %s', 'mission-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 } elseif ( $has_end_date ) {
 	/* translators: %s: formatted date */
-	$time_text = sprintf( __( 'Ends %s', 'missionwp-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
+	$time_text = sprintf( __( 'Ends %s', 'mission-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 } else {
-	$time_text = __( 'Ongoing', 'missionwp-donation-platform' );
+	$time_text = __( 'Ongoing', 'mission-donation-platform' );
 }
 
 // Card CSS classes.
@@ -161,7 +161,7 @@ ob_start();
 ?>
 <div
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-campaign-card' ] ) ); ?>
-	data-wp-interactive="mission/campaign"
+	data-wp-interactive="mission-donation-platform/campaign"
 	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>;"
 >
 	<div class="<?php echo esc_attr( $card_classes ); ?>">
@@ -210,7 +210,7 @@ ob_start();
 						<?php if ( $show_donor_count ) : ?>
 							<span class="mission-cc-donors">
 								<strong><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></strong>
-								<?php esc_html_e( 'donors', 'missionwp-donation-platform' ); ?>
+								<?php esc_html_e( 'donors', 'mission-donation-platform' ); ?>
 							</span>
 						<?php endif; ?>
 						<span class="mission-cc-time"><?php echo esc_html( $time_text ); ?></span>
@@ -238,5 +238,4 @@ $output = ob_get_clean();
  * @param Campaign $campaign   Campaign model.
  * @param array    $attributes Block attributes.
  */
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_campaign_card_output', $output, $campaign, $attributes );
+echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_campaign_card_output', $output, $campaign, $attributes ) );

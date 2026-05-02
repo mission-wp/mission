@@ -11,10 +11,10 @@ export default function StepCampaign( { data, updateData, errors } ) {
 
   const openMediaLibrary = () => {
     const frame = wp.media( {
-      title: __( 'Select Campaign Image', 'missionwp-donation-platform' ),
+      title: __( 'Select Campaign Image', 'mission-donation-platform' ),
       library: { type: 'image' },
       multiple: false,
-      button: { text: __( 'Use this image', 'missionwp-donation-platform' ) },
+      button: { text: __( 'Use this image', 'mission-donation-platform' ) },
     } );
 
     frame.on( 'select', () => {
@@ -31,12 +31,12 @@ export default function StepCampaign( { data, updateData, errors } ) {
   return (
     <>
       <h1 className="mission-onboarding-step__heading">
-        { __( 'Create a campaign', 'missionwp-donation-platform' ) }
+        { __( 'Create a campaign', 'mission-donation-platform' ) }
       </h1>
       <p className="mission-onboarding-step__subheading">
         { __(
           'Campaigns organize your fundraising efforts. Fill out the details below to generate a ready-to-share campaign page.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
       </p>
 
@@ -50,7 +50,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
           className="mission-onboarding-field__label"
           htmlFor="ob-campaign-name"
         >
-          { __( 'Campaign Name', 'missionwp-donation-platform' ) }
+          { __( 'Campaign Name', 'mission-donation-platform' ) }
         </label>
         <input
           type="text"
@@ -73,9 +73,9 @@ export default function StepCampaign( { data, updateData, errors } ) {
           className="mission-onboarding-field__label"
           htmlFor="ob-campaign-desc"
         >
-          { __( 'Description', 'missionwp-donation-platform' ) }
+          { __( 'Description', 'mission-donation-platform' ) }
           <span className="mission-onboarding-field__optional">
-            { __( '\u2014 optional', 'missionwp-donation-platform' ) }
+            { __( '\u2014 optional', 'mission-donation-platform' ) }
           </span>
         </label>
         <textarea
@@ -87,7 +87,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
           }
           placeholder={ __(
             'A brief description of this campaign\u2026',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
         />
       </div>
@@ -95,7 +95,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
       { /* Goal Type */ }
       <div className="mission-onboarding-field">
         <span className="mission-onboarding-field__label">
-          { __( 'Goal Type', 'missionwp-donation-platform' ) }
+          { __( 'Goal Type', 'mission-donation-platform' ) }
         </span>
         <GoalTypePicker
           value={ data.campaign_goal_type || 'amount' }
@@ -115,10 +115,10 @@ export default function StepCampaign( { data, updateData, errors } ) {
         >
           { /* eslint-disable-next-line no-nested-ternary */ }
           { data.campaign_goal_type === 'amount'
-            ? __( 'Goal Amount', 'missionwp-donation-platform' )
+            ? __( 'Goal Amount', 'mission-donation-platform' )
             : data.campaign_goal_type === 'donations'
-            ? __( 'Number of Donations', 'missionwp-donation-platform' )
-            : __( 'Number of Donors', 'missionwp-donation-platform' ) }
+            ? __( 'Number of Donations', 'mission-donation-platform' )
+            : __( 'Number of Donors', 'mission-donation-platform' ) }
         </label>
         { data.campaign_goal_type === 'amount' ? (
           <div className="mission-onboarding-currency-wrap">
@@ -162,9 +162,9 @@ export default function StepCampaign( { data, updateData, errors } ) {
             className="mission-onboarding-field__label"
             htmlFor="ob-campaign-start"
           >
-            { __( 'Start Date', 'missionwp-donation-platform' ) }
+            { __( 'Start Date', 'mission-donation-platform' ) }
             <span className="mission-onboarding-field__optional">
-              { __( '\u2014 optional', 'missionwp-donation-platform' ) }
+              { __( '\u2014 optional', 'mission-donation-platform' ) }
             </span>
           </label>
           <input
@@ -182,9 +182,9 @@ export default function StepCampaign( { data, updateData, errors } ) {
             className="mission-onboarding-field__label"
             htmlFor="ob-campaign-end"
           >
-            { __( 'End Date', 'missionwp-donation-platform' ) }
+            { __( 'End Date', 'mission-donation-platform' ) }
             <span className="mission-onboarding-field__optional">
-              { __( '\u2014 optional', 'missionwp-donation-platform' ) }
+              { __( '\u2014 optional', 'mission-donation-platform' ) }
             </span>
           </label>
           <input
@@ -202,9 +202,9 @@ export default function StepCampaign( { data, updateData, errors } ) {
       { /* Image */ }
       <div className="mission-onboarding-field">
         <span className="mission-onboarding-field__label">
-          { __( 'Campaign Image', 'missionwp-donation-platform' ) }
+          { __( 'Campaign Image', 'mission-donation-platform' ) }
           <span className="mission-onboarding-field__optional">
-            { __( '\u2014 optional', 'missionwp-donation-platform' ) }
+            { __( '\u2014 optional', 'mission-donation-platform' ) }
           </span>
         </span>
         { data.campaign_image_url ? (
@@ -213,7 +213,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
               src={ data.campaign_image_url }
               alt={ __(
                 'Campaign image preview',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             />
             <div className="mission-onboarding-image-preview__actions">
@@ -222,7 +222,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
                 className="mission-onboarding-image-btn"
                 onClick={ openMediaLibrary }
               >
-                { __( 'Replace', 'missionwp-donation-platform' ) }
+                { __( 'Replace', 'mission-donation-platform' ) }
               </button>
               <button
                 type="button"
@@ -234,7 +234,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
                   } )
                 }
               >
-                { __( 'Remove', 'missionwp-donation-platform' ) }
+                { __( 'Remove', 'mission-donation-platform' ) }
               </button>
             </div>
           </div>
@@ -270,13 +270,13 @@ export default function StepCampaign( { data, updateData, errors } ) {
             <span className="mission-onboarding-image-upload__text">
               { __(
                 'Click to upload or select from media library',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </span>
             <span className="mission-onboarding-image-upload__hint">
               { __(
                 'PNG, JPG, or WebP up to 5MB',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </span>
           </div>

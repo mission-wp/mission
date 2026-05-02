@@ -2,19 +2,19 @@
 /**
  * Donor dashboard transactions and receipts endpoint.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints\DonorDashboard;
+namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
-use Mission\Receipts\ReceiptPdfGenerator;
-use Mission\Reporting\ReportingService;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\DonorDashboardPrepareTrait;
-use Mission\Rest\Traits\ResolveDonorTrait;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
+use MissionDP\Receipts\ReceiptPdfGenerator;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
+use MissionDP\Rest\Traits\ResolveDonorTrait;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -200,7 +200,7 @@ class TransactionsEndpoint {
 		if ( empty( $receipt_data['transactions'] ) ) {
 			return new WP_Error(
 				'no_transactions',
-				__( 'No completed transactions found for this year.', 'missionwp-donation-platform' ),
+				__( 'No completed transactions found for this year.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -209,7 +209,7 @@ class TransactionsEndpoint {
 		$pdf       = $generator->generate_annual( $donor, $year, $receipt_data );
 
 		$filename = sanitize_file_name(
-			sprintf( '%s-receipt-%d.pdf', ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ), $year )
+			sprintf( '%s-receipt-%d.pdf', ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ), $year )
 		);
 
 		/**
@@ -220,7 +220,7 @@ class TransactionsEndpoint {
 		 * @param int    $year         Calendar year.
 		 * @param array  $receipt_data Receipt data.
 		 */
-		$filename = apply_filters( 'mission_receipt_filename', $filename, $donor, $year, $receipt_data );
+		$filename = apply_filters( 'missiondp_receipt_filename', $filename, $donor, $year, $receipt_data );
 
 		$this->stream_pdf( $pdf, $filename );
 
@@ -245,7 +245,7 @@ class TransactionsEndpoint {
 		if ( ! $transaction ) {
 			return new WP_Error(
 				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
+				__( 'Transaction not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -253,7 +253,7 @@ class TransactionsEndpoint {
 		if ( $transaction->donor_id !== $donor->id ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to access this transaction.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to access this transaction.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -261,7 +261,7 @@ class TransactionsEndpoint {
 		if ( 'completed' !== $transaction->status ) {
 			return new WP_Error(
 				'transaction_not_completed',
-				__( 'Receipts are only available for completed transactions.', 'missionwp-donation-platform' ),
+				__( 'Receipts are only available for completed transactions.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -272,7 +272,7 @@ class TransactionsEndpoint {
 			'id'              => $transaction->id,
 			'amount'          => $transaction->amount,
 			'currency'        => $transaction->currency,
-			'campaign_name'   => $campaign?->title ?? __( 'General Fund', 'missionwp-donation-platform' ),
+			'campaign_name'   => $campaign?->title ?? __( 'General Fund', 'mission-donation-platform' ),
 			'payment_gateway' => $transaction->payment_gateway,
 			'date_completed'  => $transaction->date_completed,
 		];
@@ -281,11 +281,11 @@ class TransactionsEndpoint {
 		$pdf       = $generator->generate_single( $donor, $transaction_data );
 
 		$filename = sanitize_file_name(
-			sprintf( '%s-receipt-%d.pdf', ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ), $transaction->id )
+			sprintf( '%s-receipt-%d.pdf', ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ), $transaction->id )
 		);
 
 		/** This filter is documented in TransactionsEndpoint::get_receipt_pdf(). */
-		$filename = apply_filters( 'mission_receipt_filename', $filename, $donor, null, $transaction_data );
+		$filename = apply_filters( 'missiondp_receipt_filename', $filename, $donor, null, $transaction_data );
 
 		$this->stream_pdf( $pdf, $filename );
 

@@ -2,15 +2,15 @@
 /**
  * Tests for the DonationFormSettings class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Blocks;
+namespace MissionDP\Tests\Blocks;
 
-use Mission\Blocks\DonationFormSettings;
-use Mission\Campaigns\CampaignPostType;
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
+use MissionDP\Blocks\DonationFormSettings;
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
 use WP_UnitTestCase;
 
 /**
@@ -25,8 +25,8 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		DatabaseModule::create_tables();
 	}
@@ -48,11 +48,11 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
-		delete_option( 'mission_settings' );
+		delete_option( 'missiondp_settings' );
 		wp_reset_postdata();
 
 		parent::tear_down();
@@ -225,7 +225,7 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 	 * Test resolve includes currency from settings option.
 	 */
 	public function test_resolve_includes_currency_from_settings(): void {
-		update_option( 'mission_settings', [ 'currency' => 'EUR' ] );
+		update_option( 'missiondp_settings', [ 'currency' => 'EUR' ] );
 
 		$result = DonationFormSettings::resolve( [] );
 
@@ -249,7 +249,7 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 	 * Test resolve includes color and branding tokens.
 	 */
 	public function test_resolve_includes_color_and_branding_tokens(): void {
-		update_option( 'mission_settings', [ 'primary_color' => '#ff5500' ] );
+		update_option( 'missiondp_settings', [ 'primary_color' => '#ff5500' ] );
 		update_option( 'blogname', 'My Nonprofit' );
 
 		$result = DonationFormSettings::resolve( [ 'primaryColor' => '#003366' ] );
@@ -349,13 +349,13 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test resolve settings are filterable via mission_donation_form_settings.
+	 * Test resolve settings are filterable via missiondp_donation_form_settings.
 	 */
 	public function test_resolve_settings_are_filterable(): void {
 		$filter_args = [];
 
 		add_filter(
-			'mission_donation_form_settings',
+			'missiondp_donation_form_settings',
 			function ( $settings, $attributes, $campaign_id ) use ( &$filter_args ) {
 				$filter_args = [
 					'settings'    => $settings,
@@ -380,6 +380,6 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		// Filter modified the output.
 		$this->assertSame( 'injected', $result['customKey'] );
 
-		remove_all_filters( 'mission_donation_form_settings' );
+		remove_all_filters( 'missiondp_donation_form_settings' );
 	}
 }

@@ -124,18 +124,18 @@ export default function EditDonorDrawer( {
     if ( ! form.email ) {
       errors.email = __(
         'This field is required.',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       );
     } else if ( ! isValidEmail( form.email ) ) {
       errors.email = __(
         'Please enter a valid email address.',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       );
     }
     if ( ! form.firstName ) {
       errors.firstName = __(
         'This field is required.',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       );
     }
     return errors;
@@ -151,7 +151,7 @@ export default function EditDonorDrawer( {
       setError(
         __(
           'Please fix the errors below and try again.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         )
       );
       bodyRef.current?.scrollTo( { top: 0, behavior: 'smooth' } );
@@ -162,7 +162,7 @@ export default function EditDonorDrawer( {
 
     try {
       await apiFetch( {
-        path: `/mission/v1/donors/${ donor.id }`,
+        path: `/mission-donation-platform/v1/donors/${ donor.id }`,
         method: 'PUT',
         data: {
           email: form.email,
@@ -183,7 +183,7 @@ export default function EditDonorDrawer( {
     } catch ( err ) {
       setError(
         err.message ||
-          __( 'Something went wrong.', 'missionwp-donation-platform' )
+          __( 'Something went wrong.', 'mission-donation-platform' )
       );
       bodyRef.current?.scrollTo( { top: 0, behavior: 'smooth' } );
     } finally {
@@ -206,7 +206,7 @@ export default function EditDonorDrawer( {
         disabled={ isSaving }
         __next40pxDefaultSize
       >
-        { __( 'Cancel', 'missionwp-donation-platform' ) }
+        { __( 'Cancel', 'mission-donation-platform' ) }
       </Button>
       <Button
         variant="primary"
@@ -219,14 +219,14 @@ export default function EditDonorDrawer( {
         } }
         __next40pxDefaultSize
       >
-        { __( 'Save Changes', 'missionwp-donation-platform' ) }
+        { __( 'Save Changes', 'mission-donation-platform' ) }
       </Button>
     </HStack>
   );
 
   return (
     <Drawer
-      title={ __( 'Edit Donor', 'missionwp-donation-platform' ) }
+      title={ __( 'Edit Donor', 'mission-donation-platform' ) }
       isOpen={ isOpen }
       onClose={ onClose }
       footer={ footer }
@@ -243,7 +243,7 @@ export default function EditDonorDrawer( {
             id={ FIELD_IDS.email }
             label={
               <RequiredLabel
-                text={ __( 'Email', 'missionwp-donation-platform' ) }
+                text={ __( 'Email', 'mission-donation-platform' ) }
               />
             }
             type="email"
@@ -264,7 +264,7 @@ export default function EditDonorDrawer( {
               id={ FIELD_IDS.firstName }
               label={
                 <RequiredLabel
-                  text={ __( 'First Name', 'missionwp-donation-platform' ) }
+                  text={ __( 'First Name', 'mission-donation-platform' ) }
                 />
               }
               value={ form.firstName }
@@ -281,7 +281,7 @@ export default function EditDonorDrawer( {
           <div style={ { flex: 1 } }>
             <TextControl
               id={ FIELD_IDS.lastName }
-              label={ __( 'Last Name', 'missionwp-donation-platform' ) }
+              label={ __( 'Last Name', 'mission-donation-platform' ) }
               value={ form.lastName }
               onChange={ setField( 'lastName' ) }
               __next40pxDefaultSize
@@ -291,7 +291,7 @@ export default function EditDonorDrawer( {
         </HStack>
         <TextControl
           id={ FIELD_IDS.phone }
-          label={ __( 'Phone', 'missionwp-donation-platform' ) }
+          label={ __( 'Phone', 'mission-donation-platform' ) }
           type="tel"
           value={ form.phone }
           onChange={ setField( 'phone' ) }
@@ -300,7 +300,7 @@ export default function EditDonorDrawer( {
         />
         <TextControl
           id={ FIELD_IDS.address1 }
-          label={ __( 'Address Line 1', 'missionwp-donation-platform' ) }
+          label={ __( 'Address Line 1', 'mission-donation-platform' ) }
           value={ form.address1 }
           onChange={ setField( 'address1' ) }
           __next40pxDefaultSize
@@ -308,7 +308,7 @@ export default function EditDonorDrawer( {
         />
         <TextControl
           id={ FIELD_IDS.address2 }
-          label={ __( 'Address Line 2', 'missionwp-donation-platform' ) }
+          label={ __( 'Address Line 2', 'mission-donation-platform' ) }
           value={ form.address2 }
           onChange={ setField( 'address2' ) }
           __next40pxDefaultSize
@@ -318,7 +318,7 @@ export default function EditDonorDrawer( {
           <div style={ { flex: 1 } }>
             <TextControl
               id={ FIELD_IDS.city }
-              label={ __( 'City', 'missionwp-donation-platform' ) }
+              label={ __( 'City', 'mission-donation-platform' ) }
               value={ form.city }
               onChange={ setField( 'city' ) }
               __next40pxDefaultSize
@@ -334,7 +334,7 @@ export default function EditDonorDrawer( {
                 options={ [
                   {
                     value: '',
-                    label: __( 'Select…', 'missionwp-donation-platform' ),
+                    label: __( 'Select…', 'mission-donation-platform' ),
                   },
                   ...regionConfig.options,
                 ] }
@@ -368,7 +368,7 @@ export default function EditDonorDrawer( {
           <div style={ { flex: 1 } }>
             <SelectControl
               id={ FIELD_IDS.country }
-              label={ __( 'Country', 'missionwp-donation-platform' ) }
+              label={ __( 'Country', 'mission-donation-platform' ) }
               value={ form.country }
               options={ COUNTRIES }
               onChange={ handleCountryChange }

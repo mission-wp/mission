@@ -2,14 +2,14 @@
 /**
  * Shared campaign caching and model preparation for donor dashboard endpoints.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Traits;
+namespace MissionDP\Rest\Traits;
 
-use Mission\Models\Campaign;
-use Mission\Models\Transaction;
-use Mission\Models\Subscription;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Transaction;
+use MissionDP\Models\Subscription;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -79,7 +79,7 @@ trait DonorDashboardPrepareTrait {
 			'type'            => $transaction->type,
 			'status'          => $transaction->status,
 			'campaign_id'     => $transaction->campaign_id,
-			'campaign_name'   => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
+			'campaign_name'   => $campaign?->title ?? __( 'Deleted Campaign', 'mission-donation-platform' ),
 			'is_anonymous'    => $transaction->is_anonymous,
 			'payment_gateway' => $transaction->payment_gateway,
 			'date_created'    => $transaction->date_created,
@@ -106,7 +106,7 @@ trait DonorDashboardPrepareTrait {
 			'currency'          => $subscription->currency,
 			'frequency'         => $subscription->frequency,
 			'campaign_id'       => $subscription->campaign_id,
-			'campaign_name'     => $campaign?->title ?? __( 'Deleted Campaign', 'missionwp-donation-platform' ),
+			'campaign_name'     => $campaign?->title ?? __( 'Deleted Campaign', 'mission-donation-platform' ),
 			'renewal_count'     => $subscription->renewal_count,
 			'total_renewed'     => $subscription->total_renewed,
 			'total_given'       => $subscription->total_amount + $subscription->total_renewed,

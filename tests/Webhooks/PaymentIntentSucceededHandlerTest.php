@@ -6,17 +6,17 @@
  * completed, and the activation of pending subscriptions tied to an initial
  * payment.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Webhooks;
+namespace MissionDP\Tests\Webhooks;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Webhooks\PaymentIntentSucceededHandler;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Webhooks\PaymentIntentSucceededHandler;
 use WP_UnitTestCase;
 
 /**
@@ -45,16 +45,16 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -79,13 +79,13 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
@@ -159,7 +159,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 		$specific_fired = false;
 
 		$this->add_tracked_action(
-			'mission_transaction_status_transition',
+			'missiondp_transaction_status_transition',
 			function ( $txn, $old, $new ) use ( &$generic_fired, &$generic_args ) {
 				$generic_fired = true;
 				$generic_args  = [ 'old_status' => $old, 'new_status' => $new ];
@@ -168,7 +168,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 			3
 		);
 		$this->add_tracked_action(
-			'mission_transaction_status_pending_to_completed',
+			'missiondp_transaction_status_pending_to_completed',
 			function () use ( &$specific_fired ) {
 				$specific_fired = true;
 			},
@@ -301,7 +301,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 
 		$fired = 0;
 		$this->add_tracked_action(
-			'mission_transaction_status_pending_to_completed',
+			'missiondp_transaction_status_pending_to_completed',
 			function () use ( &$fired ) {
 				$fired++;
 			},
@@ -325,7 +325,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 
 		$fired = false;
 		$this->add_tracked_action(
-			'mission_transaction_status_transition',
+			'missiondp_transaction_status_transition',
 			function () use ( &$fired ) {
 				$fired = true;
 			},

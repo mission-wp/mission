@@ -4,10 +4,10 @@
  *
  * Shared by the donor dashboard and donation form blocks.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\DonorDashboard;
+namespace MissionDP\DonorDashboard;
 
 defined( 'ABSPATH' ) || exit;
 

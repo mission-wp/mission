@@ -2,15 +2,15 @@
 /**
  * REST endpoint for donors.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Donor;
-use Mission\Reporting\ReportingService;
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Models\Donor;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -106,7 +106,7 @@ class DonorsEndpoint {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new WP_Error(
 				'rest_forbidden',
-				__( 'You do not have permission to view donors.', 'missionwp-donation-platform' ),
+				__( 'You do not have permission to view donors.', 'mission-donation-platform' ),
 				[ 'status' => 403 ]
 			);
 		}
@@ -182,7 +182,7 @@ class DonorsEndpoint {
 		if ( ! $donor ) {
 			return new WP_Error(
 				'donor_not_found',
-				__( 'Donor not found.', 'missionwp-donation-platform' ),
+				__( 'Donor not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -202,7 +202,7 @@ class DonorsEndpoint {
 		if ( ! $donor ) {
 			return new WP_Error(
 				'donor_not_found',
-				__( 'Donor not found.', 'missionwp-donation-platform' ),
+				__( 'Donor not found.', 'mission-donation-platform' ),
 				[ 'status' => 404 ]
 			);
 		}
@@ -215,7 +215,7 @@ class DonorsEndpoint {
 			if ( ! is_email( $email ) ) {
 				return new WP_Error(
 					'invalid_email',
-					__( 'A valid email address is required.', 'missionwp-donation-platform' ),
+					__( 'A valid email address is required.', 'mission-donation-platform' ),
 					[ 'status' => 400 ]
 				);
 			}
@@ -226,7 +226,7 @@ class DonorsEndpoint {
 				if ( $existing ) {
 					return new WP_Error(
 						'duplicate_donor',
-						__( 'A donor with this email address already exists.', 'missionwp-donation-platform' ),
+						__( 'A donor with this email address already exists.', 'mission-donation-platform' ),
 						[ 'status' => 409 ]
 					);
 				}
@@ -261,7 +261,7 @@ class DonorsEndpoint {
 		if ( ! is_email( $email ) ) {
 			return new WP_Error(
 				'invalid_email',
-				__( 'A valid email address is required.', 'missionwp-donation-platform' ),
+				__( 'A valid email address is required.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
 		}
@@ -271,7 +271,7 @@ class DonorsEndpoint {
 		if ( $existing ) {
 			return new WP_Error(
 				'duplicate_donor',
-				__( 'A donor with this email address already exists.', 'missionwp-donation-platform' ),
+				__( 'A donor with this email address already exists.', 'mission-donation-platform' ),
 				[ 'status' => 409 ]
 			);
 		}

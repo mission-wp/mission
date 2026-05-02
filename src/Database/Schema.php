@@ -2,10 +2,10 @@
 /**
  * Database schema definitions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Database;
+namespace MissionDP\Database;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -26,7 +26,7 @@ class Schema {
 		global $wpdb;
 
 		$charset_collate = 'DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci';
-		$prefix          = $wpdb->prefix . 'mission_';
+		$prefix          = $wpdb->prefix . 'missiondp_';
 
 		return [
 			// ----------------------------------------------------------------
@@ -73,11 +73,11 @@ class Schema {
 			// ----------------------------------------------------------------
 			"{$prefix}transactionmeta"     => "CREATE TABLE {$prefix}transactionmeta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  mission_transaction_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  missiondp_transaction_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
   meta_value longtext,
   PRIMARY KEY  (meta_id),
-  KEY mission_transaction_id (mission_transaction_id),
+  KEY missiondp_transaction_id (missiondp_transaction_id),
   KEY meta_key (meta_key(191))
 ) {$charset_collate};",
 
@@ -119,11 +119,11 @@ class Schema {
 			// ----------------------------------------------------------------
 			"{$prefix}donormeta"           => "CREATE TABLE {$prefix}donormeta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  mission_donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  missiondp_donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
   meta_value longtext,
   PRIMARY KEY  (meta_id),
-  KEY mission_donor_id (mission_donor_id),
+  KEY missiondp_donor_id (missiondp_donor_id),
   KEY meta_key (meta_key(191))
 ) {$charset_collate};",
 
@@ -168,11 +168,11 @@ class Schema {
 			// ----------------------------------------------------------------
 			"{$prefix}subscriptionmeta"    => "CREATE TABLE {$prefix}subscriptionmeta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  mission_subscription_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  missiondp_subscription_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
   meta_value longtext,
   PRIMARY KEY  (meta_id),
-  KEY mission_subscription_id (mission_subscription_id),
+  KEY missiondp_subscription_id (missiondp_subscription_id),
   KEY meta_key (meta_key(191))
 ) {$charset_collate};",
 
@@ -181,11 +181,11 @@ class Schema {
 			// ----------------------------------------------------------------
 			"{$prefix}campaignmeta"        => "CREATE TABLE {$prefix}campaignmeta (
   meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  mission_campaign_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  missiondp_campaign_id bigint(20) unsigned NOT NULL DEFAULT 0,
   meta_key varchar(255) DEFAULT NULL,
   meta_value longtext,
   PRIMARY KEY  (meta_id),
-  KEY mission_campaign_id (mission_campaign_id),
+  KEY missiondp_campaign_id (missiondp_campaign_id),
   KEY meta_key (meta_key(191))
 ) {$charset_collate};",
 

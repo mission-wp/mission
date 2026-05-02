@@ -3,22 +3,22 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
 const DATA_TYPES = [
-  { value: 'donors', label: __( 'Donors', 'missionwp-donation-platform' ) },
+  { value: 'donors', label: __( 'Donors', 'mission-donation-platform' ) },
   {
     value: 'transactions',
-    label: __( 'Transactions', 'missionwp-donation-platform' ),
+    label: __( 'Transactions', 'mission-donation-platform' ),
   },
   {
     value: 'campaigns',
-    label: __( 'Campaigns', 'missionwp-donation-platform' ),
+    label: __( 'Campaigns', 'mission-donation-platform' ),
   },
   {
     value: 'subscriptions',
-    label: __( 'Subscriptions', 'missionwp-donation-platform' ),
+    label: __( 'Subscriptions', 'mission-donation-platform' ),
   },
   {
     value: 'tributes',
-    label: __( 'Dedications', 'missionwp-donation-platform' ),
+    label: __( 'Dedications', 'mission-donation-platform' ),
   },
 ];
 
@@ -76,12 +76,12 @@ export default function ExportPanel() {
       notification_status: notificationStatus,
     } );
 
-    apiFetch( { path: `/mission/v1/export/count?${ qs }` } )
+    apiFetch( { path: `/mission-donation-platform/v1/export/count?${ qs }` } )
       .then( ( data ) => setCount( data.count ) )
       .catch( () => setCount( 0 ) )
       .finally( () => setIsLoadingCount( false ) );
 
-    apiFetch( { path: `/mission/v1/export/preview?${ qs }` } )
+    apiFetch( { path: `/mission-donation-platform/v1/export/preview?${ qs }` } )
       .then( ( data ) => setPreview( data ) )
       .catch( () => setPreview( { columns: [], rows: [] } ) )
       .finally( () => setIsLoadingPreview( false ) );
@@ -110,10 +110,10 @@ export default function ExportPanel() {
       date_to: dateTo,
       notify_method: notifyMethod,
       notification_status: notificationStatus,
-      _wpnonce: window.missionAdmin?.restNonce,
+      _wpnonce: window.missiondpAdmin?.restNonce,
     } );
     window.open(
-      `${ window.missionAdmin?.restUrl }export/download?${ qs }`,
+      `${ window.missiondpAdmin?.restUrl }export/download?${ qs }`,
       '_blank'
     );
   };
@@ -121,10 +121,10 @@ export default function ExportPanel() {
   const handleDownloadAll = () => {
     const qs = buildQueryString( {
       format,
-      _wpnonce: window.missionAdmin?.restNonce,
+      _wpnonce: window.missiondpAdmin?.restNonce,
     } );
     window.open(
-      `${ window.missionAdmin?.restUrl }export/download-all?${ qs }`,
+      `${ window.missiondpAdmin?.restUrl }export/download-all?${ qs }`,
       '_blank'
     );
   };
@@ -138,12 +138,12 @@ export default function ExportPanel() {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Export Data', 'missionwp-donation-platform' ) }
+            { __( 'Export Data', 'mission-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
-              'Download your MissionWP data as a file.',
-              'missionwp-donation-platform'
+              'Download your Mission data as a file.',
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -154,7 +154,7 @@ export default function ExportPanel() {
               className="mission-settings-field__label"
               htmlFor="export-type"
             >
-              { __( 'Data type', 'missionwp-donation-platform' ) }
+              { __( 'Data type', 'mission-donation-platform' ) }
             </label>
             <select
               id="export-type"
@@ -174,7 +174,7 @@ export default function ExportPanel() {
               className="mission-settings-field__label"
               htmlFor="export-format"
             >
-              { __( 'File format', 'missionwp-donation-platform' ) }
+              { __( 'File format', 'mission-donation-platform' ) }
             </label>
             <select
               id="export-format"
@@ -195,7 +195,7 @@ export default function ExportPanel() {
                 className="mission-settings-field__label"
                 htmlFor="export-from"
               >
-                { __( 'From', 'missionwp-donation-platform' ) }
+                { __( 'From', 'mission-donation-platform' ) }
               </label>
               <input
                 type="date"
@@ -210,7 +210,7 @@ export default function ExportPanel() {
                 className="mission-settings-field__label"
                 htmlFor="export-to"
               >
-                { __( 'To', 'missionwp-donation-platform' ) }
+                { __( 'To', 'mission-donation-platform' ) }
               </label>
               <input
                 type="date"
@@ -222,7 +222,7 @@ export default function ExportPanel() {
               <span className="mission-settings-field__hint">
                 { __(
                   'Leave blank to export all.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               </span>
             </div>
@@ -236,7 +236,7 @@ export default function ExportPanel() {
                 className="mission-settings-field__label"
                 htmlFor="export-notify-method"
               >
-                { __( 'Notify method', 'missionwp-donation-platform' ) }
+                { __( 'Notify method', 'mission-donation-platform' ) }
               </label>
               <select
                 id="export-notify-method"
@@ -245,13 +245,13 @@ export default function ExportPanel() {
                 onChange={ ( e ) => setNotifyMethod( e.target.value ) }
               >
                 <option value="">
-                  { __( 'All', 'missionwp-donation-platform' ) }
+                  { __( 'All', 'mission-donation-platform' ) }
                 </option>
                 <option value="email">
-                  { __( 'Email', 'missionwp-donation-platform' ) }
+                  { __( 'Email', 'mission-donation-platform' ) }
                 </option>
                 <option value="mail">
-                  { __( 'Mail', 'missionwp-donation-platform' ) }
+                  { __( 'Mail', 'mission-donation-platform' ) }
                 </option>
               </select>
             </div>
@@ -260,7 +260,7 @@ export default function ExportPanel() {
                 className="mission-settings-field__label"
                 htmlFor="export-notification-status"
               >
-                { __( 'Notification status', 'missionwp-donation-platform' ) }
+                { __( 'Notification status', 'mission-donation-platform' ) }
               </label>
               <select
                 id="export-notification-status"
@@ -269,13 +269,13 @@ export default function ExportPanel() {
                 onChange={ ( e ) => setNotificationStatus( e.target.value ) }
               >
                 <option value="">
-                  { __( 'All', 'missionwp-donation-platform' ) }
+                  { __( 'All', 'mission-donation-platform' ) }
                 </option>
                 <option value="pending">
-                  { __( 'Pending', 'missionwp-donation-platform' ) }
+                  { __( 'Pending', 'mission-donation-platform' ) }
                 </option>
                 <option value="sent">
-                  { __( 'Sent', 'missionwp-donation-platform' ) }
+                  { __( 'Sent', 'mission-donation-platform' ) }
                 </option>
               </select>
             </div>
@@ -301,7 +301,7 @@ export default function ExportPanel() {
           ) : (
             <span>
               { ( count ?? 0 ).toLocaleString() } { dataType }{ ' ' }
-              { __( 'will be exported', 'missionwp-donation-platform' ) }
+              { __( 'will be exported', 'mission-donation-platform' ) }
             </span>
           ) }
         </div>
@@ -327,7 +327,7 @@ export default function ExportPanel() {
               <polyline points="5 7 8 10 11 7" />
               <line x1="8" y1="10" x2="8" y2="2" />
             </svg>
-            { __( 'Export', 'missionwp-donation-platform' ) + ' ' + typeLabel }
+            { __( 'Export', 'mission-donation-platform' ) + ' ' + typeLabel }
           </button>
         </div>
       </div>
@@ -336,12 +336,12 @@ export default function ExportPanel() {
       <div className="mission-settings-card">
         <div className="mission-settings-card__header">
           <h2 className="mission-settings-card__title">
-            { __( 'Preview', 'missionwp-donation-platform' ) }
+            { __( 'Preview', 'mission-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
             { __(
               'First 5 records that will be included in your export.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -420,12 +420,12 @@ export default function ExportPanel() {
           </div>
           <div className="mission-tools-export-all__text">
             <div className="mission-tools-export-all__title">
-              { __( 'Export All Data', 'missionwp-donation-platform' ) }
+              { __( 'Export All Data', 'mission-donation-platform' ) }
             </div>
             <div className="mission-tools-export-all__desc">
               { __(
                 'Download all donors, transactions, campaigns, and subscriptions as a single ZIP file.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </div>
           </div>
@@ -448,7 +448,7 @@ export default function ExportPanel() {
               <polyline points="5 7 8 10 11 7" />
               <line x1="8" y1="10" x2="8" y2="2" />
             </svg>
-            { __( 'Download ZIP', 'missionwp-donation-platform' ) }
+            { __( 'Download ZIP', 'mission-donation-platform' ) }
           </button>
         </div>
       </div>

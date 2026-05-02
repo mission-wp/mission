@@ -2,14 +2,14 @@
 /**
  * Receipt PDF generator using Dompdf.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Receipts;
+namespace MissionDP\Receipts;
 
-use Mission\Currency\Currency;
-use Mission\Models\Donor;
-use Mission\Settings\SettingsService;
+use MissionDP\Currency\Currency;
+use MissionDP\Models\Donor;
+use MissionDP\Settings\SettingsService;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -49,9 +49,9 @@ class ReceiptPdfGenerator {
 			'year'         => $year,
 			'year_label'   => $is_current_year
 				/* translators: %d: calendar year */
-				? sprintf( __( 'Year to Date — %d', 'missionwp-donation-platform' ), $year )
+				? sprintf( __( 'Year to Date — %d', 'mission-donation-platform' ), $year )
 				/* translators: %d: calendar year */
-				: sprintf( __( 'Annual Donation Receipt — %d', 'missionwp-donation-platform' ), $year ),
+				: sprintf( __( 'Annual Donation Receipt — %d', 'mission-donation-platform' ), $year ),
 			'transactions' => $this->format_transactions( $receipt_data['transactions'], $currency ),
 			'total'        => Currency::format_amount( $receipt_data['total'], $currency ),
 			'count'        => $receipt_data['count'],
@@ -77,7 +77,7 @@ class ReceiptPdfGenerator {
 			'org'          => $this->get_org_data(),
 			'donor'        => $this->get_donor_data( $donor ),
 			'year'         => null,
-			'year_label'   => __( 'Donation Receipt', 'missionwp-donation-platform' ),
+			'year_label'   => __( 'Donation Receipt', 'mission-donation-platform' ),
 			'transactions' => $this->format_transactions( [ $transaction_data ], $currency ),
 			'total'        => Currency::format_amount( (int) $transaction_data['amount'], $currency ),
 			'count'        => 1,
@@ -94,9 +94,9 @@ class ReceiptPdfGenerator {
 	 * @return array{name: string, address: string, ein: string}
 	 */
 	private function get_org_data(): array {
-		$name    = apply_filters( 'mission_receipt_org_name', $this->settings->get( 'org_name', get_bloginfo( 'name' ) ) );
-		$address = apply_filters( 'mission_receipt_org_address', $this->settings->format_org_address() );
-		$ein     = apply_filters( 'mission_receipt_org_ein', $this->settings->get( 'org_ein', '' ) );
+		$name    = apply_filters( 'missiondp_receipt_org_name', $this->settings->get( 'org_name', get_bloginfo( 'name' ) ) );
+		$address = apply_filters( 'missiondp_receipt_org_address', $this->settings->format_org_address() );
+		$ein     = apply_filters( 'missiondp_receipt_org_ein', $this->settings->get( 'org_ein', '' ) );
 
 		return [
 			'name'    => $name,
@@ -164,10 +164,10 @@ class ReceiptPdfGenerator {
 	private function get_disclaimer(): string {
 		$disclaimer = __(
 			'No goods or services were provided in exchange for these contributions. All donations are tax-deductible to the extent allowed by law.',
-			'missionwp-donation-platform'
+			'mission-donation-platform'
 		);
 
-		return apply_filters( 'mission_receipt_disclaimer', $disclaimer );
+		return apply_filters( 'missiondp_receipt_disclaimer', $disclaimer );
 	}
 
 	/**
@@ -187,7 +187,7 @@ class ReceiptPdfGenerator {
 		 * @param string $html The full HTML document.
 		 * @param array  $data Template data.
 		 */
-		$html = apply_filters( 'mission_receipt_html', $html, $data );
+		$html = apply_filters( 'missiondp_receipt_html', $html, $data );
 
 		$options = new Options();
 		$options->set( 'isRemoteEnabled', false );
@@ -201,7 +201,7 @@ class ReceiptPdfGenerator {
 		 * @param Options $options Dompdf Options object.
 		 * @param array   $data    Template data.
 		 */
-		$options = apply_filters( 'mission_receipt_pdf_options', $options, $data );
+		$options = apply_filters( 'missiondp_receipt_pdf_options', $options, $data );
 
 		$dompdf = new Dompdf( $options );
 		$dompdf->loadHtml( $html );

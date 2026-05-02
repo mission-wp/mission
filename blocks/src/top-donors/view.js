@@ -3,7 +3,7 @@
  */
 import { store } from '@wordpress/interactivity';
 
-store( 'mission/top-donors', {
+store( 'mission-donation-platform/top-donors', {
   actions: {
     scrollToForm() {
       const form = document.querySelector( '.mission-donation-form' );

@@ -14,22 +14,22 @@ import OnboardingModal from '../components/OnboardingModal';
 const POLL_INTERVAL = 30000;
 
 const PERIOD_LABELS = {
-  today: __( 'vs yesterday', 'missionwp-donation-platform' ),
-  week: __( 'vs last week', 'missionwp-donation-platform' ),
-  month: __( 'vs last month', 'missionwp-donation-platform' ),
+  today: __( 'vs yesterday', 'mission-donation-platform' ),
+  week: __( 'vs last week', 'mission-donation-platform' ),
+  month: __( 'vs last month', 'mission-donation-platform' ),
 };
 
 const CHART_LABELS = {
-  today: __( 'Today', 'missionwp-donation-platform' ),
-  week: __( 'Last 7 days', 'missionwp-donation-platform' ),
-  month: __( 'Last 30 days', 'missionwp-donation-platform' ),
+  today: __( 'Today', 'mission-donation-platform' ),
+  week: __( 'Last 7 days', 'mission-donation-platform' ),
+  month: __( 'Last 30 days', 'mission-donation-platform' ),
 };
 
 export default function Dashboard() {
   const [ showOnboarding, setShowOnboarding ] = useState(
-    () => ! window.missionAdmin?.onboardingCompleted
+    () => ! window.missiondpAdmin?.onboardingCompleted
   );
-  const STORAGE_KEY = 'mission_dashboard_period';
+  const STORAGE_KEY = 'missiondp_dashboard_period';
   const [ period, setPeriodState ] = useState( () => {
     try {
       return window.localStorage.getItem( STORAGE_KEY ) || 'month';
@@ -48,7 +48,7 @@ export default function Dashboard() {
   const [ data, setData ] = useState( null );
   const [ isLoading, setIsLoading ] = useState( true );
   const [ stripeConnected, setStripeConnected ] = useState(
-    window.missionAdmin?.stripeConnected ?? false
+    window.missiondpAdmin?.stripeConnected ?? false
   );
   const intervalRef = useRef( null );
   const leftRef = useRef( null );
@@ -62,8 +62,8 @@ export default function Dashboard() {
 
       try {
         const result = await apiFetch( {
-          path: `/mission/v1/dashboard?period=${ period }`,
-          headers: { 'X-WP-Nonce': window.missionAdmin.restNonce },
+          path: `/mission-donation-platform/v1/dashboard?period=${ period }`,
+          headers: { 'X-WP-Nonce': window.missiondpAdmin.restNonce },
         } );
 
         setData( result );
@@ -147,15 +147,15 @@ export default function Dashboard() {
       <div className="mission-dashboard-header">
         <div>
           <h1>
-            { __( 'MissionWP Dashboard', 'missionwp-donation-platform' ) }{ ' ' }
+            { __( 'Mission Dashboard', 'mission-donation-platform' ) }{ ' ' }
             <span className="mission-version-tag">
-              { `v${ window.missionAdmin?.version || '' }` }
+              { `v${ window.missiondpAdmin?.version || '' }` }
             </span>
           </h1>
           <span style={ { color: '#6b6b7b', fontSize: '14px' } }>
             { __(
               'Your donation activity at a glance',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </span>
         </div>
@@ -171,7 +171,7 @@ export default function Dashboard() {
           ) }
           <div className="mission-stats-row">
             <StatCard
-              label={ __( 'Total Donations', 'missionwp-donation-platform' ) }
+              label={ __( 'Total Donations', 'mission-donation-platform' ) }
               value={ stats ? formatAmount( stats.total_donations ) : '' }
               current={ stats?.total_donations }
               previous={ stats?.total_donations_previous }
@@ -179,7 +179,7 @@ export default function Dashboard() {
               isLoading={ isLoading }
             />
             <StatCard
-              label={ __( 'Total Donors', 'missionwp-donation-platform' ) }
+              label={ __( 'Total Donors', 'mission-donation-platform' ) }
               value={ stats ? stats.total_donors.toLocaleString() : '' }
               current={ stats?.total_donors }
               previous={ stats?.total_donors_previous }
@@ -187,7 +187,7 @@ export default function Dashboard() {
               isLoading={ isLoading }
             />
             <StatCard
-              label={ __( 'Avg. Donation', 'missionwp-donation-platform' ) }
+              label={ __( 'Avg. Donation', 'mission-donation-platform' ) }
               value={ stats ? formatAmount( stats.average_donation ) : '' }
               current={ stats?.average_donation }
               previous={ stats?.average_donation_previous }

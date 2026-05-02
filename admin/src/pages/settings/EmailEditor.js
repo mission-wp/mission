@@ -29,7 +29,9 @@ export default function EmailEditor( {
     }
 
     setLoadingDefault( true );
-    apiFetch( { path: `/mission/v1/email/template/${ email.id }` } )
+    apiFetch( {
+      path: `/mission-donation-platform/v1/email/template/${ email.id }`,
+    } )
       .then( ( data ) => {
         setDefaultBody( data.body || '' );
         setEmailHeader( data.header || '' );
@@ -70,7 +72,7 @@ export default function EmailEditor( {
 
     try {
       await apiFetch( {
-        path: '/mission/v1/email/test',
+        path: '/mission-donation-platform/v1/email/test',
         method: 'POST',
         data: { email_type: email.id },
       } );
@@ -115,7 +117,7 @@ export default function EmailEditor( {
           className="mission-email-editor__close"
           onClick={ onClose }
           type="button"
-          aria-label={ __( 'Close', 'missionwp-donation-platform' ) }
+          aria-label={ __( 'Close', 'mission-donation-platform' ) }
         >
           <svg
             width="16"
@@ -138,7 +140,7 @@ export default function EmailEditor( {
         { /* Subject */ }
         <div className="mission-email-editor__section">
           <div className="mission-email-editor__section-label">
-            { __( 'Subject line', 'missionwp-donation-platform' ) }
+            { __( 'Subject line', 'mission-donation-platform' ) }
           </div>
           <div className="mission-email-editor__subject">
             <input
@@ -178,7 +180,7 @@ export default function EmailEditor( {
               className="mission-email-editor__section-label"
               style={ { marginBottom: 0 } }
             >
-              { __( 'Email body', 'missionwp-donation-platform' ) }
+              { __( 'Email body', 'mission-donation-platform' ) }
             </div>
             <div className="mission-email-editor__toggle">
               <button
@@ -188,7 +190,7 @@ export default function EmailEditor( {
                 onClick={ () => setMode( 'preview' ) }
                 type="button"
               >
-                { __( 'Preview', 'missionwp-donation-platform' ) }
+                { __( 'Preview', 'mission-donation-platform' ) }
               </button>
               <button
                 className={ `mission-email-editor__toggle-btn${
@@ -197,7 +199,7 @@ export default function EmailEditor( {
                 onClick={ () => setMode( 'html' ) }
                 type="button"
               >
-                { __( 'Edit HTML', 'missionwp-donation-platform' ) }
+                { __( 'Edit HTML', 'mission-donation-platform' ) }
               </button>
             </div>
           </div>
@@ -213,10 +215,7 @@ export default function EmailEditor( {
                     fontSize: '13px',
                   } }
                 >
-                  { __(
-                    'Loading preview\u2026',
-                    'missionwp-donation-platform'
-                  ) }
+                  { __( 'Loading preview\u2026', 'mission-donation-platform' ) }
                 </div>
               ) : (
                 <div className="mission-email-editor__preview-frame">
@@ -229,10 +228,7 @@ export default function EmailEditor( {
                     className="mission-email-editor__preview-content"
                     sandbox=""
                     srcDoc={ previewHtml }
-                    title={ __(
-                      'Email preview',
-                      'missionwp-donation-platform'
-                    ) }
+                    title={ __( 'Email preview', 'mission-donation-platform' ) }
                   />
                 </div>
               ) }
@@ -251,10 +247,7 @@ export default function EmailEditor( {
               onClick={ handleReset }
               type="button"
             >
-              { __(
-                'Reset to default template',
-                'missionwp-donation-platform'
-              ) }
+              { __( 'Reset to default template', 'mission-donation-platform' ) }
             </button>
           ) }
         </div>
@@ -285,11 +278,11 @@ export default function EmailEditor( {
                 <line x1="22" y1="2" x2="11" y2="13" />
                 <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
-              { __( 'Send test email', 'missionwp-donation-platform' ) }
+              { __( 'Send test email', 'mission-donation-platform' ) }
             </>
           ) }
           { testState === 'sending' &&
-            __( 'Sending\u2026', 'missionwp-donation-platform' ) }
+            __( 'Sending\u2026', 'mission-donation-platform' ) }
           { testState === 'sent' && (
             <>
               <svg
@@ -304,11 +297,11 @@ export default function EmailEditor( {
               >
                 <polyline points="12 5 6.5 11 4 8.5" />
               </svg>
-              { __( 'Sent!', 'missionwp-donation-platform' ) }
+              { __( 'Sent!', 'mission-donation-platform' ) }
             </>
           ) }
           { testState === 'error' &&
-            __( 'Failed to send', 'missionwp-donation-platform' ) }
+            __( 'Failed to send', 'mission-donation-platform' ) }
         </button>
 
         <button
@@ -328,7 +321,7 @@ export default function EmailEditor( {
           >
             <polyline points="12 5 6.5 11 4 8.5" />
           </svg>
-          { __( 'Done', 'missionwp-donation-platform' ) }
+          { __( 'Done', 'mission-donation-platform' ) }
         </button>
       </div>
     </SlidePanel>

@@ -23,11 +23,11 @@ import { formatAmount } from '@shared/currency';
 
 const DONATE_BUTTON_OPTIONS = [
   {
-    label: __( 'Scroll to donation form', 'missionwp-donation-platform' ),
+    label: __( 'Scroll to donation form', 'mission-donation-platform' ),
     value: 'scroll',
   },
-  { label: __( 'Custom URL', 'missionwp-donation-platform' ), value: 'url' },
-  { label: __( 'Hide', 'missionwp-donation-platform' ), value: 'hide' },
+  { label: __( 'Custom URL', 'mission-donation-platform' ), value: 'url' },
+  { label: __( 'Hide', 'mission-donation-platform' ), value: 'hide' },
 ];
 
 const SAMPLE_DONORS = [
@@ -68,7 +68,7 @@ export default function Edit( { attributes, setAttributes } ) {
   const [ campaigns, setCampaigns ] = useState( [] );
   const [ isLoadingList, setIsLoadingList ] = useState( true );
   const primaryColorVars = useMemo( () => {
-    const color = window.missionBlockEditor?.primaryColor || '#2fa36b';
+    const color = window.missiondpBlockEditor?.primaryColor || '#2fa36b';
     return computePrimaryColorVars( color );
   }, [] );
 
@@ -83,7 +83,7 @@ export default function Edit( { attributes, setAttributes } ) {
   }, [] );
 
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/campaigns?per_page=100' } )
+    apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( response ) => {
         setCampaigns( Array.isArray( response ) ? response : [] );
       } )
@@ -95,7 +95,7 @@ export default function Edit( { attributes, setAttributes } ) {
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
-    currentPostType === 'mission_campaign' &&
+    currentPostType === 'missiondp_campaign' &&
     currentPostId &&
     ! isLoadingList
   ) {
@@ -174,7 +174,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <p>
             { __(
               'Select a campaign or place this block on a campaign page.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -188,7 +188,7 @@ export default function Edit( { attributes, setAttributes } ) {
           className="mission-donor-heading"
           value={ heading }
           onChange={ ( val ) => setAttributes( { heading: val } ) }
-          placeholder={ __( 'Recent Donors', 'missionwp-donation-platform' ) }
+          placeholder={ __( 'Recent Donors', 'mission-donation-platform' ) }
           allowedFormats={ [] }
         />
         <ul className="mission-donor-list">
@@ -223,9 +223,9 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
+        <PanelBody title={ __( 'Settings', 'mission-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
+            label={ __( 'Campaign', 'mission-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -234,13 +234,13 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   )
                 : undefined
             }
           />
           <RangeControl
-            label={ __( 'Number of donors', 'missionwp-donation-platform' ) }
+            label={ __( 'Number of donors', 'mission-donation-platform' ) }
             value={ numberOfDonors }
             onChange={ ( val ) => setAttributes( { numberOfDonors: val } ) }
             min={ 1 }
@@ -250,7 +250,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <SelectControl
             label={ __(
               'Donate button (empty state)',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
             value={ donateButtonAction }
             options={ DONATE_BUTTON_OPTIONS }
@@ -258,7 +258,7 @@ export default function Edit( { attributes, setAttributes } ) {
           />
           { donateButtonAction === 'url' && (
             <TextControl
-              label={ __( 'Donate URL', 'missionwp-donation-platform' ) }
+              label={ __( 'Donate URL', 'mission-donation-platform' ) }
               value={ donateButtonUrl }
               onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
               type="url"
@@ -266,12 +266,12 @@ export default function Edit( { attributes, setAttributes } ) {
             />
           ) }
           <ToggleControl
-            label={ __( 'Show avatars', 'missionwp-donation-platform' ) }
+            label={ __( 'Show avatars', 'mission-donation-platform' ) }
             checked={ showAvatars }
             onChange={ ( val ) => setAttributes( { showAvatars: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show dedications', 'missionwp-donation-platform' ) }
+            label={ __( 'Show dedications', 'mission-donation-platform' ) }
             checked={ showDedication }
             onChange={ ( val ) => setAttributes( { showDedication: val } ) }
           />

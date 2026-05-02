@@ -7,82 +7,79 @@ import ConfirmationModal from './ConfirmationModal';
 const SECTIONS = [
   {
     id: 'cache',
-    title: __( 'Cache & Transients', 'missionwp-donation-platform' ),
+    title: __( 'Cache & Transients', 'mission-donation-platform' ),
     description: __(
       "Clear cached data. This is safe and won't remove any donor or transaction records.",
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     actions: [
       {
         id: 'clear_dashboard_cache',
-        label: __( 'Clear dashboard cache', 'missionwp-donation-platform' ),
+        label: __( 'Clear dashboard cache', 'mission-donation-platform' ),
         description: __(
           'Refresh cached stats, chart data, and campaign totals on the dashboard.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
         successMessage: __(
           'Dashboard cache cleared.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
       {
         id: 'clear_email_template_cache',
-        label: __(
-          'Clear email template cache',
-          'missionwp-donation-platform'
-        ),
+        label: __( 'Clear email template cache', 'mission-donation-platform' ),
         description: __(
           'Force email templates to regenerate. Useful if receipt styles appear outdated.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
         successMessage: __(
           'Email template cache cleared.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
       {
         id: 'clear_stripe_sync_cache',
-        label: __( 'Flush Stripe sync cache', 'missionwp-donation-platform' ),
+        label: __( 'Flush Stripe sync cache', 'mission-donation-platform' ),
         description: __(
           'Clear cached Stripe data and re-sync subscription statuses on next page load.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
         successMessage: __(
           'Stripe sync cache cleared.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
     ],
   },
   {
     id: 'logs',
-    title: __( 'Logs & History', 'missionwp-donation-platform' ),
+    title: __( 'Logs & History', 'mission-donation-platform' ),
     description: __(
       'Remove activity history. This does not affect donor or transaction data.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     actions: [
       {
         id: 'clear_activity_log',
-        label: __( 'Clear activity log', 'missionwp-donation-platform' ),
+        label: __( 'Clear activity log', 'mission-donation-platform' ),
         getDescription: ( stats ) => {
           const count = stats?.activity_log_count;
           if ( count === undefined ) {
             return __(
               'Remove all entries from the activity feed.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             );
           }
           return sprintf(
             /* translators: %s: entry count with HTML markup */
             __(
               'Remove all entries from the activity feed. %s currently stored.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             `<strong>${ count.toLocaleString() } ${
               count === 1
-                ? __( 'entry', 'missionwp-donation-platform' )
-                : __( 'entries', 'missionwp-donation-platform' )
+                ? __( 'entry', 'mission-donation-platform' )
+                : __( 'entries', 'mission-donation-platform' )
             }</strong>`
           );
         },
@@ -91,46 +88,46 @@ const SECTIONS = [
             /* translators: %s: number of entries */
             __(
               'This will permanently delete all %s activity log entries.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             ( stats?.activity_log_count || 0 ).toLocaleString()
           ),
         successMessage: __(
           'Activity log cleared.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
     ],
   },
   {
     id: 'test-data',
-    title: __( 'Test Data', 'missionwp-donation-platform' ),
+    title: __( 'Test Data', 'mission-donation-platform' ),
     description: __(
       'Remove data created while in Stripe test mode. Only test mode data is affected.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     variant: 'warn',
     actions: [
       {
         id: 'delete_test_transactions',
-        label: __( 'Delete test transactions', 'missionwp-donation-platform' ),
+        label: __( 'Delete test transactions', 'mission-donation-platform' ),
         getDescription: ( stats ) => {
           const count = stats?.test_transaction_count;
           if ( count === undefined ) {
             return __(
               'Remove all transactions made with Stripe test mode keys.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             );
           }
           return sprintf(
             /* translators: %s: count with HTML markup */
             __(
               'Remove all transactions made with Stripe test mode keys. %s found.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             `<strong>${ count.toLocaleString() } ${ __(
               'test transactions',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }</strong>`
           );
         },
@@ -139,35 +136,35 @@ const SECTIONS = [
             /* translators: %s: number of test transactions */
             __(
               'This will permanently delete %s test transactions. This cannot be undone.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             ( stats?.test_transaction_count || 0 ).toLocaleString()
           ),
         successMessage: __(
           'Test transactions deleted.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
       {
         id: 'delete_test_donors',
-        label: __( 'Delete test donors', 'missionwp-donation-platform' ),
+        label: __( 'Delete test donors', 'mission-donation-platform' ),
         getDescription: ( stats ) => {
           const count = stats?.test_donor_count;
           if ( count === undefined ) {
             return __(
               'Remove donors that only have test mode transactions (no live donations).',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             );
           }
           return sprintf(
             /* translators: %s: count with HTML markup */
             __(
               'Remove donors that only have test mode transactions (no live donations). %s found.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             `<strong>${ count.toLocaleString() } ${ __(
               'test-only donors',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }</strong>`
           );
         },
@@ -176,28 +173,28 @@ const SECTIONS = [
             /* translators: %s: number of test donors */
             __(
               'This will permanently delete %s test-only donors and their associated data. This cannot be undone.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             ( stats?.test_donor_count || 0 ).toLocaleString()
           ),
         successMessage: __(
           'Test donors deleted.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
       {
         id: 'delete_all_test_data',
-        label: __( 'Delete all test data', 'missionwp-donation-platform' ),
+        label: __( 'Delete all test data', 'mission-donation-platform' ),
         description: __(
           'Remove all test transactions, test donors, and test subscriptions in one step.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
         getConfirmMessage: ( stats ) =>
           sprintf(
             /* translators: %1$s: transaction count, %2$s: donor count, %3$s: subscription count */
             __(
               'This will permanently delete all test mode data (%1$s transactions, %2$s donors, %3$s subscriptions). This cannot be undone.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             ( stats?.test_transaction_count || 0 ).toLocaleString(),
             ( stats?.test_donor_count || 0 ).toLocaleString(),
@@ -205,53 +202,53 @@ const SECTIONS = [
           ),
         successMessage: __(
           'All test data deleted.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
     ],
   },
   {
     id: 'danger',
-    title: __( 'Danger Zone', 'missionwp-donation-platform' ),
+    title: __( 'Danger Zone', 'mission-donation-platform' ),
     description: __(
       'These actions are irreversible and will permanently delete data.',
-      'missionwp-donation-platform'
+      'mission-donation-platform'
     ),
     variant: 'danger',
     actions: [
       {
         id: 'reset_all_settings',
-        label: __( 'Reset all settings', 'missionwp-donation-platform' ),
+        label: __( 'Reset all settings', 'mission-donation-platform' ),
         description: __(
-          'Restore all MissionWP settings to their defaults. Stripe will be disconnected. Donor and transaction data is preserved.',
-          'missionwp-donation-platform'
+          'Restore all Mission settings to their defaults. Stripe will be disconnected. Donor and transaction data is preserved.',
+          'mission-donation-platform'
         ),
         confirmMessage: __(
-          'This will reset ALL MissionWP settings to defaults and disconnect Stripe. Your donor and transaction data will NOT be deleted, but you will need to reconfigure the plugin.',
-          'missionwp-donation-platform'
+          'This will reset ALL Mission settings to defaults and disconnect Stripe. Your donor and transaction data will NOT be deleted, but you will need to reconfigure the plugin.',
+          'mission-donation-platform'
         ),
         isDanger: true,
         successMessage: __(
           'All settings reset to defaults.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
       },
       {
         id: 'delete_all_data',
-        label: __( 'Delete all MissionWP data', 'missionwp-donation-platform' ),
+        label: __( 'Delete all Mission data', 'mission-donation-platform' ),
         description: __(
           'Completely remove all donors, transactions, campaigns, subscriptions, and settings. This is equivalent to a fresh install.',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ),
         confirmMessage: __(
-          'This will PERMANENTLY DELETE all MissionWP data including donors, transactions, campaigns, subscriptions, and settings. This action CANNOT be undone.',
-          'missionwp-donation-platform'
+          'This will PERMANENTLY DELETE all Mission data including donors, transactions, campaigns, subscriptions, and settings. This action CANNOT be undone.',
+          'mission-donation-platform'
         ),
         isDanger: true,
         typedConfirm: 'DELETE',
         successMessage: __(
-          'All MissionWP data has been deleted.',
-          'missionwp-donation-platform'
+          'All Mission data has been deleted.',
+          'mission-donation-platform'
         ),
         isLast: true,
       },
@@ -323,8 +320,8 @@ function ActionRow( {
         onClick={ () => onRun( action ) }
       >
         { isRunning
-          ? __( 'Running…', 'missionwp-donation-platform' )
-          : __( 'Run', 'missionwp-donation-platform' ) }
+          ? __( 'Running…', 'mission-donation-platform' )
+          : __( 'Run', 'mission-donation-platform' ) }
       </button>
     </div>
   );
@@ -339,7 +336,7 @@ export default function CleanupPanel() {
   const [ toastKey, setToastKey ] = useState( 0 );
 
   const fetchStats = useCallback( () => {
-    apiFetch( { path: '/mission/v1/cleanup/stats' } )
+    apiFetch( { path: '/mission-donation-platform/v1/cleanup/stats' } )
       .then( ( data ) => {
         setStats( data );
         setLoadingStats( false );
@@ -357,7 +354,7 @@ export default function CleanupPanel() {
 
     try {
       await apiFetch( {
-        path: `/mission/v1/cleanup/${ action.id }`,
+        path: `/mission-donation-platform/v1/cleanup/${ action.id }`,
         method: 'POST',
         data: confirmation ? { confirmation } : undefined,
       } );
@@ -371,7 +368,7 @@ export default function CleanupPanel() {
         type: 'error',
         message:
           err.message ||
-          __( 'Something went wrong.', 'missionwp-donation-platform' ),
+          __( 'Something went wrong.', 'mission-donation-platform' ),
       } );
     } finally {
       setRunningAction( null );

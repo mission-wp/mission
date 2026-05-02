@@ -2,49 +2,49 @@
 /**
  * REST module - handles custom REST API endpoints.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest;
+namespace MissionDP\Rest;
 
-use Mission\Reporting\ReportingService;
-use Mission\Rest\Endpoints\ActivityFeedEndpoint;
-use Mission\Rest\Endpoints\CampaignsEndpoint;
-use Mission\Rest\Endpoints\DashboardEndpoint;
-use Mission\Rest\Endpoints\ConfirmDonationEndpoint;
-use Mission\Rest\Endpoints\ConfirmSubscriptionEndpoint;
-use Mission\Rest\Endpoints\CreatePaymentIntentEndpoint;
-use Mission\Rest\Endpoints\CreateSubscriptionEndpoint;
-use Mission\Rest\Endpoints\PaymentConfigEndpoint;
-use Mission\Rest\Endpoints\ReviewBannerEndpoint;
-use Mission\Rest\Endpoints\SettingsEndpoint;
-use Mission\Rest\Endpoints\StripeConnectEndpoint;
-use Mission\Rest\Endpoints\DonationFormSettingsEndpoint;
-use Mission\Rest\Endpoints\NotesEndpoint;
-use Mission\Export\ExportService;
-use Mission\Rest\Endpoints\DonorsEndpoint;
-use Mission\Rest\Endpoints\ExportEndpoint;
-use Mission\Rest\Endpoints\DonorWallEndpoint;
-use Mission\Rest\Endpoints\EmailTemplateEndpoint;
-use Mission\Rest\Endpoints\EmailTestEndpoint;
-use Mission\Rest\Endpoints\TransactionHistoryEndpoint;
-use Mission\Rest\Endpoints\TributeEndpoint;
+use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Endpoints\ActivityFeedEndpoint;
+use MissionDP\Rest\Endpoints\CampaignsEndpoint;
+use MissionDP\Rest\Endpoints\DashboardEndpoint;
+use MissionDP\Rest\Endpoints\ConfirmDonationEndpoint;
+use MissionDP\Rest\Endpoints\ConfirmSubscriptionEndpoint;
+use MissionDP\Rest\Endpoints\CreatePaymentIntentEndpoint;
+use MissionDP\Rest\Endpoints\CreateSubscriptionEndpoint;
+use MissionDP\Rest\Endpoints\PaymentConfigEndpoint;
+use MissionDP\Rest\Endpoints\ReviewBannerEndpoint;
+use MissionDP\Rest\Endpoints\SettingsEndpoint;
+use MissionDP\Rest\Endpoints\StripeConnectEndpoint;
+use MissionDP\Rest\Endpoints\DonationFormSettingsEndpoint;
+use MissionDP\Rest\Endpoints\NotesEndpoint;
+use MissionDP\Export\ExportService;
+use MissionDP\Rest\Endpoints\DonorsEndpoint;
+use MissionDP\Rest\Endpoints\ExportEndpoint;
+use MissionDP\Rest\Endpoints\DonorWallEndpoint;
+use MissionDP\Rest\Endpoints\EmailTemplateEndpoint;
+use MissionDP\Rest\Endpoints\EmailTestEndpoint;
+use MissionDP\Rest\Endpoints\TransactionHistoryEndpoint;
+use MissionDP\Rest\Endpoints\TributeEndpoint;
 
-use Mission\Rest\Endpoints\DonorAuthEndpoint;
-use Mission\Rest\Endpoints\DonorDashboard\OverviewEndpoint as DashboardOverviewEndpoint;
-use Mission\Rest\Endpoints\DonorDashboard\TransactionsEndpoint as DashboardTransactionsEndpoint;
-use Mission\Rest\Endpoints\DonorDashboard\SubscriptionsEndpoint as DashboardSubscriptionsEndpoint;
-use Mission\Rest\Endpoints\DonorDashboard\EmailChangeEndpoint as DashboardEmailChangeEndpoint;
-use Mission\Rest\Endpoints\DonorDashboard\ProfileEndpoint as DashboardProfileEndpoint;
-use Mission\Rest\Endpoints\StripeWebhookEndpoint;
-use Mission\Rest\Endpoints\SubscriptionsEndpoint;
-use Mission\Rest\Endpoints\SystemStatusEndpoint;
-use Mission\Rest\Endpoints\TransactionsEndpoint;
-use Mission\Rest\Endpoints\CleanupEndpoint;
-use Mission\Cleanup\CleanupService;
-use Mission\DonorDashboard\DonorAuthService;
-use Mission\Payments\PaymentIntentVerifier;
-use Mission\Settings\SettingsService;
+use MissionDP\Rest\Endpoints\DonorAuthEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\OverviewEndpoint as DashboardOverviewEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\TransactionsEndpoint as DashboardTransactionsEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\SubscriptionsEndpoint as DashboardSubscriptionsEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\EmailChangeEndpoint as DashboardEmailChangeEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\ProfileEndpoint as DashboardProfileEndpoint;
+use MissionDP\Rest\Endpoints\StripeWebhookEndpoint;
+use MissionDP\Rest\Endpoints\SubscriptionsEndpoint;
+use MissionDP\Rest\Endpoints\SystemStatusEndpoint;
+use MissionDP\Rest\Endpoints\TransactionsEndpoint;
+use MissionDP\Rest\Endpoints\CleanupEndpoint;
+use MissionDP\Cleanup\CleanupService;
+use MissionDP\DonorDashboard\DonorAuthService;
+use MissionDP\Payments\PaymentIntentVerifier;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -58,7 +58,7 @@ class RestModule {
 	 *
 	 * @var string
 	 */
-	public const NAMESPACE = 'mission/v1';
+	public const NAMESPACE = 'mission-donation-platform/v1';
 
 	/**
 	 * Initialize the REST module.

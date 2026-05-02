@@ -2,12 +2,12 @@
 /**
  * Reporting service for aggregate queries.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Reporting;
+namespace MissionDP\Reporting;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -53,7 +53,7 @@ class ReportingService {
 	public function transaction_summary( string $currency ): array {
 		global $wpdb;
 
-		$table   = $wpdb->prefix . 'mission_transactions';
+		$table   = $wpdb->prefix . 'missiondp_transactions';
 		$is_test = (int) $this->is_test_mode();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -121,7 +121,7 @@ class ReportingService {
 	public function donor_summary(): array {
 		global $wpdb;
 
-		$table       = $wpdb->prefix . 'mission_donors';
+		$table       = $wpdb->prefix . 'missiondp_donors';
 		$donated_col = $this->is_test_mode() ? 'test_total_donated' : 'total_donated';
 		$count_col   = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
 
@@ -162,16 +162,16 @@ class ReportingService {
 	/**
 	 * Get detail stats for a single donor (is_recurring, is_top_donor).
 	 *
-	 * @param \Mission\Models\Donor $donor   The donor.
+	 * @param \MissionDP\Models\Donor $donor   The donor.
 	 * @param bool|null             $is_test Override test mode (null = use settings).
 	 * @return array{is_recurring: bool, is_top_donor: bool}
 	 */
-	public function donor_detail_stats( \Mission\Models\Donor $donor, ?bool $is_test = null ): array {
+	public function donor_detail_stats( \MissionDP\Models\Donor $donor, ?bool $is_test = null ): array {
 		global $wpdb;
 
 		$test_mode   = $is_test ?? $this->is_test_mode();
-		$sub_table   = $wpdb->prefix . 'mission_subscriptions';
-		$donor_table = $wpdb->prefix . 'mission_donors';
+		$sub_table   = $wpdb->prefix . 'missiondp_subscriptions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$donated_col = $test_mode ? 'test_total_donated' : 'total_donated';
 		$count_col   = $test_mode ? 'test_transaction_count' : 'transaction_count';
 
@@ -199,21 +199,21 @@ class ReportingService {
 
 		return [
 			'is_recurring' => $has_sub,
-			'is_top_donor' => (bool) apply_filters( 'mission_donor_is_top_donor', $is_top, $donor ),
+			'is_top_donor' => (bool) apply_filters( 'missiondp_donor_is_top_donor', $is_top, $donor ),
 		];
 	}
 
 	/**
 	 * Get the largest single completed donation for a campaign.
 	 *
-	 * @param int  $campaign_id Campaign ID (from mission_campaigns table).
+	 * @param int  $campaign_id Campaign ID (from missiondp_campaigns table).
 	 * @param bool $is_test     Whether to query test transactions.
 	 * @return int Amount in minor units (0 if no donations).
 	 */
 	public function top_donation_for_campaign( int $campaign_id, bool $is_test = false ): int {
 		global $wpdb;
 
-		$table = $wpdb->prefix . 'mission_transactions';
+		$table = $wpdb->prefix . 'missiondp_transactions';
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$result = $wpdb->get_var(
@@ -236,7 +236,7 @@ class ReportingService {
 	public function campaign_summary(): array {
 		global $wpdb;
 
-		$table      = $wpdb->prefix . 'mission_campaigns';
+		$table      = $wpdb->prefix . 'missiondp_campaigns';
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -287,8 +287,8 @@ class ReportingService {
 	public function review_banner_stats(): array {
 		global $wpdb;
 
-		$campaigns_table    = $wpdb->prefix . 'mission_campaigns';
-		$transactions_table = $wpdb->prefix . 'mission_transactions';
+		$campaigns_table    = $wpdb->prefix . 'missiondp_campaigns';
+		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$total_raised = (int) $wpdb->get_var(
@@ -316,7 +316,7 @@ class ReportingService {
 	public function period_stats( string $start, string $end ): array {
 		global $wpdb;
 
-		$table   = $wpdb->prefix . 'mission_transactions';
+		$table   = $wpdb->prefix . 'missiondp_transactions';
 		$is_test = (int) $this->is_test_mode();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -357,7 +357,7 @@ class ReportingService {
 	public function chart_data( string $start, string $end, string $period = 'month' ): array {
 		global $wpdb;
 
-		$table   = $wpdb->prefix . 'mission_transactions';
+		$table   = $wpdb->prefix . 'missiondp_transactions';
 		$is_test = (int) $this->is_test_mode();
 
 		if ( 'today' === $period ) {
@@ -413,7 +413,7 @@ class ReportingService {
 	public function top_campaigns( int $limit = 5 ): array {
 		global $wpdb;
 
-		$table      = $wpdb->prefix . 'mission_campaigns';
+		$table      = $wpdb->prefix . 'missiondp_campaigns';
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 
 		$txn_count_col   = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
@@ -449,7 +449,7 @@ class ReportingService {
 
 			$campaigns[] = [
 				'id'            => (int) $row['id'],
-				'title'         => $row['title'] ?: __( 'Untitled', 'missionwp-donation-platform' ),
+				'title'         => $row['title'] ?: __( 'Untitled', 'mission-donation-platform' ),
 				'total_raised'  => (int) $row['raised'],
 				'goal_amount'   => (int) $row['goal_amount'],
 				'goal_type'     => $goal_type,
@@ -469,8 +469,8 @@ class ReportingService {
 	public function transactions_with_donors( array $args = [] ): array {
 		global $wpdb;
 
-		$txn_table   = $wpdb->prefix . 'mission_transactions';
-		$donor_table = $wpdb->prefix . 'mission_donors';
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
@@ -511,7 +511,7 @@ class ReportingService {
 		// Dedication filter — requires a JOIN to the tributes table.
 		$tribute_join = '';
 		if ( ! empty( $args['dedication'] ) ) {
-			$tribute_table = $wpdb->prefix . 'mission_tributes';
+			$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 			$tribute_join  = " INNER JOIN {$tribute_table} AS tribute ON t.id = tribute.transaction_id";
 
 			match ( $args['dedication'] ) {
@@ -557,7 +557,7 @@ class ReportingService {
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$campaign_table = $wpdb->prefix . 'mission_campaigns';
+			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
 			$placeholders   = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$campaigns = $wpdb->get_results(
@@ -576,7 +576,7 @@ class ReportingService {
 
 			$items[] = [
 				'id'             => (int) $row['id'],
-				'donor_name'     => $donor_name ?: __( 'Anonymous', 'missionwp-donation-platform' ),
+				'donor_name'     => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
 				'donor_email'    => $row['donor_email'] ?? '',
 				'amount'         => (int) $row['amount'],
 				'currency'       => $row['currency'],
@@ -603,8 +603,8 @@ class ReportingService {
 	public function subscriptions_with_donors( array $args = [] ): array {
 		global $wpdb;
 
-		$sub_table   = $wpdb->prefix . 'mission_subscriptions';
-		$donor_table = $wpdb->prefix . 'mission_donors';
+		$sub_table   = $wpdb->prefix . 'missiondp_subscriptions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
@@ -676,7 +676,7 @@ class ReportingService {
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$campaign_table = $wpdb->prefix . 'mission_campaigns';
+			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
 			$placeholders   = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 			$campaigns = $wpdb->get_results(
@@ -706,7 +706,7 @@ class ReportingService {
 				'total_renewed'     => (int) $row['total_renewed'],
 				'date_created'      => $row['date_created'],
 				'date_next_renewal' => $row['date_next_renewal'],
-				'donor_name'        => $donor_name ?: __( 'Anonymous', 'missionwp-donation-platform' ),
+				'donor_name'        => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
 				'donor_email'       => $row['donor_email'] ?? '',
 				'donor_id'          => $row['donor_id'] ? (int) $row['donor_id'] : null,
 				'campaign_title'    => $campaign_map[ $row['campaign_id'] ?? 0 ] ?? '',
@@ -728,7 +728,7 @@ class ReportingService {
 	public function subscription_summary(): array {
 		global $wpdb;
 
-		$table       = $wpdb->prefix . 'mission_subscriptions';
+		$table       = $wpdb->prefix . 'missiondp_subscriptions';
 		$is_test     = (int) $this->is_test_mode();
 		$now         = new \DateTimeImmutable( 'now', wp_timezone() );
 		$month_start = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
@@ -882,15 +882,15 @@ class ReportingService {
 	/**
 	 * Get top donors for a campaign, ranked by total donated amount.
 	 *
-	 * @param int $campaign_id Campaign ID (from mission_campaigns table).
+	 * @param int $campaign_id Campaign ID (from missiondp_campaigns table).
 	 * @param int $limit       Number of donors to return.
 	 * @return array<int, array{donor_id: int, first_name: string, last_name: string, email: string, is_anonymous: bool, total: int, tribute_type: ?string, honoree_name: ?string}>
 	 */
 	public function top_donors_for_campaign( int $campaign_id, int $limit = 5 ): array {
 		global $wpdb;
 
-		$txn_table   = $wpdb->prefix . 'mission_transactions';
-		$donor_table = $wpdb->prefix . 'mission_donors';
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$is_test     = (int) $this->is_test_mode();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -941,15 +941,15 @@ class ReportingService {
 	/**
 	 * Get recent donors for a campaign, ordered by transaction date.
 	 *
-	 * @param int $campaign_id Campaign ID (from mission_campaigns table).
+	 * @param int $campaign_id Campaign ID (from missiondp_campaigns table).
 	 * @param int $limit       Number of entries to return.
 	 * @return array<int, array{donor_id: int, transaction_id: int, first_name: string, last_name: string, email: string, is_anonymous: bool, amount: int, date_created: string, tribute_type: ?string, honoree_name: ?string}>
 	 */
 	public function recent_donors_for_campaign( int $campaign_id, int $limit = 5 ): array {
 		global $wpdb;
 
-		$txn_table   = $wpdb->prefix . 'mission_transactions';
-		$donor_table = $wpdb->prefix . 'mission_donors';
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$is_test     = (int) $this->is_test_mode();
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1013,8 +1013,8 @@ class ReportingService {
 			return [];
 		}
 
-		$txn_table     = $wpdb->prefix . 'mission_transactions';
-		$tribute_table = $wpdb->prefix . 'mission_tributes';
+		$txn_table     = $wpdb->prefix . 'missiondp_transactions';
+		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 		$is_test       = (int) $this->is_test_mode();
 
 		$placeholders = implode( ',', array_fill( 0, count( $donor_ids ), '%d' ) );
@@ -1062,7 +1062,7 @@ class ReportingService {
 			return [];
 		}
 
-		$tribute_table = $wpdb->prefix . 'mission_tributes';
+		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 		$placeholders  = implode( ',', array_fill( 0, count( $transaction_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
@@ -1109,8 +1109,8 @@ class ReportingService {
 	): array {
 		global $wpdb;
 
-		$txn_table   = $wpdb->prefix . 'mission_transactions';
-		$donor_table = $wpdb->prefix . 'mission_donors';
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$is_test     = (int) $this->is_test_mode();
 		$offset      = ( $page - 1 ) * $per_page;
 
@@ -1211,15 +1211,15 @@ class ReportingService {
 			return [];
 		}
 
-		$meta_table   = $wpdb->prefix . 'mission_transactionmeta';
+		$meta_table   = $wpdb->prefix . 'missiondp_transactionmeta';
 		$placeholders = implode( ',', array_fill( 0, count( $transaction_ids ), '%d' ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT mission_transaction_id, meta_value
+				"SELECT missiondp_transaction_id, meta_value
 				FROM {$meta_table}
-				WHERE mission_transaction_id IN ({$placeholders}) AND meta_key = 'donor_comment'",
+				WHERE missiondp_transaction_id IN ({$placeholders}) AND meta_key = 'donor_comment'",
 				...array_map( 'intval', $transaction_ids )
 			),
 			ARRAY_A
@@ -1228,7 +1228,7 @@ class ReportingService {
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
-			$map[ (int) $row['mission_transaction_id'] ] = $row['meta_value'];
+			$map[ (int) $row['missiondp_transaction_id'] ] = $row['meta_value'];
 		}
 
 		return $map;
@@ -1245,7 +1245,7 @@ class ReportingService {
 	public function donor_annual_summary( int $donor_id, bool $is_test = false ): array {
 		global $wpdb;
 
-		$table     = $wpdb->prefix . 'mission_transactions';
+		$table     = $wpdb->prefix . 'missiondp_transactions';
 		$test_flag = $is_test ? 1 : 0;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1300,8 +1300,8 @@ class ReportingService {
 	public function donor_annual_receipt_data( int $donor_id, int $year, bool $is_test = false ): array {
 		global $wpdb;
 
-		$txn_table = $wpdb->prefix . 'mission_transactions';
-		$cam_table = $wpdb->prefix . 'mission_campaigns';
+		$txn_table = $wpdb->prefix . 'missiondp_transactions';
+		$cam_table = $wpdb->prefix . 'missiondp_campaigns';
 		$test_flag = $is_test ? 1 : 0;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1321,7 +1321,7 @@ class ReportingService {
 					AND t.is_test = {$test_flag}
 					AND YEAR(t.date_completed) = %d
 				ORDER BY t.date_completed ASC",
-				__( 'General Fund', 'missionwp-donation-platform' ),
+				__( 'General Fund', 'mission-donation-platform' ),
 				$donor_id,
 				$year
 			),
@@ -1372,7 +1372,7 @@ class ReportingService {
 	public function donor_transaction_years( int $donor_id, bool $is_test = false ): array {
 		global $wpdb;
 
-		$table     = $wpdb->prefix . 'mission_transactions';
+		$table     = $wpdb->prefix . 'missiondp_transactions';
 		$test_flag = $is_test ? 1 : 0;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1399,8 +1399,8 @@ class ReportingService {
 	public function donor_transaction_campaigns( int $donor_id, bool $is_test = false ): array {
 		global $wpdb;
 
-		$txn_table = $wpdb->prefix . 'mission_transactions';
-		$cam_table = $wpdb->prefix . 'mission_campaigns';
+		$txn_table = $wpdb->prefix . 'missiondp_transactions';
+		$cam_table = $wpdb->prefix . 'missiondp_campaigns';
 		$test_flag = $is_test ? 1 : 0;
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -1411,7 +1411,7 @@ class ReportingService {
 				LEFT JOIN {$cam_table} c ON c.id = t.campaign_id
 				WHERE t.donor_id = %d AND t.is_test = {$test_flag} AND t.campaign_id IS NOT NULL
 				ORDER BY name ASC",
-				__( 'Deleted Campaign', 'missionwp-donation-platform' ),
+				__( 'Deleted Campaign', 'mission-donation-platform' ),
 				$donor_id
 			),
 			ARRAY_A

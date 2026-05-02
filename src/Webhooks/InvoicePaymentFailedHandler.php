@@ -2,12 +2,12 @@
 /**
  * Handler for invoice.payment_failed webhook events.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Webhooks;
+namespace MissionDP\Webhooks;
 
-use Mission\Models\Subscription;
+use MissionDP\Models\Subscription;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -55,6 +55,6 @@ class InvoicePaymentFailedHandler {
 		 * @param Subscription $subscription The subscription that failed to renew.
 		 * @param array        $data         Webhook event data.
 		 */
-		do_action( 'mission_subscription_payment_failed', $subscription, $data );
+		do_action( 'missiondp_subscription_payment_failed', $subscription, $data );
 	}
 }

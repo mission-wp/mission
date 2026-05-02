@@ -2,12 +2,12 @@
 /**
  * Tests for the CampaignsEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Models\Campaign;
+use MissionDP\Models\Campaign;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -113,7 +113,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_get_requires_manage_options(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertSame( 403, $response->get_status() );
@@ -127,7 +127,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$this->create_campaign( [ 'title' => 'Test Campaign' ] );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns' );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -155,7 +155,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_get_returns_empty_when_no_campaigns(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertSame( 200, $response->get_status() );
@@ -170,7 +170,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$this->create_campaign();
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns' );
 		$response = $this->server->dispatch( $request );
 		$headers  = $response->get_headers();
 
@@ -189,7 +189,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$this->create_campaign( [ 'title' => 'Annual Fundraiser' ] );
 		$this->create_campaign( [ 'title' => 'Emergency Relief' ] );
 
-		$request = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
+		$request = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns' );
 		$request->set_param( 'search', 'Annual' );
 
 		$response = $this->server->dispatch( $request );
@@ -216,7 +216,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$ended_campaign->date_end   = wp_date( 'Y-m-d', strtotime( '-1 day' ) );
 		$ended_campaign->save();
 
-		$request = new WP_REST_Request( 'GET', '/mission/v1/campaigns' );
+		$request = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns' );
 		$request->set_param( 'status', 'active' );
 
 		$response = $this->server->dispatch( $request );
@@ -239,7 +239,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign->date_end   = wp_date( 'Y-m-d', strtotime( '+30 days' ) );
 		$campaign->save();
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $campaign->id );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -258,7 +258,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign->date_end   = wp_date( 'Y-m-d', strtotime( '-1 day' ) );
 		$campaign->save();
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $campaign->id );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -275,7 +275,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		wp_set_current_user( $this->subscriber_id );
 
-		$request  = new WP_REST_Request( 'DELETE', '/mission/v1/campaigns/' . $campaign->id );
+		$request  = new WP_REST_Request( 'DELETE', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertSame( 403, $response->get_status() );
@@ -289,7 +289,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign = $this->create_campaign( [ 'title' => 'To Be Deleted' ] );
 
-		$request  = new WP_REST_Request( 'DELETE', '/mission/v1/campaigns/' . $campaign->id );
+		$request  = new WP_REST_Request( 'DELETE', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -305,7 +305,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_delete_returns_404_for_missing_campaign(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request  = new WP_REST_Request( 'DELETE', '/mission/v1/campaigns/999999' );
+		$request  = new WP_REST_Request( 'DELETE', '/mission-donation-platform/v1/campaigns/999999' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertSame( 404, $response->get_status() );
@@ -317,7 +317,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_batch_delete_requires_manage_options(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns/batch-delete' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns/batch-delete' );
 		$request->set_body_params( array( 'ids' => array( 1 ) ) );
 		$response = $this->server->dispatch( $request );
 
@@ -337,7 +337,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign_ids = array_map( fn( $c ) => $c->id, $campaigns );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns/batch-delete' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns/batch-delete' );
 		$request->set_body_params( array( 'ids' => $campaign_ids ) );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
@@ -357,7 +357,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_create_campaign_with_expected_fields(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns' );
 		$request->set_body_params( array(
 			'title'       => 'New Campaign',
 			'excerpt'     => 'A test campaign.',
@@ -383,7 +383,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_create_campaign_requires_title(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns' );
 		$request->set_body_params( array(
 			'excerpt' => 'Missing title.',
 		) );
@@ -399,7 +399,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_create_campaign_requires_manage_options(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns' );
 		$request->set_body_params( array(
 			'title' => 'Forbidden Campaign',
 		) );
@@ -417,7 +417,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign = $this->create_campaign( [ 'title' => 'Detail Campaign' ] );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $campaign->id );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -451,7 +451,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_get_single_returns_404_for_missing(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/999999' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/999999' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertSame( 404, $response->get_status() );
@@ -465,7 +465,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign = $this->create_campaign();
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/campaigns/batch-delete' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns/batch-delete' );
 		$request->set_body_params( array( 'ids' => array( $campaign->id, 999999 ) ) );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
@@ -487,7 +487,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 			'goal_amount' => 100000,
 		] );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [
 			'goal_amount' => 250000,
 			'excerpt'     => 'Updated description.',
@@ -511,7 +511,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign = $this->create_campaign();
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [
 			'close_on_goal'               => true,
 			'stop_donations_on_end'       => false,
@@ -541,7 +541,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign = $this->create_campaign( [ 'goal_amount' => 100000 ] );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [ 'goal_amount' => -50000 ] );
 
 		$response = $this->server->dispatch( $request );
@@ -559,7 +559,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 	public function test_update_returns_404_for_missing(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/999999' );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/999999' );
 		$request->set_body_params( [ 'goal_amount' => 100000 ] );
 
 		$response = $this->server->dispatch( $request );
@@ -576,7 +576,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		wp_set_current_user( $this->subscriber_id );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [ 'goal_amount' => 100000 ] );
 
 		$response = $this->server->dispatch( $request );
@@ -593,11 +593,11 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign = $this->create_campaign();
 		$fired    = false;
 
-		$this->add_tracked_action( 'mission_campaign_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'missiondp_campaign_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [ 'fee_recovery' => false ] );
 
 		$this->server->dispatch( $request );
@@ -614,11 +614,11 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign = $this->create_campaign( [ 'goal_amount' => 100000 ] );
 		$fired    = false;
 
-		$this->add_tracked_action( 'mission_campaign_goal_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'missiondp_campaign_goal_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [ 'goal_amount' => 200000 ] );
 
 		$this->server->dispatch( $request );
@@ -635,11 +635,11 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign = $this->create_campaign( [ 'goal_amount' => 100000 ] );
 		$fired    = false;
 
-		$this->add_tracked_action( 'mission_campaign_goal_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'missiondp_campaign_goal_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [ 'goal_amount' => 100000 ] );
 
 		$this->server->dispatch( $request );
@@ -655,7 +655,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$campaign = $this->create_campaign();
 
-		$request = new WP_REST_Request( 'PUT', '/mission/v1/campaigns/' . $campaign->id );
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$request->set_body_params( [ 'show_in_listings' => false ] );
 
 		$response = $this->server->dispatch( $request );
@@ -665,7 +665,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$this->assertFalse( $data['show_in_listings'] );
 
 		// Verify it persisted by re-fetching.
-		$get_request  = new WP_REST_Request( 'GET', '/mission/v1/campaigns/' . $campaign->id );
+		$get_request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
 		$get_response = $this->server->dispatch( $get_request );
 
 		$this->assertFalse( $get_response->get_data()['show_in_listings'] );

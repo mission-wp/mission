@@ -1,10 +1,10 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission/campaign-image",
+	"name": "mission-donation-platform/campaign-image",
 	"version": "0.1.0",
 	"title": "Campaign Image",
-	"category": "mission",
+	"category": "mission-donation-platform",
 	"icon": "format-image",
 	"description": "Display the image associated with a campaign.",
 	"supports": {
@@ -71,7 +71,7 @@
 		}
 	},
 	"example": {},
-	"textdomain": "missionwp-donation-platform",
+	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

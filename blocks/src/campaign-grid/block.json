@@ -1,10 +1,10 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "mission/campaign-grid",
+  "name": "mission-donation-platform/campaign-grid",
   "version": "0.1.0",
   "title": "Campaign Grid",
-  "category": "mission",
+  "category": "mission-donation-platform",
   "icon": "grid-view",
   "description": "Display multiple campaigns in a responsive grid layout.",
   "supports": {
@@ -63,7 +63,7 @@
     }
   },
   "example": {},
-  "textdomain": "missionwp-donation-platform",
+  "textdomain": "mission-donation-platform",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",

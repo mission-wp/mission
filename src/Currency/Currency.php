@@ -2,10 +2,10 @@
 /**
  * Currency helper.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Currency;
+namespace MissionDP\Currency;
 
 defined( 'ABSPATH' ) || exit;
 

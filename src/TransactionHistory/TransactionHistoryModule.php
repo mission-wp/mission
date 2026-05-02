@@ -2,12 +2,12 @@
 /**
  * Transaction history module — logs lifecycle events for transactions.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\TransactionHistory;
+namespace MissionDP\TransactionHistory;
 
-use Mission\Models\TransactionHistory;
+use MissionDP\Models\TransactionHistory;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -107,12 +107,12 @@ class TransactionHistoryModule {
 	 * @return void
 	 */
 	private function register_event_listeners(): void {
-		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
-		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_payment_completed' ] );
-		add_action( 'mission_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
-		add_action( 'mission_transaction_status_completed_to_refunded', [ $this, 'on_refund_completed' ] );
-		add_action( 'mission_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
-		add_action( 'mission_transaction_status_transition', [ $this, 'on_status_transition' ], 10, 3 );
+		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_payment_completed' ] );
+		add_action( 'missiondp_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'missiondp_transaction_status_completed_to_refunded', [ $this, 'on_refund_completed' ] );
+		add_action( 'missiondp_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
+		add_action( 'missiondp_transaction_status_transition', [ $this, 'on_status_transition' ], 10, 3 );
 	}
 
 	/**

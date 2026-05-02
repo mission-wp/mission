@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useMemo } from '@wordpress/element';
 
 const PERSISTED_KEYS = [ 'type', 'fields', 'perPage', 'sort' ];
-const STORAGE_PREFIX = 'mission_view_';
+const STORAGE_PREFIX = 'missiondp_view_';
 
 function getPersistedFields( view ) {
   const persisted = {};

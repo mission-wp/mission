@@ -2,12 +2,12 @@
 /**
  * Tests for the Subscription model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Models;
+namespace MissionDP\Tests\Models;
 
-use Mission\Models\Subscription;
+use MissionDP\Models\Subscription;
 use WP_UnitTestCase;
 
 /**
@@ -319,7 +319,7 @@ class SubscriptionTest extends WP_UnitTestCase {
 	public function test_update_amount_fires_amount_changed_action(): void {
 		$fired_args = null;
 
-		add_action( 'mission_subscription_amount_changed', function () use ( &$fired_args ) {
+		add_action( 'missiondp_subscription_amount_changed', function () use ( &$fired_args ) {
 			$fired_args = func_get_args();
 		}, 10, 3 );
 
@@ -345,7 +345,7 @@ class SubscriptionTest extends WP_UnitTestCase {
 	public function test_update_amount_does_not_fire_when_only_tip_changes(): void {
 		$fired = false;
 
-		add_action( 'mission_subscription_amount_changed', function () use ( &$fired ) {
+		add_action( 'missiondp_subscription_amount_changed', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

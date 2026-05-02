@@ -1,12 +1,11 @@
 {
-	"name": "missionwp/donation-platform",
+	"name": "missionwp/mission-donation-platform",
 	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"require": {
 		"dompdf/dompdf": "^3.1",
-		"php": ">=8.0",
-		"stripe/stripe-php": "^16.0"
+		"php": ">=8.0"
 	},
 	"require-dev": {
 		"phpcompatibility/phpcompatibility-wp": "^2.1",
@@ -16,7 +15,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Mission\\": "src/"
+			"MissionDP\\": "src/"
 		}
 	},
 	"config": {

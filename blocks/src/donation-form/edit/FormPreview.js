@@ -43,7 +43,7 @@ export default function FormPreview( { attributes = {} } ) {
   const [ settings, setSettings ] = useState( null );
 
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/donation-form-settings' } )
+    apiFetch( { path: '/mission-donation-platform/v1/donation-form-settings' } )
       .then( ( response ) => setSettings( response ) )
       .catch( () => setSettings( null ) );
   }, [] );
@@ -85,16 +85,16 @@ export default function FormPreview( { attributes = {} } ) {
         <div className="mission-df-step mission-df-step-1 active">
           <h2 className="mission-df-step-title">
             { attributes.chooseGiftHeading ||
-              __( 'Choose Your Gift', 'missionwp-donation-platform' ) }
+              __( 'Choose Your Gift', 'mission-donation-platform' ) }
           </h2>
 
           { recurringEnabled && (
             <div className="mission-df-frequency-toggle">
               <button type="button" className="mission-df-frequency-btn active">
-                { __( 'One Time', 'missionwp-donation-platform' ) }
+                { __( 'One Time', 'mission-donation-platform' ) }
               </button>
               <button type="button" className="mission-df-frequency-btn">
-                { __( 'Ongoing', 'missionwp-donation-platform' ) }
+                { __( 'Ongoing', 'mission-donation-platform' ) }
               </button>
             </div>
           ) }
@@ -128,7 +128,7 @@ export default function FormPreview( { attributes = {} } ) {
                 type="button"
                 className="mission-df-amount-btn mission-df-amount-btn--other"
               >
-                { __( 'Other', 'missionwp-donation-platform' ) }
+                { __( 'Other', 'mission-donation-platform' ) }
               </button>
             ) }
           </div>
@@ -138,7 +138,7 @@ export default function FormPreview( { attributes = {} } ) {
             className="mission-df-btn mission-df-btn--primary"
           >
             { attributes.continueButtonText ||
-              __( 'Continue', 'missionwp-donation-platform' ) }
+              __( 'Continue', 'mission-donation-platform' ) }
           </button>
         </div>
       </div>

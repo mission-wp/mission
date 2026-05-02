@@ -37,7 +37,7 @@ export default function AmountsTab( {
       { /* Donation Frequencies */ }
       <div className="mission-field-group" style={ { marginBottom: 24 } }>
         <span className="mission-field-label">
-          { __( 'Donation Frequencies', 'missionwp-donation-platform' ) }
+          { __( 'Donation Frequencies', 'mission-donation-platform' ) }
         </span>
         <FrequencyChips
           selected={ localState.frequencies }
@@ -46,7 +46,7 @@ export default function AmountsTab( {
         <span className="mission-field-hint">
           { __(
             'Select which frequencies are available on donation forms',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
         </span>
       </div>
@@ -61,16 +61,16 @@ export default function AmountsTab( {
           } }
         >
           <span className="mission-field-label" style={ { marginBottom: 0 } }>
-            { __( 'Suggested Amounts', 'missionwp-donation-platform' ) }
+            { __( 'Suggested Amounts', 'mission-donation-platform' ) }
           </span>
           <div style={ { display: 'flex', alignItems: 'center', gap: 8 } }>
             <span style={ { fontSize: '11.7px', color: '#9b9ba8' } }>
-              { __( 'With descriptions', 'missionwp-donation-platform' ) }
+              { __( 'With descriptions', 'mission-donation-platform' ) }
             </span>
             { /* eslint-disable-next-line jsx-a11y/label-has-associated-control */ }
             <label
               className="mission-toggle-switch mission-toggle-switch--sm"
-              title={ __( 'With descriptions', 'missionwp-donation-platform' ) }
+              title={ __( 'With descriptions', 'mission-donation-platform' ) }
             >
               <input
                 type="checkbox"
@@ -115,7 +115,7 @@ export default function AmountsTab( {
         <span className="mission-field-hint">
           { __(
             'Press Enter to add an amount. Click an amount to set it as the pre-selected default.',
-            'missionwp-donation-platform'
+            'mission-donation-platform'
           ) }
         </span>
       </div>
@@ -127,7 +127,7 @@ export default function AmountsTab( {
           style={ { marginBottom: 24, maxWidth: '50%' } }
         >
           <label className="mission-field-label" htmlFor="default-frequency">
-            { __( 'Default Frequency', 'missionwp-donation-platform' ) }
+            { __( 'Default Frequency', 'mission-donation-platform' ) }
           </label>
           <select
             id="default-frequency"
@@ -139,11 +139,11 @@ export default function AmountsTab( {
           >
             { localState.frequencies.map( ( f ) => {
               const labels = {
-                one_time: __( 'One-time', 'missionwp-donation-platform' ),
-                weekly: __( 'Weekly', 'missionwp-donation-platform' ),
-                monthly: __( 'Monthly', 'missionwp-donation-platform' ),
-                quarterly: __( 'Quarterly', 'missionwp-donation-platform' ),
-                annually: __( 'Annually', 'missionwp-donation-platform' ),
+                one_time: __( 'One-time', 'mission-donation-platform' ),
+                weekly: __( 'Weekly', 'mission-donation-platform' ),
+                monthly: __( 'Monthly', 'mission-donation-platform' ),
+                quarterly: __( 'Quarterly', 'mission-donation-platform' ),
+                annually: __( 'Annually', 'mission-donation-platform' ),
               };
               return (
                 <option key={ f } value={ f }>
@@ -155,7 +155,7 @@ export default function AmountsTab( {
           <span className="mission-field-hint">
             { __(
               'Pre-selected frequency when the form loads',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </span>
         </div>
@@ -165,10 +165,10 @@ export default function AmountsTab( {
       <ToggleRow
         checked={ localState.customAmount }
         onChange={ ( val ) => updateField( 'customAmount', val ) }
-        label={ __( 'Allow custom amount', 'missionwp-donation-platform' ) }
+        label={ __( 'Allow custom amount', 'mission-donation-platform' ) }
         hint={ __(
           'Let donors enter their own amount',
-          'missionwp-donation-platform'
+          'mission-donation-platform'
         ) }
         style={ { marginBottom: 20 } }
       />
@@ -176,7 +176,7 @@ export default function AmountsTab( {
       { /* Minimum Donation */ }
       <div className="mission-field-group" style={ { maxWidth: '50%' } }>
         <label className="mission-field-label" htmlFor="min-donation">
-          { __( 'Minimum Donation', 'missionwp-donation-platform' ) }
+          { __( 'Minimum Donation', 'mission-donation-platform' ) }
         </label>
         <div className="mission-field-currency">
           <span className="mission-field-currency__symbol">

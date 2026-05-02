@@ -2,15 +2,15 @@
 /**
  * Tests for the DonorNotesEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Donor;
-use Mission\Models\Note;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Note;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -54,16 +54,16 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -107,16 +107,16 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 		$wp_rest_server = null;
 		wp_set_current_user( 0 );
 
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
 
@@ -224,7 +224,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 		$note1 = $this->create_note( [ 'content' => 'First note.' ] );
 		$note2 = $this->create_note( [ 'content' => 'Second note.' ] );
 
-		$response = $this->dispatch_get( "/mission/v1/donors/{$this->donor->id}/notes" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -249,7 +249,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	 * Test GET returns 404 when donor does not exist.
 	 */
 	public function test_get_404_when_donor_not_found(): void {
-		$response = $this->dispatch_get( '/mission/v1/donors/999999/notes' );
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/donors/999999/notes' );
 
 		$this->assertSame( 404, $response->get_status() );
 		$this->assertSame( 'donor_not_found', $response->as_error()->get_error_code() );
@@ -263,7 +263,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	 * Test POST creates a note with content and author.
 	 */
 	public function test_post_creates_note_with_content_and_author(): void {
-		$response = $this->dispatch_post( "/mission/v1/donors/{$this->donor->id}/notes", [
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes", [
 			'content' => 'Important donor note.',
 		] );
 		$data = $response->get_data();
@@ -284,7 +284,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	 * Test POST validates donor exists.
 	 */
 	public function test_post_validates_donor_exists(): void {
-		$response = $this->dispatch_post( '/mission/v1/donors/999999/notes', [
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/donors/999999/notes', [
 			'content' => 'This donor does not exist.',
 		] );
 
@@ -296,7 +296,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	 * Test POST rejects empty content.
 	 */
 	public function test_post_rejects_empty_content(): void {
-		$response = $this->dispatch_post( "/mission/v1/donors/{$this->donor->id}/notes", [
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes", [
 			'content' => '   ',
 		] );
 
@@ -314,7 +314,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	public function test_delete_removes_note(): void {
 		$note = $this->create_note();
 
-		$response = $this->dispatch_delete( "/mission/v1/donors/{$this->donor->id}/notes/{$note->id}" );
+		$response = $this->dispatch_delete( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes/{$note->id}" );
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -328,7 +328,7 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	 * Test DELETE returns 404 for nonexistent note.
 	 */
 	public function test_delete_404_for_nonexistent_note(): void {
-		$response = $this->dispatch_delete( "/mission/v1/donors/{$this->donor->id}/notes/999999" );
+		$response = $this->dispatch_delete( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes/999999" );
 
 		$this->assertSame( 404, $response->get_status() );
 		$this->assertSame( 'note_not_found', $response->as_error()->get_error_code() );
@@ -344,14 +344,14 @@ class DonorNotesEndpointTest extends WP_UnitTestCase {
 	public function test_permissions_unauthenticated_rejected(): void {
 		// Unauthenticated (user 0).
 		wp_set_current_user( 0 );
-		$response = $this->dispatch_get( "/mission/v1/donors/{$this->donor->id}/notes" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes" );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );
 
 		// Subscriber role.
 		wp_set_current_user( $this->subscriber_id );
-		$response = $this->dispatch_get( "/mission/v1/donors/{$this->donor->id}/notes" );
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/donors/{$this->donor->id}/notes" );
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->as_error()->get_error_code() );

@@ -2,10 +2,10 @@
 /**
  * JSON export formatter.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Export\Formatters;
+namespace MissionDP\Export\Formatters;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -41,7 +41,7 @@ class JsonFormatter implements FormatterInterface {
 		 * @param array  $columns Column definitions.
 		 * @param array  $rows    Row data.
 		 */
-		return apply_filters( "mission_export_{$type}_json", $json, $columns, $rows );
+		return apply_filters( "missiondp_export_{$type}_json", $json, $columns, $rows );
 	}
 
 	/**

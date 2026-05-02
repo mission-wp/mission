@@ -4,7 +4,7 @@ import { renderHook, act } from '@testing-library/react';
 import { usePersistedView } from '../use-persisted-view';
 
 const STORAGE_KEY = 'test_view';
-const FULL_KEY = 'mission_view_test_view';
+const FULL_KEY = 'missiondp_view_test_view';
 
 const DEFAULT_VIEW = {
   type: 'table',

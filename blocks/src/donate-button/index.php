@@ -3,7 +3,7 @@
  * Block Name: Donate Button
  * Description: A customizable donate button that scrolls to a donation form or links to a URL.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
@@ -23,7 +23,7 @@ $resolve_preset = static function ( string $value ): string {
 	return $value;
 };
 
-$text          = $attributes['text'] ?? __( 'Donate Now', 'missionwp-donation-platform' );
+$text          = $attributes['text'] ?? __( 'Donate Now', 'mission-donation-platform' );
 $donate_action = $attributes['donateButtonAction'] ?? 'scroll';
 $donate_url    = $attributes['donateButtonUrl'] ?? '';
 
@@ -195,7 +195,7 @@ ob_start();
 ?>
 <div
 	<?php echo wp_kses_post( $wrapper_attrs ); ?>
-	data-wp-interactive="mission/donate-button"
+	data-wp-interactive="mission-donation-platform/donate-button"
 >
 	<?php if ( 'scroll' === $donate_action ) : ?>
 		<button
@@ -225,5 +225,4 @@ $output = ob_get_clean();
  * @param string $output     HTML output.
  * @param array  $attributes Block attributes.
  */
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_donate_button_output', $output, $attributes );
+echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_donate_button_output', $output, $attributes ) );

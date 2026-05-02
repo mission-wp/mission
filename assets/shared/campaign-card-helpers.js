@@ -41,14 +41,14 @@ export function getTag( campaign, daysRemaining ) {
 
   if ( status === 'ended' || daysRemaining === 0 ) {
     return {
-      text: __( 'Ended', 'missionwp-donation-platform' ),
+      text: __( 'Ended', 'mission-donation-platform' ),
       className: 'mission-cc-tag--ended',
     };
   }
 
   if ( hasGoal && goalProgress >= goalAmount ) {
     return {
-      text: __( 'Goal Reached', 'missionwp-donation-platform' ),
+      text: __( 'Goal Reached', 'mission-donation-platform' ),
       className: 'mission-cc-tag--goal-reached',
     };
   }
@@ -57,10 +57,10 @@ export function getTag( campaign, daysRemaining ) {
     return {
       text:
         daysRemaining === 1
-          ? __( '1 Day Left', 'missionwp-donation-platform' )
+          ? __( '1 Day Left', 'mission-donation-platform' )
           : `${ daysRemaining } ${ __(
               'Days Left',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }`,
       className: 'mission-cc-tag--ending-soon',
     };
@@ -113,7 +113,7 @@ export function getTimeText( campaign, daysRemaining ) {
   const { status, date_end: dateEnd } = campaign;
 
   if ( ! dateEnd ) {
-    return __( 'Ongoing', 'missionwp-donation-platform' );
+    return __( 'Ongoing', 'mission-donation-platform' );
   }
 
   const datePart = dateEnd.split( ' ' )[ 0 ];

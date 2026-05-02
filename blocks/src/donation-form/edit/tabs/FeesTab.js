@@ -3,40 +3,37 @@ import { getCurrencySymbol } from '@shared/currency';
 import { minorToMajor } from '@shared/currencies';
 
 export default function FeesTab( { localState, updateField } ) {
-  const feePercent = window.missionFeeSettings?.stripeFeePercent ?? 2.9;
-  const feeFixed = window.missionFeeSettings?.stripeFeeFixed ?? 30;
+  const feePercent = window.missiondpFeeSettings?.stripeFeePercent ?? 2.9;
+  const feeFixed = window.missiondpFeeSettings?.stripeFeeFixed ?? 30;
   const symbol = getCurrencySymbol();
   const fixedDisplay = minorToMajor( feeFixed, 'USD' );
 
   const feeOptions = [
     {
       value: 'none',
-      label: __( 'Organization absorbs fees', 'missionwp-donation-platform' ),
+      label: __( 'Organization absorbs fees', 'mission-donation-platform' ),
       hint: __(
         'Your organization covers all processing fees',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
     },
     {
       value: 'optional',
       label: __(
         'Give donors the option to cover fees',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
       hint: __(
         'Donors can choose to add processing fees to their donation',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
     },
     {
       value: 'required',
-      label: __(
-        'Require donors to cover fees',
-        'missionwp-donation-platform'
-      ),
+      label: __( 'Require donors to cover fees', 'mission-donation-platform' ),
       hint: __(
         'Processing fees are automatically included in every donation',
-        'missionwp-donation-platform'
+        'mission-donation-platform'
       ),
     },
   ];
@@ -44,18 +41,18 @@ export default function FeesTab( { localState, updateField } ) {
   const platformOptions = [
     {
       value: true,
-      label: __( 'Optional donor tip', 'missionwp-donation-platform' ),
+      label: __( 'Optional donor tip', 'mission-donation-platform' ),
       hint: __(
-        'Donors can leave an optional tip to support the MissionWP platform',
-        'missionwp-donation-platform'
+        'Donors can leave an optional tip to support the Mission platform',
+        'mission-donation-platform'
       ),
     },
     {
       value: false,
-      label: __( 'Flat platform fee (3%)', 'missionwp-donation-platform' ),
+      label: __( 'Flat platform fee (3%)', 'mission-donation-platform' ),
       hint: __(
-        'A flat 3% of each donation goes to support MissionWP',
-        'missionwp-donation-platform'
+        'A flat 3% of each donation goes to support Mission',
+        'mission-donation-platform'
       ),
     },
   ];
@@ -65,14 +62,14 @@ export default function FeesTab( { localState, updateField } ) {
       { /* Processing Fees */ }
       <div className="mission-fees-tab__section">
         <span className="mission-field-label">
-          { __( 'Processing Fees', 'missionwp-donation-platform' ) }
+          { __( 'Processing Fees', 'mission-donation-platform' ) }
         </span>
         <p className="mission-fees-tab__section-hint">
           { sprintf(
             /* translators: 1: fee percentage, 2: currency symbol, 3: fixed fee amount */
             __(
               'Stripe charges %1$s%% + %2$s%3$s per transaction for payment processing.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ),
             feePercent,
             symbol,
@@ -111,12 +108,12 @@ export default function FeesTab( { localState, updateField } ) {
       { /* Platform Fee */ }
       <div className="mission-fees-tab__section">
         <span className="mission-field-label">
-          { __( 'Platform Fee', 'missionwp-donation-platform' ) }
+          { __( 'Platform Fee', 'mission-donation-platform' ) }
         </span>
         <p className="mission-fees-tab__section-hint">
           { __(
-            'MissionWP is funded by optional donor tips or a small platform fee — your choice.',
-            'missionwp-donation-platform'
+            'Mission is funded by optional donor tips or a small platform fee — your choice.',
+            'mission-donation-platform'
           ) }
         </p>
         <div className="mission-fees-tab__radio-group mission-fees-tab__radio-group--row">

@@ -2,18 +2,18 @@
 /**
  * Admin module - handles admin functionality.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Admin;
+namespace MissionDP\Admin;
 
-use Mission\Admin\Pages\CampaignsPage;
-use Mission\Admin\Pages\DashboardPage;
-use Mission\Admin\Pages\DonorsPage;
-use Mission\Admin\Pages\SettingsPage;
-use Mission\Admin\Pages\SubscriptionsPage;
-use Mission\Admin\Pages\ToolsPage;
-use Mission\Admin\Pages\TransactionsPage;
+use MissionDP\Admin\Pages\CampaignsPage;
+use MissionDP\Admin\Pages\DashboardPage;
+use MissionDP\Admin\Pages\DonorsPage;
+use MissionDP\Admin\Pages\SettingsPage;
+use MissionDP\Admin\Pages\SubscriptionsPage;
+use MissionDP\Admin\Pages\ToolsPage;
+use MissionDP\Admin\Pages\TransactionsPage;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,37 +25,37 @@ class AdminModule {
 	/**
 	 * Menu slug for the main Mission menu.
 	 */
-	public const MENU_SLUG = 'mission';
+	public const MENU_SLUG = 'mission-donation-platform';
 
 	/**
 	 * Submenu slug for Transactions.
 	 */
-	public const TRANSACTIONS_SLUG = 'mission-transactions';
+	public const TRANSACTIONS_SLUG = 'mission-donation-platform-transactions';
 
 	/**
 	 * Submenu slug for Campaigns.
 	 */
-	public const CAMPAIGNS_SLUG = 'mission-campaigns';
+	public const CAMPAIGNS_SLUG = 'mission-donation-platform-campaigns';
 
 	/**
 	 * Submenu slug for Donors.
 	 */
-	public const DONORS_SLUG = 'mission-donors';
+	public const DONORS_SLUG = 'mission-donation-platform-donors';
 
 	/**
 	 * Submenu slug for Subscriptions.
 	 */
-	public const SUBSCRIPTIONS_SLUG = 'mission-subscriptions';
+	public const SUBSCRIPTIONS_SLUG = 'mission-donation-platform-subscriptions';
 
 	/**
 	 * Submenu slug for Settings.
 	 */
-	public const SETTINGS_SLUG = 'mission-settings';
+	public const SETTINGS_SLUG = 'mission-donation-platform-settings';
 
 	/**
 	 * Submenu slug for Tools.
 	 */
-	public const TOOLS_SLUG = 'mission-tools';
+	public const TOOLS_SLUG = 'mission-donation-platform-tools';
 
 	/**
 	 * Page instances.
@@ -90,7 +90,7 @@ class AdminModule {
 		add_action( 'load-edit.php', [ $this, 'redirect_campaign_list' ] );
 		add_filter( 'parent_file', [ $this, 'set_campaign_parent_menu' ] );
 		add_filter( 'submenu_file', [ $this, 'set_campaign_submenu_file' ] );
-		add_filter( 'plugin_action_links_' . MISSION_BASENAME, [ $this, 'add_plugin_action_links' ] );
+		add_filter( 'plugin_action_links_' . MISSIONDP_BASENAME, [ $this, 'add_plugin_action_links' ] );
 	}
 
 	/**
@@ -111,15 +111,15 @@ class AdminModule {
 		wp_enqueue_media();
 
 		// Enqueue code editor (CodeMirror) for the email template HTML editor.
-		if ( 'missionwp_page_mission-settings' === $screen->id ) {
+		if ( 'mission_page_mission-donation-platform-settings' === $screen->id ) {
 			$code_editor_settings = wp_enqueue_code_editor( [ 'type' => 'text/html' ] );
 
 			if ( false !== $code_editor_settings ) {
-				wp_localize_script( 'code-editor', 'missionCodeEditor', $code_editor_settings );
+				wp_localize_script( 'code-editor', 'missiondpCodeEditor', $code_editor_settings );
 			}
 		}
 
-		$asset_file = MISSION_PATH . 'admin/build/mission-admin.asset.php';
+		$asset_file = MISSIONDP_PATH . 'admin/build/mission-admin.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			return;
@@ -129,7 +129,7 @@ class AdminModule {
 
 		wp_enqueue_script(
 			'mission-admin',
-			MISSION_URL . 'admin/build/mission-admin.js',
+			MISSIONDP_URL . 'admin/build/mission-admin.js',
 			$asset['dependencies'],
 			$asset['version'],
 			true
@@ -137,14 +137,14 @@ class AdminModule {
 
 		wp_enqueue_style(
 			'mission-admin-vendor',
-			MISSION_URL . 'admin/build/style-mission-admin.css',
+			MISSIONDP_URL . 'admin/build/style-mission-admin.css',
 			[],
 			$asset['version']
 		);
 
 		wp_enqueue_style(
 			'mission-admin',
-			MISSION_URL . 'admin/build/mission-admin.css',
+			MISSIONDP_URL . 'admin/build/mission-admin.css',
 			[ 'wp-components', 'mission-admin-vendor' ],
 			$asset['version']
 		);
@@ -152,32 +152,32 @@ class AdminModule {
 		// Enqueue block editor assets when viewing a campaign detail page.
 		$this->maybe_enqueue_block_editor( $screen );
 
-		$settings = get_option( 'mission_settings', [] );
+		$settings = get_option( 'missiondp_settings', [] );
 
 		$domain = wp_parse_url( home_url(), PHP_URL_HOST );
 
 		wp_localize_script(
 			'mission-admin',
-			'missionAdmin',
+			'missiondpAdmin',
 			[
-				'restUrl'                   => rest_url( 'mission/v1/' ),
+				'restUrl'                   => rest_url( 'mission-donation-platform/v1/' ),
 				'restNonce'                 => wp_create_nonce( 'wp_rest' ),
 				'adminUrl'                  => admin_url(),
 				'page'                      => $screen->id,
-				'version'                   => MISSION_VERSION,
+				'version'                   => MISSIONDP_VERSION,
 				'currency'                  => $settings['currency'] ?? 'USD',
 				'testMode'                  => ! empty( $settings['test_mode'] ),
 				'stripeConnected'           => ( $settings['stripe_connection_status'] ?? 'disconnected' ) === 'connected',
 				'stripeConnectUrl'          => 'https://api.missionwp.com/connect/start?' . http_build_query(
 					[
 						'domain'     => $domain,
-						'return_url' => admin_url( 'admin.php?page=mission-settings' ),
+						'return_url' => admin_url( 'admin.php?page=mission-donation-platform-settings' ),
 					]
 				),
 				'stripeConnectUrlDashboard' => 'https://api.missionwp.com/connect/start?' . http_build_query(
 					[
 						'domain'     => $domain,
-						'return_url' => admin_url( 'admin.php?page=mission' ),
+						'return_url' => admin_url( 'admin.php?page=mission-donation-platform' ),
 					]
 				),
 				'onboardingCompleted'       => ! empty( $settings['onboarding_completed'] ),
@@ -195,7 +195,7 @@ class AdminModule {
 	 * @param \WP_Screen $screen The current admin screen.
 	 */
 	private function maybe_enqueue_block_editor( \WP_Screen $screen ): void {
-		if ( 'missionwp_page_mission-campaigns' !== $screen->id ) {
+		if ( 'mission_page_mission-donation-platform-campaigns' !== $screen->id ) {
 			return;
 		}
 
@@ -217,7 +217,7 @@ class AdminModule {
 		do_action( 'enqueue_block_editor_assets' );
 
 		// Build editor settings and inline them for the JS block editor.
-		$block_editor_context = new \WP_Block_Editor_Context( [ 'name' => 'mission/campaign-editor' ] );
+		$block_editor_context = new \WP_Block_Editor_Context( [ 'name' => 'mission-donation-platform/campaign-editor' ] );
 		$editor_settings      = get_block_editor_settings(
 			[],
 			$block_editor_context
@@ -225,19 +225,19 @@ class AdminModule {
 
 		wp_add_inline_script(
 			'mission-admin',
-			'window.missionEditorSettings = ' . wp_json_encode( $editor_settings ) . ';',
+			'window.missiondpEditorSettings = ' . wp_json_encode( $editor_settings ) . ';',
 			'before'
 		);
 
-		// Register the "mission" block category in the JS store before block
+		// Register the "mission-donation-platform" block category in the JS store before block
 		// scripts run. Without this, registerBlockType() warns about an
 		// invalid category because BlockEditorProvider hasn't mounted yet.
 		wp_add_inline_script(
 			'wp-blocks',
 			'( function() {' .
 				'var c = wp.blocks.getCategories();' .
-				'if ( ! c.some( function( cat ) { return cat.slug === "mission"; } ) ) {' .
-					'wp.blocks.setCategories( [ { slug: "mission", title: "MissionWP" } ].concat( c ) );' .
+				'if ( ! c.some( function( cat ) { return cat.slug === "mission-donation-platform"; } ) ) {' .
+					'wp.blocks.setCategories( [ { slug: "mission-donation-platform", title: "Mission" } ].concat( c ) );' .
 				'}' .
 			'} )();',
 			'after'
@@ -262,14 +262,14 @@ class AdminModule {
 	 */
 	private function is_mission_screen( string $screen_id ): bool {
 		$mission_screens = [
-			'toplevel_page_mission',
-			'missionwp_page_mission-campaigns',
-			'missionwp_page_mission-transactions',
-			'missionwp_page_mission-donors',
-			'missionwp_page_mission-subscriptions',
-			'missionwp_page_mission-settings',
-			'missionwp_page_mission-tools',
-			'mission_campaign',
+			'toplevel_page_mission-donation-platform',
+			'mission_page_mission-donation-platform-campaigns',
+			'mission_page_mission-donation-platform-transactions',
+			'mission_page_mission-donation-platform-donors',
+			'mission_page_mission-donation-platform-subscriptions',
+			'mission_page_mission-donation-platform-settings',
+			'mission_page_mission-donation-platform-tools',
+			'missiondp_campaign',
 		];
 
 		return in_array( $screen_id, $mission_screens, true );
@@ -284,8 +284,8 @@ class AdminModule {
 		$icon_url = $this->get_menu_icon_url();
 
 		add_menu_page(
-			__( 'MissionWP', 'missionwp-donation-platform' ),
-			__( 'MissionWP', 'missionwp-donation-platform' ),
+			__( 'Mission', 'mission-donation-platform' ),
+			__( 'Mission', 'mission-donation-platform' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this->pages['dashboard'], 'render' ],
@@ -295,8 +295,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Dashboard', 'missionwp-donation-platform' ),
-			__( 'Dashboard', 'missionwp-donation-platform' ),
+			__( 'Dashboard', 'mission-donation-platform' ),
+			__( 'Dashboard', 'mission-donation-platform' ),
 			'manage_options',
 			self::MENU_SLUG,
 			[ $this->pages['dashboard'], 'render' ]
@@ -304,8 +304,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Campaigns', 'missionwp-donation-platform' ),
-			__( 'Campaigns', 'missionwp-donation-platform' ),
+			__( 'Campaigns', 'mission-donation-platform' ),
+			__( 'Campaigns', 'mission-donation-platform' ),
 			'manage_options',
 			self::CAMPAIGNS_SLUG,
 			[ $this->pages['campaigns'], 'render' ]
@@ -313,8 +313,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Transactions', 'missionwp-donation-platform' ),
-			__( 'Transactions', 'missionwp-donation-platform' ),
+			__( 'Transactions', 'mission-donation-platform' ),
+			__( 'Transactions', 'mission-donation-platform' ),
 			'manage_options',
 			self::TRANSACTIONS_SLUG,
 			[ $this->pages['transactions'], 'render' ]
@@ -322,8 +322,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Donors', 'missionwp-donation-platform' ),
-			__( 'Donors', 'missionwp-donation-platform' ),
+			__( 'Donors', 'mission-donation-platform' ),
+			__( 'Donors', 'mission-donation-platform' ),
 			'manage_options',
 			self::DONORS_SLUG,
 			[ $this->pages['donors'], 'render' ]
@@ -331,8 +331,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Subscriptions', 'missionwp-donation-platform' ),
-			__( 'Subscriptions', 'missionwp-donation-platform' ),
+			__( 'Subscriptions', 'mission-donation-platform' ),
+			__( 'Subscriptions', 'mission-donation-platform' ),
 			'manage_options',
 			self::SUBSCRIPTIONS_SLUG,
 			[ $this->pages['subscriptions'], 'render' ]
@@ -340,8 +340,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Settings', 'missionwp-donation-platform' ),
-			__( 'Settings', 'missionwp-donation-platform' ),
+			__( 'Settings', 'mission-donation-platform' ),
+			__( 'Settings', 'mission-donation-platform' ),
 			'manage_options',
 			self::SETTINGS_SLUG,
 			[ $this->pages['settings'], 'render' ]
@@ -349,8 +349,8 @@ class AdminModule {
 
 		add_submenu_page(
 			self::MENU_SLUG,
-			__( 'Tools', 'missionwp-donation-platform' ),
-			__( 'Tools', 'missionwp-donation-platform' ),
+			__( 'Tools', 'mission-donation-platform' ),
+			__( 'Tools', 'mission-donation-platform' ),
 			'manage_options',
 			self::TOOLS_SLUG,
 			[ $this->pages['tools'], 'render' ]
@@ -368,7 +368,7 @@ class AdminModule {
 		$settings_link = sprintf(
 			'<a href="%s">%s</a>',
 			admin_url( 'admin.php?page=' . self::SETTINGS_SLUG ),
-			__( 'Settings', 'missionwp-donation-platform' )
+			__( 'Settings', 'mission-donation-platform' )
 		);
 
 		return [ 'settings' => $settings_link ] + $links;
@@ -382,7 +382,7 @@ class AdminModule {
 	public function redirect_campaign_list(): void {
 		$screen = get_current_screen();
 
-		if ( $screen && 'mission_campaign' === $screen->post_type ) {
+		if ( $screen && 'missiondp_campaign' === $screen->post_type ) {
 			wp_safe_redirect( admin_url( 'admin.php?page=' . self::CAMPAIGNS_SLUG ) );
 			exit;
 		}
@@ -398,7 +398,7 @@ class AdminModule {
 	public function set_campaign_parent_menu( string $parent_file ): string {
 		$screen = get_current_screen();
 
-		if ( $screen && 'mission_campaign' === $screen->post_type ) {
+		if ( $screen && 'missiondp_campaign' === $screen->post_type ) {
 			return self::MENU_SLUG;
 		}
 
@@ -415,7 +415,7 @@ class AdminModule {
 	public function set_campaign_submenu_file( ?string $submenu_file ): ?string {
 		$screen = get_current_screen();
 
-		if ( $screen && 'mission_campaign' === $screen->post_type ) {
+		if ( $screen && 'missiondp_campaign' === $screen->post_type ) {
 			return self::CAMPAIGNS_SLUG;
 		}
 
@@ -430,15 +430,15 @@ class AdminModule {
 	 * @return void
 	 */
 	public function add_test_mode_indicator( \WP_Admin_Bar $admin_bar ): void {
-		$settings = get_option( 'mission_settings', [] );
+		$settings = get_option( 'missiondp_settings', [] );
 		$is_test  = ! empty( $settings['test_mode'] );
 
 		$admin_bar->add_menu(
 			[
 				'id'     => 'mission-test-mode',
 				'parent' => 'top-secondary',
-				'title'  => __( 'MissionWP Test Mode Active', 'missionwp-donation-platform' ),
-				'href'   => admin_url( 'admin.php?page=mission-settings' ),
+				'title'  => __( 'Mission Test Mode Active', 'mission-donation-platform' ),
+				'href'   => admin_url( 'admin.php?page=mission-donation-platform-settings' ),
 				'meta'   => [
 					'class' => 'mission-test-mode-indicator' . ( $is_test ? '' : ' hidden' ),
 				],
@@ -469,11 +469,11 @@ class AdminModule {
 	 * @return void
 	 */
 	public function maybe_redirect_after_activation(): void {
-		if ( ! get_transient( 'mission_do_activation_redirect' ) ) {
+		if ( ! get_transient( 'missiondp_do_activation_redirect' ) ) {
 			return;
 		}
 
-		delete_transient( 'mission_do_activation_redirect' );
+		delete_transient( 'missiondp_do_activation_redirect' );
 
 		if (
 			wp_doing_ajax()
@@ -485,7 +485,7 @@ class AdminModule {
 			return;
 		}
 
-		wp_safe_redirect( admin_url( 'admin.php?page=mission' ) );
+		wp_safe_redirect( admin_url( 'admin.php?page=mission-donation-platform' ) );
 		exit;
 	}
 
@@ -521,7 +521,7 @@ class AdminModule {
 		foreach ( [ 'import', 'migration', 'features' ] as $feature ) {
 			register_meta(
 				'user',
-				'mission_feature_signup_' . $feature,
+				'missiondp_feature_signup_' . $feature,
 				[
 					'type'              => 'string',
 					'single'            => true,
@@ -546,7 +546,7 @@ class AdminModule {
 		$signups = [];
 
 		foreach ( [ 'import', 'migration', 'features' ] as $feature ) {
-			$email = get_user_meta( $user_id, 'mission_feature_signup_' . $feature, true );
+			$email = get_user_meta( $user_id, 'missiondp_feature_signup_' . $feature, true );
 			if ( $email ) {
 				$signups[ $feature ] = $email;
 			}

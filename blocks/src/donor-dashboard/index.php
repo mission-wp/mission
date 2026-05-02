@@ -3,7 +3,7 @@
  * Block Name: Donor Dashboard
  * Description: A self-service portal for donors.
  *
- * @package Mission
+ * @package MissionDP
  *
  * @var array    $attributes Block attributes.
  * @var string   $content    Block content.
@@ -13,19 +13,19 @@
 defined( 'ABSPATH' ) || exit;
 
 // Primary color.
-$mission_settings = get_option( 'mission_settings', [] );
+$mission_settings = get_option( 'missiondp_settings', [] );
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $attributes['primaryColor'] ) ? $attributes['primaryColor'] : $global_primary;
-$color_style      = \Mission\DonorDashboard\PrimaryColorResolver::inline_style( $primary_color );
+$color_style      = \MissionDP\DonorDashboard\PrimaryColorResolver::inline_style( $primary_color );
 
 // Check if the current user is a logged-in donor.
 $is_donor = false;
 $donor    = null;
 $wp_user  = wp_get_current_user();
 
-if ( $wp_user->ID && in_array( 'mission_donor', $wp_user->roles, true ) ) {
+if ( $wp_user->ID && in_array( 'missiondp_donor', $wp_user->roles, true ) ) {
 	// Look up the donor record linked to this WP user.
-	$donor = \Mission\Models\Donor::find_by_user_id( $wp_user->ID );
+	$donor = \MissionDP\Models\Donor::find_by_user_id( $wp_user->ID );
 	if ( $donor ) {
 		$is_donor = true;
 	}
@@ -38,11 +38,11 @@ $activation_token_valid = false;
 $activation_token_error = '';
 
 if ( $activation_token && $activation_email && ! $is_donor ) {
-	$auth_service           = new \Mission\DonorDashboard\DonorAuthService();
+	$auth_service           = new \MissionDP\DonorDashboard\DonorAuthService();
 	$activation_token_valid = null !== $auth_service->validate_activation_token( $activation_email, $activation_token );
 
 	if ( ! $activation_token_valid ) {
-		$activation_token_error = __( 'This activation link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' );
+		$activation_token_error = __( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' );
 	}
 }
 
@@ -54,11 +54,11 @@ $reset_key_valid = false;
 $reset_key_error = '';
 
 if ( 'reset-password' === $reset_action && $reset_key && $reset_login && ! $is_donor ) {
-	$auth_service    = $auth_service ?? new \Mission\DonorDashboard\DonorAuthService();
+	$auth_service    = $auth_service ?? new \MissionDP\DonorDashboard\DonorAuthService();
 	$reset_key_valid = null !== $auth_service->validate_reset_key( $reset_login, $reset_key );
 
 	if ( ! $reset_key_valid ) {
-		$reset_key_error = __( 'This password reset link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' );
+		$reset_key_error = __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' );
 	}
 }
 
@@ -95,14 +95,14 @@ if ( ! $is_donor ) :
 		'activationEmail'  => $activation_token_valid ? $activation_email : '',
 		'resetKey'         => $reset_key_valid ? $reset_key : '',
 		'resetLogin'       => $reset_key_valid ? $reset_login : '',
-		'restUrl'          => rest_url( 'mission/v1/' ),
+		'restUrl'          => rest_url( 'mission-donation-platform/v1/' ),
 		'nonce'            => wp_create_nonce( 'wp_rest' ),
 		'dashboardUrl'     => get_permalink(),
 	];
 
 	// Server-side initial values for derived state — JS getters take over on hydration.
 	wp_interactivity_state(
-		'mission/donor-dashboard',
+		'mission-donation-platform/donor-dashboard',
 		[
 			'isLoginView'              => 'login' === $initial_view,
 			'isActivateView'           => 'activate' === $initial_view,
@@ -112,7 +112,7 @@ if ( ! $is_donor ) :
 			'isForgotPasswordSentView' => false,
 			'isResetPasswordView'      => 'reset-password' === $initial_view,
 			'passwordInputType'        => 'password',
-			'passwordToggleLabel'      => __( 'Show password', 'missionwp-donation-platform' ),
+			'passwordToggleLabel'      => __( 'Show password', 'mission-donation-platform' ),
 		]
 	);
 
@@ -123,27 +123,27 @@ else :
 	// ── Panels and navigation ──
 	$panels = [
 		'overview'  => [
-			'label' => __( 'Overview', 'missionwp-donation-platform' ),
+			'label' => __( 'Overview', 'mission-donation-platform' ),
 			'icon'  => 'grid',
 			'file'  => __DIR__ . '/parts/overview.php',
 		],
 		'history'   => [
-			'label' => __( 'Donation History', 'missionwp-donation-platform' ),
+			'label' => __( 'Donation History', 'mission-donation-platform' ),
 			'icon'  => 'clock',
 			'file'  => __DIR__ . '/parts/history.php',
 		],
 		'recurring' => [
-			'label' => __( 'Recurring Donations', 'missionwp-donation-platform' ),
+			'label' => __( 'Recurring Donations', 'mission-donation-platform' ),
 			'icon'  => 'refresh',
 			'file'  => __DIR__ . '/parts/recurring.php',
 		],
 		'receipts'  => [
-			'label' => __( 'Annual Receipts', 'missionwp-donation-platform' ),
+			'label' => __( 'Annual Receipts', 'mission-donation-platform' ),
 			'icon'  => 'receipt',
 			'file'  => __DIR__ . '/parts/receipts.php',
 		],
 		'profile'   => [
-			'label' => __( 'Profile', 'missionwp-donation-platform' ),
+			'label' => __( 'Profile', 'mission-donation-platform' ),
 			'icon'  => 'user',
 			'file'  => __DIR__ . '/parts/profile.php',
 		],
@@ -174,9 +174,9 @@ else :
 	 * Keys are the panel ID used in hash routing (e.g. 'overview', 'history').
 	 *
 	 * @param array                $panels Panel definitions keyed by panel ID.
-	 * @param \Mission\Models\Donor $donor  The current donor.
+	 * @param \MissionDP\Models\Donor $donor  The current donor.
 	 */
-	$panels = apply_filters( 'mission_donor_dashboard_panels', $panels, $donor );
+	$panels = apply_filters( 'missiondp_donor_dashboard_panels', $panels, $donor );
 
 	$panel_labels = array_combine(
 		array_keys( $panels ),
@@ -198,12 +198,12 @@ else :
 	 * Each item has 'id', 'label', and 'icon' keys.
 	 *
 	 * @param array                $nav_items Navigation items.
-	 * @param \Mission\Models\Donor $donor     The current donor.
+	 * @param \MissionDP\Models\Donor $donor     The current donor.
 	 */
-	$nav_items = apply_filters( 'mission_donor_dashboard_nav_items', $nav_items, $donor );
+	$nav_items = apply_filters( 'missiondp_donor_dashboard_nav_items', $nav_items, $donor );
 
 	// Build context and state via the context builder.
-	$builder  = new \Mission\DonorDashboard\DashboardContextBuilder( $donor, $mission_settings );
+	$builder  = new \MissionDP\DonorDashboard\DashboardContextBuilder( $donor, $mission_settings );
 	$result   = $builder->build( $panels, $panel_labels );
 	$context  = $result['context'];
 	$initials = $context['donor']['initials'];
@@ -216,11 +216,11 @@ else :
 	];
 
 	// Server-side initial values for derived state — JS getters take over on hydration.
-	wp_interactivity_state( 'mission/donor-dashboard', $result['state'] );
+	wp_interactivity_state( 'mission-donation-platform/donor-dashboard', $result['state'] );
 	?>
 	<div
 		<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-donor-dashboard' ] ) ); ?>
-		data-wp-interactive="mission/donor-dashboard"
+		data-wp-interactive="mission-donation-platform/donor-dashboard"
 		<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
 		data-wp-init="callbacks.init"
 		data-wp-on-document--keydown="actions.handleGlobalKeydown"
@@ -254,7 +254,7 @@ else :
 				<!-- Content -->
 				<main class="mission-dd-content">
 					<!-- Mobile toggle (visible ≤600px via container query) -->
-					<button class="mission-dd-mobile-toggle" data-wp-on--click="actions.openSidebar" aria-label="<?php esc_attr_e( 'Open menu', 'missionwp-donation-platform' ); ?>">
+					<button class="mission-dd-mobile-toggle" data-wp-on--click="actions.openSidebar" aria-label="<?php esc_attr_e( 'Open menu', 'mission-donation-platform' ); ?>">
 						<span class="mission-dd-icon mission-dd-icon-menu" aria-hidden="true"></span>
 						<span data-wp-text="state.panelTitle"></span>
 					</button>
@@ -284,5 +284,4 @@ $output = ob_get_clean();
  * @param string $output     HTML output.
  * @param array  $attributes Block attributes.
  */
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'mission_donor_dashboard_output', $output, $attributes );
+echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_donor_dashboard_output', $output, $attributes ) );

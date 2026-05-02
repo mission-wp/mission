@@ -9,15 +9,15 @@
  * falls back to a processing response and the Stripe webhook completes the
  * transaction asynchronously.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Models\Transaction;
-use Mission\Payments\PaymentIntentVerifier;
-use Mission\Rest\RestModule;
-use Mission\Rest\Traits\RateLimitTrait;
+use MissionDP\Models\Transaction;
+use MissionDP\Payments\PaymentIntentVerifier;
+use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\RateLimitTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -52,7 +52,7 @@ class ConfirmDonationEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
 					'transaction_id'    => [
 						'required'          => true,
@@ -70,6 +70,43 @@ class ConfirmDonationEndpoint {
 	}
 
 	/**
+	 * Permission check for the confirm endpoint.
+	 *
+	 * The endpoint must accept unauthenticated requests because donors aren't
+	 * logged in when the donation form posts here. Authorization comes from
+	 * the caller proving they originated the PaymentIntent: the submitted
+	 * `payment_intent_id` must match the value Stripe returned when the
+	 * pending transaction was created. Without that pairing, the request
+	 * cannot transition the transaction.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return true|WP_Error
+	 */
+	public function check_permission( WP_REST_Request $request ): bool|WP_Error {
+		$transaction = Transaction::find( $request->get_param( 'transaction_id' ) );
+
+		if ( ! $transaction ) {
+			return new WP_Error(
+				'transaction_not_found',
+				__( 'Transaction not found.', 'mission-donation-platform' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );
+
+		if ( ! hash_equals( (string) $transaction->gateway_transaction_id, $payment_intent_id ) ) {
+			return new WP_Error(
+				'transaction_mismatch',
+				__( 'Payment intent does not match this transaction.', 'mission-donation-platform' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Confirm a donation by verifying PaymentIntent status with Stripe.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -81,27 +118,9 @@ class ConfirmDonationEndpoint {
 			return $rate_error;
 		}
 
-		$transaction = Transaction::find( $request->get_param( 'transaction_id' ) );
-
-		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'missionwp-donation-platform' ),
-				[ 'status' => 404 ]
-			);
-		}
-
-		// Require the client to know the correct PaymentIntent ID. Prevents
-		// enumeration by transaction ID alone.
-		$payment_intent_id = $request->get_param( 'payment_intent_id' );
-
-		if ( ! hash_equals( $transaction->gateway_transaction_id, $payment_intent_id ) ) {
-			return new WP_Error(
-				'transaction_mismatch',
-				__( 'Payment intent does not match this transaction.', 'missionwp-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
+		// Existence + payment_intent_id match are validated in check_permission().
+		$transaction       = Transaction::find( $request->get_param( 'transaction_id' ) );
+		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );
 
 		// Happy path: the webhook arrived before the client's confirm call.
 		if ( 'completed' === $transaction->status ) {
@@ -117,7 +136,7 @@ class ConfirmDonationEndpoint {
 		if ( in_array( $transaction->status, [ 'failed', 'cancelled' ], true ) ) {
 			return new WP_Error(
 				'payment_failed',
-				__( 'The payment was not successful.', 'missionwp-donation-platform' ),
+				__( 'The payment was not successful.', 'mission-donation-platform' ),
 				[ 'status' => 402 ]
 			);
 		}
@@ -158,7 +177,7 @@ class ConfirmDonationEndpoint {
 
 			return new WP_Error(
 				'payment_failed',
-				__( 'The payment was not successful.', 'missionwp-donation-platform' ),
+				__( 'The payment was not successful.', 'mission-donation-platform' ),
 				[ 'status' => 402 ]
 			);
 		}

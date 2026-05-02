@@ -2,14 +2,14 @@
 /**
  * Tests for the Transaction model.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Models;
+namespace MissionDP\Tests\Models;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Donor;
-use Mission\Models\Transaction;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
 /**
@@ -32,10 +32,10 @@ class TransactionTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		// phpcs:enable
 
 		parent::tear_down();
@@ -417,10 +417,10 @@ class TransactionTest extends WP_UnitTestCase {
 	/**
 	 * Test mission_transaction_created action fires on insert.
 	 */
-	public function test_mission_transaction_created_action_fires(): void {
+	public function test_missiondp_transaction_created_action_fires(): void {
 		$fired = false;
 
-		add_action( 'mission_transaction_created', function () use ( &$fired ) {
+		add_action( 'missiondp_transaction_created', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

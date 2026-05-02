@@ -34,11 +34,11 @@ const RecurringIcon = () => (
 );
 
 const STATUS_LABELS = {
-  active: __( 'Active', 'missionwp-donation-platform' ),
-  pending: __( 'Pending', 'missionwp-donation-platform' ),
-  paused: __( 'Paused', 'missionwp-donation-platform' ),
-  cancelled: __( 'Cancelled', 'missionwp-donation-platform' ),
-  past_due: __( 'Past Due', 'missionwp-donation-platform' ),
+  active: __( 'Active', 'mission-donation-platform' ),
+  pending: __( 'Pending', 'mission-donation-platform' ),
+  paused: __( 'Paused', 'mission-donation-platform' ),
+  cancelled: __( 'Cancelled', 'mission-donation-platform' ),
+  past_due: __( 'Past Due', 'mission-donation-platform' ),
 };
 
 const FREQUENCY_SUFFIXES = {
@@ -147,15 +147,15 @@ function buildFields() {
   return [
     {
       id: 'subscription',
-      label: __( 'Subscription', 'missionwp-donation-platform' ),
+      label: __( 'Subscription', 'mission-donation-platform' ),
       enableSorting: false,
       enableHiding: false,
       render: ( { item } ) => {
         if ( item._isSkeleton ) {
           return <SkeletonBar width="55%" height="16px" />;
         }
-        const adminUrl = window.missionAdmin?.adminUrl || '';
-        const detailUrl = `${ adminUrl }admin.php?page=mission-subscriptions&subscription_id=${ item.id }`;
+        const adminUrl = window.missiondpAdmin?.adminUrl || '';
+        const detailUrl = `${ adminUrl }admin.php?page=mission-donation-platform-subscriptions&subscription_id=${ item.id }`;
         return (
           <a
             href={ detailUrl }
@@ -194,7 +194,7 @@ function buildFields() {
     },
     {
       id: 'amount',
-      label: __( 'Amount', 'missionwp-donation-platform' ),
+      label: __( 'Amount', 'mission-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -210,7 +210,7 @@ function buildFields() {
     },
     {
       id: 'campaign_title',
-      label: __( 'Campaign', 'missionwp-donation-platform' ),
+      label: __( 'Campaign', 'mission-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -223,7 +223,7 @@ function buildFields() {
     },
     {
       id: 'date_created',
-      label: __( 'Started', 'missionwp-donation-platform' ),
+      label: __( 'Started', 'mission-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -236,7 +236,7 @@ function buildFields() {
     },
     {
       id: 'date_next_renewal',
-      label: __( 'Next Renewal', 'missionwp-donation-platform' ),
+      label: __( 'Next Renewal', 'mission-donation-platform' ),
       enableSorting: true,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -251,7 +251,7 @@ function buildFields() {
     },
     {
       id: 'status',
-      label: __( 'Status', 'missionwp-donation-platform' ),
+      label: __( 'Status', 'mission-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
         item._isSkeleton ? (
@@ -264,23 +264,23 @@ function buildFields() {
       elements: [
         {
           value: 'active',
-          label: __( 'Active', 'missionwp-donation-platform' ),
+          label: __( 'Active', 'mission-donation-platform' ),
         },
         {
           value: 'pending',
-          label: __( 'Pending', 'missionwp-donation-platform' ),
+          label: __( 'Pending', 'mission-donation-platform' ),
         },
         {
           value: 'paused',
-          label: __( 'Paused', 'missionwp-donation-platform' ),
+          label: __( 'Paused', 'mission-donation-platform' ),
         },
         {
           value: 'cancelled',
-          label: __( 'Cancelled', 'missionwp-donation-platform' ),
+          label: __( 'Cancelled', 'mission-donation-platform' ),
         },
         {
           value: 'past_due',
-          label: __( 'Past Due', 'missionwp-donation-platform' ),
+          label: __( 'Past Due', 'mission-donation-platform' ),
         },
       ],
       filterBy: {
@@ -323,7 +323,7 @@ export default function SubscriptionList() {
   const [ summary, setSummary ] = useState( null );
 
   const fetchSummary = useCallback( () => {
-    apiFetch( { path: '/mission/v1/subscriptions/summary' } )
+    apiFetch( { path: '/mission-donation-platform/v1/subscriptions/summary' } )
       .then( setSummary )
       .catch( () => {} );
   }, [] );
@@ -353,7 +353,7 @@ export default function SubscriptionList() {
 
     try {
       const response = await apiFetch( {
-        path: `/mission/v1/subscriptions?${ params.toString() }`,
+        path: `/mission-donation-platform/v1/subscriptions?${ params.toString() }`,
         parse: false,
       } );
 
@@ -384,7 +384,7 @@ export default function SubscriptionList() {
   const mrrDelta = summary
     ? {
         ...getDelta( summary.mrr, summary.previous_mrr ),
-        label: __( 'vs last month', 'missionwp-donation-platform' ),
+        label: __( 'vs last month', 'mission-donation-platform' ),
       }
     : null;
 
@@ -397,34 +397,34 @@ export default function SubscriptionList() {
         <VStack spacing={ 6 }>
           <VStack spacing={ 1 }>
             <Heading level={ 1 }>
-              { __( 'Subscriptions', 'missionwp-donation-platform' ) }
+              { __( 'Subscriptions', 'mission-donation-platform' ) }
             </Heading>
             <Text variant="muted">
               { __(
                 'Manage recurring donations.',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
             </Text>
           </VStack>
 
           <div className="mission-stats-row mission-stats-row--4">
             <StatCard
-              label={ __( 'Monthly Recurring', 'missionwp-donation-platform' ) }
+              label={ __( 'Monthly Recurring', 'mission-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
             <StatCard
               label={ __(
                 'Active Subscriptions',
-                'missionwp-donation-platform'
+                'mission-donation-platform'
               ) }
               value="0"
             />
             <StatCard
-              label={ __( 'Avg. Subscription', 'missionwp-donation-platform' ) }
+              label={ __( 'Avg. Subscription', 'mission-donation-platform' ) }
               value={ formatAmount( 0 ) }
             />
             <StatCard
-              label={ __( 'Churned', 'missionwp-donation-platform' ) }
+              label={ __( 'Churned', 'mission-donation-platform' ) }
               value="0"
             />
           </div>
@@ -435,11 +435,11 @@ export default function SubscriptionList() {
                 icon={ <RecurringIcon /> }
                 text={ __(
                   'No subscriptions yet',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
                 hint={ __(
                   'Recurring donations will appear here once donors subscribe.',
-                  'missionwp-donation-platform'
+                  'mission-donation-platform'
                 ) }
               />
             </CardBody>
@@ -454,53 +454,47 @@ export default function SubscriptionList() {
       <VStack spacing={ 6 }>
         <VStack spacing={ 1 }>
           <Heading level={ 1 }>
-            { __( 'Subscriptions', 'missionwp-donation-platform' ) }
+            { __( 'Subscriptions', 'mission-donation-platform' ) }
           </Heading>
           <Text variant="muted">
-            { __(
-              'Manage recurring donations.',
-              'missionwp-donation-platform'
-            ) }
+            { __( 'Manage recurring donations.', 'mission-donation-platform' ) }
           </Text>
         </VStack>
 
         <div className="mission-stats-row mission-stats-row--4">
           <StatCard
-            label={ __( 'Monthly Recurring', 'missionwp-donation-platform' ) }
+            label={ __( 'Monthly Recurring', 'mission-donation-platform' ) }
             value={ summary ? formatAmount( summary.mrr ) : '' }
             delta={ mrrDelta }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __(
-              'Active Subscriptions',
-              'missionwp-donation-platform'
-            ) }
+            label={ __( 'Active Subscriptions', 'mission-donation-platform' ) }
             value={ summary ? String( summary.active ) : '' }
             subtitle={
               summary
                 ? `${ summary.new_this_month } ${ __(
                     'new this month',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }`
                 : ''
             }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Avg. Subscription', 'missionwp-donation-platform' ) }
+            label={ __( 'Avg. Subscription', 'mission-donation-platform' ) }
             value={ summary ? formatAmount( summary.average_monthly ) : '' }
-            subtitle={ __( 'Per month', 'missionwp-donation-platform' ) }
+            subtitle={ __( 'Per month', 'mission-donation-platform' ) }
             isLoading={ ! summary }
           />
           <StatCard
-            label={ __( 'Churned', 'missionwp-donation-platform' ) }
+            label={ __( 'Churned', 'mission-donation-platform' ) }
             value={ summary ? String( summary.churned ) : '' }
             subtitle={
               summary
                 ? `${ formatAmount( summary.churned_mrr ) }${ __(
                     '/mo lost',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   ) }`
                 : ''
             }

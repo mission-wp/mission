@@ -18,11 +18,11 @@ import { formatAmount } from '@shared/currency';
 
 const DONATE_BUTTON_OPTIONS = [
   {
-    label: __( 'Scroll to donation form', 'missionwp-donation-platform' ),
+    label: __( 'Scroll to donation form', 'mission-donation-platform' ),
     value: 'scroll',
   },
-  { label: __( 'Custom URL', 'missionwp-donation-platform' ), value: 'url' },
-  { label: __( 'Hide', 'missionwp-donation-platform' ), value: 'hide' },
+  { label: __( 'Custom URL', 'mission-donation-platform' ), value: 'url' },
+  { label: __( 'Hide', 'mission-donation-platform' ), value: 'hide' },
 ];
 
 /**
@@ -94,7 +94,7 @@ export default function Edit( { attributes, setAttributes } ) {
   } = attributes;
 
   const primaryColorVars = useMemo( () => {
-    const color = window.missionBlockEditor?.primaryColor || '#2fa36b';
+    const color = window.missiondpBlockEditor?.primaryColor || '#2fa36b';
     return computePrimaryColorVars( color );
   }, [] );
 
@@ -111,7 +111,7 @@ export default function Edit( { attributes, setAttributes } ) {
   }, [] );
 
   useEffect( () => {
-    apiFetch( { path: '/mission/v1/campaigns?per_page=100' } )
+    apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( response ) => {
         setCampaigns( Array.isArray( response ) ? response : [] );
       } )
@@ -123,7 +123,7 @@ export default function Edit( { attributes, setAttributes } ) {
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
-    currentPostType === 'mission_campaign' &&
+    currentPostType === 'missiondp_campaign' &&
     currentPostId &&
     ! isLoadingList
   ) {
@@ -213,7 +213,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <p>
             { __(
               'Select a campaign or place this block on a campaign page.',
-              'missionwp-donation-platform'
+              'mission-donation-platform'
             ) }
           </p>
         </div>
@@ -250,7 +250,7 @@ export default function Edit( { attributes, setAttributes } ) {
                   { ( campaign.donor_count || 0 ).toLocaleString() }
                 </span>
                 <span className="mission-cp-stat__label">
-                  { __( 'donors', 'missionwp-donation-platform' ) }
+                  { __( 'donors', 'mission-donation-platform' ) }
                 </span>
               </div>
             ) }
@@ -260,7 +260,7 @@ export default function Edit( { attributes, setAttributes } ) {
                   { daysRemaining.toLocaleString() }
                 </span>
                 <span className="mission-cp-stat__label">
-                  { __( 'days remaining', 'missionwp-donation-platform' ) }
+                  { __( 'days remaining', 'mission-donation-platform' ) }
                 </span>
               </div>
             ) }
@@ -268,7 +268,7 @@ export default function Edit( { attributes, setAttributes } ) {
         ) }
         { donateButtonAction !== 'hide' && (
           <div className="mission-cp-donate-btn">
-            { __( 'Donate Now', 'missionwp-donation-platform' ) }
+            { __( 'Donate Now', 'mission-donation-platform' ) }
           </div>
         ) }
       </div>
@@ -278,9 +278,9 @@ export default function Edit( { attributes, setAttributes } ) {
   return (
     <>
       <InspectorControls>
-        <PanelBody title={ __( 'Settings', 'missionwp-donation-platform' ) }>
+        <PanelBody title={ __( 'Settings', 'mission-donation-platform' ) }>
           <ComboboxControl
-            label={ __( 'Campaign', 'missionwp-donation-platform' ) }
+            label={ __( 'Campaign', 'mission-donation-platform' ) }
             value={ campaignId || null }
             options={ campaignOptions }
             onChange={ onCampaignChange }
@@ -289,20 +289,20 @@ export default function Edit( { attributes, setAttributes } ) {
               ! campaignId
                 ? __(
                     'If empty, the campaign will be detected from the current post.',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   )
                 : undefined
             }
           />
           <SelectControl
-            label={ __( 'Donate button', 'missionwp-donation-platform' ) }
+            label={ __( 'Donate button', 'mission-donation-platform' ) }
             value={ donateButtonAction }
             options={ DONATE_BUTTON_OPTIONS }
             onChange={ ( val ) => setAttributes( { donateButtonAction: val } ) }
           />
           { donateButtonAction === 'url' && (
             <TextControl
-              label={ __( 'Donate URL', 'missionwp-donation-platform' ) }
+              label={ __( 'Donate URL', 'mission-donation-platform' ) }
               value={ donateButtonUrl }
               onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
               type="url"
@@ -310,19 +310,19 @@ export default function Edit( { attributes, setAttributes } ) {
             />
           ) }
           <ToggleControl
-            label={ __( 'Show donors', 'missionwp-donation-platform' ) }
+            label={ __( 'Show donors', 'mission-donation-platform' ) }
             checked={ showDonors }
             onChange={ ( val ) => setAttributes( { showDonors: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show days remaining', 'missionwp-donation-platform' ) }
+            label={ __( 'Show days remaining', 'mission-donation-platform' ) }
             checked={ showDaysRemaining }
             onChange={ ( val ) => setAttributes( { showDaysRemaining: val } ) }
             help={
               campaign && ! campaign.date_end
                 ? __(
                     'This campaign has no end date, so days remaining will be hidden automatically.',
-                    'missionwp-donation-platform'
+                    'mission-donation-platform'
                   )
                 : undefined
             }

@@ -2,19 +2,19 @@
 /**
  * Tests for the ActivityFeedModule class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\ActivityFeed;
+namespace MissionDP\Tests\ActivityFeed;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\ActivityLog;
-use Mission\Models\Campaign;
-use Mission\Models\Donor;
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
-use Mission\Plugin;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\ActivityLog;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+use MissionDP\Plugin;
+use MissionDP\Settings\SettingsService;
 use WP_UnitTestCase;
 
 /**
@@ -43,16 +43,16 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -81,16 +81,16 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$this->hooks_to_remove = [];
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		delete_option( SettingsService::OPTION_NAME );
@@ -343,7 +343,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$subscription->save();
 
 		// Fire the hook directly (update_amount calls an external API).
-		do_action( 'mission_subscription_amount_changed', $subscription, 2500, 5000 );
+		do_action( 'missiondp_subscription_amount_changed', $subscription, 2500, 5000 );
 
 		$entries = ActivityLog::query( [ 'event' => 'subscription_amount_increased' ] );
 		$this->assertCount( 1, $entries );
@@ -372,7 +372,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		] );
 		$subscription->save();
 
-		do_action( 'mission_subscription_amount_changed', $subscription, 5000, 2500 );
+		do_action( 'missiondp_subscription_amount_changed', $subscription, 5000, 2500 );
 
 		$entries = ActivityLog::query( [ 'event' => 'subscription_amount_decreased' ] );
 		$this->assertCount( 1, $entries );
@@ -413,7 +413,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 	 */
 	public function test_auto_prune_removes_entries_older_than_90_days(): void {
 		global $wpdb;
-		$table = $wpdb->prefix . 'mission_activity_log';
+		$table = $wpdb->prefix . 'missiondp_activity_log';
 
 		// Create entries with explicit dates.
 		$entry_100 = new ActivityLog( [ 'event' => 'test', 'object_type' => 'test', 'object_id' => 100 ] );
@@ -450,7 +450,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 	 */
 	public function test_prune_retention_is_filterable(): void {
 		global $wpdb;
-		$table = $wpdb->prefix . 'mission_activity_log';
+		$table = $wpdb->prefix . 'missiondp_activity_log';
 
 		$entry_50 = new ActivityLog( [ 'event' => 'test', 'object_type' => 'test', 'object_id' => 50 ] );
 		$entry_50->save();
@@ -467,8 +467,8 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		// phpcs:enable
 
 		$filter = fn() => 40;
-		add_filter( 'mission_activity_log_retention_days', $filter );
-		$this->hooks_to_remove[] = [ 'mission_activity_log_retention_days', $filter, 10 ];
+		add_filter( 'missiondp_activity_log_retention_days', $filter );
+		$this->hooks_to_remove[] = [ 'missiondp_activity_log_retention_days', $filter, 10 ];
 
 		Plugin::instance()->get_activity_feed_module()->run_prune();
 
@@ -495,7 +495,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$campaign->save();
 
 		// Initialize milestones for the campaign.
-		$tracker = new \Mission\Campaigns\MilestoneTracker();
+		$tracker = new \MissionDP\Campaigns\MilestoneTracker();
 		$tracker->on_campaign_created( $campaign );
 
 		// Create a test-mode transaction that crosses 25%.

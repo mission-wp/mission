@@ -2,13 +2,13 @@
 /**
  * REST endpoint for resolved donation form settings.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Blocks\DonationFormSettings;
-use Mission\Rest\RestModule;
+use MissionDP\Blocks\DonationFormSettings;
+use MissionDP\Rest\RestModule;
 use WP_REST_Request;
 use WP_REST_Response;
 

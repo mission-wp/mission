@@ -2,13 +2,13 @@
 /**
  * Handler for invoice.payment_succeeded webhook events.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Webhooks;
+namespace MissionDP\Webhooks;
 
-use Mission\Models\Subscription;
-use Mission\Models\Transaction;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 

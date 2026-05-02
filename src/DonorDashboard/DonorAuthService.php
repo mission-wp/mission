@@ -5,13 +5,13 @@
  * Handles account activation (with email verification), login, logout,
  * and current donor resolution.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\DonorDashboard;
+namespace MissionDP\DonorDashboard;
 
-use Mission\Email\EmailModule;
-use Mission\Models\Donor;
+use MissionDP\Email\EmailModule;
+use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -47,12 +47,12 @@ class DonorAuthService {
 
 		if ( ! $donor ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'We couldn\'t find any donations with this email address.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'We couldn\'t find any donations with this email address.', 'mission-donation-platform' ) );
 		}
 
 		if ( $donor->user_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'An account already exists for this email. Please log in instead.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'An account already exists for this email. Please log in instead.', 'mission-donation-platform' ) );
 		}
 
 		// Generate a secure random token and store its hash.
@@ -76,7 +76,7 @@ class DonorAuthService {
 		);
 
 		/** @var EmailModule $email_module */
-		$email_module = \Mission\Plugin::instance()->get_email_module();
+		$email_module = \MissionDP\Plugin::instance()->get_email_module();
 
 		if ( ! $email_module->is_email_enabled( 'account_activation' ) ) {
 			return;
@@ -88,15 +88,15 @@ class DonorAuthService {
 			'expiry_hours'     => self::TOKEN_EXPIRY_HOURS,
 		];
 
-		$subject = __( 'Verify your email to activate your donor account', 'missionwp-donation-platform' );
+		$subject = __( 'Verify your email to activate your donor account', 'mission-donation-platform' );
 
 		$custom_subject = $email_module->get_custom_subject( 'account_activation' );
 		if ( $custom_subject ) {
 			$subject = $email_module->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
-					'{organization}' => ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
 				]
 			);
 		}
@@ -109,7 +109,7 @@ class DonorAuthService {
 		 *
 		 * @param Donor $donor The donor model.
 		 */
-		do_action( 'mission_donor_activation_email_sent', $donor );
+		do_action( 'missiondp_donor_activation_email_sent', $donor );
 	}
 
 	/**
@@ -153,7 +153,7 @@ class DonorAuthService {
 	 * Activate a donor account using a verified token.
 	 *
 	 * Validates the token, creates a WordPress user with the
-	 * `mission_donor` role, links it to the donor record, cleans up
+	 * `missiondp_donor` role, links it to the donor record, cleans up
 	 * the token meta, and logs them in.
 	 *
 	 * @param string $email    Donor email address.
@@ -170,7 +170,7 @@ class DonorAuthService {
 
 		if ( ! $donor ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This activation link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		$user_id = $donor->create_user_account( $password );
@@ -189,7 +189,7 @@ class DonorAuthService {
 		 * @param Donor    $donor The donor model.
 		 * @param \WP_User $user  The newly created WordPress user.
 		 */
-		do_action( 'mission_donor_account_activated', $donor, get_userdata( $user_id ) );
+		do_action( 'missiondp_donor_account_activated', $donor, get_userdata( $user_id ) );
 
 		return $donor;
 	}
@@ -216,13 +216,13 @@ class DonorAuthService {
 
 		if ( is_wp_error( $user ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Invalid email or password.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
-		if ( ! in_array( 'mission_donor', $user->roles, true ) ) {
+		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
 			wp_logout();
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Invalid email or password.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
 		$donor = Donor::find_by_user_id( $user->ID );
@@ -230,7 +230,7 @@ class DonorAuthService {
 		if ( ! $donor ) {
 			wp_logout();
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Invalid email or password.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
 		return $donor;
@@ -253,7 +253,7 @@ class DonorAuthService {
 	public function get_current_donor(): ?Donor {
 		$user = wp_get_current_user();
 
-		if ( ! $user->ID || ! in_array( 'mission_donor', $user->roles, true ) ) {
+		if ( ! $user->ID || ! in_array( 'missiondp_donor', $user->roles, true ) ) {
 			return null;
 		}
 
@@ -277,26 +277,26 @@ class DonorAuthService {
 
 		if ( ! $donor ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'We couldn\'t find a donor account with this email address.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'We couldn\'t find a donor account with this email address.', 'mission-donation-platform' ) );
 		}
 
 		if ( ! $donor->user_id ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'No account has been activated for this email. Please activate your account first.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'No account has been activated for this email. Please activate your account first.', 'mission-donation-platform' ) );
 		}
 
 		$user = get_userdata( $donor->user_id );
 
 		if ( ! $user ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Unable to process this request.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'Unable to process this request.', 'mission-donation-platform' ) );
 		}
 
 		$key = get_password_reset_key( $user );
 
 		if ( is_wp_error( $key ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Unable to generate a password reset link. Please try again later.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'Unable to generate a password reset link. Please try again later.', 'mission-donation-platform' ) );
 		}
 
 		$reset_url = add_query_arg(
@@ -309,21 +309,21 @@ class DonorAuthService {
 		);
 
 		/** @var EmailModule $email_module */
-		$email_module = \Mission\Plugin::instance()->get_email_module();
+		$email_module = \MissionDP\Plugin::instance()->get_email_module();
 
 		if ( ! $email_module->is_email_enabled( 'password_reset' ) ) {
 			return;
 		}
 
-		$subject = __( 'Reset your password', 'missionwp-donation-platform' );
+		$subject = __( 'Reset your password', 'mission-donation-platform' );
 
 		$custom_subject = $email_module->get_custom_subject( 'password_reset' );
 		if ( $custom_subject ) {
 			$subject = $email_module->replace_subject_tags(
 				$custom_subject,
 				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'missionwp-donation-platform' ),
-					'{organization}' => ( new \Mission\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
 				]
 			);
 		}
@@ -343,7 +343,7 @@ class DonorAuthService {
 		 *
 		 * @param Donor $donor The donor model.
 		 */
-		do_action( 'mission_donor_password_reset_email_sent', $donor );
+		do_action( 'missiondp_donor_password_reset_email_sent', $donor );
 	}
 
 	/**
@@ -365,19 +365,19 @@ class DonorAuthService {
 
 		if ( is_wp_error( $user ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
-		if ( ! in_array( 'mission_donor', $user->roles, true ) ) {
+		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		$donor = Donor::find_by_user_id( $user->ID );
 
 		if ( ! $donor ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'missionwp-donation-platform' ) );
+			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		// Set the new password (destroys all existing sessions).
@@ -401,7 +401,7 @@ class DonorAuthService {
 		 * @param Donor    $donor The donor model.
 		 * @param \WP_User $user  The WordPress user.
 		 */
-		do_action( 'mission_donor_password_reset', $donor, $user );
+		do_action( 'missiondp_donor_password_reset', $donor, $user );
 
 		return $donor;
 	}
@@ -423,7 +423,7 @@ class DonorAuthService {
 			return null;
 		}
 
-		if ( ! in_array( 'mission_donor', $user->roles, true ) ) {
+		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
 			return null;
 		}
 
@@ -459,14 +459,14 @@ class DonorAuthService {
 		 *
 		 * @param int $min_length Default minimum length.
 		 */
-		$min_length = (int) apply_filters( 'mission_donor_min_password_length', self::MIN_PASSWORD_LENGTH );
+		$min_length = (int) apply_filters( 'missiondp_donor_min_password_length', self::MIN_PASSWORD_LENGTH );
 
 		if ( strlen( $password ) < $min_length ) {
 			// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new \RuntimeException(
 				sprintf(
 					/* translators: %d: minimum password length */
-					__( 'Password must be at least %d characters.', 'missionwp-donation-platform' ),
+					__( 'Password must be at least %d characters.', 'mission-donation-platform' ),
 					$min_length
 				)
 			);
@@ -480,7 +480,7 @@ class DonorAuthService {
 	 * @return string
 	 */
 	private function get_dashboard_url(): string {
-		$page_id = (int) get_option( 'mission_dashboard_page_id', 0 );
+		$page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
 
 		if ( $page_id ) {
 			$url = get_permalink( $page_id );

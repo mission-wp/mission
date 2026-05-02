@@ -106,7 +106,7 @@ export default function AmountChipsTabs( {
             <rect x="4" y="4" width="7" height="7" rx="1" />
             <path d="M8 4V2.5A1.5 1.5 0 0 0 6.5 1h-4A1.5 1.5 0 0 0 1 2.5v4A1.5 1.5 0 0 0 2.5 8H4" />
           </svg>
-          { __( 'Copy from…', 'missionwp-donation-platform' ) }
+          { __( 'Copy from…', 'mission-donation-platform' ) }
         </button>
         { copyMenuOpen === freq.id && (
           <div className="mission-amounts-tabbed__copy-menu">
@@ -189,7 +189,7 @@ export default function AmountChipsTabs( {
                       className="mission-amount-row__desc"
                       placeholder={ __(
                         'Add a description (optional)',
-                        'missionwp-donation-platform'
+                        'mission-donation-platform'
                       ) }
                       value={ descriptions[ String( amount ) ] || '' }
                       onChange={ ( e ) =>
@@ -210,7 +210,7 @@ export default function AmountChipsTabs( {
                     { symbol }
                     <input
                       type="text"
-                      placeholder={ __( 'Add', 'missionwp-donation-platform' ) }
+                      placeholder={ __( 'Add', 'mission-donation-platform' ) }
                       ref={ ( el ) => {
                         inputRefs.current[ freq.id ] = el;
                       } }
@@ -268,7 +268,7 @@ export default function AmountChipsTabs( {
                 </span>
                 <input
                   type="text"
-                  placeholder={ __( 'Add', 'missionwp-donation-platform' ) }
+                  placeholder={ __( 'Add', 'mission-donation-platform' ) }
                   ref={ ( el ) => {
                     inputRefs.current[ freq.id ] = el;
                   } }

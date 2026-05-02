@@ -1,10 +1,10 @@
-=== MissionWP Donation Platform ===
+=== Mission Donation Platform ===
 Contributors: missionwp
 Tags: donations, fundraising, nonprofit, stripe, donation form
 Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable Tag: 1.0.1
+Stable Tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ The free donation plugin for nonprofits. Powerful features, modern forms, no add
 
 == Description ==
 
-MissionWP Donation Platform is a modern, open-source WordPress donation plugin built for nonprofits. It provides beautiful donation forms, Stripe payment processing, campaign management, donor tracking, and more — all without paid add-ons.
+Mission Donation Platform is a modern, open-source WordPress donation plugin built for nonprofits. It provides beautiful donation forms, Stripe payment processing, campaign management, donor tracking, and more — all without paid add-ons.
 
 = Features =
 
@@ -27,24 +27,20 @@ MissionWP Donation Platform is a modern, open-source WordPress donation plugin b
 
 == Installation ==
 
-1. Upload the `missionwp-donation-platform` folder to `/wp-content/plugins/`
+1. Upload the `mission-donation-platform` folder to `/wp-content/plugins/`
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Connect your Stripe account under MissionWP > Settings
+3. Connect your Stripe account under Mission > Settings
 4. Create your first campaign and start accepting donations
-
-= Development =
-
-Source code, build instructions, and contribution guidelines are available on [GitHub](https://github.com/mission-wp/mission).
 
 == Frequently Asked Questions ==
 
-= How is MissionWP Donation Platform free? =
+= How is Mission Donation Platform free? =
 
-MissionWP is funded by optional donor tips, not paid add-ons. All features are included for free.
+Mission is funded by optional donor tips, not paid add-ons. All features are included for free.
 
 = What payment gateways are supported? =
 
-MissionWP currently supports Stripe via Stripe Connect with direct charges.
+Mission currently supports Stripe via Stripe Connect with direct charges.
 
 = What are the minimum requirements? =
 
@@ -56,27 +52,59 @@ This plugin connects to the following third-party services:
 
 = Stripe =
 
-MissionWP uses [Stripe](https://stripe.com) to process donations. When a donor submits a donation form, payment data is sent directly from the donor's browser to Stripe's servers via Stripe.js. The plugin also receives webhook notifications from Stripe for payment confirmations, refunds, and subscription updates.
+Mission uses [Stripe](https://stripe.com) to process donations. When a donor submits a donation form, payment data is sent directly from the donor's browser to Stripe's servers via Stripe.js. The plugin also receives webhook notifications from Stripe for payment confirmations, refunds, and subscription updates.
 
 * [Stripe Terms of Service](https://stripe.com/legal)
 * [Stripe Privacy Policy](https://stripe.com/privacy)
 
-= MissionWP API =
+= Mission API =
 
-MissionWP connects to [api.missionwp.com](https://api.missionwp.com) (operated by the plugin author) for the following:
+Mission connects to [api.missionwp.com](https://api.missionwp.com) (operated by the plugin author) for the following:
 
-* **Stripe Connect onboarding** — When you connect your Stripe account, the OAuth flow is handled through the MissionWP API as a proxy.
-* **Payment processing** — Donation and subscription requests are routed through the MissionWP API to your connected Stripe account.
-* **Webhook forwarding** — Stripe webhook events are forwarded from the MissionWP API to your WordPress site.
-* **Feature signup** — If you opt in to notifications about upcoming features (under Tools > Features), your email is sent to the MissionWP API.
+* **Stripe Connect onboarding** — When you connect your Stripe account, the OAuth flow is handled through the Mission API as a proxy.
+* **Payment processing** — Donation and subscription requests are routed through the Mission API to your connected Stripe account.
+* **Webhook forwarding** — Stripe webhook events are forwarded from the Mission API to your WordPress site.
+* **Feature signup** — If you opt in to notifications about upcoming features (under Tools > Features), your email is sent to the Mission API.
 
-* [MissionWP Terms of Service](https://missionwp.com/terms)
-* [MissionWP Privacy Policy](https://missionwp.com/privacy)
+* [Mission Terms of Service](https://missionwp.com/terms)
+* [Mission Privacy Policy](https://missionwp.com/privacy)
+
+= Gravatar =
+
+Mission uses [Gravatar](https://gravatar.com) to display profile images for donors in the admin dashboard (Donors and Transactions screens) and on the public-facing Donor Wall block. When one of these views is rendered, the visitor's browser requests an avatar image from `https://www.gravatar.com/avatar/{hash}` where `{hash}` is an MD5 hash of the donor's email address. Donor email addresses themselves are never sent to Gravatar — only the hash. If a donor has no Gravatar account, a blank placeholder is returned. No request is made if a donor record has no email on file.
+
+* [Gravatar Terms of Service](https://wordpress.com/tos/)
+* [Gravatar Privacy Policy](https://automattic.com/privacy/)
+
+== Source Code ==
+
+The full, unminified source code for this plugin is publicly available on GitHub:
+
+**https://github.com/mission-wp/mission**
+
+The repository contains the original `.js`, `.jsx`, and `.scss` files. To build the plugin from source:
+
+`composer install`
+`npm install`
+`npm run build`
+
+See the README in the repository for full development setup, contribution guidelines, and a description of the build pipeline.
 
 == Changelog ==
 
+= 1.1.0 =
+* Renamed plugin slug to mission-donation-platform and prefixed all PHP/JS identifiers with missiondp_ per WordPress.org review
+* Refactored DataStore queries and Cleanup IN-clauses to use wpdb::prepare() with proper placeholders
+* Escaped block render output through wp_kses with an allowlist that preserves SVG icons and Interactivity API directives
+* Moved security checks into permission_callback for state-changing public REST endpoints (donation/subscription confirm, email-change confirm)
+* Added a Source Code section to the readme linking to the public GitHub repo with build instructions
+* Disclosed Gravatar usage under External Services in the readme
+* Removed unused stripe/stripe-php dependency
+* Added WordPress.org directory assets (banners, icons, screenshots)
+* Fixed MISSIONDP_STRIPE_PK_TEST to match the live platform Stripe account
+
 = 1.0.1 =
-* Renamed plugin to MissionWP Donation Platform per WordPress.org review team guidance
+* Renamed plugin to Mission Donation Platform per WordPress.org review team guidance
 
 = 1.0.0 =
 * Initial release

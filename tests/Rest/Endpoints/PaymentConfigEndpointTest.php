@@ -2,12 +2,12 @@
 /**
  * Tests for the PaymentConfigEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -28,7 +28,7 @@ class PaymentConfigEndpointTest extends WP_UnitTestCase {
 	 *
 	 * @var string
 	 */
-	private string $route = '/mission/v1/donations/payment-config';
+	private string $route = '/mission-donation-platform/v1/donations/payment-config';
 
 	/**
 	 * Set up each test.

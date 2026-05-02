@@ -2,13 +2,13 @@
 /**
  * REST endpoint for public payment configuration.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Rest\Endpoints;
+namespace MissionDP\Rest\Endpoints;
 
-use Mission\Rest\RestModule;
-use Mission\Settings\SettingsService;
+use MissionDP\Rest\RestModule;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Response;
 
 defined( 'ABSPATH' ) || exit;
@@ -39,6 +39,9 @@ class PaymentConfigEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'handle' ],
+				// Public — returns the Stripe publishable key (intentionally
+				// public per Stripe's design) and other non-sensitive config
+				// the frontend donation form needs before a donor can submit.
 				'permission_callback' => '__return_true',
 			]
 		);

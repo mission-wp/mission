@@ -2,14 +2,14 @@
 /**
  * Tests for the DonationFormSettingsEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Database\DatabaseModule;
-use Mission\Models\Campaign;
-use Mission\Settings\SettingsService;
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -44,7 +44,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 	 *
 	 * @var string
 	 */
-	private string $route = '/mission/v1/donation-form-settings';
+	private string $route = '/mission-donation-platform/v1/donation-form-settings';
 
 	/**
 	 * Create tables once for all tests in this class.
@@ -53,16 +53,16 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 		parent::set_up_before_class();
 
 		global $wpdb;
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_activity_log" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transaction_history" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_notes" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactionmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_transactions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_subscriptions" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donormeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_donors" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transaction_history" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_notes" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donormeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_donors" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_campaigns" );
 
 		DatabaseModule::create_tables();
 	}
@@ -92,8 +92,8 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 		wp_set_current_user( 0 );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaignmeta" );
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}mission_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
 		delete_option( SettingsService::OPTION_NAME );
@@ -256,7 +256,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test GET settings are filterable via mission_donation_form_settings hook.
+	 * Test GET settings are filterable via missiondp_donation_form_settings hook.
 	 */
 	public function test_get_settings_are_filterable(): void {
 		$filter = function ( array $settings ): array {
@@ -264,7 +264,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			return $settings;
 		};
 
-		add_filter( 'mission_donation_form_settings', $filter );
+		add_filter( 'missiondp_donation_form_settings', $filter );
 
 		$response = $this->dispatch_get();
 		$data     = $response->get_data();
@@ -272,7 +272,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 1000, $data['minimumAmount'] );
 
-		remove_filter( 'mission_donation_form_settings', $filter );
+		remove_filter( 'missiondp_donation_form_settings', $filter );
 	}
 
 	/**
@@ -285,7 +285,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			return $settings;
 		};
 
-		add_filter( 'mission_donation_form_settings', $filter_invalid );
+		add_filter( 'missiondp_donation_form_settings', $filter_invalid );
 
 		$response = $this->dispatch_get();
 		$data     = $response->get_data();
@@ -297,7 +297,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 		// Verify the response is valid (200) — the filter overrides post-sanitization.
 		$this->assertSame( 'not-a-color', $data['primaryColor'] );
 
-		remove_filter( 'mission_donation_form_settings', $filter_invalid );
+		remove_filter( 'missiondp_donation_form_settings', $filter_invalid );
 
 		// Test sanitization via block attributes — since endpoint passes [], test that empty primaryColor
 		// (the default) is preserved and a valid color set via pre-filter works.
@@ -306,14 +306,14 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			return $settings;
 		};
 
-		add_filter( 'mission_donation_form_settings', $filter_valid );
+		add_filter( 'missiondp_donation_form_settings', $filter_valid );
 
 		$response = $this->dispatch_get();
 		$data     = $response->get_data();
 
 		$this->assertSame( '#abc123', $data['primaryColor'] );
 
-		remove_filter( 'mission_donation_form_settings', $filter_valid );
+		remove_filter( 'missiondp_donation_form_settings', $filter_valid );
 	}
 
 	/**

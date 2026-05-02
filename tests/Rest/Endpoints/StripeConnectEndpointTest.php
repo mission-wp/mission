@@ -2,12 +2,12 @@
 /**
  * Tests for the StripeConnectEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -42,14 +42,14 @@ class StripeConnectEndpointTest extends WP_UnitTestCase {
 	 *
 	 * @var string
 	 */
-	private string $connect_route = '/mission/v1/stripe/connect';
+	private string $connect_route = '/mission-donation-platform/v1/stripe/connect';
 
 	/**
 	 * Disconnect route.
 	 *
 	 * @var string
 	 */
-	private string $disconnect_route = '/mission/v1/stripe/disconnect';
+	private string $disconnect_route = '/mission-donation-platform/v1/stripe/disconnect';
 
 	/**
 	 * Captured API requests keyed by endpoint name.
@@ -221,7 +221,7 @@ class StripeConnectEndpointTest extends WP_UnitTestCase {
 
 		// Verify correct webhook_url payload.
 		$body = json_decode( $this->captured_requests['webhook']['args']['body'], true );
-		$this->assertSame( rest_url( 'mission/v1/webhooks/stripe' ), $body['webhook_url'] );
+		$this->assertSame( rest_url( 'mission-donation-platform/v1/webhooks/stripe' ), $body['webhook_url'] );
 
 		// Verify Authorization header uses the site_token.
 		$this->assertSame(
@@ -252,7 +252,7 @@ class StripeConnectEndpointTest extends WP_UnitTestCase {
 		] );
 
 		$this->assertSame( 502, $response->get_status() );
-		$this->assertSame( 'mission_connect_failed', $response->as_error()->get_error_code() );
+		$this->assertSame( 'missiondp_connect_failed', $response->as_error()->get_error_code() );
 	}
 
 	/**
@@ -278,7 +278,7 @@ class StripeConnectEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 400, $response->get_status() );
 
 		$error = $response->as_error();
-		$this->assertSame( 'mission_connect_failed', $error->get_error_code() );
+		$this->assertSame( 'missiondp_connect_failed', $error->get_error_code() );
 		$this->assertSame( 'Invalid setup code', $error->get_error_message() );
 	}
 

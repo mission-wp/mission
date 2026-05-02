@@ -2,10 +2,10 @@
 /**
  * Settings service — single source of truth for plugin settings.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Settings;
+namespace MissionDP\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -19,7 +19,7 @@ class SettingsService {
 	 *
 	 * @var string
 	 */
-	public const OPTION_NAME = 'mission_settings';
+	public const OPTION_NAME = 'missiondp_settings';
 
 	/**
 	 * Get all settings, merged with defaults so new keys always resolve.
@@ -64,7 +64,7 @@ class SettingsService {
 		 * @param array<string, mixed> $values   Only the changed values.
 		 * @param array<string, mixed> $current  Settings before update.
 		 */
-		do_action( 'mission_settings_updated', $updated, $values, $current );
+		do_action( 'missiondp_settings_updated', $updated, $values, $current );
 
 		return $updated;
 	}
@@ -219,6 +219,6 @@ class SettingsService {
 		 *
 		 * @param array<string, mixed> $defaults Default settings.
 		 */
-		return apply_filters( 'mission_settings_defaults', $defaults );
+		return apply_filters( 'missiondp_settings_defaults', $defaults );
 	}
 }

@@ -2,12 +2,12 @@
 /**
  * Handler for customer.subscription.deleted webhook events.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Webhooks;
+namespace MissionDP\Webhooks;
 
-use Mission\Models\Subscription;
+use MissionDP\Models\Subscription;
 
 defined( 'ABSPATH' ) || exit;
 

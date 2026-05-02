@@ -2,12 +2,12 @@
 /**
  * Tests for the SettingsEndpoint class.
  *
- * @package Mission
+ * @package MissionDP
  */
 
-namespace Mission\Tests\Rest\Endpoints;
+namespace MissionDP\Tests\Rest\Endpoints;
 
-use Mission\Settings\SettingsService;
+use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -79,7 +79,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_get_requires_manage_options(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/settings' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/settings' );
 		$response = $this->server->dispatch( $request );
 
 		$this->assertSame( 403, $response->get_status() );
@@ -91,7 +91,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_get_returns_all_settings(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/settings' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/settings' );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -115,7 +115,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 
 		wp_set_current_user( $this->admin_id );
 
-		$request  = new WP_REST_Request( 'GET', '/mission/v1/settings' );
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/settings' );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
 
@@ -128,7 +128,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_post_updates_values(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/settings' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( array( 'currency' => 'eur' ) ) );
 
@@ -145,7 +145,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_post_rejects_unauthorized_user(): void {
 		wp_set_current_user( $this->subscriber_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/settings' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( array( 'currency' => 'GBP' ) ) );
 
@@ -160,7 +160,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_post_cannot_set_site_token(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/settings' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( array( 'stripe_site_token' => 'tok_evil' ) ) );
 
@@ -178,7 +178,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_post_updates_test_mode(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/settings' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( array( 'test_mode' => false ) ) );
 
@@ -189,7 +189,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 		$this->assertFalse( $data['test_mode'] );
 
 		// Toggle back on.
-		$request2 = new WP_REST_Request( 'POST', '/mission/v1/settings' );
+		$request2 = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
 		$request2->set_header( 'Content-Type', 'application/json' );
 		$request2->set_body( wp_json_encode( array( 'test_mode' => true ) ) );
 
@@ -205,7 +205,7 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	public function test_post_ignores_unknown_keys(): void {
 		wp_set_current_user( $this->admin_id );
 
-		$request = new WP_REST_Request( 'POST', '/mission/v1/settings' );
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( wp_json_encode( array( 'unknown_key' => 'value' ) ) );
 
