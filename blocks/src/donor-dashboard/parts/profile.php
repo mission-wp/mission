@@ -213,8 +213,8 @@ defined( 'ABSPATH' ) || exit;
 			<button
 				type="button"
 				role="switch"
-				class="mission-dd-toggle<?php echo $preferences['email_receipts'] ? ' is-on' : ''; ?>"
-				aria-checked="<?php echo $preferences['email_receipts'] ? 'true' : 'false'; ?>"
+				class="<?php echo esc_attr( 'mission-dd-toggle' . ( $preferences['email_receipts'] ? ' is-on' : '' ) ); ?>"
+				aria-checked="<?php echo esc_attr( $preferences['email_receipts'] ? 'true' : 'false' ); ?>"
 				data-wp-class--is-on="context.profile.preferences.emailReceipts"
 				data-wp-bind--aria-checked="context.profile.preferences.emailReceipts"
 				data-wp-on--click="actions.toggleEmailReceipts"
@@ -232,8 +232,8 @@ defined( 'ABSPATH' ) || exit;
 			<button
 				type="button"
 				role="switch"
-				class="mission-dd-toggle<?php echo $preferences['email_campaign_updates'] ? ' is-on' : ''; ?>"
-				aria-checked="<?php echo $preferences['email_campaign_updates'] ? 'true' : 'false'; ?>"
+				class="<?php echo esc_attr( 'mission-dd-toggle' . ( $preferences['email_campaign_updates'] ? ' is-on' : '' ) ); ?>"
+				aria-checked="<?php echo esc_attr( $preferences['email_campaign_updates'] ? 'true' : 'false' ); ?>"
 				data-wp-class--is-on="context.profile.preferences.emailCampaignUpdates"
 				data-wp-bind--aria-checked="context.profile.preferences.emailCampaignUpdates"
 				data-wp-on--click="actions.toggleEmailCampaignUpdates"
@@ -251,8 +251,8 @@ defined( 'ABSPATH' ) || exit;
 			<button
 				type="button"
 				role="switch"
-				class="mission-dd-toggle<?php echo $preferences['email_annual_reminder'] ? ' is-on' : ''; ?>"
-				aria-checked="<?php echo $preferences['email_annual_reminder'] ? 'true' : 'false'; ?>"
+				class="<?php echo esc_attr( 'mission-dd-toggle' . ( $preferences['email_annual_reminder'] ? ' is-on' : '' ) ); ?>"
+				aria-checked="<?php echo esc_attr( $preferences['email_annual_reminder'] ? 'true' : 'false' ); ?>"
 				data-wp-class--is-on="context.profile.preferences.emailAnnualReminder"
 				data-wp-bind--aria-checked="context.profile.preferences.emailAnnualReminder"
 				data-wp-on--click="actions.toggleEmailAnnualReminder"

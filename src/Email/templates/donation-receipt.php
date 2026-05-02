@@ -38,10 +38,10 @@ $first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
 		</td>
 	</tr>
 	<tr>
-		<td style="padding: 12px 16px; <?php echo $data['campaign_name'] ? 'border-bottom: 1px solid #e5e7eb; ' : ''; ?>font-weight: 600;">
+		<td style="padding: 12px 16px; <?php echo esc_attr( $data['campaign_name'] ? 'border-bottom: 1px solid #e5e7eb; ' : '' ); ?>font-weight: 600;">
 			<?php esc_html_e( 'Date', 'mission-donation-platform' ); ?>
 		</td>
-		<td style="padding: 12px 16px; <?php echo $data['campaign_name'] ? 'border-bottom: 1px solid #e5e7eb; ' : ''; ?>">
+		<td style="padding: 12px 16px; <?php echo esc_attr( $data['campaign_name'] ? 'border-bottom: 1px solid #e5e7eb; ' : '' ); ?>">
 			<?php echo esc_html( $data['date_formatted'] ); ?>
 		</td>
 	</tr>

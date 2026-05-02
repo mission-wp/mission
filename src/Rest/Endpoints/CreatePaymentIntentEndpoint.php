@@ -59,6 +59,10 @@ class CreatePaymentIntentEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
+				// Public — donors are unauthenticated when initiating a donation.
+				// Abuse is mitigated by rate limiting, input validation, and the
+				// fact that PaymentIntent creation happens server-side via the
+				// Mission API (a malicious caller cannot mint usable Stripe state).
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'donation_amount'      => [

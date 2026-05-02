@@ -49,6 +49,10 @@ class DonorAuthEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'send_activation' ],
+				// Public — donors are unauthenticated when calling auth endpoints
+				// (signup, login, password reset). Abuse is mitigated by rate
+				// limiting; activation/reset routes additionally verify a one-time
+				// token issued via email before changing any state.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'email' => [
@@ -67,6 +71,10 @@ class DonorAuthEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'activate' ],
+				// Public — donors are unauthenticated when calling auth endpoints
+				// (signup, login, password reset). Abuse is mitigated by rate
+				// limiting; activation/reset routes additionally verify a one-time
+				// token issued via email before changing any state.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'email'    => [
@@ -94,6 +102,10 @@ class DonorAuthEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'login' ],
+				// Public — donors are unauthenticated when calling auth endpoints
+				// (signup, login, password reset). Abuse is mitigated by rate
+				// limiting; activation/reset routes additionally verify a one-time
+				// token issued via email before changing any state.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'email'    => [
@@ -120,6 +132,10 @@ class DonorAuthEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'forgot_password' ],
+				// Public — donors are unauthenticated when calling auth endpoints
+				// (signup, login, password reset). Abuse is mitigated by rate
+				// limiting; activation/reset routes additionally verify a one-time
+				// token issued via email before changing any state.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'email' => [
@@ -138,6 +154,10 @@ class DonorAuthEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'reset_password' ],
+				// Public — donors are unauthenticated when calling auth endpoints
+				// (signup, login, password reset). Abuse is mitigated by rate
+				// limiting; activation/reset routes additionally verify a one-time
+				// token issued via email before changing any state.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'login'    => [

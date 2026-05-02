@@ -62,7 +62,7 @@ class EmailChangeEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'confirm_email_change' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ $this, 'check_confirm_token' ],
 				'args'                => [
 					'email' => [
 						'type'              => 'string',
@@ -209,19 +209,18 @@ class EmailChangeEndpoint {
 	}
 
 	/**
-	 * Confirm an email change via verification token.
+	 * Permission check for the confirm-email-change endpoint.
 	 *
-	 * This endpoint is public — the token serves as authorization.
+	 * The endpoint must accept unauthenticated requests because the donor
+	 * follows the verification link from their email client (no session). The
+	 * token in the URL is the authorization: it must hash to the value
+	 * stored in donor meta and must not be expired. Without a valid token
+	 * pairing, the request cannot proceed.
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
+	 * @return true|WP_Error
 	 */
-	public function confirm_email_change( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$rate_error = $this->check_rate_limit( 'email_change_confirm', 5, 300 );
-		if ( $rate_error ) {
-			return $rate_error;
-		}
-
+	public function check_confirm_token( WP_REST_Request $request ): bool|WP_Error {
 		$current_email = $request->get_param( 'email' );
 		$token         = $request->get_param( 'token' );
 
@@ -234,7 +233,6 @@ class EmailChangeEndpoint {
 			);
 		}
 
-		// Validate token.
 		$stored_hash = $donor->get_meta( 'pending_email_token' );
 		$expires     = $donor->get_meta( 'pending_email_token_expires' );
 
@@ -263,6 +261,25 @@ class EmailChangeEndpoint {
 			);
 		}
 
+		return true;
+	}
+
+	/**
+	 * Confirm an email change via verification token.
+	 *
+	 * The verification token is validated in check_confirm_token() before
+	 * this handler runs.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function confirm_email_change( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$rate_error = $this->check_rate_limit( 'email_change_confirm', 5, 300 );
+		if ( $rate_error ) {
+			return $rate_error;
+		}
+
+		$donor     = Donor::find_by_email( $request->get_param( 'email' ) );
 		$new_email = $donor->get_meta( 'pending_email' );
 		if ( ! $new_email ) {
 			return new WP_Error(

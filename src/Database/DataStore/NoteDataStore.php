@@ -140,9 +140,14 @@ class NoteDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		$sql = $this->build_query_sql( 'SELECT *', $args );
+		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( $values ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
+			$sql = $wpdb->prepare( $sql, $values );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
 		$rows = $wpdb->get_results( $sql, ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
@@ -158,9 +163,14 @@ class NoteDataStore implements DataStoreInterface {
 		global $wpdb;
 
 		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		$sql = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		if ( $values ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
+			$sql = $wpdb->prepare( $sql, $values );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
 		return (int) $wpdb->get_var( $sql );
 	}
 
@@ -171,9 +181,12 @@ class NoteDataStore implements DataStoreInterface {
 	 * @param array<string, mixed> $args   Query arguments.
 	 * @return string
 	 */
-	private function build_query_sql( string $select, array $args ): string {
-		global $wpdb;
-
+	/**
+	 * Returns [ sql_template, values ] — caller passes through wpdb::prepare().
+	 *
+	 * @return array{0: string, 1: array<int, mixed>}
+	 */
+	private function build_query_sql( string $select, array $args ): array {
 		$table  = $this->get_table_name();
 		$where  = [];
 		$values = [];
@@ -202,19 +215,14 @@ class NoteDataStore implements DataStoreInterface {
 		$sql = "{$select} FROM {$table} {$where_clause} ORDER BY {$orderby} {$order}";
 
 		if ( isset( $args['per_page'] ) ) {
+			$sql     .= ' LIMIT %d OFFSET %d';
 			$per_page = max( 1, (int) $args['per_page'] );
 			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$offset   = ( $page - 1 ) * $per_page;
-
-			$sql .= " LIMIT {$per_page} OFFSET {$offset}";
+			$values[] = $per_page;
+			$values[] = ( $page - 1 ) * $per_page;
 		}
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		return $sql;
+		return [ $sql, $values ];
 	}
 
 	/**

@@ -53,7 +53,7 @@ class ConfirmSubscriptionEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
-				'permission_callback' => '__return_true',
+				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
 					'transaction_id'    => [
 						'required'          => true,
@@ -76,6 +76,53 @@ class ConfirmSubscriptionEndpoint {
 	}
 
 	/**
+	 * Permission check for the confirm-subscription endpoint.
+	 *
+	 * The endpoint must accept unauthenticated requests because donors aren't
+	 * logged in when the donation form posts here. Authorization comes from
+	 * the caller proving they originated the request: the submitted
+	 * `payment_intent_id` must match the transaction's recorded gateway ID,
+	 * and the submitted `subscription_id` must match the transaction's own
+	 * subscription. Without that triple match, the request cannot transition
+	 * any state.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return true|WP_Error
+	 */
+	public function check_permission( WP_REST_Request $request ): bool|WP_Error {
+		$transaction = Transaction::find( $request->get_param( 'transaction_id' ) );
+
+		if ( ! $transaction ) {
+			return new WP_Error(
+				'transaction_not_found',
+				__( 'Transaction not found.', 'mission-donation-platform' ),
+				[ 'status' => 404 ]
+			);
+		}
+
+		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );
+		$subscription_id   = (int) $request->get_param( 'subscription_id' );
+
+		if ( ! hash_equals( (string) $transaction->gateway_transaction_id, $payment_intent_id ) ) {
+			return new WP_Error(
+				'transaction_mismatch',
+				__( 'Payment intent does not match this transaction.', 'mission-donation-platform' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		if ( (int) $transaction->subscription_id !== $subscription_id ) {
+			return new WP_Error(
+				'subscription_mismatch',
+				__( 'Subscription does not match this transaction.', 'mission-donation-platform' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Confirm a subscription's initial payment.
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -87,37 +134,10 @@ class ConfirmSubscriptionEndpoint {
 			return $rate_error;
 		}
 
-		$transaction = Transaction::find( $request->get_param( 'transaction_id' ) );
-
-		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
-		}
-
-		$payment_intent_id = $request->get_param( 'payment_intent_id' );
+		// Existence + payment_intent_id + subscription_id matches are validated in check_permission().
+		$transaction       = Transaction::find( $request->get_param( 'transaction_id' ) );
+		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );
 		$subscription_id   = (int) $request->get_param( 'subscription_id' );
-
-		if ( ! hash_equals( $transaction->gateway_transaction_id, $payment_intent_id ) ) {
-			return new WP_Error(
-				'transaction_mismatch',
-				__( 'Payment intent does not match this transaction.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		// The submitted subscription_id must match the transaction's own
-		// subscription_id. Prevents a caller from pairing a valid (transaction,
-		// payment_intent) tuple with an arbitrary subscription ID.
-		if ( (int) $transaction->subscription_id !== $subscription_id ) {
-			return new WP_Error(
-				'subscription_mismatch',
-				__( 'Subscription does not match this transaction.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
 
 		// Happy path: the webhook arrived before the client's confirm call.
 		if ( 'completed' === $transaction->status ) {

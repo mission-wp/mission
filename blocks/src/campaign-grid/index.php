@@ -253,7 +253,7 @@ ob_start();
 			 * @param array    $attributes Block attributes.
 			 */
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo apply_filters( 'missiondp_campaign_grid_card_output', $card_html, $campaign, $attributes );
+			echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_campaign_grid_card_output', $card_html, $campaign, $attributes ) );
 			?>
 		<?php endforeach; ?>
 	</div>
@@ -268,5 +268,4 @@ $output = ob_get_clean();
  * @param Campaign[] $campaigns  The campaigns.
  * @param array      $attributes Block attributes.
  */
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'missiondp_campaign_grid_output', $output, $campaigns, $attributes );
+echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_campaign_grid_output', $output, $campaigns, $attributes ) );

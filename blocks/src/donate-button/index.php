@@ -225,5 +225,4 @@ $output = ob_get_clean();
  * @param string $output     HTML output.
  * @param array  $attributes Block attributes.
  */
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'missiondp_donate_button_output', $output, $attributes );
+echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_donate_button_output', $output, $attributes ) );
