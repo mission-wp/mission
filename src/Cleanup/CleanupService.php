@@ -215,24 +215,25 @@ class CleanupService {
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$id_list = implode( ',', array_map( 'intval', $ids ) );
+			$ids          = array_map( 'intval', $ids );
+			$placeholders = implode( ', ', array_fill( 0, $count, '%d' ) );
 
 			// Cascade: meta, history, notes, tributes.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}transactionmeta WHERE transaction_id IN ({$id_list})" );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}transaction_history WHERE transaction_id IN ({$id_list})" );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}notes WHERE object_type = 'transaction' AND object_id IN ({$id_list})" );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}tributes WHERE transaction_id IN ({$id_list})" );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}transactionmeta WHERE transaction_id IN ({$placeholders})", $ids ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}transaction_history WHERE transaction_id IN ({$placeholders})", $ids ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}notes WHERE object_type = 'transaction' AND object_id IN ({$placeholders})", $ids ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}tributes WHERE transaction_id IN ({$placeholders})", $ids ) );
 
 			// Delete the transactions.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
 			$wpdb->query( "DELETE FROM {$prefix}transactions WHERE is_test = 1" );
 
 			// Reset test aggregate columns on donors and campaigns.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
 			$wpdb->query(
 				"UPDATE {$prefix}donors SET
 					test_total_donated = 0,
@@ -242,7 +243,7 @@ class CleanupService {
 					test_last_transaction = NULL"
 			);
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
 			$wpdb->query(
 				"UPDATE {$prefix}campaigns SET
 					test_total_raised = 0,
@@ -277,14 +278,15 @@ class CleanupService {
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$id_list = implode( ',', array_map( 'intval', $ids ) );
+			$ids          = array_map( 'intval', $ids );
+			$placeholders = implode( ', ', array_fill( 0, $count, '%d' ) );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}donormeta WHERE donor_id IN ({$id_list})" );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}notes WHERE object_type = 'donor' AND object_id IN ({$id_list})" );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}donors WHERE id IN ({$id_list})" );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}donormeta WHERE donor_id IN ({$placeholders})", $ids ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}notes WHERE object_type = 'donor' AND object_id IN ({$placeholders})", $ids ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}donors WHERE id IN ({$placeholders})", $ids ) );
 		}
 
 		$this->log_activity( 'test_donors_deleted', 'settings', 0, [ 'count' => $count ] );
@@ -308,11 +310,12 @@ class CleanupService {
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$id_list = implode( ',', array_map( 'intval', $ids ) );
+			$ids          = array_map( 'intval', $ids );
+			$placeholders = implode( ', ', array_fill( 0, $count, '%d' ) );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "DELETE FROM {$prefix}subscriptionmeta WHERE subscription_id IN ({$id_list})" );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}subscriptionmeta WHERE subscription_id IN ({$placeholders})", $ids ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
 			$wpdb->query( "DELETE FROM {$prefix}subscriptions WHERE is_test = 1" );
 		}
 
