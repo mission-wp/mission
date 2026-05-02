@@ -951,7 +951,7 @@ $context = [
 		<div class="mission-df-success-content">
 			<?php
 			if ( ! empty( $content ) ) {
-				echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inner block content is already escaped by WordPress.
+				echo \MissionDP\Helpers\Kses::block_output( $content );
 			} else {
 				?>
 				<h2><?php esc_html_e( 'Thank you!', 'mission-donation-platform' ); ?></h2>

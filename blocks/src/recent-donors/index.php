@@ -167,5 +167,4 @@ $output = ob_get_clean();
  * @param Campaign $campaign   Campaign model.
  * @param array    $attributes Block attributes.
  */
-// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML is escaped above, filter consumers are responsible for their additions.
-echo apply_filters( 'missiondp_recent_donors_output', $output, $campaign, $attributes );
+echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_recent_donors_output', $output, $campaign, $attributes ) );
