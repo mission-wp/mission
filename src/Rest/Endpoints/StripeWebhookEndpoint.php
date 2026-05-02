@@ -55,6 +55,9 @@ class StripeWebhookEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
+				// Public — called by Stripe (no WordPress credentials available).
+				// Authentication happens inside handle() via Stripe's webhook
+				// signature verification using the stored webhook secret.
 				'permission_callback' => '__return_true',
 			]
 		);

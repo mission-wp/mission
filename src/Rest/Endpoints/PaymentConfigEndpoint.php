@@ -39,6 +39,9 @@ class PaymentConfigEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'handle' ],
+				// Public — returns the Stripe publishable key (intentionally
+				// public per Stripe's design) and other non-sensitive config
+				// the frontend donation form needs before a donor can submit.
 				'permission_callback' => '__return_true',
 			]
 		);

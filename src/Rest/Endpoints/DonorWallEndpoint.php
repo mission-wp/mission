@@ -46,6 +46,9 @@ class DonorWallEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'handle' ],
+				// Public — the Donor Wall block is rendered on public pages and
+				// returns only the donor data the site owner has chosen to expose
+				// (name, optional message, donation amount). No private fields.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'campaign_id'    => [
