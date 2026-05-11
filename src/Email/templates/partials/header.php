@@ -21,6 +21,7 @@ $primary_color = $settings->get( 'primary_color', '#2fa36b' );
 	<meta name="x-apple-disable-message-reformatting">
 	<meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no">
 	<title><?php echo esc_html( $subject ); ?></title>
+	<!-- Email clients don't reliably support external stylesheets, so CSS is inlined here from sibling files at render time. -->
 	<!--[if mso]>
 	<noscript>
 		<xml>
@@ -30,22 +31,19 @@ $primary_color = $settings->get( 'primary_color', '#2fa36b' );
 			</o:OfficeDocumentSettings>
 		</xml>
 	</noscript>
-	<style>
-		table { border-collapse: collapse; }
-		td { font-family: 'Segoe UI', Helvetica, Arial, sans-serif; }
-		a { text-decoration: none; }
-	</style>
+	<?php
+	echo wp_kses(
+		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/header-mso.css' ) ),
+		[ 'style' => [] ]
+	);
+	?>
 	<![endif]-->
-	<style>
-		body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-		table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-		img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; }
-		body { margin: 0; padding: 0; width: 100% !important; height: 100% !important; }
-		@media only screen and (max-width: 600px) {
-			.email-container { width: 100% !important; }
-			.email-padding { padding-left: 20px !important; padding-right: 20px !important; }
-		}
-	</style>
+	<?php
+	echo wp_kses(
+		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/header.css' ) ),
+		[ 'style' => [] ]
+	);
+	?>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f7f7f5; width: 100% !important;">
 
