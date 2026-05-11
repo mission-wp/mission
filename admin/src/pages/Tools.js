@@ -3,31 +3,10 @@ import { __ } from '@wordpress/i18n';
 
 import CleanupPanel from './tools/CleanupPanel';
 import ComingSoonPanel from './tools/ComingSoonPanel';
-import ExportPanel from './tools/ExportPanel';
 import LogsPanel from './tools/LogsPanel';
 import StatusPanel from './tools/StatusPanel';
 
 const TABS = [
-  {
-    id: 'export',
-    label: __( 'Export', 'mission-donation-platform' ),
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-        <polyline points="7 10 12 15 17 10" />
-        <line x1="12" y1="15" x2="12" y2="3" />
-      </svg>
-    ),
-  },
   {
     id: 'import',
     label: __( 'Import', 'mission-donation-platform' ),
@@ -165,7 +144,7 @@ function getInitialTab() {
       return stored;
     }
   } catch {}
-  return 'export';
+  return 'status';
 }
 
 export default function Tools() {
@@ -213,8 +192,6 @@ export default function Tools() {
         </nav>
 
         <div>
-          { activeTab === 'export' && <ExportPanel /> }
-
           { [ 'import', 'migration', 'features' ].includes( activeTab ) && (
             <ComingSoonPanel tabId={ activeTab } />
           ) }

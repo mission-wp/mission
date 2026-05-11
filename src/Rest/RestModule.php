@@ -21,9 +21,7 @@ use MissionDP\Rest\Endpoints\SettingsEndpoint;
 use MissionDP\Rest\Endpoints\StripeConnectEndpoint;
 use MissionDP\Rest\Endpoints\DonationFormSettingsEndpoint;
 use MissionDP\Rest\Endpoints\NotesEndpoint;
-use MissionDP\Export\ExportService;
 use MissionDP\Rest\Endpoints\DonorsEndpoint;
-use MissionDP\Rest\Endpoints\ExportEndpoint;
 use MissionDP\Rest\Endpoints\DonorWallEndpoint;
 use MissionDP\Rest\Endpoints\EmailTemplateEndpoint;
 use MissionDP\Rest\Endpoints\EmailTestEndpoint;
@@ -107,7 +105,6 @@ class RestModule {
 		( new DashboardEmailChangeEndpoint() )->register();
 		( new EmailTestEndpoint( $settings ) )->register();
 		( new EmailTemplateEndpoint( $settings ) )->register();
-		( new ExportEndpoint( new ExportService( $settings ) ) )->register();
 		( new SystemStatusEndpoint( $settings ) )->register();
 		( new CleanupEndpoint( new CleanupService( $settings ) ) )->register();
 	}
