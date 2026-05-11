@@ -219,9 +219,7 @@ Mission uses [Gravatar](https://gravatar.com) to display profile images for dono
 
 == Source Code ==
 
-The full, unminified source code for this plugin is publicly available on GitHub:
-
-**https://github.com/mission-wp/mission**
+The full, unminified source code for this plugin is publicly available on GitHub at https://github.com/mission-wp/mission
 
 The repository contains the original `.js`, `.jsx`, and `.scss` files. To build the plugin from source:
 
