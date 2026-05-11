@@ -311,11 +311,17 @@ class EmailChangeEndpoint {
 		}
 
 		// Perform the email change.
-		$old_email = $donor->email;
+		$old_email     = $donor->email;
+		$was_logged_in = $donor->user_id && get_current_user_id() === $donor->user_id;
 		$this->apply_email_change( $donor, $new_email );
 
 		// Clean up pending meta.
 		$this->cleanup_pending_meta( $donor );
+
+		// user_login changed; force re-auth instead of rewriting the session.
+		if ( $was_logged_in ) {
+			wp_logout();
+		}
 
 		/**
 		 * Fires after a donor's email address has been changed.
@@ -328,8 +334,9 @@ class EmailChangeEndpoint {
 
 		return new WP_REST_Response(
 			[
-				'email'   => $new_email,
-				'message' => __( 'Email address updated successfully.', 'mission-donation-platform' ),
+				'email'           => $new_email,
+				'message'         => __( 'Email address updated. Please sign in with your new email.', 'mission-donation-platform' ),
+				'requires_signin' => $was_logged_in,
 			]
 		);
 	}
@@ -356,8 +363,8 @@ class EmailChangeEndpoint {
 	 * Updates in the correct order to avoid sync hook conflicts:
 	 * 1. Donor table email
 	 * 2. WP user email (sync hook sees no diff, early-returns)
-	 * 3. WP user_login via direct DB query
-	 * 4. Clean cache and re-set auth cookie
+	 * 3. WP user_login via direct DB query (no WP API for this)
+	 * 4. Clean cached user data
 	 *
 	 * @param Donor  $donor     The donor.
 	 * @param string $new_email The new email address.
@@ -388,13 +395,8 @@ class EmailChangeEndpoint {
 				[ '%d' ]
 			);
 
-			// 4. Clear cached user data and re-set auth cookie.
+			// 4. Clear cached user data.
 			clean_user_cache( $donor->user_id );
-
-			if ( get_current_user_id() === $donor->user_id ) {
-				wp_set_current_user( $donor->user_id );
-				wp_set_auth_cookie( $donor->user_id, true );
-			}
 		}
 	}
 
