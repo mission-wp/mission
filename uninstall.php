@@ -92,12 +92,9 @@ foreach ( wp_roles()->roles as $role_name => $role_info ) {
 }
 
 // -------------------------------------------------------------------------
-// Donor user accounts (missiondp_donor role)
+// Donor role (plugin-defined)
 // -------------------------------------------------------------------------
-$donor_users = get_users( [ 'role' => 'missiondp_donor' ] );
-foreach ( $donor_users as $donor_user ) {
-	wp_delete_user( $donor_user->ID );
-}
+// Donor user accounts are intentionally preserved — site owners may have repurposed them or other plugins may reference them.
 remove_role( 'missiondp_donor' );
 
 // -------------------------------------------------------------------------
