@@ -180,4 +180,4 @@ $output = ob_get_clean();
  * @param Campaign $campaign   Campaign model.
  * @param array    $attributes Block attributes.
  */
-echo \MissionDP\Helpers\Kses::block_output( apply_filters( 'missiondp_campaign_progress_output', $output, $campaign, $attributes ) );
+echo wp_kses( apply_filters( 'missiondp_campaign_progress_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );

@@ -64,14 +64,10 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 	public function read( int $id ): ?TransactionHistory {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -128,13 +124,8 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -152,13 +143,8 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		return (int) $wpdb->get_var( $sql );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
 	}
 
 	/**
@@ -175,9 +161,8 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 	 * @return array{0: string, 1: array<int, mixed>}
 	 */
 	private function build_query_sql( string $select, array $args ): array {
-		$table  = $this->get_table_name();
 		$where  = [];
-		$values = [];
+		$values = [ $this->get_table_name() ];
 
 		if ( ! empty( $args['transaction_id'] ) ) {
 			$where[]  = 'transaction_id = %d';
@@ -193,9 +178,10 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 
 		$allowed_orderby = [ 'id', 'created_at' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'created_at';
-		$order           = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
+		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		$sql = "{$select} FROM {$table} {$where_clause} ORDER BY {$orderby} {$order}";
+		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
+		$values[] = $orderby;
 
 		if ( isset( $args['per_page'] ) ) {
 			$sql     .= ' LIMIT %d OFFSET %d';

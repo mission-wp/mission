@@ -67,15 +67,6 @@ class ProfileEndpoint {
 			]
 		);
 
-		register_rest_route(
-			RestModule::NAMESPACE,
-			'/donor-dashboard/account',
-			[
-				'methods'             => 'DELETE',
-				'callback'            => [ $this, 'delete_account' ],
-				'permission_callback' => [ $this, 'check_donor_permission' ],
-			]
-		);
 	}
 
 	/**
@@ -148,47 +139,6 @@ class ProfileEndpoint {
 		}
 
 		return new WP_REST_Response( $this->get_preferences( $donor ) );
-	}
-
-	/**
-	 * DELETE /donor-dashboard/account
-	 *
-	 * Unlinks the WP user from the donor record. The donor record and all
-	 * transaction history are preserved for the organization's records.
-	 *
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function delete_account(): WP_REST_Response|WP_Error {
-		$donor = $this->resolve_donor();
-
-		if ( is_wp_error( $donor ) ) {
-			return $donor;
-		}
-
-		$user_id = $donor->user_id;
-
-		// Null out user_id before deleting the WP user to prevent hooks from
-		// finding the donor still linked.
-		$donor->user_id = null;
-		$donor->save();
-
-		require_once ABSPATH . 'wp-admin/includes/user.php';
-		wp_delete_user( $user_id );
-
-		/**
-		 * Fires after a donor deletes their account.
-		 *
-		 * @param Donor $donor   The donor whose account was deleted.
-		 * @param int   $user_id The WP user ID that was deleted.
-		 */
-		do_action( 'missiondp_donor_account_deleted', $donor, $user_id );
-
-		return new WP_REST_Response(
-			[
-				'success' => true,
-				'message' => __( 'Your account has been deleted. Your donation history has been preserved for the organization\'s records.', 'mission-donation-platform' ),
-			]
-		);
 	}
 
 	/**

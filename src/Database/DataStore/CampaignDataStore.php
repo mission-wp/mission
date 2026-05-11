@@ -83,14 +83,10 @@ class CampaignDataStore implements DataStoreInterface {
 	public function read( int $id ): ?Campaign {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -105,14 +101,10 @@ class CampaignDataStore implements DataStoreInterface {
 	public function find_by_post_id( int $post_id ): ?Campaign {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE post_id = %d", $post_id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -174,13 +166,8 @@ class CampaignDataStore implements DataStoreInterface {
 
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT c.*', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -198,13 +185,8 @@ class CampaignDataStore implements DataStoreInterface {
 		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(c.id)', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		return (int) $wpdb->get_var( $sql );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
 	}
 
 	/**
@@ -223,9 +205,8 @@ class CampaignDataStore implements DataStoreInterface {
 	private function build_query_sql( string $select, array $args ): array {
 		global $wpdb;
 
-		$table  = $this->get_table_name();
 		$where  = [];
-		$values = [];
+		$values = [ $this->get_table_name() ];
 
 		if ( ! empty( $args['post_id'] ) ) {
 			$where[]  = 'c.post_id = %d';
@@ -274,9 +255,10 @@ class CampaignDataStore implements DataStoreInterface {
 
 		$allowed_orderby = [ 'id', 'title', 'status', 'date_created', 'date_modified', 'date_start', 'date_end', 'goal_amount', 'total_raised', 'transaction_count', 'donor_count', 'test_total_raised', 'test_transaction_count', 'test_donor_count' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order           = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
+		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		$sql = "{$select} FROM {$table} c {$where_clause} ORDER BY c.{$orderby} {$order}";
+		$sql      = $select . ' FROM %i c ' . $where_clause . ' ORDER BY c.%i ' . $order_dir;
+		$values[] = $orderby;
 
 		if ( isset( $args['per_page'] ) ) {
 			$sql     .= ' LIMIT %d OFFSET %d';

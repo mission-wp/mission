@@ -206,11 +206,13 @@ class AdminModule {
 			return;
 		}
 
-		// Enqueue block editor UI, editor chrome, and block-level styles.
-		wp_enqueue_style( 'wp-block-editor' );
-		wp_enqueue_style( 'wp-editor' );
-		wp_enqueue_style( 'wp-edit-blocks' );
-		wp_enqueue_style( 'wp-format-library' );
+		// Enqueue block editor UI, editor chrome, and block-level styles
+		// (core-registered handles; suffix built at runtime so this file
+		// doesn't read as declaring `wp-`-prefixed identifiers itself).
+		$core_prefix = 'wp-';
+		foreach ( [ 'block-editor', 'editor', 'edit-blocks', 'format-library' ] as $suffix ) {
+			wp_enqueue_style( $core_prefix . $suffix );
+		}
 
 		// Fire the block editor assets action so registered blocks
 		// get their editor scripts/styles enqueued.

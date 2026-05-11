@@ -290,19 +290,5 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 	</div>
 
-	<!-- Danger Zone -->
-	<div class="mission-dd-danger-zone">
-		<div class="mission-dd-profile-error" data-wp-bind--hidden="!context.profile.deleteError" role="alert" aria-live="polite">
-			<span data-wp-text="context.profile.deleteError"></span>
-		</div>
-		<button
-			class="mission-dd-danger-link"
-			data-wp-on--click="actions.deleteAccount"
-			data-wp-bind--disabled="context.profile.deleteLoading"
-		>
-			<?php esc_html_e( 'Delete my account', 'mission-donation-platform' ); ?>
-		</button>
-		<div class="mission-dd-danger-desc"><?php esc_html_e( 'This will remove your login access. Your donation history will be preserved for the organization\'s records.', 'mission-donation-platform' ); ?></div>
-	</div>
 
 </div>

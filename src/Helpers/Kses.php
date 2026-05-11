@@ -22,28 +22,15 @@ class Kses {
 	private static ?array $block_allowed = null;
 
 	/**
-	 * Sanitize block render HTML for echo'ing.
+	 * Allowlist for block render output: extends `wp_kses_allowed_html('post')`
+	 * with SVG icons and the Interactivity API `data-wp-*` attribute family.
 	 *
-	 * Extends `wp_kses_allowed_html('post')` with:
-	 * - SVG and the SVG child elements used for icons in our blocks
-	 * - The Interactivity API `data-wp-*` attribute family
-	 *
-	 * Use this any time a block render template echoes an HTML string that
-	 * has been (or might be) modified by a third-party filter — escape late.
-	 *
-	 * @param string $html Raw HTML.
-	 * @return string Escaped HTML safe to echo.
-	 */
-	public static function block_output( string $html ): string {
-		return wp_kses( $html, self::allowed_block_html() );
-	}
-
-	/**
-	 * Build (and memoise) the allowlist used by block_output().
+	 * Pass the result as the second argument to `wp_kses()` when echoing block
+	 * render HTML that may have been modified by a third-party filter.
 	 *
 	 * @return array<string, array<string, bool>>
 	 */
-	private static function allowed_block_html(): array {
+	public static function block_allowed_html(): array {
 		if ( null !== self::$block_allowed ) {
 			return self::$block_allowed;
 		}

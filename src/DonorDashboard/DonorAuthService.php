@@ -179,9 +179,14 @@ class DonorAuthService {
 		$donor->delete_meta( 'activation_token' );
 		$donor->delete_meta( 'activation_token_expires' );
 
-		// Log the donor in immediately.
-		wp_set_current_user( $user_id );
-		wp_set_auth_cookie( $user_id, true );
+		wp_signon(
+			[
+				'user_login'    => $email,
+				'user_password' => $password,
+				'remember'      => true,
+			],
+			is_ssl()
+		);
 
 		/**
 		 * Fires after a donor activates their account.
@@ -383,17 +388,14 @@ class DonorAuthService {
 		// Set the new password (destroys all existing sessions).
 		wp_set_password( $new_password, $user->ID );
 
-		// Invalidate the reset key to prevent reuse.
-		wp_update_user(
+		wp_signon(
 			[
-				'ID'                  => $user->ID,
-				'user_activation_key' => '',
-			]
+				'user_login'    => $user->user_login,
+				'user_password' => $new_password,
+				'remember'      => true,
+			],
+			is_ssl()
 		);
-
-		// Log the donor in immediately.
-		wp_set_current_user( $user->ID );
-		wp_set_auth_cookie( $user->ID, true );
 
 		/**
 		 * Fires after a donor resets their password.

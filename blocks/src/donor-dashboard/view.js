@@ -152,7 +152,15 @@ store( 'mission-donation-platform/donor-dashboard', {
               ctx.profile.email = data.email;
               ctx.profile.pendingEmail = '';
               ctx.donor.email = data.email;
-              showToast( ctx, 'Email address updated successfully!' );
+              showToast(
+                ctx,
+                data.message || 'Email address updated successfully!'
+              );
+
+              // Server logged us out (user_login changed); reload so the login form appears.
+              if ( data.requires_signin ) {
+                setTimeout( () => window.location.reload(), 1500 );
+              }
             } else {
               showToast(
                 ctx,
