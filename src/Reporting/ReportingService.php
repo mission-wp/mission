@@ -474,45 +474,46 @@ class ReportingService {
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
-		$orderby  = $args['orderby'] ?? 'date_created';
-		$order    = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
 
-		$where  = [];
-		$values = [];
+		$allowed_orderby = [ 'date_created', 'amount' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
+
+		$where         = [];
+		$where_values  = [];
+		$tribute_table = null;
 
 		// Always filter by test mode.
-		$where[]  = 't.is_test = %d';
-		$values[] = (int) $this->is_test_mode();
+		$where[]        = 't.is_test = %d';
+		$where_values[] = (int) $this->is_test_mode();
 
 		if ( ! empty( $args['status'] ) ) {
-			$where[]  = 't.status = %s';
-			$values[] = $args['status'];
+			$where[]        = 't.status = %s';
+			$where_values[] = $args['status'];
 		}
 
 		if ( ! empty( $args['campaign_id'] ) ) {
-			$where[]  = 't.campaign_id = %d';
-			$values[] = $args['campaign_id'];
+			$where[]        = 't.campaign_id = %d';
+			$where_values[] = $args['campaign_id'];
 		}
 
 		if ( ! empty( $args['donor_id'] ) ) {
-			$where[]  = 't.donor_id = %d';
-			$values[] = $args['donor_id'];
+			$where[]        = 't.donor_id = %d';
+			$where_values[] = $args['donor_id'];
 		}
 
 		if ( ! empty( $args['search'] ) ) {
-			$like     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]  = '(d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d)';
-			$values[] = $like;
-			$values[] = $like;
-			$values[] = $like;
-			$values[] = (int) $args['search'];
+			$like           = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$where[]        = '(d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d)';
+			$where_values[] = $like;
+			$where_values[] = $like;
+			$where_values[] = $like;
+			$where_values[] = (int) $args['search'];
 		}
 
 		// Dedication filter — requires a JOIN to the tributes table.
-		$tribute_join = '';
 		if ( ! empty( $args['dedication'] ) ) {
 			$tribute_table = $wpdb->prefix . 'missiondp_tributes';
-			$tribute_join  = " INNER JOIN {$tribute_table} AS tribute ON t.id = tribute.transaction_id";
 
 			match ( $args['dedication'] ) {
 				'mail_pending' => array_push( $where, "tribute.notify_method = 'mail'", 'tribute.notification_sent_at IS NULL' ),
@@ -522,49 +523,45 @@ class ReportingService {
 			};
 		}
 
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
+		$where_clause = 'WHERE ' . implode( ' AND ', $where );
+		$tribute_join = null === $tribute_table ? '' : ' INNER JOIN %i AS tribute ON t.id = tribute.transaction_id';
 
-		$allowed_orderby = [ 'date_created', 'amount' ];
-		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_created';
+		// Values must appear in SQL placeholder order: table identifiers first, then WHERE values.
+		$base_values = [ $txn_table, $donor_table ];
+		if ( null !== $tribute_table ) {
+			$base_values[] = $tribute_table;
+		}
+		$base_values = array_merge( $base_values, $where_values );
 
 		// Count total.
-		$count_sql = "SELECT COUNT(*) FROM {$txn_table} AS t LEFT JOIN {$donor_table} AS d ON t.donor_id = d.id {$tribute_join} {$where_clause}";
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$count_sql = $wpdb->prepare( $count_sql, $values );
-		}
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$total = (int) $wpdb->get_var( $count_sql );
+		$count_sql = 'SELECT COUNT(*) FROM %i AS t LEFT JOIN %i AS d ON t.donor_id = d.id' . $tribute_join . ' ' . $where_clause;
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $count_sql composed from literal fragments above: table names use %i, WHERE fragments contain only %s/%d placeholders.
+		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $base_values ) );
 
 		// Fetch rows.
 		$offset = ( $page - 1 ) * $per_page;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$sql = "SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
-			FROM {$txn_table} AS t
-			LEFT JOIN {$donor_table} AS d ON t.donor_id = d.id
-			{$tribute_join}
-			{$where_clause}
-			ORDER BY t.{$orderby} {$order}
-			LIMIT %d OFFSET %d";
+		$sql = 'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email'
+			. ' FROM %i AS t'
+			. ' LEFT JOIN %i AS d ON t.donor_id = d.id'
+			. $tribute_join
+			. ' ' . $where_clause
+			. ' ORDER BY t.%i ' . $order_dir
+			. ' LIMIT %d OFFSET %d';
 
-		$query_values = array_merge( $values, [ $per_page, $offset ] );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $query_values ), ARRAY_A );
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows_values = array_merge( $base_values, [ $orderby, $per_page, $offset ] );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql composed from literal fragments above: table names and orderby column use %i, ASC/DESC is a hardcoded ternary literal, WHERE fragments contain only %s/%d placeholders.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $rows_values ), ARRAY_A );
 
 		// Batch-fetch campaign titles from the campaigns table.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
-			$placeholders   = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			$campaigns = $wpdb->get_results(
-				$wpdb->prepare( "SELECT id, title FROM {$campaign_table} WHERE id IN ({$placeholders})", ...array_map( 'intval', $campaign_ids ) ),
-				ARRAY_A
-			);
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$placeholders         = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
+			$campaign_lookup_sql  = 'SELECT id, title FROM %i WHERE id IN (' . $placeholders . ')';
+			$campaign_lookup_args = array_merge( [ $wpdb->prefix . 'missiondp_campaigns' ], array_map( 'intval', $campaign_ids ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per campaign ID; every ID passes through intval() before binding.
+			$campaigns = $wpdb->get_results( $wpdb->prepare( $campaign_lookup_sql, $campaign_lookup_args ), ARRAY_A );
 			foreach ( $campaigns as $campaign ) {
 				$campaign_map[ $campaign['id'] ] = $campaign['title'];
 			}
@@ -608,82 +605,73 @@ class ReportingService {
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
-		$orderby  = $args['orderby'] ?? 'date_created';
-		$order    = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
 
-		$where  = [];
-		$values = [];
+		$allowed_orderby = [ 'id', 'date_created', 'date_next_renewal', 'total_amount', 'status' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
+
+		$where        = [];
+		$where_values = [];
 
 		// Always filter by test mode.
-		$where[]  = 's.is_test = %d';
-		$values[] = (int) $this->is_test_mode();
+		$where[]        = 's.is_test = %d';
+		$where_values[] = (int) $this->is_test_mode();
 
 		if ( ! empty( $args['status'] ) ) {
-			$where[]  = 's.status = %s';
-			$values[] = $args['status'];
+			$where[]        = 's.status = %s';
+			$where_values[] = $args['status'];
 		}
 
 		if ( ! empty( $args['campaign_id'] ) ) {
-			$where[]  = 's.campaign_id = %d';
-			$values[] = $args['campaign_id'];
+			$where[]        = 's.campaign_id = %d';
+			$where_values[] = $args['campaign_id'];
 		}
 
 		if ( ! empty( $args['donor_id'] ) ) {
-			$where[]  = 's.donor_id = %d';
-			$values[] = $args['donor_id'];
+			$where[]        = 's.donor_id = %d';
+			$where_values[] = $args['donor_id'];
 		}
 
 		if ( ! empty( $args['search'] ) ) {
-			$like     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]  = '(d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s)';
-			$values[] = $like;
-			$values[] = $like;
-			$values[] = $like;
-			$values[] = $like;
+			$like           = '%' . $wpdb->esc_like( $args['search'] ) . '%';
+			$where[]        = '(d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s)';
+			$where_values[] = $like;
+			$where_values[] = $like;
+			$where_values[] = $like;
+			$where_values[] = $like;
 		}
 
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
-
-		$allowed_orderby = [ 'id', 'date_created', 'date_next_renewal', 'total_amount', 'status' ];
-		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_created';
+		$where_clause = 'WHERE ' . implode( ' AND ', $where );
+		$base_values  = array_merge( [ $sub_table, $donor_table ], $where_values );
 
 		// Count total.
-		$count_sql = "SELECT COUNT(*) FROM {$sub_table} AS s LEFT JOIN {$donor_table} AS d ON s.donor_id = d.id {$where_clause}";
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$count_sql = $wpdb->prepare( $count_sql, $values );
-		}
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$total = (int) $wpdb->get_var( $count_sql );
+		$count_sql = 'SELECT COUNT(*) FROM %i AS s LEFT JOIN %i AS d ON s.donor_id = d.id ' . $where_clause;
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $count_sql composed from literal fragments above: table names use %i, WHERE fragments contain only %s/%d placeholders.
+		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $base_values ) );
 
 		// Fetch rows.
 		$offset = ( $page - 1 ) * $per_page;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$sql = "SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
-			FROM {$sub_table} AS s
-			LEFT JOIN {$donor_table} AS d ON s.donor_id = d.id
-			{$where_clause}
-			ORDER BY s.{$orderby} {$order}
-			LIMIT %d OFFSET %d";
+		$sql = 'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email'
+			. ' FROM %i AS s'
+			. ' LEFT JOIN %i AS d ON s.donor_id = d.id'
+			. ' ' . $where_clause
+			. ' ORDER BY s.%i ' . $order_dir
+			. ' LIMIT %d OFFSET %d';
 
-		$query_values = array_merge( $values, [ $per_page, $offset ] );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $query_values ), ARRAY_A );
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows_values = array_merge( $base_values, [ $orderby, $per_page, $offset ] );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql composed from literal fragments above: table names and orderby column use %i, ASC/DESC is a hardcoded ternary literal, WHERE fragments contain only %s/%d placeholders.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $rows_values ), ARRAY_A );
 
 		// Batch-fetch campaign titles.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$campaign_table = $wpdb->prefix . 'missiondp_campaigns';
-			$placeholders   = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
-			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-			$campaigns = $wpdb->get_results(
-				$wpdb->prepare( "SELECT id, title FROM {$campaign_table} WHERE id IN ({$placeholders})", ...array_map( 'intval', $campaign_ids ) ),
-				ARRAY_A
-			);
-			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+			$placeholders         = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
+			$campaign_lookup_sql  = 'SELECT id, title FROM %i WHERE id IN (' . $placeholders . ')';
+			$campaign_lookup_args = array_merge( [ $wpdb->prefix . 'missiondp_campaigns' ], array_map( 'intval', $campaign_ids ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per campaign ID; every ID passes through intval() before binding.
+			$campaigns = $wpdb->get_results( $wpdb->prepare( $campaign_lookup_sql, $campaign_lookup_args ), ARRAY_A );
 			foreach ( $campaigns as $campaign ) {
 				$campaign_map[ $campaign['id'] ] = $campaign['title'];
 			}
@@ -1111,16 +1099,20 @@ class ReportingService {
 
 		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
 		$donor_table = $wpdb->prefix . 'missiondp_donors';
-		$is_test     = (int) $this->is_test_mode();
 		$offset      = ( $page - 1 ) * $per_page;
 
+		// Validate orderby.
+		$allowed_orderby = [ 'date_completed', 'amount' ];
+		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_completed';
+		$order_dir       = 'ASC' === strtoupper( $order ) ? 'ASC' : 'DESC';
+
 		// Build WHERE clause.
-		$where  = [ "t.status = 'completed'", $wpdb->prepare( 't.is_test = %d', $is_test ) ];
-		$values = [];
+		$where        = [ "t.status = 'completed'", 't.is_test = %d' ];
+		$where_values = [ (int) $this->is_test_mode() ];
 
 		if ( $campaign_id > 0 ) {
-			$where[]  = 't.campaign_id = %d';
-			$values[] = $campaign_id;
+			$where[]        = 't.campaign_id = %d';
+			$where_values[] = $campaign_id;
 		}
 
 		if ( ! $show_anonymous ) {
@@ -1129,41 +1121,28 @@ class ReportingService {
 
 		$where_clause = 'WHERE ' . implode( ' AND ', $where );
 
-		// Validate orderby.
-		$allowed_orderby = [ 'date_completed', 'amount' ];
-		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_completed';
-		$order           = strtoupper( $order ) === 'ASC' ? 'ASC' : 'DESC';
-		$order_clause    = "ORDER BY t.{$orderby} {$order}";
-
 		// Count query.
-		$count_sql = "SELECT COUNT(*) FROM {$txn_table} AS t {$where_clause}";
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$count_sql = $wpdb->prepare( $count_sql, ...$values );
-		}
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-		$total = (int) $wpdb->get_var( $count_sql );
+		$count_sql    = 'SELECT COUNT(*) FROM %i AS t ' . $where_clause;
+		$count_values = array_merge( [ $txn_table ], $where_values );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $count_sql composed from literal fragments above: table name uses %i, WHERE fragments contain only %s/%d placeholders or hardcoded literals.
+		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $count_values ) );
 
 		// Main query.
-		$main_values   = $values;
-		$main_values[] = $per_page;
-		$main_values[] = $offset;
+		$sql = 'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,'
+			. ' t.date_completed, t.currency, d.first_name, d.last_name, d.email'
+			. ' FROM %i AS t'
+			. ' INNER JOIN %i AS d ON t.donor_id = d.id'
+			. ' ' . $where_clause
+			. ' ORDER BY t.%i ' . $order_dir
+			. ' LIMIT %d OFFSET %d';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,
-					t.date_completed, t.currency, d.first_name, d.last_name, d.email
-				FROM {$txn_table} AS t
-				INNER JOIN {$donor_table} AS d ON t.donor_id = d.id
-				{$where_clause}
-				{$order_clause}
-				LIMIT %d OFFSET %d",
-				...$main_values
-			),
-			ARRAY_A
+		$main_values = array_merge(
+			[ $txn_table, $donor_table ],
+			$where_values,
+			[ $orderby, $per_page, $offset ]
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql composed from literal fragments above: table names and orderby column use %i, ASC/DESC is a hardcoded ternary literal, WHERE fragments contain only %s/%d placeholders or hardcoded literals.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $main_values ), ARRAY_A );
 
 		if ( ! $rows ) {
 			return [

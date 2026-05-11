@@ -88,14 +88,10 @@ class TransactionDataStore implements DataStoreInterface {
 	public function read( int $id ): ?Transaction {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -167,9 +163,13 @@ class TransactionDataStore implements DataStoreInterface {
 		( new TributeDataStore() )->delete_by_transaction( $id );
 
 		// Delete associated meta.
-		$meta_table = $this->get_meta_table_name();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE missiondp_transaction_id = %d", $id ) );
+		$wpdb->query(
+			$wpdb->prepare(
+				'DELETE FROM %i WHERE missiondp_transaction_id = %d',
+				$this->get_meta_table_name(),
+				$id
+			)
+		);
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
@@ -188,13 +188,8 @@ class TransactionDataStore implements DataStoreInterface {
 
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -212,13 +207,8 @@ class TransactionDataStore implements DataStoreInterface {
 		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		return (int) $wpdb->get_var( $sql );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
 	}
 
 	/**
@@ -234,9 +224,8 @@ class TransactionDataStore implements DataStoreInterface {
 	 * @return array{0: string, 1: array<int, mixed>} [ sql_template, values ]
 	 */
 	private function build_query_sql( string $select, array $args ): array {
-		$table  = $this->get_table_name();
 		$where  = [];
-		$values = [];
+		$values = [ $this->get_table_name() ];
 
 		if ( ! empty( $args['id'] ) ) {
 			$where[]  = 'id = %d';
@@ -302,9 +291,10 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$allowed_orderby = [ 'id', 'date_created', 'date_completed', 'date_modified', 'total_amount', 'status' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order           = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
+		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		$sql = "{$select} FROM {$table} {$where_clause} ORDER BY {$orderby} {$order}";
+		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
+		$values[] = $orderby;
 
 		if ( isset( $args['per_page'] ) ) {
 			$sql     .= ' LIMIT %d OFFSET %d';
@@ -366,14 +356,13 @@ class TransactionDataStore implements DataStoreInterface {
 		$now          = current_time( 'mysql', true );
 		$completed_at = $transaction->date_completed ?? $now;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
 			$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 			if ( $transaction->is_test ) {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$donor_table}
+						"UPDATE %i
 						SET test_total_donated = test_total_donated + %d,
 							test_total_tip = test_total_tip + %d,
 							test_transaction_count = test_transaction_count + 1,
@@ -381,6 +370,7 @@ class TransactionDataStore implements DataStoreInterface {
 							test_last_transaction = %s,
 							date_modified = %s
 						WHERE id = %d",
+						$donor_table,
 						$transaction->amount,
 						$transaction->tip_amount,
 						$completed_at,
@@ -392,7 +382,7 @@ class TransactionDataStore implements DataStoreInterface {
 			} else {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$donor_table}
+						"UPDATE %i
 						SET total_donated = total_donated + %d,
 							total_tip = total_tip + %d,
 							transaction_count = transaction_count + 1,
@@ -400,6 +390,7 @@ class TransactionDataStore implements DataStoreInterface {
 							last_transaction = %s,
 							date_modified = %s
 						WHERE id = %d",
+						$donor_table,
 						$transaction->amount,
 						$transaction->tip_amount,
 						$completed_at,
@@ -418,12 +409,13 @@ class TransactionDataStore implements DataStoreInterface {
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$campaign_table}
-					SET {$raised_col} = {$raised_col} + %d,
-						{$count_col} = {$count_col} + 1,
-						date_modified = %s
-					WHERE id = %d",
+					'UPDATE %i SET %i = %i + %d, %i = %i + 1, date_modified = %s WHERE id = %d',
+					$campaign_table,
+					$raised_col,
+					$raised_col,
 					$transaction->amount,
+					$count_col,
+					$count_col,
 					$now,
 					$transaction->campaign_id
 				)
@@ -431,16 +423,16 @@ class TransactionDataStore implements DataStoreInterface {
 
 			// Increment donor_count if this is the donor's first completed transaction for this campaign.
 			if ( $transaction->donor_id ) {
-				$txn_table       = $this->get_table_name();
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
 
 				$has_previous = (bool) $wpdb->get_var(
 					$wpdb->prepare(
-						"SELECT 1 FROM {$txn_table}
+						"SELECT 1 FROM %i
 						WHERE campaign_id = %d AND donor_id = %d AND status = 'completed'
 							AND is_test = %d AND id != %d
 						LIMIT 1",
+						$this->get_table_name(),
 						$transaction->campaign_id,
 						$transaction->donor_id,
 						$is_test_val,
@@ -451,9 +443,10 @@ class TransactionDataStore implements DataStoreInterface {
 				if ( ! $has_previous ) {
 					$wpdb->query(
 						$wpdb->prepare(
-							"UPDATE {$campaign_table}
-							SET {$donor_count_col} = {$donor_count_col} + 1, date_modified = %s
-							WHERE id = %d",
+							'UPDATE %i SET %i = %i + 1, date_modified = %s WHERE id = %d',
+							$campaign_table,
+							$donor_count_col,
+							$donor_count_col,
 							$now,
 							$transaction->campaign_id
 						)
@@ -467,7 +460,6 @@ class TransactionDataStore implements DataStoreInterface {
 			 */
 			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -480,19 +472,19 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$now = current_time( 'mysql', true );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
 			$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 			if ( $transaction->is_test ) {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$donor_table}
+						'UPDATE %i
 						SET test_total_donated = GREATEST(0, test_total_donated - %d),
 							test_total_tip = GREATEST(0, test_total_tip - %d),
 							test_transaction_count = GREATEST(0, CAST(test_transaction_count AS SIGNED) - 1),
 							date_modified = %s
-						WHERE id = %d",
+						WHERE id = %d',
+						$donor_table,
 						$transaction->amount,
 						$transaction->tip_amount,
 						$now,
@@ -502,12 +494,13 @@ class TransactionDataStore implements DataStoreInterface {
 			} else {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$donor_table}
+						'UPDATE %i
 						SET total_donated = GREATEST(0, total_donated - %d),
 							total_tip = GREATEST(0, total_tip - %d),
 							transaction_count = GREATEST(0, CAST(transaction_count AS SIGNED) - 1),
 							date_modified = %s
-						WHERE id = %d",
+						WHERE id = %d',
+						$donor_table,
 						$transaction->amount,
 						$transaction->tip_amount,
 						$now,
@@ -524,12 +517,13 @@ class TransactionDataStore implements DataStoreInterface {
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$campaign_table}
-					SET {$raised_col} = GREATEST(0, {$raised_col} - %d),
-						{$count_col} = GREATEST(0, CAST({$count_col} AS SIGNED) - 1),
-						date_modified = %s
-					WHERE id = %d",
+					'UPDATE %i SET %i = GREATEST(0, %i - %d), %i = GREATEST(0, CAST(%i AS SIGNED) - 1), date_modified = %s WHERE id = %d',
+					$campaign_table,
+					$raised_col,
+					$raised_col,
 					$transaction->amount,
+					$count_col,
+					$count_col,
 					$now,
 					$transaction->campaign_id
 				)
@@ -537,15 +531,15 @@ class TransactionDataStore implements DataStoreInterface {
 
 			// Decrement donor_count if the donor has no remaining completed transactions for this campaign.
 			if ( $transaction->donor_id ) {
-				$txn_table       = $this->get_table_name();
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
 
 				$remaining = (int) $wpdb->get_var(
 					$wpdb->prepare(
-						"SELECT COUNT(*) FROM {$txn_table}
+						"SELECT COUNT(*) FROM %i
 						WHERE campaign_id = %d AND donor_id = %d AND status = 'completed'
 							AND is_test = %d AND id != %d",
+						$this->get_table_name(),
 						$transaction->campaign_id,
 						$transaction->donor_id,
 						$is_test_val,
@@ -556,10 +550,10 @@ class TransactionDataStore implements DataStoreInterface {
 				if ( 0 === $remaining ) {
 					$wpdb->query(
 						$wpdb->prepare(
-							"UPDATE {$campaign_table}
-							SET {$donor_count_col} = GREATEST(0, CAST({$donor_count_col} AS SIGNED) - 1),
-								date_modified = %s
-							WHERE id = %d",
+							'UPDATE %i SET %i = GREATEST(0, CAST(%i AS SIGNED) - 1), date_modified = %s WHERE id = %d',
+							$campaign_table,
+							$donor_count_col,
+							$donor_count_col,
 							$now,
 							$transaction->campaign_id
 						)
@@ -573,7 +567,6 @@ class TransactionDataStore implements DataStoreInterface {
 			 */
 			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -597,18 +590,18 @@ class TransactionDataStore implements DataStoreInterface {
 		$donation_delta             = $current_donation_refunded - $previous_donation_refunded;
 		$tip_delta                  = $refund_delta - $donation_delta;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
 			$donor_table = $wpdb->prefix . 'missiondp_donors';
 
 			if ( $transaction->is_test ) {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$donor_table}
+						'UPDATE %i
 						SET test_total_donated = GREATEST(0, test_total_donated - %d),
 							test_total_tip = GREATEST(0, test_total_tip - %d),
 							date_modified = %s
-						WHERE id = %d",
+						WHERE id = %d',
+						$donor_table,
 						$donation_delta,
 						$tip_delta,
 						$now,
@@ -618,11 +611,12 @@ class TransactionDataStore implements DataStoreInterface {
 			} else {
 				$wpdb->query(
 					$wpdb->prepare(
-						"UPDATE {$donor_table}
+						'UPDATE %i
 						SET total_donated = GREATEST(0, total_donated - %d),
 							total_tip = GREATEST(0, total_tip - %d),
 							date_modified = %s
-						WHERE id = %d",
+						WHERE id = %d',
+						$donor_table,
 						$donation_delta,
 						$tip_delta,
 						$now,
@@ -638,10 +632,10 @@ class TransactionDataStore implements DataStoreInterface {
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$campaign_table}
-					SET {$raised_col} = GREATEST(0, {$raised_col} - %d),
-						date_modified = %s
-					WHERE id = %d",
+					'UPDATE %i SET %i = GREATEST(0, %i - %d), date_modified = %s WHERE id = %d',
+					$campaign_table,
+					$raised_col,
+					$raised_col,
 					$donation_delta,
 					$now,
 					$transaction->campaign_id
@@ -651,7 +645,6 @@ class TransactionDataStore implements DataStoreInterface {
 			/** @param int $campaign_id @param bool $is_test */
 			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		/**
 		 * Fires after aggregates are adjusted for a refund.
@@ -677,17 +670,16 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$now = current_time( 'mysql', true );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		if ( $transaction->donor_id ) {
 			$donor_table = $wpdb->prefix . 'missiondp_donors';
 			$count_col   = $transaction->is_test ? 'test_transaction_count' : 'transaction_count';
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$donor_table}
-					SET {$count_col} = GREATEST(0, CAST({$count_col} AS SIGNED) - 1),
-						date_modified = %s
-					WHERE id = %d",
+					'UPDATE %i SET %i = GREATEST(0, CAST(%i AS SIGNED) - 1), date_modified = %s WHERE id = %d',
+					$donor_table,
+					$count_col,
+					$count_col,
 					$now,
 					$transaction->donor_id
 				)
@@ -700,10 +692,10 @@ class TransactionDataStore implements DataStoreInterface {
 
 			$wpdb->query(
 				$wpdb->prepare(
-					"UPDATE {$campaign_table}
-					SET {$count_col} = GREATEST(0, CAST({$count_col} AS SIGNED) - 1),
-						date_modified = %s
-					WHERE id = %d",
+					'UPDATE %i SET %i = GREATEST(0, CAST(%i AS SIGNED) - 1), date_modified = %s WHERE id = %d',
+					$campaign_table,
+					$count_col,
+					$count_col,
 					$now,
 					$transaction->campaign_id
 				)
@@ -711,15 +703,15 @@ class TransactionDataStore implements DataStoreInterface {
 
 			// Decrement donor_count if the donor has no remaining completed transactions for this campaign.
 			if ( $transaction->donor_id ) {
-				$txn_table       = $this->get_table_name();
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
 
 				$remaining = (int) $wpdb->get_var(
 					$wpdb->prepare(
-						"SELECT COUNT(*) FROM {$txn_table}
+						"SELECT COUNT(*) FROM %i
 						WHERE campaign_id = %d AND donor_id = %d AND status = 'completed'
 							AND is_test = %d AND id != %d",
+						$this->get_table_name(),
 						$transaction->campaign_id,
 						$transaction->donor_id,
 						$is_test_val,
@@ -730,10 +722,10 @@ class TransactionDataStore implements DataStoreInterface {
 				if ( 0 === $remaining ) {
 					$wpdb->query(
 						$wpdb->prepare(
-							"UPDATE {$campaign_table}
-							SET {$donor_count_col} = GREATEST(0, CAST({$donor_count_col} AS SIGNED) - 1),
-								date_modified = %s
-							WHERE id = %d",
+							'UPDATE %i SET %i = GREATEST(0, CAST(%i AS SIGNED) - 1), date_modified = %s WHERE id = %d',
+							$campaign_table,
+							$donor_count_col,
+							$donor_count_col,
 							$now,
 							$transaction->campaign_id
 						)
@@ -744,7 +736,6 @@ class TransactionDataStore implements DataStoreInterface {
 			/** @param int $campaign_id @param bool $is_test */
 			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**

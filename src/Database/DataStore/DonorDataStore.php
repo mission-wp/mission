@@ -79,14 +79,10 @@ class DonorDataStore implements DataStoreInterface {
 	public function read( int $id ): ?Donor {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -101,14 +97,10 @@ class DonorDataStore implements DataStoreInterface {
 	public function find_by_email( string $email ): ?Donor {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE email = %s", $email ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE email = %s', $this->get_table_name(), $email ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -122,14 +114,10 @@ class DonorDataStore implements DataStoreInterface {
 	public function find_by_user_id( int $user_id ): ?Donor {
 		global $wpdb;
 
-		$table = $this->get_table_name();
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE user_id = %d", $user_id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d', $this->get_table_name(), $user_id ),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -174,9 +162,13 @@ class DonorDataStore implements DataStoreInterface {
 	public function delete( int $id ): bool {
 		global $wpdb;
 
-		$meta_table = $this->get_meta_table_name();
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$meta_table} WHERE missiondp_donor_id = %d", $id ) );
+		$wpdb->query(
+			$wpdb->prepare(
+				'DELETE FROM %i WHERE missiondp_donor_id = %d',
+				$this->get_meta_table_name(),
+				$id
+			)
+		);
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
@@ -195,13 +187,8 @@ class DonorDataStore implements DataStoreInterface {
 
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -219,13 +206,8 @@ class DonorDataStore implements DataStoreInterface {
 		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
 		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
 
-		if ( $values ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql contains placeholders for $values built in build_query_sql.
-			$sql = $wpdb->prepare( $sql, $values );
-		}
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table query; values prepared above.
-		return (int) $wpdb->get_var( $sql );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
 	}
 
 	/**
@@ -244,9 +226,8 @@ class DonorDataStore implements DataStoreInterface {
 	private function build_query_sql( string $select, array $args ): array {
 		global $wpdb;
 
-		$table  = $this->get_table_name();
 		$where  = [];
-		$values = [];
+		$values = [ $this->get_table_name() ];
 
 		if ( ! empty( $args['user_id'] ) ) {
 			$where[]  = 'user_id = %d';
@@ -276,16 +257,18 @@ class DonorDataStore implements DataStoreInterface {
 			$count_col          = in_array( $args['has_transactions'], $allowed_count_cols, true )
 				? $args['has_transactions']
 				: 'transaction_count';
-			$where[]            = "{$count_col} > 0";
+			$where[]            = '%i > 0';
+			$values[]           = $count_col;
 		}
 
 		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
 
 		$allowed_orderby = [ 'id', 'date_created', 'total_donated', 'transaction_count', 'last_transaction', 'test_total_donated', 'test_transaction_count', 'test_last_transaction' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order           = strtoupper( $args['order'] ?? 'DESC' ) === 'ASC' ? 'ASC' : 'DESC';
+		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		$sql = "{$select} FROM {$table} {$where_clause} ORDER BY {$orderby} {$order}";
+		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
+		$values[] = $orderby;
 
 		if ( isset( $args['per_page'] ) ) {
 			$sql     .= ' LIMIT %d OFFSET %d';
