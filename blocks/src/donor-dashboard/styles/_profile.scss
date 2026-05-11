@@ -365,34 +365,6 @@
   }
 }
 
-// ── Danger Zone ──
-
-:where(.mission-dd-danger-zone) {
-  border-top: 1px solid var(--mission-border, #eee);
-  margin-top: 40px;
-  padding-top: 24px;
-}
-
-:where(.mission-dd-danger-link) {
-  background: none;
-  border: none;
-  color: var(--mission-error, #b85c5c);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  padding: 0;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-:where(.mission-dd-danger-desc) {
-  color: var(--mission-text-secondary, #6b7280);
-  font-size: 12px;
-  margin-top: 4px;
-}
-
 // ── Responsive ──
 
 @container (max-width: 600px) {

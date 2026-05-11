@@ -332,44 +332,4 @@ export const profileActions = {
     );
   },
 
-  // ── Delete account ──
-  *deleteAccount() {
-    // eslint-disable-next-line no-alert
-    const confirmed = window.confirm(
-      'Are you sure you want to delete your account? You will lose login access, but your donation history will be preserved.'
-    );
-
-    if ( ! confirmed ) {
-      return;
-    }
-
-    const ctx = getContext();
-    ctx.profile.deleteLoading = true;
-    ctx.profile.deleteError = '';
-
-    try {
-      const response = yield fetch( `${ ctx.restUrl }donor-dashboard/account`, {
-        method: 'DELETE',
-        credentials: 'same-origin',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-WP-Nonce': ctx.nonce,
-        },
-      } );
-
-      if ( ! response.ok ) {
-        const data = yield response.json();
-        ctx.profile.deleteError =
-          data.message || 'Failed to delete account. Please try again.';
-        ctx.profile.deleteLoading = false;
-        return;
-      }
-
-      // Account deleted — redirect to site home.
-      window.location.href = ctx.siteHomeUrl || '/';
-    } catch {
-      ctx.profile.deleteError = 'Something went wrong. Please try again.';
-      ctx.profile.deleteLoading = false;
-    }
-  },
 };

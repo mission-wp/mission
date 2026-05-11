@@ -277,18 +277,6 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Dispatch a DELETE request.
-	 *
-	 * @param string $route Route path.
-	 * @return \WP_REST_Response
-	 */
-	private function dispatch_delete( string $route ): \WP_REST_Response {
-		$request = new WP_REST_Request( 'DELETE', $route );
-
-		return $this->server->dispatch( $request );
-	}
-
-	/**
 	 * Register an action hook and track it for automatic cleanup.
 	 *
 	 * @param string   $hook          Hook name.
@@ -624,51 +612,6 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		// Verify meta persisted.
 		$fresh = Donor::find( $this->donor->id );
 		$this->assertSame( '0', $fresh->get_meta( 'email_receipts' ) );
-	}
-
-	// -------------------------------------------------------------------------
-	// Delete Account
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Test delete account unlinks WP user and preserves donor record.
-	 */
-	public function test_delete_account_unlinks_wp_user(): void {
-		$response = $this->dispatch_delete( '/mission-donation-platform/v1/donor-dashboard/account' );
-		$data     = $response->get_data();
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertTrue( $data['success'] );
-
-		// Donor record preserved with null user_id.
-		$fresh = Donor::find( $this->donor->id );
-		$this->assertNotNull( $fresh );
-		$this->assertNull( $fresh->user_id );
-
-		// WP user deleted.
-		$this->assertFalse( get_userdata( $this->donor_user_id ) );
-	}
-
-	/**
-	 * Test delete account fires action hook.
-	 */
-	public function test_delete_account_fires_action(): void {
-		$fired = false;
-
-		$this->add_tracked_action(
-			'missiondp_donor_account_deleted',
-			function ( $donor, $user_id ) use ( &$fired ) {
-				$fired = true;
-				$this->assertInstanceOf( Donor::class, $donor );
-				$this->assertIsInt( $user_id );
-			},
-			10,
-			2,
-		);
-
-		$this->dispatch_delete( '/mission-donation-platform/v1/donor-dashboard/account' );
-
-		$this->assertTrue( $fired );
 	}
 
 	// -------------------------------------------------------------------------

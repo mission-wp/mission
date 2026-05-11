@@ -205,7 +205,6 @@ class DashboardContextBuilder {
 			'restUrl'              => rest_url( 'mission-donation-platform/v1/' ),
 			'nonce'                => wp_create_nonce( 'wp_rest' ),
 			'dashboardUrl'         => get_permalink(),
-			'siteHomeUrl'          => home_url( '/' ),
 			'stripePublishableKey' => ! empty( $this->settings['test_mode'] ) ? MISSIONDP_STRIPE_PK_TEST : MISSIONDP_STRIPE_PK_LIVE,
 			'validPanels'          => array_values( array_keys( $panels ) ),
 			'panelLabels'          => $panel_labels,
