@@ -230,7 +230,14 @@ function StatusSkeleton() {
  * @return {Array} Array of { title, rows, key } objects.
  */
 function buildSections( data ) {
-  const { mission, wordpress, server, database, plugins, theme } = data;
+  const {
+    mission_donation_platform: mission,
+    wordpress,
+    server,
+    database,
+    plugins,
+    theme,
+  } = data;
 
   // --- Mission Environment ---
   const stripeStatus = mission.stripe_connected ? (
