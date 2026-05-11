@@ -951,7 +951,7 @@ $context = [
 		<div class="mission-df-success-content">
 			<?php
 			if ( ! empty( $content ) ) {
-				echo \MissionDP\Helpers\Kses::block_output( $content );
+				echo wp_kses( $content, \MissionDP\Helpers\Kses::block_allowed_html() );
 			} else {
 				?>
 				<h2><?php esc_html_e( 'Thank you!', 'mission-donation-platform' ); ?></h2>
