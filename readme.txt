@@ -4,7 +4,7 @@ Tags: donations, donate, fundraising, nonprofit, recurring donations
 Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 8.0
-Stable Tag: 1.1.0
+Stable Tag: 1.1.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -230,6 +230,10 @@ The repository contains the original `.js`, `.jsx`, and `.scss` files. To build 
 See the README in the repository for full development setup, contribution guidelines, and a description of the build pipeline.
 
 == Changelog ==
+
+= 1.1.1 =
+* Donor login now goes through WordPress's standard auth pipeline for better compatibility with security plugins
+* Donor user accounts are no longer deleted automatically when the plugin is uninstalled
 
 = 1.1.0 =
 * Renamed plugin slug to mission-donation-platform and prefixed all PHP/JS identifiers with missiondp_ per WordPress.org review
