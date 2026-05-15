@@ -349,11 +349,13 @@ body.mission-onboarding-open {
 
 input.mission-onboarding-field__input {
   width: 100%;
+  box-sizing: border-box;
   padding: 10px 14px;
   border: 1px solid #dcdcde;
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.88rem;
+  line-height: 1.4;
   color: #1a1a2e;
   background: #fff;
   outline: none;
@@ -371,11 +373,14 @@ input.mission-onboarding-field__input {
 
 select.mission-onboarding-field__select {
   width: 100%;
+  box-sizing: border-box;
+  height: auto;
   padding: 10px 14px;
   border: 1px solid #dcdcde;
   border-radius: 8px;
   font-family: inherit;
   font-size: 0.88rem;
+  line-height: 1.4;
   color: #1a1a2e;
   background: #fff;
   outline: none;

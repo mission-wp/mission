@@ -1,5 +1,5 @@
 {
-	"core": null,
+	"core": "WordPress/WordPress#7.0-branch",
 	"plugins": [
 		"."
 	],
