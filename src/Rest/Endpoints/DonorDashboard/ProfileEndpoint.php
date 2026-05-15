@@ -66,7 +66,6 @@ class ProfileEndpoint {
 				'args'                => $this->get_preference_params(),
 			]
 		);
-
 	}
 
 	/**
