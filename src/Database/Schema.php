@@ -7,6 +7,8 @@
 
 namespace MissionDP\Database;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table data adapter; direct $wpdb is required.
+
 defined( 'ABSPATH' ) || exit;
 
 /**

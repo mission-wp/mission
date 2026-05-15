@@ -9,6 +9,8 @@ namespace MissionDP\Database;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter -- SQL identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches identifiers.
+
 /**
  * Database module class.
  */
@@ -117,7 +119,7 @@ class DatabaseModule {
 		$tables = $schema->get_table_names();
 
 		foreach ( $tables as $table_name ) {
-			$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 	}
 

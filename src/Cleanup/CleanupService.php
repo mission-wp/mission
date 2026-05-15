@@ -13,7 +13,7 @@ use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
-// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names use a safe prefix variable.
+// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
 
 /**
  * Central cleanup coordinator.

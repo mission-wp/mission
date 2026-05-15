@@ -19,6 +19,8 @@ use MissionDP\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter -- SQL identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches identifiers.
+
 /**
  * Campaign lifecycle module class.
  */
@@ -123,6 +125,7 @@ class CampaignLifecycleModule {
 
 		// Scheduled campaigns that should now be active.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$to_activate = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT id FROM {$table} WHERE status = 'scheduled' AND date_start IS NOT NULL AND date_start <= %s",
@@ -140,6 +143,7 @@ class CampaignLifecycleModule {
 
 		// Active campaigns that should now be ended.
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$to_end = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT id FROM {$table} WHERE status = 'active' AND date_end IS NOT NULL AND date_end < %s",

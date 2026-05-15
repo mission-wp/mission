@@ -51,6 +51,18 @@
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
 	</rule>
 
+	<!--
+		Direct $wpdb queries are required in the data layer (custom tables) and the
+		reporting/cleanup services. WordPress has no higher-level API for custom
+		tables, so suppress the sniff in those paths. It still fires elsewhere
+		(REST endpoints, modules) where direct queries should be a smell.
+	-->
+	<rule ref="WordPress.DB.DirectDatabaseQuery">
+		<exclude-pattern>/src/Database/*</exclude-pattern>
+		<exclude-pattern>/src/Reporting/*</exclude-pattern>
+		<exclude-pattern>/src/Cleanup/*</exclude-pattern>
+	</rule>
+
 	<!-- Exclude vendor and build directories. -->
 	<exclude-pattern>/vendor/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>

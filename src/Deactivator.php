@@ -59,6 +59,7 @@ class Deactivator {
 		delete_transient( 'missiondp_activated' );
 
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query(
 			"DELETE FROM {$wpdb->options}
 			WHERE option_name LIKE '_transient_missiondp_%'

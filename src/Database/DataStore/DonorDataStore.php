@@ -7,6 +7,8 @@
 
 namespace MissionDP\Database\DataStore;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+
 use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
