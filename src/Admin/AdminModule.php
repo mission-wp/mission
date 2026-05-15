@@ -216,6 +216,7 @@ class AdminModule {
 
 		// Fire the block editor assets action so registered blocks
 		// get their editor scripts/styles enqueued.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Invoking WordPress core action to load block editor assets on our custom admin page.
 		do_action( 'enqueue_block_editor_assets' );
 
 		// Build editor settings and inline them for the JS block editor.

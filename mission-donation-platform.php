@@ -27,9 +27,9 @@ define( 'MISSIONDP_STRIPE_PK_TEST', 'pk_test_51T5DwoQLFYekpV0FSkXZtgzDJ9c1NxnIT0
 define( 'MISSIONDP_STRIPE_PK_LIVE', 'pk_live_51T5DwoQLFYekpV0Fmd9UBolXWaoBAnSvLud40NTmdRBkJlHgbhBbzEhIeXlDMrNe7KosZTskGSTY7KI1RejfBuRn00pnVlZyia' );
 
 // Load Composer autoloader.
-$autoloader = __DIR__ . '/vendor/autoload.php';
-if ( file_exists( $autoloader ) ) {
-	require_once $autoloader;
+$missiondp_autoloader = __DIR__ . '/vendor/autoload.php';
+if ( file_exists( $missiondp_autoloader ) ) {
+	require_once $missiondp_autoloader;
 } else {
 	// If Composer dependencies haven't been installed, show an admin notice.
 	add_action(
