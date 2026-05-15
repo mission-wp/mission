@@ -7,10 +7,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$settings    = new \MissionDP\Settings\SettingsService();
-$site_name   = $settings->get( 'org_name', get_bloginfo( 'name' ) );
-$org_address = $settings->format_org_address();
-?>
+( static function (): void {
+	$settings    = new \MissionDP\Settings\SettingsService();
+	$site_name   = $settings->get( 'org_name', get_bloginfo( 'name' ) );
+	$org_address = $settings->format_org_address();
+	?>
 									</td>
 								</tr>
 
@@ -49,3 +50,5 @@ $org_address = $settings->format_org_address();
 
 </body>
 </html>
+	<?php
+} )();

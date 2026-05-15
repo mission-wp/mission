@@ -15,6 +15,8 @@ use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function ( $attributes, $content, $block ): void {
 // Build query arguments.
 $status_filter      = $attributes['statusFilter'] ?? 'active';
 $number_of_campaigns = (int) ( $attributes['numberOfCampaigns'] ?? 6 );
@@ -269,3 +271,4 @@ $output = ob_get_clean();
  * @param array      $attributes Block attributes.
  */
 echo wp_kses( apply_filters( 'missiondp_campaign_grid_output', $output, $campaigns, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+} )( $attributes, $content, $block );

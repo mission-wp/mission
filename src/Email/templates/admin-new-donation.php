@@ -9,8 +9,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
-?>
+( static function ( $data ): void {
+	$is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
+	?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
 	<?php esc_html_e( 'New Donation Received', 'mission-donation-platform' ); ?>
 </h1>
@@ -100,10 +101,12 @@ $is_recurring = 'recurring' === ( $data['donation_type'] ?? 'one_time' );
 	<?php endif; ?>
 </table>
 
-<?php if ( ! empty( $data['admin_url'] ) ) : ?>
+	<?php if ( ! empty( $data['admin_url'] ) ) : ?>
 	<p style="margin: 20px 0 0;">
 		<a href="<?php echo esc_url( $data['admin_url'] ); ?>" style="display: inline-block; padding: 10px 20px; background-color: #2fa36b; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
 			<?php esc_html_e( 'View in Dashboard', 'mission-donation-platform' ); ?>
 		</a>
 	</p>
-<?php endif; ?>
+	<?php endif; ?>
+	<?php
+} )( $data );

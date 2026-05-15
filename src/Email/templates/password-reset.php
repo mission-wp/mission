@@ -7,9 +7,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$donor      = $data['donor'];
-$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
-?>
+( static function ( $data ): void {
+	$donor      = $data['donor'];
+	$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
+	?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
 	<?php esc_html_e( 'Reset your password', 'mission-donation-platform' ); ?>
 </h1>
@@ -52,3 +53,5 @@ $first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
 	<?php esc_html_e( 'If the button doesn\'t work, copy and paste this link into your browser:', 'mission-donation-platform' ); ?><br>
 	<?php echo esc_html( $data['reset_url'] ); ?>
 </p>
+	<?php
+} )( $data );

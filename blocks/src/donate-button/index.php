@@ -12,6 +12,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function ( $attributes, $content, $block ): void {
 // Helper to resolve WordPress preset value notation → CSS variable.
 $resolve_preset = static function ( string $value ): string {
 	if ( str_starts_with( $value, 'var:preset|' ) ) {
@@ -226,3 +228,4 @@ $output = ob_get_clean();
  * @param array  $attributes Block attributes.
  */
 echo wp_kses( apply_filters( 'missiondp_donate_button_output', $output, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+} )( $attributes, $content, $block );

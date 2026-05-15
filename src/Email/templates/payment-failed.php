@@ -8,11 +8,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$donor      = $data['donor'];
-$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
-// dashboard_url may be a real URL or the literal merge tag '{donor_dashboard}'.
-$dashboard_url = $data['dashboard_url'] ?? home_url( '/' );
-?>
+( static function ( $data ): void {
+	$donor      = $data['donor'];
+	$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
+	// dashboard_url may be a real URL or the literal merge tag '{donor_dashboard}'.
+	$dashboard_url = $data['dashboard_url'] ?? home_url( '/' );
+	?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
 	<?php esc_html_e( 'Payment failed', 'mission-donation-platform' ); ?>
 </h1>
@@ -51,3 +52,5 @@ $dashboard_url = $data['dashboard_url'] ?? home_url( '/' );
 <p style="margin: 16px 0 0; color: #6b7280; font-size: 14px;">
 	<?php esc_html_e( 'Your subscription will remain active while the payment is retried. If the issue is not resolved, your subscription may be cancelled.', 'mission-donation-platform' ); ?>
 </p>
+	<?php
+} )( $data );

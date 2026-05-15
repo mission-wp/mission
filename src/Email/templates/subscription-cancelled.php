@@ -7,10 +7,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$donor      = $data['donor'];
-$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
-$site_name  = ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
-?>
+( static function ( $data ): void {
+	$donor      = $data['donor'];
+	$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
+	$site_name  = ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
+	?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
 	<?php esc_html_e( 'Subscription cancelled', 'mission-donation-platform' ); ?>
 </h1>
@@ -49,3 +50,5 @@ $site_name  = ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', ge
 	);
 	?>
 </p>
+	<?php
+} )( $data );

@@ -7,6 +7,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function (): void {
 $receipt_intro = apply_filters(
 	'missiondp_receipt_intro_text',
 	sprintf(
@@ -58,3 +60,4 @@ $receipt_intro = apply_filters(
 	</div>
 
 </div>
+<?php } )();

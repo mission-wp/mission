@@ -9,6 +9,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function ( $donor, $initials, $nav_items ): void {
 // Map panel IDs to their Interactivity API state getter names.
 $panel_state_map = [
 	'overview'  => 'state.isOverview',
@@ -79,3 +81,4 @@ $panel_state_map = [
 		</nav>
 	</div>
 </aside>
+<?php } )( $donor, $initials, $nav_items );

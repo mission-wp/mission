@@ -8,11 +8,13 @@
  * @var WP_Block $block      Block instance.
  */
 
-defined( 'ABSPATH' ) || exit;
-
 use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Currency\Currency;
 
+defined( 'ABSPATH' ) || exit;
+
+
+( static function ( $attributes, $content, $block ): void {
 $settings = DonationFormSettings::resolve( $attributes );
 
 $block_classes = [ 'mission-donation-form' ];
@@ -987,3 +989,4 @@ $context = [
 	<?php endif; ?>
 
 </section>
+<?php } )( $attributes, $content, $block );

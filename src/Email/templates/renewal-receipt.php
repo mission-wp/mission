@@ -7,9 +7,10 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$donor      = $data['donor'];
-$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
-?>
+( static function ( $data ): void {
+	$donor      = $data['donor'];
+	$first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
+	?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
 	<?php esc_html_e( 'Recurring donation receipt', 'mission-donation-platform' ); ?>
 </h1>
@@ -58,3 +59,5 @@ $first_name = $donor->first_name ?: __( 'Friend', 'mission-donation-platform' );
 <p style="margin: 16px 0 0; color: #6b7280; font-size: 14px;">
 	<?php esc_html_e( 'Thank you for your continued generosity!', 'mission-donation-platform' ); ?>
 </p>
+	<?php
+} )( $data );

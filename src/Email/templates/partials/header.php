@@ -7,11 +7,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$settings      = new \MissionDP\Settings\SettingsService();
-$site_name     = $settings->get( 'org_name', get_bloginfo( 'name' ) );
-$subject       = $data['subject'] ?? $site_name;
-$primary_color = $settings->get( 'primary_color', '#2fa36b' );
-?>
+( static function ( $data ): void {
+	$settings      = new \MissionDP\Settings\SettingsService();
+	$site_name     = $settings->get( 'org_name', get_bloginfo( 'name' ) );
+	$subject       = $data['subject'] ?? $site_name;
+	$primary_color = $settings->get( 'primary_color', '#2fa36b' );
+	?>
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
@@ -97,3 +98,5 @@ $primary_color = $settings->get( 'primary_color', '#2fa36b' );
 								<!-- Body content -->
 								<tr>
 									<td class="email-padding" style="padding: 28px 40px 32px 40px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #666666;">
+	<?php
+} )( $data );

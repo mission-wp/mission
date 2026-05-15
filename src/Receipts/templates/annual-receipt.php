@@ -21,7 +21,9 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-?>
+
+( static function ( $data ): void {
+	?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -165,3 +167,5 @@ defined( 'ABSPATH' ) || exit;
 
 </body>
 </html>
+	<?php
+} )( $data );

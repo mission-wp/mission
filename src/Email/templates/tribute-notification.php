@@ -8,14 +8,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$settings      = new \MissionDP\Settings\SettingsService();
-$primary_color = $settings->get( 'primary_color', '#2fa36b' );
-$org_name      = $data['organization'] ?? get_bloginfo( 'name' );
-$donor_name    = $data['donor']->first_name ?? __( 'Someone', 'mission-donation-platform' );
-$type_label    = $data['tribute_type_label'] ?? __( 'in honor of', 'mission-donation-platform' );
-$honoree_name  = $data['honoree_name'] ?? '';
-$message       = $data['message'] ?? '';
-?>
+( static function ( $data ): void {
+	$settings      = new \MissionDP\Settings\SettingsService();
+	$primary_color = $settings->get( 'primary_color', '#2fa36b' );
+	$org_name      = $data['organization'] ?? get_bloginfo( 'name' );
+	$donor_name    = $data['donor']->first_name ?? __( 'Someone', 'mission-donation-platform' );
+	$type_label    = $data['tribute_type_label'] ?? __( 'in honor of', 'mission-donation-platform' );
+	$honoree_name  = $data['honoree_name'] ?? '';
+	$message       = $data['message'] ?? '';
+	?>
 <div style="text-align: center; padding: 10px 0 20px;">
 	<p style="margin: 0 0 4px; font-size: 20px; color: #4a4a5a; line-height: 1.4;">
 		<?php
@@ -57,3 +58,5 @@ $message       = $data['message'] ?? '';
 		?>
 	</p>
 </div>
+	<?php
+} )( $data );

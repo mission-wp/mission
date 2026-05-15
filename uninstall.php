@@ -13,101 +13,105 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-// Only remove data if the admin explicitly opted in via Settings > Data.
-$settings = get_option( 'missiondp_settings', [] );
+( static function (): void {
+	// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Bulk teardown during uninstall; transient/post-meta cleanup has no higher-level WP API.
 
-if ( empty( $settings['delete_data_on_uninstall'] ) ) {
-	return;
-}
+	// Only remove data if the admin explicitly opted in via Settings > Data.
+	$settings = get_option( 'missiondp_settings', [] );
 
-global $wpdb;
-
-// -------------------------------------------------------------------------
-// Plugin-created pages
-// -------------------------------------------------------------------------
-$dashboard_page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
-if ( $dashboard_page_id ) {
-	wp_delete_post( $dashboard_page_id, true );
-}
-
-// -------------------------------------------------------------------------
-// Options
-// -------------------------------------------------------------------------
-$options = [
-	'missiondp_version',
-	'missiondp_db_version',
-	'missiondp_settings',
-	'missiondp_dashboard_page_id',
-	'missiondp_installed_at',
-];
-
-foreach ( $options as $option ) {
-	delete_option( $option );
-}
-
-// -------------------------------------------------------------------------
-// Transients
-// -------------------------------------------------------------------------
-$wpdb->query(
-	"DELETE FROM {$wpdb->options}
-	WHERE option_name LIKE '_transient_missiondp_%'
-	OR option_name LIKE '_transient_timeout_missiondp_%'"
-);
-
-// -------------------------------------------------------------------------
-// Campaign CPT posts and meta
-// -------------------------------------------------------------------------
-$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'missiondp_campaign'" );
-$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'missiondp_campaign'" );
-
-// -------------------------------------------------------------------------
-// Custom tables
-// -------------------------------------------------------------------------
-// Load the Schema class to get table names dynamically.
-$autoloader = __DIR__ . '/vendor/autoload.php';
-if ( file_exists( $autoloader ) ) {
-	require_once $autoloader;
-
-	if ( class_exists( '\MissionDP\Database\DatabaseModule' ) ) {
-		\MissionDP\Database\DatabaseModule::drop_tables();
+	if ( empty( $settings['delete_data_on_uninstall'] ) ) {
+		return;
 	}
-}
 
-// -------------------------------------------------------------------------
-// Capabilities
-// -------------------------------------------------------------------------
-$capabilities = [
-	'manage_missiondp',
-	'view_missiondp_reports',
-	'edit_missiondp_transactions',
-];
+	global $wpdb;
 
-foreach ( wp_roles()->roles as $role_name => $role_info ) {
-	$wp_role = get_role( $role_name );
-	if ( $wp_role ) {
-		foreach ( $capabilities as $cap ) {
-			$wp_role->remove_cap( $cap );
+	// -------------------------------------------------------------------------
+	// Plugin-created pages
+	// -------------------------------------------------------------------------
+	$dashboard_page_id = (int) get_option( 'missiondp_dashboard_page_id', 0 );
+	if ( $dashboard_page_id ) {
+		wp_delete_post( $dashboard_page_id, true );
+	}
+
+	// -------------------------------------------------------------------------
+	// Options
+	// -------------------------------------------------------------------------
+	$options = [
+		'missiondp_version',
+		'missiondp_db_version',
+		'missiondp_settings',
+		'missiondp_dashboard_page_id',
+		'missiondp_installed_at',
+	];
+
+	foreach ( $options as $option ) {
+		delete_option( $option );
+	}
+
+	// -------------------------------------------------------------------------
+	// Transients
+	// -------------------------------------------------------------------------
+	$wpdb->query(
+		"DELETE FROM {$wpdb->options}
+		WHERE option_name LIKE '_transient_missiondp_%'
+		OR option_name LIKE '_transient_timeout_missiondp_%'"
+	);
+
+	// -------------------------------------------------------------------------
+	// Campaign CPT posts and meta
+	// -------------------------------------------------------------------------
+	$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'missiondp_campaign'" );
+	$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'missiondp_campaign'" );
+
+	// -------------------------------------------------------------------------
+	// Custom tables
+	// -------------------------------------------------------------------------
+	// Load the Schema class to get table names dynamically.
+	$autoloader = __DIR__ . '/vendor/autoload.php';
+	if ( file_exists( $autoloader ) ) {
+		require_once $autoloader;
+
+		if ( class_exists( '\MissionDP\Database\DatabaseModule' ) ) {
+			\MissionDP\Database\DatabaseModule::drop_tables();
 		}
 	}
-}
 
-// -------------------------------------------------------------------------
-// Donor role (plugin-defined)
-// -------------------------------------------------------------------------
-// Donor user accounts are intentionally preserved — site owners may have repurposed them or other plugins may reference them.
-remove_role( 'missiondp_donor' );
+	// -------------------------------------------------------------------------
+	// Capabilities
+	// -------------------------------------------------------------------------
+	$capabilities = [
+		'manage_missiondp',
+		'view_missiondp_reports',
+		'edit_missiondp_transactions',
+	];
 
-// -------------------------------------------------------------------------
-// User meta
-// -------------------------------------------------------------------------
-$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'missiondp_%'" );
+	foreach ( wp_roles()->roles as $role_name => $role_info ) {
+		$wp_role = get_role( $role_name );
+		if ( $wp_role ) {
+			foreach ( $capabilities as $cap ) {
+				$wp_role->remove_cap( $cap );
+			}
+		}
+	}
 
-// -------------------------------------------------------------------------
-// Scheduled events
-// -------------------------------------------------------------------------
-wp_clear_scheduled_hook( 'missiondp_daily_cleanup' );
-wp_clear_scheduled_hook( 'missiondp_check_recurring_payments' );
-wp_clear_scheduled_hook( 'missiondp_campaign_lifecycle' );
+	// -------------------------------------------------------------------------
+	// Donor role (plugin-defined)
+	// -------------------------------------------------------------------------
+	// Donor user accounts are intentionally preserved — site owners may have repurposed them or other plugins may reference them.
+	remove_role( 'missiondp_donor' );
 
-// Clear the cache to ensure stale data isn't served.
-wp_cache_flush();
+	// -------------------------------------------------------------------------
+	// User meta
+	// -------------------------------------------------------------------------
+	$wpdb->query( "DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'missiondp_%'" );
+
+	// -------------------------------------------------------------------------
+	// Scheduled events
+	// -------------------------------------------------------------------------
+	wp_clear_scheduled_hook( 'missiondp_daily_cleanup' );
+	wp_clear_scheduled_hook( 'missiondp_check_recurring_payments' );
+	wp_clear_scheduled_hook( 'missiondp_campaign_lifecycle' );
+
+	// Clear the cache to ensure stale data isn't served.
+	wp_cache_flush();
+} )();

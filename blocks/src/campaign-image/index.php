@@ -15,6 +15,8 @@ use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function ( $attributes, $content, $block ): void {
 // Resolve the campaign.
 $campaign = null;
 
@@ -164,3 +166,4 @@ if ( $shadow ) {
 		loading="lazy"
 	/>
 </figure>
+<?php } )( $attributes, $content, $block );

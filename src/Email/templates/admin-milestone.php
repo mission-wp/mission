@@ -9,8 +9,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$is_percentage = str_ends_with( $data['milestone_id'], '-pct' );
-?>
+( static function ( $data ): void {
+	$is_percentage = str_ends_with( $data['milestone_id'], '-pct' );
+	?>
 <h1 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1a1a2e;">
 	<?php esc_html_e( 'Campaign Milestone Reached', 'mission-donation-platform' ); ?>
 </h1>
@@ -77,10 +78,12 @@ $is_percentage = str_ends_with( $data['milestone_id'], '-pct' );
 	<?php endif; ?>
 </table>
 
-<?php if ( ! empty( $data['admin_url'] ) ) : ?>
+	<?php if ( ! empty( $data['admin_url'] ) ) : ?>
 	<p style="margin: 20px 0 0;">
 		<a href="<?php echo esc_url( $data['admin_url'] ); ?>" style="display: inline-block; padding: 10px 20px; background-color: #2fa36b; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
 			<?php esc_html_e( 'View Campaign', 'mission-donation-platform' ); ?>
 		</a>
 	</p>
-<?php endif; ?>
+	<?php endif; ?>
+	<?php
+} )( $data );

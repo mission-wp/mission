@@ -16,6 +16,8 @@ use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function ( $attributes, $content, $block ): void {
 // Resolve the campaign.
 $campaign = null;
 
@@ -239,3 +241,4 @@ $output = ob_get_clean();
  * @param array    $attributes Block attributes.
  */
 echo wp_kses( apply_filters( 'missiondp_campaign_card_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+} )( $attributes, $content, $block );

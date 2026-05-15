@@ -12,6 +12,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+
+( static function ( $attributes, $content, $block ): void {
 // Primary color.
 $mission_settings = get_option( 'missiondp_settings', [] );
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
@@ -285,3 +287,4 @@ $output = ob_get_clean();
  * @param array  $attributes Block attributes.
  */
 echo wp_kses( apply_filters( 'missiondp_donor_dashboard_output', $output, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+} )( $attributes, $content, $block );
