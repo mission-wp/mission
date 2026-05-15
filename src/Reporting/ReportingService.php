@@ -7,6 +7,8 @@
 
 namespace MissionDP\Reporting;
 
+// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -56,15 +58,15 @@ class ReportingService {
 		$table   = $wpdb->prefix . 'missiondp_transactions';
 		$is_test = (int) $this->is_test_mode();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
 					COALESCE(SUM(amount), 0) AS total_revenue,
 					COUNT(*) AS total_donations,
 					COALESCE(AVG(amount), 0) AS average_donation
-				FROM {$table}
-				WHERE status = 'completed' AND is_test = %d AND currency = %s",
+				FROM %i
+				WHERE status = \'completed\' AND is_test = %d AND currency = %s',
+				$table,
 				$is_test,
 				$currency
 			),
@@ -73,9 +75,10 @@ class ReportingService {
 
 		$refund_row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT COUNT(*) AS refund_count, COALESCE(SUM(amount), 0) AS refund_amount
-				FROM {$table}
-				WHERE status = 'refunded' AND is_test = %d AND currency = %s",
+				'SELECT COUNT(*) AS refund_count, COALESCE(SUM(amount), 0) AS refund_amount
+				FROM %i
+				WHERE status = \'refunded\' AND is_test = %d AND currency = %s',
+				$table,
 				$is_test,
 				$currency
 			),
@@ -88,11 +91,12 @@ class ReportingService {
 		$prev_end       = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
 		$previous_stats = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT COALESCE(SUM(amount), 0) AS previous_revenue,
+				'SELECT COALESCE(SUM(amount), 0) AS previous_revenue,
 						COUNT(*) AS previous_donations
-				FROM {$table}
-				WHERE status = 'completed' AND is_test = %d AND currency = %s
-					AND date_created >= %s AND date_created < %s",
+				FROM %i
+				WHERE status = \'completed\' AND is_test = %d AND currency = %s
+					AND date_created >= %s AND date_created < %s',
+				$table,
 				$is_test,
 				$currency,
 				$prev_start,
@@ -100,7 +104,6 @@ class ReportingService {
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return [
 			'total_revenue'         => (int) ( $row['total_revenue'] ?? 0 ),
@@ -125,22 +128,33 @@ class ReportingService {
 		$donated_col = $this->is_test_mode() ? 'test_total_donated' : 'total_donated';
 		$count_col   = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$total_donors = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE {$count_col} > 0" );
+		$total_donors = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE %i > 0', $table, $count_col )
+		);
 
 		$top_donor = $wpdb->get_row(
-			"SELECT first_name, last_name, {$donated_col} AS top_donated FROM {$table} WHERE {$count_col} > 0 ORDER BY {$donated_col} DESC LIMIT 1",
+			$wpdb->prepare(
+				'SELECT first_name, last_name, %i AS top_donated FROM %i WHERE %i > 0 ORDER BY %i DESC LIMIT 1',
+				$donated_col,
+				$table,
+				$count_col,
+				$donated_col
+			),
 			ARRAY_A
 		);
 
 		$average_donated = (int) $wpdb->get_var(
-			"SELECT COALESCE(AVG({$donated_col}), 0) FROM {$table} WHERE {$count_col} > 0"
+			$wpdb->prepare(
+				'SELECT COALESCE(AVG(%i), 0) FROM %i WHERE %i > 0',
+				$donated_col,
+				$table,
+				$count_col
+			)
 		);
 
 		$repeat_donors = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$table} WHERE {$count_col} > 1"
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE %i > 1', $table, $count_col )
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$top_donor_name  = '';
 		$top_donor_total = 0;
@@ -178,24 +192,27 @@ class ReportingService {
 		$donor_donated = $test_mode ? $donor->test_total_donated : $donor->total_donated;
 		$donor_count   = $test_mode ? $donor->test_transaction_count : $donor->transaction_count;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$has_sub = (bool) $wpdb->get_var(
-			$wpdb->prepare( "SELECT 1 FROM {$sub_table} WHERE donor_id = %d AND status = 'active' AND is_test = %d LIMIT 1", $donor->id, (int) $test_mode )
+			$wpdb->prepare( 'SELECT 1 FROM %i WHERE donor_id = %d AND status = \'active\' AND is_test = %d LIMIT 1', $sub_table, $donor->id, (int) $test_mode )
 		);
 
-		$total_donors = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$donor_table} WHERE {$count_col} > 0" );
+		$total_donors = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE %i > 0', $donor_table, $count_col )
+		);
 		$is_top       = false;
 
 		if ( $total_donors > 0 && $donor_count > 0 ) {
 			$rank   = (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$donor_table} WHERE {$donated_col} > %d AND {$count_col} > 0",
-					$donor_donated
+					'SELECT COUNT(*) FROM %i WHERE %i > %d AND %i > 0',
+					$donor_table,
+					$donated_col,
+					$donor_donated,
+					$count_col
 				)
 			);
 			$is_top = $rank < max( 1, (int) ceil( $total_donors * 0.1 ) );
 		}
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return [
 			'is_recurring' => $has_sub,
@@ -215,15 +232,14 @@ class ReportingService {
 
 		$table = $wpdb->prefix . 'missiondp_transactions';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$result = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COALESCE(MAX(amount), 0) FROM {$table} WHERE campaign_id = %d AND status = 'completed' AND is_test = %d",
+				'SELECT COALESCE(MAX(amount), 0) FROM %i WHERE campaign_id = %d AND status = \'completed\' AND is_test = %d',
+				$table,
 				$campaign_id,
 				(int) $is_test
 			)
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return (int) $result;
 	}
@@ -239,23 +255,36 @@ class ReportingService {
 		$table      = $wpdb->prefix . 'missiondp_campaigns';
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$total_campaigns = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
-		$total_raised    = (int) $wpdb->get_var( "SELECT COALESCE(SUM({$raised_col}), 0) FROM {$table}" );
+		$total_campaigns = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table )
+		);
+		$total_raised    = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COALESCE(SUM(%i), 0) FROM %i', $raised_col, $table )
+		);
 
 		$average_per_campaign = $total_campaigns > 0
 			? (int) round( $total_raised / $total_campaigns )
 			: 0;
 
-		$active    = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'active'" );
-		$ended     = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'ended'" );
-		$scheduled = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'scheduled'" );
+		$active    = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = \'active\'', $table )
+		);
+		$ended     = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = \'ended\'', $table )
+		);
+		$scheduled = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = \'scheduled\'', $table )
+		);
 
 		$top = $wpdb->get_row(
-			"SELECT title, {$raised_col} AS top_raised FROM {$table} ORDER BY {$raised_col} DESC LIMIT 1",
+			$wpdb->prepare(
+				'SELECT title, %i AS top_raised FROM %i ORDER BY %i DESC LIMIT 1',
+				$raised_col,
+				$table,
+				$raised_col
+			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$top_campaign_name   = '';
 		$top_campaign_raised = 0;
@@ -290,15 +319,13 @@ class ReportingService {
 		$campaigns_table    = $wpdb->prefix . 'missiondp_campaigns';
 		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$total_raised = (int) $wpdb->get_var(
-			"SELECT COALESCE(SUM(total_raised), 0) FROM {$campaigns_table}"
+			$wpdb->prepare( 'SELECT COALESCE(SUM(total_raised), 0) FROM %i', $campaigns_table )
 		);
 
 		$donation_count = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$transactions_table} WHERE status = 'completed' AND is_test = 0"
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = \'completed\' AND is_test = 0', $transactions_table )
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return [
 			'total_raised'   => $total_raised,
@@ -319,25 +346,24 @@ class ReportingService {
 		$table   = $wpdb->prefix . 'missiondp_transactions';
 		$is_test = (int) $this->is_test_mode();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$result = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
 					COALESCE( SUM( amount ), 0 ) AS total_amount,
 					COUNT( DISTINCT donor_id ) AS donor_count,
 					COALESCE( AVG( amount ), 0 ) AS avg_amount
-				FROM {$table}
-				WHERE status = 'completed'
+				FROM %i
+				WHERE status = \'completed\'
 					AND is_test = %d
 					AND date_completed >= %s
-					AND date_completed <= %s",
+					AND date_completed <= %s',
+				$table,
 				$is_test,
 				$start,
 				$end
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return $result ?: [
 			'total_amount' => '0',
@@ -364,24 +390,23 @@ class ReportingService {
 			return $this->get_hourly_chart_data( $table, $start, $end, $is_test );
 		}
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT DATE( date_completed ) AS day, SUM( amount ) AS amount
-				FROM {$table}
-				WHERE status = 'completed'
+				'SELECT DATE( date_completed ) AS day, SUM( amount ) AS amount
+				FROM %i
+				WHERE status = \'completed\'
 					AND is_test = %d
 					AND date_completed >= %s
 					AND date_completed <= %s
 				GROUP BY day
-				ORDER BY day ASC",
+				ORDER BY day ASC',
+				$table,
 				$is_test,
 				$start,
 				$end
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data_map = [];
 		foreach ( $rows as $row ) {
@@ -419,19 +444,22 @@ class ReportingService {
 		$txn_count_col   = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
 		$donor_count_col = $this->is_test_mode() ? 'test_donor_count' : 'donor_count';
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT c.id, c.title, c.{$raised_col} AS raised, c.goal_amount, c.goal_type,
-					c.{$txn_count_col} AS txn_count, c.{$donor_count_col} AS dn_count
-				FROM {$table} c
-				ORDER BY c.{$raised_col} DESC
-				LIMIT %d",
+				'SELECT c.id, c.title, c.%i AS raised, c.goal_amount, c.goal_type,
+					c.%i AS txn_count, c.%i AS dn_count
+				FROM %i c
+				ORDER BY c.%i DESC
+				LIMIT %d',
+				$raised_col,
+				$txn_count_col,
+				$donor_count_col,
+				$table,
+				$raised_col,
 				$limit
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! $rows ) {
 			return [];
@@ -724,12 +752,13 @@ class ReportingService {
 		$monthly_expr = $this->frequency_to_monthly_sql( 'amount', 'frequency' );
 
 		// MRR: sum of active subscriptions normalized to monthly.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $monthly_expr is a hardcoded SQL CASE expression with no user input.
 		$mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM({$monthly_expr}), 0)
-				FROM {$table}
+				FROM %i
 				WHERE status = 'active' AND is_test = %d",
+				$table,
 				$is_test
 			)
 		);
@@ -738,10 +767,11 @@ class ReportingService {
 		$prev_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM({$monthly_expr}), 0)
-				FROM {$table}
+				FROM %i
 				WHERE is_test = %d
 					AND date_created < %s
 					AND (status = 'active' OR (status = 'cancelled' AND date_cancelled >= %s))",
+				$table,
 				$is_test,
 				$month_start,
 				$month_start
@@ -751,7 +781,8 @@ class ReportingService {
 		// Active count.
 		$active = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE status = 'active' AND is_test = %d",
+				"SELECT COUNT(*) FROM %i WHERE status = 'active' AND is_test = %d",
+				$table,
 				$is_test
 			)
 		);
@@ -759,8 +790,9 @@ class ReportingService {
 		// New this month: active subscriptions created since first of month.
 		$new_this_month = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table}
+				"SELECT COUNT(*) FROM %i
 				WHERE status = 'active' AND is_test = %d AND date_created >= %s",
+				$table,
 				$is_test,
 				$month_start
 			)
@@ -769,8 +801,9 @@ class ReportingService {
 		// Churned: subscriptions cancelled this month.
 		$churned = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table}
+				"SELECT COUNT(*) FROM %i
 				WHERE status = 'cancelled' AND is_test = %d AND date_cancelled >= %s",
+				$table,
 				$is_test,
 				$month_start
 			)
@@ -780,8 +813,9 @@ class ReportingService {
 		$churned_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COALESCE(SUM({$monthly_expr}), 0)
-				FROM {$table}
+				FROM %i
 				WHERE status = 'cancelled' AND is_test = %d AND date_cancelled >= %s",
+				$table,
 				$is_test,
 				$month_start
 			)
@@ -830,24 +864,23 @@ class ReportingService {
 	private function get_hourly_chart_data( string $table, string $start, string $end, int $is_test ): array {
 		global $wpdb;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT HOUR( date_completed ) AS hr, SUM( amount ) AS amount
-				FROM {$table}
-				WHERE status = 'completed'
+				'SELECT HOUR( date_completed ) AS hr, SUM( amount ) AS amount
+				FROM %i
+				WHERE status = \'completed\'
 					AND is_test = %d
 					AND date_completed >= %s
 					AND date_completed <= %s
 				GROUP BY hr
-				ORDER BY hr ASC",
+				ORDER BY hr ASC',
+				$table,
 				$is_test,
 				$start,
 				$end
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$data_map = [];
 		foreach ( $rows as $row ) {
@@ -881,24 +914,24 @@ class ReportingService {
 		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$is_test     = (int) $this->is_test_mode();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT t.donor_id, d.first_name, d.last_name, d.email,
+				'SELECT t.donor_id, d.first_name, d.last_name, d.email,
 					SUM(t.amount) AS total, MAX(t.is_anonymous) AS is_anonymous
-				FROM {$txn_table} AS t
-				INNER JOIN {$donor_table} AS d ON t.donor_id = d.id
-				WHERE t.campaign_id = %d AND t.status = 'completed' AND t.is_test = %d
+				FROM %i AS t
+				INNER JOIN %i AS d ON t.donor_id = d.id
+				WHERE t.campaign_id = %d AND t.status = \'completed\' AND t.is_test = %d
 				GROUP BY t.donor_id
 				ORDER BY total DESC
-				LIMIT %d",
+				LIMIT %d',
+				$txn_table,
+				$donor_table,
 				$campaign_id,
 				$is_test,
 				$limit
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! $rows ) {
 			return [];
@@ -940,23 +973,23 @@ class ReportingService {
 		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$is_test     = (int) $this->is_test_mode();
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT t.id AS transaction_id, t.donor_id, t.amount, t.is_anonymous, t.date_created,
+				'SELECT t.id AS transaction_id, t.donor_id, t.amount, t.is_anonymous, t.date_created,
 					d.first_name, d.last_name, d.email
-				FROM {$txn_table} AS t
-				INNER JOIN {$donor_table} AS d ON t.donor_id = d.id
-				WHERE t.campaign_id = %d AND t.status = 'completed' AND t.is_test = %d
+				FROM %i AS t
+				INNER JOIN %i AS d ON t.donor_id = d.id
+				WHERE t.campaign_id = %d AND t.status = \'completed\' AND t.is_test = %d
 				ORDER BY t.date_created DESC
-				LIMIT %d",
+				LIMIT %d',
+				$txn_table,
+				$donor_table,
 				$campaign_id,
 				$is_test,
 				$limit
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! $rows ) {
 			return [];
@@ -1006,25 +1039,23 @@ class ReportingService {
 		$is_test       = (int) $this->is_test_mode();
 
 		$placeholders = implode( ',', array_fill( 0, count( $donor_ids ), '%d' ) );
-		$values       = array_merge( array_map( 'intval', $donor_ids ), [ $campaign_id, $is_test ] );
+		$values       = array_merge(
+			[ $txn_table ],
+			array_map( 'intval', $donor_ids ),
+			[ $campaign_id, $is_test, $tribute_table ]
+		);
+		$sql          = 'SELECT sub.donor_id, tr.tribute_type, tr.honoree_name'
+			. ' FROM ('
+			. '   SELECT donor_id, MAX(id) AS max_txn_id'
+			. '   FROM %i'
+			. '   WHERE donor_id IN (' . $placeholders . ') AND campaign_id = %d AND status = \'completed\' AND is_test = %d'
+			. '   GROUP BY donor_id'
+			. ' ) AS sub'
+			. ' INNER JOIN %i AS tr ON tr.transaction_id = sub.max_txn_id';
 
 		// Get the most recent transaction ID per donor, then join tributes.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT sub.donor_id, tr.tribute_type, tr.honoree_name
-				FROM (
-					SELECT donor_id, MAX(id) AS max_txn_id
-					FROM {$txn_table}
-					WHERE donor_id IN ({$placeholders}) AND campaign_id = %d AND status = 'completed' AND is_test = %d
-					GROUP BY donor_id
-				) AS sub
-				INNER JOIN {$tribute_table} AS tr ON tr.transaction_id = sub.max_txn_id",
-				...$values
-			),
-			ARRAY_A
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per donor ID; every ID passes through intval() before binding. Table names use %i.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1052,18 +1083,11 @@ class ReportingService {
 
 		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 		$placeholders  = implode( ',', array_fill( 0, count( $transaction_ids ), '%d' ) );
+		$sql           = 'SELECT transaction_id, tribute_type, honoree_name FROM %i WHERE transaction_id IN (' . $placeholders . ')';
+		$values        = array_merge( [ $tribute_table ], array_map( 'intval', $transaction_ids ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT transaction_id, tribute_type, honoree_name
-				FROM {$tribute_table}
-				WHERE transaction_id IN ({$placeholders})",
-				...array_map( 'intval', $transaction_ids )
-			),
-			ARRAY_A
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per transaction ID; every ID passes through intval() before binding. Table name uses %i.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1192,18 +1216,11 @@ class ReportingService {
 
 		$meta_table   = $wpdb->prefix . 'missiondp_transactionmeta';
 		$placeholders = implode( ',', array_fill( 0, count( $transaction_ids ), '%d' ) );
+		$sql          = 'SELECT missiondp_transaction_id, meta_value FROM %i WHERE missiondp_transaction_id IN (' . $placeholders . ') AND meta_key = \'donor_comment\'';
+		$values       = array_merge( [ $meta_table ], array_map( 'intval', $transaction_ids ) );
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT missiondp_transaction_id, meta_value
-				FROM {$meta_table}
-				WHERE missiondp_transaction_id IN ({$placeholders}) AND meta_key = 'donor_comment'",
-				...array_map( 'intval', $transaction_ids )
-			),
-			ARRAY_A
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per transaction ID; every ID passes through intval() before binding. Table name uses %i.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1227,22 +1244,22 @@ class ReportingService {
 		$table     = $wpdb->prefix . 'missiondp_transactions';
 		$test_flag = $is_test ? 1 : 0;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
 					YEAR(date_completed) AS year,
 					COALESCE(SUM(amount), 0) AS total,
 					COUNT(*) AS count
-				FROM {$table}
-				WHERE donor_id = %d AND status = 'completed' AND is_test = {$test_flag}
+				FROM %i
+				WHERE donor_id = %d AND status = \'completed\' AND is_test = %d
 				GROUP BY YEAR(date_completed)
-				ORDER BY year DESC",
-				$donor_id
+				ORDER BY year DESC',
+				$table,
+				$donor_id,
+				$test_flag
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return array_map(
 			static fn( array $row ) => [
@@ -1283,30 +1300,31 @@ class ReportingService {
 		$cam_table = $wpdb->prefix . 'missiondp_campaigns';
 		$test_flag = $is_test ? 1 : 0;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
 					t.id,
 					t.amount,
 					t.currency,
 					COALESCE(c.title, %s) AS campaign_name,
 					t.payment_gateway,
 					t.date_completed
-				FROM {$txn_table} t
-				LEFT JOIN {$cam_table} c ON c.id = t.campaign_id
+				FROM %i t
+				LEFT JOIN %i c ON c.id = t.campaign_id
 				WHERE t.donor_id = %d
-					AND t.status = 'completed'
-					AND t.is_test = {$test_flag}
+					AND t.status = \'completed\'
+					AND t.is_test = %d
 					AND YEAR(t.date_completed) = %d
-				ORDER BY t.date_completed ASC",
+				ORDER BY t.date_completed ASC',
 				__( 'General Fund', 'mission-donation-platform' ),
+				$txn_table,
+				$cam_table,
 				$donor_id,
+				$test_flag,
 				$year
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		if ( ! $rows ) {
 			return [
@@ -1354,17 +1372,17 @@ class ReportingService {
 		$table     = $wpdb->prefix . 'missiondp_transactions';
 		$test_flag = $is_test ? 1 : 0;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_col(
 			$wpdb->prepare(
-				"SELECT DISTINCT YEAR(date_created) AS year
-				FROM {$table}
-				WHERE donor_id = %d AND is_test = {$test_flag}
-				ORDER BY year DESC",
-				$donor_id
+				'SELECT DISTINCT YEAR(date_created) AS year
+				FROM %i
+				WHERE donor_id = %d AND is_test = %d
+				ORDER BY year DESC',
+				$table,
+				$donor_id,
+				$test_flag
 			)
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return array_map( 'intval', $rows ?: [] );
 	}
@@ -1382,20 +1400,21 @@ class ReportingService {
 		$cam_table = $wpdb->prefix . 'missiondp_campaigns';
 		$test_flag = $is_test ? 1 : 0;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT DISTINCT t.campaign_id AS id, COALESCE(c.title, %s) AS name
-				FROM {$txn_table} t
-				LEFT JOIN {$cam_table} c ON c.id = t.campaign_id
-				WHERE t.donor_id = %d AND t.is_test = {$test_flag} AND t.campaign_id IS NOT NULL
-				ORDER BY name ASC",
+				'SELECT DISTINCT t.campaign_id AS id, COALESCE(c.title, %s) AS name
+				FROM %i t
+				LEFT JOIN %i c ON c.id = t.campaign_id
+				WHERE t.donor_id = %d AND t.is_test = %d AND t.campaign_id IS NOT NULL
+				ORDER BY name ASC',
 				__( 'Deleted Campaign', 'mission-donation-platform' ),
-				$donor_id
+				$txn_table,
+				$cam_table,
+				$donor_id,
+				$test_flag
 			),
 			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		return array_map(
 			static fn( array $row ) => [
