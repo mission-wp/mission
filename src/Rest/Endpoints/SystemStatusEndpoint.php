@@ -161,7 +161,7 @@ class SystemStatusEndpoint {
 			'php_max_execution_time' => (int) ini_get( 'max_execution_time' ),
 			'php_max_input_vars'     => (int) ini_get( 'max_input_vars' ),
 			'php_max_upload_size'    => ini_get( 'upload_max_filesize' ),
-			'mysql_version'          => $wpdb->get_var( 'SELECT VERSION()' ), // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			'mysql_version'          => $wpdb->db_server_info(),
 			'curl_version'           => $curl_info ? $curl_info['version'] . ', ' . $curl_info['ssl_version'] : __( 'Not available', 'mission-donation-platform' ),
 			'fsockopen'              => function_exists( 'fsockopen' ),
 			'curl'                   => function_exists( 'curl_init' ),
@@ -171,60 +171,16 @@ class SystemStatusEndpoint {
 	}
 
 	/**
-	 * Gather database information including table sizes.
+	 * Gather database information.
 	 *
 	 * @return array
 	 */
 	private function get_database_info(): array {
 		global $wpdb;
 
-		$schema      = new Schema();
-		$table_names = $schema->get_table_names();
-		$db_name     = $wpdb->dbname;
-
-		// Get sizes for all tables in this database.
-		$all_sizes = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->prepare(
-				'SELECT table_name, data_length, index_length
-				FROM information_schema.tables
-				WHERE table_schema = %s',
-				$db_name
-			)
-		);
-
-		$total_size   = 0;
-		$mission_size = 0;
-		$table_map    = [];
-
-		foreach ( $all_sizes as $row ) {
-			$data_bytes  = (int) $row->data_length;
-			$index_bytes = (int) $row->index_length;
-			$total_size += $data_bytes + $index_bytes;
-
-			if ( in_array( $row->table_name, $table_names, true ) ) {
-				$mission_size                 += $data_bytes + $index_bytes;
-				$table_map[ $row->table_name ] = [
-					'data_size'  => round( $data_bytes / 1024 / 1024, 2 ),
-					'index_size' => round( $index_bytes / 1024 / 1024, 2 ),
-				];
-			}
-		}
-
-		// Build tables array preserving schema order.
-		$tables = [];
-		foreach ( $table_names as $name ) {
-			$tables[] = [
-				'name'       => $name,
-				'data_size'  => $table_map[ $name ]['data_size'] ?? 0,
-				'index_size' => $table_map[ $name ]['index_size'] ?? 0,
-			];
-		}
-
 		return [
-			'prefix'         => $wpdb->prefix,
-			'total_size'     => round( $total_size / 1024 / 1024, 2 ),
-			'missiondp_size' => round( $mission_size / 1024 / 1024, 2 ),
-			'tables'         => $tables,
+			'prefix' => $wpdb->prefix,
+			'tables' => ( new Schema() )->get_table_names(),
 		];
 	}
 
