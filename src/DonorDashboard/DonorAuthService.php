@@ -46,13 +46,11 @@ class DonorAuthService {
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'We couldn\'t find any donations with this email address.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'We couldn\'t find any donations with this email address.', 'mission-donation-platform' ) );
 		}
 
 		if ( $donor->user_id ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'An account already exists for this email. Please log in instead.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'An account already exists for this email. Please log in instead.', 'mission-donation-platform' ) );
 		}
 
 		// Generate a secure random token and store its hash.
@@ -169,8 +167,7 @@ class DonorAuthService {
 		$donor = $this->validate_activation_token( $email, $token );
 
 		if ( ! $donor ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		$user_id = $donor->create_user_account( $password );
@@ -220,22 +217,19 @@ class DonorAuthService {
 		);
 
 		if ( is_wp_error( $user ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Invalid email or password.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
 		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
 			wp_logout();
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Invalid email or password.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
 		$donor = Donor::find_by_user_id( $user->ID );
 
 		if ( ! $donor ) {
 			wp_logout();
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Invalid email or password.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
 		return $donor;
@@ -281,27 +275,23 @@ class DonorAuthService {
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'We couldn\'t find a donor account with this email address.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'We couldn\'t find a donor account with this email address.', 'mission-donation-platform' ) );
 		}
 
 		if ( ! $donor->user_id ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'No account has been activated for this email. Please activate your account first.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'No account has been activated for this email. Please activate your account first.', 'mission-donation-platform' ) );
 		}
 
 		$user = get_userdata( $donor->user_id );
 
 		if ( ! $user ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Unable to process this request.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'Unable to process this request.', 'mission-donation-platform' ) );
 		}
 
 		$key = get_password_reset_key( $user );
 
 		if ( is_wp_error( $key ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'Unable to generate a password reset link. Please try again later.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'Unable to generate a password reset link. Please try again later.', 'mission-donation-platform' ) );
 		}
 
 		$reset_url = add_query_arg(
@@ -369,20 +359,17 @@ class DonorAuthService {
 		$user = check_password_reset_key( $key, $login );
 
 		if ( is_wp_error( $user ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		$donor = Donor::find_by_user_id( $user->ID );
 
 		if ( ! $donor ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \RuntimeException( __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
 		// Set the new password (destroys all existing sessions).
@@ -464,15 +451,13 @@ class DonorAuthService {
 		$min_length = (int) apply_filters( 'missiondp_donor_min_password_length', self::MIN_PASSWORD_LENGTH );
 
 		if ( strlen( $password ) < $min_length ) {
-			// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new \RuntimeException(
 				sprintf(
 					/* translators: %d: minimum password length */
-					__( 'Password must be at least %d characters.', 'mission-donation-platform' ),
-					$min_length
+					esc_html__( 'Password must be at least %d characters.', 'mission-donation-platform' ),
+					absint( $min_length )
 				)
 			);
-			// phpcs:enable WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
