@@ -2,7 +2,7 @@
 Contributors: missionwp
 Tags: donations, donate, fundraising, nonprofit, recurring donations
 Requires at least: 6.7
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 8.0
 Stable Tag: 1.1.2
 License: GPL-2.0-or-later
@@ -133,6 +133,18 @@ A REST API exposes every entity for headless integrations, and a model-based dat
 
 The full source — including all build sources — lives at [github.com/mission-wp/mission](https://github.com/mission-wp/mission).
 
+== Source Code ==
+
+The full, unminified source code for this plugin is publicly available on GitHub at https://github.com/mission-wp/mission
+
+The repository contains the original `.js`, `.jsx`, and `.scss` files for every compiled asset shipped in `admin/build/` and `blocks/build/`. To build the plugin from source:
+
+`composer install`
+`npm install`
+`npm run build`
+
+See the README in the repository for full development setup, contribution guidelines, and a description of the build pipeline.
+
 == Installation ==
 
 1. Upload the `mission-donation-platform` folder to `/wp-content/plugins/`, or install Mission directly from the WordPress.org plugin directory.
@@ -186,6 +198,10 @@ Please report security issues privately by emailing hello@missionwp.com rather t
 1. The Mission admin dashboard with revenue, donation, donor, and campaign metrics in test and live modes.
 2. The donation form with suggested amounts, frequency picker, and tribute support.
 3. The donor-facing dashboard for viewing history, managing recurring donations, and downloading receipts.
+4. The transaction detail screen with payment info, donor details, and quick actions like refund, resend receipt, and PDF export.
+5. The donor profile in the admin with donation history, recurring subscriptions, and contact details.
+6. The campaign detail screen in the admin with stats, progress bar, goal info, and campaign image.
+7. Public-facing campaign page built from blocks for progress tracking, donor wall, and an inline donation form.
 
 == External Services ==
 
@@ -216,18 +232,6 @@ Mission uses [Gravatar](https://gravatar.com) to display profile images for dono
 
 * [Gravatar Terms of Service](https://wordpress.com/tos/)
 * [Gravatar Privacy Policy](https://automattic.com/privacy/)
-
-== Source Code ==
-
-The full, unminified source code for this plugin is publicly available on GitHub at https://github.com/mission-wp/mission
-
-The repository contains the original `.js`, `.jsx`, and `.scss` files. To build the plugin from source:
-
-`composer install`
-`npm install`
-`npm run build`
-
-See the README in the repository for full development setup, contribution guidelines, and a description of the build pipeline.
 
 == Changelog ==
 
