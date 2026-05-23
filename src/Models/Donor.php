@@ -116,8 +116,7 @@ class Donor extends Model {
 	 */
 	public function create_user_account( string $password ): int {
 		if ( $this->user_id ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not rendered output.
-			throw new \RuntimeException( __( 'This donor already has an account.', 'mission-donation-platform' ) );
+			throw new \RuntimeException( esc_html__( 'This donor already has an account.', 'mission-donation-platform' ) );
 		}
 
 		// Use the donor email as the username.
@@ -133,14 +132,41 @@ class Donor extends Model {
 		);
 
 		if ( is_wp_error( $user_id ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message, not rendered output.
-			throw new \RuntimeException( $user_id->get_error_message() );
+			throw new \RuntimeException( esc_html( $user_id->get_error_message() ) );
 		}
 
 		$this->user_id = $user_id;
 		$this->save();
 
 		return $user_id;
+	}
+
+	/**
+	 * Change the donor's email address.
+	 *
+	 * Updates the donors table and the linked WordPress user's email. The
+	 * user_login is intentionally left alone — WordPress has no public API
+	 * for changing it, and donors can continue logging in with their
+	 * original email.
+	 *
+	 * @param string $new_email The new email address.
+	 */
+	public function change_email( string $new_email ): void {
+		$this->email = $new_email;
+		$this->save();
+
+		if ( ! $this->user_id ) {
+			return;
+		}
+
+		wp_update_user(
+			[
+				'ID'         => $this->user_id,
+				'user_email' => $new_email,
+			]
+		);
+
+		clean_user_cache( $this->user_id );
 	}
 
 	/**

@@ -71,8 +71,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	if ( file_exists( $autoloader ) ) {
 		require_once $autoloader;
 
-		if ( class_exists( '\MissionDP\Database\DatabaseModule' ) ) {
-			\MissionDP\Database\DatabaseModule::drop_tables();
+		if ( class_exists( '\MissionDP\Database\Schema' ) ) {
+			( new \MissionDP\Database\Schema() )->drop_all_tables();
 		}
 	}
 

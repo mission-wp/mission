@@ -311,17 +311,11 @@ class EmailChangeEndpoint {
 		}
 
 		// Perform the email change.
-		$old_email     = $donor->email;
-		$was_logged_in = $donor->user_id && get_current_user_id() === $donor->user_id;
-		$this->apply_email_change( $donor, $new_email );
+		$old_email = $donor->email;
+		$donor->change_email( $new_email );
 
 		// Clean up pending meta.
 		$this->cleanup_pending_meta( $donor );
-
-		// user_login changed; force re-auth instead of rewriting the session.
-		if ( $was_logged_in ) {
-			wp_logout();
-		}
 
 		/**
 		 * Fires after a donor's email address has been changed.
@@ -355,49 +349,6 @@ class EmailChangeEndpoint {
 		$this->cleanup_pending_meta( $donor );
 
 		return new WP_REST_Response( [ 'message' => __( 'Email change cancelled.', 'mission-donation-platform' ) ] );
-	}
-
-	/**
-	 * Apply the email change to all storage locations.
-	 *
-	 * Updates in the correct order to avoid sync hook conflicts:
-	 * 1. Donor table email
-	 * 2. WP user email (sync hook sees no diff, early-returns)
-	 * 3. WP user_login via direct DB query (no WP API for this)
-	 * 4. Clean cached user data
-	 *
-	 * @param Donor  $donor     The donor.
-	 * @param string $new_email The new email address.
-	 */
-	private function apply_email_change( Donor $donor, string $new_email ): void {
-		global $wpdb;
-
-		// 1. Update donors table.
-		$donor->email = $new_email;
-		$donor->save();
-
-		// 2. Update WP user email.
-		if ( $donor->user_id ) {
-			wp_update_user(
-				[
-					'ID'         => $donor->user_id,
-					'user_email' => $new_email,
-				]
-			);
-
-			// 3. Update user_login directly (no WP API for this).
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-			$wpdb->update(
-				$wpdb->users,
-				[ 'user_login' => $new_email ],
-				[ 'ID' => $donor->user_id ],
-				[ '%s' ],
-				[ '%d' ]
-			);
-
-			// 4. Clear cached user data.
-			clean_user_cache( $donor->user_id );
-		}
 	}
 
 	/**

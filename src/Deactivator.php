@@ -7,6 +7,8 @@
 
 namespace MissionDP;
 
+use MissionDP\Cleanup\CleanupService;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -58,12 +60,6 @@ class Deactivator {
 	private static function clear_transients(): void {
 		delete_transient( 'missiondp_activated' );
 
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query(
-			"DELETE FROM {$wpdb->options}
-			WHERE option_name LIKE '_transient_missiondp_%'
-			OR option_name LIKE '_transient_timeout_missiondp_%'"
-		);
+		CleanupService::clear_plugin_transients();
 	}
 }
