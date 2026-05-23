@@ -84,6 +84,7 @@ class AdminModule {
 		add_action( 'admin_init', [ $this, 'maybe_redirect_after_activation' ] );
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_menu_icon_css' ] );
 		add_action( 'admin_bar_menu', [ $this, 'add_test_mode_indicator' ], 999 );
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_test_mode_admin_bar_css' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_test_mode_admin_bar_css' ] );
@@ -96,12 +97,9 @@ class AdminModule {
 	/**
 	 * Enqueue admin scripts and styles on Mission pages.
 	 *
-	 * @param string $hook_suffix The current admin page hook suffix.
-	 *
 	 * @return void
 	 */
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by admin_enqueue_scripts hook signature.
-	public function enqueue_admin_assets( string $hook_suffix ): void {
+	public function enqueue_admin_assets(): void {
 		$screen = get_current_screen();
 
 		if ( ! $screen || ! $this->is_mission_screen( $screen->id ) ) {
@@ -454,6 +452,24 @@ class AdminModule {
 	 *
 	 * @return void
 	 */
+	/**
+	 * Lift the WordPress default 60% opacity from our admin menu icon so it
+	 * renders at full color, matching dashicons and data-URI SVG icons.
+	 *
+	 * @return void
+	 */
+	public function enqueue_menu_icon_css(): void {
+		wp_add_inline_style(
+			'admin-menu',
+			'#toplevel_page_' . self::MENU_SLUG . ' .wp-menu-image img{opacity:1}'
+		);
+	}
+
+	/**
+	 * Attach inline CSS for the test mode admin bar indicator to the core admin-bar stylesheet.
+	 *
+	 * @return void
+	 */
 	public function enqueue_test_mode_admin_bar_css(): void {
 		if ( ! is_admin_bar_showing() ) {
 			return;
@@ -498,21 +514,11 @@ class AdminModule {
 	 * @return string
 	 */
 	private function get_menu_icon_url(): string {
-		$logo_path = plugin_dir_path( __DIR__ ) . '../assets/img/icon.svg';
-
-		if ( ! file_exists( $logo_path ) ) {
+		if ( ! file_exists( MISSIONDP_PATH . 'assets/img/icon.svg' ) ) {
 			return 'dashicons-heart';
 		}
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file, not a remote URL.
-		$svg_content = file_get_contents( $logo_path );
-		if ( false === $svg_content ) {
-			return 'dashicons-heart';
-		}
-
-		// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Encoding SVG for data URI, not obfuscation.
-		$base64 = base64_encode( $svg_content );
-		return 'data:image/svg+xml;base64,' . $base64;
+		return MISSIONDP_URL . 'assets/img/icon.svg';
 	}
 
 	/**
