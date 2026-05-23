@@ -4,7 +4,7 @@ Tags: donations, donate, fundraising, nonprofit, recurring donations
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.2
+Stable Tag: 1.1.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -234,6 +234,12 @@ Mission uses [Gravatar](https://gravatar.com) to display profile images for dono
 * [Gravatar Privacy Policy](https://automattic.com/privacy/)
 
 == Changelog ==
+
+= 1.1.3 =
+* Tested with WordPress 7.0
+* Refreshed the admin menu icon
+* API and webhook diagnostics now appear in Tools > Logs alongside other plugin activity
+* Internal code quality and maintainability improvements
 
 = 1.1.2 =
 * Updated @wordpress/dataviews to 14.3.0 and @wordpress/icons to 13.1.0
