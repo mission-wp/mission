@@ -7,7 +7,7 @@
 
 namespace MissionDP\Reporting;
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Settings\SettingsService;
 
@@ -497,99 +497,186 @@ class ReportingService {
 	public function transactions_with_donors( array $args = [] ): array {
 		global $wpdb;
 
-		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
-		$donor_table = $wpdb->prefix . 'missiondp_donors';
+		$txn_table     = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table   = $wpdb->prefix . 'missiondp_donors';
+		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
 
 		$allowed_orderby = [ 'date_created', 'amount' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
+		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
 
-		$where         = [];
-		$where_values  = [];
-		$tribute_table = null;
+		$is_test = (int) $this->is_test_mode();
 
-		// Always filter by test mode.
-		$where[]        = 't.is_test = %d';
-		$where_values[] = (int) $this->is_test_mode();
+		$has_status   = ! empty( $args['status'] ) ? 1 : 0;
+		$status       = $has_status ? (string) $args['status'] : '';
+		$has_campaign = ! empty( $args['campaign_id'] ) ? 1 : 0;
+		$campaign_id  = $has_campaign ? (int) $args['campaign_id'] : 0;
+		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
+		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
+		$has_search   = ! empty( $args['search'] ) ? 1 : 0;
+		$search_like  = $has_search ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
+		$search_id    = $has_search ? (int) $args['search'] : 0;
 
-		if ( ! empty( $args['status'] ) ) {
-			$where[]        = 't.status = %s';
-			$where_values[] = $args['status'];
-		}
+		// Dedication mode flags — at most one is set to 1.
+		$dedication      = $args['dedication'] ?? '';
+		$has_dedication  = '' !== $dedication ? 1 : 0;
+		$is_mail_pending = 'mail_pending' === $dedication ? 1 : 0;
+		$is_mail_sent    = 'mail_sent' === $dedication ? 1 : 0;
+		$is_email_sent   = 'email_sent' === $dedication ? 1 : 0;
 
-		if ( ! empty( $args['campaign_id'] ) ) {
-			$where[]        = 't.campaign_id = %d';
-			$where_values[] = $args['campaign_id'];
-		}
-
-		if ( ! empty( $args['donor_id'] ) ) {
-			$where[]        = 't.donor_id = %d';
-			$where_values[] = $args['donor_id'];
-		}
-
-		if ( ! empty( $args['search'] ) ) {
-			$like           = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]        = '(d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d)';
-			$where_values[] = $like;
-			$where_values[] = $like;
-			$where_values[] = $like;
-			$where_values[] = (int) $args['search'];
-		}
-
-		// Dedication filter — requires a JOIN to the tributes table.
-		if ( ! empty( $args['dedication'] ) ) {
-			$tribute_table = $wpdb->prefix . 'missiondp_tributes';
-
-			match ( $args['dedication'] ) {
-				'mail_pending' => array_push( $where, "tribute.notify_method = 'mail'", 'tribute.notification_sent_at IS NULL' ),
-				'mail_sent'    => array_push( $where, "tribute.notify_method = 'mail'", 'tribute.notification_sent_at IS NOT NULL' ),
-				'email_sent'   => array_push( $where, "tribute.notify_method = 'email'", 'tribute.notification_sent_at IS NOT NULL' ),
-				default        => null, // 'any' — the INNER JOIN alone filters to tributes.
-			};
-		}
-
-		$where_clause = 'WHERE ' . implode( ' AND ', $where );
-		$tribute_join = null === $tribute_table ? '' : ' INNER JOIN %i AS tribute ON t.id = tribute.transaction_id';
-
-		// Values must appear in SQL placeholder order: table identifiers first, then WHERE values.
-		$base_values = [ $txn_table, $donor_table ];
-		if ( null !== $tribute_table ) {
-			$base_values[] = $tribute_table;
-		}
-		$base_values = array_merge( $base_values, $where_values );
-
-		// Count total.
-		$count_sql = 'SELECT COUNT(*) FROM %i AS t LEFT JOIN %i AS d ON t.donor_id = d.id' . $tribute_join . ' ' . $where_clause;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $count_sql composed from literal fragments above: table names use %i, WHERE fragments contain only %s/%d placeholders.
-		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $base_values ) );
-
-		// Fetch rows.
 		$offset = ( $page - 1 ) * $per_page;
 
-		$sql = 'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email'
-			. ' FROM %i AS t'
-			. ' LEFT JOIN %i AS d ON t.donor_id = d.id'
-			. $tribute_join
-			. ' ' . $where_clause
-			. ' ORDER BY t.%i ' . $order_dir
-			. ' LIMIT %d OFFSET %d';
+		// Count total. The dedication filter uses an EXISTS subquery so the
+		// LEFT JOIN to donors does not multiply rows when a transaction has
+		// multiple tributes. When $has_dedication = 0 the outer toggle short
+		// circuits the EXISTS and matches every row.
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS t
+				 LEFT JOIN %i AS d ON t.donor_id = d.id
+				 WHERE t.is_test = %d
+				   AND ( %d = 0 OR t.status = %s )
+				   AND ( %d = 0 OR t.campaign_id = %d )
+				   AND ( %d = 0 OR t.donor_id = %d )
+				   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d )
+				   AND ( %d = 0 OR EXISTS (
+						SELECT 1 FROM %i AS tr
+						WHERE tr.transaction_id = t.id
+						  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NULL ) )
+						  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NOT NULL ) )
+						  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
+					) )',
+				$txn_table,
+				$donor_table,
+				$is_test,
+				$has_status,
+				$status,
+				$has_campaign,
+				$campaign_id,
+				$has_donor,
+				$donor_id,
+				$has_search,
+				$search_like,
+				$search_like,
+				$search_like,
+				$search_id,
+				$has_dedication,
+				$tribute_table,
+				$is_mail_pending,
+				$is_mail_sent,
+				$is_email_sent
+			)
+		);
 
-		$rows_values = array_merge( $base_values, [ $orderby, $per_page, $offset ] );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql composed from literal fragments above: table names and orderby column use %i, ASC/DESC is a hardcoded ternary literal, WHERE fragments contain only %s/%d placeholders.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $rows_values ), ARRAY_A );
+		// Fetch rows.
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
+					 FROM %i AS t
+					 LEFT JOIN %i AS d ON t.donor_id = d.id
+					 WHERE t.is_test = %d
+					   AND ( %d = 0 OR t.status = %s )
+					   AND ( %d = 0 OR t.campaign_id = %d )
+					   AND ( %d = 0 OR t.donor_id = %d )
+					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d )
+					   AND ( %d = 0 OR EXISTS (
+							SELECT 1 FROM %i AS tr
+							WHERE tr.transaction_id = t.id
+							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NULL ) )
+							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NOT NULL ) )
+							  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
+						) )
+					 ORDER BY t.%i ASC
+					 LIMIT %d OFFSET %d',
+					$txn_table,
+					$donor_table,
+					$is_test,
+					$has_status,
+					$status,
+					$has_campaign,
+					$campaign_id,
+					$has_donor,
+					$donor_id,
+					$has_search,
+					$search_like,
+					$search_like,
+					$search_like,
+					$search_id,
+					$has_dedication,
+					$tribute_table,
+					$is_mail_pending,
+					$is_mail_sent,
+					$is_email_sent,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
+					 FROM %i AS t
+					 LEFT JOIN %i AS d ON t.donor_id = d.id
+					 WHERE t.is_test = %d
+					   AND ( %d = 0 OR t.status = %s )
+					   AND ( %d = 0 OR t.campaign_id = %d )
+					   AND ( %d = 0 OR t.donor_id = %d )
+					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d )
+					   AND ( %d = 0 OR EXISTS (
+							SELECT 1 FROM %i AS tr
+							WHERE tr.transaction_id = t.id
+							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NULL ) )
+							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NOT NULL ) )
+							  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
+						) )
+					 ORDER BY t.%i DESC
+					 LIMIT %d OFFSET %d',
+					$txn_table,
+					$donor_table,
+					$is_test,
+					$has_status,
+					$status,
+					$has_campaign,
+					$campaign_id,
+					$has_donor,
+					$donor_id,
+					$has_search,
+					$search_like,
+					$search_like,
+					$search_like,
+					$search_id,
+					$has_dedication,
+					$tribute_table,
+					$is_mail_pending,
+					$is_mail_sent,
+					$is_email_sent,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		// Batch-fetch campaign titles from the campaigns table.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$placeholders         = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
-			$campaign_lookup_sql  = 'SELECT id, title FROM %i WHERE id IN (' . $placeholders . ')';
-			$campaign_lookup_args = array_merge( [ $wpdb->prefix . 'missiondp_campaigns' ], array_map( 'intval', $campaign_ids ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per campaign ID; every ID passes through intval() before binding.
-			$campaigns = $wpdb->get_results( $wpdb->prepare( $campaign_lookup_sql, $campaign_lookup_args ), ARRAY_A );
+			$campaign_ids_csv = implode( ',', array_map( 'intval', $campaign_ids ) );
+			$campaigns        = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT id, title FROM %i WHERE FIND_IN_SET( id, %s ) > 0',
+					$wpdb->prefix . 'missiondp_campaigns',
+					$campaign_ids_csv
+				),
+				ARRAY_A
+			);
 			foreach ( $campaigns as $campaign ) {
 				$campaign_map[ $campaign['id'] ] = $campaign['title'];
 			}
@@ -636,70 +723,130 @@ class ReportingService {
 
 		$allowed_orderby = [ 'id', 'date_created', 'date_next_renewal', 'total_amount', 'status' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
+		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
 
-		$where        = [];
-		$where_values = [];
+		$is_test = (int) $this->is_test_mode();
 
-		// Always filter by test mode.
-		$where[]        = 's.is_test = %d';
-		$where_values[] = (int) $this->is_test_mode();
+		$has_status   = ! empty( $args['status'] ) ? 1 : 0;
+		$status       = $has_status ? (string) $args['status'] : '';
+		$has_campaign = ! empty( $args['campaign_id'] ) ? 1 : 0;
+		$campaign_id  = $has_campaign ? (int) $args['campaign_id'] : 0;
+		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
+		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
+		$has_search   = ! empty( $args['search'] ) ? 1 : 0;
+		$search_like  = $has_search ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
 
-		if ( ! empty( $args['status'] ) ) {
-			$where[]        = 's.status = %s';
-			$where_values[] = $args['status'];
-		}
-
-		if ( ! empty( $args['campaign_id'] ) ) {
-			$where[]        = 's.campaign_id = %d';
-			$where_values[] = $args['campaign_id'];
-		}
-
-		if ( ! empty( $args['donor_id'] ) ) {
-			$where[]        = 's.donor_id = %d';
-			$where_values[] = $args['donor_id'];
-		}
-
-		if ( ! empty( $args['search'] ) ) {
-			$like           = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]        = '(d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s)';
-			$where_values[] = $like;
-			$where_values[] = $like;
-			$where_values[] = $like;
-			$where_values[] = $like;
-		}
-
-		$where_clause = 'WHERE ' . implode( ' AND ', $where );
-		$base_values  = array_merge( [ $sub_table, $donor_table ], $where_values );
-
-		// Count total.
-		$count_sql = 'SELECT COUNT(*) FROM %i AS s LEFT JOIN %i AS d ON s.donor_id = d.id ' . $where_clause;
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $count_sql composed from literal fragments above: table names use %i, WHERE fragments contain only %s/%d placeholders.
-		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $base_values ) );
-
-		// Fetch rows.
 		$offset = ( $page - 1 ) * $per_page;
 
-		$sql = 'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email'
-			. ' FROM %i AS s'
-			. ' LEFT JOIN %i AS d ON s.donor_id = d.id'
-			. ' ' . $where_clause
-			. ' ORDER BY s.%i ' . $order_dir
-			. ' LIMIT %d OFFSET %d';
+		// Count total.
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS s
+				 LEFT JOIN %i AS d ON s.donor_id = d.id
+				 WHERE s.is_test = %d
+				   AND ( %d = 0 OR s.status = %s )
+				   AND ( %d = 0 OR s.campaign_id = %d )
+				   AND ( %d = 0 OR s.donor_id = %d )
+				   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s )',
+				$sub_table,
+				$donor_table,
+				$is_test,
+				$has_status,
+				$status,
+				$has_campaign,
+				$campaign_id,
+				$has_donor,
+				$donor_id,
+				$has_search,
+				$search_like,
+				$search_like,
+				$search_like,
+				$search_like
+			)
+		);
 
-		$rows_values = array_merge( $base_values, [ $orderby, $per_page, $offset ] );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql composed from literal fragments above: table names and orderby column use %i, ASC/DESC is a hardcoded ternary literal, WHERE fragments contain only %s/%d placeholders.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $rows_values ), ARRAY_A );
+		// Fetch rows.
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
+					 FROM %i AS s
+					 LEFT JOIN %i AS d ON s.donor_id = d.id
+					 WHERE s.is_test = %d
+					   AND ( %d = 0 OR s.status = %s )
+					   AND ( %d = 0 OR s.campaign_id = %d )
+					   AND ( %d = 0 OR s.donor_id = %d )
+					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s )
+					 ORDER BY s.%i ASC
+					 LIMIT %d OFFSET %d',
+					$sub_table,
+					$donor_table,
+					$is_test,
+					$has_status,
+					$status,
+					$has_campaign,
+					$campaign_id,
+					$has_donor,
+					$donor_id,
+					$has_search,
+					$search_like,
+					$search_like,
+					$search_like,
+					$search_like,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
+					 FROM %i AS s
+					 LEFT JOIN %i AS d ON s.donor_id = d.id
+					 WHERE s.is_test = %d
+					   AND ( %d = 0 OR s.status = %s )
+					   AND ( %d = 0 OR s.campaign_id = %d )
+					   AND ( %d = 0 OR s.donor_id = %d )
+					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s )
+					 ORDER BY s.%i DESC
+					 LIMIT %d OFFSET %d',
+					$sub_table,
+					$donor_table,
+					$is_test,
+					$has_status,
+					$status,
+					$has_campaign,
+					$campaign_id,
+					$has_donor,
+					$donor_id,
+					$has_search,
+					$search_like,
+					$search_like,
+					$search_like,
+					$search_like,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		// Batch-fetch campaign titles.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$placeholders         = implode( ',', array_fill( 0, count( $campaign_ids ), '%d' ) );
-			$campaign_lookup_sql  = 'SELECT id, title FROM %i WHERE id IN (' . $placeholders . ')';
-			$campaign_lookup_args = array_merge( [ $wpdb->prefix . 'missiondp_campaigns' ], array_map( 'intval', $campaign_ids ) );
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per campaign ID; every ID passes through intval() before binding.
-			$campaigns = $wpdb->get_results( $wpdb->prepare( $campaign_lookup_sql, $campaign_lookup_args ), ARRAY_A );
+			$campaign_ids_csv = implode( ',', array_map( 'intval', $campaign_ids ) );
+			$campaigns        = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT id, title FROM %i WHERE FIND_IN_SET( id, %s ) > 0',
+					$wpdb->prefix . 'missiondp_campaigns',
+					$campaign_ids_csv
+				),
+				ARRAY_A
+			);
 			foreach ( $campaigns as $campaign ) {
 				$campaign_map[ $campaign['id'] ] = $campaign['title'];
 			}
@@ -749,15 +896,18 @@ class ReportingService {
 		$now         = new \DateTimeImmutable( 'now', wp_timezone() );
 		$month_start = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
 
-		$monthly_expr = $this->frequency_to_monthly_sql( 'amount', 'frequency' );
-
 		// MRR: sum of active subscriptions normalized to monthly.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $monthly_expr is a hardcoded SQL CASE expression with no user input.
 		$mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COALESCE(SUM({$monthly_expr}), 0)
+				'SELECT COALESCE(SUM(CASE frequency
+					WHEN \'weekly\' THEN amount * 52 / 12
+					WHEN \'monthly\' THEN amount
+					WHEN \'quarterly\' THEN amount / 3
+					WHEN \'annually\' THEN amount / 12
+					ELSE amount
+				END), 0)
 				FROM %i
-				WHERE status = 'active' AND is_test = %d",
+				WHERE status = \'active\' AND is_test = %d',
 				$table,
 				$is_test
 			)
@@ -766,11 +916,17 @@ class ReportingService {
 		// Previous MRR: subscriptions that were active at start of current month.
 		$prev_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COALESCE(SUM({$monthly_expr}), 0)
+				'SELECT COALESCE(SUM(CASE frequency
+					WHEN \'weekly\' THEN amount * 52 / 12
+					WHEN \'monthly\' THEN amount
+					WHEN \'quarterly\' THEN amount / 3
+					WHEN \'annually\' THEN amount / 12
+					ELSE amount
+				END), 0)
 				FROM %i
 				WHERE is_test = %d
 					AND date_created < %s
-					AND (status = 'active' OR (status = 'cancelled' AND date_cancelled >= %s))",
+					AND (status = \'active\' OR (status = \'cancelled\' AND date_cancelled >= %s))',
 				$table,
 				$is_test,
 				$month_start,
@@ -781,7 +937,7 @@ class ReportingService {
 		// Active count.
 		$active = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM %i WHERE status = 'active' AND is_test = %d",
+				'SELECT COUNT(*) FROM %i WHERE status = \'active\' AND is_test = %d',
 				$table,
 				$is_test
 			)
@@ -790,8 +946,8 @@ class ReportingService {
 		// New this month: active subscriptions created since first of month.
 		$new_this_month = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM %i
-				WHERE status = 'active' AND is_test = %d AND date_created >= %s",
+				'SELECT COUNT(*) FROM %i
+				WHERE status = \'active\' AND is_test = %d AND date_created >= %s',
 				$table,
 				$is_test,
 				$month_start
@@ -801,8 +957,8 @@ class ReportingService {
 		// Churned: subscriptions cancelled this month.
 		$churned = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM %i
-				WHERE status = 'cancelled' AND is_test = %d AND date_cancelled >= %s",
+				'SELECT COUNT(*) FROM %i
+				WHERE status = \'cancelled\' AND is_test = %d AND date_cancelled >= %s',
 				$table,
 				$is_test,
 				$month_start
@@ -812,15 +968,20 @@ class ReportingService {
 		// Churned MRR: normalized monthly amount lost from churned subscriptions.
 		$churned_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COALESCE(SUM({$monthly_expr}), 0)
+				'SELECT COALESCE(SUM(CASE frequency
+					WHEN \'weekly\' THEN amount * 52 / 12
+					WHEN \'monthly\' THEN amount
+					WHEN \'quarterly\' THEN amount / 3
+					WHEN \'annually\' THEN amount / 12
+					ELSE amount
+				END), 0)
 				FROM %i
-				WHERE status = 'cancelled' AND is_test = %d AND date_cancelled >= %s",
+				WHERE status = \'cancelled\' AND is_test = %d AND date_cancelled >= %s',
 				$table,
 				$is_test,
 				$month_start
 			)
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$average_monthly = $active > 0 ? (int) round( $mrr / $active ) : 0;
 
@@ -833,23 +994,6 @@ class ReportingService {
 			'churned'         => $churned,
 			'churned_mrr'     => $churned_mrr,
 		];
-	}
-
-	/**
-	 * SQL CASE expression to normalize a subscription amount to monthly.
-	 *
-	 * @param string $amount_col    Column name for the amount.
-	 * @param string $frequency_col Column name for the frequency.
-	 * @return string SQL expression.
-	 */
-	private function frequency_to_monthly_sql( string $amount_col, string $frequency_col ): string {
-		return "CASE {$frequency_col}
-			WHEN 'weekly' THEN {$amount_col} * 52 / 12
-			WHEN 'monthly' THEN {$amount_col}
-			WHEN 'quarterly' THEN {$amount_col} / 3
-			WHEN 'annually' THEN {$amount_col} / 12
-			ELSE {$amount_col}
-		END";
 	}
 
 	/**
@@ -1037,25 +1181,30 @@ class ReportingService {
 		$txn_table     = $wpdb->prefix . 'missiondp_transactions';
 		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 		$is_test       = (int) $this->is_test_mode();
-
-		$placeholders = implode( ',', array_fill( 0, count( $donor_ids ), '%d' ) );
-		$values       = array_merge(
-			[ $txn_table ],
-			array_map( 'intval', $donor_ids ),
-			[ $campaign_id, $is_test, $tribute_table ]
-		);
-		$sql          = 'SELECT sub.donor_id, tr.tribute_type, tr.honoree_name'
-			. ' FROM ('
-			. '   SELECT donor_id, MAX(id) AS max_txn_id'
-			. '   FROM %i'
-			. '   WHERE donor_id IN (' . $placeholders . ') AND campaign_id = %d AND status = \'completed\' AND is_test = %d'
-			. '   GROUP BY donor_id'
-			. ' ) AS sub'
-			. ' INNER JOIN %i AS tr ON tr.transaction_id = sub.max_txn_id';
+		$donor_ids_csv = implode( ',', array_map( 'intval', $donor_ids ) );
 
 		// Get the most recent transaction ID per donor, then join tributes.
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per donor ID; every ID passes through intval() before binding. Table names use %i.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT sub.donor_id, tr.tribute_type, tr.honoree_name
+				 FROM (
+					 SELECT donor_id, MAX(id) AS max_txn_id
+					 FROM %i
+					 WHERE FIND_IN_SET( donor_id, %s ) > 0
+						AND campaign_id = %d
+						AND status = \'completed\'
+						AND is_test = %d
+					 GROUP BY donor_id
+				 ) AS sub
+				 INNER JOIN %i AS tr ON tr.transaction_id = sub.max_txn_id',
+				$txn_table,
+				$donor_ids_csv,
+				$campaign_id,
+				$is_test,
+				$tribute_table
+			),
+			ARRAY_A
+		);
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1081,13 +1230,17 @@ class ReportingService {
 			return [];
 		}
 
-		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
-		$placeholders  = implode( ',', array_fill( 0, count( $transaction_ids ), '%d' ) );
-		$sql           = 'SELECT transaction_id, tribute_type, honoree_name FROM %i WHERE transaction_id IN (' . $placeholders . ')';
-		$values        = array_merge( [ $tribute_table ], array_map( 'intval', $transaction_ids ) );
+		$tribute_table       = $wpdb->prefix . 'missiondp_tributes';
+		$transaction_ids_csv = implode( ',', array_map( 'intval', $transaction_ids ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per transaction ID; every ID passes through intval() before binding. Table name uses %i.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT transaction_id, tribute_type, honoree_name FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
+				$tribute_table,
+				$transaction_ids_csv
+			),
+			ARRAY_A
+		);
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1128,45 +1281,80 @@ class ReportingService {
 		// Validate orderby.
 		$allowed_orderby = [ 'date_completed', 'amount' ];
 		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_completed';
-		$order_dir       = 'ASC' === strtoupper( $order ) ? 'ASC' : 'DESC';
+		$order_asc       = 'ASC' === strtoupper( $order );
 
-		// Build WHERE clause.
-		$where        = [ "t.status = 'completed'", 't.is_test = %d' ];
-		$where_values = [ (int) $this->is_test_mode() ];
-
-		if ( $campaign_id > 0 ) {
-			$where[]        = 't.campaign_id = %d';
-			$where_values[] = $campaign_id;
-		}
-
-		if ( ! $show_anonymous ) {
-			$where[] = 't.is_anonymous = 0';
-		}
-
-		$where_clause = 'WHERE ' . implode( ' AND ', $where );
+		$is_test      = (int) $this->is_test_mode();
+		$has_campaign = $campaign_id > 0 ? 1 : 0;
+		$exclude_anon = $show_anonymous ? 0 : 1;
 
 		// Count query.
-		$count_sql    = 'SELECT COUNT(*) FROM %i AS t ' . $where_clause;
-		$count_values = array_merge( [ $txn_table ], $where_values );
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $count_sql composed from literal fragments above: table name uses %i, WHERE fragments contain only %s/%d placeholders or hardcoded literals.
-		$total = (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $count_values ) );
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS t
+				 WHERE t.status = \'completed\'
+				   AND t.is_test = %d
+				   AND ( %d = 0 OR t.campaign_id = %d )
+				   AND ( %d = 0 OR t.is_anonymous = 0 )',
+				$txn_table,
+				$is_test,
+				$has_campaign,
+				$campaign_id,
+				$exclude_anon
+			)
+		);
 
 		// Main query.
-		$sql = 'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,'
-			. ' t.date_completed, t.currency, d.first_name, d.last_name, d.email'
-			. ' FROM %i AS t'
-			. ' INNER JOIN %i AS d ON t.donor_id = d.id'
-			. ' ' . $where_clause
-			. ' ORDER BY t.%i ' . $order_dir
-			. ' LIMIT %d OFFSET %d';
-
-		$main_values = array_merge(
-			[ $txn_table, $donor_table ],
-			$where_values,
-			[ $orderby, $per_page, $offset ]
-		);
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql composed from literal fragments above: table names and orderby column use %i, ASC/DESC is a hardcoded ternary literal, WHERE fragments contain only %s/%d placeholders or hardcoded literals.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $main_values ), ARRAY_A );
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,
+						t.date_completed, t.currency, d.first_name, d.last_name, d.email
+					 FROM %i AS t
+					 INNER JOIN %i AS d ON t.donor_id = d.id
+					 WHERE t.status = \'completed\'
+					   AND t.is_test = %d
+					   AND ( %d = 0 OR t.campaign_id = %d )
+					   AND ( %d = 0 OR t.is_anonymous = 0 )
+					 ORDER BY t.%i ASC
+					 LIMIT %d OFFSET %d',
+					$txn_table,
+					$donor_table,
+					$is_test,
+					$has_campaign,
+					$campaign_id,
+					$exclude_anon,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,
+						t.date_completed, t.currency, d.first_name, d.last_name, d.email
+					 FROM %i AS t
+					 INNER JOIN %i AS d ON t.donor_id = d.id
+					 WHERE t.status = \'completed\'
+					   AND t.is_test = %d
+					   AND ( %d = 0 OR t.campaign_id = %d )
+					   AND ( %d = 0 OR t.is_anonymous = 0 )
+					 ORDER BY t.%i DESC
+					 LIMIT %d OFFSET %d',
+					$txn_table,
+					$donor_table,
+					$is_test,
+					$has_campaign,
+					$campaign_id,
+					$exclude_anon,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		if ( ! $rows ) {
 			return [
@@ -1214,13 +1402,18 @@ class ReportingService {
 			return [];
 		}
 
-		$meta_table   = $wpdb->prefix . 'missiondp_transactionmeta';
-		$placeholders = implode( ',', array_fill( 0, count( $transaction_ids ), '%d' ) );
-		$sql          = 'SELECT missiondp_transaction_id, meta_value FROM %i WHERE missiondp_transaction_id IN (' . $placeholders . ') AND meta_key = \'donor_comment\'';
-		$values       = array_merge( [ $meta_table ], array_map( 'intval', $transaction_ids ) );
+		$meta_table          = $wpdb->prefix . 'missiondp_transactionmeta';
+		$transaction_ids_csv = implode( ',', array_map( 'intval', $transaction_ids ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- IN clause expands one %d per transaction ID; every ID passes through intval() before binding. Table name uses %i.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT missiondp_transaction_id, meta_value FROM %i WHERE FIND_IN_SET( missiondp_transaction_id, %s ) > 0 AND meta_key = %s',
+				$meta_table,
+				$transaction_ids_csv,
+				'donor_comment'
+			),
+			ARRAY_A
+		);
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {

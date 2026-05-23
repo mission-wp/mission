@@ -13,7 +13,7 @@ use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
-// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 /**
  * Central cleanup coordinator.
@@ -43,9 +43,9 @@ class CleanupService {
 
 		$prefix = $wpdb->prefix . 'missiondp_';
 
-		// Activity log count.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$activity_log_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$prefix}activity_log" );
+		$activity_log_count = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $prefix . 'activity_log' )
+		);
 
 		// Log files.
 		$log_dir         = $this->get_log_dir();
@@ -63,20 +63,20 @@ class CleanupService {
 		}
 
 		// Test data counts.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$test_transaction_count = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$prefix}transactions WHERE is_test = 1"
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 		);
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$test_subscription_count = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$prefix}subscriptions WHERE is_test = 1"
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
 		);
 
 		// Donors that have only test transactions (no live ones).
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$test_donor_count = (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$prefix}donors WHERE transaction_count = 0 AND test_transaction_count > 0"
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i WHERE transaction_count = 0 AND test_transaction_count > 0',
+				$prefix . 'donors'
+			)
 		);
 
 		return [
@@ -144,13 +144,13 @@ class CleanupService {
 
 		$table = $wpdb->prefix . 'missiondp_activity_log';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+		$count = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table )
+		);
 
 		$this->log_activity( 'activity_log_cleared', 'settings', 0, [ 'entries_deleted' => $count ] );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "TRUNCATE TABLE {$table}" );
+		$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 
 		return [ 'deleted' => $count ];
 	}
@@ -209,46 +209,72 @@ class CleanupService {
 		$prefix = $wpdb->prefix . 'missiondp_';
 
 		// Get IDs first for cascade cleanup.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$ids = $wpdb->get_col( "SELECT id FROM {$prefix}transactions WHERE is_test = 1" );
+		$ids = $wpdb->get_col(
+			$wpdb->prepare( 'SELECT id FROM %i WHERE is_test = 1', $prefix . 'transactions' )
+		);
 
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$ids          = array_map( 'intval', $ids );
-			$placeholders = implode( ', ', array_fill( 0, $count, '%d' ) );
+			$ids_csv = implode( ',', array_map( 'intval', $ids ) );
 
 			// Cascade: meta, history, notes, tributes.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}transactionmeta WHERE transaction_id IN ({$placeholders})", $ids ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}transaction_history WHERE transaction_id IN ({$placeholders})", $ids ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}notes WHERE object_type = 'transaction' AND object_id IN ({$placeholders})", $ids ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}tributes WHERE transaction_id IN ({$placeholders})", $ids ) );
-
-			// Delete the transactions.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
-			$wpdb->query( "DELETE FROM {$prefix}transactions WHERE is_test = 1" );
-
-			// Reset test aggregate columns on donors and campaigns.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
 			$wpdb->query(
-				"UPDATE {$prefix}donors SET
-					test_total_donated = 0,
-					test_total_tip = 0,
-					test_transaction_count = 0,
-					test_first_transaction = NULL,
-					test_last_transaction = NULL"
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
+					$prefix . 'transactionmeta',
+					$ids_csv
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
+					$prefix . 'transaction_history',
+					$ids_csv
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE object_type = %s AND FIND_IN_SET( object_id, %s ) > 0',
+					$prefix . 'notes',
+					'transaction',
+					$ids_csv
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
+					$prefix . 'tributes',
+					$ids_csv
+				)
 			);
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
+			// Delete the transactions.
 			$wpdb->query(
-				"UPDATE {$prefix}campaigns SET
-					test_total_raised = 0,
-					test_donor_count = 0,
-					test_transaction_count = 0"
+				$wpdb->prepare( 'DELETE FROM %i WHERE is_test = 1', $prefix . 'transactions' )
+			);
+
+			// Reset test aggregate columns on donors and campaigns.
+			$wpdb->query(
+				$wpdb->prepare(
+					'UPDATE %i SET
+						test_total_donated = 0,
+						test_total_tip = 0,
+						test_transaction_count = 0,
+						test_first_transaction = NULL,
+						test_last_transaction = NULL',
+					$prefix . 'donors'
+				)
+			);
+
+			$wpdb->query(
+				$wpdb->prepare(
+					'UPDATE %i SET
+						test_total_raised = 0,
+						test_donor_count = 0,
+						test_transaction_count = 0',
+					$prefix . 'campaigns'
+				)
 			);
 		}
 
@@ -270,23 +296,40 @@ class CleanupService {
 		$prefix = $wpdb->prefix . 'missiondp_';
 
 		// Donors with zero live and zero test transactions remaining.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$ids = $wpdb->get_col(
-			"SELECT id FROM {$prefix}donors WHERE transaction_count = 0 AND test_transaction_count = 0"
+			$wpdb->prepare(
+				'SELECT id FROM %i WHERE transaction_count = 0 AND test_transaction_count = 0',
+				$prefix . 'donors'
+			)
 		);
 
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$ids          = array_map( 'intval', $ids );
-			$placeholders = implode( ', ', array_fill( 0, $count, '%d' ) );
+			$ids_csv = implode( ',', array_map( 'intval', $ids ) );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}donormeta WHERE donor_id IN ({$placeholders})", $ids ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}notes WHERE object_type = 'donor' AND object_id IN ({$placeholders})", $ids ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}donors WHERE id IN ({$placeholders})", $ids ) );
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE FIND_IN_SET( donor_id, %s ) > 0',
+					$prefix . 'donormeta',
+					$ids_csv
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE object_type = %s AND FIND_IN_SET( object_id, %s ) > 0',
+					$prefix . 'notes',
+					'donor',
+					$ids_csv
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE FIND_IN_SET( id, %s ) > 0',
+					$prefix . 'donors',
+					$ids_csv
+				)
+			);
 		}
 
 		$this->log_activity( 'test_donors_deleted', 'settings', 0, [ 'count' => $count ] );
@@ -304,19 +347,25 @@ class CleanupService {
 
 		$prefix = $wpdb->prefix . 'missiondp_';
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$ids = $wpdb->get_col( "SELECT id FROM {$prefix}subscriptions WHERE is_test = 1" );
+		$ids = $wpdb->get_col(
+			$wpdb->prepare( 'SELECT id FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
+		);
 
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$ids          = array_map( 'intval', $ids );
-			$placeholders = implode( ', ', array_fill( 0, $count, '%d' ) );
+			$ids_csv = implode( ',', array_map( 'intval', $ids ) );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table prefix is internal; IDs are bound via prepare() with %d placeholders interpolated from $placeholders.
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$prefix}subscriptionmeta WHERE subscription_id IN ({$placeholders})", $ids ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Hardcoded query, no user input.
-			$wpdb->query( "DELETE FROM {$prefix}subscriptions WHERE is_test = 1" );
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE FIND_IN_SET( subscription_id, %s ) > 0',
+					$prefix . 'subscriptionmeta',
+					$ids_csv
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare( 'DELETE FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
+			);
 		}
 
 		$this->log_activity( 'test_subscriptions_deleted', 'settings', 0, [ 'count' => $count ] );
@@ -386,35 +435,48 @@ class CleanupService {
 		// Truncate all custom tables.
 		$schema = new Schema();
 		foreach ( $schema->get_table_names() as $table ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "TRUNCATE TABLE {$table}" );
+			$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 		}
 
 		// Delete campaign CPT posts and meta.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query(
-			"DELETE meta FROM {$wpdb->postmeta} meta
-			 INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id
-			 WHERE posts.post_type = 'missiondp_campaign'"
+			$wpdb->prepare(
+				'DELETE meta FROM %i meta
+				 INNER JOIN %i posts ON posts.ID = meta.post_id
+				 WHERE posts.post_type = %s',
+				$wpdb->postmeta,
+				$wpdb->posts,
+				'missiondp_campaign'
+			)
 		);
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'missiondp_campaign'" );
+		$wpdb->query(
+			$wpdb->prepare(
+				'DELETE FROM %i WHERE post_type = %s',
+				$wpdb->posts,
+				'missiondp_campaign'
+			)
+		);
 
 		// Reset settings to defaults.
 		update_option( 'missiondp_settings', $this->settings->get_defaults() );
 		delete_option( 'missiondp_default_campaign' );
 
-		// Clear transients.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query(
-			"DELETE FROM {$wpdb->options}
-			WHERE option_name LIKE '_transient_missiondp_%'
-			OR option_name LIKE '_transient_timeout_missiondp_%'"
-		);
+		self::clear_plugin_transients();
 
 		wp_cache_flush();
 
 		return [ 'deleted' => true ];
+	}
+
+	/**
+	 * Delete every Mission plugin transient (and its timeout sibling).
+	 *
+	 * Used during deactivation and the "delete all data" reset. Static so it
+	 * can be called from the Deactivator without instantiating the full
+	 * service (which depends on SettingsService).
+	 */
+	public static function clear_plugin_transients(): void {
+		self::delete_transients_like_static( 'missiondp_%' );
 	}
 
 	// ------------------------------------------------------------------
@@ -427,16 +489,23 @@ class CleanupService {
 	 * @param string $pattern SQL LIKE pattern (e.g. 'missiondp_dashboard_%').
 	 */
 	private function delete_transients_like( string $pattern ): void {
+		self::delete_transients_like_static( $pattern );
+	}
+
+	/**
+	 * Static implementation of the transient delete.
+	 *
+	 * @param string $pattern SQL LIKE pattern (e.g. 'missiondp_dashboard_%').
+	 */
+	private static function delete_transients_like_static( string $pattern ): void {
 		global $wpdb;
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->options}
-				WHERE option_name LIKE %s
-				OR option_name LIKE %s",
+				'DELETE FROM %i WHERE option_name LIKE %s OR option_name LIKE %s',
+				$wpdb->options,
 				'_transient_' . $pattern,
-				'_transient_timeout_' . $pattern,
+				'_transient_timeout_' . $pattern
 			)
 		);
 	}

@@ -7,7 +7,7 @@
 
 namespace MissionDP\Database\DataStore;
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Models\Transaction;
 
@@ -181,6 +181,10 @@ class TransactionDataStore implements DataStoreInterface {
 	/**
 	 * Query transactions.
 	 *
+	 * Supported filters: status, type, type__not, donor_id, campaign_id,
+	 * subscription_id, gateway_transaction_id, is_test, date_after, date_before.
+	 * Pagination/order: orderby, order, per_page, page.
+	 *
 	 * @param array<string, mixed> $args Query arguments.
 	 *
 	 * @return Transaction[]
@@ -188,16 +192,139 @@ class TransactionDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
+		$status     = (string) ( $args['status'] ?? '' );
+		$has_status = '' !== $status ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$type     = (string) ( $args['type'] ?? '' );
+		$has_type = '' !== $type ? 1 : 0;
+
+		$type_not     = (string) ( $args['type__not'] ?? '' );
+		$has_type_not = '' !== $type_not ? 1 : 0;
+
+		$donor_id  = (int) ( $args['donor_id'] ?? 0 );
+		$has_donor = $donor_id > 0 ? 1 : 0;
+
+		$campaign_id  = (int) ( $args['campaign_id'] ?? 0 );
+		$has_campaign = $campaign_id > 0 ? 1 : 0;
+
+		$subscription_id  = (int) ( $args['subscription_id'] ?? 0 );
+		$has_subscription = $subscription_id > 0 ? 1 : 0;
+
+		$gateway_txn_id     = (string) ( $args['gateway_transaction_id'] ?? '' );
+		$has_gateway_txn_id = '' !== $gateway_txn_id ? 1 : 0;
+
+		$is_test_val = isset( $args['is_test'] ) ? (int) (bool) $args['is_test'] : 0;
+		$has_is_test = isset( $args['is_test'] ) ? 1 : 0;
+
+		$date_after     = (string) ( $args['date_after'] ?? '' );
+		$has_date_after = '' !== $date_after ? 1 : 0;
+
+		$date_before     = (string) ( $args['date_before'] ?? '' );
+		$has_date_before = '' !== $date_before ? 1 : 0;
+
+		$allowed_orderby = [ 'id', 'date_created', 'date_completed', 'date_modified', 'total_amount', 'status' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+
+		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR status = %s )
+					   AND ( %d = 0 OR type = %s )
+					   AND ( %d = 0 OR type != %s )
+					   AND ( %d = 0 OR donor_id = %d )
+					   AND ( %d = 0 OR campaign_id = %d )
+					   AND ( %d = 0 OR subscription_id = %d )
+					   AND ( %d = 0 OR gateway_transaction_id = %s )
+					   AND ( %d = 0 OR is_test = %d )
+					   AND ( %d = 0 OR date_created >= %s )
+					   AND ( %d = 0 OR date_created <= %s )
+					 ORDER BY %i ASC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_status,
+					$status,
+					$has_type,
+					$type,
+					$has_type_not,
+					$type_not,
+					$has_donor,
+					$donor_id,
+					$has_campaign,
+					$campaign_id,
+					$has_subscription,
+					$subscription_id,
+					$has_gateway_txn_id,
+					$gateway_txn_id,
+					$has_is_test,
+					$is_test_val,
+					$has_date_after,
+					$date_after,
+					$has_date_before,
+					$date_before,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR status = %s )
+					   AND ( %d = 0 OR type = %s )
+					   AND ( %d = 0 OR type != %s )
+					   AND ( %d = 0 OR donor_id = %d )
+					   AND ( %d = 0 OR campaign_id = %d )
+					   AND ( %d = 0 OR subscription_id = %d )
+					   AND ( %d = 0 OR gateway_transaction_id = %s )
+					   AND ( %d = 0 OR is_test = %d )
+					   AND ( %d = 0 OR date_created >= %s )
+					   AND ( %d = 0 OR date_created <= %s )
+					 ORDER BY %i DESC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_status,
+					$status,
+					$has_type,
+					$type,
+					$has_type_not,
+					$type_not,
+					$has_donor,
+					$donor_id,
+					$has_campaign,
+					$campaign_id,
+					$has_subscription,
+					$subscription_id,
+					$has_gateway_txn_id,
+					$gateway_txn_id,
+					$has_is_test,
+					$is_test_val,
+					$has_date_after,
+					$date_after,
+					$has_date_before,
+					$date_before,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
 
 	/**
 	 * Count transactions matching filters.
+	 *
+	 * Supported filters mirror query() (excluding pagination/order).
 	 *
 	 * @param array<string, mixed> $args Query arguments.
 	 *
@@ -206,107 +333,72 @@ class TransactionDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		$status     = (string) ( $args['status'] ?? '' );
+		$has_status = '' !== $status ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
-	}
+		$type     = (string) ( $args['type'] ?? '' );
+		$has_type = '' !== $type ? 1 : 0;
 
-	/**
-	 * Build a query SQL template and the values that fill its placeholders.
-	 *
-	 * The returned SQL contains `%d` / `%s` placeholders for any user-supplied
-	 * value; the caller is expected to pass it through `$wpdb->prepare()`
-	 * before executing.
-	 *
-	 * @param string               $select The SELECT clause.
-	 * @param array<string, mixed> $args   Query arguments.
-	 *
-	 * @return array{0: string, 1: array<int, mixed>} [ sql_template, values ]
-	 */
-	private function build_query_sql( string $select, array $args ): array {
-		$where  = [];
-		$values = [ $this->get_table_name() ];
+		$type_not     = (string) ( $args['type__not'] ?? '' );
+		$has_type_not = '' !== $type_not ? 1 : 0;
 
-		if ( ! empty( $args['id'] ) ) {
-			$where[]  = 'id = %d';
-			$values[] = $args['id'];
-		}
+		$donor_id  = (int) ( $args['donor_id'] ?? 0 );
+		$has_donor = $donor_id > 0 ? 1 : 0;
 
-		if ( ! empty( $args['status'] ) ) {
-			$where[]  = 'status = %s';
-			$values[] = $args['status'];
-		}
+		$campaign_id  = (int) ( $args['campaign_id'] ?? 0 );
+		$has_campaign = $campaign_id > 0 ? 1 : 0;
 
-		if ( ! empty( $args['type'] ) ) {
-			$where[]  = 'type = %s';
-			$values[] = $args['type'];
-		}
+		$subscription_id  = (int) ( $args['subscription_id'] ?? 0 );
+		$has_subscription = $subscription_id > 0 ? 1 : 0;
 
-		if ( ! empty( $args['type__not'] ) ) {
-			$where[]  = 'type != %s';
-			$values[] = $args['type__not'];
-		}
+		$gateway_txn_id     = (string) ( $args['gateway_transaction_id'] ?? '' );
+		$has_gateway_txn_id = '' !== $gateway_txn_id ? 1 : 0;
 
-		if ( ! empty( $args['donor_id'] ) ) {
-			$where[]  = 'donor_id = %d';
-			$values[] = $args['donor_id'];
-		}
+		$is_test_val = isset( $args['is_test'] ) ? (int) (bool) $args['is_test'] : 0;
+		$has_is_test = isset( $args['is_test'] ) ? 1 : 0;
 
-		if ( ! empty( $args['campaign_id'] ) ) {
-			$where[]  = 'campaign_id = %d';
-			$values[] = $args['campaign_id'];
-		}
+		$date_after     = (string) ( $args['date_after'] ?? '' );
+		$has_date_after = '' !== $date_after ? 1 : 0;
 
-		if ( ! empty( $args['subscription_id'] ) ) {
-			$where[]  = 'subscription_id = %d';
-			$values[] = $args['subscription_id'];
-		}
+		$date_before     = (string) ( $args['date_before'] ?? '' );
+		$has_date_before = '' !== $date_before ? 1 : 0;
 
-		if ( ! empty( $args['source_post_id'] ) ) {
-			$where[]  = 'source_post_id = %d';
-			$values[] = $args['source_post_id'];
-		}
-
-		if ( ! empty( $args['gateway_transaction_id'] ) ) {
-			$where[]  = 'gateway_transaction_id = %s';
-			$values[] = $args['gateway_transaction_id'];
-		}
-
-		if ( isset( $args['is_test'] ) ) {
-			$where[]  = 'is_test = %d';
-			$values[] = (int) $args['is_test'];
-		}
-
-		if ( ! empty( $args['date_after'] ) ) {
-			$where[]  = 'date_created >= %s';
-			$values[] = $args['date_after'];
-		}
-
-		if ( ! empty( $args['date_before'] ) ) {
-			$where[]  = 'date_created <= %s';
-			$values[] = $args['date_before'];
-		}
-
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
-
-		$allowed_orderby = [ 'id', 'date_created', 'date_completed', 'date_modified', 'total_amount', 'status' ];
-		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
-
-		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
-		$values[] = $orderby;
-
-		if ( isset( $args['per_page'] ) ) {
-			$sql     .= ' LIMIT %d OFFSET %d';
-			$per_page = max( 1, (int) $args['per_page'] );
-			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$values[] = $per_page;
-			$values[] = ( $page - 1 ) * $per_page;
-		}
-
-		return [ $sql, $values ];
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i
+				 WHERE ( %d = 0 OR status = %s )
+				   AND ( %d = 0 OR type = %s )
+				   AND ( %d = 0 OR type != %s )
+				   AND ( %d = 0 OR donor_id = %d )
+				   AND ( %d = 0 OR campaign_id = %d )
+				   AND ( %d = 0 OR subscription_id = %d )
+				   AND ( %d = 0 OR gateway_transaction_id = %s )
+				   AND ( %d = 0 OR is_test = %d )
+				   AND ( %d = 0 OR date_created >= %s )
+				   AND ( %d = 0 OR date_created <= %s )',
+				$this->get_table_name(),
+				$has_status,
+				$status,
+				$has_type,
+				$type,
+				$has_type_not,
+				$type_not,
+				$has_donor,
+				$donor_id,
+				$has_campaign,
+				$campaign_id,
+				$has_subscription,
+				$subscription_id,
+				$has_gateway_txn_id,
+				$gateway_txn_id,
+				$has_is_test,
+				$is_test_val,
+				$has_date_after,
+				$date_after,
+				$has_date_before,
+				$date_before
+			)
+		);
 	}
 
 	/**

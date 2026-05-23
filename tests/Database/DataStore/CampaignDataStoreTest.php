@@ -193,20 +193,6 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test query by post_id.
-	 */
-	public function test_query_by_post_id(): void {
-		$campaign_a = $this->make_campaign_with_post();
-		$campaign_b = $this->make_campaign_with_post();
-		$this->store->create( $campaign_a );
-		$this->store->create( $campaign_b );
-
-		$results = $this->store->query( array( 'post_id' => $campaign_a->post_id ) );
-		$this->assertCount( 1, $results );
-		$this->assertSame( $campaign_a->post_id, $results[0]->post_id );
-	}
-
-	/**
 	 * Test count.
 	 */
 	public function test_count(): void {

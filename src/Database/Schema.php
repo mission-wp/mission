@@ -310,4 +310,15 @@ class Schema {
 	public function get_table_names(): array {
 		return array_keys( $this->get_table_schemas() );
 	}
+
+	/**
+	 * Drop every custom plugin table. Called during uninstall.
+	 */
+	public function drop_all_tables(): void {
+		global $wpdb;
+
+		foreach ( $this->get_table_names() as $table_name ) {
+			$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
+		}
+	}
 }

@@ -8,6 +8,7 @@
 namespace MissionDP\Tests\Database;
 
 use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\Schema;
 use WP_UnitTestCase;
 
 /**
@@ -35,10 +36,10 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that drop_tables runs without error.
+	 * Test that Schema::drop_all_tables runs without error.
 	 */
-	public function test_drop_tables_runs_without_error(): void {
-		DatabaseModule::drop_tables();
+	public function test_drop_all_tables_runs_without_error(): void {
+		( new Schema() )->drop_all_tables();
 
 		// If we get here without an exception, the test passes.
 		$this->assertTrue( true );

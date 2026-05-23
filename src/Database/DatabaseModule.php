@@ -9,8 +9,6 @@ namespace MissionDP\Database;
 
 defined( 'ABSPATH' ) || exit;
 
-// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter -- SQL identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches identifiers.
-
 /**
  * Database module class.
  */
@@ -102,24 +100,6 @@ class DatabaseModule {
 
 		foreach ( $tables as $table_sql ) {
 			dbDelta( $table_sql );
-		}
-	}
-
-	/**
-	 * Drop all custom database tables.
-	 *
-	 * Called during uninstall to clean up plugin data.
-	 *
-	 * @return void
-	 */
-	public static function drop_tables(): void {
-		global $wpdb;
-
-		$schema = new Schema();
-		$tables = $schema->get_table_names();
-
-		foreach ( $tables as $table_name ) {
-			$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 	}
 

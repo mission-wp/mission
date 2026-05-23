@@ -106,6 +106,30 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Get IDs of scheduled campaigns whose start date has arrived.
+	 *
+	 * @param string $today Today's date (Y-m-d).
+	 * @return int[]
+	 */
+	public static function find_ids_to_activate( string $today ): array {
+		/** @var CampaignDataStore $store */
+		$store = static::store();
+		return $store->find_ids_to_activate( $today );
+	}
+
+	/**
+	 * Get IDs of active campaigns whose end date has passed.
+	 *
+	 * @param string $today Today's date (Y-m-d).
+	 * @return int[]
+	 */
+	public static function find_ids_to_end( string $today ): array {
+		/** @var CampaignDataStore $store */
+		$store = static::store();
+		return $store->find_ids_to_end( $today );
+	}
+
+	/**
 	 * Save this model — creates the WP post on first save.
 	 *
 	 * @return int|bool New ID on insert, true on update, false on failure.

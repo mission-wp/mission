@@ -7,7 +7,7 @@
 
 namespace MissionDP\Database\DataStore;
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Models\TransactionHistory;
 
@@ -124,10 +124,55 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
+		$transaction_id     = (int) ( $args['transaction_id'] ?? 0 );
+		$has_transaction_id = $transaction_id > 0 ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$event_type     = (string) ( $args['event_type'] ?? '' );
+		$has_event_type = '' !== $event_type ? 1 : 0;
+
+		$order_asc = 'ASC' === strtoupper( (string) ( $args['order'] ?? 'DESC' ) );
+
+		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR transaction_id = %d )
+					   AND ( %d = 0 OR event_type = %s )
+					 ORDER BY created_at ASC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_transaction_id,
+					$transaction_id,
+					$has_event_type,
+					$event_type,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR transaction_id = %d )
+					   AND ( %d = 0 OR event_type = %s )
+					 ORDER BY created_at DESC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_transaction_id,
+					$transaction_id,
+					$has_event_type,
+					$event_type,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -142,58 +187,24 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		$transaction_id     = (int) ( $args['transaction_id'] ?? 0 );
+		$has_transaction_id = $transaction_id > 0 ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
-	}
+		$event_type     = (string) ( $args['event_type'] ?? '' );
+		$has_event_type = '' !== $event_type ? 1 : 0;
 
-	/**
-	 * Build a query SQL string from arguments.
-	 *
-	 * @param string               $select The SELECT clause.
-	 * @param array<string, mixed> $args   Query arguments.
-	 *
-	 * @return string
-	 */
-	/**
-	 * Returns [ sql_template, values ] — caller passes through wpdb::prepare().
-	 *
-	 * @return array{0: string, 1: array<int, mixed>}
-	 */
-	private function build_query_sql( string $select, array $args ): array {
-		$where  = [];
-		$values = [ $this->get_table_name() ];
-
-		if ( ! empty( $args['transaction_id'] ) ) {
-			$where[]  = 'transaction_id = %d';
-			$values[] = $args['transaction_id'];
-		}
-
-		if ( ! empty( $args['event_type'] ) ) {
-			$where[]  = 'event_type = %s';
-			$values[] = $args['event_type'];
-		}
-
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
-
-		$allowed_orderby = [ 'id', 'created_at' ];
-		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'created_at';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
-
-		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
-		$values[] = $orderby;
-
-		if ( isset( $args['per_page'] ) ) {
-			$sql     .= ' LIMIT %d OFFSET %d';
-			$per_page = max( 1, (int) $args['per_page'] );
-			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$values[] = $per_page;
-			$values[] = ( $page - 1 ) * $per_page;
-		}
-
-		return [ $sql, $values ];
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i
+				 WHERE ( %d = 0 OR transaction_id = %d )
+				   AND ( %d = 0 OR event_type = %s )',
+				$this->get_table_name(),
+				$has_transaction_id,
+				$transaction_id,
+				$has_event_type,
+				$event_type
+			)
+		);
 	}
 
 	/**

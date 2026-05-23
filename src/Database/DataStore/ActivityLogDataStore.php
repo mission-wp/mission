@@ -7,7 +7,7 @@
 
 namespace MissionDP\Database\DataStore;
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Models\ActivityLog;
 
@@ -121,10 +121,115 @@ class ActivityLogDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
+		$object_type     = ! empty( $args['object_type'] ) ? (string) $args['object_type'] : '';
+		$has_object_type = '' !== $object_type ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$object_id     = ! empty( $args['object_id'] ) ? (int) $args['object_id'] : 0;
+		$has_object_id = $object_id > 0 ? 1 : 0;
+
+		$event     = ! empty( $args['event'] ) ? (string) $args['event'] : '';
+		$has_event = '' !== $event ? 1 : 0;
+
+		$has_is_test = isset( $args['is_test'] ) ? 1 : 0;
+		$is_test     = $has_is_test ? (int) $args['is_test'] : 0;
+
+		$date_after     = ! empty( $args['date_after'] ) ? (string) $args['date_after'] : '';
+		$has_date_after = '' !== $date_after ? 1 : 0;
+
+		$level     = ! empty( $args['level'] ) ? (string) $args['level'] : '';
+		$has_level = '' !== $level ? 1 : 0;
+
+		$category     = ! empty( $args['category'] ) ? (string) $args['category'] : '';
+		$has_category = '' !== $category ? 1 : 0;
+
+		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
+		$has_search  = '' !== $search_like ? 1 : 0;
+
+		$allowed_orderby = [ 'id', 'date_created', 'event', 'object_type', 'level', 'category' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+
+		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR object_type = %s )
+					   AND ( %d = 0 OR object_id = %d )
+					   AND ( %d = 0 OR event = %s )
+					   AND ( %d = 0 OR is_test = %d )
+					   AND ( %d = 0 OR date_created >= %s )
+					   AND ( %d = 0 OR level = %s )
+					   AND ( %d = 0 OR category = %s )
+					   AND ( %d = 0 OR event LIKE %s OR data LIKE %s )
+					 ORDER BY %i ASC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_object_type,
+					$object_type,
+					$has_object_id,
+					$object_id,
+					$has_event,
+					$event,
+					$has_is_test,
+					$is_test,
+					$has_date_after,
+					$date_after,
+					$has_level,
+					$level,
+					$has_category,
+					$category,
+					$has_search,
+					$search_like,
+					$search_like,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR object_type = %s )
+					   AND ( %d = 0 OR object_id = %d )
+					   AND ( %d = 0 OR event = %s )
+					   AND ( %d = 0 OR is_test = %d )
+					   AND ( %d = 0 OR date_created >= %s )
+					   AND ( %d = 0 OR level = %s )
+					   AND ( %d = 0 OR category = %s )
+					   AND ( %d = 0 OR event LIKE %s OR data LIKE %s )
+					 ORDER BY %i DESC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_object_type,
+					$object_type,
+					$has_object_id,
+					$object_id,
+					$has_event,
+					$event,
+					$has_is_test,
+					$is_test,
+					$has_date_after,
+					$date_after,
+					$has_level,
+					$level,
+					$has_category,
+					$category,
+					$has_search,
+					$search_like,
+					$search_like,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -139,11 +244,61 @@ class ActivityLogDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		$object_type     = ! empty( $args['object_type'] ) ? (string) $args['object_type'] : '';
+		$has_object_type = '' !== $object_type ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
+		$object_id     = ! empty( $args['object_id'] ) ? (int) $args['object_id'] : 0;
+		$has_object_id = $object_id > 0 ? 1 : 0;
+
+		$event     = ! empty( $args['event'] ) ? (string) $args['event'] : '';
+		$has_event = '' !== $event ? 1 : 0;
+
+		$has_is_test = isset( $args['is_test'] ) ? 1 : 0;
+		$is_test     = $has_is_test ? (int) $args['is_test'] : 0;
+
+		$date_after     = ! empty( $args['date_after'] ) ? (string) $args['date_after'] : '';
+		$has_date_after = '' !== $date_after ? 1 : 0;
+
+		$level     = ! empty( $args['level'] ) ? (string) $args['level'] : '';
+		$has_level = '' !== $level ? 1 : 0;
+
+		$category     = ! empty( $args['category'] ) ? (string) $args['category'] : '';
+		$has_category = '' !== $category ? 1 : 0;
+
+		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
+		$has_search  = '' !== $search_like ? 1 : 0;
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i
+				 WHERE ( %d = 0 OR object_type = %s )
+				   AND ( %d = 0 OR object_id = %d )
+				   AND ( %d = 0 OR event = %s )
+				   AND ( %d = 0 OR is_test = %d )
+				   AND ( %d = 0 OR date_created >= %s )
+				   AND ( %d = 0 OR level = %s )
+				   AND ( %d = 0 OR category = %s )
+				   AND ( %d = 0 OR event LIKE %s OR data LIKE %s )',
+				$this->get_table_name(),
+				$has_object_type,
+				$object_type,
+				$has_object_id,
+				$object_id,
+				$has_event,
+				$event,
+				$has_is_test,
+				$is_test,
+				$has_date_after,
+				$date_after,
+				$has_level,
+				$level,
+				$has_category,
+				$category,
+				$has_search,
+				$search_like,
+				$search_like
+			)
+		);
 	}
 
 	/**
@@ -191,91 +346,6 @@ class ActivityLogDataStore implements DataStoreInterface {
 		}
 
 		return (int) $wpdb->rows_affected;
-	}
-
-	/**
-	 * Build a query SQL string from arguments.
-	 *
-	 * @param string               $select The SELECT clause.
-	 * @param array<string, mixed> $args   Query arguments.
-	 *
-	 * @return string
-	 */
-	/**
-	 * Returns [ sql_template, values ] — caller passes through wpdb::prepare().
-	 *
-	 * @return array{0: string, 1: array<int, mixed>}
-	 */
-	private function build_query_sql( string $select, array $args ): array {
-		global $wpdb;
-
-		$where  = [];
-		$values = [ $this->get_table_name() ];
-
-		if ( ! empty( $args['object_type'] ) ) {
-			$where[]  = 'object_type = %s';
-			$values[] = $args['object_type'];
-		}
-
-		if ( ! empty( $args['object_id'] ) ) {
-			$where[]  = 'object_id = %d';
-			$values[] = $args['object_id'];
-		}
-
-		if ( ! empty( $args['event'] ) ) {
-			$where[]  = 'event = %s';
-			$values[] = $args['event'];
-		}
-
-		if ( isset( $args['is_test'] ) ) {
-			$where[]  = 'is_test = %d';
-			$values[] = (int) $args['is_test'];
-		}
-
-		if ( ! empty( $args['date_after'] ) ) {
-			$where[]  = 'date_created >= %s';
-			$values[] = $args['date_after'];
-		}
-
-		if ( ! empty( $args['date_before'] ) ) {
-			$where[]  = 'date_created <= %s';
-			$values[] = $args['date_before'];
-		}
-
-		if ( ! empty( $args['level'] ) ) {
-			$where[]  = 'level = %s';
-			$values[] = $args['level'];
-		}
-
-		if ( ! empty( $args['category'] ) ) {
-			$where[]  = 'category = %s';
-			$values[] = $args['category'];
-		}
-
-		if ( ! empty( $args['search'] ) ) {
-			$where[]  = '(event LIKE %s OR data LIKE %s)';
-			$values[] = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$values[] = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-		}
-
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
-
-		$allowed_orderby = [ 'id', 'date_created', 'event', 'object_type', 'level', 'category' ];
-		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
-
-		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
-		$values[] = $orderby;
-
-		if ( isset( $args['per_page'] ) ) {
-			$sql     .= ' LIMIT %d OFFSET %d';
-			$per_page = max( 1, (int) $args['per_page'] );
-			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$values[] = $per_page;
-			$values[] = ( $page - 1 ) * $per_page;
-		}
-
-		return [ $sql, $values ];
 	}
 
 	/**

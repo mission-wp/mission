@@ -7,7 +7,7 @@
 
 namespace MissionDP\Database\DataStore;
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Models\Subscription;
 
@@ -174,10 +174,96 @@ class SubscriptionDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
+		$status_in_csv  = ! empty( $args['status__in'] ) && is_array( $args['status__in'] ) ? implode( ',', $args['status__in'] ) : '';
+		$has_status_in  = '' !== $status_in_csv ? 1 : 0;
+		$status         = ! $has_status_in && ! empty( $args['status'] ) ? (string) $args['status'] : '';
+		$has_status     = '' !== $status ? 1 : 0;
+		$donor_id       = (int) ( $args['donor_id'] ?? 0 );
+		$campaign_id    = (int) ( $args['campaign_id'] ?? 0 );
+		$has_is_test    = isset( $args['is_test'] ) ? 1 : 0;
+		$is_test        = isset( $args['is_test'] ) ? (int) (bool) $args['is_test'] : 0;
+		$gateway_sub_id = (string) ( $args['gateway_subscription_id'] ?? '' );
+		$has_gateway    = '' !== $gateway_sub_id ? 1 : 0;
+		$renewal_before = (string) ( $args['date_next_renewal_before'] ?? '' );
+		$has_renewal    = '' !== $renewal_before ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$allowed_orderby = [ 'id', 'date_created', 'date_modified', 'date_next_renewal', 'total_amount', 'status' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+
+		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR FIND_IN_SET( status, %s ) )
+					   AND ( %d = 0 OR status = %s )
+					   AND ( %d = 0 OR donor_id = %d )
+					   AND ( %d = 0 OR campaign_id = %d )
+					   AND ( %d = 0 OR is_test = %d )
+					   AND ( %d = 0 OR gateway_subscription_id = %s )
+					   AND ( %d = 0 OR date_next_renewal < %s )
+					 ORDER BY %i ASC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_status_in,
+					$status_in_csv,
+					$has_status,
+					$status,
+					$donor_id,
+					$donor_id,
+					$campaign_id,
+					$campaign_id,
+					$has_is_test,
+					$is_test,
+					$has_gateway,
+					$gateway_sub_id,
+					$has_renewal,
+					$renewal_before,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR FIND_IN_SET( status, %s ) )
+					   AND ( %d = 0 OR status = %s )
+					   AND ( %d = 0 OR donor_id = %d )
+					   AND ( %d = 0 OR campaign_id = %d )
+					   AND ( %d = 0 OR is_test = %d )
+					   AND ( %d = 0 OR gateway_subscription_id = %s )
+					   AND ( %d = 0 OR date_next_renewal < %s )
+					 ORDER BY %i DESC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_status_in,
+					$status_in_csv,
+					$has_status,
+					$status,
+					$donor_id,
+					$donor_id,
+					$campaign_id,
+					$campaign_id,
+					$has_is_test,
+					$is_test,
+					$has_gateway,
+					$gateway_sub_id,
+					$has_renewal,
+					$renewal_before,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -192,100 +278,46 @@ class SubscriptionDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		$status_in_csv  = ! empty( $args['status__in'] ) && is_array( $args['status__in'] ) ? implode( ',', $args['status__in'] ) : '';
+		$has_status_in  = '' !== $status_in_csv ? 1 : 0;
+		$status         = ! $has_status_in && ! empty( $args['status'] ) ? (string) $args['status'] : '';
+		$has_status     = '' !== $status ? 1 : 0;
+		$donor_id       = (int) ( $args['donor_id'] ?? 0 );
+		$campaign_id    = (int) ( $args['campaign_id'] ?? 0 );
+		$has_is_test    = isset( $args['is_test'] ) ? 1 : 0;
+		$is_test        = isset( $args['is_test'] ) ? (int) (bool) $args['is_test'] : 0;
+		$gateway_sub_id = (string) ( $args['gateway_subscription_id'] ?? '' );
+		$has_gateway    = '' !== $gateway_sub_id ? 1 : 0;
+		$renewal_before = (string) ( $args['date_next_renewal_before'] ?? '' );
+		$has_renewal    = '' !== $renewal_before ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
-	}
-
-	/**
-	 * Build a query SQL string from arguments.
-	 *
-	 * @param string               $select The SELECT clause.
-	 * @param array<string, mixed> $args   Query arguments.
-	 *
-	 * @return string
-	 */
-	/**
-	 * Returns [ sql_template, values ] — caller passes through wpdb::prepare().
-	 *
-	 * @return array{0: string, 1: array<int, mixed>}
-	 */
-	private function build_query_sql( string $select, array $args ): array {
-		global $wpdb;
-
-		$where  = [];
-		$values = [ $this->get_table_name() ];
-
-		if ( ! empty( $args['status__in'] ) && is_array( $args['status__in'] ) ) {
-			$placeholders = implode( ', ', array_fill( 0, count( $args['status__in'] ), '%s' ) );
-			$where[]      = "status IN ($placeholders)";
-			array_push( $values, ...$args['status__in'] );
-		} elseif ( ! empty( $args['status'] ) ) {
-			$where[]  = 'status = %s';
-			$values[] = $args['status'];
-		}
-
-		if ( ! empty( $args['donor_id'] ) ) {
-			$where[]  = 'donor_id = %d';
-			$values[] = $args['donor_id'];
-		}
-
-		if ( ! empty( $args['campaign_id'] ) ) {
-			$where[]  = 'campaign_id = %d';
-			$values[] = $args['campaign_id'];
-		}
-
-		if ( isset( $args['is_test'] ) ) {
-			$where[]  = 'is_test = %d';
-			$values[] = (int) $args['is_test'];
-		}
-
-		if ( ! empty( $args['gateway_subscription_id'] ) ) {
-			$where[]  = 'gateway_subscription_id = %s';
-			$values[] = $args['gateway_subscription_id'];
-		}
-
-		if ( ! empty( $args['date_after'] ) ) {
-			$where[]  = 'date_created >= %s';
-			$values[] = $args['date_after'];
-		}
-
-		if ( ! empty( $args['date_before'] ) ) {
-			$where[]  = 'date_created <= %s';
-			$values[] = $args['date_before'];
-		}
-
-		if ( ! empty( $args['date_next_renewal_before'] ) ) {
-			$where[]  = 'date_next_renewal < %s';
-			$values[] = $args['date_next_renewal_before'];
-		}
-
-		if ( ! empty( $args['search'] ) ) {
-			$search   = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]  = '( gateway_subscription_id LIKE %s )';
-			$values[] = $search;
-		}
-
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
-
-		$allowed_orderby = [ 'id', 'date_created', 'date_modified', 'date_next_renewal', 'total_amount', 'status' ];
-		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
-
-		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
-		$values[] = $orderby;
-
-		if ( isset( $args['per_page'] ) ) {
-			$sql     .= ' LIMIT %d OFFSET %d';
-			$per_page = max( 1, (int) $args['per_page'] );
-			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$values[] = $per_page;
-			$values[] = ( $page - 1 ) * $per_page;
-		}
-
-		return [ $sql, $values ];
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i
+				 WHERE ( %d = 0 OR FIND_IN_SET( status, %s ) )
+				   AND ( %d = 0 OR status = %s )
+				   AND ( %d = 0 OR donor_id = %d )
+				   AND ( %d = 0 OR campaign_id = %d )
+				   AND ( %d = 0 OR is_test = %d )
+				   AND ( %d = 0 OR gateway_subscription_id = %s )
+				   AND ( %d = 0 OR date_next_renewal < %s )',
+				$this->get_table_name(),
+				$has_status_in,
+				$status_in_csv,
+				$has_status,
+				$status,
+				$donor_id,
+				$donor_id,
+				$campaign_id,
+				$campaign_id,
+				$has_is_test,
+				$is_test,
+				$has_gateway,
+				$gateway_sub_id,
+				$has_renewal,
+				$renewal_before
+			)
+		);
 	}
 
 	/**

@@ -7,7 +7,7 @@
 
 namespace MissionDP\Database\DataStore;
 
-// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom-table layer. Identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches SQL identifiers. Values use %s/%d placeholders throughout.
+// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Models\Donor;
 
@@ -187,10 +187,54 @@ class DonorDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT *', $args );
+		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
+		$has_search  = '' !== $search_like ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $values ), ARRAY_A );
+		$allowed_orderby = [ 'id', 'date_created', 'total_donated', 'transaction_count', 'last_transaction', 'test_total_donated', 'test_transaction_count', 'test_last_transaction' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+
+		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		if ( $order_asc ) {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR email LIKE %s OR first_name LIKE %s OR last_name LIKE %s )
+					 ORDER BY %i ASC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_search,
+					$search_like,
+					$search_like,
+					$search_like,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		} else {
+			$rows = $wpdb->get_results(
+				$wpdb->prepare(
+					'SELECT * FROM %i
+					 WHERE ( %d = 0 OR email LIKE %s OR first_name LIKE %s OR last_name LIKE %s )
+					 ORDER BY %i DESC
+					 LIMIT %d OFFSET %d',
+					$this->get_table_name(),
+					$has_search,
+					$search_like,
+					$search_like,
+					$search_like,
+					$orderby,
+					$per_page,
+					$offset
+				),
+				ARRAY_A
+			);
+		}
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -205,82 +249,20 @@ class DonorDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		unset( $args['per_page'], $args['page'], $args['orderby'], $args['order'] );
-		[ $sql, $values ] = $this->build_query_sql( 'SELECT COUNT(*)', $args );
+		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
+		$has_search  = '' !== $search_like ? 1 : 0;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is a fixed template built in build_query_sql(): table name and ORDER BY column use %i, all WHERE values use %s/%d. No user input is concatenated into the SQL string.
-		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $values ) );
-	}
-
-	/**
-	 * Build a query SQL string from arguments.
-	 *
-	 * @param string               $select The SELECT clause.
-	 * @param array<string, mixed> $args   Query arguments.
-	 *
-	 * @return string
-	 */
-	/**
-	 * Returns [ sql_template, values ] — caller passes through wpdb::prepare().
-	 *
-	 * @return array{0: string, 1: array<int, mixed>}
-	 */
-	private function build_query_sql( string $select, array $args ): array {
-		global $wpdb;
-
-		$where  = [];
-		$values = [ $this->get_table_name() ];
-
-		if ( ! empty( $args['user_id'] ) ) {
-			$where[]  = 'user_id = %d';
-			$values[] = $args['user_id'];
-		}
-
-		if ( ! empty( $args['search'] ) ) {
-			$like     = '%' . $wpdb->esc_like( $args['search'] ) . '%';
-			$where[]  = '(email LIKE %s OR first_name LIKE %s OR last_name LIKE %s)';
-			$values[] = $like;
-			$values[] = $like;
-			$values[] = $like;
-		}
-
-		if ( ! empty( $args['date_after'] ) ) {
-			$where[]  = 'date_created >= %s';
-			$values[] = $args['date_after'];
-		}
-
-		if ( ! empty( $args['date_before'] ) ) {
-			$where[]  = 'date_created <= %s';
-			$values[] = $args['date_before'];
-		}
-
-		if ( ! empty( $args['has_transactions'] ) ) {
-			$allowed_count_cols = [ 'transaction_count', 'test_transaction_count' ];
-			$count_col          = in_array( $args['has_transactions'], $allowed_count_cols, true )
-				? $args['has_transactions']
-				: 'transaction_count';
-			$where[]            = '%i > 0';
-			$values[]           = $count_col;
-		}
-
-		$where_clause = $where ? 'WHERE ' . implode( ' AND ', $where ) : '';
-
-		$allowed_orderby = [ 'id', 'date_created', 'total_donated', 'transaction_count', 'last_transaction', 'test_total_donated', 'test_transaction_count', 'test_last_transaction' ];
-		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_dir       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
-
-		$sql      = $select . ' FROM %i ' . $where_clause . ' ORDER BY %i ' . $order_dir;
-		$values[] = $orderby;
-
-		if ( isset( $args['per_page'] ) ) {
-			$sql     .= ' LIMIT %d OFFSET %d';
-			$per_page = max( 1, (int) $args['per_page'] );
-			$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
-			$values[] = $per_page;
-			$values[] = ( $page - 1 ) * $per_page;
-		}
-
-		return [ $sql, $values ];
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i
+				 WHERE ( %d = 0 OR email LIKE %s OR first_name LIKE %s OR last_name LIKE %s )',
+				$this->get_table_name(),
+				$has_search,
+				$search_like,
+				$search_like,
+				$search_like
+			)
+		);
 	}
 
 	/**

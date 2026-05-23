@@ -19,8 +19,6 @@ use MissionDP\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
-// phpcs:disable PluginCheck.Security.DirectDB.UnescapedDBParameter -- SQL identifiers are $wpdb->prefix + plugin-hardcoded suffixes; no user input reaches identifiers.
-
 /**
  * Campaign lifecycle module class.
  */
@@ -118,42 +116,17 @@ class CampaignLifecycleModule {
 	 * @return void
 	 */
 	public function process_transitions(): void {
-		global $wpdb;
-
-		$table = $wpdb->prefix . 'missiondp_campaigns';
 		$today = wp_date( 'Y-m-d' );
 
-		// Scheduled campaigns that should now be active.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$to_activate = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT id FROM {$table} WHERE status = 'scheduled' AND date_start IS NOT NULL AND date_start <= %s",
-				$today
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-		foreach ( $to_activate as $id ) {
-			$campaign = Campaign::find( (int) $id );
+		foreach ( Campaign::find_ids_to_activate( $today ) as $id ) {
+			$campaign = Campaign::find( $id );
 			if ( $campaign ) {
 				$this->transition_status( $campaign, 'active', 'cron' );
 			}
 		}
 
-		// Active campaigns that should now be ended.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$to_end = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT id FROM {$table} WHERE status = 'active' AND date_end IS NOT NULL AND date_end < %s",
-				$today
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
-		foreach ( $to_end as $id ) {
-			$campaign = Campaign::find( (int) $id );
+		foreach ( Campaign::find_ids_to_end( $today ) as $id ) {
+			$campaign = Campaign::find( $id );
 			if ( $campaign ) {
 				$this->transition_status( $campaign, 'ended', 'cron' );
 			}
