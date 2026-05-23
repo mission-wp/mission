@@ -9,7 +9,6 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Rest\RestModule;
-use WP_REST_Request;
 use WP_REST_Response;
 
 defined( 'ABSPATH' ) || exit;
@@ -48,12 +47,9 @@ class DonationFormSettingsEndpoint {
 	/**
 	 * Return resolved donation form settings (plugin defaults + currency).
 	 *
-	 * @param WP_REST_Request $request Request object (unused, required by REST API).
-	 *
 	 * @return WP_REST_Response
 	 */
-	// phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by WP REST API callback signature.
-	public function handle( WP_REST_Request $request ): WP_REST_Response {
+	public function handle(): WP_REST_Response {
 		return new WP_REST_Response( DonationFormSettings::resolve( [] ), 200 );
 	}
 }

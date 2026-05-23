@@ -12,7 +12,6 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Donor;
 use MissionDP\Rest\RestModule;
-use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -59,15 +58,6 @@ class EmailTemplateEndpoint {
 		'donor_note'                => 'A note about your donation',
 		'tribute_notification'      => 'A donation has been made {tribute_type_label} {honoree_name}',
 	];
-
-	/**
-	 * Constructor.
-	 *
-	 * @param SettingsService $settings Settings service.
-	 */
-	public function __construct(
-		private readonly SettingsService $settings, // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInImplementedInterfaceAfterLastUsed -- reserved for future use.
-	) {}
 
 	/**
 	 * Register REST routes.

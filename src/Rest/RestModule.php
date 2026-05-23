@@ -104,7 +104,7 @@ class RestModule {
 		( new DashboardProfileEndpoint() )->register();
 		( new DashboardEmailChangeEndpoint() )->register();
 		( new EmailTestEndpoint( $settings ) )->register();
-		( new EmailTemplateEndpoint( $settings ) )->register();
+		( new EmailTemplateEndpoint() )->register();
 		( new SystemStatusEndpoint( $settings ) )->register();
 		( new CleanupEndpoint( new CleanupService( $settings ) ) )->register();
 	}
