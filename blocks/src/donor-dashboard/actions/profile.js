@@ -331,5 +331,4 @@ export const profileActions = {
       ! ctx.profile.preferences.emailAnnualReminder
     );
   },
-
 };

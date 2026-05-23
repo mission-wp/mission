@@ -294,7 +294,6 @@ class DonorsEndpointTest extends WP_UnitTestCase {
 	 * Test GET list returns paginated donors.
 	 */
 	public function test_get_list_returns_paginated_donors(): void {
-		// Create transactions so each donor passes the has_transactions filter.
 		$this->create_transaction( [ 'donor_id' => $this->donor->id ] );
 
 		$donor2 = $this->create_donor();
