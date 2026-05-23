@@ -9,6 +9,7 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
+use MissionDP\Plugin;
 use MissionDP\Receipts\ReceiptPdfGenerator;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\RestModule;
@@ -797,8 +798,21 @@ class TransactionsEndpoint {
 			]
 		);
 
+		$activity = Plugin::instance()->get_activity_feed_module();
+
 		if ( is_wp_error( $response ) ) {
-			error_log( '[Mission] Refund API call failed: ' . $response->get_error_message() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$activity?->log(
+				'refund_api_call_failed',
+				'transaction',
+				$transaction->id,
+				[
+					'reason' => 'wp_error',
+					'error'  => $response->get_error_message(),
+				],
+				(bool) $transaction->is_test,
+				'error',
+				'payment'
+			);
 			return new WP_Error(
 				'refund_failed',
 				__( 'Failed to process refund. Please try again.', 'mission-donation-platform' ),
@@ -812,7 +826,19 @@ class TransactionsEndpoint {
 			$body    = json_decode( wp_remote_retrieve_body( $response ), true );
 			$message = $body['error'] ?? __( 'Failed to process refund. Please try again.', 'mission-donation-platform' );
 
-			error_log( "[Mission] Refund API returned HTTP {$status_code}: " . wp_remote_retrieve_body( $response ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$activity?->log(
+				'refund_api_call_failed',
+				'transaction',
+				$transaction->id,
+				[
+					'reason' => 'http_error',
+					'status' => $status_code,
+					'body'   => wp_remote_retrieve_body( $response ),
+				],
+				(bool) $transaction->is_test,
+				'error',
+				'payment'
+			);
 			return new WP_Error( 'refund_failed', $message, [ 'status' => $status_code ] );
 		}
 

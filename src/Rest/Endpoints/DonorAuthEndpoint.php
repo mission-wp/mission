@@ -11,6 +11,7 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\DonorDashboard\DonorAuthService;
+use MissionDP\Plugin;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\DonorPermissionTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
@@ -215,8 +216,17 @@ class DonorAuthEndpoint {
 
 		try {
 			$this->auth->send_activation_email( $request->get_param( 'email' ) );
-		} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-			// Silently swallow — never reveal whether the email exists.
+		} catch ( \RuntimeException $e ) {
+			// Swallow the failure so the response never reveals whether the email exists.
+			Plugin::instance()->get_activity_feed_module()?->log(
+				'donor_send_activation_suppressed',
+				'donor',
+				0,
+				[ 'error' => $e->getMessage() ],
+				false,
+				'warning',
+				'email'
+			);
 		}
 
 		return new WP_REST_Response(
@@ -267,8 +277,17 @@ class DonorAuthEndpoint {
 
 		try {
 			$this->auth->forgot_password( $request->get_param( 'email' ) );
-		} catch ( \RuntimeException $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
-			// Silently swallow — never reveal whether the email exists.
+		} catch ( \RuntimeException $e ) {
+			// Swallow the failure so the response never reveals whether the email exists.
+			Plugin::instance()->get_activity_feed_module()?->log(
+				'donor_forgot_password_suppressed',
+				'donor',
+				0,
+				[ 'error' => $e->getMessage() ],
+				false,
+				'warning',
+				'email'
+			);
 		}
 
 		return new WP_REST_Response(

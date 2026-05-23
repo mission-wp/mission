@@ -11,6 +11,7 @@ use DateTime;
 use DateTimeZone;
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\SubscriptionDataStore;
+use MissionDP\Plugin;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -347,7 +348,7 @@ class Subscription extends Model {
 		$site_token = $settings->get( 'stripe_site_token' );
 
 		if ( ! $site_token ) {
-			error_log( "[Mission] API call to {$endpoint} failed: no site token configured." ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$this->log_api_failure( $endpoint, 'no_site_token' );
 			return false;
 		}
 
@@ -364,14 +365,21 @@ class Subscription extends Model {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			error_log( "[Mission] API call to {$endpoint} failed: " . $response->get_error_message() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$this->log_api_failure( $endpoint, 'wp_error', [ 'error' => $response->get_error_message() ] );
 			return false;
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
 
 		if ( 200 !== $status_code ) {
-			error_log( "[Mission] API call to {$endpoint} returned HTTP {$status_code}: " . wp_remote_retrieve_body( $response ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$this->log_api_failure(
+				$endpoint,
+				'http_error',
+				[
+					'status' => $status_code,
+					'body'   => wp_remote_retrieve_body( $response ),
+				]
+			);
 			return false;
 		}
 
@@ -420,18 +428,50 @@ class Subscription extends Model {
 		);
 
 		if ( is_wp_error( $response ) ) {
-			error_log( "[Mission] API call to {$endpoint} failed: " . $response->get_error_message() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$this->log_api_failure( $endpoint, 'wp_error', [ 'error' => $response->get_error_message() ] );
 			return false;
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
 
 		if ( 200 !== $status_code ) {
-			error_log( "[Mission] API call to {$endpoint} returned HTTP {$status_code}: " . wp_remote_retrieve_body( $response ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			$this->log_api_failure(
+				$endpoint,
+				'http_error',
+				[
+					'status' => $status_code,
+					'body'   => wp_remote_retrieve_body( $response ),
+				]
+			);
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * Record a Mission API call failure in the activity log.
+	 *
+	 * @param string              $endpoint The API endpoint that failed.
+	 * @param string              $reason   Short reason code (no_site_token, wp_error, http_error).
+	 * @param array<string,mixed> $extra    Additional context (error message, status, body).
+	 */
+	private function log_api_failure( string $endpoint, string $reason, array $extra = [] ): void {
+		Plugin::instance()->get_activity_feed_module()?->log(
+			'subscription_api_call_failed',
+			'subscription',
+			$this->id,
+			array_merge(
+				[
+					'endpoint' => $endpoint,
+					'reason'   => $reason,
+				],
+				$extra
+			),
+			(bool) $this->is_test,
+			'error',
+			'subscription'
+		);
 	}
 
 	/**

@@ -166,7 +166,11 @@ class DashboardEndpoint {
 		 */
 		$excluded_events = apply_filters(
 			'missiondp_dashboard_activity_excluded_events',
-			[ 'admin_notification_sent' ]
+			[
+				'admin_notification_sent',
+				'donor_send_activation_suppressed',
+				'donor_forgot_password_suppressed',
+			]
 		);
 
 		// System events that should always appear despite their object_type.
