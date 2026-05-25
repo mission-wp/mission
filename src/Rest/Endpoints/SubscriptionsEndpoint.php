@@ -493,7 +493,7 @@ class SubscriptionsEndpoint {
 			return $txn->fee_amount;
 		}
 
-		[ $fee_rate, $fee_fixed ] = $this->get_fee_params( $txn );
+		[ $fee_rate, $fee_fixed ] = TipCalculator::get_fee_params( $txn );
 
 		return (int) round( $txn->amount * $fee_rate + $fee_fixed );
 	}

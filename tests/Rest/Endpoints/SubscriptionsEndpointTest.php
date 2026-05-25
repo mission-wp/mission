@@ -625,6 +625,29 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test GET single computes processing fee when transaction fee_amount is zero.
+	 *
+	 * Regression: prepare_subscription_detail() falls back to deriving the fee
+	 * from settings when fee_amount is not stored on the transaction. That
+	 * fallback path must not fatal.
+	 */
+	public function test_get_single_computes_processing_fee_when_fee_amount_zero(): void {
+		$subscription = $this->create_subscription();
+		$this->create_transaction( [
+			'subscription_id' => $subscription->id,
+			'amount'          => 1000,
+			'fee_amount'      => 0,
+		] );
+
+		$response = $this->dispatch_get( "/mission-donation-platform/v1/subscriptions/{$subscription->id}" );
+
+		$this->assertSame( 200, $response->get_status() );
+		$t = $response->get_data()['transactions'][0];
+		$this->assertArrayHasKey( 'processing_fee', $t );
+		$this->assertGreaterThan( 0, $t['processing_fee'] );
+	}
+
+	/**
 	 * Test GET single returns 404 for nonexistent subscription.
 	 */
 	public function test_get_single_404_for_nonexistent(): void {
