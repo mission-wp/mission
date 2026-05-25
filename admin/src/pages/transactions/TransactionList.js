@@ -522,7 +522,8 @@ export default function TransactionList() {
     buildSummaryCards( summary );
 
   const hasNoFilters = ! view.filters || view.filters.length === 0;
-  const showEmptyState = ! isLoading && data.length === 0 && hasNoFilters;
+  const showEmptyState =
+    ! isLoading && data.length === 0 && hasNoFilters && ! view.search;
 
   if ( showEmptyState ) {
     return (
