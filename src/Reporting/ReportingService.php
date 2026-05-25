@@ -8,7 +8,9 @@
 namespace MissionDP\Reporting;
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Reporting queries assemble SQL from literal fragments + the SearchClauseBuilder helper (whose placeholders are matched in $where_args) and whitelisted ASC/DESC direction strings.
 
+use MissionDP\Database\SearchClauseBuilder;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -506,7 +508,7 @@ class ReportingService {
 
 		$allowed_orderby = [ 'date_created', 'amount' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+		$direction       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
 		$is_test = (int) $this->is_test_mode();
 
@@ -516,9 +518,23 @@ class ReportingService {
 		$campaign_id  = $has_campaign ? (int) $args['campaign_id'] : 0;
 		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
 		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
-		$has_search   = ! empty( $args['search'] ) ? 1 : 0;
-		$search_like  = $has_search ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
-		$search_id    = $has_search ? (int) $args['search'] : 0;
+
+		// Build the search WHERE fragment. The helper produces a multi-token
+		// AND-of-OR clause across name/email columns; we OR an exact match on
+		// the transaction ID so numeric searches still hit t.id directly.
+		$search_clause = SearchClauseBuilder::build_like_clause(
+			(string) ( $args['search'] ?? '' ),
+			[ 'd.first_name', 'd.last_name', 'd.email' ]
+		);
+		if ( $search_clause ) {
+			$search_id        = (int) $args['search'];
+			$search_sql       = '(' . $search_clause['sql'] . ' OR t.id = ' . $search_id . ')';
+			$search_params    = $search_clause['params'];
+			$search_where_sql = ' AND ' . $search_sql;
+		} else {
+			$search_params    = [];
+			$search_where_sql = '';
+		}
 
 		// Dedication mode flags — at most one is set to 1.
 		$dedication      = $args['dedication'] ?? '';
@@ -529,140 +545,58 @@ class ReportingService {
 
 		$offset = ( $page - 1 ) * $per_page;
 
-		// Count total. The dedication filter uses an EXISTS subquery so the
-		// LEFT JOIN to donors does not multiply rows when a transaction has
-		// multiple tributes. When $has_dedication = 0 the outer toggle short
-		// circuits the EXISTS and matches every row.
-		$total = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT COUNT(*) FROM %i AS t
-				 LEFT JOIN %i AS d ON t.donor_id = d.id
-				 WHERE t.is_test = %d
+		// Shared WHERE clause body. Search fragment is spliced in as already-
+		// validated SQL (the helper emits only %s placeholders + trusted column
+		// names; the t.id branch uses an int-cast value). The dedication filter
+		// uses an EXISTS subquery so the LEFT JOIN to donors does not multiply
+		// rows when a transaction has multiple tributes.
+		$where = 'WHERE t.is_test = %d
 				   AND ( %d = 0 OR t.status = %s )
 				   AND ( %d = 0 OR t.campaign_id = %d )
-				   AND ( %d = 0 OR t.donor_id = %d )
-				   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d )
+				   AND ( %d = 0 OR t.donor_id = %d )' . $search_where_sql . '
 				   AND ( %d = 0 OR EXISTS (
 						SELECT 1 FROM %i AS tr
 						WHERE tr.transaction_id = t.id
 						  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NULL ) )
 						  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NOT NULL ) )
 						  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
-					) )',
-				$txn_table,
-				$donor_table,
-				$is_test,
-				$has_status,
-				$status,
-				$has_campaign,
-				$campaign_id,
-				$has_donor,
-				$donor_id,
-				$has_search,
-				$search_like,
-				$search_like,
-				$search_like,
-				$search_id,
-				$has_dedication,
-				$tribute_table,
-				$is_mail_pending,
-				$is_mail_sent,
-				$is_email_sent
+					) )';
+
+		// Args that align with placeholders inside $where. Search params slot
+		// into the position the search fragment occupies in the WHERE string.
+		$where_args = array_merge(
+			[ $is_test, $has_status, $status, $has_campaign, $campaign_id, $has_donor, $donor_id ],
+			$search_params,
+			[ $has_dedication, $tribute_table, $is_mail_pending, $is_mail_sent, $is_email_sent ]
+		);
+
+		// Count total.
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS t
+				 LEFT JOIN %i AS d ON t.donor_id = d.id
+				 ' . $where,
+				array_merge( [ $txn_table, $donor_table ], $where_args )
 			)
 		);
 
 		// Fetch rows.
-		if ( $order_asc ) {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
-					 FROM %i AS t
-					 LEFT JOIN %i AS d ON t.donor_id = d.id
-					 WHERE t.is_test = %d
-					   AND ( %d = 0 OR t.status = %s )
-					   AND ( %d = 0 OR t.campaign_id = %d )
-					   AND ( %d = 0 OR t.donor_id = %d )
-					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d )
-					   AND ( %d = 0 OR EXISTS (
-							SELECT 1 FROM %i AS tr
-							WHERE tr.transaction_id = t.id
-							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NULL ) )
-							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NOT NULL ) )
-							  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
-						) )
-					 ORDER BY t.%i ASC
-					 LIMIT %d OFFSET %d',
-					$txn_table,
-					$donor_table,
-					$is_test,
-					$has_status,
-					$status,
-					$has_campaign,
-					$campaign_id,
-					$has_donor,
-					$donor_id,
-					$has_search,
-					$search_like,
-					$search_like,
-					$search_like,
-					$search_id,
-					$has_dedication,
-					$tribute_table,
-					$is_mail_pending,
-					$is_mail_sent,
-					$is_email_sent,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
-					 FROM %i AS t
-					 LEFT JOIN %i AS d ON t.donor_id = d.id
-					 WHERE t.is_test = %d
-					   AND ( %d = 0 OR t.status = %s )
-					   AND ( %d = 0 OR t.campaign_id = %d )
-					   AND ( %d = 0 OR t.donor_id = %d )
-					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR t.id = %d )
-					   AND ( %d = 0 OR EXISTS (
-							SELECT 1 FROM %i AS tr
-							WHERE tr.transaction_id = t.id
-							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NULL ) )
-							  AND ( %d = 0 OR ( tr.notify_method = \'mail\' AND tr.notification_sent_at IS NOT NULL ) )
-							  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
-						) )
-					 ORDER BY t.%i DESC
-					 LIMIT %d OFFSET %d',
-					$txn_table,
-					$donor_table,
-					$is_test,
-					$has_status,
-					$status,
-					$has_campaign,
-					$campaign_id,
-					$has_donor,
-					$donor_id,
-					$has_search,
-					$search_like,
-					$search_like,
-					$search_like,
-					$search_id,
-					$has_dedication,
-					$tribute_table,
-					$is_mail_pending,
-					$is_mail_sent,
-					$is_email_sent,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		}
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
+				 FROM %i AS t
+				 LEFT JOIN %i AS d ON t.donor_id = d.id
+				 ' . $where . "
+				 ORDER BY t.%i {$direction}
+				 LIMIT %d OFFSET %d",
+				array_merge(
+					[ $txn_table, $donor_table ],
+					$where_args,
+					[ $orderby, $per_page, $offset ]
+				)
+			),
+			ARRAY_A
+		);
 
 		// Batch-fetch campaign titles from the campaigns table.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
@@ -723,7 +657,7 @@ class ReportingService {
 
 		$allowed_orderby = [ 'id', 'date_created', 'date_next_renewal', 'total_amount', 'status' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+		$direction       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
 		$is_test = (int) $this->is_test_mode();
 
@@ -733,106 +667,61 @@ class ReportingService {
 		$campaign_id  = $has_campaign ? (int) $args['campaign_id'] : 0;
 		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
 		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
-		$has_search   = ! empty( $args['search'] ) ? 1 : 0;
-		$search_like  = $has_search ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
+
+		// Build the search WHERE fragment. Multi-token AND across name/email
+		// columns, plus a LIKE on the gateway subscription ID so partial
+		// matches like "sub_1abc" still resolve.
+		$search_clause = SearchClauseBuilder::build_like_clause(
+			(string) ( $args['search'] ?? '' ),
+			[ 'd.first_name', 'd.last_name', 'd.email', 's.gateway_subscription_id' ]
+		);
+		if ( $search_clause ) {
+			$search_params    = $search_clause['params'];
+			$search_where_sql = ' AND ' . $search_clause['sql'];
+		} else {
+			$search_params    = [];
+			$search_where_sql = '';
+		}
 
 		$offset = ( $page - 1 ) * $per_page;
+
+		$where = 'WHERE s.is_test = %d
+				   AND ( %d = 0 OR s.status = %s )
+				   AND ( %d = 0 OR s.campaign_id = %d )
+				   AND ( %d = 0 OR s.donor_id = %d )' . $search_where_sql;
+
+		$where_args = array_merge(
+			[ $is_test, $has_status, $status, $has_campaign, $campaign_id, $has_donor, $donor_id ],
+			$search_params
+		);
 
 		// Count total.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS s
 				 LEFT JOIN %i AS d ON s.donor_id = d.id
-				 WHERE s.is_test = %d
-				   AND ( %d = 0 OR s.status = %s )
-				   AND ( %d = 0 OR s.campaign_id = %d )
-				   AND ( %d = 0 OR s.donor_id = %d )
-				   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s )',
-				$sub_table,
-				$donor_table,
-				$is_test,
-				$has_status,
-				$status,
-				$has_campaign,
-				$campaign_id,
-				$has_donor,
-				$donor_id,
-				$has_search,
-				$search_like,
-				$search_like,
-				$search_like,
-				$search_like
+				 ' . $where,
+				array_merge( [ $sub_table, $donor_table ], $where_args )
 			)
 		);
 
 		// Fetch rows.
-		if ( $order_asc ) {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
-					 FROM %i AS s
-					 LEFT JOIN %i AS d ON s.donor_id = d.id
-					 WHERE s.is_test = %d
-					   AND ( %d = 0 OR s.status = %s )
-					   AND ( %d = 0 OR s.campaign_id = %d )
-					   AND ( %d = 0 OR s.donor_id = %d )
-					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s )
-					 ORDER BY s.%i ASC
-					 LIMIT %d OFFSET %d',
-					$sub_table,
-					$donor_table,
-					$is_test,
-					$has_status,
-					$status,
-					$has_campaign,
-					$campaign_id,
-					$has_donor,
-					$donor_id,
-					$has_search,
-					$search_like,
-					$search_like,
-					$search_like,
-					$search_like,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
-					 FROM %i AS s
-					 LEFT JOIN %i AS d ON s.donor_id = d.id
-					 WHERE s.is_test = %d
-					   AND ( %d = 0 OR s.status = %s )
-					   AND ( %d = 0 OR s.campaign_id = %d )
-					   AND ( %d = 0 OR s.donor_id = %d )
-					   AND ( %d = 0 OR d.first_name LIKE %s OR d.last_name LIKE %s OR d.email LIKE %s OR s.gateway_subscription_id LIKE %s )
-					 ORDER BY s.%i DESC
-					 LIMIT %d OFFSET %d',
-					$sub_table,
-					$donor_table,
-					$is_test,
-					$has_status,
-					$status,
-					$has_campaign,
-					$campaign_id,
-					$has_donor,
-					$donor_id,
-					$has_search,
-					$search_like,
-					$search_like,
-					$search_like,
-					$search_like,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		}
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
+				 FROM %i AS s
+				 LEFT JOIN %i AS d ON s.donor_id = d.id
+				 ' . $where . "
+				 ORDER BY s.%i {$direction}
+				 LIMIT %d OFFSET %d",
+				array_merge(
+					[ $sub_table, $donor_table ],
+					$where_args,
+					[ $orderby, $per_page, $offset ]
+				)
+			),
+			ARRAY_A
+		);
 
 		// Batch-fetch campaign titles.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );

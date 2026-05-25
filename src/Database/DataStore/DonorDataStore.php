@@ -8,7 +8,9 @@
 namespace MissionDP\Database\DataStore;
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
+// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- query()/count() assemble SQL from literal fragments + the SearchClauseBuilder helper (whose placeholders are matched in $prepare_args) and a whitelisted ASC/DESC direction.
 
+use MissionDP\Database\SearchClauseBuilder;
 use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
@@ -187,54 +189,33 @@ class DonorDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
-		$has_search  = '' !== $search_like ? 1 : 0;
+		$search_clause = SearchClauseBuilder::build_like_clause(
+			(string) ( $args['search'] ?? '' ),
+			[ 'email', 'first_name', 'last_name' ]
+		);
+		$where_sql     = $search_clause ? ' WHERE ' . $search_clause['sql'] : '';
+		$search_params = $search_clause ? $search_clause['params'] : [];
 
 		$allowed_orderby = [ 'id', 'date_created', 'total_donated', 'transaction_count', 'last_transaction', 'test_total_donated', 'test_transaction_count', 'test_last_transaction' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+		$direction       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
 		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		if ( $order_asc ) {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR email LIKE %s OR first_name LIKE %s OR last_name LIKE %s )
-					 ORDER BY %i ASC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_search,
-					$search_like,
-					$search_like,
-					$search_like,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR email LIKE %s OR first_name LIKE %s OR last_name LIKE %s )
-					 ORDER BY %i DESC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_search,
-					$search_like,
-					$search_like,
-					$search_like,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		}
+		$sql = 'SELECT * FROM %i' . $where_sql . " ORDER BY %i {$direction} LIMIT %d OFFSET %d";
+
+		$prepare_args = array_merge(
+			[ $this->get_table_name() ],
+			$search_params,
+			[ $orderby, $per_page, $offset ]
+		);
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare( $sql, $prepare_args ),
+			ARRAY_A
+		);
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -249,20 +230,17 @@ class DonorDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
-		$has_search  = '' !== $search_like ? 1 : 0;
-
-		return (int) $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT COUNT(*) FROM %i
-				 WHERE ( %d = 0 OR email LIKE %s OR first_name LIKE %s OR last_name LIKE %s )',
-				$this->get_table_name(),
-				$has_search,
-				$search_like,
-				$search_like,
-				$search_like
-			)
+		$search_clause = SearchClauseBuilder::build_like_clause(
+			(string) ( $args['search'] ?? '' ),
+			[ 'email', 'first_name', 'last_name' ]
 		);
+		$where_sql     = $search_clause ? ' WHERE ' . $search_clause['sql'] : '';
+		$search_params = $search_clause ? $search_clause['params'] : [];
+
+		$sql          = 'SELECT COUNT(*) FROM %i' . $where_sql;
+		$prepare_args = array_merge( [ $this->get_table_name() ], $search_params );
+
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $prepare_args ) );
 	}
 
 	/**

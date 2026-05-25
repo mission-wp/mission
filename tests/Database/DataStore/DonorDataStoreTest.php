@@ -149,6 +149,51 @@ class DonorDataStoreTest extends WP_UnitTestCase {
 		$this->assertSame( 'Alice', $results[0]->first_name );
 	}
 
+	/**
+	 * Test query with multi-word search matches tokens across first and last name.
+	 */
+	public function test_query_with_multi_word_search_matches_across_name_columns(): void {
+		$this->store->create( $this->make_donor( array( 'email' => 'a@example.com', 'first_name' => 'Antwon', 'last_name' => 'Klein' ) ) );
+		$this->store->create( $this->make_donor( array( 'email' => 'b@example.com', 'first_name' => 'Antwon', 'last_name' => 'Smith' ) ) );
+		$this->store->create( $this->make_donor( array( 'email' => 'c@example.com', 'first_name' => 'Bob', 'last_name' => 'Klein' ) ) );
+
+		// "antwon klein" should match only the Antwon Klein donor.
+		$results = $this->store->query( array( 'search' => 'antwon klein' ) );
+		$this->assertCount( 1, $results );
+		$this->assertSame( 'Antwon', $results[0]->first_name );
+		$this->assertSame( 'Klein', $results[0]->last_name );
+
+		// Reverse word order works the same.
+		$results = $this->store->query( array( 'search' => 'klein antwon' ) );
+		$this->assertCount( 1, $results );
+		$this->assertSame( 'a@example.com', $results[0]->email );
+
+		// Partial tokens still match.
+		$results = $this->store->query( array( 'search' => 'ant kle' ) );
+		$this->assertCount( 1, $results );
+		$this->assertSame( 'a@example.com', $results[0]->email );
+
+		// Single-token search still works.
+		$this->assertCount( 2, $this->store->query( array( 'search' => 'antwon' ) ) );
+		$this->assertCount( 2, $this->store->query( array( 'search' => 'klein' ) ) );
+	}
+
+	/**
+	 * Test that count() matches query() row count for multi-word search.
+	 */
+	public function test_count_matches_query_with_multi_word_search(): void {
+		$this->store->create( $this->make_donor( array( 'first_name' => 'Antwon', 'last_name' => 'Klein' ) ) );
+		$this->store->create( $this->make_donor( array( 'first_name' => 'Antwon', 'last_name' => 'Smith' ) ) );
+		$this->store->create( $this->make_donor( array( 'first_name' => 'Bob', 'last_name' => 'Klein' ) ) );
+
+		$args    = array( 'search' => 'antwon klein' );
+		$results = $this->store->query( $args );
+		$count   = $this->store->count( $args );
+
+		$this->assertCount( 1, $results );
+		$this->assertSame( 1, $count );
+	}
+
 	// -------------------------------------------------------------------------
 	// Meta
 	// -------------------------------------------------------------------------

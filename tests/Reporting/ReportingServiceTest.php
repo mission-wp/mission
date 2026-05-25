@@ -661,6 +661,64 @@ class ReportingServiceTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $paginated['items'] );
 	}
 
+	/**
+	 * Test transactions_with_donors multi-word search matches across donor name columns.
+	 */
+	public function test_transactions_with_donors_multi_word_search(): void {
+		$antwon = $this->create_donor( [ 'email' => 'antwon@example.com', 'first_name' => 'Antwon', 'last_name' => 'Klein' ] );
+		$bob    = $this->create_donor( [ 'email' => 'bob@example.com', 'first_name' => 'Bob', 'last_name' => 'Klein' ] );
+
+		$this->create_transaction( [ 'donor_id' => $antwon->id ] );
+		$this->create_transaction( [ 'donor_id' => $bob->id ] );
+		$this->create_transaction( [ 'donor_id' => $this->donor->id ] );
+
+		$service = $this->make_service();
+
+		$result = $service->transactions_with_donors( [ 'search' => 'antwon klein' ] );
+		$this->assertSame( 1, $result['total'] );
+		$this->assertCount( 1, $result['items'] );
+		$this->assertSame( 'antwon@example.com', $result['items'][0]['donor_email'] );
+
+		// Single-token search still hits all matching rows.
+		$result = $service->transactions_with_donors( [ 'search' => 'klein' ] );
+		$this->assertSame( 2, $result['total'] );
+
+		// Numeric search still matches a transaction by ID.
+		$txn          = $this->create_transaction( [ 'donor_id' => $this->donor->id ] );
+		$by_id_result = $service->transactions_with_donors( [ 'search' => (string) $txn->id ] );
+		$this->assertGreaterThanOrEqual( 1, $by_id_result['total'] );
+		$ids_returned = array_column( $by_id_result['items'], 'id' );
+		$this->assertContains( $txn->id, $ids_returned );
+	}
+
+	/**
+	 * Test subscriptions_with_donors multi-word search matches across donor name columns.
+	 */
+	public function test_subscriptions_with_donors_multi_word_search(): void {
+		$antwon = $this->create_donor( [ 'email' => 'antwon@example.com', 'first_name' => 'Antwon', 'last_name' => 'Klein' ] );
+		$bob    = $this->create_donor( [ 'email' => 'bob@example.com', 'first_name' => 'Bob', 'last_name' => 'Klein' ] );
+
+		$this->create_subscription( [ 'donor_id' => $antwon->id, 'gateway_subscription_id' => 'sub_antwon_1' ] );
+		$this->create_subscription( [ 'donor_id' => $bob->id, 'gateway_subscription_id' => 'sub_bob_1' ] );
+		$this->create_subscription( [ 'donor_id' => $this->donor->id, 'gateway_subscription_id' => 'sub_jane_1' ] );
+
+		$service = $this->make_service();
+
+		$result = $service->subscriptions_with_donors( [ 'search' => 'antwon klein' ] );
+		$this->assertSame( 1, $result['total'] );
+		$this->assertCount( 1, $result['items'] );
+		$this->assertSame( 'antwon@example.com', $result['items'][0]['donor_email'] );
+
+		// Single token still finds both Kleins.
+		$result = $service->subscriptions_with_donors( [ 'search' => 'klein' ] );
+		$this->assertSame( 2, $result['total'] );
+
+		// Partial gateway_subscription_id match still works.
+		$result = $service->subscriptions_with_donors( [ 'search' => 'sub_bob' ] );
+		$this->assertSame( 1, $result['total'] );
+		$this->assertSame( 'bob@example.com', $result['items'][0]['donor_email'] );
+	}
+
 	// =========================================================================
 	// 14. All methods: handle empty result sets gracefully
 	// =========================================================================
