@@ -8,7 +8,7 @@ Stable Tag: 1.1.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A free, modern donation plugin for nonprofits. Every feature included, no paid add-ons, ever — funded by optional donor tips.
+Accept donations, manage recurring giving, easy donor management, and grow fundraising with Mission, a free WordPress donation plugin for nonprofits
 
 == Description ==
 
