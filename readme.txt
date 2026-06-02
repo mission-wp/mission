@@ -1,6 +1,6 @@
 === Mission Donation Platform ===
 Contributors: missionwp
-Tags: donations, fundraising, recurring donations, nonprofit, stripe, donate, donation form, donor management, charity, campaigns, recurring giving, payment
+Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
