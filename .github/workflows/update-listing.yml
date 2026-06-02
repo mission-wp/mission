@@ -1,0 +1,29 @@
+# Updates only the wp.org listing — banners, icon, screenshots (from
+# `.wordpress-org/`) and `trunk/readme.txt` (description, tags, FAQ,
+# changelog). Does NOT touch plugin code, does NOT create an SVN tag,
+# does NOT trigger a "new version available" prompt for installed users.
+#
+# Run from Actions → "Update WordPress.org listing" → Run workflow.
+
+name: Update WordPress.org listing
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update wp.org assets and readme
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: mission-donation-platform
