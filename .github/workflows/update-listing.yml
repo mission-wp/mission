@@ -21,9 +21,59 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Update wp.org assets and readme
-        uses: 10up/action-wordpress-plugin-asset-update@stable
+      - name: Update wp.org readme and assets
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: mission-donation-platform
+        run: |
+          set -euo pipefail
+
+          SVN_ROOT="https://plugins.svn.wordpress.org/${SLUG}"
+          SVN_OPTS="--username $SVN_USERNAME --password $SVN_PASSWORD --non-interactive --no-auth-cache"
+
+          # --- 1. readme.txt → trunk/readme.txt ---
+          # Shallow checkout: only the files at trunk root, no subdirs.
+          # Avoids pulling vendor/ (thousands of files) for a one-file change.
+          svn co --depth=files "$SVN_ROOT/trunk" svn-trunk $SVN_OPTS
+
+          cp readme.txt svn-trunk/readme.txt
+
+          pushd svn-trunk > /dev/null
+          if [ -n "$(svn diff readme.txt)" ]; then
+            svn ci -m "Update readme.txt (listing only)" $SVN_OPTS
+          else
+            echo "readme.txt unchanged on SVN — skipping commit."
+          fi
+          popd > /dev/null
+
+          # --- 2. .wordpress-org/ → assets/ (banners, icon, screenshots) ---
+          svn co "$SVN_ROOT/assets" svn-assets $SVN_OPTS
+
+          # Sync local assets over SVN copy. --exclude .svn keeps SVN metadata intact.
+          rsync -av --delete --exclude='.svn' .wordpress-org/ svn-assets/
+
+          pushd svn-assets > /dev/null
+          # Stage new files
+          svn add --force . > /dev/null
+          # Stage deletions (files present in SVN but no longer in .wordpress-org/)
+          svn status | awk '/^!/ {print $2}' | xargs -r svn rm
+
+          # Set mime types on image files so browsers render them inline.
+          for f in $(svn status | awk '/^A/ {print $2}'); do
+            case "$f" in
+              *.png) svn propset svn:mime-type image/png "$f" ;;
+              *.gif) svn propset svn:mime-type image/gif "$f" ;;
+              *.jpg|*.jpeg) svn propset svn:mime-type image/jpeg "$f" ;;
+              *.svg) svn propset svn:mime-type image/svg+xml "$f" ;;
+            esac
+          done
+
+          if [ -n "$(svn status)" ]; then
+            svn ci -m "Update wp.org assets (banners, icon, screenshots)" $SVN_OPTS
+          else
+            echo "Assets unchanged on SVN — skipping commit."
+          fi
+          popd > /dev/null
+
+          echo "Done. wp.org listing cache may take ~15 min to refresh."
