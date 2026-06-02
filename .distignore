@@ -1,0 +1,65 @@
+# Anything listed here is excluded when deploying to the wp.org SVN trunk.
+# Patterns match like rsync --exclude-from. Keep this in sync with the
+# `files:` whitelist in package.json so the GitHub Actions ZIP and the
+# wp.org release stay identical.
+
+# --- Version control / CI ---
+.git
+.github
+.gitignore
+.gitattributes
+
+# --- Editor / OS ---
+.DS_Store
+.editorconfig
+.vscode
+.idea
+
+# --- Local dev environment ---
+.wp-env
+.wp-env.json
+.env
+.env.example
+.claude
+artifacts
+
+# --- wp.org listing assets (deployed separately to /assets, not /trunk) ---
+.wordpress-org
+
+# --- Build sources (compiled output in admin/build + blocks/build ships) ---
+admin/src
+blocks/src
+assets/shared
+
+# --- Node tooling ---
+node_modules
+package.json
+package-lock.json
+webpack.admin.config.js
+webpack.blocks.config.js
+jest.config.js
+playwright.config.js
+tsconfig.json
+.eslintrc.js
+.prettierrc.js
+.stylelintrc.json
+
+# --- PHP tooling / dev configs ---
+composer.lock
+phpunit.xml.dist
+.phpcs.xml.dist
+.phpunit.result.cache
+
+# --- Tests & specs ---
+tests
+specs
+tasks
+scripts
+
+# --- Internal docs (readme.txt is the user-facing one) ---
+CLAUDE.md
+plugin-review-feedback.md
+
+# --- Build artifacts that don't need to ship ---
+*.map
+mission-donation-platform.zip

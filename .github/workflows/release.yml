@@ -1,4 +1,4 @@
-name: Build Release ZIP
+name: Release
 
 on:
   release:
@@ -46,3 +46,11 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: mission-donation-platform.zip
+
+      - name: Deploy to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: mission-donation-platform
+          VERSION: ${{ github.event.release.tag_name }}
