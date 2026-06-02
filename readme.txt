@@ -4,7 +4,7 @@ Tags: donations, donate, fundraising, nonprofit, recurring donations
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.3
+Stable Tag: 1.1.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -234,6 +234,12 @@ Mission uses [Gravatar](https://gravatar.com) to display profile images for dono
 * [Gravatar Privacy Policy](https://automattic.com/privacy/)
 
 == Changelog ==
+
+= 1.1.4 =
+* Update screenshots and banners
+* Don't show empty-state shell on Subscriptions/Transactions when a search is active
+* Fix multi-word search on Donors, Transactions, and Subscriptions admin pages
+* Fix fatal on subscription detail when a transaction has no recorded fee_amount
 
 = 1.1.3 =
 * Tested with WordPress 7.0
