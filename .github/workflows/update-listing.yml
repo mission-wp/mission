@@ -28,3 +28,32 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: mission-donation-platform
           IGNORE_OTHER_FILES: true
+
+      # wp.org parses the listing page (description, tags, FAQ, changelog)
+      # from tags/<Stable Tag>/readme.txt, not trunk. The asset-update action
+      # above only writes trunk when IGNORE_OTHER_FILES is set, so copy the
+      # readme into the current stable tag as well.
+      - name: Sync readme into the current stable tag
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: mission-donation-platform
+        run: |
+          set -euo pipefail
+
+          STABLE_TAG=$(grep -oP '(?i)^Stable Tag:\s*\K\S+' readme.txt)
+          if [ -z "$STABLE_TAG" ] || [ "$STABLE_TAG" = "trunk" ]; then
+            echo "Stable Tag missing or set to trunk — no tag readme to sync."
+            exit 0
+          fi
+
+          SVN_OPTS="--username $SVN_USERNAME --password $SVN_PASSWORD --non-interactive --no-auth-cache"
+          svn co --depth=files "https://plugins.svn.wordpress.org/${SLUG}/tags/${STABLE_TAG}" svn-tag $SVN_OPTS
+
+          cp readme.txt svn-tag/readme.txt
+          cd svn-tag
+          if [ -n "$(svn diff readme.txt)" ]; then
+            svn ci -m "Sync tag readme with trunk" $SVN_OPTS
+          else
+            echo "Tag readme already matches trunk — nothing to commit."
+          fi
