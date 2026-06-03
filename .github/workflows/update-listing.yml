@@ -27,8 +27,4 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: mission-donation-platform
-          # Skip the action's full-repo rsync — only readme.txt and
-          # .wordpress-org/ get committed. Sidesteps the vendor/composer
-          # revert bug (10up/action-wordpress-plugin-asset-update#58) that
-          # fires when this workflow doesn't run composer install.
           IGNORE_OTHER_FILES: true
