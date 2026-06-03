@@ -32,7 +32,12 @@ jobs:
       # wp.org parses the listing page (description, tags, FAQ, changelog)
       # from tags/<Stable Tag>/readme.txt, not trunk. The asset-update action
       # above only writes trunk when IGNORE_OTHER_FILES is set, so copy the
-      # readme into the current stable tag as well.
+      # readme into the current stable tag as well. The 10up action runs in
+      # its own container with svn baked in; this step runs on the host
+      # runner, which no longer ships svn by default.
+      - name: Install Subversion
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion
+
       - name: Sync readme into the current stable tag
         env:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
