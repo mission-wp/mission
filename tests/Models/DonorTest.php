@@ -473,6 +473,30 @@ class DonorTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test change_email preserves user_login when it does not match the old email.
+	 *
+	 * Existing WordPress users with arbitrary usernames (admins, editors, or
+	 * anyone whose login is not their email) who also become donors must not
+	 * have their login overwritten when they change their donor email.
+	 */
+	public function test_change_email_preserves_non_email_user_login(): void {
+		$user_id = self::factory()->user->create( [
+			'user_login' => 'blueberries',
+			'user_email' => 'old@example.com',
+		] );
+		$donor   = $this->create_donor( [
+			'email'   => 'old@example.com',
+			'user_id' => $user_id,
+		] );
+
+		$donor->change_email( 'new@example.com' );
+
+		$user = get_userdata( $user_id );
+		$this->assertSame( 'new@example.com', $user->user_email );
+		$this->assertSame( 'blueberries', $user->user_login );
+	}
+
+	/**
 	 * Test change_email lets the donor sign in with the new email.
 	 */
 	public function test_change_email_allows_login_with_new_email(): void {

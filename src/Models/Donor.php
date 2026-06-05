@@ -144,13 +144,18 @@ class Donor extends Model {
 	/**
 	 * Change the donor's email address.
 	 *
-	 * Updates the donors table and the linked WordPress user's user_email and
-	 * user_login so the donor can sign in with their new address.
+	 * Updates the donors table and the linked WordPress user's user_email.
+	 * If the user's user_login matches the old email, it is also updated so
+	 * the donor can keep signing in with their email. Otherwise user_login
+	 * is left alone so existing WordPress users with arbitrary usernames
+	 * (e.g. an admin or editor who also donated) can still log in.
 	 *
 	 * @param string $new_email The new email address.
 	 */
 	public function change_email( string $new_email ): void {
 		global $wpdb;
+
+		$old_email = $this->email;
 
 		$this->email = $new_email;
 		$this->save();
@@ -159,6 +164,13 @@ class Donor extends Model {
 			return;
 		}
 
+		$user = get_userdata( $this->user_id );
+		if ( ! $user ) {
+			return;
+		}
+
+		$sync_user_login = strcasecmp( $user->user_login, $old_email ) === 0;
+
 		wp_update_user(
 			[
 				'ID'         => $this->user_id,
@@ -166,14 +178,16 @@ class Donor extends Model {
 			]
 		);
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No WordPress API exists for updating user_login.
-		$wpdb->update(
-			$wpdb->users,
-			[ 'user_login' => $new_email ],
-			[ 'ID' => $this->user_id ],
-			[ '%s' ],
-			[ '%d' ]
-		);
+		if ( $sync_user_login ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No WordPress API exists for updating user_login.
+			$wpdb->update(
+				$wpdb->users,
+				[ 'user_login' => $new_email ],
+				[ 'ID' => $this->user_id ],
+				[ '%s' ],
+				[ '%d' ]
+			);
+		}
 
 		clean_user_cache( $this->user_id );
 	}
