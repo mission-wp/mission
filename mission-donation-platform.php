@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Mission Donation Platform
+ * Plugin Name: Mission - Donation Platform
  * Plugin URI: https://missionwp.com
  * Description: The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.
- * Version: 1.1.4
+ * Version: 1.1.5
  * Author: Mission
  * Author URI: https://github.com/mission-wp
  * License: GPL-2.0-or-later
@@ -17,8 +17,44 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// PHP version check. Must run before the autoloader is required, since the
+// plugin's source uses PHP 8.0+ syntax that would fatal during parsing on
+// older versions. Keep this block 7.x-safe.
+if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
+	add_action(
+		'admin_notices',
+		static function () {
+			?>
+			<div class="notice notice-error">
+				<p>
+					<strong><?php esc_html_e( 'Mission Donation Platform can\'t run on this site right now.', 'mission-donation-platform' ); ?></strong>
+				</p>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: current PHP version number */
+						esc_html__( 'Your site is running PHP %s, which is outdated and no longer receives security updates. Mission requires PHP 8.0 or higher.', 'mission-donation-platform' ),
+						esc_html( PHP_VERSION )
+					);
+					?>
+				</p>
+				<p>
+					<?php esc_html_e( 'Most hosts can upgrade your PHP version with a one-click setting or a quick support request. Contact your hosting provider and ask them to upgrade you to PHP 8.2 or higher. Your whole site will be faster and more secure.', 'mission-donation-platform' ); ?>
+				</p>
+				<p>
+					<a href="https://wordpress.org/support/update-php/" target="_blank" rel="noopener noreferrer">
+						<?php esc_html_e( 'Learn more about updating PHP →', 'mission-donation-platform' ); ?>
+					</a>
+				</p>
+			</div>
+			<?php
+		}
+	);
+	return;
+}
+
 // Plugin constants.
-define( 'MISSIONDP_VERSION', '1.1.4' );
+define( 'MISSIONDP_VERSION', '1.1.5' );
 define( 'MISSIONDP_FILE', __FILE__ );
 define( 'MISSIONDP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSIONDP_URL', plugin_dir_url( __FILE__ ) );

@@ -50,7 +50,8 @@
   margin-bottom: 6px;
 }
 
-:where(.mission-dd-profile-input) {
+// Scoped under .mission-donor-dashboard so the input rule beats theme `input[type="text"]` defaults.
+.mission-donor-dashboard .mission-dd-profile-input {
   background: var(--mission-bg, #fff);
   border: 1px solid var(--mission-border, #ddd);
   border-radius: 6px;
@@ -80,7 +81,7 @@
 
 // ── Inline validation ──
 
-:where(.mission-dd-input-error) {
+.mission-donor-dashboard .mission-dd-input-error {
   border-color: var(--mission-error, #b85c5c);
 
   &:focus {

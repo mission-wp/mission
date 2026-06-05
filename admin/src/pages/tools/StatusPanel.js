@@ -448,11 +448,21 @@ function buildSections( data ) {
       value: <code>{ database.prefix }</code>,
     },
     {
-      label: __( 'Mission tables', 'mission-donation-platform' ),
-      value: (
-        <span className="mission-status-muted">{ database.tables.length }</span>
-      ),
+      label: __( 'Total database size', 'mission-donation-platform' ),
+      value: `${ database.total_size } MB`,
     },
+    {
+      label: __( 'Mission tables size', 'mission-donation-platform' ),
+      value: `${ database.missiondp_size } MB`,
+    },
+    ...database.tables.map( ( t ) => ( {
+      label: t.name,
+      value: (
+        <span className="mission-status-muted">
+          { `Data: ${ t.data_size } MB + Index: ${ t.index_size } MB` }
+        </span>
+      ),
+    } ) ),
   ];
 
   // --- Active Plugins ---

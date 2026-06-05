@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
 import LogsFilterBar from './LogsFilterBar';
@@ -22,6 +22,8 @@ export default function LogsPanel() {
     category: '',
     search: '',
   } );
+  const listRef = useRef( null );
+  const pendingScrollId = useRef( null );
 
   const fetchEntries = useCallback(
     async ( pageNum = 1, append = false ) => {
@@ -61,6 +63,9 @@ export default function LogsPanel() {
 
         setTotal( totalCount );
         setHasMore( pageNum < totalPages );
+        if ( append && data.length > 0 ) {
+          pendingScrollId.current = data[ 0 ].id;
+        }
         setEntries( ( prev ) => ( append ? [ ...prev, ...data ] : data ) );
       } catch {
         // Silently fail — entries stay as they were.
@@ -84,6 +89,19 @@ export default function LogsPanel() {
     setPage( nextPage );
     fetchEntries( nextPage, true );
   };
+
+  useEffect( () => {
+    if ( pendingScrollId.current === null || ! listRef.current ) {
+      return;
+    }
+    const target = listRef.current.querySelector(
+      `[data-log-id="${ pendingScrollId.current }"]`
+    );
+    pendingScrollId.current = null;
+    if ( target ) {
+      target.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+    }
+  }, [ entries ] );
 
   const handleFilterChange = ( update ) => {
     setFilters( ( prev ) => ( { ...prev, ...update } ) );
@@ -197,7 +215,7 @@ export default function LogsPanel() {
               : __( 'No log entries yet.', 'mission-donation-platform' ) }
           </div>
         ) : (
-          <div className="mission-logs-list">
+          <div className="mission-logs-list" ref={ listRef }>
             { entries.map( ( entry ) => (
               <LogEntry
                 key={ entry.id }
