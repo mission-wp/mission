@@ -310,12 +310,15 @@ class EmailChangeEndpoint {
 			);
 		}
 
-		// Perform the email change.
-		$old_email = $donor->email;
-		$donor->change_email( $new_email );
+		$old_email      = $donor->email;
+		$was_logged_in  = $donor->user_id && get_current_user_id() === $donor->user_id;
 
-		// Clean up pending meta.
+		$donor->change_email( $new_email );
 		$this->cleanup_pending_meta( $donor );
+
+		if ( $was_logged_in ) {
+			wp_logout();
+		}
 
 		/**
 		 * Fires after a donor's email address has been changed.
