@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.4
+Stable Tag: 1.1.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -182,6 +182,14 @@ This plugin connects to the following third-party services:
 **Gravatar** supplies donor avatars in the admin and on the Donor Wall block. Email addresses are hashed before being sent. See Gravatar's [Terms](https://wordpress.com/tos/) and [Privacy Policy](https://automattic.com/privacy/).
 
 == Changelog ==
+
+= 1.1.5 =
+* Add a data export tool for transactions, donors, subscriptions, and campaigns
+* Show an admin notice when the site is running PHP below 8.0
+* Auto-scroll to the first newly loaded entry when expanding the logs list
+* Donors can now sign in with their new email address after changing it on the donor dashboard
+* Fix donor dashboard form fields losing their class and id attributes
+* Restore the database size display in System Status
 
 = 1.1.4 =
 * Update screenshots and banners
