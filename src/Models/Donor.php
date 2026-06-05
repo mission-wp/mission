@@ -144,14 +144,14 @@ class Donor extends Model {
 	/**
 	 * Change the donor's email address.
 	 *
-	 * Updates the donors table and the linked WordPress user's email. The
-	 * user_login is intentionally left alone — WordPress has no public API
-	 * for changing it, and donors can continue logging in with their
-	 * original email.
+	 * Updates the donors table and the linked WordPress user's user_email and
+	 * user_login so the donor can sign in with their new address.
 	 *
 	 * @param string $new_email The new email address.
 	 */
 	public function change_email( string $new_email ): void {
+		global $wpdb;
+
 		$this->email = $new_email;
 		$this->save();
 
@@ -164,6 +164,15 @@ class Donor extends Model {
 				'ID'         => $this->user_id,
 				'user_email' => $new_email,
 			]
+		);
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- No WordPress API exists for updating user_login.
+		$wpdb->update(
+			$wpdb->users,
+			[ 'user_login' => $new_email ],
+			[ 'ID' => $this->user_id ],
+			[ '%s' ],
+			[ '%d' ]
 		);
 
 		clean_user_cache( $this->user_id );
