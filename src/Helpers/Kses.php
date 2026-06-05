@@ -38,8 +38,18 @@ class Kses {
 		$allowed = wp_kses_allowed_html( 'post' );
 
 		// Common attributes that should be allowed on every interactive tag,
-		// including Interactivity API directives and ARIA attributes.
+		// including Interactivity API directives and ARIA attributes. `class`,
+		// `id`, and `style` are listed explicitly because WordPress's `post`
+		// allowlist omits some tags entirely (e.g. `input`), in which case
+		// those tags would lose their styling hooks during kses.
 		$shared_attrs = [
+			'class'                 => true,
+			'id'                    => true,
+			'style'                 => true,
+			'title'                 => true,
+			'hidden'                => true,
+			'lang'                  => true,
+			'dir'                   => true,
 			'data-*'                => true,
 			'aria-*'                => true,
 			'role'                  => true,
