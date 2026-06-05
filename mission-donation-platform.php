@@ -27,7 +27,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 			?>
 			<div class="notice notice-error">
 				<p>
-					<strong><?php esc_html_e( 'Mission Donation Platform can\'t run on this site.', 'mission-donation-platform' ); ?></strong>
+					<strong><?php esc_html_e( 'Mission Donation Platform can\'t run on this site right now.', 'mission-donation-platform' ); ?></strong>
 				</p>
 				<p>
 					<?php
