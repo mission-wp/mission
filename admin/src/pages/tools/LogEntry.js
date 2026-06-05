@@ -42,6 +42,7 @@ export default function LogEntry( { entry, isExpanded, onToggle } ) {
         type="button"
         className={ `mission-logs-entry${ isExpanded ? ' is-expanded' : '' }` }
         onClick={ onToggle }
+        data-log-id={ entry.id }
       >
         <span className={ `mission-logs-dot is-${ level }` } />
         <span className="mission-logs-body">
