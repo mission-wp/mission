@@ -1,4 +1,4 @@
-=== Mission Donation Platform ===
+=== Mission - Donation Plugin for WordPress - Fundraising & Recurring Donations ===
 Contributors: missionwp
 Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
