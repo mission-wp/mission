@@ -171,16 +171,57 @@ class SystemStatusEndpoint {
 	}
 
 	/**
-	 * Gather database information.
+	 * Gather database information including table sizes.
 	 *
 	 * @return array
 	 */
 	private function get_database_info(): array {
 		global $wpdb;
 
+		$table_names = ( new Schema() )->get_table_names();
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- information_schema query, no WP API exists.
+		$all_sizes = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT table_name, data_length, index_length
+				FROM information_schema.tables
+				WHERE table_schema = %s',
+				$wpdb->dbname
+			)
+		);
+
+		$total_size   = 0;
+		$mission_size = 0;
+		$table_map    = [];
+
+		foreach ( $all_sizes as $row ) {
+			$data_bytes  = (int) $row->data_length;
+			$index_bytes = (int) $row->index_length;
+			$total_size += $data_bytes + $index_bytes;
+
+			if ( in_array( $row->table_name, $table_names, true ) ) {
+				$mission_size                 += $data_bytes + $index_bytes;
+				$table_map[ $row->table_name ] = [
+					'data_size'  => round( $data_bytes / 1024 / 1024, 2 ),
+					'index_size' => round( $index_bytes / 1024 / 1024, 2 ),
+				];
+			}
+		}
+
+		$tables = [];
+		foreach ( $table_names as $name ) {
+			$tables[] = [
+				'name'       => $name,
+				'data_size'  => $table_map[ $name ]['data_size'] ?? 0,
+				'index_size' => $table_map[ $name ]['index_size'] ?? 0,
+			];
+		}
+
 		return [
-			'prefix' => $wpdb->prefix,
-			'tables' => ( new Schema() )->get_table_names(),
+			'prefix'         => $wpdb->prefix,
+			'total_size'     => round( $total_size / 1024 / 1024, 2 ),
+			'missiondp_size' => round( $mission_size / 1024 / 1024, 2 ),
+			'tables'         => $tables,
 		];
 	}
 
