@@ -560,4 +560,69 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $sub_entries );
 		$this->assertTrue( $sub_entries[0]->is_test );
 	}
+
+	/**
+	 * Test that plugin_updated logs the version from the freshly-updated file on
+	 * disk, not the MISSIONDP_VERSION constant that was loaded into memory at the
+	 * start of the request (which still reflects the previous version during the
+	 * upgrader_process_complete hook).
+	 */
+	public function test_plugin_updated_reads_version_from_disk_not_constant(): void {
+		$plugin_file = WP_PLUGIN_DIR . '/' . MISSIONDP_BASENAME;
+		$original    = file_get_contents( $plugin_file );
+
+		// Simulate the post-upgrade state by rewriting the Version header on disk
+		// to a value that differs from MISSIONDP_VERSION (which is loaded in memory).
+		$on_disk_version = '99.99.99';
+		$modified        = preg_replace(
+			'/^(\s*\*\s*Version:\s*).+$/m',
+			'${1}' . $on_disk_version,
+			$original,
+			1
+		);
+		file_put_contents( $plugin_file, $modified );
+
+		// Bust the get_plugin_data cache so it re-reads the file.
+		wp_clean_plugins_cache( false );
+
+		try {
+			$module = Plugin::instance()->get_activity_feed_module();
+			$module->on_upgrader_complete(
+				new \stdClass(),
+				[
+					'type'    => 'plugin',
+					'action'  => 'update',
+					'plugins' => [ MISSIONDP_BASENAME ],
+				]
+			);
+		} finally {
+			file_put_contents( $plugin_file, $original );
+			wp_clean_plugins_cache( false );
+		}
+
+		$entries = ActivityLog::query( [ 'event' => 'plugin_updated' ] );
+		$this->assertCount( 1, $entries );
+
+		$data = json_decode( $entries[0]->data, true );
+		$this->assertSame( $on_disk_version, $data['new_version'] );
+		$this->assertNotSame( MISSIONDP_VERSION, $data['new_version'] );
+	}
+
+	/**
+	 * Test that plugin_updated does not log when the upgrade was for a different plugin.
+	 */
+	public function test_plugin_updated_ignores_other_plugins(): void {
+		$module = Plugin::instance()->get_activity_feed_module();
+		$module->on_upgrader_complete(
+			new \stdClass(),
+			[
+				'type'    => 'plugin',
+				'action'  => 'update',
+				'plugins' => [ 'some-other-plugin/some-other-plugin.php' ],
+			]
+		);
+
+		$entries = ActivityLog::query( [ 'event' => 'plugin_updated' ] );
+		$this->assertCount( 0, $entries );
+	}
 }

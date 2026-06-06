@@ -439,12 +439,21 @@ class ActivityFeedModule {
 			return;
 		}
 
+		// Read the version from the freshly-updated plugin file on disk.
+		// MISSIONDP_VERSION still reflects the old code loaded into memory at request start.
+		if ( ! function_exists( 'get_plugin_data' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . MISSIONDP_BASENAME, false, false );
+		$new_version = $plugin_data['Version'] ?? MISSIONDP_VERSION;
+
 		$this->log(
 			'plugin_updated',
 			'settings',
 			0,
 			[
-				'new_version' => MISSIONDP_VERSION,
+				'new_version' => $new_version,
 			]
 		);
 	}
