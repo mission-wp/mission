@@ -433,6 +433,43 @@ class SettingsServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Migration must NOT fire if only `stripe_account_id` is set without a
+	 * site_token. A multi-step legacy configuration can transiently hit
+	 * this state (account_id written, token written next) and migrating
+	 * early would lock in an account record with an empty site_token that
+	 * the subsequent token write cannot repair.
+	 */
+	public function test_lazy_migration_skips_when_token_is_missing(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			array(
+				'stripe_site_token'        => '',
+				'stripe_account_id'        => 'acct_partial',
+				'stripe_connection_status' => 'connected',
+			)
+		);
+
+		$accounts = $this->service->get_stripe_accounts();
+
+		$this->assertSame( array(), $accounts );
+
+		// Once the token is also set, migration fires on next read.
+		update_option(
+			SettingsService::OPTION_NAME,
+			array_merge(
+				get_option( SettingsService::OPTION_NAME ),
+				array( 'stripe_site_token' => 'tok_finally_here' )
+			)
+		);
+
+		$accounts = $this->service->get_stripe_accounts();
+
+		$this->assertCount( 1, $accounts );
+		$this->assertSame( 'tok_finally_here', $accounts[0]['site_token'] );
+		$this->assertSame( 'acct_partial', $accounts[0]['account_id'] );
+	}
+
+	/**
 	 * Legacy migration also fires when only `stripe_site_token` is set (no
 	 * account_id). Old connect responses occasionally left account_id empty;
 	 * the upstream API routed by site_token alone in that case, so we need

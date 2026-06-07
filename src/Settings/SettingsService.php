@@ -84,11 +84,15 @@ class SettingsService {
 			$accounts = [];
 		}
 
-		// Migrate from the legacy single-account flat keys. We accept either
-		// a populated stripe_account_id OR a stripe_site_token — old connects
-		// could leave account_id empty while the site_token alone was enough
-		// to charge (the upstream API routed by token, not account_id).
-		if ( empty( $accounts ) && ( $this->get( 'stripe_account_id' ) || $this->get( 'stripe_site_token' ) ) ) {
+		// Migrate from the legacy single-account flat keys. Migration is
+		// gated on the site_token because that's what actually routes to
+		// Stripe — capturing a half-written state (e.g. account_id set
+		// before the token has been persisted) would lock in an account
+		// record with an empty token that subsequent token writes can't
+		// fix. account_id is allowed to be empty here: some old connect
+		// responses left it blank and the upstream API still routed by
+		// site_token alone.
+		if ( empty( $accounts ) && $this->get( 'stripe_site_token' ) ) {
 			$accounts = [
 				$this->build_legacy_account_record(),
 			];
