@@ -83,6 +83,29 @@ class ImportEndpoint {
 				],
 			]
 		);
+
+		register_rest_route(
+			RestModule::NAMESPACE,
+			'/import/execute',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ $this, 'execute_import' ],
+				'permission_callback' => [ $this, 'check_permission' ],
+				'args'                => [
+					'file_id'            => [
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+					'duplicate_strategy' => [
+						'type'              => 'string',
+						'required'          => true,
+						'enum'              => [ 'skip', 'update', 'create' ],
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+				],
+			]
+		);
 	}
 
 	/**
@@ -162,6 +185,24 @@ class ImportEndpoint {
 		}
 
 		$result = $this->import->validate_file( $files['file'], $type );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return new WP_REST_Response( $result );
+	}
+
+	/**
+	 * Run the import against a previously validated file.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function execute_import( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$result = $this->import->execute_import(
+			(string) $request->get_param( 'file_id' ),
+			(string) $request->get_param( 'duplicate_strategy' )
+		);
 
 		if ( is_wp_error( $result ) ) {
 			return $result;

@@ -129,16 +129,51 @@ function DownloadIcon() {
   );
 }
 
+const PROGRESS_STEPS = [
+  {
+    key: 'reading',
+    label: __( 'Reading file', 'mission-donation-platform' ),
+    sub: __( 'Reading file…', 'mission-donation-platform' ),
+    word: __( 'Reading', 'mission-donation-platform' ),
+    mode: 'indeterminate',
+  },
+  {
+    key: 'validating',
+    label: __( 'Validating records', 'mission-donation-platform' ),
+    sub: __( 'Validating records…', 'mission-donation-platform' ),
+    word: __( 'Validating', 'mission-donation-platform' ),
+    mode: 'indeterminate',
+  },
+  {
+    key: 'creating',
+    label: __( 'Creating donor profiles', 'mission-donation-platform' ),
+    sub: __( 'Creating donor profiles…', 'mission-donation-platform' ),
+    word: __( 'Importing', 'mission-donation-platform' ),
+    mode: 'indeterminate',
+  },
+  {
+    key: 'finalizing',
+    label: __( 'Updating donor totals', 'mission-donation-platform' ),
+    sub: __( 'Finishing up…', 'mission-donation-platform' ),
+    word: __( 'Finalizing', 'mission-donation-platform' ),
+    mode: 'finalizing',
+  },
+];
+
 export default function ImportPanel() {
   const [ dataType, setDataType ] = useState( 'donors' );
   const [ expectedColumns, setExpectedColumns ] = useState( [] );
-  const [ uploadState, setUploadState ] = useState( 'upload' ); // 'upload' | 'validation' | 'success'
+  const [ uploadState, setUploadState ] = useState( 'upload' ); // 'upload' | 'validation' | 'progress' | 'success'
   const [ isUploading, setIsUploading ] = useState( false );
   const [ uploadError, setUploadError ] = useState( '' );
   const [ validation, setValidation ] = useState( null );
   const [ duplicateStrategy, setDuplicateStrategy ] = useState( 'skip' );
   const [ isDragging, setIsDragging ] = useState( false );
+  const [ progressStep, setProgressStep ] = useState( 0 );
+  const [ importResult, setImportResult ] = useState( null );
+  const [ importError, setImportError ] = useState( '' );
   const fileInputRef = useRef( null );
+  const progressTimer = useRef( null );
 
   const typeLabel =
     DATA_TYPES.find( ( t ) => t.value === dataType )?.label ?? '';
@@ -156,10 +191,76 @@ export default function ImportPanel() {
     setValidation( null );
     setUploadError( '' );
     setDuplicateStrategy( 'skip' );
+    setImportResult( null );
+    setImportError( '' );
+    setProgressStep( 0 );
+    if ( progressTimer.current ) {
+      clearInterval( progressTimer.current );
+      progressTimer.current = null;
+    }
     if ( fileInputRef.current ) {
       fileInputRef.current.value = '';
     }
   }, [] );
+
+  useEffect( () => {
+    return () => {
+      if ( progressTimer.current ) {
+        clearInterval( progressTimer.current );
+      }
+    };
+  }, [] );
+
+  const executeImport = useCallback( () => {
+    if ( ! validation?.file_id ) {
+      return;
+    }
+
+    setUploadState( 'progress' );
+    setImportError( '' );
+    setImportResult( null );
+    setProgressStep( 0 );
+
+    progressTimer.current = setInterval( () => {
+      setProgressStep( ( prev ) =>
+        prev < PROGRESS_STEPS.length - 2 ? prev + 1 : prev
+      );
+    }, 900 );
+
+    apiFetch( {
+      path: '/mission-donation-platform/v1/import/execute',
+      method: 'POST',
+      data: {
+        file_id: validation.file_id,
+        duplicate_strategy: duplicateStrategy,
+      },
+    } )
+      .then( ( data ) => {
+        if ( progressTimer.current ) {
+          clearInterval( progressTimer.current );
+          progressTimer.current = null;
+        }
+        setProgressStep( PROGRESS_STEPS.length - 1 );
+        setTimeout( () => {
+          setImportResult( data );
+          setUploadState( 'success' );
+        }, 450 );
+      } )
+      .catch( ( err ) => {
+        if ( progressTimer.current ) {
+          clearInterval( progressTimer.current );
+          progressTimer.current = null;
+        }
+        setImportError(
+          err?.message ||
+            __(
+              'The import could not be completed.',
+              'mission-donation-platform'
+            )
+        );
+        setUploadState( 'validation' );
+      } );
+  }, [ validation, duplicateStrategy ] );
 
   const handleTypeChange = ( newType ) => {
     if ( newType !== dataType ) {
@@ -265,6 +366,13 @@ export default function ImportPanel() {
               ) }
             </p>
           </div>
+
+          { uploadError && (
+            <div className="mission-import-error" role="alert">
+              <WarningIcon />
+              <span>{ uploadError }</span>
+            </div>
+          ) }
 
           <div
             className="mission-settings-field"
@@ -380,10 +488,6 @@ export default function ImportPanel() {
               onChange={ handleFileChange }
             />
           </div>
-
-          { uploadError && (
-            <div className="mission-import-error">{ uploadError }</div>
-          ) }
         </div>
 
         <div className="mission-settings-card">
@@ -438,6 +542,15 @@ export default function ImportPanel() {
       issueStatClass = 'is-warning';
     }
 
+    let actionCount;
+    if ( 'skip' === duplicateStrategy ) {
+      actionCount = newRows;
+    } else if ( 'update' === duplicateStrategy && 0 === newRows ) {
+      actionCount = duplicates;
+    } else {
+      actionCount = importableRows;
+    }
+
     let summaryText;
     if ( 'skip' === duplicateStrategy ) {
       summaryText = sprintf(
@@ -488,6 +601,12 @@ export default function ImportPanel() {
 
     return (
       <div className="mission-settings-panel">
+        { importError && (
+          <div className="mission-import-error" role="alert">
+            <WarningIcon />
+            <span>{ importError }</span>
+          </div>
+        ) }
         <div className="mission-settings-card">
           <div className="mission-settings-card__header">
             <h2 className="mission-settings-card__title">
@@ -692,7 +811,9 @@ export default function ImportPanel() {
               </p>
             </div>
             <div className="mission-import-radio-group">
-              { DUPLICATE_STRATEGIES.map( ( option ) => (
+              { DUPLICATE_STRATEGIES.filter(
+                ( option ) => 'create' !== option.value || 'donors' !== dataType
+              ).map( ( option ) => (
                 <button
                   key={ option.value }
                   type="button"
@@ -784,8 +905,16 @@ export default function ImportPanel() {
             <button
               className="mission-settings-save-bar__btn"
               type="button"
-              disabled
-              title={ __( 'Coming in Phase 2', 'mission-donation-platform' ) }
+              onClick={ executeImport }
+              disabled={ actionCount === 0 || dataType !== 'donors' }
+              title={
+                dataType !== 'donors'
+                  ? __(
+                      'Only donor imports are supported right now.',
+                      'mission-donation-platform'
+                    )
+                  : ''
+              }
             >
               <svg
                 width="14"
@@ -801,13 +930,224 @@ export default function ImportPanel() {
                 <polyline points="11 5 8 2 5 5" />
                 <line x1="8" y1="2" x2="8" y2="10" />
               </svg>
-              { sprintf(
-                /* translators: 1: number, 2: type label */
-                __( 'Import %1$d %2$s', 'mission-donation-platform' ),
-                'create' === duplicateStrategy ? importableRows : newRows,
-                typeLabel
-              ) }
+              { 'update' === duplicateStrategy && 0 === newRows
+                ? sprintf(
+                    /* translators: 1: number, 2: type label */
+                    __( 'Update %1$d %2$s', 'mission-donation-platform' ),
+                    actionCount,
+                    typeLabel
+                  )
+                : sprintf(
+                    /* translators: 1: number, 2: type label */
+                    __( 'Import %1$d %2$s', 'mission-donation-platform' ),
+                    actionCount,
+                    typeLabel
+                  ) }
             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // -----------------
+  // Progress State
+  // -----------------
+  if ( 'progress' === uploadState ) {
+    const current = PROGRESS_STEPS[ progressStep ] ?? PROGRESS_STEPS[ 0 ];
+    return (
+      <div className="mission-settings-panel">
+        <div className="mission-settings-card">
+          <div className="mission-import-progress">
+            <div
+              className={ `mission-import-progress__ring mode-${ current.mode }` }
+            >
+              <svg viewBox="0 0 120 120">
+                <circle
+                  className="mission-import-progress__ring-track"
+                  cx="60"
+                  cy="60"
+                  r="52"
+                />
+                <circle
+                  className="mission-import-progress__ring-fill"
+                  cx="60"
+                  cy="60"
+                  r="52"
+                />
+                <circle
+                  className="mission-import-progress__ring-sweep"
+                  cx="60"
+                  cy="60"
+                  r="52"
+                />
+              </svg>
+              <div className="mission-import-progress__word">
+                { current.word }
+              </div>
+            </div>
+            <div className="mission-import-progress__title">
+              { sprintf(
+                /* translators: %s: data type label */
+                __( 'Importing your %s', 'mission-donation-platform' ),
+                typeLabel.toLowerCase()
+              ) }
+            </div>
+            <div className="mission-import-progress__sub">{ current.sub }</div>
+            <div className="mission-import-progress__steps">
+              { PROGRESS_STEPS.map( ( step, idx ) => {
+                let cls = '';
+                if ( idx < progressStep ) {
+                  cls = 'is-done';
+                } else if ( idx === progressStep ) {
+                  cls = 'is-active';
+                }
+                return (
+                  <div
+                    className={ `mission-import-progress__step ${ cls }` }
+                    key={ step.key }
+                  >
+                    <span className="mission-import-progress__step-marker" />
+                    <span className="mission-import-progress__step-label">
+                      { step.label }
+                    </span>
+                  </div>
+                );
+              } ) }
+            </div>
+            <div className="mission-import-progress__hint">
+              { __(
+                'Large imports can take a few minutes. Please keep this tab open until the import finishes.',
+                'mission-donation-platform'
+              ) }
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // -----------------
+  // Success State
+  // -----------------
+  if ( 'success' === uploadState && importResult ) {
+    const { imported = 0, updated = 0, skipped = 0, errors = 0 } = importResult;
+
+    const lines = [];
+    if ( imported > 0 ) {
+      lines.push(
+        sprintf(
+          /* translators: 1: count, 2: data type */
+          __(
+            '%1$d %2$s were successfully imported.',
+            'mission-donation-platform'
+          ),
+          imported,
+          typeLabel.toLowerCase()
+        )
+      );
+    }
+    if ( updated > 0 ) {
+      lines.push(
+        sprintf(
+          /* translators: %d: count */
+          __(
+            '%d existing records were updated.',
+            'mission-donation-platform'
+          ),
+          updated
+        )
+      );
+    }
+    if ( skipped > 0 ) {
+      lines.push(
+        sprintf(
+          /* translators: %d: count */
+          __( '%d duplicates were skipped.', 'mission-donation-platform' ),
+          skipped
+        )
+      );
+    }
+    if ( errors > 0 ) {
+      lines.push(
+        sprintf(
+          /* translators: %d: count */
+          __( '%d rows failed to import.', 'mission-donation-platform' ),
+          errors
+        )
+      );
+    }
+
+    const viewUrl =
+      'donors' === dataType
+        ? `${
+            window.missiondpAdmin?.adminUrl ?? ''
+          }admin.php?page=mission-donation-platform-donors`
+        : '';
+
+    return (
+      <div className="mission-settings-panel">
+        <div className="mission-settings-card">
+          <div className="mission-import-success">
+            <div className="mission-import-success__icon">
+              <svg
+                width="28"
+                height="28"
+                viewBox="0 0 32 32"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="8,16 14,22 24,10" />
+              </svg>
+            </div>
+            <div className="mission-import-success__title">
+              { __( 'Import complete', 'mission-donation-platform' ) }
+            </div>
+            <div className="mission-import-success__text">
+              { lines.join( ' ' ) }
+            </div>
+            { errors > 0 && importResult.error_details?.length > 0 && (
+              <details className="mission-import-success__errors">
+                <summary>
+                  { __( 'Show error details', 'mission-donation-platform' ) }
+                </summary>
+                <ul>
+                  { importResult.error_details.map( ( e, idx ) => (
+                    <li key={ idx }>
+                      <strong>
+                        { sprintf(
+                          /* translators: %d: row number */
+                          __( 'Row %d:', 'mission-donation-platform' ),
+                          e.row
+                        ) }
+                      </strong>{ ' ' }
+                      { e.message }
+                    </li>
+                  ) ) }
+                </ul>
+              </details>
+            ) }
+            <div className="mission-import-success__buttons">
+              { viewUrl && (
+                <a className="mission-settings-save-bar__btn" href={ viewUrl }>
+                  { sprintf(
+                    /* translators: %s: data type label */
+                    __( 'View %s', 'mission-donation-platform' ),
+                    typeLabel
+                  ) }
+                </a>
+              ) }
+              <button
+                className="mission-settings-secondary-btn"
+                type="button"
+                onClick={ resetToUpload }
+              >
+                { __( 'Import more data', 'mission-donation-platform' ) }
+              </button>
+            </div>
           </div>
         </div>
       </div>
