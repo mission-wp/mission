@@ -24,6 +24,10 @@ use MissionDP\Rest\Endpoints\NotesEndpoint;
 use MissionDP\Export\ExportService;
 use MissionDP\Rest\Endpoints\DonorsEndpoint;
 use MissionDP\Rest\Endpoints\ExportEndpoint;
+use MissionDP\Rest\Endpoints\ImportEndpoint;
+use MissionDP\Import\ColumnMapper;
+use MissionDP\Import\ImportService;
+use MissionDP\Import\Validators\RowValidator;
 use MissionDP\Rest\Endpoints\DonorWallEndpoint;
 use MissionDP\Rest\Endpoints\EmailTemplateEndpoint;
 use MissionDP\Rest\Endpoints\EmailTestEndpoint;
@@ -107,7 +111,9 @@ class RestModule {
 		( new DashboardEmailChangeEndpoint() )->register();
 		( new EmailTestEndpoint( $settings ) )->register();
 		( new EmailTemplateEndpoint() )->register();
-		( new ExportEndpoint( new ExportService( $settings ) ) )->register();
+		$export_service = new ExportService( $settings );
+		( new ExportEndpoint( $export_service ) )->register();
+		( new ImportEndpoint( new ImportService( $export_service, new ColumnMapper( $export_service ), new RowValidator() ) ) )->register();
 		( new SystemStatusEndpoint( $settings ) )->register();
 		( new CleanupEndpoint( new CleanupService( $settings ) ) )->register();
 	}
