@@ -1703,6 +1703,16 @@ select.mission-logs-select {
     display: flex;
     justify-content: center;
     gap: 10px;
+
+    a {
+      text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+      color: #fff;
+      text-decoration: none;
+    }
   }
 }
 
