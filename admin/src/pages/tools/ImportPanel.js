@@ -129,51 +129,42 @@ function DownloadIcon() {
   );
 }
 
-const PROGRESS_STEPS = [
-  {
-    key: 'reading',
-    label: __( 'Reading file', 'mission-donation-platform' ),
-    sub: __( 'Reading file…', 'mission-donation-platform' ),
-    word: __( 'Reading', 'mission-donation-platform' ),
-    mode: 'indeterminate',
-  },
-  {
-    key: 'validating',
-    label: __( 'Validating records', 'mission-donation-platform' ),
-    sub: __( 'Validating records…', 'mission-donation-platform' ),
-    word: __( 'Validating', 'mission-donation-platform' ),
-    mode: 'indeterminate',
-  },
-  {
-    key: 'creating',
-    label: __( 'Creating donor profiles', 'mission-donation-platform' ),
-    sub: __( 'Creating donor profiles…', 'mission-donation-platform' ),
-    word: __( 'Importing', 'mission-donation-platform' ),
-    mode: 'indeterminate',
-  },
-  {
-    key: 'finalizing',
-    label: __( 'Updating donor totals', 'mission-donation-platform' ),
-    sub: __( 'Finishing up…', 'mission-donation-platform' ),
-    word: __( 'Finalizing', 'mission-donation-platform' ),
-    mode: 'finalizing',
-  },
-];
+// Pace the displayed progress so tiny imports don't jump 0→100% before the
+// first poll lands. Capped so huge imports aren't artificially stalled.
+const MIN_MS_PER_ROW = 250;
+const MIN_PROGRESS_FLOOR_MS = 2500;
+const MIN_PROGRESS_CEIL_MS = 8000;
+const POLL_INTERVAL_MS = 2000;
+const TERMINAL_STATUSES = [ 'completed', 'failed', 'cancelled' ];
+
+function computeMinDuration( totalRows ) {
+  if ( ! totalRows || totalRows <= 0 ) {
+    return MIN_PROGRESS_FLOOR_MS;
+  }
+  return Math.max(
+    MIN_PROGRESS_FLOOR_MS,
+    Math.min( MIN_PROGRESS_CEIL_MS, totalRows * MIN_MS_PER_ROW )
+  );
+}
 
 export default function ImportPanel() {
   const [ dataType, setDataType ] = useState( 'donors' );
   const [ expectedColumns, setExpectedColumns ] = useState( [] );
-  const [ uploadState, setUploadState ] = useState( 'upload' ); // 'upload' | 'validation' | 'progress' | 'success'
+  const [ uploadState, setUploadState ] = useState( 'upload' ); // 'upload' | 'validation' | 'progress' | 'success' | 'failed'
   const [ isUploading, setIsUploading ] = useState( false );
   const [ uploadError, setUploadError ] = useState( '' );
   const [ validation, setValidation ] = useState( null );
   const [ duplicateStrategy, setDuplicateStrategy ] = useState( 'skip' );
   const [ isDragging, setIsDragging ] = useState( false );
-  const [ progressStep, setProgressStep ] = useState( 0 );
-  const [ importResult, setImportResult ] = useState( null );
+  const [ jobId, setJobId ] = useState( '' );
+  const [ jobStatus, setJobStatus ] = useState( null );
+  const [ displayedPercent, setDisplayedPercent ] = useState( 0 );
+  const [ isCancelling, setIsCancelling ] = useState( false );
   const [ importError, setImportError ] = useState( '' );
   const fileInputRef = useRef( null );
-  const progressTimer = useRef( null );
+  const progressStartedAt = useRef( 0 );
+  const animationFrame = useRef( null );
+  const pollTimer = useRef( null );
 
   const typeLabel =
     DATA_TYPES.find( ( t ) => t.value === dataType )?.label ?? '';
@@ -186,30 +177,162 @@ export default function ImportPanel() {
       .catch( () => setExpectedColumns( [] ) );
   }, [ dataType ] );
 
+  const stopPolling = useCallback( () => {
+    if ( pollTimer.current ) {
+      clearInterval( pollTimer.current );
+      pollTimer.current = null;
+    }
+  }, [] );
+
+  const stopAnimation = useCallback( () => {
+    if ( animationFrame.current ) {
+      window.cancelAnimationFrame( animationFrame.current );
+      animationFrame.current = null;
+    }
+  }, [] );
+
   const resetToUpload = useCallback( () => {
+    stopPolling();
+    stopAnimation();
     setUploadState( 'upload' );
     setValidation( null );
     setUploadError( '' );
     setDuplicateStrategy( 'skip' );
-    setImportResult( null );
+    setJobId( '' );
+    setJobStatus( null );
+    setDisplayedPercent( 0 );
+    setIsCancelling( false );
     setImportError( '' );
-    setProgressStep( 0 );
-    if ( progressTimer.current ) {
-      clearInterval( progressTimer.current );
-      progressTimer.current = null;
-    }
+    progressStartedAt.current = 0;
     if ( fileInputRef.current ) {
       fileInputRef.current.value = '';
     }
-  }, [] );
+  }, [ stopPolling, stopAnimation ] );
 
   useEffect( () => {
     return () => {
-      if ( progressTimer.current ) {
-        clearInterval( progressTimer.current );
-      }
+      stopPolling();
+      stopAnimation();
     };
-  }, [] );
+  }, [ stopPolling, stopAnimation ] );
+
+  // On mount or when dataType changes, look up an in-flight job for the user
+  // so navigating away and coming back resumes into the progress state.
+  useEffect( () => {
+    let cancelled = false;
+    apiFetch( {
+      path: `/mission-donation-platform/v1/import/active?type=${ dataType }`,
+    } )
+      .then( ( data ) => {
+        if ( cancelled || ! data?.job ) {
+          return;
+        }
+        const active = data.job;
+        if ( TERMINAL_STATUSES.includes( active.status ) ) {
+          return;
+        }
+        setJobId( active.job_id );
+        setJobStatus( active );
+        setUploadState( 'progress' );
+        progressStartedAt.current = Date.now();
+      } )
+      .catch( () => {
+        // Silent — no active job is the normal case.
+      } );
+    return () => {
+      cancelled = true;
+    };
+  }, [ dataType ] );
+
+  // Poll status while a job is in flight.
+  const jobStatusStatus = jobStatus?.status;
+  useEffect( () => {
+    if ( ! jobId ) {
+      stopPolling();
+      return undefined;
+    }
+    if ( jobStatusStatus && TERMINAL_STATUSES.includes( jobStatusStatus ) ) {
+      stopPolling();
+      return undefined;
+    }
+    const tick = () => {
+      apiFetch( {
+        path: `/mission-donation-platform/v1/import/status?job_id=${ encodeURIComponent(
+          jobId
+        ) }`,
+      } )
+        .then( ( data ) => setJobStatus( data ) )
+        .catch( () => {
+          // Network blip — keep polling.
+        } );
+    };
+    tick();
+    pollTimer.current = setInterval( tick, POLL_INTERVAL_MS );
+    return () => stopPolling();
+  }, [ jobId, jobStatusStatus, stopPolling ] );
+
+  // Animate displayedPercent toward the real backend percent on a time-shaped
+  // ramp so tiny imports don't jump 0→100% between polls.
+  useEffect( () => {
+    if ( ! jobStatus ) {
+      return undefined;
+    }
+    const realPercent = Math.max(
+      0,
+      Math.min( 100, jobStatus.percentage ?? 0 )
+    );
+    const minDuration = computeMinDuration( jobStatus.total_rows );
+    const isTerminal = TERMINAL_STATUSES.includes( jobStatus.status );
+    stopAnimation();
+    const step = () => {
+      setDisplayedPercent( ( current ) => {
+        const elapsed = progressStartedAt.current
+          ? Date.now() - progressStartedAt.current
+          : minDuration;
+        const timeDriven = Math.min( 100, ( elapsed / minDuration ) * 100 );
+        // Once terminal, let the ramp finish past the real percent.
+        const ceiling = isTerminal
+          ? Math.max( realPercent, timeDriven )
+          : Math.min( realPercent, timeDriven );
+        if ( current >= ceiling ) {
+          return ceiling;
+        }
+        const next = current + 0.6;
+        return next >= ceiling ? ceiling : next;
+      } );
+      animationFrame.current = window.requestAnimationFrame( step );
+    };
+    animationFrame.current = window.requestAnimationFrame( step );
+    return () => stopAnimation();
+  }, [ jobStatus, stopAnimation ] );
+
+  // Transition into terminal UI states once both the backend is terminal AND
+  // the minimum on-screen progress duration has been met.
+  const jobTotalRows = jobStatus?.total_rows;
+  useEffect( () => {
+    if ( ! jobStatusStatus ) {
+      return undefined;
+    }
+    if ( ! TERMINAL_STATUSES.includes( jobStatusStatus ) ) {
+      return undefined;
+    }
+    const minDuration = computeMinDuration( jobTotalRows );
+    const elapsed = progressStartedAt.current
+      ? Date.now() - progressStartedAt.current
+      : minDuration;
+    const wait = Math.max( 0, minDuration - elapsed );
+    const timeout = setTimeout( () => {
+      if ( 'completed' === jobStatusStatus ) {
+        setUploadState( 'success' );
+      } else if ( 'failed' === jobStatusStatus ) {
+        setUploadState( 'failed' );
+      } else if ( 'cancelled' === jobStatusStatus ) {
+        // After cancel, drop back to upload so the user can try again.
+        resetToUpload();
+      }
+    }, wait );
+    return () => clearTimeout( timeout );
+  }, [ jobStatusStatus, jobTotalRows, resetToUpload ] );
 
   const executeImport = useCallback( () => {
     if ( ! validation?.file_id ) {
@@ -218,17 +341,12 @@ export default function ImportPanel() {
 
     setUploadState( 'progress' );
     setImportError( '' );
-    setImportResult( null );
-    setProgressStep( 0 );
-
-    progressTimer.current = setInterval( () => {
-      setProgressStep( ( prev ) =>
-        prev < PROGRESS_STEPS.length - 2 ? prev + 1 : prev
-      );
-    }, 900 );
+    setJobStatus( null );
+    setDisplayedPercent( 0 );
+    progressStartedAt.current = Date.now();
 
     apiFetch( {
-      path: '/mission-donation-platform/v1/import/execute',
+      path: '/mission-donation-platform/v1/import/start',
       method: 'POST',
       data: {
         file_id: validation.file_id,
@@ -236,31 +354,43 @@ export default function ImportPanel() {
       },
     } )
       .then( ( data ) => {
-        if ( progressTimer.current ) {
-          clearInterval( progressTimer.current );
-          progressTimer.current = null;
-        }
-        setProgressStep( PROGRESS_STEPS.length - 1 );
-        setTimeout( () => {
-          setImportResult( data );
-          setUploadState( 'success' );
-        }, 450 );
+        setJobId( data.job_id );
+        setJobStatus( data );
       } )
       .catch( ( err ) => {
-        if ( progressTimer.current ) {
-          clearInterval( progressTimer.current );
-          progressTimer.current = null;
+        // 409 conflict surfaces an existing job — resume into it instead of erroring.
+        if ( err?.code === 'import_in_progress' && err?.data?.job ) {
+          setJobId( err.data.job.job_id );
+          setJobStatus( err.data.job );
+          return;
         }
         setImportError(
           err?.message ||
             __(
-              'The import could not be completed.',
+              'The import could not be started.',
               'mission-donation-platform'
             )
         );
         setUploadState( 'validation' );
       } );
   }, [ validation, duplicateStrategy ] );
+
+  const cancelImport = useCallback( () => {
+    if ( ! jobId || isCancelling ) {
+      return;
+    }
+    setIsCancelling( true );
+    apiFetch( {
+      path: '/mission-donation-platform/v1/import/cancel',
+      method: 'POST',
+      data: { job_id: jobId },
+    } )
+      .then( ( data ) => setJobStatus( data ) )
+      .catch( () => {
+        // Polling will catch up eventually.
+      } )
+      .finally( () => setIsCancelling( false ) );
+  }, [ jobId, isCancelling ] );
 
   const handleTypeChange = ( newType ) => {
     if ( newType !== dataType ) {
@@ -954,13 +1084,48 @@ export default function ImportPanel() {
   // Progress State
   // -----------------
   if ( 'progress' === uploadState ) {
-    const current = PROGRESS_STEPS[ progressStep ] ?? PROGRESS_STEPS[ 0 ];
+    const total = jobStatus?.total_rows ?? 0;
+    const realProcessed = jobStatus?.processed_rows ?? 0;
+    const realImported = jobStatus?.imported ?? 0;
+    const realSkipped = jobStatus?.skipped ?? 0;
+    const realUpdated = jobStatus?.updated ?? 0;
+    const realErrors = jobStatus?.errors ?? 0;
+    const percentInt = Math.round( displayedPercent );
+
+    // Scale counters by the displayed ramp so they count up alongside the bar
+    // instead of jumping to final values on the first poll.
+    const displayedFraction = total > 0 ? displayedPercent / 100 : 0;
+    const processed = Math.min(
+      realProcessed,
+      Math.floor( total * displayedFraction )
+    );
+    const scale = ( value ) => {
+      if ( ! realProcessed ) {
+        return 0;
+      }
+      return Math.min(
+        value,
+        Math.floor( ( value * processed ) / realProcessed )
+      );
+    };
+    const imported = scale( realImported );
+    const updated = scale( realUpdated );
+    const skipped = scale( realSkipped );
+    const errs = scale( realErrors );
+    const ringMode =
+      jobStatus && TERMINAL_STATUSES.includes( jobStatus.status )
+        ? 'finalizing'
+        : 'determinate';
+    // Stroke-dasharray fraction for the ring (circumference of r=52).
+    const circumference = 2 * Math.PI * 52;
+    const dashOffset = circumference * ( 1 - displayedPercent / 100 );
+
     return (
       <div className="mission-settings-panel">
         <div className="mission-settings-card">
           <div className="mission-import-progress">
             <div
-              className={ `mission-import-progress__ring mode-${ current.mode }` }
+              className={ `mission-import-progress__ring mode-${ ringMode }` }
             >
               <svg viewBox="0 0 120 120">
                 <circle
@@ -974,52 +1139,147 @@ export default function ImportPanel() {
                   cx="60"
                   cy="60"
                   r="52"
-                />
-                <circle
-                  className="mission-import-progress__ring-sweep"
-                  cx="60"
-                  cy="60"
-                  r="52"
+                  style={ {
+                    strokeDasharray: circumference,
+                    strokeDashoffset: dashOffset,
+                  } }
                 />
               </svg>
               <div className="mission-import-progress__word">
-                { current.word }
+                { `${ percentInt }%` }
               </div>
             </div>
             <div className="mission-import-progress__title">
-              { sprintf(
-                /* translators: %s: data type label */
-                __( 'Importing your %s', 'mission-donation-platform' ),
-                typeLabel.toLowerCase()
-              ) }
+              { 'cancelled' === jobStatus?.status
+                ? __( 'Cancelling…', 'mission-donation-platform' )
+                : sprintf(
+                    /* translators: %s: data type label */
+                    __( 'Importing your %s', 'mission-donation-platform' ),
+                    typeLabel.toLowerCase()
+                  ) }
             </div>
-            <div className="mission-import-progress__sub">{ current.sub }</div>
-            <div className="mission-import-progress__steps">
-              { PROGRESS_STEPS.map( ( step, idx ) => {
-                let cls = '';
-                if ( idx < progressStep ) {
-                  cls = 'is-done';
-                } else if ( idx === progressStep ) {
-                  cls = 'is-active';
-                }
-                return (
-                  <div
-                    className={ `mission-import-progress__step ${ cls }` }
-                    key={ step.key }
-                  >
-                    <span className="mission-import-progress__step-marker" />
-                    <span className="mission-import-progress__step-label">
-                      { step.label }
-                    </span>
-                  </div>
-                );
-              } ) }
+            <div className="mission-import-progress__sub">
+              { total > 0
+                ? sprintf(
+                    /* translators: 1: processed rows, 2: total rows */
+                    __(
+                      '%1$d of %2$d rows processed',
+                      'mission-donation-platform'
+                    ),
+                    processed,
+                    total
+                  )
+                : __( 'Starting up…', 'mission-donation-platform' ) }
+            </div>
+            <div className="mission-import-progress__counters">
+              <div className="mission-import-progress__counter">
+                <span className="mission-import-progress__counter-value">
+                  { imported }
+                </span>
+                <span className="mission-import-progress__counter-label">
+                  { __( 'imported', 'mission-donation-platform' ) }
+                </span>
+              </div>
+              <div className="mission-import-progress__counter">
+                <span className="mission-import-progress__counter-value">
+                  { updated }
+                </span>
+                <span className="mission-import-progress__counter-label">
+                  { __( 'updated', 'mission-donation-platform' ) }
+                </span>
+              </div>
+              <div className="mission-import-progress__counter">
+                <span className="mission-import-progress__counter-value">
+                  { skipped }
+                </span>
+                <span className="mission-import-progress__counter-label">
+                  { __( 'skipped', 'mission-donation-platform' ) }
+                </span>
+              </div>
+              { errs > 0 && (
+                <div className="mission-import-progress__counter is-error">
+                  <span className="mission-import-progress__counter-value">
+                    { errs }
+                  </span>
+                  <span className="mission-import-progress__counter-label">
+                    { __( 'errors', 'mission-donation-platform' ) }
+                  </span>
+                </div>
+              ) }
             </div>
             <div className="mission-import-progress__hint">
               { __(
-                'Large imports can take a few minutes. Please keep this tab open until the import finishes.',
+                'You can safely leave this page — the import keeps running in the background. Come back any time to check progress.',
                 'mission-donation-platform'
               ) }
+            </div>
+            <div className="mission-import-progress__actions">
+              <button
+                className="mission-settings-secondary-btn"
+                type="button"
+                onClick={ cancelImport }
+                disabled={
+                  isCancelling ||
+                  ( jobStatus &&
+                    TERMINAL_STATUSES.includes( jobStatus.status ) )
+                }
+              >
+                { isCancelling
+                  ? __( 'Cancelling…', 'mission-donation-platform' )
+                  : __( 'Cancel import', 'mission-donation-platform' ) }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // -----------------
+  // Failed State
+  // -----------------
+  if ( 'failed' === uploadState ) {
+    return (
+      <div className="mission-settings-panel">
+        <div className="mission-settings-card">
+          <div className="mission-import-success mission-import-failed">
+            <div className="mission-import-success__icon is-error">
+              <WarningIcon />
+            </div>
+            <div className="mission-import-success__title">
+              { __( 'Import failed', 'mission-donation-platform' ) }
+            </div>
+            <div className="mission-import-success__text">
+              { jobStatus?.last_error ||
+                __(
+                  'Something went wrong while running the import.',
+                  'mission-donation-platform'
+                ) }
+            </div>
+            { ( jobStatus?.imported > 0 ||
+              jobStatus?.updated > 0 ||
+              jobStatus?.skipped > 0 ) && (
+              <div className="mission-import-success__text">
+                { sprintf(
+                  /* translators: 1: imported, 2: updated, 3: skipped */
+                  __(
+                    '%1$d imported, %2$d updated, %3$d skipped before the failure.',
+                    'mission-donation-platform'
+                  ),
+                  jobStatus?.imported ?? 0,
+                  jobStatus?.updated ?? 0,
+                  jobStatus?.skipped ?? 0
+                ) }
+              </div>
+            ) }
+            <div className="mission-import-success__buttons">
+              <button
+                className="mission-settings-save-bar__btn"
+                type="button"
+                onClick={ resetToUpload }
+              >
+                { __( 'Try again', 'mission-donation-platform' ) }
+              </button>
             </div>
           </div>
         </div>
@@ -1030,8 +1290,9 @@ export default function ImportPanel() {
   // -----------------
   // Success State
   // -----------------
-  if ( 'success' === uploadState && importResult ) {
-    const { imported = 0, updated = 0, skipped = 0, errors = 0 } = importResult;
+  if ( 'success' === uploadState && jobStatus ) {
+    const importResult = jobStatus;
+    const { imported = 0, updated = 0, skipped = 0, errors = 0 } = jobStatus;
 
     const lines = [];
     if ( imported > 0 ) {

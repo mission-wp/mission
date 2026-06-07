@@ -279,6 +279,36 @@ class Schema {
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
+			// Import Jobs
+			// ----------------------------------------------------------------
+			"{$prefix}import_jobs"         => "CREATE TABLE {$prefix}import_jobs (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  job_id varchar(64) NOT NULL DEFAULT '',
+  user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  type varchar(20) NOT NULL DEFAULT 'donors',
+  duplicate_strategy varchar(20) NOT NULL DEFAULT 'skip',
+  status varchar(20) NOT NULL DEFAULT 'queued',
+  file_path text NOT NULL,
+  original_filename varchar(255) NOT NULL DEFAULT '',
+  total_rows int(10) unsigned NOT NULL DEFAULT 0,
+  processed_rows int(10) unsigned NOT NULL DEFAULT 0,
+  imported int(10) unsigned NOT NULL DEFAULT 0,
+  skipped int(10) unsigned NOT NULL DEFAULT 0,
+  updated int(10) unsigned NOT NULL DEFAULT 0,
+  errors int(10) unsigned NOT NULL DEFAULT 0,
+  error_details longtext,
+  last_error text,
+  started_at datetime DEFAULT NULL,
+  completed_at datetime DEFAULT NULL,
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  UNIQUE KEY job_id (job_id),
+  KEY user_status (user_id, status),
+  KEY status (status),
+  KEY date_created (date_created)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
 			// Activity Log
 			// ----------------------------------------------------------------
 			"{$prefix}activity_log"        => "CREATE TABLE {$prefix}activity_log (

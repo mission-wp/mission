@@ -177,6 +177,17 @@ class Plugin {
 		// Initialize donor dashboard module (donor auth, wp-admin redirect).
 		$this->donor_dashboard_module = new DonorDashboard\DonorDashboardModule();
 		$this->donor_dashboard_module->init();
+
+		// Register the import job handler on every request so Action Scheduler
+		// workers can fire it (not just rest_api_init).
+		$import_export  = new Export\ExportService( new Settings\SettingsService() );
+		$import_service = new Import\ImportService(
+			$import_export,
+			new Import\ColumnMapper( $import_export ),
+			new Import\Validators\RowValidator()
+		);
+		( new Import\ImportJobHandler( $import_service ) )->register();
+		( new Import\ImportCleanup( $import_service ) )->register();
 	}
 
 	/**

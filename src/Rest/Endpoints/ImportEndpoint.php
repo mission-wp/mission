@@ -1,6 +1,6 @@
 <?php
 /**
- * REST endpoint for the Import tool (Phase 1: validate + template).
+ * REST endpoints for the Import tool.
  *
  * @package MissionDP
  */
@@ -86,10 +86,10 @@ class ImportEndpoint {
 
 		register_rest_route(
 			RestModule::NAMESPACE,
-			'/import/execute',
+			'/import/start',
 			[
 				'methods'             => 'POST',
-				'callback'            => [ $this, 'execute_import' ],
+				'callback'            => [ $this, 'start_import' ],
 				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
 					'file_id'            => [
@@ -106,10 +106,61 @@ class ImportEndpoint {
 				],
 			]
 		);
+
+		register_rest_route(
+			RestModule::NAMESPACE,
+			'/import/status',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'get_status' ],
+				'permission_callback' => [ $this, 'check_permission' ],
+				'args'                => [
+					'job_id' => [
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			RestModule::NAMESPACE,
+			'/import/cancel',
+			[
+				'methods'             => 'POST',
+				'callback'            => [ $this, 'cancel' ],
+				'permission_callback' => [ $this, 'check_permission' ],
+				'args'                => [
+					'job_id' => [
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			RestModule::NAMESPACE,
+			'/import/active',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'get_active' ],
+				'permission_callback' => [ $this, 'check_permission' ],
+				'args'                => [
+					'type' => [
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					],
+				],
+			]
+		);
 	}
 
 	/**
-	 * Permission check. Must be a site admin.
+	 * Permission check.
 	 */
 	public function check_permission(): bool|WP_Error {
 		if ( ! current_user_can( 'manage_options' ) ) {
@@ -124,7 +175,7 @@ class ImportEndpoint {
 	}
 
 	/**
-	 * Return the expected columns for a type (used by the UI callout).
+	 * Return the expected columns for a type.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 */
@@ -194,14 +245,57 @@ class ImportEndpoint {
 	}
 
 	/**
-	 * Run the import against a previously validated file.
+	 * Start a background import job.
 	 *
 	 * @param WP_REST_Request $request Request.
 	 */
-	public function execute_import( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$result = $this->import->execute_import(
+	public function start_import( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$result = $this->import->start_import(
 			(string) $request->get_param( 'file_id' ),
-			(string) $request->get_param( 'duplicate_strategy' )
+			(string) $request->get_param( 'duplicate_strategy' ),
+			get_current_user_id()
+		);
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return new WP_REST_Response( $result, 202 );
+	}
+
+	/**
+	 * Return status of a single job (scoped to the current user).
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function get_status( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$result = $this->import->get_job_status(
+			(string) $request->get_param( 'job_id' ),
+			get_current_user_id()
+		);
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		// Safety net for environments where AS auto-dispatch never fires, and
+		// for resuming after the runner hits its own time limit mid-job.
+		if ( ! in_array( $result['status'], [ 'completed', 'failed', 'cancelled' ], true ) ) {
+			$this->import->kick_queue_runner();
+		}
+
+		return new WP_REST_Response( $result );
+	}
+
+	/**
+	 * Cancel an in-flight job.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function cancel( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$result = $this->import->cancel_job(
+			(string) $request->get_param( 'job_id' ),
+			get_current_user_id()
 		);
 
 		if ( is_wp_error( $result ) ) {
@@ -209,5 +303,24 @@ class ImportEndpoint {
 		}
 
 		return new WP_REST_Response( $result );
+	}
+
+	/**
+	 * Return the user's currently active job for the given type (if any).
+	 *
+	 * Used by the import panel on mount to resume after a navigate-away.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function get_active( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$type = $request->get_param( 'type' );
+
+		if ( ! $this->import->is_valid_type( $type ) ) {
+			return new WP_Error( 'invalid_type', __( 'Unsupported import type.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		$active = $this->import->get_active_job( get_current_user_id(), $type );
+
+		return new WP_REST_Response( [ 'job' => $active ] );
 	}
 }

@@ -30,9 +30,24 @@ class Deactivator {
 		do_action( 'missiondp_plugin_deactivating' );
 
 		self::clear_scheduled_events();
+		self::clear_action_scheduler_actions();
 		self::clear_transients();
 
 		flush_rewrite_rules();
+	}
+
+	/**
+	 * Cancel any pending Action Scheduler actions owned by the plugin.
+	 *
+	 * Prevents queued import ticks from sitting around in the AS table after
+	 * the plugin is deactivated.
+	 *
+	 * @return void
+	 */
+	private static function clear_action_scheduler_actions(): void {
+		if ( function_exists( 'as_unschedule_all_actions' ) ) {
+			as_unschedule_all_actions( 'missiondp_import_tick' );
+		}
 	}
 
 	/**

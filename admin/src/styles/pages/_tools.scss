@@ -1411,7 +1411,11 @@ select.mission-logs-select {
     stroke-dasharray: 326.726;
     stroke-dashoffset: 326.726;
     opacity: 0;
-    transition: stroke-dashoffset 0.35s ease, opacity 0.3s ease;
+    // No transition on stroke-dashoffset — JS drives it via requestAnimationFrame
+    // at 60fps and a CSS transition just lags / fights the JS updates. Keep the
+    // opacity transition so the ring fades in cleanly when the determinate mode
+    // class is added.
+    transition: opacity 0.3s ease;
   }
 
   &__ring-sweep {
@@ -1431,20 +1435,11 @@ select.mission-logs-select {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14.4px;
+    font-size: 16px;
     font-weight: 600;
     color: #2fa36b;
     opacity: 0;
     transition: opacity 0.3s ease;
-
-    &::after {
-      content: "";
-      width: 0;
-      min-width: 0;
-      overflow: visible;
-      white-space: nowrap;
-      animation: missionImportDots 1.4s infinite;
-    }
   }
 
   &__ring.mode-indeterminate {
@@ -1459,6 +1454,19 @@ select.mission-logs-select {
     .mission-import-progress__word {
       opacity: 1;
       animation: missionImportPhasePulse 1.7s ease-in-out infinite;
+    }
+  }
+
+  &__ring.mode-determinate {
+
+    /* stylelint-disable-next-line no-descending-specificity */
+    .mission-import-progress__ring-fill {
+      opacity: 1;
+    }
+
+    /* stylelint-disable-next-line no-descending-specificity */
+    .mission-import-progress__word {
+      opacity: 1;
     }
   }
 
@@ -1549,12 +1557,52 @@ select.mission-logs-select {
     }
   }
 
+  &__counters {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin: 4px auto 24px;
+    flex-wrap: wrap;
+  }
+
+  &__counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 64px;
+  }
+
+  &__counter-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e1e1e;
+    line-height: 1;
+  }
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  &__counter.is-error .mission-import-progress__counter-value {
+    color: #c92c2c;
+  }
+
+  &__counter-label {
+    font-size: 11.5px;
+    color: #6b6b7b;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
   &__hint {
     font-size: 12px;
     color: #9b9ba8;
     line-height: 1.5;
     max-width: 380px;
-    margin: 0 auto;
+    margin: 0 auto 20px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -1652,6 +1700,15 @@ select.mission-logs-select {
       border-radius: 50%;
       border: 2px solid rgba(47, 163, 107, 0.15);
       animation: missionImportPulse 2s ease-out infinite;
+    }
+
+    &.is-error {
+      background: rgba(201, 44, 44, 0.12);
+      color: #c92c2c;
+
+      &::after {
+        border-color: rgba(201, 44, 44, 0.15);
+      }
     }
   }
 

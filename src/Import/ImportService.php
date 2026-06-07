@@ -1,6 +1,7 @@
 <?php
 /**
- * Import service. Parses uploaded files and produces a validation preview.
+ * Import service. Parses uploaded files, runs validation previews, and
+ * orchestrates background donor imports via Action Scheduler.
  *
  * @package MissionDP
  */
@@ -11,20 +12,23 @@ use MissionDP\Currency\Currency;
 use MissionDP\Export\ExportService;
 use MissionDP\Import\Validators\RowValidator;
 use MissionDP\Models\Donor;
+use MissionDP\Models\ImportJob;
 use MissionDP\Plugin;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Central import coordinator (Phase 1: validation only).
+ * Central import coordinator.
  */
 class ImportService {
 
-	private const TYPES        = [ 'donors', 'transactions', 'campaigns', 'subscriptions' ];
-	private const PREVIEW_ROWS = 5;
-	private const MAX_BYTES    = 10 * 1024 * 1024;
-	private const FILE_ID_TTL  = HOUR_IN_SECONDS;
+	private const TYPES         = [ 'donors', 'transactions', 'campaigns', 'subscriptions' ];
+	private const PREVIEW_ROWS  = 5;
+	private const MAX_BYTES     = 10 * 1024 * 1024;
+	private const FILE_ID_TTL   = HOUR_IN_SECONDS;
+	private const BATCH_DEFAULT = 200;
+	private const STORAGE_DIR   = 'mission-imports';
 
 	/**
 	 * Constructor.
@@ -160,18 +164,23 @@ class ImportService {
 	}
 
 	/**
-	 * Execute a validated import. Re-parses the previously uploaded file from the
-	 * transient-referenced temp path, applies the duplicate strategy, and writes
-	 * records through the relevant model layer.
+	 * Start a background import from a validated upload. Creates an ImportJob
+	 * row, moves the file to stable storage, and enqueues the first Action
+	 * Scheduler tick. Does not process any rows itself.
 	 *
-	 * @param string $file_id            Transient key returned by validate_file().
+	 * @param string $file_id            Transient key from validate_file().
 	 * @param string $duplicate_strategy 'skip' | 'update' | 'create'.
+	 * @param int    $user_id            Current WP user (jobs are scoped per user).
 	 *
-	 * @return array|WP_Error Summary array or error.
+	 * @return array|WP_Error Job payload, or WP_Error on validation/conflict.
 	 */
-	public function execute_import( string $file_id, string $duplicate_strategy ): array|WP_Error {
+	public function start_import( string $file_id, string $duplicate_strategy, int $user_id ): array|WP_Error {
 		if ( ! in_array( $duplicate_strategy, [ 'skip', 'update', 'create' ], true ) ) {
 			return new WP_Error( 'invalid_strategy', __( 'Invalid duplicate strategy.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		if ( $user_id <= 0 ) {
+			return new WP_Error( 'no_user', __( 'You must be signed in to start an import.', 'mission-donation-platform' ), [ 'status' => 401 ] );
 		}
 
 		$stored = get_transient( $file_id );
@@ -180,11 +189,11 @@ class ImportService {
 			return new WP_Error( 'file_expired', __( 'The uploaded file has expired. Please upload it again.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		$path     = (string) $stored['path'];
-		$type     = (string) $stored['type'];
-		$filename = (string) ( $stored['filename'] ?? '' );
+		$source_path = (string) $stored['path'];
+		$type        = (string) $stored['type'];
+		$filename    = (string) ( $stored['filename'] ?? '' );
 
-		if ( ! is_readable( $path ) ) {
+		if ( ! is_readable( $source_path ) ) {
 			return new WP_Error( 'file_missing', __( 'The uploaded file could not be read.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
@@ -192,242 +201,339 @@ class ImportService {
 			return new WP_Error( 'unsupported_type', __( 'Only donor imports are supported right now.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		// The stored temp file has a `.tmp` extension (from wp_tempnam), so derive
-		// the format from the original upload filename instead.
+		// Concurrency guard: refuse a second import while one is in flight.
+		$active = ImportJob::find_active_for_user( $user_id, $type );
+
+		if ( $active ) {
+			return new WP_Error(
+				'import_in_progress',
+				__( 'An import is already running for this data type. Resume or cancel it before starting another.', 'mission-donation-platform' ),
+				[
+					'status' => 409,
+					'job'    => $active->to_array(),
+				]
+			);
+		}
+
 		$extension = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
 
+		$job_id = $this->generate_job_id();
+		$stable = $this->move_to_storage( $source_path, $job_id, $extension );
+
+		if ( is_wp_error( $stable ) ) {
+			return $stable;
+		}
+
+		// Single pass to count rows so the UI can show real percentages.
+		$total_rows = $this->count_rows( $stable, $extension );
+
+		if ( is_wp_error( $total_rows ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged -- WP_Filesystem unavailable during REST.
+			@unlink( $stable );
+			return $total_rows;
+		}
+
+		$job = new ImportJob(
+			[
+				'job_id'             => $job_id,
+				'user_id'            => $user_id,
+				'type'               => $type,
+				'duplicate_strategy' => $duplicate_strategy,
+				'status'             => ImportJob::STATUS_QUEUED,
+				'file_path'          => $stable,
+				'original_filename'  => $filename,
+				'total_rows'         => $total_rows,
+			]
+		);
+		$job->save();
+
+		// Drop the upload transient now that we own the file at a stable path.
+		delete_transient( $file_id );
+
+		/**
+		 * Fires before the first tick of an import is scheduled.
+		 *
+		 * @param string $type      Data type.
+		 * @param int    $row_count Total rows.
+		 * @param string $strategy  Duplicate strategy.
+		 * @param string $job_id    Public job token.
+		 */
+		do_action( "missiondp_import_{$type}_before", $type, $total_rows, $duplicate_strategy, $job_id );
+
+		// Enqueue the first tick. Each tick reschedules itself until done.
+		if ( function_exists( 'as_enqueue_async_action' ) ) {
+			as_enqueue_async_action( 'missiondp_import_tick', [ $job_id ], 'mission-import' );
+			$this->kick_queue_runner();
+		} else {
+			// Fallback for environments without Action Scheduler (e.g. tests).
+			do_action( 'missiondp_import_tick', $job_id );
+		}
+
+		return $job->to_array();
+	}
+
+	/**
+	 * Run AS's queue runner on shutdown so ticks start processing immediately
+	 * in environments where WP-Cron / loopback dispatch is unreliable (wp-env,
+	 * low-traffic sites). On PHP-FPM the response is flushed first so the
+	 * caller isn't blocked.
+	 */
+	public function kick_queue_runner(): void {
+		static $registered = false;
+
+		if ( $registered ) {
+			return;
+		}
+
+		$registered = true;
+
+		add_action(
+			'shutdown',
+			static function () {
+				if ( function_exists( 'fastcgi_finish_request' ) ) {
+					// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort; not all SAPIs support this.
+					@fastcgi_finish_request();
+				}
+
+				if ( ! class_exists( '\ActionScheduler' ) ) {
+					return;
+				}
+
+				try {
+					\ActionScheduler::runner()->run( 'Mission Import' );
+				} catch ( \Throwable $e ) {
+					// Don't let runner failures surface — AS records them itself.
+					unset( $e );
+				}
+			},
+			PHP_INT_MAX
+		);
+	}
+
+	/**
+	 * Read the next batch of rows from the job's file (skipping past
+	 * processed_rows), map columns, and run the donor write logic. Returns
+	 * the delta to apply to the job's counters.
+	 *
+	 * Used by ImportJobHandler. Public so the handler in another namespace can call it.
+	 *
+	 * @param ImportJob $job        The job.
+	 * @param int       $batch_size Rows to process this call.
+	 *
+	 * @return array{processed: int, imported: int, skipped: int, updated: int, errors: int, error_details: array<int, array{row: int, message: string}>, eof: bool}
+	 */
+	public function process_batch( ImportJob $job, int $batch_size ): array {
+		$batch = $this->read_batch( $job, $batch_size );
+
+		if ( is_wp_error( $batch ) ) {
+			throw new \RuntimeException( esc_html( $batch->get_error_message() ) );
+		}
+
+		if ( empty( $batch['rows'] ) ) {
+			return [
+				'processed'     => 0,
+				'imported'      => 0,
+				'skipped'       => 0,
+				'updated'       => 0,
+				'errors'        => 0,
+				'error_details' => [],
+				'eof'           => true,
+			];
+		}
+
+		$deltas = $this->process_donor_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] );
+
+		$deltas['processed'] = count( $batch['rows'] );
+		$deltas['eof']       = $batch['eof'];
+
+		return $deltas;
+	}
+
+	/**
+	 * Return the public-safe payload for a job, scoped to the requesting user.
+	 *
+	 * @param string $job_id  Public token.
+	 * @param int    $user_id Current user.
+	 */
+	public function get_job_status( string $job_id, int $user_id ): array|WP_Error {
+		$job = ImportJob::find_by_job_id( $job_id );
+
+		if ( ! $job || $job->user_id !== $user_id ) {
+			return new WP_Error( 'job_not_found', __( 'Import job not found.', 'mission-donation-platform' ), [ 'status' => 404 ] );
+		}
+
+		return $job->to_array();
+	}
+
+	/**
+	 * Cancel a queued/processing job. The next tick observes the flag and bails.
+	 *
+	 * @param string $job_id  Public token.
+	 * @param int    $user_id Current user.
+	 */
+	public function cancel_job( string $job_id, int $user_id ): array|WP_Error {
+		$job = ImportJob::find_by_job_id( $job_id );
+
+		if ( ! $job || $job->user_id !== $user_id ) {
+			return new WP_Error( 'job_not_found', __( 'Import job not found.', 'mission-donation-platform' ), [ 'status' => 404 ] );
+		}
+
+		if ( $job->is_terminal() ) {
+			return $job->to_array();
+		}
+
+		$job->mark_cancelled();
+
+		return $job->to_array();
+	}
+
+	/**
+	 * Get the user's currently in-flight job for a type (queued or processing).
+	 *
+	 * @param int    $user_id User.
+	 * @param string $type    Type.
+	 */
+	public function get_active_job( int $user_id, string $type ): ?array {
+		$job = ImportJob::find_active_for_user( $user_id, $type );
+
+		return $job ? $job->to_array() : null;
+	}
+
+	/**
+	 * Configured batch size, filterable.
+	 */
+	public function get_batch_size(): int {
+		/**
+		 * Filter the number of rows processed per import tick.
+		 *
+		 * @param int $batch_size Default batch size.
+		 */
+		return max( 1, (int) apply_filters( 'missiondp_import_batch_size', self::BATCH_DEFAULT ) );
+	}
+
+	/**
+	 * Remove a job's stored upload file. Called on cancel/complete/failure
+	 * cleanup. Safe to call repeatedly.
+	 *
+	 * @param ImportJob $job Job.
+	 */
+	public function delete_job_file( ImportJob $job ): void {
+		if ( '' === $job->file_path ) {
+			return;
+		}
+
+		$base = $this->storage_basedir();
+
+		if ( null === $base ) {
+			return;
+		}
+
+		// Defensive: only ever delete files inside our managed dir.
+		if ( ! str_starts_with( $job->file_path, $base ) ) {
+			return;
+		}
+
+		if ( file_exists( $job->file_path ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged -- WP_Filesystem unavailable in AS workers.
+			@unlink( $job->file_path );
+		}
+	}
+
+	/**
+	 * Log a completed import to the activity feed. Used by ImportJobHandler.
+	 *
+	 * @param ImportJob $job Completed job.
+	 */
+	public function log_completed_activity( ImportJob $job ): void {
+		if ( ! class_exists( Plugin::class ) ) {
+			return;
+		}
+
+		$module = Plugin::instance()->get_activity_feed_module();
+
+		if ( ! $module ) {
+			return;
+		}
+
+		$module->log(
+			'data_imported',
+			$job->type,
+			0,
+			[
+				'type'     => $job->type,
+				'strategy' => $job->duplicate_strategy,
+				'imported' => $job->imported,
+				'skipped'  => $job->skipped,
+				'updated'  => $job->updated,
+				'errors'   => $job->errors,
+				'job_id'   => $job->job_id,
+			],
+			false,
+			$job->errors > 0 ? 'warning' : 'info',
+		);
+	}
+
+	// ------------------------------------------------------------------
+	// Internal: row reading & processing
+	// ------------------------------------------------------------------
+
+	/**
+	 * Read the next batch of rows from a job's file, starting at processed_rows.
+	 * Returns mapped (canonical-keyed) rows along with the 1-based row number of
+	 * the first row in the batch, so error reports can use the user's row numbers.
+	 *
+	 * @param ImportJob $job        Job.
+	 * @param int       $batch_size Max rows to return.
+	 *
+	 * @return array{rows: array<int, array<string, string>>, start_row: int, eof: bool}|WP_Error
+	 */
+	private function read_batch( ImportJob $job, int $batch_size ): array|WP_Error {
+		if ( ! is_readable( $job->file_path ) ) {
+			return new WP_Error( 'file_missing', __( 'Import file is no longer available.', 'mission-donation-platform' ) );
+		}
+
+		$extension = strtolower( pathinfo( $job->original_filename, PATHINFO_EXTENSION ) );
+
 		$parsed = match ( $extension ) {
-			'csv'   => $this->parse_csv( $path ),
-			'json'  => $this->parse_json( $path ),
-			default => new WP_Error( 'invalid_extension', __( 'Only .csv and .json files are supported.', 'mission-donation-platform' ), [ 'status' => 400 ] ),
+			'csv'   => $this->read_csv_slice( $job->file_path, $job->processed_rows, $batch_size ),
+			'json'  => $this->read_json_slice( $job->file_path, $job->processed_rows, $batch_size ),
+			default => new WP_Error( 'invalid_extension', __( 'Unknown file format.', 'mission-donation-platform' ) ),
 		};
 
 		if ( is_wp_error( $parsed ) ) {
 			return $parsed;
 		}
 
-		$resolved    = $this->mapper->resolve_headers( $parsed['headers'], $type );
-		$mapped_rows = $this->map_rows( $parsed['rows'], $resolved['matched'] );
-
-		/**
-		 * Fires before an import starts.
-		 *
-		 * @param string $type      Data type being imported.
-		 * @param int    $row_count Number of rows about to be processed.
-		 * @param string $strategy  Duplicate strategy.
-		 */
-		do_action( "missiondp_import_{$type}_before", $type, count( $mapped_rows ), $duplicate_strategy );
-
-		$results = $this->import_donors( $mapped_rows, $duplicate_strategy );
-
-		$this->cleanup_file( $file_id, $path );
-
-		$this->log_activity( $type, $duplicate_strategy, $results );
-
-		/**
-		 * Fires after an import completes.
-		 *
-		 * @param string $type     Data type imported.
-		 * @param array  $results  Result summary.
-		 * @param string $strategy Duplicate strategy.
-		 */
-		do_action( "missiondp_import_{$type}_after", $type, $results, $duplicate_strategy );
-
-		return $results;
-	}
-
-	/**
-	 * Generate a blank CSV template for the given type.
-	 *
-	 * @param string $type Data type.
-	 */
-	public function build_template( string $type ): string {
-		$columns = $this->export->get_columns( $type );
-		$headers = array_column( $columns, 'label' );
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- In-memory temp stream.
-		$handle = fopen( 'php://temp', 'r+' );
-		fputcsv( $handle, $headers );
-		rewind( $handle );
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread -- In-memory stream.
-		$content = stream_get_contents( $handle );
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- WP_Filesystem can't read php://temp.
-
-		return (string) $content;
-	}
-
-	/**
-	 * Parse a CSV file into headers + rows.
-	 *
-	 * @param string $path Path to the uploaded temp file.
-	 * @return array{headers: string[], rows: array<int, string[]>}|WP_Error
-	 */
-	private function parse_csv( string $path ): array|WP_Error {
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		$handle = fopen( $path, 'r' );
-
-		if ( false === $handle ) {
-			return new WP_Error( 'parse_failed', __( 'Could not open the uploaded file.', 'mission-donation-platform' ), [ 'status' => 400 ] );
-		}
-
-		$headers = fgetcsv( $handle );
-
-		if ( false === $headers ) {
-			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- WP_Filesystem can't read php://temp.
-			return new WP_Error( 'parse_failed', __( 'The file appears to be empty.', 'mission-donation-platform' ), [ 'status' => 400 ] );
-		}
-
-		$headers = array_map( static fn( $h ) => is_string( $h ) ? trim( $h ) : '', $headers );
-
-		$rows = [];
-
-		while ( false !== ( $row = fgetcsv( $handle ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition,WordPress.CodeAnalysis.AssignmentInCondition
-			if ( 1 === count( $row ) && null === $row[0] ) {
-				continue;
-			}
-
-			$rows[] = array_map( static fn( $v ) => is_string( $v ) ? $v : (string) $v, $row );
-		}
-
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- WP_Filesystem can't read php://temp.
+		$resolved = $this->mapper->resolve_headers( $parsed['headers'], $job->type );
+		$mapped   = $this->map_rows( $parsed['rows'], $resolved['matched'] );
 
 		return [
-			'headers' => $headers,
-			'rows'    => $rows,
+			'rows'      => $mapped,
+			'start_row' => $job->processed_rows + 1,
+			'eof'       => $parsed['eof'],
 		];
 	}
 
 	/**
-	 * Parse a JSON file into headers + rows.
+	 * Apply a batch of donor rows. Same logic as the pre-background flow:
+	 * re-run validator (skip on errors), respect duplicate strategy, save via
+	 * Model layer so hooks fire.
 	 *
-	 * @param string $path Path to the uploaded temp file.
-	 * @return array{headers: string[], rows: array<int, string[]>}|WP_Error
-	 */
-	private function parse_json( string $path ): array|WP_Error {
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local temp file.
-		$raw = file_get_contents( $path );
-
-		if ( false === $raw ) {
-			return new WP_Error( 'parse_failed', __( 'Could not read the uploaded file.', 'mission-donation-platform' ), [ 'status' => 400 ] );
-		}
-
-		$data = json_decode( $raw, true );
-
-		if ( ! is_array( $data ) || empty( $data ) ) {
-			return new WP_Error( 'parse_failed', __( 'The JSON file is empty or malformed.', 'mission-donation-platform' ), [ 'status' => 400 ] );
-		}
-
-		$headers = array_keys( $data[0] );
-		$rows    = [];
-
-		foreach ( $data as $entry ) {
-			if ( ! is_array( $entry ) ) {
-				continue;
-			}
-
-			$row = [];
-
-			foreach ( $headers as $key ) {
-				$value = $entry[ $key ] ?? '';
-				$row[] = is_scalar( $value ) ? (string) $value : wp_json_encode( $value );
-			}
-
-			$rows[] = $row;
-		}
-
-		return [
-			'headers' => array_map( 'strval', $headers ),
-			'rows'    => $rows,
-		];
-	}
-
-	/**
-	 * Translate raw rows into canonical-keyed arrays based on header mapping.
-	 *
-	 * @param array<int, string[]>      $rows           Raw rows.
-	 * @param array<int, string|null>   $matched_keys   Mapping of column index => canonical key (null for unmatched).
-	 *
-	 * @return array<int, array<string, string>>
-	 */
-	private function map_rows( array $rows, array $matched_keys ): array {
-		$mapped = [];
-
-		foreach ( $rows as $row ) {
-			$entry = [];
-
-			foreach ( $matched_keys as $i => $key ) {
-				if ( null === $key ) {
-					continue;
-				}
-
-				$entry[ $key ] = $row[ $i ] ?? '';
-			}
-
-			$mapped[] = $entry;
-		}
-
-		return $mapped;
-	}
-
-	/**
-	 * Count rows that look like duplicates of existing records.
-	 *
-	 * Phase 1 only implements donor email matching. Other types return 0. Rows
-	 * already marked for skipping are excluded so the duplicate count reflects
-	 * only the records the importer would actually attempt to write.
-	 *
-	 * @param string                              $type                Data type.
-	 * @param array<int, array<string, string>>   $rows                Mapped rows.
-	 * @param array<int, bool>                    $skipped_rows_lookup Map of (1-based row number) to true for rows being skipped.
-	 */
-	private function count_duplicates( string $type, array $rows, array $skipped_rows_lookup = [] ): int {
-		if ( 'donors' !== $type ) {
-			return 0;
-		}
-
-		$count = 0;
-		$seen  = [];
-
-		foreach ( $rows as $i => $row ) {
-			if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
-				continue;
-			}
-
-			$email = strtolower( trim( $row['email'] ?? '' ) );
-
-			if ( '' === $email || ! is_email( $email ) || isset( $seen[ $email ] ) ) {
-				continue;
-			}
-
-			$seen[ $email ] = true;
-
-			if ( Donor::find_by_email( $email ) ) {
-				++$count;
-			}
-		}
-
-		return $count;
-	}
-
-	/**
-	 * Import a batch of donor rows. Each row is run through the validator a
-	 * second time so any error rows are skipped, mirroring the preview UI.
-	 *
-	 * @param array<int, array<string, string>> $rows     Mapped rows (canonical keys).
-	 * @param string                            $strategy 'skip' | 'update' | 'create'.
+	 * @param array<int, array<string, string>> $rows      Mapped rows.
+	 * @param string                            $strategy  Duplicate strategy.
+	 * @param int                               $start_row 1-based row number of the first row.
 	 *
 	 * @return array{imported: int, skipped: int, updated: int, errors: int, error_details: array<int, array{row: int, message: string}>}
 	 */
-	private function import_donors( array $rows, string $strategy ): array {
+	private function process_donor_rows( array $rows, string $strategy, int $start_row ): array {
 		$imported      = 0;
 		$skipped       = 0;
 		$updated       = 0;
 		$errors        = 0;
 		$error_details = [];
-		$batch_size    = 200;
 
 		foreach ( $rows as $i => $row ) {
-			$row_number = $i + 1;
+			$row_number = $start_row + $i;
 
 			$row_warnings = $this->validator->validate( $row, 'donors', $row_number );
 
@@ -481,16 +587,10 @@ class ImportService {
 				++$imported;
 			} catch ( \Throwable $e ) {
 				++$errors;
-				if ( count( $error_details ) < 25 ) {
-					$error_details[] = [
-						'row'     => $row_number,
-						'message' => $e->getMessage(),
-					];
-				}
-			}
-
-			if ( 0 === $row_number % $batch_size ) {
-				wp_cache_flush();
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $e->getMessage(),
+				];
 			}
 		}
 
@@ -503,10 +603,319 @@ class ImportService {
 		];
 	}
 
+	// ------------------------------------------------------------------
+	// Internal: file IO
+	// ------------------------------------------------------------------
+
+	/**
+	 * Read a slice of a CSV file starting at `$offset` data rows past the header.
+	 *
+	 * @param string $path       File path.
+	 * @param int    $offset     Number of data rows to skip.
+	 * @param int    $batch_size Max rows to return.
+	 *
+	 * @return array{headers: string[], rows: array<int, string[]>, eof: bool}|WP_Error
+	 */
+	private function read_csv_slice( string $path, int $offset, int $batch_size ): array|WP_Error {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$handle = fopen( $path, 'r' );
+
+		if ( false === $handle ) {
+			return new WP_Error( 'parse_failed', __( 'Could not open the uploaded file.', 'mission-donation-platform' ) );
+		}
+
+		$headers = fgetcsv( $handle );
+
+		if ( false === $headers ) {
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'parse_failed', __( 'The file appears to be empty.', 'mission-donation-platform' ) );
+		}
+
+		$headers = array_map( static fn( $h ) => is_string( $h ) ? trim( $h ) : '', $headers );
+
+		// Skip past previously processed rows.
+		for ( $i = 0; $i < $offset; $i++ ) {
+			$skip = fgetcsv( $handle );
+			if ( false === $skip ) {
+				fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				return [
+					'headers' => $headers,
+					'rows'    => [],
+					'eof'     => true,
+				];
+			}
+		}
+
+		$rows      = [];
+		$row_count = 0;
+		while ( $row_count < $batch_size ) {
+			$row = fgetcsv( $handle );
+			if ( false === $row ) {
+				break;
+			}
+			if ( 1 === count( $row ) && null === $row[0] ) {
+				continue;
+			}
+			$rows[] = array_map( static fn( $v ) => is_string( $v ) ? $v : (string) $v, $row );
+			++$row_count;
+		}
+
+		$eof = feof( $handle ) || $row_count < $batch_size;
+
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		return [
+			'headers' => $headers,
+			'rows'    => $rows,
+			'eof'     => $eof,
+		];
+	}
+
+	/**
+	 * Read a slice of a JSON file. JSON is loaded whole (file size capped at 10 MB)
+	 * and sliced in-memory — simpler than streaming a JSON array.
+	 *
+	 * @param string $path       File path.
+	 * @param int    $offset     Rows to skip.
+	 * @param int    $batch_size Max rows.
+	 *
+	 * @return array{headers: string[], rows: array<int, string[]>, eof: bool}|WP_Error
+	 */
+	private function read_json_slice( string $path, int $offset, int $batch_size ): array|WP_Error {
+		$parsed = $this->parse_json( $path );
+
+		if ( is_wp_error( $parsed ) ) {
+			return $parsed;
+		}
+
+		$total = count( $parsed['rows'] );
+		$slice = array_slice( $parsed['rows'], $offset, $batch_size );
+		$eof   = ( $offset + count( $slice ) ) >= $total;
+
+		return [
+			'headers' => $parsed['headers'],
+			'rows'    => array_values( $slice ),
+			'eof'     => $eof,
+		];
+	}
+
+	/**
+	 * Count total data rows in the file (header excluded).
+	 *
+	 * @param string $path      File path.
+	 * @param string $extension csv|json.
+	 */
+	private function count_rows( string $path, string $extension ): int|WP_Error {
+		if ( 'csv' === $extension ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+			$handle = fopen( $path, 'r' );
+			if ( false === $handle ) {
+				return new WP_Error( 'parse_failed', __( 'Could not open the uploaded file.', 'mission-donation-platform' ) );
+			}
+
+			$first = fgetcsv( $handle );
+			if ( false === $first ) {
+				fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+				return 0;
+			}
+
+			$count = 0;
+			while ( false !== ( $row = fgetcsv( $handle ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition,WordPress.CodeAnalysis.AssignmentInCondition
+				if ( 1 === count( $row ) && null === $row[0] ) {
+					continue;
+				}
+				++$count;
+			}
+
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return $count;
+		}
+
+		if ( 'json' === $extension ) {
+			$parsed = $this->parse_json( $path );
+			if ( is_wp_error( $parsed ) ) {
+				return $parsed;
+			}
+			return count( $parsed['rows'] );
+		}
+
+		return new WP_Error( 'invalid_extension', __( 'Only .csv and .json files are supported.', 'mission-donation-platform' ) );
+	}
+
+	/**
+	 * Generate the blank CSV template for a type.
+	 *
+	 * @param string $type Data type.
+	 */
+	public function build_template( string $type ): string {
+		$columns = $this->export->get_columns( $type );
+		$headers = array_column( $columns, 'label' );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$handle = fopen( 'php://temp', 'r+' );
+		fputcsv( $handle, $headers );
+		rewind( $handle );
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
+		$content = stream_get_contents( $handle );
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		return (string) $content;
+	}
+
+	/**
+	 * Parse a CSV file fully into headers + rows. Used by validate_file and
+	 * by the row counter for very small files.
+	 *
+	 * @param string $path Path.
+	 *
+	 * @return array{headers: string[], rows: array<int, string[]>}|WP_Error
+	 */
+	private function parse_csv( string $path ): array|WP_Error {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		$handle = fopen( $path, 'r' );
+
+		if ( false === $handle ) {
+			return new WP_Error( 'parse_failed', __( 'Could not open the uploaded file.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		$headers = fgetcsv( $handle );
+
+		if ( false === $headers ) {
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return new WP_Error( 'parse_failed', __( 'The file appears to be empty.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		$headers = array_map( static fn( $h ) => is_string( $h ) ? trim( $h ) : '', $headers );
+
+		$rows = [];
+
+		while ( false !== ( $row = fgetcsv( $handle ) ) ) { // phpcs:ignore Generic.CodeAnalysis.AssignmentInCondition.FoundInWhileCondition,WordPress.CodeAnalysis.AssignmentInCondition
+			if ( 1 === count( $row ) && null === $row[0] ) {
+				continue;
+			}
+
+			$rows[] = array_map( static fn( $v ) => is_string( $v ) ? $v : (string) $v, $row );
+		}
+
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		return [
+			'headers' => $headers,
+			'rows'    => $rows,
+		];
+	}
+
+	/**
+	 * Parse a JSON file into headers + rows. Used for validation and small-batch reads.
+	 *
+	 * @param string $path Path.
+	 *
+	 * @return array{headers: string[], rows: array<int, string[]>}|WP_Error
+	 */
+	private function parse_json( string $path ): array|WP_Error {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$raw = file_get_contents( $path );
+
+		if ( false === $raw ) {
+			return new WP_Error( 'parse_failed', __( 'Could not read the uploaded file.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		$data = json_decode( $raw, true );
+
+		if ( ! is_array( $data ) || empty( $data ) ) {
+			return new WP_Error( 'parse_failed', __( 'The JSON file is empty or malformed.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		$headers = array_keys( $data[0] );
+		$rows    = [];
+
+		foreach ( $data as $entry ) {
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+
+			$row = [];
+
+			foreach ( $headers as $key ) {
+				$value = $entry[ $key ] ?? '';
+				$row[] = is_scalar( $value ) ? (string) $value : wp_json_encode( $value );
+			}
+
+			$rows[] = $row;
+		}
+
+		return [
+			'headers' => array_map( 'strval', $headers ),
+			'rows'    => $rows,
+		];
+	}
+
+	/**
+	 * Translate raw rows into canonical-keyed arrays based on header mapping.
+	 *
+	 * @param array<int, string[]>      $rows         Raw rows.
+	 * @param array<int, string|null>   $matched_keys Mapping of column index => canonical key.
+	 *
+	 * @return array<int, array<string, string>>
+	 */
+	private function map_rows( array $rows, array $matched_keys ): array {
+		$mapped = [];
+
+		foreach ( $rows as $row ) {
+			$entry = [];
+
+			foreach ( $matched_keys as $i => $key ) {
+				if ( null === $key ) {
+					continue;
+				}
+
+				$entry[ $key ] = $row[ $i ] ?? '';
+			}
+
+			$mapped[] = $entry;
+		}
+
+		return $mapped;
+	}
+
+	/**
+	 * Count rows that look like duplicates of existing records, used by the preview.
+	 *
+	 * @param string                              $type                Data type.
+	 * @param array<int, array<string, string>>   $rows                Mapped rows.
+	 * @param array<int, bool>                    $skipped_rows_lookup Rows already flagged for skipping.
+	 */
+	private function count_duplicates( string $type, array $rows, array $skipped_rows_lookup = [] ): int {
+		if ( 'donors' !== $type ) {
+			return 0;
+		}
+
+		$count = 0;
+		$seen  = [];
+
+		foreach ( $rows as $i => $row ) {
+			if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
+				continue;
+			}
+
+			$email = strtolower( trim( $row['email'] ?? '' ) );
+
+			if ( '' === $email || ! is_email( $email ) || isset( $seen[ $email ] ) ) {
+				continue;
+			}
+
+			$seen[ $email ] = true;
+
+			if ( Donor::find_by_email( $email ) ) {
+				++$count;
+			}
+		}
+
+		return $count;
+	}
+
 	/**
 	 * Convert a mapped row into the data array expected by the Donor constructor.
-	 * Strips out unknown keys, normalizes amounts (major -> minor units), and
-	 * parses dates into MySQL format.
 	 *
 	 * @param array<string, string> $row Mapped row keyed by canonical field.
 	 * @return array<string, mixed>
@@ -609,9 +1018,7 @@ class ImportService {
 	}
 
 	/**
-	 * Convert a major-unit currency string ("$1,820.00" / "1820" / "18.20") into
-	 * minor units. Exports use major units with two decimals, so values without a
-	 * decimal point are assumed to be major as well.
+	 * Convert a major-unit currency string into minor units.
 	 *
 	 * @param string $value Raw amount string.
 	 */
@@ -622,9 +1029,7 @@ class ImportService {
 			return 0;
 		}
 
-		$major = (float) $cleaned;
-		// Default currency: USD has 2 decimals. Donor-level totals aren't tied to a
-		// specific transaction's currency so site default is the safest assumption.
+		$major      = (float) $cleaned;
 		$multiplier = 10 ** Currency::get_decimals( 'USD' );
 
 		return (int) round( $major * $multiplier );
@@ -645,58 +1050,93 @@ class ImportService {
 		return gmdate( 'Y-m-d H:i:s', $timestamp );
 	}
 
-	/**
-	 * Remove the temp file and its transient after an import completes.
-	 *
-	 * @param string $file_id Transient key.
-	 * @param string $path    Filesystem path.
-	 */
-	private function cleanup_file( string $file_id, string $path ): void {
-		delete_transient( $file_id );
+	// ------------------------------------------------------------------
+	// Internal: storage
+	// ------------------------------------------------------------------
 
-		if ( file_exists( $path ) ) {
-			// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged -- WP_Filesystem unavailable during REST.
-			@unlink( $path );
+	/**
+	 * Copy the temp-uploaded file into a stable location keyed by job_id.
+	 *
+	 * @param string $source_path Original upload temp path.
+	 * @param string $job_id      Public token.
+	 * @param string $extension   csv|json.
+	 */
+	private function move_to_storage( string $source_path, string $job_id, string $extension ): string|WP_Error {
+		$base = $this->ensure_storage_dir();
+
+		if ( is_wp_error( $base ) ) {
+			return $base;
 		}
+
+		$dest = trailingslashit( $base ) . $job_id . '.' . $extension;
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.copy_copy,WordPress.PHP.NoSilencedErrors.Discouraged
+		if ( ! @copy( $source_path, $dest ) ) {
+			return new WP_Error( 'file_copy_failed', __( 'Could not store the import file.', 'mission-donation-platform' ), [ 'status' => 500 ] );
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink,WordPress.PHP.NoSilencedErrors.Discouraged
+		@unlink( $source_path );
+
+		return $dest;
 	}
 
 	/**
-	 * Log a completed import to the activity feed.
-	 *
-	 * @param string                                                                              $type     Data type.
-	 * @param string                                                                              $strategy Duplicate strategy.
-	 * @param array{imported: int, skipped: int, updated: int, errors: int, error_details: array} $results  Result counts.
+	 * Ensure the mission-imports upload dir exists and is locked down.
 	 */
-	private function log_activity( string $type, string $strategy, array $results ): void {
-		if ( ! class_exists( Plugin::class ) ) {
-			return;
+	private function ensure_storage_dir(): string|WP_Error {
+		$base = $this->storage_basedir();
+
+		if ( null === $base ) {
+			return new WP_Error( 'upload_dir', __( 'Uploads directory is not writable.', 'mission-donation-platform' ), [ 'status' => 500 ] );
 		}
 
-		$module = Plugin::instance()->get_activity_feed_module();
-
-		if ( ! $module ) {
-			return;
+		if ( ! is_dir( $base ) ) {
+			wp_mkdir_p( $base );
 		}
 
-		$module->log(
-			'data_imported',
-			$type,
-			0,
-			[
-				'type'     => $type,
-				'strategy' => $strategy,
-				'imported' => $results['imported'],
-				'skipped'  => $results['skipped'],
-				'updated'  => $results['updated'],
-				'errors'   => $results['errors'],
-			],
-			false,
-			$results['errors'] > 0 ? 'warning' : 'info',
-		);
+		if ( ! is_dir( $base ) ) {
+			return new WP_Error( 'mkdir_failed', __( 'Could not create the import storage directory.', 'mission-donation-platform' ), [ 'status' => 500 ] );
+		}
+
+		$htaccess = trailingslashit( $base ) . '.htaccess';
+		if ( ! file_exists( $htaccess ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents,WordPress.PHP.NoSilencedErrors.Discouraged -- WP_Filesystem unavailable here; lockdown file is best-effort.
+			@file_put_contents( $htaccess, "Order deny,allow\nDeny from all\n" );
+		}
+
+		$index = trailingslashit( $base ) . 'index.html';
+		if ( ! file_exists( $index ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents,WordPress.PHP.NoSilencedErrors.Discouraged -- WP_Filesystem unavailable here; lockdown file is best-effort.
+			@file_put_contents( $index, '' );
+		}
+
+		return $base;
 	}
 
 	/**
-	 * Copy the uploaded temp file into a stable location and return a transient-keyed ID.
+	 * Compute the base storage directory under uploads.
+	 */
+	private function storage_basedir(): ?string {
+		$upload = wp_upload_dir( null, false );
+
+		if ( empty( $upload['basedir'] ) ) {
+			return null;
+		}
+
+		return trailingslashit( $upload['basedir'] ) . self::STORAGE_DIR;
+	}
+
+	/**
+	 * Generate an unguessable job token.
+	 */
+	private function generate_job_id(): string {
+		return 'mdp_job_' . wp_generate_password( 24, false );
+	}
+
+	/**
+	 * Copy the validated upload file into a tempnam location keyed by a
+	 * short-lived transient. Used by validate_file().
 	 *
 	 * @param string $tmp_path Source path.
 	 * @param string $filename Original filename.
@@ -709,7 +1149,7 @@ class ImportService {
 
 		$dest = wp_tempnam( 'mission-import-' . $type );
 
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.copy_copy,WordPress.PHP.NoSilencedErrors.Discouraged -- WP_Filesystem unavailable during REST; failure handled via missing transient downstream.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.copy_copy,WordPress.PHP.NoSilencedErrors.Discouraged
 		@copy( $tmp_path, $dest );
 
 		$file_id = 'mdp_imp_' . wp_generate_password( 16, false );
