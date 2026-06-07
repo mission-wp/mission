@@ -66,11 +66,26 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$this->server = $wp_rest_server = new \WP_REST_Server();
 		do_action( 'rest_api_init' );
 
-		// Configure settings needed for every test.
+		// Configure settings needed for every test. The default connected
+		// account is what most tests use; specific tests can add more.
 		update_option(
 			SettingsService::OPTION_NAME,
 			[
+				'stripe_accounts'    => [
+					[
+						'site_id'           => 'site_default',
+						'site_token'        => 'tok_test_abc123',
+						'account_id'        => 'acct_test_connected',
+						'display_name'      => 'Default Account',
+						'connection_status' => 'connected',
+						'charges_enabled'   => true,
+						'webhook_secret'    => 'whsec_default',
+						'is_default'        => true,
+						'connected_at'      => gmdate( 'c' ),
+					],
+				],
 				'stripe_site_token'  => 'tok_test_abc123',
+				'stripe_account_id'  => 'acct_test_connected',
 				'stripe_fee_percent' => 2.9,
 				'stripe_fee_fixed'   => 30,
 				'test_mode'          => false,
@@ -133,15 +148,16 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 			return $preempt;
 		}
 
-		// Store the request body for assertions.
+		// Store the request body + auth header for assertions.
 		$this->last_api_body = json_decode( $args['body'], true );
+		$this->last_api_auth = (string) ( $args['headers']['Authorization'] ?? '' );
 
 		return [
 			'response' => [ 'code' => 200 ],
 			'body'     => wp_json_encode(
 				[
 					'client_secret'        => 'pi_test123_secret_abc456',
-					'connected_account_id' => 'acct_test_connected',
+					'connected_account_id' => $this->mock_connected_account_id,
 				]
 			),
 		];
@@ -192,6 +208,20 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 	 * @var array|null
 	 */
 	private ?array $last_api_body = null;
+
+	/**
+	 * The last Authorization header captured by the mock.
+	 *
+	 * @var string
+	 */
+	private string $last_api_auth = '';
+
+	/**
+	 * connected_account_id the mock will echo back in the response.
+	 *
+	 * @var string
+	 */
+	private string $mock_connected_account_id = 'acct_test_connected';
 
 	/**
 	 * Build and dispatch a create-payment-intent request with sensible defaults.
@@ -316,7 +346,9 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		update_option(
 			SettingsService::OPTION_NAME,
 			[
+				'stripe_accounts'    => [],
 				'stripe_site_token'  => '',
+				'stripe_account_id'  => '',
 				'stripe_fee_percent' => 2.9,
 				'stripe_fee_fixed'   => 30,
 			]
@@ -635,7 +667,20 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		update_option(
 			SettingsService::OPTION_NAME,
 			[
+				'stripe_accounts'    => [
+					[
+						'site_id'           => 'site_default',
+						'site_token'        => 'tok_test_abc123',
+						'account_id'        => 'acct_test_connected',
+						'display_name'      => 'Default Account',
+						'connection_status' => 'connected',
+						'charges_enabled'   => true,
+						'webhook_secret'    => 'whsec_default',
+						'is_default'        => true,
+					],
+				],
 				'stripe_site_token'  => 'tok_test_abc123',
+				'stripe_account_id'  => 'acct_test_connected',
 				'stripe_fee_percent' => 2.9,
 				'stripe_fee_fixed'   => 30,
 				'test_mode'          => true,
@@ -650,7 +695,20 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		update_option(
 			SettingsService::OPTION_NAME,
 			[
+				'stripe_accounts'    => [
+					[
+						'site_id'           => 'site_default',
+						'site_token'        => 'tok_test_abc123',
+						'account_id'        => 'acct_test_connected',
+						'display_name'      => 'Default Account',
+						'connection_status' => 'connected',
+						'charges_enabled'   => true,
+						'webhook_secret'    => 'whsec_default',
+						'is_default'        => true,
+					],
+				],
 				'stripe_site_token'  => 'tok_test_abc123',
+				'stripe_account_id'  => 'acct_test_connected',
 				'stripe_fee_percent' => 2.9,
 				'stripe_fee_fixed'   => 30,
 				'test_mode'          => false,
@@ -884,28 +942,117 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 	/**
 	 * Test saves stripe account ID on first call and does not overwrite.
 	 */
-	public function test_saves_stripe_account_id_on_first_call(): void {
-		// Ensure no account ID is set.
-		update_option(
-			SettingsService::OPTION_NAME,
-			[
-				'stripe_site_token'  => 'tok_test_abc123',
-				'stripe_fee_percent' => 2.9,
-				'stripe_fee_fixed'   => 30,
-				'stripe_account_id'  => '',
-			]
-		);
+	public function test_transaction_records_charged_stripe_account_id(): void {
+		$response = $this->make_request();
+		$txn      = Transaction::find( $response->get_data()['transaction_id'] );
 
-		$this->make_request( [ 'donor_email' => 'first@example.com' ] );
+		$this->assertSame( 'acct_test_connected', $txn->get_meta( 'stripe_account_id' ) );
+	}
 
+	// =========================================================================
+	// Multi-account Stripe selection
+	// =========================================================================
+
+	/**
+	 * Helper: install a second connected account in addition to the default.
+	 *
+	 * @return void
+	 */
+	private function install_second_account(): void {
 		$settings = new SettingsService();
-		$this->assertSame( 'acct_test_connected', $settings->get( 'stripe_account_id' ) );
+		$settings->add_stripe_account( [
+			'site_id'           => 'site_b',
+			'site_token'        => 'tok_secondary_xyz',
+			'account_id'        => 'acct_secondary',
+			'display_name'      => 'Secondary Account',
+			'connection_status' => 'connected',
+			'charges_enabled'   => true,
+			'webhook_secret'    => 'whsec_secondary',
+			'connected_at'      => gmdate( 'c' ),
+		] );
+	}
 
-		// Pre-set a different account ID — should not be overwritten.
-		$settings->update( [ 'stripe_account_id' => 'acct_existing_123' ] );
+	/**
+	 * A form-selected stripe_account_id routes the API call through that
+	 * account's site_token.
+	 */
+	public function test_honors_form_selected_account_id(): void {
+		$this->install_second_account();
+		$this->mock_connected_account_id = 'acct_secondary';
 
-		$this->make_request( [ 'donor_email' => 'second@example.com' ] );
+		$this->make_request( [ 'stripe_account_id' => 'acct_secondary' ] );
 
-		$this->assertSame( 'acct_existing_123', $settings->get( 'stripe_account_id' ) );
+		$this->assertSame( 'Bearer tok_secondary_xyz', $this->last_api_auth );
+	}
+
+	/**
+	 * Transactions persist the account_id that actually processed the charge,
+	 * so refunds / verification later route to the right account.
+	 */
+	public function test_transaction_meta_records_form_selected_account(): void {
+		$this->install_second_account();
+		$this->mock_connected_account_id = 'acct_secondary';
+
+		$response = $this->make_request( [ 'stripe_account_id' => 'acct_secondary' ] );
+		$txn      = Transaction::find( $response->get_data()['transaction_id'] );
+
+		$this->assertSame( 'acct_secondary', $txn->get_meta( 'stripe_account_id' ) );
+	}
+
+	/**
+	 * Security-critical: a donor-supplied stripe_account_id that is NOT a
+	 * connected account must fall back to the default account, NOT attempt
+	 * to use the donor-supplied identifier.
+	 */
+	public function test_unknown_account_id_falls_back_to_default(): void {
+		$this->install_second_account();
+
+		$this->make_request( [ 'stripe_account_id' => 'acct_attacker_supplied_xxx' ] );
+
+		// The default account's token was used, not the attacker-supplied ID.
+		$this->assertSame( 'Bearer tok_test_abc123', $this->last_api_auth );
+	}
+
+	/**
+	 * An unknown account_id fires the fallback action so admins can spot the
+	 * misconfiguration via the activity log.
+	 */
+	public function test_unknown_account_id_fires_fallback_action(): void {
+		$this->install_second_account();
+
+		$fired_with = null;
+		$callback   = static function ( $requested, $used ) use ( &$fired_with ) {
+			$fired_with = [ $requested, $used ];
+		};
+		add_action( 'missiondp_stripe_account_fallback', $callback, 10, 2 );
+
+		$this->make_request( [ 'stripe_account_id' => 'acct_does_not_exist' ] );
+
+		remove_action( 'missiondp_stripe_account_fallback', $callback, 10 );
+
+		$this->assertNotNull( $fired_with );
+		$this->assertSame( 'acct_does_not_exist', $fired_with[0] );
+		$this->assertSame( 'acct_test_connected', $fired_with[1] );
+	}
+
+	/**
+	 * An empty stripe_account_id uses the default account silently — no
+	 * fallback action (it's not a misconfiguration, it's the intended path).
+	 */
+	public function test_empty_account_id_does_not_fire_fallback_action(): void {
+		$this->install_second_account();
+
+		$fired    = false;
+		$callback = static function () use ( &$fired ) {
+			$fired = true;
+		};
+		add_action( 'missiondp_stripe_account_fallback', $callback, 10, 2 );
+
+		$this->make_request( [ 'stripe_account_id' => '' ] );
+
+		remove_action( 'missiondp_stripe_account_fallback', $callback, 10 );
+
+		$this->assertFalse( $fired );
+		$this->assertSame( 'Bearer tok_test_abc123', $this->last_api_auth );
 	}
 }

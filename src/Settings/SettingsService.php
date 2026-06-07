@@ -84,7 +84,11 @@ class SettingsService {
 			$accounts = [];
 		}
 
-		if ( empty( $accounts ) && $this->get( 'stripe_account_id' ) ) {
+		// Migrate from the legacy single-account flat keys. We accept either
+		// a populated stripe_account_id OR a stripe_site_token — old connects
+		// could leave account_id empty while the site_token alone was enough
+		// to charge (the upstream API routed by token, not account_id).
+		if ( empty( $accounts ) && ( $this->get( 'stripe_account_id' ) || $this->get( 'stripe_site_token' ) ) ) {
 			$accounts = [
 				$this->build_legacy_account_record(),
 			];
