@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.5
+Stable Tag: 1.1.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -183,19 +183,23 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.1.6 =
+* Expanded the country dropdown to the full ISO 3166-1 list so any country is selectable
+* Fixed the plugin update entry in the activity log to show the correct new version
+
 = 1.1.5 =
-* Add a data export tool for transactions, donors, subscriptions, and campaigns
-* Show an admin notice when the site is running PHP below 8.0
-* Auto-scroll to the first newly loaded entry when expanding the logs list
+* Added a data export tool for transactions, donors, subscriptions, and campaigns
+* Shows an admin notice when the site is running PHP below 8.0
+* Auto-scrolls to the first newly loaded entry when expanding the logs list
 * Donors can now sign in with their new email address after changing it on the donor dashboard
-* Fix donor dashboard form fields losing their class and id attributes
-* Restore the database size display in System Status
+* Fixed donor dashboard form fields losing their class and id attributes
+* Restored the database size display in System Status
 
 = 1.1.4 =
-* Update screenshots and banners
-* Don't show empty-state shell on Subscriptions/Transactions when a search is active
-* Fix multi-word search on Donors, Transactions, and Subscriptions admin pages
-* Fix fatal on subscription detail when a transaction has no recorded fee_amount
+* Updated screenshots and banners
+* No longer shows the empty-state shell on Subscriptions and Transactions when a search is active
+* Fixed multi-word search on Donors, Transactions, and Subscriptions admin pages
+* Fixed a fatal on subscription detail when a transaction had no recorded fee_amount
 
 = 1.1.3 =
 * Tested with WordPress 7.0
@@ -208,15 +212,15 @@ This plugin connects to the following third-party services:
 * Fixed onboarding state select rendering taller than adjacent input fields
 * Wrapped PHP templates in IIFEs to scope file-local variables
 * Converted ReportingService identifier interpolation to %i placeholders
-* Silenced Plugin Check false positives in custom-table data layer
-* Prefixed $autoloader and silenced core-hook invocation sniff
+* Silenced Plugin Check false positives in the custom-table data layer
+* Prefixed $autoloader and silenced the core-hook invocation sniff
 
 = 1.1.1 =
 * Donor login now goes through WordPress's standard auth pipeline for better compatibility with security plugins
 * Donor user accounts are no longer deleted automatically when the plugin is uninstalled
 
 = 1.1.0 =
-* Renamed plugin slug to mission-donation-platform and prefixed all PHP/JS identifiers with missiondp_ per WordPress.org review
+* Renamed the plugin slug to mission-donation-platform and prefixed all PHP and JS identifiers with missiondp_ per WordPress.org review
 * Refactored DataStore queries and Cleanup IN-clauses to use wpdb::prepare() with proper placeholders
 * Escaped block render output through wp_kses with an allowlist that preserves SVG icons and Interactivity API directives
 * Moved security checks into permission_callback for state-changing public REST endpoints (donation/subscription confirm, email-change confirm)
