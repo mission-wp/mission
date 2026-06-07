@@ -90,6 +90,19 @@ class CampaignPostTypeTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the post type shows in the admin bar.
+	 *
+	 * Required so the "Edit Campaign" link appears in the frontend admin bar
+	 * on a single campaign page. show_in_admin_bar defaults to show_in_menu,
+	 * which is false, so it has to be set explicitly.
+	 */
+	public function test_post_type_shows_in_admin_bar(): void {
+		$post_type = get_post_type_object( CampaignPostType::POST_TYPE );
+
+		$this->assertTrue( $post_type->show_in_admin_bar );
+	}
+
+	/**
 	 * Test that a disabled campaign page returns 404 on the frontend.
 	 */
 	public function test_disabled_campaign_page_returns_404(): void {
