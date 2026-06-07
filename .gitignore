@@ -33,3 +33,6 @@ logs/
 
 # Plugin zip
 *.zip
+
+# Local test fixtures
+*.csv
