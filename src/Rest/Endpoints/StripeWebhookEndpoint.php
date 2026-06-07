@@ -218,6 +218,7 @@ class StripeWebhookEndpoint {
 	private function process_event( array $payload ): void {
 		$event_type = $payload['event_type'];
 		$data       = $payload['data'] ?? [];
+		$account_id = (string) ( $payload['account_id'] ?? '' );
 
 		/**
 		 * Fires when a webhook event is received, before type-specific processing.
@@ -229,7 +230,7 @@ class StripeWebhookEndpoint {
 		do_action( 'missiondp_webhook_event', $event_type, $data, $payload );
 
 		match ( $event_type ) {
-			'account.updated'                => ( new AccountUpdatedHandler() )->handle( $data ),
+			'account.updated'                => ( new AccountUpdatedHandler() )->handle( $data, $account_id ),
 			'charge.refunded'                => $this->handle_charge_refunded( $data ),
 			'payment_intent.succeeded'       => ( new PaymentIntentSucceededHandler() )->handle( $data ),
 			'invoice.paid',

@@ -224,6 +224,35 @@ class SettingsService {
 	}
 
 	/**
+	 * Merge updates into a connected Stripe account record.
+	 *
+	 * @param string               $account_id Stripe account ID.
+	 * @param array<string, mixed> $fields     Fields to merge into the account record.
+	 * @return bool True if the account was found and updated.
+	 */
+	public function update_stripe_account( string $account_id, array $fields ): bool {
+		$accounts = $this->get_stripe_accounts();
+		$found    = false;
+
+		foreach ( $accounts as &$account ) {
+			if ( ( $account['account_id'] ?? '' ) === $account_id ) {
+				$account = array_replace( $account, $fields );
+				$found   = true;
+				break;
+			}
+		}
+		unset( $account );
+
+		if ( ! $found ) {
+			return false;
+		}
+
+		$this->write_stripe_accounts( $accounts );
+
+		return true;
+	}
+
+	/**
 	 * Persist the stripe_accounts list, bypassing the recursive merge in update().
 	 *
 	 * Recursive merge keeps stale indexes when the list shrinks, so we write the
@@ -236,8 +265,8 @@ class SettingsService {
 		$current = $this->get_all();
 		$legacy  = $this->derive_legacy_keys_from( $accounts );
 
-		$updated                     = array_replace( $current, $legacy );
-		$updated['stripe_accounts']  = array_values( $accounts );
+		$updated                    = array_replace( $current, $legacy );
+		$updated['stripe_accounts'] = array_values( $accounts );
 
 		update_option( self::OPTION_NAME, $updated );
 
