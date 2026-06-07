@@ -310,8 +310,8 @@ class EmailChangeEndpoint {
 			);
 		}
 
-		$old_email      = $donor->email;
-		$was_logged_in  = $donor->user_id && get_current_user_id() === $donor->user_id;
+		$old_email     = $donor->email;
+		$was_logged_in = $donor->user_id && get_current_user_id() === $donor->user_id;
 
 		$donor->change_email( $new_email );
 		$this->cleanup_pending_meta( $donor );
