@@ -142,7 +142,11 @@ class ConfirmDonationEndpoint {
 		}
 
 		// Transaction is still pending — verify with Stripe synchronously.
-		$verification = $this->verifier->verify( $payment_intent_id, (bool) $transaction->is_test );
+		$verification = $this->verifier->verify(
+			$payment_intent_id,
+			(bool) $transaction->is_test,
+			(string) $transaction->get_meta( 'stripe_account_id' )
+		);
 
 		if ( ! $verification['verified'] ) {
 			// Mission API unavailable or not deployed — fall back to the

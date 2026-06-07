@@ -2,11 +2,27 @@ import { __, sprintf } from '@wordpress/i18n';
 import { getCurrencySymbol } from '@shared/currency';
 import { minorToMajor } from '@shared/currencies';
 
-export default function FeesTab( { localState, updateField } ) {
+export default function PaymentsTab( { localState, updateField } ) {
   const feePercent = window.missiondpFeeSettings?.stripeFeePercent ?? 2.9;
   const feeFixed = window.missiondpFeeSettings?.stripeFeeFixed ?? 30;
+  const stripeAccounts = window.missiondpFeeSettings?.stripeAccounts ?? [];
   const symbol = getCurrencySymbol();
   const fixedDisplay = minorToMajor( feeFixed, 'USD' );
+
+  const selectedAccountId = localState.stripeAccountId ?? '';
+  const selectedAccountExists =
+    selectedAccountId === '' ||
+    stripeAccounts.some( ( a ) => a.account_id === selectedAccountId );
+  const defaultAccount = stripeAccounts.find( ( a ) => a.is_default );
+  const defaultLabel = defaultAccount
+    ? sprintf(
+        /* translators: %s: Stripe account display name */
+        __( 'Default account (%s)', 'mission-donation-platform' ),
+        defaultAccount.display_name ||
+          defaultAccount.account_id ||
+          __( 'unnamed', 'mission-donation-platform' )
+      )
+    : __( 'Default account', 'mission-donation-platform' );
 
   const feeOptions = [
     {
@@ -59,6 +75,49 @@ export default function FeesTab( { localState, updateField } ) {
 
   return (
     <div className="mission-fees-tab">
+      { /* Stripe Account */ }
+      { stripeAccounts.length > 0 && (
+        <div className="mission-fees-tab__section">
+          <span className="mission-field-label">
+            { __( 'Stripe account', 'mission-donation-platform' ) }
+          </span>
+          <p className="mission-fees-tab__section-hint">
+            { __(
+              'Choose which connected Stripe account receives donations from this form.',
+              'mission-donation-platform'
+            ) }
+          </p>
+          <select
+            className="mission-fees-tab__select"
+            value={ selectedAccountId }
+            onChange={ ( e ) =>
+              updateField( 'stripeAccountId', e.target.value )
+            }
+          >
+            <option value="">{ defaultLabel }</option>
+            { stripeAccounts.map( ( account ) => (
+              <option key={ account.account_id } value={ account.account_id }>
+                { account.display_name || account.account_id }
+                { account.is_default
+                  ? ` — ${ __( 'default', 'mission-donation-platform' ) }`
+                  : '' }
+              </option>
+            ) ) }
+          </select>
+          { ! selectedAccountExists && (
+            <p
+              className="mission-fees-tab__section-hint"
+              style={ { color: '#b85c5c', marginTop: '8px' } }
+            >
+              { __(
+                'The previously selected account is no longer connected. Donations from this form will use the default account.',
+                'mission-donation-platform'
+              ) }
+            </p>
+          ) }
+        </div>
+      ) }
+
       { /* Processing Fees */ }
       <div className="mission-fees-tab__section">
         <span className="mission-field-label">

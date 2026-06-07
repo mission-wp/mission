@@ -149,6 +149,7 @@ $context = [
 	'restNonce'            => wp_create_nonce( 'wp_rest' ),
 	'formId'               => $attributes['formId'] ?? '',
 	'campaignId'           => $settings['campaignId'] ?? 0,
+	'stripeAccountId'      => $attributes['stripeAccountId'] ?? '',
 	'sourcePostId'         => get_the_ID() ?: 0,
 	'isSubmitting'         => false,
 	'paymentError'         => '',

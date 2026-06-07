@@ -97,6 +97,10 @@
 		"customFields": {
 			"type": "array",
 			"default": []
+		},
+		"stripeAccountId": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"example": {},

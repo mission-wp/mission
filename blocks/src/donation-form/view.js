@@ -644,6 +644,7 @@ store( 'mission-donation-platform/donation-form', {
               campaign_id: ctx.campaignId || 0,
               source_post_id: ctx.sourcePostId || 0,
               form_id: ctx.formId || '',
+              stripe_account_id: ctx.stripeAccountId || '',
               is_anonymous: ctx.isAnonymous,
               tribute_type: ctx.tributeChecked ? ctx.tributeType : '',
               honoree_name: ctx.tributeChecked ? ctx.honoreeName : '',

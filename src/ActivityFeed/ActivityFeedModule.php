@@ -121,6 +121,28 @@ class ActivityFeedModule {
 
 		// Settings updated.
 		add_action( 'missiondp_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
+
+		// Stripe account fallback (form requested a disconnected account, used default instead).
+		add_action( 'missiondp_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
+	}
+
+	/**
+	 * Log a fallback to the default Stripe account when a form-selected account is unavailable.
+	 *
+	 * @param string $requested_account_id Account ID the form asked for.
+	 * @param string $used_account_id      Account ID that was actually used (default).
+	 * @return void
+	 */
+	public function on_stripe_account_fallback( string $requested_account_id, string $used_account_id ): void {
+		$this->log(
+			'stripe_account_fallback',
+			'settings',
+			0,
+			[
+				'requested_account_id' => $requested_account_id,
+				'used_account_id'      => $used_account_id,
+			]
+		);
 	}
 
 	/**
@@ -604,6 +626,7 @@ class ActivityFeedModule {
 	private const SENSITIVE_SETTINGS = [
 		'stripe_site_token',
 		'stripe_webhook_secret',
+		'stripe_accounts',
 	];
 
 	public function on_settings_updated( array $updated, array $values, array $current ): void {

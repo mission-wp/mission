@@ -770,7 +770,7 @@ class TransactionsEndpoint {
 			);
 		}
 
-		$site_token = $this->settings->get( 'stripe_site_token' );
+		$site_token = $this->settings->resolve_site_token( (string) $transaction->get_meta( 'stripe_account_id' ) );
 
 		if ( ! $site_token ) {
 			return new WP_Error(

@@ -5,7 +5,7 @@ import { minorToMajor, majorToMinor } from '@shared/currencies';
 import { getCurrencySymbol } from '@shared/currency';
 import AmountsTab from './tabs/AmountsTab';
 import DonorInfoTab from './tabs/DonorInfoTab';
-import FeesTab from './tabs/FeesTab';
+import PaymentsTab from './tabs/PaymentsTab';
 import ConfirmationTab from './tabs/ConfirmationTab';
 import AppearanceTab from './tabs/AppearanceTab';
 import CustomFieldsTab, { findEmptyLabelField } from './tabs/CustomFieldsTab';
@@ -13,7 +13,7 @@ import CustomFieldsTab, { findEmptyLabelField } from './tabs/CustomFieldsTab';
 const TABS = [
   { id: 'amounts', label: __( 'Amounts', 'mission-donation-platform' ) },
   { id: 'donor', label: __( 'Donor Info', 'mission-donation-platform' ) },
-  { id: 'fees', label: __( 'Fees', 'mission-donation-platform' ) },
+  { id: 'payments', label: __( 'Payments', 'mission-donation-platform' ) },
   {
     id: 'custom-fields',
     label: __( 'Custom Fields', 'mission-donation-platform' ),
@@ -225,6 +225,7 @@ function buildLocalState( resolved, currency ) {
     summaryHeading: resolved.summaryHeading || '',
     additionalInfoHeading: resolved.additionalInfoHeading || '',
     customFields: resolved.customFields || [],
+    stripeAccountId: resolved.stripeAccountId || '',
   };
 }
 
@@ -262,6 +263,7 @@ function resolveSettings( defaults, attrs ) {
     'summaryHeading',
     'additionalInfoHeading',
     'customFields',
+    'stripeAccountId',
   ];
   for ( const key of keys ) {
     if ( attrs[ key ] !== undefined ) {
@@ -428,6 +430,7 @@ export default function FormSettingsModal( {
       customFields: localState.customFields.length
         ? localState.customFields
         : undefined,
+      stripeAccountId: localState.stripeAccountId || undefined,
     } );
 
     onClose();
@@ -450,8 +453,10 @@ export default function FormSettingsModal( {
       );
     }
 
-    if ( activeTab === 'fees' ) {
-      return <FeesTab localState={ localState } updateField={ updateField } />;
+    if ( activeTab === 'payments' ) {
+      return (
+        <PaymentsTab localState={ localState } updateField={ updateField } />
+      );
     }
 
     if ( activeTab === 'confirmation' ) {

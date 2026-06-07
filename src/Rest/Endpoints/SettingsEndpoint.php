@@ -87,7 +87,10 @@ class SettingsEndpoint {
 	public function get_settings(): WP_REST_Response {
 		$all = $this->settings->get_all();
 
-		unset( $all['stripe_site_token'] );
+		unset( $all['stripe_site_token'], $all['stripe_webhook_secret'] );
+
+		// Replace raw accounts (containing tokens) with the sanitized public list.
+		$all['stripe_accounts'] = $this->settings->get_stripe_accounts_public();
 
 		$this->inject_page_keys( $all );
 
@@ -123,8 +126,9 @@ class SettingsEndpoint {
 				continue;
 			}
 
-			// Never allow site token to be set via general settings endpoint.
-			if ( 'stripe_site_token' === $key ) {
+			// Never allow tokens, secrets, or the accounts list to be mutated via
+			// the general settings endpoint — these are managed by /stripe/* routes.
+			if ( in_array( $key, [ 'stripe_site_token', 'stripe_webhook_secret', 'stripe_accounts' ], true ) ) {
 				continue;
 			}
 
@@ -133,7 +137,9 @@ class SettingsEndpoint {
 
 		$updated = $this->settings->update( $values );
 
-		unset( $updated['stripe_site_token'] );
+		unset( $updated['stripe_site_token'], $updated['stripe_webhook_secret'] );
+
+		$updated['stripe_accounts'] = $this->settings->get_stripe_accounts_public();
 
 		$this->inject_page_keys( $updated );
 

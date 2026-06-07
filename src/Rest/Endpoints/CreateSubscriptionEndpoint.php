@@ -228,6 +228,12 @@ class CreateSubscriptionEndpoint {
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => static fn( $val ) => in_array( $val, [ 'tip', 'flat' ], true ),
 					],
+					'stripe_account_id'    => [
+						'required'          => false,
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'sanitize_text_field',
+					],
 				],
 			]
 		);
@@ -289,14 +295,26 @@ class CreateSubscriptionEndpoint {
 			return $minimum_check;
 		}
 
-		$site_token = $this->settings->get( 'stripe_site_token' );
+		$requested_account_id = (string) $request->get_param( 'stripe_account_id' );
+		$resolved_account     = '' !== $requested_account_id
+			? $this->settings->get_stripe_account_by_id( $requested_account_id )
+			: null;
+		$resolved_account   ??= $this->settings->get_default_stripe_account();
+		$site_token           = (string) ( $resolved_account['site_token'] ?? '' );
 
-		if ( empty( $site_token ) ) {
+		if ( '' === $site_token ) {
 			return new WP_Error(
 				'stripe_not_connected',
 				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
+		}
+
+		if (
+			'' !== $requested_account_id
+			&& ( $resolved_account['account_id'] ?? '' ) !== $requested_account_id
+		) {
+			do_action( 'missiondp_stripe_account_fallback', $requested_account_id, $resolved_account['account_id'] ?? '' );
 		}
 
 		$donor_name = trim(
@@ -348,10 +366,7 @@ class CreateSubscriptionEndpoint {
 			);
 		}
 
-		// Persist the connected account ID if not already saved.
-		if ( ! $this->settings->get( 'stripe_account_id' ) ) {
-			$this->settings->update( [ 'stripe_account_id' => $body['connected_account_id'] ] );
-		}
+		$connected_account_id = (string) $body['connected_account_id'];
 
 		// Upsert donor.
 		$donor = Donor::find_by_email( $email );
@@ -420,6 +435,9 @@ class CreateSubscriptionEndpoint {
 
 		$subscription->save();
 
+		// Record which Stripe account this subscription was created against.
+		$subscription->add_meta( 'stripe_account_id', $connected_account_id );
+
 		// Create pending transaction for the initial payment.
 		$transaction = new Transaction(
 			[
@@ -444,6 +462,9 @@ class CreateSubscriptionEndpoint {
 		);
 
 		$transaction->save();
+
+		// Record which Stripe account this transaction was charged against.
+		$transaction->add_meta( 'stripe_account_id', $connected_account_id );
 
 		// Store fee rates at time of transaction.
 		$transaction->add_meta( 'stripe_fee_percent', (string) $this->settings->get( 'stripe_fee_percent', 2.9 ) );
