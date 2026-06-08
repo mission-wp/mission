@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.6
+Stable Tag: 1.1.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -185,6 +185,7 @@ This plugin connects to the following third-party services:
 
 = 1.1.7 =
 * Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
+* Tools > Status now lists every connected Stripe account instead of only the default one
 * Added an "Edit Campaign" link to the admin bar when viewing a campaign on the frontend
 
 = 1.1.6 =
