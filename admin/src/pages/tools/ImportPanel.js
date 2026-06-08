@@ -23,7 +23,7 @@ const DUPLICATE_STRATEGIES = [
     value: 'skip',
     label: __( 'Skip duplicates', 'mission-donation-platform' ),
     desc: __(
-      'If a record with the same email already exists, skip the imported row.',
+      'If a matching record already exists, skip the imported row.',
       'mission-donation-platform'
     ),
   },
@@ -32,14 +32,6 @@ const DUPLICATE_STRATEGIES = [
     label: __( 'Update existing', 'mission-donation-platform' ),
     desc: __(
       'If a match is found, update the existing record with the imported data.',
-      'mission-donation-platform'
-    ),
-  },
-  {
-    value: 'create',
-    label: __( 'Create new', 'mission-donation-platform' ),
-    desc: __(
-      'Always create a new record, even if a duplicate may exist.',
       'mission-donation-platform'
     ),
   },
@@ -660,6 +652,7 @@ export default function ImportPanel() {
     const rowsSkipped = validation.rows_skipped || 0;
     const importableRows = validation.rows_importable ?? totalRows;
     const duplicates = validation.duplicates || 0;
+    const rowsWithoutGatewayId = validation.rows_without_gateway_id || 0;
     const newRows = Math.max( importableRows - duplicates, 0 );
     const allIssues = validation.warnings || [];
     const errors = allIssues.filter( ( w ) => w.severity === 'error' );
@@ -693,7 +686,7 @@ export default function ImportPanel() {
         duplicates,
         typeLabel.toLowerCase()
       );
-    } else if ( 'update' === duplicateStrategy ) {
+    } else {
       summaryText = sprintf(
         /* translators: 1: new row count, 2: duplicate count, 3: data type */
         __(
@@ -702,16 +695,6 @@ export default function ImportPanel() {
         ),
         newRows,
         duplicates,
-        typeLabel.toLowerCase()
-      );
-    } else {
-      summaryText = sprintf(
-        /* translators: 1: total row count, 2: data type */
-        __(
-          'This will create %1$d %2$s, including any duplicates. This action cannot be undone.',
-          'mission-donation-platform'
-        ),
-        importableRows,
         typeLabel.toLowerCase()
       );
     }
@@ -839,7 +822,10 @@ export default function ImportPanel() {
             </div>
           </div>
 
-          { ( errors.length > 0 || warnings.length > 0 || duplicates > 0 ) && (
+          { ( errors.length > 0 ||
+            warnings.length > 0 ||
+            duplicates > 0 ||
+            rowsWithoutGatewayId > 0 ) && (
             <div className="mission-import-warnings">
               { errors.slice( 0, 10 ).map( ( w, idx ) => (
                 <div
@@ -916,8 +902,34 @@ export default function ImportPanel() {
                         typeLabel.toLowerCase()
                       ) }
                     </strong>{ ' ' }
+                    { 'transactions' === dataType
+                      ? __(
+                          'already exist in your database (matched by Charge ID)',
+                          'mission-donation-platform'
+                        )
+                      : __(
+                          'already exist in your database (matched by email)',
+                          'mission-donation-platform'
+                        ) }
+                  </span>
+                </div>
+              ) }
+              { 'transactions' === dataType && rowsWithoutGatewayId > 0 && (
+                <div className="mission-import-warning-item">
+                  <WarningIcon />
+                  <span>
+                    <strong>
+                      { sprintf(
+                        /* translators: %d: number of rows */
+                        __(
+                          '%d rows have no Charge ID',
+                          'mission-donation-platform'
+                        ),
+                        rowsWithoutGatewayId
+                      ) }
+                    </strong>{ ' ' }
                     { __(
-                      'already exist in your database (matched by email)',
+                      "and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates.",
                       'mission-donation-platform'
                     ) }
                   </span>
@@ -941,9 +953,7 @@ export default function ImportPanel() {
               </p>
             </div>
             <div className="mission-import-radio-group">
-              { DUPLICATE_STRATEGIES.filter(
-                ( option ) => 'create' !== option.value || 'donors' !== dataType
-              ).map( ( option ) => (
+              { DUPLICATE_STRATEGIES.map( ( option ) => (
                 <button
                   key={ option.value }
                   type="button"
@@ -1036,11 +1046,14 @@ export default function ImportPanel() {
               className="mission-settings-save-bar__btn"
               type="button"
               onClick={ executeImport }
-              disabled={ actionCount === 0 || dataType !== 'donors' }
+              disabled={
+                actionCount === 0 ||
+                ( dataType !== 'donors' && dataType !== 'transactions' )
+              }
               title={
-                dataType !== 'donors'
+                dataType !== 'donors' && dataType !== 'transactions'
                   ? __(
-                      'Only donor imports are supported right now.',
+                      'Donor and transaction imports are supported. Campaigns and subscriptions are coming soon.',
                       'mission-donation-platform'
                     )
                   : ''
@@ -1339,12 +1352,16 @@ export default function ImportPanel() {
       );
     }
 
-    const viewUrl =
-      'donors' === dataType
-        ? `${
-            window.missiondpAdmin?.adminUrl ?? ''
-          }admin.php?page=mission-donation-platform-donors`
-        : '';
+    const viewPageSlug = {
+      donors: 'mission-donation-platform-donors',
+      transactions: 'mission-donation-platform-transactions',
+    }[ dataType ];
+
+    const viewUrl = viewPageSlug
+      ? `${
+          window.missiondpAdmin?.adminUrl ?? ''
+        }admin.php?page=${ viewPageSlug }`
+      : '';
 
     return (
       <div className="mission-settings-panel">

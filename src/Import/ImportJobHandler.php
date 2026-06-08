@@ -123,6 +123,7 @@ class ImportJobHandler {
 		$done = $result['eof'] || $fresh->processed_rows >= $fresh->total_rows;
 
 		if ( $done ) {
+			$this->import->run_post_import_recompute( $fresh );
 			$fresh->mark_completed();
 			$this->import->log_completed_activity( $fresh );
 			$this->import->delete_job_file( $fresh );

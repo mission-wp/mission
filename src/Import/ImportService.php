@@ -9,10 +9,15 @@
 namespace MissionDP\Import;
 
 use MissionDP\Currency\Currency;
+use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Database\DataStore\TransactionDataStore;
 use MissionDP\Export\ExportService;
 use MissionDP\Import\Validators\RowValidator;
+use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\ImportJob;
+use MissionDP\Models\Transaction;
 use MissionDP\Plugin;
 use WP_Error;
 
@@ -42,6 +47,20 @@ class ImportService {
 		private readonly ColumnMapper $mapper,
 		private readonly RowValidator $validator,
 	) {}
+
+	/**
+	 * Per-batch caches for donor and campaign lookups. Keyed by lookup-string
+	 * (email or title), value is int donor/campaign id, or 0 for "we already
+	 * looked and found nothing" so we don't re-query.
+	 *
+	 * @var array<string, int>
+	 */
+	private array $donor_lookup_cache = [];
+
+	/**
+	 * @var array<string, int>
+	 */
+	private array $campaign_lookup_cache = [];
 
 	/**
 	 * Whether an import type string is supported.
@@ -135,7 +154,10 @@ class ImportService {
 		$skipped_row_numbers = array_keys( $skipped_rows );
 		$importable_rows     = count( $rows ) - count( $skipped_row_numbers );
 
-		$duplicates = $this->count_duplicates( $type, $mapped_rows, $skipped_rows );
+		$duplicates       = $this->count_duplicates( $type, $mapped_rows, $skipped_rows );
+		$rows_no_gateway  = 'transactions' === $type
+			? $this->count_rows_without_gateway_id( $mapped_rows, $skipped_rows )
+			: 0;
 
 		$preview_rows = array_map(
 			static fn( array $row ) => array_values( $row ),
@@ -156,6 +178,7 @@ class ImportService {
 			'columns_unmatched'   => $resolved['unmatched'],
 			'warnings'            => $warnings,
 			'duplicates'          => $duplicates,
+			'rows_without_gateway_id' => $rows_no_gateway,
 			'preview_headers'     => $headers,
 			'preview_rows'        => $preview_rows,
 			'warning_rows'        => array_values( array_unique( array_column( $warnings, 'row' ) ) ),
@@ -169,13 +192,13 @@ class ImportService {
 	 * Scheduler tick. Does not process any rows itself.
 	 *
 	 * @param string $file_id            Transient key from validate_file().
-	 * @param string $duplicate_strategy 'skip' | 'update' | 'create'.
+	 * @param string $duplicate_strategy 'skip' | 'update'.
 	 * @param int    $user_id            Current WP user (jobs are scoped per user).
 	 *
 	 * @return array|WP_Error Job payload, or WP_Error on validation/conflict.
 	 */
 	public function start_import( string $file_id, string $duplicate_strategy, int $user_id ): array|WP_Error {
-		if ( ! in_array( $duplicate_strategy, [ 'skip', 'update', 'create' ], true ) ) {
+		if ( ! in_array( $duplicate_strategy, [ 'skip', 'update' ], true ) ) {
 			return new WP_Error( 'invalid_strategy', __( 'Invalid duplicate strategy.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
@@ -197,8 +220,8 @@ class ImportService {
 			return new WP_Error( 'file_missing', __( 'The uploaded file could not be read.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		if ( 'donors' !== $type ) {
-			return new WP_Error( 'unsupported_type', __( 'Only donor imports are supported right now.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		if ( ! in_array( $type, [ 'donors', 'transactions' ], true ) ) {
+			return new WP_Error( 'unsupported_type', __( 'This import type is not yet supported.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
 		// Concurrency guard: refuse a second import while one is in flight.
@@ -341,7 +364,11 @@ class ImportService {
 			];
 		}
 
-		$deltas = $this->process_donor_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] );
+		$deltas = match ( $job->type ) {
+			'donors'       => $this->process_donor_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
+			'transactions' => $this->process_transaction_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'], $job->job_id ),
+			default        => throw new \RuntimeException( esc_html( "Unsupported import type: {$job->type}" ) ),
+		};
 
 		$deltas['processed'] = count( $batch['rows'] );
 		$deltas['eof']       = $batch['eof'];
@@ -601,6 +628,405 @@ class ImportService {
 			'errors'        => $errors,
 			'error_details' => $error_details,
 		];
+	}
+
+	// ------------------------------------------------------------------
+	// Transactions
+	// ------------------------------------------------------------------
+
+	/**
+	 * Process a batch of mapped transaction rows.
+	 *
+	 * Inserts go through TransactionDataStore::create_silent() so we don't fire
+	 * missiondp_transaction_created or per-row aggregate updates. Touched donor
+	 * and campaign IDs are accumulated in the job's transient so the end-of-job
+	 * recompute can rebuild aggregates in a single pass.
+	 *
+	 * @param array<int, array<string, string>> $rows      Mapped rows from read_batch().
+	 * @param string                            $strategy  Duplicate strategy (skip/update/create).
+	 * @param int                               $start_row Row number of the first row in this batch.
+	 * @param string                            $job_id    Public job token.
+	 *
+	 * @return array{imported:int, skipped:int, updated:int, errors:int, error_details: array<int, array{row:int, message:string}>}
+	 */
+	private function process_transaction_rows( array $rows, string $strategy, int $start_row, string $job_id ): array {
+		$imported      = 0;
+		$skipped       = 0;
+		$updated       = 0;
+		$errors        = 0;
+		$error_details = [];
+
+		$this->donor_lookup_cache    = [];
+		$this->campaign_lookup_cache = [];
+
+		$transaction_store = new TransactionDataStore();
+
+		foreach ( $rows as $i => $row ) {
+			$row_number = $start_row + $i;
+
+			$row_warnings = $this->validator->validate( $row, 'transactions', $row_number );
+
+			foreach ( $row_warnings as $warning ) {
+				if ( 'error' === ( $warning['severity'] ?? 'warning' ) ) {
+					++$skipped;
+					continue 2;
+				}
+			}
+
+			$prepared = $this->prepare_transaction_row( $row );
+
+			if ( is_wp_error( $prepared ) ) {
+				++$errors;
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $prepared->get_error_message(),
+				];
+				continue;
+			}
+
+			/**
+			 * Filter a transaction row right before it is saved.
+			 *
+			 * @param array  $prepared Prepared row data.
+			 * @param array  $row      Original mapped row.
+			 * @param string $strategy Duplicate strategy.
+			 */
+			$prepared = apply_filters( 'missiondp_import_transactions_row', $prepared, $row, $strategy );
+
+			$meta_pairs = $this->extract_meta_pairs( $row );
+
+			try {
+				$gateway_id = (string) ( $prepared['gateway_transaction_id'] ?? '' );
+				$existing   = '' !== $gateway_id ? Transaction::find_by_gateway_transaction_id( $gateway_id ) : null;
+
+				if ( $existing ) {
+					if ( 'skip' === $strategy ) {
+						++$skipped;
+						continue;
+					}
+
+					if ( 'update' === $strategy ) {
+						foreach ( $prepared as $field => $value ) {
+							$existing->{$field} = $value;
+						}
+						$transaction_store->update_silent( $existing );
+						$this->apply_meta( $existing, $meta_pairs );
+						$this->mark_touched_from_transaction( $existing, $job_id );
+						++$updated;
+						continue;
+					}
+				}
+
+				$transaction = new Transaction( $prepared );
+				$transaction_store->create_silent( $transaction );
+				$this->apply_meta( $transaction, $meta_pairs );
+				$this->mark_touched_from_transaction( $transaction, $job_id );
+				++$imported;
+			} catch ( \Throwable $e ) {
+				++$errors;
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		return [
+			'imported'      => $imported,
+			'skipped'       => $skipped,
+			'updated'       => $updated,
+			'errors'        => $errors,
+			'error_details' => $error_details,
+		];
+	}
+
+	/**
+	 * Convert a mapped transaction row into the data array for the Transaction constructor.
+	 *
+	 * @param array<string, string> $row Mapped row keyed by canonical field.
+	 * @return array<string, mixed>|WP_Error
+	 */
+	private function prepare_transaction_row( array $row ): array|WP_Error {
+		$donor_id = $this->resolve_donor_id( $row );
+		if ( is_wp_error( $donor_id ) ) {
+			return $donor_id;
+		}
+
+		$campaign_id = $this->resolve_campaign_id( $row );
+		if ( is_wp_error( $campaign_id ) ) {
+			return $campaign_id;
+		}
+
+		$amount          = $this->parse_amount( (string) ( $row['amount'] ?? '0' ) );
+		$fee_amount      = $this->parse_amount( (string) ( $row['fee_amount'] ?? '0' ) );
+		$tip_amount      = $this->parse_amount( (string) ( $row['tip_amount'] ?? '0' ) );
+		$amount_refunded = $this->parse_amount( (string) ( $row['amount_refunded'] ?? '0' ) );
+
+		$total_amount = isset( $row['total_amount'] ) && '' !== trim( (string) $row['total_amount'] )
+			? $this->parse_amount( (string) $row['total_amount'] )
+			: $amount + $fee_amount + $tip_amount;
+
+		$status = strtolower( trim( (string) ( $row['status'] ?? '' ) ) );
+		if ( ! in_array( $status, [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ], true ) ) {
+			$status = 'completed';
+		}
+
+		$date_created   = $this->parse_date( (string) ( $row['date_created'] ?? '' ) );
+		$date_completed = $this->parse_date( (string) ( $row['date_completed'] ?? '' ) );
+		$date_refunded  = $this->parse_date( (string) ( $row['date_refunded'] ?? '' ) );
+
+		if ( 'completed' === $status && null === $date_completed ) {
+			$date_completed = $date_created ?? current_time( 'mysql', true );
+		}
+
+		$prepared = [
+			'status'                  => $status,
+			'donor_id'                => $donor_id,
+			'campaign_id'             => $campaign_id,
+			'amount'                  => $amount,
+			'fee_amount'              => $fee_amount,
+			'tip_amount'              => $tip_amount,
+			'total_amount'            => $total_amount,
+			'amount_refunded'         => $amount_refunded,
+			'currency'                => strtolower( trim( (string) ( $row['currency'] ?? 'usd' ) ) ),
+			'payment_gateway'         => trim( (string) ( $row['payment_gateway'] ?? '' ) ),
+			'gateway_transaction_id'  => trim( (string) ( $row['gateway_transaction_id'] ?? '' ) ) ?: null,
+			'gateway_subscription_id' => trim( (string) ( $row['gateway_subscription_id'] ?? '' ) ) ?: null,
+			'gateway_customer_id'     => trim( (string) ( $row['gateway_customer_id'] ?? '' ) ),
+			'is_anonymous'            => $this->parse_bool( $row['is_anonymous'] ?? '' ),
+			'is_test'                 => $this->parse_bool( $row['is_test'] ?? '' ),
+			'donor_ip'                => trim( (string) ( $row['donor_ip'] ?? '' ) ),
+		];
+
+		if ( null !== $date_created ) {
+			$prepared['date_created'] = $date_created;
+		}
+		if ( null !== $date_completed ) {
+			$prepared['date_completed'] = $date_completed;
+		}
+		if ( null !== $date_refunded ) {
+			$prepared['date_refunded'] = $date_refunded;
+		}
+
+		if ( isset( $row['type'] ) && '' !== trim( (string) $row['type'] ) ) {
+			$prepared['type'] = trim( (string) $row['type'] );
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Resolve a transaction row's donor reference to a donor ID.
+	 *
+	 * @param array<string, string> $row Mapped row.
+	 * @return int|WP_Error
+	 */
+	private function resolve_donor_id( array $row ): int|WP_Error {
+		if ( isset( $row['donor_id'] ) && '' !== trim( (string) $row['donor_id'] ) ) {
+			$id = (int) trim( (string) $row['donor_id'] );
+
+			if ( $id > 0 ) {
+				/* translators: %d: donor ID */
+				$not_found_message = __( 'No donor with ID %d.', 'mission-donation-platform' );
+
+				$cache_key = "id:{$id}";
+				if ( isset( $this->donor_lookup_cache[ $cache_key ] ) ) {
+					if ( 0 === $this->donor_lookup_cache[ $cache_key ] ) {
+						return new WP_Error( 'donor_not_found', sprintf( $not_found_message, $id ) );
+					}
+					return $this->donor_lookup_cache[ $cache_key ];
+				}
+
+				$donor                                  = Donor::find( $id );
+				$this->donor_lookup_cache[ $cache_key ] = $donor ? $donor->id : 0;
+
+				if ( $donor ) {
+					return $donor->id;
+				}
+
+				return new WP_Error( 'donor_not_found', sprintf( $not_found_message, $id ) );
+			}
+		}
+
+		$email = strtolower( trim( (string) ( $row['donor_email'] ?? '' ) ) );
+
+		if ( '' === $email ) {
+			return new WP_Error( 'donor_missing', __( 'Row has no donor_email or donor_id.', 'mission-donation-platform' ) );
+		}
+
+		/* translators: %s: donor email */
+		$not_found_message = __( 'No donor found for email "%s". Import donors first.', 'mission-donation-platform' );
+
+		$cache_key = "email:{$email}";
+		if ( isset( $this->donor_lookup_cache[ $cache_key ] ) ) {
+			if ( 0 === $this->donor_lookup_cache[ $cache_key ] ) {
+				return new WP_Error( 'donor_not_found', sprintf( $not_found_message, $email ) );
+			}
+			return $this->donor_lookup_cache[ $cache_key ];
+		}
+
+		$donor                                  = Donor::find_by_email( $email );
+		$this->donor_lookup_cache[ $cache_key ] = $donor ? $donor->id : 0;
+
+		if ( $donor ) {
+			return $donor->id;
+		}
+
+		return new WP_Error( 'donor_not_found', sprintf( $not_found_message, $email ) );
+	}
+
+	/**
+	 * Resolve a transaction row's campaign reference to a campaign ID, or null
+	 * if no campaign is referenced (a valid case).
+	 *
+	 * @param array<string, string> $row Mapped row.
+	 * @return int|null|WP_Error
+	 */
+	private function resolve_campaign_id( array $row ): int|null|WP_Error {
+		if ( isset( $row['campaign_id'] ) && '' !== trim( (string) $row['campaign_id'] ) ) {
+			$id = (int) trim( (string) $row['campaign_id'] );
+
+			if ( $id > 0 ) {
+				/* translators: %d: campaign ID */
+				$not_found_message = __( 'No campaign with ID %d.', 'mission-donation-platform' );
+
+				$cache_key = "id:{$id}";
+				if ( isset( $this->campaign_lookup_cache[ $cache_key ] ) ) {
+					if ( 0 === $this->campaign_lookup_cache[ $cache_key ] ) {
+						return new WP_Error( 'campaign_not_found', sprintf( $not_found_message, $id ) );
+					}
+					return $this->campaign_lookup_cache[ $cache_key ];
+				}
+
+				$campaign                                  = Campaign::find( $id );
+				$this->campaign_lookup_cache[ $cache_key ] = $campaign ? $campaign->id : 0;
+
+				if ( $campaign ) {
+					return $campaign->id;
+				}
+
+				return new WP_Error( 'campaign_not_found', sprintf( $not_found_message, $id ) );
+			}
+		}
+
+		$title = trim( (string) ( $row['campaign_title'] ?? '' ) );
+
+		if ( '' === $title ) {
+			return null;
+		}
+
+		/* translators: %s: campaign title */
+		$not_found_message = __( 'No campaign found with title "%s".', 'mission-donation-platform' );
+
+		$cache_key = 'title:' . strtolower( $title );
+		if ( isset( $this->campaign_lookup_cache[ $cache_key ] ) ) {
+			if ( 0 === $this->campaign_lookup_cache[ $cache_key ] ) {
+				return new WP_Error( 'campaign_not_found', sprintf( $not_found_message, $title ) );
+			}
+			return $this->campaign_lookup_cache[ $cache_key ];
+		}
+
+		$matches                                   = Campaign::find_all_by_title( $title );
+		$this->campaign_lookup_cache[ $cache_key ] = $matches ? $matches[0]->id : 0;
+
+		if ( $matches ) {
+			return $matches[0]->id;
+		}
+
+		return new WP_Error( 'campaign_not_found', sprintf( $not_found_message, $title ) );
+	}
+
+	/**
+	 * Coerce a CSV truthy/falsy string to bool.
+	 *
+	 * @param mixed $value Raw value.
+	 */
+	private function parse_bool( $value ): bool {
+		$normalized = strtolower( trim( (string) $value ) );
+
+		return in_array( $normalized, [ '1', 'true', 'yes', 'y', 'on' ], true );
+	}
+
+	/**
+	 * Mark a transaction's donor and campaign as touched if the row was committed
+	 * with completed status. Touched entities get a recompute at job end.
+	 *
+	 * @param Transaction $transaction Inserted/updated transaction.
+	 * @param string      $job_id      Public job token.
+	 */
+	private function mark_touched_from_transaction( Transaction $transaction, string $job_id ): void {
+		if ( 'completed' !== $transaction->status ) {
+			// We still want refunds tracked, since the refund path can change donor totals.
+			if ( 'refunded' !== $transaction->status ) {
+				return;
+			}
+		}
+
+		if ( $transaction->donor_id ) {
+			$this->track_touched_entity( $job_id, 'donors', $transaction->donor_id );
+		}
+
+		if ( $transaction->campaign_id ) {
+			$this->track_touched_entity( $job_id, 'campaigns', (int) $transaction->campaign_id );
+		}
+	}
+
+	/**
+	 * Accumulate distinct touched IDs in a per-job transient.
+	 *
+	 * @param string $job_id Public job token.
+	 * @param string $bucket 'donors' or 'campaigns'.
+	 * @param int    $id     Donor or campaign ID.
+	 */
+	public function track_touched_entity( string $job_id, string $bucket, int $id ): void {
+		if ( $id <= 0 || ! in_array( $bucket, [ 'donors', 'campaigns' ], true ) ) {
+			return;
+		}
+
+		$key      = "mission_import_touched_{$job_id}";
+		$existing = get_transient( $key );
+
+		if ( ! is_array( $existing ) ) {
+			$existing = [
+				'donors'    => [],
+				'campaigns' => [],
+			];
+		}
+
+		$existing[ $bucket ][] = $id;
+		$existing[ $bucket ]   = array_values( array_unique( $existing[ $bucket ] ) );
+
+		set_transient( $key, $existing, DAY_IN_SECONDS );
+	}
+
+	/**
+	 * Rebuild aggregates for all donors and campaigns touched by this job.
+	 *
+	 * Called from ImportJobHandler when the job transitions to completed, before
+	 * mark_completed(). Idempotent — running it twice produces the same result.
+	 *
+	 * @param ImportJob $job The completed job.
+	 */
+	public function run_post_import_recompute( ImportJob $job ): void {
+		$key     = "mission_import_touched_{$job->job_id}";
+		$touched = get_transient( $key );
+
+		if ( ! is_array( $touched ) ) {
+			return;
+		}
+
+		$donor_store    = new DonorDataStore();
+		$campaign_store = new CampaignDataStore();
+
+		foreach ( $touched['donors'] ?? [] as $donor_id ) {
+			$donor_store->recompute_aggregates( (int) $donor_id );
+		}
+
+		foreach ( $touched['campaigns'] ?? [] as $campaign_id ) {
+			$campaign_store->recompute_aggregates( (int) $campaign_id );
+		}
+
+		delete_transient( $key );
 	}
 
 	// ------------------------------------------------------------------
@@ -886,27 +1312,77 @@ class ImportService {
 	 * @param array<int, bool>                    $skipped_rows_lookup Rows already flagged for skipping.
 	 */
 	private function count_duplicates( string $type, array $rows, array $skipped_rows_lookup = [] ): int {
-		if ( 'donors' !== $type ) {
-			return 0;
+		if ( 'donors' === $type ) {
+			$count = 0;
+			$seen  = [];
+
+			foreach ( $rows as $i => $row ) {
+				if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
+					continue;
+				}
+
+				$email = strtolower( trim( $row['email'] ?? '' ) );
+
+				if ( '' === $email || ! is_email( $email ) || isset( $seen[ $email ] ) ) {
+					continue;
+				}
+
+				$seen[ $email ] = true;
+
+				if ( Donor::find_by_email( $email ) ) {
+					++$count;
+				}
+			}
+
+			return $count;
 		}
 
+		if ( 'transactions' === $type ) {
+			$count = 0;
+			$seen  = [];
+
+			foreach ( $rows as $i => $row ) {
+				if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
+					continue;
+				}
+
+				$gateway_id = trim( (string) ( $row['gateway_transaction_id'] ?? '' ) );
+
+				if ( '' === $gateway_id || isset( $seen[ $gateway_id ] ) ) {
+					continue;
+				}
+
+				$seen[ $gateway_id ] = true;
+
+				if ( Transaction::find_by_gateway_transaction_id( $gateway_id ) ) {
+					++$count;
+				}
+			}
+
+			return $count;
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Count transaction rows with no gateway_transaction_id. These rows have no
+	 * stable key to deduplicate against, so each import creates a new transaction
+	 * for them. The validation preview surfaces this so the user knows what
+	 * happens on a re-run.
+	 *
+	 * @param array<int, array<string, string>> $rows                Mapped rows.
+	 * @param array<int, bool>                  $skipped_rows_lookup Rows already flagged for skipping.
+	 */
+	private function count_rows_without_gateway_id( array $rows, array $skipped_rows_lookup = [] ): int {
 		$count = 0;
-		$seen  = [];
 
 		foreach ( $rows as $i => $row ) {
 			if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
 				continue;
 			}
 
-			$email = strtolower( trim( $row['email'] ?? '' ) );
-
-			if ( '' === $email || ! is_email( $email ) || isset( $seen[ $email ] ) ) {
-				continue;
-			}
-
-			$seen[ $email ] = true;
-
-			if ( Donor::find_by_email( $email ) ) {
+			if ( '' === trim( (string) ( $row['gateway_transaction_id'] ?? '' ) ) ) {
 				++$count;
 			}
 		}
@@ -1006,14 +1482,14 @@ class ImportService {
 	}
 
 	/**
-	 * Apply collected meta pairs to a donor.
+	 * Apply meta:* pairs to any model that uses HasMeta (Donor, Transaction).
 	 *
-	 * @param Donor                 $donor Donor model.
+	 * @param object              $model Model with HasMeta trait.
 	 * @param array<string, string> $pairs Meta key => value pairs.
 	 */
-	private function apply_meta( Donor $donor, array $pairs ): void {
+	private function apply_meta( object $model, array $pairs ): void {
 		foreach ( $pairs as $key => $value ) {
-			$donor->update_meta( $key, $value );
+			$model->update_meta( $key, $value );
 		}
 	}
 

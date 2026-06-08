@@ -100,7 +100,7 @@ class ImportEndpoint {
 					'duplicate_strategy' => [
 						'type'              => 'string',
 						'required'          => true,
-						'enum'              => [ 'skip', 'update', 'create' ],
+						'enum'              => [ 'skip', 'update' ],
 						'sanitize_callback' => 'sanitize_text_field',
 					],
 				],

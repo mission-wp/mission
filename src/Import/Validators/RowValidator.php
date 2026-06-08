@@ -63,18 +63,50 @@ class RowValidator {
 			}
 		}
 
-		if ( isset( $row['email'] ) && '' !== trim( $row['email'] ) && ! is_email( $row['email'] ) ) {
+		foreach ( [ 'email', 'donor_email' ] as $email_field ) {
+			if ( ! isset( $row[ $email_field ] ) ) {
+				continue;
+			}
+
+			$value = trim( $row[ $email_field ] );
+
+			if ( '' === $value || is_email( $value ) ) {
+				continue;
+			}
+
 			$warnings[] = [
 				'row'      => $row_number,
-				'column'   => 'email',
+				'column'   => $email_field,
 				'message'  => sprintf(
-					/* translators: %s: invalid email value */
-					__( 'Email address \'%s\' is not a valid address. Row will be skipped.', 'mission-donation-platform' ),
-					$row['email']
+					/* translators: 1: column name, 2: invalid email value */
+					__( 'Column "%1$s" has invalid email \'%2$s\'. Row will be skipped.', 'mission-donation-platform' ),
+					$email_field,
+					$value
 				),
-				'value'    => $row['email'],
+				'value'    => $value,
 				'severity' => 'error',
 			];
+		}
+
+		$is_transactions = 'transactions' === $type;
+
+		if ( $is_transactions && isset( $row['status'] ) ) {
+			$status  = trim( (string) $row['status'] );
+			$allowed = [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ];
+
+			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'status',
+					'message'  => sprintf(
+						/* translators: %s: invalid status value */
+						__( 'Status \'%s\' is not one of pending/completed/refunded/cancelled/failed. Row will be skipped.', 'mission-donation-platform' ),
+						$status
+					),
+					'value'    => $status,
+					'severity' => 'error',
+				];
+			}
 		}
 
 		foreach ( [ 'amount', 'fee_amount', 'tip_amount', 'total_amount', 'goal_amount', 'total_donated', 'total_tip' ] as $numeric ) {
@@ -89,17 +121,22 @@ class RowValidator {
 			}
 
 			if ( ! $this->looks_like_number( $value ) ) {
+				$is_error = $is_transactions;
+
 				$warnings[] = [
 					'row'      => $row_number,
 					'column'   => $numeric,
 					'message'  => sprintf(
-						/* translators: 1: column name, 2: invalid value */
-						__( 'Column "%1$s" has non-numeric value \'%2$s\'. Will be imported as zero.', 'mission-donation-platform' ),
+						/* translators: 1: column name, 2: invalid value, 3: trailing sentence */
+						__( 'Column "%1$s" has non-numeric value \'%2$s\'. %3$s', 'mission-donation-platform' ),
 						$numeric,
-						$value
+						$value,
+						$is_error
+							? __( 'Row will be skipped.', 'mission-donation-platform' )
+							: __( 'Will be imported as zero.', 'mission-donation-platform' )
 					),
 					'value'    => $value,
-					'severity' => 'warning',
+					'severity' => $is_error ? 'error' : 'warning',
 				];
 			}
 		}
@@ -116,17 +153,22 @@ class RowValidator {
 			}
 
 			if ( false === strtotime( $value ) ) {
+				$is_error = $is_transactions;
+
 				$warnings[] = [
 					'row'      => $row_number,
 					'column'   => $date_key,
 					'message'  => sprintf(
-						/* translators: 1: column name, 2: invalid value */
-						__( 'Column "%1$s" has unparseable date \'%2$s\'. Will be left blank.', 'mission-donation-platform' ),
+						/* translators: 1: column name, 2: invalid value, 3: trailing sentence */
+						__( 'Column "%1$s" has unparseable date \'%2$s\'. %3$s', 'mission-donation-platform' ),
 						$date_key,
-						$value
+						$value,
+						$is_error
+							? __( 'Row will be skipped.', 'mission-donation-platform' )
+							: __( 'Will be left blank.', 'mission-donation-platform' )
 					),
 					'value'    => $value,
-					'severity' => 'warning',
+					'severity' => $is_error ? 'error' : 'warning',
 				];
 			}
 		}

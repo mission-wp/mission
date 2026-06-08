@@ -133,8 +133,10 @@ class ColumnMapper {
 			'transactions'  => [
 				'Donor Email'    => 'donor_email',
 				'Campaign Title' => 'campaign_title',
-				'Gateway'        => 'gateway',
+				'Gateway'        => 'payment_gateway',
 				'Charge ID'      => 'gateway_transaction_id',
+				'Transaction ID' => 'gateway_transaction_id',
+				'Date'           => 'date_created',
 			],
 			'campaigns'     => [
 				'Title' => 'title',
