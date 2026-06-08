@@ -183,6 +183,10 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.1.7 =
+* Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
+* Added an "Edit Campaign" link to the admin bar when viewing a campaign on the frontend
+
 = 1.1.6 =
 * Expanded the country dropdown to the full ISO 3166-1 list so any country is selectable
 * Fixed the plugin update entry in the activity log to show the correct new version
