@@ -7,19 +7,126 @@ import ColorPicker from '@shared/components/ColorPicker';
 
 import SaveBar from './SaveBar';
 
+function StripeMark() {
+  return (
+    <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+      <path d="M16.5 12.6c0-.8.66-1.1 1.74-1.1 1.55 0 3.52.47 5.07 1.31V8.04C21.61 7.37 19.9 7.1 18.24 7.1c-4.07 0-6.78 2.13-6.78 5.68 0 5.55 7.62 4.66 7.62 7.05 0 .95-.82 1.26-1.96 1.26-1.7 0-3.86-.69-5.58-1.63v4.83c1.9.82 3.83 1.17 5.58 1.17 4.17 0 7.04-2.06 7.04-5.66 0-5.99-7.66-4.92-7.66-7.2z" />
+    </svg>
+  );
+}
+
+function StarFilled() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+    </svg>
+  );
+}
+
+function StarOutline() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function StripeAccountRow( {
+  account,
+  showMakeDefault,
+  onMakeDefault,
+  onDisconnect,
+  disabled,
+} ) {
+  const showDefaultIndicator = showMakeDefault && account.is_default;
+
+  return (
+    <div
+      className={ `mission-stripe-account${
+        showDefaultIndicator ? ' is-default' : ''
+      }` }
+    >
+      <div className="mission-stripe-account__icon">
+        <StripeMark />
+      </div>
+      <div className="mission-stripe-account__info">
+        <span className="mission-stripe-account__name">
+          <span className="mission-stripe-account__name-text">
+            { account.display_name ||
+              __( 'Stripe account', 'mission-donation-platform' ) }
+          </span>
+          { showDefaultIndicator && (
+            <span className="mission-stripe-default-badge">
+              <StarFilled />
+              { __( 'Default', 'mission-donation-platform' ) }
+            </span>
+          ) }
+        </span>
+        { account.account_id && (
+          <span className="mission-stripe-account__id">
+            { account.account_id }
+          </span>
+        ) }
+      </div>
+      <div className="mission-stripe-account__right">
+        <span className="mission-stripe-account__status">
+          <span className="mission-stripe-account__dot" />
+          { __( 'Connected', 'mission-donation-platform' ) }
+        </span>
+        <div className="mission-stripe-account__actions">
+          { showMakeDefault && ! account.is_default && (
+            <button
+              className="mission-stripe-action"
+              onClick={ () => onMakeDefault( account.account_id ) }
+              disabled={ disabled }
+              type="button"
+            >
+              <StarOutline />
+              { __( 'Make default', 'mission-donation-platform' ) }
+            </button>
+          ) }
+          <button
+            className="mission-stripe-action is-danger"
+            onClick={ () => onDisconnect( account ) }
+            disabled={ disabled }
+            type="button"
+          >
+            { __( 'Disconnect', 'mission-donation-platform' ) }
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GeneralPanel( {
   settings,
   updateField,
   saving,
   isDirty,
   handleSave,
-  setShowDisconnectModal,
-  handleDisconnect, // eslint-disable-line no-unused-vars -- used by parent modal
+  setDisconnectTarget,
+  handleMakeDefault,
   pendingCurrency, // eslint-disable-line no-unused-vars -- used by parent modal
   setPendingCurrency,
 } ) {
-  const isConnected = settings.stripe_connection_status === 'connected';
+  const accounts = Array.isArray( settings.stripe_accounts )
+    ? settings.stripe_accounts
+    : [];
+  const hasAccounts = accounts.length > 0;
   const stripeConnectUrl = window.missiondpAdmin?.stripeConnectUrl;
+  const defaultChargesEnabled = accounts.some(
+    ( a ) => a.is_default && a.charges_enabled
+  );
+  const anyChargesDisabled = accounts.some( ( a ) => ! a.charges_enabled );
 
   return (
     <div className="mission-settings-panel" key="general">
@@ -30,63 +137,64 @@ export default function GeneralPanel( {
             { __( 'Payment Gateway', 'mission-donation-platform' ) }
           </h2>
           <p className="mission-settings-card__desc">
-            { __(
-              'Connect your Stripe account to process donations.',
-              'mission-donation-platform'
-            ) }
+            { hasAccounts
+              ? __(
+                  'Connect one or more Stripe accounts to process donations. New donations are routed through your default account.',
+                  'mission-donation-platform'
+                )
+              : __(
+                  'Connect your Stripe account to process donations.',
+                  'mission-donation-platform'
+                ) }
           </p>
         </div>
 
-        { isConnected ? (
+        { settings.stripe_connection_status === 'error' && (
+          <p
+            style={ {
+              color: '#b85c5c',
+              fontSize: '13px',
+              marginBottom: '12px',
+            } }
+          >
+            { __(
+              'Connection error — please try again.',
+              'mission-donation-platform'
+            ) }
+          </p>
+        ) }
+
+        { stripeConnectUrl && (
+          <a href={ stripeConnectUrl } className="mission-stripe-connect-btn">
+            <StripeMark />
+            { hasAccounts
+              ? __(
+                  'Connect another Stripe account',
+                  'mission-donation-platform'
+                )
+              : __( 'Connect with Stripe', 'mission-donation-platform' ) }
+          </a>
+        ) }
+
+        { hasAccounts && (
           <>
-            <div className="mission-settings-stripe">
-              <div className="mission-settings-stripe__info">
-                <div className="mission-settings-stripe__icon">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="1" y="4" width="22" height="16" rx="3" />
-                    <line x1="1" y1="10" x2="23" y2="10" />
-                  </svg>
-                </div>
-                <div className="mission-settings-stripe__details">
-                  <span className="mission-settings-stripe__status">
-                    <span className="mission-settings-stripe__dot" />
-                    { __( 'Connected', 'mission-donation-platform' ) }
-                  </span>
-                  { ( settings.stripe_display_name ||
-                    settings.stripe_account_id ) && (
-                    <span className="mission-settings-stripe__name">
-                      { [
-                        settings.stripe_display_name,
-                        settings.stripe_account_id
-                          ? `(${ settings.stripe_account_id })`
-                          : '',
-                      ]
-                        .filter( Boolean )
-                        .join( ' ' ) }
-                    </span>
-                  ) }
-                </div>
-              </div>
-              <button
-                className="mission-settings-stripe__disconnect"
-                onClick={ () => setShowDisconnectModal( true ) }
-                disabled={ saving }
-                type="button"
-              >
-                { __( 'Disconnect', 'mission-donation-platform' ) }
-              </button>
+            <p className="mission-stripe-accounts-label">
+              { __( 'Connected accounts', 'mission-donation-platform' ) }
+            </p>
+            <div className="mission-stripe-accounts">
+              { accounts.map( ( account ) => (
+                <StripeAccountRow
+                  key={ account.account_id }
+                  account={ account }
+                  showMakeDefault={ accounts.length > 1 }
+                  onMakeDefault={ handleMakeDefault }
+                  onDisconnect={ setDisconnectTarget }
+                  disabled={ saving }
+                />
+              ) ) }
             </div>
 
-            { ! settings.stripe_charges_enabled && (
+            { anyChargesDisabled && (
               <div className="mission-settings-stripe-warning">
                 <svg
                   width="16"
@@ -104,10 +212,15 @@ export default function GeneralPanel( {
                 </svg>
                 <div>
                   <p>
-                    { __(
-                      'Your Stripe account is connected, but charges are not yet enabled. You\u2019ll need to finish setting up your Stripe account before you can accept donations.',
-                      'mission-donation-platform'
-                    ) }
+                    { defaultChargesEnabled
+                      ? __(
+                          'One or more connected accounts can’t accept charges yet. Finish setting them up on the Stripe Dashboard.',
+                          'mission-donation-platform'
+                        )
+                      : __(
+                          'Your default Stripe account isn’t ready to accept charges. Finish setting it up before donations can complete.',
+                          'mission-donation-platform'
+                        ) }
                   </p>
                   <a
                     href="https://dashboard.stripe.com"
@@ -115,7 +228,7 @@ export default function GeneralPanel( {
                     rel="noopener noreferrer"
                   >
                     { __(
-                      'Go to Stripe Dashboard \u2192',
+                      'Go to Stripe Dashboard →',
                       'mission-donation-platform'
                     ) }
                   </a>
@@ -141,11 +254,11 @@ export default function GeneralPanel( {
                   <div className="mission-settings-toggle-row__desc">
                     { settings.test_mode
                       ? __(
-                          'Using Stripe test keys \u2014 no real charges.',
+                          'Using Stripe test keys — no real charges.',
                           'mission-donation-platform'
                         )
                       : __(
-                          'Using Stripe live keys \u2014 real charges.',
+                          'Using Stripe live keys — real charges.',
                           'mission-donation-platform'
                         ) }
                   </div>
@@ -167,32 +280,6 @@ export default function GeneralPanel( {
               </div>
             </div>
           </>
-        ) : (
-          <div>
-            { settings.stripe_connection_status === 'error' && (
-              <p
-                style={ {
-                  color: '#b85c5c',
-                  fontSize: '13px',
-                  marginBottom: '12px',
-                } }
-              >
-                { __(
-                  'Connection error \u2014 please try again.',
-                  'mission-donation-platform'
-                ) }
-              </p>
-            ) }
-            { stripeConnectUrl && (
-              <a
-                href={ stripeConnectUrl }
-                className="mission-settings-save-bar__btn"
-                style={ { textDecoration: 'none', display: 'inline-flex' } }
-              >
-                { __( 'Connect to Stripe', 'mission-donation-platform' ) }
-              </a>
-            ) }
-          </div>
         ) }
       </div>
 
@@ -392,7 +479,7 @@ export default function GeneralPanel( {
           </select>
         </div>
 
-        { isConnected && (
+        { hasAccounts && (
           <div
             style={ {
               marginTop: '18px',

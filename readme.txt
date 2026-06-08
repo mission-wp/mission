@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.6
+Stable Tag: 1.1.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -177,11 +177,16 @@ This plugin connects to the following third-party services:
 
 **Stripe** processes donations. Payment data is sent from the donor's browser to Stripe via Stripe.js, and Stripe sends webhook notifications back for payment, refund, and subscription events. See Stripe's [Terms](https://stripe.com/legal) and [Privacy Policy](https://stripe.com/privacy).
 
-**Mission API** (api.missionwp.com, operated by the plugin author) proxies Stripe Connect onboarding, payment requests, and webhook forwarding to your site. If you opt in to feature notifications under Tools > Features, your email is also sent here. See Mission's [Terms](https://missionwp.com/terms) and [Privacy Policy](https://missionwp.com/privacy).
+**Mission API** proxies Stripe Connect onboarding, payment requests, and webhook forwarding to your site. If you opt in to feature notifications under Tools > Features, your email is also sent here. See Mission's [Terms](https://missionwp.com/terms) and [Privacy Policy](https://missionwp.com/privacy).
 
 **Gravatar** supplies donor avatars in the admin and on the Donor Wall block. Email addresses are hashed before being sent. See Gravatar's [Terms](https://wordpress.com/tos/) and [Privacy Policy](https://automattic.com/privacy/).
 
 == Changelog ==
+
+= 1.1.7 =
+* Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
+* Tools > Status now lists every connected Stripe account instead of only the default one
+* Added an "Edit Campaign" link to the admin bar when viewing a campaign on the frontend
 
 = 1.1.6 =
 * Expanded the country dropdown to the full ISO 3166-1 list so any country is selectable

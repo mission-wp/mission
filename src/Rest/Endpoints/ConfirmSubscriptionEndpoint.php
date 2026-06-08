@@ -160,7 +160,11 @@ class ConfirmSubscriptionEndpoint {
 		}
 
 		// Transaction is still pending — verify with Stripe synchronously.
-		$verification = $this->verifier->verify( $payment_intent_id, (bool) $transaction->is_test );
+		$verification = $this->verifier->verify(
+			$payment_intent_id,
+			(bool) $transaction->is_test,
+			(string) $transaction->get_meta( 'stripe_account_id' )
+		);
 
 		if ( ! $verification['verified'] ) {
 			return new WP_REST_Response(

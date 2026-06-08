@@ -149,7 +149,7 @@ export default function Settings() {
   const [ toastKey, setToastKey ] = useState( 0 );
   const clearToast = useCallback( () => setToast( null ), [] );
   const [ connecting, setConnecting ] = useState( false );
-  const [ showDisconnectModal, setShowDisconnectModal ] = useState( false );
+  const [ disconnectTarget, setDisconnectTarget ] = useState( null );
   const [ pendingCurrency, setPendingCurrency ] = useState( null );
   const savedSettings = useRef( null );
 
@@ -293,13 +293,14 @@ export default function Settings() {
     setSaving( false );
   };
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = async ( accountId = '' ) => {
     setSaving( true );
 
     try {
       const data = await apiFetch( {
         path: '/mission-donation-platform/v1/stripe/disconnect',
         method: 'POST',
+        data: { account_id: accountId },
       } );
       savedSettings.current = data;
       setSettings( data );
@@ -315,6 +316,40 @@ export default function Settings() {
         message:
           error.message ||
           __( 'Failed to disconnect Stripe.', 'mission-donation-platform' ),
+      } );
+    }
+
+    setSaving( false );
+  };
+
+  const handleMakeDefault = async ( accountId ) => {
+    setSaving( true );
+
+    try {
+      const data = await apiFetch( {
+        path: `/mission-donation-platform/v1/stripe/accounts/${ accountId }/default`,
+        method: 'POST',
+      } );
+      savedSettings.current = data;
+      setSettings( data );
+      setToastKey( ( k ) => k + 1 );
+      setToast( {
+        type: 'success',
+        message: __(
+          'Default Stripe account updated.',
+          'mission-donation-platform'
+        ),
+      } );
+    } catch ( error ) {
+      setToastKey( ( k ) => k + 1 );
+      setToast( {
+        type: 'error',
+        message:
+          error.message ||
+          __(
+            'Failed to update the default account.',
+            'mission-donation-platform'
+          ),
       } );
     }
 
@@ -389,9 +424,8 @@ export default function Settings() {
             <GeneralPanel
               { ...panelProps }
               connecting={ connecting }
-              showDisconnectModal={ showDisconnectModal }
-              setShowDisconnectModal={ setShowDisconnectModal }
-              handleDisconnect={ handleDisconnect }
+              setDisconnectTarget={ setDisconnectTarget }
+              handleMakeDefault={ handleMakeDefault }
               pendingCurrency={ pendingCurrency }
               setPendingCurrency={ setPendingCurrency }
             />
@@ -450,18 +484,37 @@ export default function Settings() {
       ) }
 
       { /* Stripe disconnect confirmation modal */ }
-      { showDisconnectModal && (
+      { disconnectTarget && (
         <Modal
           title={ __( 'Disconnect Stripe', 'mission-donation-platform' ) }
-          onRequestClose={ () => setShowDisconnectModal( false ) }
+          onRequestClose={ () => setDisconnectTarget( null ) }
           size="small"
         >
           <p style={ { margin: '0 0 16px' } }>
-            { __(
-              'Are you sure you want to disconnect your Stripe account? You will not be able to process donations until you reconnect.',
-              'mission-donation-platform'
-            ) }
+            { disconnectTarget.is_default
+              ? __(
+                  'This is your default Stripe account. Disconnecting it will route donations through another connected account, or block new donations if no accounts remain.',
+                  'mission-donation-platform'
+                )
+              : __(
+                  'Donation forms set to use this account will fall back to your default account once it’s disconnected.',
+                  'mission-donation-platform'
+                ) }
           </p>
+          { disconnectTarget.display_name && (
+            <p
+              style={ {
+                margin: '0 0 16px',
+                fontWeight: 600,
+                fontSize: '13px',
+              } }
+            >
+              { disconnectTarget.display_name }
+              { disconnectTarget.account_id
+                ? ` (${ disconnectTarget.account_id })`
+                : '' }
+            </p>
+          ) }
           <div
             style={ {
               display: 'flex',
@@ -471,7 +524,7 @@ export default function Settings() {
           >
             <button
               className="components-button is-tertiary"
-              onClick={ () => setShowDisconnectModal( false ) }
+              onClick={ () => setDisconnectTarget( null ) }
               type="button"
             >
               { __( 'Cancel', 'mission-donation-platform' ) }
@@ -479,8 +532,9 @@ export default function Settings() {
             <button
               className="components-button is-primary is-destructive"
               onClick={ () => {
-                setShowDisconnectModal( false );
-                handleDisconnect();
+                const accountId = disconnectTarget.account_id;
+                setDisconnectTarget( null );
+                handleDisconnect( accountId );
               } }
               type="button"
             >

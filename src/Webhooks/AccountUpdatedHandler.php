@@ -22,34 +22,59 @@ class AccountUpdatedHandler {
 	/**
 	 * Handle the event.
 	 *
-	 * @param array<string, mixed> $data Event data from the Mission API.
+	 * @param array<string, mixed> $data       Event data from the Mission API.
+	 * @param string               $account_id Stripe account ID the event applies to.
 	 * @return void
 	 */
-	public function handle( array $data ): void {
+	public function handle( array $data, string $account_id = '' ): void {
 		if ( ! isset( $data['charges_enabled'] ) ) {
 			return;
 		}
 
 		$settings        = new SettingsService();
 		$charges_enabled = (bool) $data['charges_enabled'];
-		$was_enabled     = (bool) $settings->get( 'stripe_charges_enabled' );
+
+		// Resolve which connected account the event targets. Prefer the
+		// account_id from the payload; for single-account installs (or older
+		// API forwards that omit it) fall back to the only connected account.
+		$target = '' !== $account_id ? $settings->get_stripe_account_by_id( $account_id ) : null;
+
+		if ( ! $target ) {
+			$accounts = $settings->get_stripe_accounts();
+			if ( 1 === count( $accounts ) ) {
+				$target = $accounts[0];
+			}
+		}
+
+		if ( ! $target ) {
+			return;
+		}
+
+		$was_enabled = ! empty( $target['charges_enabled'] );
 
 		if ( $charges_enabled === $was_enabled ) {
 			return;
 		}
 
-		$settings->update( [ 'stripe_charges_enabled' => $charges_enabled ] );
+		$settings->update_stripe_account(
+			(string) $target['account_id'],
+			[ 'charges_enabled' => $charges_enabled ]
+		);
 
 		if ( $charges_enabled ) {
 			/**
 			 * Fires when a connected Stripe account becomes able to process charges.
+			 *
+			 * @param string $account_id The Stripe account ID that changed.
 			 */
-			do_action( 'missiondp_stripe_charges_enabled' );
+			do_action( 'missiondp_stripe_charges_enabled', (string) $target['account_id'] );
 		} else {
 			/**
 			 * Fires when a connected Stripe account loses the ability to process charges.
+			 *
+			 * @param string $account_id The Stripe account ID that changed.
 			 */
-			do_action( 'missiondp_stripe_charges_disabled' );
+			do_action( 'missiondp_stripe_charges_disabled', (string) $target['account_id'] );
 		}
 	}
 }

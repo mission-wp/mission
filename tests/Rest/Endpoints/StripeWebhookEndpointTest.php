@@ -274,6 +274,139 @@ class StripeWebhookEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'invalid_signature', $response->as_error()->get_error_code() );
 	}
 
+	// =========================================================================
+	// Multi-account signature verification
+	// =========================================================================
+
+	/**
+	 * Helper: install a connected-accounts list with the given records.
+	 *
+	 * @param array<int, array<string, mixed>> $accounts Account records.
+	 * @return void
+	 */
+	private function install_accounts( array $accounts ): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			[
+				'stripe_accounts'       => $accounts,
+				// Clear legacy secret so per-account lookup is exercised.
+				'stripe_webhook_secret' => '',
+			]
+		);
+	}
+
+	/**
+	 * A webhook signed with account B's secret verifies when the payload names
+	 * account B, even with account A also connected with a different secret.
+	 */
+	public function test_multi_account_picks_secret_by_payload_account_id(): void {
+		$this->install_accounts( [
+			[
+				'account_id'     => 'acct_a',
+				'webhook_secret' => 'whsec_a',
+				'is_default'     => true,
+			],
+			[
+				'account_id'     => 'acct_b',
+				'webhook_secret' => 'whsec_b',
+				'is_default'     => false,
+			],
+		] );
+
+		$response = $this->dispatch_signed_webhook(
+			[
+				'account_id' => 'acct_b',
+				'event_type' => 'some.test.event',
+				'data'       => [],
+			],
+			'whsec_b'
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * Without an account_id in the payload, any connected account's secret
+	 * still verifies (covers the case where the upstream API forwards events
+	 * without the new account_id field).
+	 */
+	public function test_multi_account_falls_back_to_trying_every_secret(): void {
+		$this->install_accounts( [
+			[
+				'account_id'     => 'acct_a',
+				'webhook_secret' => 'whsec_a',
+				'is_default'     => true,
+			],
+			[
+				'account_id'     => 'acct_b',
+				'webhook_secret' => 'whsec_b',
+				'is_default'     => false,
+			],
+		] );
+
+		// No account_id in payload — signed with B's secret.
+		$response = $this->dispatch_signed_webhook(
+			[
+				'event_type' => 'some.test.event',
+				'data'       => [],
+			],
+			'whsec_b'
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * Legacy single-account installs (no stripe_accounts yet) verify against
+	 * the legacy flat stripe_webhook_secret.
+	 */
+	public function test_legacy_webhook_secret_still_verifies(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			[
+				// Note: $this->webhook_secret is the value used in set_up.
+				'stripe_webhook_secret' => $this->webhook_secret,
+				'stripe_accounts'       => [],
+			]
+		);
+
+		$response = $this->dispatch_signed_webhook( [
+			'event_type' => 'some.test.event',
+			'data'       => [],
+		] );
+
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * A signature produced with a secret that is NOT stored anywhere — not
+	 * any account's webhook_secret, not the legacy key — is rejected.
+	 *
+	 * This is the security-critical assertion: the "try multiple secrets" loop
+	 * must only accept signatures matching one of the stored trusted secrets.
+	 */
+	public function test_foreign_secret_is_rejected(): void {
+		$this->install_accounts( [
+			[
+				'account_id'     => 'acct_a',
+				'webhook_secret' => 'whsec_a',
+				'is_default'     => true,
+			],
+		] );
+
+		$response = $this->dispatch_signed_webhook(
+			[
+				'account_id' => 'acct_a',
+				'event_type' => 'some.test.event',
+				'data'       => [],
+			],
+			'whsec_attacker_made_this_up'
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'invalid_signature', $response->as_error()->get_error_code() );
+	}
+
 	/**
 	 * Test that a charge.refunded event transitions a transaction to refunded.
 	 */

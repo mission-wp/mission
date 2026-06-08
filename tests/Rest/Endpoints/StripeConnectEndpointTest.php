@@ -327,10 +327,11 @@ class StripeConnectEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( '', $data['stripe_account_id'] );
 		$this->assertSame( '', $data['stripe_display_name'] );
 		$this->assertSame( 'disconnected', $data['stripe_connection_status'] );
-		$this->assertSame( '', $data['stripe_webhook_secret'] );
+		$this->assertSame( [], $data['stripe_accounts'] );
 
-		// Token not exposed in response.
+		// Token + webhook secret not exposed in response.
 		$this->assertArrayNotHasKey( 'stripe_site_token', $data );
+		$this->assertArrayNotHasKey( 'stripe_webhook_secret', $data );
 
 		// Verify disconnect API was called.
 		$this->assertArrayHasKey( 'disconnect', $this->captured_requests );
@@ -458,11 +459,12 @@ class StripeConnectEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 502, $response->get_status() );
 		$this->assertSame( 'webhook_registration_failed', $response->as_error()->get_error_code() );
 
-		// Credentials should be rolled back.
-		$stored = get_option( SettingsService::OPTION_NAME );
-		$this->assertSame( '', $stored['stripe_site_token'] );
-		$this->assertSame( '', $stored['stripe_account_id'] );
-		$this->assertSame( 'disconnected', $stored['stripe_connection_status'] );
+		// Webhook secret is fetched before any account is stored, so a failure
+		// leaves no half-written state — no account in stripe_accounts.
+		$settings = new SettingsService();
+		$this->assertSame( [], $settings->get_stripe_accounts() );
+		$this->assertSame( '', $settings->get( 'stripe_site_token' ) );
+		$this->assertSame( '', $settings->get( 'stripe_account_id' ) );
 	}
 
 	/**

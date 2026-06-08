@@ -345,7 +345,7 @@ class Subscription extends Model {
 	 */
 	private function call_mission_api_with_response( string $endpoint, array $body ): array|false {
 		$settings   = new SettingsService();
-		$site_token = $settings->get( 'stripe_site_token' );
+		$site_token = $settings->resolve_site_token( (string) $this->get_meta( 'stripe_account_id' ) );
 
 		if ( ! $site_token ) {
 			$this->log_api_failure( $endpoint, 'no_site_token' );
@@ -401,7 +401,7 @@ class Subscription extends Model {
 		}
 
 		$settings   = new SettingsService();
-		$site_token = $settings->get( 'stripe_site_token' );
+		$site_token = $settings->resolve_site_token( (string) $this->get_meta( 'stripe_account_id' ) );
 
 		if ( ! $site_token ) {
 			return true;

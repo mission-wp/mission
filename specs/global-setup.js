@@ -30,19 +30,20 @@ async function globalSetup( config ) {
 
   await requestUtils.setupRest();
 
-  // Activate the plugin if it isn't already.
+  // Activate the plugin if it isn't already. The REST plugin slug is
+  // `<directory>/<main-file-without-ext>`, which for this plugin is
+  // `mission-donation-platform/mission-donation-platform`.
+  const pluginSlug = 'mission-donation-platform/mission-donation-platform';
   const plugins = await requestUtils.rest( {
     path: '/wp/v2/plugins',
     method: 'GET',
   } );
 
-  const mission = plugins.find(
-    ( p ) => p.plugin === 'mission/mission-donation-platform'
-  );
+  const mission = plugins.find( ( p ) => p.plugin === pluginSlug );
 
   if ( mission && mission.status !== 'active' ) {
     await requestUtils.rest( {
-      path: `/wp/v2/plugins/mission/mission-donation-platform`,
+      path: `/wp/v2/plugins/${ pluginSlug }`,
       method: 'PUT',
       data: { status: 'active' },
     } );

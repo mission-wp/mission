@@ -80,10 +80,10 @@ class StripeWebhookEndpoint {
 			);
 		}
 
-		$body   = $request->get_body();
-		$secret = $this->settings->get( 'stripe_webhook_secret' );
+		$body    = $request->get_body();
+		$secrets = $this->collect_candidate_secrets( $body );
 
-		if ( ! $secret ) {
+		if ( empty( $secrets ) ) {
 			return new WP_Error(
 				'webhook_not_configured',
 				'Webhook secret is not configured.',
@@ -91,7 +91,15 @@ class StripeWebhookEndpoint {
 			);
 		}
 
-		if ( ! $this->verify_signature( $body, $signature, $secret ) ) {
+		$verified = false;
+		foreach ( $secrets as $secret ) {
+			if ( $this->verify_signature( $body, $signature, $secret ) ) {
+				$verified = true;
+				break;
+			}
+		}
+
+		if ( ! $verified ) {
 			return new WP_Error(
 				'invalid_signature',
 				'Invalid webhook signature.',
@@ -112,6 +120,47 @@ class StripeWebhookEndpoint {
 		$this->process_event( $payload );
 
 		return new WP_REST_Response( [ 'received' => true ], 200 );
+	}
+
+	/**
+	 * Collect candidate webhook secrets to try for signature verification.
+	 *
+	 * Prefers the secret of the account named in the payload (when the Mission
+	 * API includes `account_id`). Falls back to every connected account, then
+	 * the legacy global secret for installs mid-migration.
+	 *
+	 * @param string $body Raw request body.
+	 * @return array<int, string>
+	 */
+	private function collect_candidate_secrets( string $body ): array {
+		$secrets = [];
+
+		$payload    = json_decode( $body, true );
+		$account_id = is_array( $payload ) ? (string) ( $payload['account_id'] ?? '' ) : '';
+
+		if ( '' !== $account_id ) {
+			$account = $this->settings->get_stripe_account_by_id( $account_id );
+			if ( $account && ! empty( $account['webhook_secret'] ) ) {
+				$secrets[] = (string) $account['webhook_secret'];
+			}
+		}
+
+		// Try every connected account — covers payloads without account_id and
+		// guards against the account_id mismatch case.
+		foreach ( $this->settings->get_stripe_accounts() as $account ) {
+			$secret = (string) ( $account['webhook_secret'] ?? '' );
+			if ( '' !== $secret && ! in_array( $secret, $secrets, true ) ) {
+				$secrets[] = $secret;
+			}
+		}
+
+		// Legacy single-account secret — kept for one release of backward compat.
+		$legacy = (string) $this->settings->get( 'stripe_webhook_secret', '' );
+		if ( '' !== $legacy && ! in_array( $legacy, $secrets, true ) ) {
+			$secrets[] = $legacy;
+		}
+
+		return $secrets;
 	}
 
 	/**
@@ -169,6 +218,7 @@ class StripeWebhookEndpoint {
 	private function process_event( array $payload ): void {
 		$event_type = $payload['event_type'];
 		$data       = $payload['data'] ?? [];
+		$account_id = (string) ( $payload['account_id'] ?? '' );
 
 		/**
 		 * Fires when a webhook event is received, before type-specific processing.
@@ -180,7 +230,7 @@ class StripeWebhookEndpoint {
 		do_action( 'missiondp_webhook_event', $event_type, $data, $payload );
 
 		match ( $event_type ) {
-			'account.updated'                => ( new AccountUpdatedHandler() )->handle( $data ),
+			'account.updated'                => ( new AccountUpdatedHandler() )->handle( $data, $account_id ),
 			'charge.refunded'                => $this->handle_charge_refunded( $data ),
 			'payment_intent.succeeded'       => ( new PaymentIntentSucceededHandler() )->handle( $data ),
 			'invoice.paid',

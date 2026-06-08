@@ -221,6 +221,12 @@ class CreatePaymentIntentEndpoint {
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => static fn( $val ) => in_array( $val, [ 'tip', 'flat' ], true ),
 					],
+					'stripe_account_id'    => [
+						'required'          => false,
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'sanitize_text_field',
+					],
 				],
 			]
 		);
@@ -281,14 +287,34 @@ class CreatePaymentIntentEndpoint {
 			return $minimum_check;
 		}
 
-		$site_token = $this->settings->get( 'stripe_site_token' );
+		$requested_account_id = (string) $request->get_param( 'stripe_account_id' );
+		$resolved_account     = $this->resolve_account( $requested_account_id );
 
-		if ( empty( $site_token ) ) {
+		if ( ! $resolved_account ) {
 			return new WP_Error(
 				'stripe_not_connected',
 				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'mission-donation-platform' ),
 				[ 'status' => 400 ]
 			);
+		}
+
+		$site_token = (string) ( $resolved_account['site_token'] ?? '' );
+
+		if ( '' === $site_token ) {
+			return new WP_Error(
+				'stripe_not_connected',
+				__( 'Stripe is not connected. Please connect Stripe in the plugin settings.', 'mission-donation-platform' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// If the form requested a specific account but it could not be honored,
+		// log a fallback event so the admin can spot the misconfig.
+		if (
+			'' !== $requested_account_id
+			&& ( $resolved_account['account_id'] ?? '' ) !== $requested_account_id
+		) {
+			do_action( 'missiondp_stripe_account_fallback', $requested_account_id, $resolved_account['account_id'] ?? '' );
 		}
 
 		$description = $this->build_description( $original_donation, $fee_amount, $tip_amount, $fee_mode, $currency );
@@ -334,10 +360,7 @@ class CreatePaymentIntentEndpoint {
 			);
 		}
 
-		// Persist the connected account ID if not already saved.
-		if ( ! $this->settings->get( 'stripe_account_id' ) ) {
-			$this->settings->update( [ 'stripe_account_id' => $body['connected_account_id'] ] );
-		}
+		$connected_account_id = (string) $body['connected_account_id'];
 
 		// Upsert donor.
 		$donor = Donor::find_by_email( $email );
@@ -406,6 +429,11 @@ class CreatePaymentIntentEndpoint {
 		);
 
 		$transaction->save();
+
+		// Store the Stripe account this transaction was charged against, so
+		// later operations (verification, refunds, subscription management) can
+		// route to the right account when multiple are connected.
+		$transaction->add_meta( 'stripe_account_id', $connected_account_id );
 
 		// Store the fee rate at time of transaction for accurate historical reporting.
 		$transaction->add_meta( 'stripe_fee_percent', (string) $this->settings->get( 'stripe_fee_percent', 2.9 ) );
@@ -558,6 +586,26 @@ class CreatePaymentIntentEndpoint {
 	 */
 	private function format_amount( int $minor_units, string $currency_code ): string {
 		return Currency::format_amount( $minor_units, $currency_code );
+	}
+
+	/**
+	 * Resolve which Stripe account record to charge against.
+	 *
+	 * Honors the form-selected account when valid, otherwise falls back to
+	 * the default account.
+	 *
+	 * @param string $requested_account_id Stripe account ID requested by the form (may be empty).
+	 * @return array<string, mixed>|null
+	 */
+	private function resolve_account( string $requested_account_id ): ?array {
+		if ( '' !== $requested_account_id ) {
+			$account = $this->settings->get_stripe_account_by_id( $requested_account_id );
+			if ( $account ) {
+				return $account;
+			}
+		}
+
+		return $this->settings->get_default_stripe_account();
 	}
 
 	/**

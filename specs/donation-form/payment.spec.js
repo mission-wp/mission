@@ -1,12 +1,12 @@
 /**
  * Donation form — payment submission tests.
  *
- * These tests require a Stripe test token. Set the MISSIONDP_STRIPE_TEST_TOKEN
- * environment variable to your stripe_site_token value:
+ * These tests require Stripe credentials. Set both env vars in .env or inline:
  *
- *   MISSIONDP_STRIPE_TEST_TOKEN=your_token npx playwright test specs/donation-form/payment.spec.js
+ *   MISSIONDP_STRIPE_TEST_TOKEN=your_token
+ *   MISSIONDP_STRIPE_ACCOUNT_ID=acct_xxx
  *
- * Tests are automatically skipped when the token is not available.
+ * Tests are automatically skipped when either is missing.
  */
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 const {

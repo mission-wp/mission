@@ -150,7 +150,9 @@ class AdminModule {
 		// Enqueue block editor assets when viewing a campaign detail page.
 		$this->maybe_enqueue_block_editor( $screen );
 
-		$settings = get_option( 'missiondp_settings', [] );
+		$settings         = get_option( 'missiondp_settings', [] );
+		$settings_service = new \MissionDP\Settings\SettingsService();
+		$stripe_accounts  = $settings_service->get_stripe_accounts_public();
 
 		$domain = wp_parse_url( home_url(), PHP_URL_HOST );
 
@@ -165,7 +167,8 @@ class AdminModule {
 				'version'                   => MISSIONDP_VERSION,
 				'currency'                  => $settings['currency'] ?? 'USD',
 				'testMode'                  => ! empty( $settings['test_mode'] ),
-				'stripeConnected'           => ( $settings['stripe_connection_status'] ?? 'disconnected' ) === 'connected',
+				'stripeAccounts'            => $stripe_accounts,
+				'stripeConnected'           => ! empty( $stripe_accounts ),
 				'stripeConnectUrl'          => 'https://api.missionwp.com/connect/start?' . http_build_query(
 					[
 						'domain'     => $domain,

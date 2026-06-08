@@ -64,10 +64,9 @@ class SubscriptionReconciler {
 	 * @return void
 	 */
 	public function reconcile(): void {
-		$settings   = new SettingsService();
-		$site_token = $settings->get( 'stripe_site_token' );
+		$settings = new SettingsService();
 
-		if ( ! $site_token ) {
+		if ( empty( $settings->get_stripe_accounts() ) ) {
 			return;
 		}
 
@@ -86,6 +85,10 @@ class SubscriptionReconciler {
 		}
 
 		foreach ( $stale_subscriptions as $subscription ) {
+			$site_token = $settings->resolve_site_token( (string) $subscription->get_meta( 'stripe_account_id' ) );
+			if ( ! $site_token ) {
+				continue;
+			}
 			$this->check_subscription( $subscription, $site_token );
 		}
 	}

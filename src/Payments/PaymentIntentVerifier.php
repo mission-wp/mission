@@ -67,10 +67,11 @@ class PaymentIntentVerifier {
 	 *
 	 * @param string $payment_intent_id Stripe PaymentIntent ID (pi_xxx).
 	 * @param bool   $test_mode         Whether the transaction is in test mode.
+	 * @param string $account_id        Stripe account ID this PI belongs to (empty = default).
 	 * @return array<string, mixed>
 	 */
-	public function verify( string $payment_intent_id, bool $test_mode ): array {
-		$site_token = $this->settings->get( 'stripe_site_token' );
+	public function verify( string $payment_intent_id, bool $test_mode, string $account_id = '' ): array {
+		$site_token = $this->settings->resolve_site_token( $account_id );
 
 		if ( empty( $site_token ) ) {
 			return [

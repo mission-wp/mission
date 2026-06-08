@@ -95,18 +95,17 @@ class SystemStatusEndpoint {
 	 * @return array
 	 */
 	private function get_mission_environment(): array {
-		$currency   = $this->settings->get( 'currency', 'USD' );
-		$symbol     = Currency::get_symbol( $currency );
-		$connected  = $this->settings->get( 'stripe_connection_status' ) === 'connected';
-		$account_id = $this->settings->get( 'stripe_account_id', '' );
-		$test_mode  = (bool) $this->settings->get( 'test_mode', false );
-		$webhook    = ! empty( $this->settings->get( 'stripe_webhook_secret', '' ) );
+		$currency  = $this->settings->get( 'currency', 'USD' );
+		$symbol    = Currency::get_symbol( $currency );
+		$accounts  = $this->settings->get_stripe_accounts_public();
+		$test_mode = (bool) $this->settings->get( 'test_mode', false );
+		$webhook   = ! empty( $this->settings->get( 'stripe_webhook_secret', '' ) );
 
 		return [
 			'version'                   => MISSIONDP_VERSION,
 			'db_version'                => get_option( DatabaseModule::DB_VERSION_OPTION, '' ),
-			'stripe_connected'          => $connected,
-			'stripe_account_id'         => $connected ? $account_id : '',
+			'stripe_connected'          => ! empty( $accounts ),
+			'stripe_accounts'           => $accounts,
 			'stripe_mode'               => $test_mode ? 'test' : 'live',
 			'stripe_webhook_configured' => $webhook,
 			'webhook_url'               => rest_url( RestModule::NAMESPACE . '/webhook' ),

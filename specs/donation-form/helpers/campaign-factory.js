@@ -100,17 +100,25 @@ async function enableTestMode( requestUtils ) {
 }
 
 /**
- * Configure Stripe for payment tests using the MISSIONDP_STRIPE_TEST_TOKEN env var.
+ * Configure Stripe for payment tests using env vars.
  *
- * Sets stripe_site_token and stripe_connection_status in the plugin's settings
- * option directly (the REST endpoint blocks token writes for security).
+ * Reads MISSIONDP_STRIPE_TEST_TOKEN + MISSIONDP_STRIPE_ACCOUNT_ID (or the
+ * legacy MISSION_STRIPE_* names) and writes them into the plugin's settings.
+ * The token goes in directly via WP-CLI because the REST endpoint blocks
+ * token writes for security.
  *
  * @param {import('@wordpress/e2e-test-utils-playwright').RequestUtils} requestUtils
  * @return {Promise<boolean>} Whether Stripe was successfully configured.
  */
 async function configureStripe( requestUtils ) {
-  const token = process.env.MISSIONDP_STRIPE_TEST_TOKEN;
-  const accountId = process.env.MISSIONDP_STRIPE_ACCOUNT_ID;
+  // Accept either the current MISSIONDP_* name or the older MISSION_*
+  // name from before the plugin was renamed to mission-donation-platform.
+  const token =
+    process.env.MISSIONDP_STRIPE_TEST_TOKEN ||
+    process.env.MISSION_STRIPE_TEST_TOKEN;
+  const accountId =
+    process.env.MISSIONDP_STRIPE_ACCOUNT_ID ||
+    process.env.MISSION_STRIPE_ACCOUNT_ID;
   if ( ! token || ! accountId ) {
     return false;
   }
