@@ -188,8 +188,9 @@ class ImportEndpoint {
 
 		return new WP_REST_Response(
 			[
-				'type'    => $type,
-				'columns' => $this->import->get_expected_columns( $type ),
+				'type'     => $type,
+				'columns'  => $this->import->get_expected_columns( $type ),
+				'required' => $this->import->get_required_columns( $type ),
 			]
 		);
 	}

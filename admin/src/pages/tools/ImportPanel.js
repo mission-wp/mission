@@ -142,6 +142,7 @@ function computeMinDuration( totalRows ) {
 export default function ImportPanel() {
   const [ dataType, setDataType ] = useState( 'donors' );
   const [ expectedColumns, setExpectedColumns ] = useState( [] );
+  const [ requiredColumns, setRequiredColumns ] = useState( [] );
   const [ uploadState, setUploadState ] = useState( 'upload' ); // 'upload' | 'validation' | 'progress' | 'success' | 'failed'
   const [ isUploading, setIsUploading ] = useState( false );
   const [ uploadError, setUploadError ] = useState( '' );
@@ -165,8 +166,14 @@ export default function ImportPanel() {
     apiFetch( {
       path: `/mission-donation-platform/v1/import/columns?type=${ dataType }`,
     } )
-      .then( ( data ) => setExpectedColumns( data.columns || [] ) )
-      .catch( () => setExpectedColumns( [] ) );
+      .then( ( data ) => {
+        setExpectedColumns( data.columns || [] );
+        setRequiredColumns( data.required || [] );
+      } )
+      .catch( () => {
+        setExpectedColumns( [] );
+        setRequiredColumns( [] );
+      } );
   }, [ dataType ] );
 
   const stopPolling = useCallback( () => {
@@ -525,13 +532,35 @@ export default function ImportPanel() {
               <InfoIcon />
             </div>
             <div className="mission-import-callout__text">
-              { __( 'Expected columns:', 'mission-donation-platform' ) }{ ' ' }
-              { expectedColumns.map( ( col, idx ) => (
-                <span key={ col }>
-                  <code>{ col }</code>
-                  { idx < expectedColumns.length - 1 ? ', ' : '' }
-                </span>
-              ) ) }
+              <div>
+                { __( 'Supported columns:', 'mission-donation-platform' ) }{ ' ' }
+                { expectedColumns.map( ( col, idx ) => (
+                  <span key={ col }>
+                    <code>{ col }</code>
+                    { idx < expectedColumns.length - 1 ? ', ' : '' }
+                  </span>
+                ) ) }
+              </div>
+              { requiredColumns.length > 0 && (
+                <div className="mission-import-callout__required">
+                  { __( 'Required:', 'mission-donation-platform' ) }{ ' ' }
+                  { requiredColumns.map( ( col, idx ) => (
+                    <span key={ col }>
+                      <code>{ col }</code>
+                      { idx < requiredColumns.length - 1 ? ', ' : '' }
+                    </span>
+                  ) ) }
+                  { requiredColumns.includes( 'donor_email' ) && (
+                    <>
+                      { ' ' }
+                      { __(
+                        '(donor_id may be used instead of donor_email)',
+                        'mission-donation-platform'
+                      ) }
+                    </>
+                  ) }
+                </div>
+              ) }
             </div>
           </div>
 

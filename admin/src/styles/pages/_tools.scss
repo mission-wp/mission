@@ -991,6 +991,10 @@ select.mission-logs-select {
       border-radius: 4px;
     }
   }
+
+  &__required {
+    margin-top: 8px;
+  }
 }
 
 // Drag and drop file zone.

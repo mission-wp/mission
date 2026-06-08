@@ -91,6 +91,26 @@ class ImportService {
 	}
 
 	/**
+	 * Get the columns the user must include in their file for a given type.
+	 *
+	 * Broader than RowValidator::required_fields() — it also lists columns that
+	 * are required by downstream resolution (e.g. transactions need a donor
+	 * reference, which is enforced after validation in resolve_donor_id()).
+	 *
+	 * @param string $type Data type.
+	 * @return string[]
+	 */
+	public function get_required_columns( string $type ): array {
+		return match ( $type ) {
+			'donors'        => [ 'email' ],
+			'transactions'  => [ 'amount', 'donor_email' ],
+			'campaigns'     => [ 'title' ],
+			'subscriptions' => [ 'amount', 'donor_email' ],
+			default         => [],
+		};
+	}
+
+	/**
 	 * Validate an uploaded file and return a preview payload.
 	 *
 	 * @param array{tmp_name: string, name: string, size: int, type: string, error: int} $file PHP $_FILES-style array.
