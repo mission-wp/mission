@@ -177,7 +177,7 @@ This plugin connects to the following third-party services:
 
 **Stripe** processes donations. Payment data is sent from the donor's browser to Stripe via Stripe.js, and Stripe sends webhook notifications back for payment, refund, and subscription events. See Stripe's [Terms](https://stripe.com/legal) and [Privacy Policy](https://stripe.com/privacy).
 
-**Mission API** (api.missionwp.com, operated by the plugin author) proxies Stripe Connect onboarding, payment requests, and webhook forwarding to your site. If you opt in to feature notifications under Tools > Features, your email is also sent here. See Mission's [Terms](https://missionwp.com/terms) and [Privacy Policy](https://missionwp.com/privacy).
+**Mission API** proxies Stripe Connect onboarding, payment requests, and webhook forwarding to your site. If you opt in to feature notifications under Tools > Features, your email is also sent here. See Mission's [Terms](https://missionwp.com/terms) and [Privacy Policy](https://missionwp.com/privacy).
 
 **Gravatar** supplies donor avatars in the admin and on the Donor Wall block. Email addresses are hashed before being sent. See Gravatar's [Terms](https://wordpress.com/tos/) and [Privacy Policy](https://automattic.com/privacy/).
 
