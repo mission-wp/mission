@@ -42,7 +42,7 @@ export default function StepDetails( { data, updateData } ) {
             id="ob-city"
             value={ data.org_city }
             onChange={ ( e ) => updateData( { org_city: e.target.value } ) }
-            placeholder="Springfield"
+            placeholder={ __( 'Springfield', 'mission-donation-platform' ) }
           />
         </div>
         <div className="mission-onboarding-field">

@@ -133,6 +133,12 @@ class AdminModule {
 			true
 		);
 
+		wp_set_script_translations(
+			'mission-admin',
+			'mission-donation-platform',
+			MISSIONDP_PATH . 'languages'
+		);
+
 		wp_enqueue_style(
 			'mission-admin-vendor',
 			MISSIONDP_URL . 'admin/build/style-mission-admin.css',

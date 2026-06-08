@@ -594,7 +594,7 @@ class CreateSubscriptionEndpoint {
 			$tip_formatted = Currency::format_amount( $tip_amount, $currency_upper );
 
 			$description .= ' ' . sprintf(
-				/* translators: %s: formatted tip amount */
+				/* translators: %s: formatted tip amount (e.g. "$1.23") */
 				__( 'The %s application fee is a tip from the donor to Mission, not a charge to your organization.', 'mission-donation-platform' ),
 				$tip_formatted,
 			);

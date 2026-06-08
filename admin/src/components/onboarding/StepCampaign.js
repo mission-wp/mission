@@ -58,7 +58,7 @@ export default function StepCampaign( { data, updateData, errors } ) {
           id="ob-campaign-name"
           value={ data.campaign_name }
           onChange={ ( e ) => updateData( { campaign_name: e.target.value } ) }
-          placeholder="e.g. General Fund"
+          placeholder={ __( 'e.g. General Fund', 'mission-donation-platform' ) }
         />
         { errors.campaign_name && (
           <span className="mission-onboarding-field__error">

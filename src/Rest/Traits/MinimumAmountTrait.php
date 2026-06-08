@@ -58,7 +58,7 @@ trait MinimumAmountTrait {
 			return new WP_Error(
 				'donation_below_minimum',
 				sprintf(
-					/* translators: %s: formatted minimum amount */
+					/* translators: %s: formatted minimum amount (e.g. "$1.00") */
 					__( 'Donation amount must be at least %s.', 'mission-donation-platform' ),
 					'$' . number_format( $block_minimum / 100, 2 )
 				),

@@ -2,6 +2,7 @@
  * Donor Dashboard — Editor component.
  */
 import { useBlockProps } from '@wordpress/block-editor';
+import { __ } from '@wordpress/i18n';
 
 export default function Edit() {
   const blockProps = useBlockProps( {
@@ -28,36 +29,50 @@ export default function Edit() {
             </svg>
           </div>
           <div className="mission-dd-editor-nav">
-            <div className="mission-dd-editor-nav-item active">Overview</div>
-            <div className="mission-dd-editor-nav-item">Donation History</div>
-            <div className="mission-dd-editor-nav-item">
-              Recurring Donations
+            <div className="mission-dd-editor-nav-item active">
+              { __( 'Overview', 'mission-donation-platform' ) }
             </div>
-            <div className="mission-dd-editor-nav-item">Annual Receipts</div>
-            <div className="mission-dd-editor-nav-item">Profile</div>
+            <div className="mission-dd-editor-nav-item">
+              { __( 'Donation History', 'mission-donation-platform' ) }
+            </div>
+            <div className="mission-dd-editor-nav-item">
+              { __( 'Recurring Donations', 'mission-donation-platform' ) }
+            </div>
+            <div className="mission-dd-editor-nav-item">
+              { __( 'Annual Receipts', 'mission-donation-platform' ) }
+            </div>
+            <div className="mission-dd-editor-nav-item">
+              { __( 'Profile', 'mission-donation-platform' ) }
+            </div>
           </div>
         </div>
         <div className="mission-dd-editor-content">
-          <div className="mission-dd-editor-title">Donor Dashboard</div>
+          <div className="mission-dd-editor-title">
+            { __( 'Donor Dashboard', 'mission-donation-platform' ) }
+          </div>
           <p className="mission-dd-editor-desc">
-            Donors will see a self-service portal here with their donation
-            history, recurring gifts, tax receipts, and profile settings.
+            { __(
+              'Donors will see a self-service portal here with their donation history, recurring gifts, tax receipts, and profile settings.',
+              'mission-donation-platform'
+            ) }
           </p>
           <div className="mission-dd-editor-stats">
             <div className="mission-dd-editor-stat">
               <span className="mission-dd-editor-stat-value">--</span>
-              <span className="mission-dd-editor-stat-label">Donations</span>
-            </div>
-            <div className="mission-dd-editor-stat">
-              <span className="mission-dd-editor-stat-value">--</span>
               <span className="mission-dd-editor-stat-label">
-                Lifetime Given
+                { __( 'Donations', 'mission-donation-platform' ) }
               </span>
             </div>
             <div className="mission-dd-editor-stat">
               <span className="mission-dd-editor-stat-value">--</span>
               <span className="mission-dd-editor-stat-label">
-                Avg. Donation
+                { __( 'Lifetime Given', 'mission-donation-platform' ) }
+              </span>
+            </div>
+            <div className="mission-dd-editor-stat">
+              <span className="mission-dd-editor-stat-value">--</span>
+              <span className="mission-dd-editor-stat-label">
+                { __( 'Avg. Donation', 'mission-donation-platform' ) }
               </span>
             </div>
           </div>

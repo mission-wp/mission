@@ -42,22 +42,26 @@ class EmailTemplateEndpoint {
 	];
 
 	/**
-	 * Default subjects per email type.
+	 * Default subjects per email type, with merge tags as literal placeholders.
 	 *
-	 * @var array<string, string>
+	 * Wrapped in a method instead of a const so strings can be translated.
+	 *
+	 * @return array<string, string>
 	 */
-	private const DEFAULT_SUBJECTS = [
-		'donation_receipt'          => 'Thank you for your {amount} donation',
-		'subscription_activated'    => 'Thank you for your {amount} {frequency} donation',
-		'renewal_receipt'           => 'Thank you for your {frequency} gift of {amount}',
-		'payment_failed'            => 'Action needed: Update your payment for your recurring donation',
-		'subscription_cancelled'    => 'Your recurring donation has ended',
-		'account_activation'        => 'Verify your email to activate your donor account',
-		'password_reset'            => 'Reset your password',
-		'email_change_verification' => 'Verify your new email address',
-		'donor_note'                => 'A note about your donation',
-		'tribute_notification'      => 'A donation has been made {tribute_type_label} {honoree_name}',
-	];
+	private function default_subjects(): array {
+		return [
+			'donation_receipt'          => __( 'Thank you for your {amount} donation', 'mission-donation-platform' ),
+			'subscription_activated'    => __( 'Thank you for your {amount} {frequency} donation', 'mission-donation-platform' ),
+			'renewal_receipt'           => __( 'Thank you for your {frequency} gift of {amount}', 'mission-donation-platform' ),
+			'payment_failed'            => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
+			'subscription_cancelled'    => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
+			'account_activation'        => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
+			'password_reset'            => __( 'Reset your password', 'mission-donation-platform' ),
+			'email_change_verification' => __( 'Verify your new email address', 'mission-donation-platform' ),
+			'donor_note'                => __( 'A note about your donation', 'mission-donation-platform' ),
+			'tribute_notification'      => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
+		];
+	}
 
 	/**
 	 * Register REST routes.
@@ -119,7 +123,7 @@ class EmailTemplateEndpoint {
 
 		$email_module = \MissionDP\Plugin::instance()->get_email_module();
 		$template     = self::TEMPLATE_MAP[ $type ];
-		$subject      = self::DEFAULT_SUBJECTS[ $type ] ?? '';
+		$subject      = $this->default_subjects()[ $type ] ?? '';
 
 		// Build data where values ARE the merge tag strings.
 		$data            = $this->build_tag_data( $type );
@@ -165,7 +169,7 @@ class EmailTemplateEndpoint {
 			'campaign_name'          => '{campaign}',
 			'frequency_label'        => '{frequency}',
 			'next_renewal_formatted' => '{next_renewal_date}',
-			'subject'                => self::DEFAULT_SUBJECTS[ $type ] ?? '',
+			'subject'                => $this->default_subjects()[ $type ] ?? '',
 		];
 
 		// Add type-specific tag data.

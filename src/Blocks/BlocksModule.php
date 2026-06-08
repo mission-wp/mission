@@ -25,6 +25,7 @@ class BlocksModule {
 	public function init(): void {
 		add_filter( 'block_categories_all', [ $this, 'register_block_category' ] );
 		add_action( 'init', [ $this, 'register_blocks' ] );
+		add_action( 'init', [ $this, 'set_block_script_translations' ], 20 );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
 		add_filter( 'render_block_mission-donation-platform/donation-form', [ $this, 'enqueue_stripe_js' ], 10, 2 );
 		add_filter( 'render_block_mission-donation-platform/donor-dashboard', [ $this, 'enqueue_stripe_js' ], 10, 2 );
@@ -242,6 +243,32 @@ class BlocksModule {
 
 		foreach ( $blocks as $block ) {
 			register_block_type_from_metadata( $block );
+		}
+	}
+
+	/**
+	 * Wire translation files to every Mission block's editor and view scripts.
+	 *
+	 * Runs after register_blocks so the auto-registered script handles exist.
+	 *
+	 * @return void
+	 */
+	public function set_block_script_translations(): void {
+		$registry  = \WP_Block_Type_Registry::get_instance();
+		$languages = dirname( dirname( __DIR__ ) ) . '/languages';
+
+		foreach ( $registry->get_all_registered() as $name => $block ) {
+			if ( 0 !== strpos( $name, 'mission-donation-platform/' ) ) {
+				continue;
+			}
+
+			foreach ( $block->editor_script_handles as $handle ) {
+				wp_set_script_translations( $handle, 'mission-donation-platform', $languages );
+			}
+
+			foreach ( $block->view_script_handles as $handle ) {
+				wp_set_script_translations( $handle, 'mission-donation-platform', $languages );
+			}
 		}
 	}
 }
