@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from '@wordpress/element';
+import { useState, useEffect, useRef, Fragment } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 
 /**
  * Colored status dot indicator.
@@ -64,7 +64,7 @@ const SKELETON_SECTIONS = [
     labels: [
       __( 'Mission version', 'mission-donation-platform' ),
       __( 'Database version', 'mission-donation-platform' ),
-      __( 'Stripe connection', 'mission-donation-platform' ),
+      __( 'Stripe connections', 'mission-donation-platform' ),
       __( 'Webhook endpoint', 'mission-donation-platform' ),
       __( 'Test mode', 'mission-donation-platform' ),
       __( 'Currency', 'mission-donation-platform' ),
@@ -240,16 +240,59 @@ function buildSections( data ) {
   } = data;
 
   // --- Mission Environment ---
-  const stripeStatus = mission.stripe_connected ? (
+  const stripeAccounts = Array.isArray( mission.stripe_accounts )
+    ? mission.stripe_accounts
+    : [];
+  const stripeConnectionLabel = _n(
+    'Stripe connection',
+    'Stripe connections',
+    Math.max( stripeAccounts.length, 1 ),
+    'mission-donation-platform'
+  );
+  const accountDotStatus = ( account ) => {
+    if (
+      account.connection_status &&
+      account.connection_status !== 'connected'
+    ) {
+      return 'err';
+    }
+    if ( ! account.charges_enabled ) {
+      return 'warn';
+    }
+    return 'ok';
+  };
+  const stripeStatus = stripeAccounts.length ? (
     <>
-      <StatusDot status="ok" />
-      { ' ' + __( 'Connected', 'mission-donation-platform' ) }
-      <span className="mission-status-muted">
-        { ` — ${ mission.stripe_account_id } (${ mission.stripe_mode } ${ __(
-          'mode',
-          'mission-donation-platform'
-        ) })` }
-      </span>
+      { stripeAccounts.map( ( account, i ) => {
+        const name =
+          account.display_name ||
+          __( 'Stripe account', 'mission-donation-platform' );
+        const suffixParts = [];
+        if ( account.account_id ) {
+          suffixParts.push( account.account_id );
+        }
+        suffixParts.push(
+          sprintf(
+            /* translators: %s: stripe mode (test or live) */
+            __( '%s mode', 'mission-donation-platform' ),
+            mission.stripe_mode
+          )
+        );
+        if ( account.is_default ) {
+          suffixParts.push( __( 'default', 'mission-donation-platform' ) );
+        }
+        return (
+          <Fragment key={ account.account_id || i }>
+            { i > 0 && '\n' }
+            <div>
+              <StatusDot status={ accountDotStatus( account ) } /> { name }
+              <span className="mission-status-muted">
+                { ` — ${ suffixParts.join( ', ' ) }` }
+              </span>
+            </div>
+          </Fragment>
+        );
+      } ) }
     </>
   ) : (
     <>
@@ -281,7 +324,7 @@ function buildSections( data ) {
       value: <code>{ mission.db_version }</code>,
     },
     {
-      label: __( 'Stripe connection', 'mission-donation-platform' ),
+      label: stripeConnectionLabel,
       value: stripeStatus,
     },
     {
