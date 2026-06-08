@@ -1,0 +1,102 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.12.0",
+    "source": "blocks\/build\/campaign-grid\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "View Campaign": [
+                "Ver campa\u00f1a"
+            ],
+            "Ended": [
+                "Finalizada"
+            ],
+            "Goal Reached": [
+                "Meta alcanzada"
+            ],
+            "Ongoing": [
+                "En curso"
+            ],
+            "donors": [
+                "donantes"
+            ],
+            "No campaigns found.": [
+                "No se han encontrado campa\u00f1as."
+            ],
+            "Active campaigns": [
+                "Campa\u00f1as activas"
+            ],
+            "1 Day Left": [
+                "Queda 1 d\u00eda"
+            ],
+            "Days Left": [
+                "D\u00edas restantes"
+            ],
+            "Newest first": [
+                "M\u00e1s recientes primero"
+            ],
+            "Oldest first": [
+                "M\u00e1s antiguos primero"
+            ],
+            "Most funded": [
+                "M\u00e1s financiadas"
+            ],
+            "Most donors": [
+                "M\u00e1s donantes"
+            ],
+            "Ending soonest": [
+                "Las que terminan antes"
+            ],
+            "Alphabetical": [
+                "Alfab\u00e9tico"
+            ],
+            "Ended campaigns": [
+                "Campa\u00f1as finalizadas"
+            ],
+            "All campaigns": [
+                "Todas las campa\u00f1as"
+            ],
+            "Content": [
+                "Contenido"
+            ],
+            "Show campaigns": [
+                "Mostrar campa\u00f1as"
+            ],
+            "Number of campaigns": [
+                "N\u00famero de campa\u00f1as"
+            ],
+            "Sort by": [
+                "Ordenar por"
+            ],
+            "Display": [
+                "Visualizaci\u00f3n"
+            ],
+            "Columns": [
+                "Columnas"
+            ],
+            "Show image": [
+                "Mostrar imagen"
+            ],
+            "Show status tag": [
+                "Mostrar etiqueta de estado"
+            ],
+            "Show description": [
+                "Mostrar descripci\u00f3n"
+            ],
+            "Show progress bar": [
+                "Mostrar barra de progreso"
+            ],
+            "Show donor count": [
+                "Mostrar n\u00famero de donantes"
+            ],
+            "Button text": [
+                "Texto del bot\u00f3n"
+            ]
+        }
+    }
+}

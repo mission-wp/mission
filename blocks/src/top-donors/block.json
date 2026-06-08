@@ -21,8 +21,7 @@
 			"default": 0
 		},
 		"heading": {
-			"type": "string",
-			"default": "Top Donors"
+			"type": "string"
 		},
 		"showAvatars": {
 			"type": "boolean",

@@ -1,0 +1,81 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.12.0",
+    "source": "blocks\/build\/campaign-statistics\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Total Raised": [
+                "Total recaudado"
+            ],
+            "Campaign": [
+                "Campa\u00f1a"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "Number of Donations": [
+                "N\u00famero de donaciones"
+            ],
+            "Number of Donors": [
+                "N\u00famero de donantes"
+            ],
+            "Average Donation": [
+                "Donaci\u00f3n media"
+            ],
+            "Medium": [
+                "Mediana"
+            ],
+            "Large": [
+                "Grande"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."
+            ],
+            "Top Donation": [
+                "Donaci\u00f3n principal"
+            ],
+            "Small": [
+                "Peque\u00f1a"
+            ],
+            "Extra Large": [
+                "Extragrande"
+            ],
+            "Statistic": [
+                "Estad\u00edstica"
+            ],
+            "Show heading": [
+                "Mostrar encabezado"
+            ],
+            "Heading": [
+                "Encabezado"
+            ],
+            "Color": [
+                "Color"
+            ],
+            "Letter case": [
+                "May\u00fasculas y min\u00fasculas"
+            ],
+            "Uppercase": [
+                "May\u00fasculas"
+            ],
+            "Lowercase": [
+                "Min\u00fasculas"
+            ],
+            "Capitalize": [
+                "Primera letra en may\u00fascula"
+            ],
+            "Campaign Statistic": [
+                "Estad\u00edstica de campa\u00f1a"
+            ],
+            "Select a Campaign": [
+                "Selecciona una campa\u00f1a"
+            ]
+        }
+    }
+}
