@@ -78,6 +78,16 @@ class ColumnMapper {
 		$unmatched = [];
 
 		foreach ( $headers as $header ) {
+			// Pass `meta:*` headers straight through so their values reach the
+			// model as meta. normalize() would strip the colon, so they have to
+			// be handled before the alias lookup.
+			$meta_key = self::meta_key_from_header( $header );
+
+			if ( null !== $meta_key ) {
+				$matched[] = "meta:{$meta_key}";
+				continue;
+			}
+
 			$key = self::normalize( $header );
 
 			if ( isset( $alias_map[ $key ] ) ) {
@@ -101,6 +111,24 @@ class ColumnMapper {
 	 */
 	public static function normalize( string $value ): string {
 		return preg_replace( '/[^a-z0-9]/', '', strtolower( $value ) ) ?? '';
+	}
+
+	/**
+	 * Extract the meta key from a `meta:*` header, preserving the key's casing.
+	 *
+	 * @param string $header Raw header value.
+	 * @return string|null The meta key (text after `meta:`), or null if not a meta header.
+	 */
+	public static function meta_key_from_header( string $header ): ?string {
+		$trimmed = trim( $header );
+
+		if ( 0 !== stripos( $trimmed, 'meta:' ) ) {
+			return null;
+		}
+
+		$meta_key = trim( substr( $trimmed, 5 ) );
+
+		return '' === $meta_key ? null : $meta_key;
 	}
 
 	/**
