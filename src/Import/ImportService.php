@@ -174,8 +174,8 @@ class ImportService {
 		$skipped_row_numbers = array_keys( $skipped_rows );
 		$importable_rows     = count( $rows ) - count( $skipped_row_numbers );
 
-		$duplicates       = $this->count_duplicates( $type, $mapped_rows, $skipped_rows );
-		$rows_no_gateway  = 'transactions' === $type
+		$duplicates      = $this->count_duplicates( $type, $mapped_rows, $skipped_rows );
+		$rows_no_gateway = 'transactions' === $type
 			? $this->count_rows_without_gateway_id( $mapped_rows, $skipped_rows )
 			: 0;
 
@@ -187,22 +187,22 @@ class ImportService {
 		$file_id = $this->store_file( $file['tmp_name'], $file['name'], $type );
 
 		return [
-			'file_id'             => $file_id,
-			'filename'            => $file['name'],
-			'filesize'            => (int) $file['size'],
-			'rows_detected'       => count( $rows ),
-			'rows_importable'     => $importable_rows,
-			'rows_skipped'        => count( $skipped_row_numbers ),
-			'columns'             => $headers,
-			'columns_matched'     => count( array_unique( $matched ) ),
-			'columns_unmatched'   => $resolved['unmatched'],
-			'warnings'            => $warnings,
-			'duplicates'          => $duplicates,
+			'file_id'                 => $file_id,
+			'filename'                => $file['name'],
+			'filesize'                => (int) $file['size'],
+			'rows_detected'           => count( $rows ),
+			'rows_importable'         => $importable_rows,
+			'rows_skipped'            => count( $skipped_row_numbers ),
+			'columns'                 => $headers,
+			'columns_matched'         => count( array_unique( $matched ) ),
+			'columns_unmatched'       => $resolved['unmatched'],
+			'warnings'                => $warnings,
+			'duplicates'              => $duplicates,
 			'rows_without_gateway_id' => $rows_no_gateway,
-			'preview_headers'     => $headers,
-			'preview_rows'        => $preview_rows,
-			'warning_rows'        => array_values( array_unique( array_column( $warnings, 'row' ) ) ),
-			'skipped_row_numbers' => $skipped_row_numbers,
+			'preview_headers'         => $headers,
+			'preview_rows'            => $preview_rows,
+			'warning_rows'            => array_values( array_unique( array_column( $warnings, 'row' ) ) ),
+			'skipped_row_numbers'     => $skipped_row_numbers,
 		];
 	}
 
