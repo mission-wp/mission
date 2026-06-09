@@ -11,12 +11,14 @@ namespace MissionDP\Import;
 use MissionDP\Currency\Currency;
 use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Database\DataStore\SubscriptionDataStore;
 use MissionDP\Database\DataStore\TransactionDataStore;
 use MissionDP\Export\ExportService;
 use MissionDP\Import\Validators\RowValidator;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\ImportJob;
+use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Plugin;
 use WP_Error;
@@ -105,7 +107,7 @@ class ImportService {
 			'donors'        => [ 'email' ],
 			'transactions'  => [ 'amount', 'donor_email' ],
 			'campaigns'     => [ 'title' ],
-			'subscriptions' => [ 'amount', 'donor_email' ],
+			'subscriptions' => [ 'amount', 'donor_email', 'status' ],
 			default         => [],
 		};
 	}
@@ -174,9 +176,14 @@ class ImportService {
 		$skipped_row_numbers = array_keys( $skipped_rows );
 		$importable_rows     = count( $rows ) - count( $skipped_row_numbers );
 
-		$duplicates      = $this->count_duplicates( $type, $mapped_rows, $skipped_rows );
-		$rows_no_gateway = 'transactions' === $type
-			? $this->count_rows_without_gateway_id( $mapped_rows, $skipped_rows )
+		$duplicates    = $this->count_duplicates( $type, $mapped_rows, $skipped_rows );
+		$gateway_field = match ( $type ) {
+			'transactions'  => 'gateway_transaction_id',
+			'subscriptions' => 'gateway_subscription_id',
+			default         => '',
+		};
+		$rows_no_gateway = '' !== $gateway_field
+			? $this->count_rows_without_gateway_id( $mapped_rows, $gateway_field, $skipped_rows )
 			: 0;
 
 		$preview_rows = array_map(
@@ -240,7 +247,7 @@ class ImportService {
 			return new WP_Error( 'file_missing', __( 'The uploaded file could not be read.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		if ( ! in_array( $type, [ 'donors', 'transactions', 'campaigns' ], true ) ) {
+		if ( ! in_array( $type, [ 'donors', 'transactions', 'campaigns', 'subscriptions' ], true ) ) {
 			return new WP_Error( 'unsupported_type', __( 'This import type is not yet supported.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
@@ -388,6 +395,7 @@ class ImportService {
 			'donors'       => $this->process_donor_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
 			'transactions' => $this->process_transaction_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'], $job->job_id ),
 			'campaigns'    => $this->process_campaign_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
+			'subscriptions' => $this->process_subscription_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
 			default        => throw new \RuntimeException( esc_html( "Unsupported import type: {$job->type}" ) ),
 		};
 
@@ -1250,6 +1258,193 @@ class ImportService {
 	}
 
 	// ------------------------------------------------------------------
+	// Subscriptions
+	// ------------------------------------------------------------------
+
+	/**
+	 * Process a batch of mapped subscription rows.
+	 *
+	 * Writes go through SubscriptionDataStore::create_silent() / update_silent()
+	 * so the activity feed and status-transition emails don't fire for historical
+	 * rows being backfilled. Subscriptions don't touch donor/campaign aggregates,
+	 * so there's no end-of-job recompute. Duplicates are matched by
+	 * gateway_subscription_id.
+	 *
+	 * @param array<int, array<string, string>> $rows      Mapped rows from read_batch().
+	 * @param string                            $strategy  Duplicate strategy (skip/update).
+	 * @param int                               $start_row Row number of the first row in this batch.
+	 *
+	 * @return array{imported:int, skipped:int, updated:int, errors:int, error_details: array<int, array{row:int, message:string}>}
+	 */
+	private function process_subscription_rows( array $rows, string $strategy, int $start_row ): array {
+		$imported      = 0;
+		$skipped       = 0;
+		$updated       = 0;
+		$errors        = 0;
+		$error_details = [];
+
+		$this->donor_lookup_cache    = [];
+		$this->campaign_lookup_cache = [];
+
+		$subscription_store = new SubscriptionDataStore();
+
+		foreach ( $rows as $i => $row ) {
+			$row_number = $start_row + $i;
+
+			$row_warnings = $this->validator->validate( $row, 'subscriptions', $row_number );
+
+			foreach ( $row_warnings as $warning ) {
+				if ( 'error' === ( $warning['severity'] ?? 'warning' ) ) {
+					++$skipped;
+					continue 2;
+				}
+			}
+
+			$prepared = $this->prepare_subscription_row( $row );
+
+			if ( is_wp_error( $prepared ) ) {
+				++$errors;
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $prepared->get_error_message(),
+				];
+				continue;
+			}
+
+			/**
+			 * Filter a subscription row right before it is saved.
+			 *
+			 * @param array  $prepared Prepared row data.
+			 * @param array  $row      Original mapped row.
+			 * @param string $strategy Duplicate strategy.
+			 */
+			$prepared = apply_filters( 'missiondp_import_subscriptions_row', $prepared, $row, $strategy );
+
+			$meta_pairs = $this->extract_meta_pairs( $row );
+
+			try {
+				$gateway_id = (string) ( $prepared['gateway_subscription_id'] ?? '' );
+				$existing   = '' !== $gateway_id ? Subscription::find_by_gateway_subscription_id( $gateway_id ) : null;
+
+				if ( $existing ) {
+					if ( 'skip' === $strategy ) {
+						++$skipped;
+						continue;
+					}
+
+					if ( 'update' === $strategy ) {
+						foreach ( $prepared as $field => $value ) {
+							$existing->{$field} = $value;
+						}
+						$subscription_store->update_silent( $existing );
+						$this->apply_meta( $existing, $meta_pairs );
+						++$updated;
+						continue;
+					}
+				}
+
+				$subscription = new Subscription( $prepared );
+				$subscription_store->create_silent( $subscription );
+				$this->apply_meta( $subscription, $meta_pairs );
+				++$imported;
+			} catch ( \Throwable $e ) {
+				++$errors;
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		return [
+			'imported'      => $imported,
+			'skipped'       => $skipped,
+			'updated'       => $updated,
+			'errors'        => $errors,
+			'error_details' => $error_details,
+		];
+	}
+
+	/**
+	 * Convert a mapped row into the data array expected by the Subscription constructor.
+	 *
+	 * Resolves donor (required) and campaign (optional). Zeroes out renewal_count
+	 * and total_renewed, and omits id, source_post_id, and initial_transaction_id
+	 * (local references that won't survive an import). Status is assumed valid —
+	 * rows with a missing/invalid status are flagged as errors and skipped before
+	 * this runs.
+	 *
+	 * @param array<string, string> $row Mapped row keyed by canonical field.
+	 * @return array<string, mixed>|WP_Error
+	 */
+	private function prepare_subscription_row( array $row ): array|WP_Error {
+		$donor_id = $this->resolve_donor_id( $row );
+		if ( is_wp_error( $donor_id ) ) {
+			return $donor_id;
+		}
+
+		$campaign_id = $this->resolve_campaign_id( $row );
+		if ( is_wp_error( $campaign_id ) ) {
+			return $campaign_id;
+		}
+
+		$amount     = $this->parse_amount( (string) ( $row['amount'] ?? '0' ) );
+		$fee_amount = $this->parse_amount( (string) ( $row['fee_amount'] ?? '0' ) );
+		$tip_amount = $this->parse_amount( (string) ( $row['tip_amount'] ?? '0' ) );
+
+		$total_amount = isset( $row['total_amount'] ) && '' !== trim( (string) $row['total_amount'] )
+			? $this->parse_amount( (string) $row['total_amount'] )
+			: $amount + $fee_amount + $tip_amount;
+
+		$status = strtolower( trim( (string) ( $row['status'] ?? '' ) ) );
+
+		$frequency = strtolower( trim( (string) ( $row['frequency'] ?? '' ) ) );
+		if ( ! in_array( $frequency, [ 'weekly', 'monthly', 'quarterly', 'annually' ], true ) ) {
+			$frequency = 'monthly';
+		}
+
+		$date_created      = $this->parse_date( (string) ( $row['date_created'] ?? '' ) );
+		$date_next_renewal = $this->parse_date( (string) ( $row['date_next_renewal'] ?? '' ) );
+		$date_cancelled    = $this->parse_date( (string) ( $row['date_cancelled'] ?? '' ) );
+		$date_modified     = $this->parse_date( (string) ( $row['date_modified'] ?? '' ) );
+
+		if ( 'cancelled' === $status && null === $date_cancelled ) {
+			$date_cancelled = $date_created ?? current_time( 'mysql', true );
+		}
+
+		$prepared = [
+			'status'                  => $status,
+			'donor_id'                => $donor_id,
+			'campaign_id'             => $campaign_id,
+			'amount'                  => $amount,
+			'fee_amount'              => $fee_amount,
+			'tip_amount'              => $tip_amount,
+			'total_amount'            => $total_amount,
+			'currency'                => strtolower( trim( (string) ( $row['currency'] ?? 'usd' ) ) ),
+			'frequency'               => $frequency,
+			'payment_gateway'         => trim( (string) ( $row['payment_gateway'] ?? '' ) ),
+			'gateway_subscription_id' => trim( (string) ( $row['gateway_subscription_id'] ?? '' ) ) ?: null,
+			'gateway_customer_id'     => trim( (string) ( $row['gateway_customer_id'] ?? '' ) ) ?: null,
+			'is_test'                 => $this->parse_bool( $row['is_test'] ?? '' ),
+		];
+
+		if ( null !== $date_created ) {
+			$prepared['date_created'] = $date_created;
+		}
+		if ( null !== $date_next_renewal ) {
+			$prepared['date_next_renewal'] = $date_next_renewal;
+		}
+		if ( null !== $date_cancelled ) {
+			$prepared['date_cancelled'] = $date_cancelled;
+		}
+		if ( null !== $date_modified ) {
+			$prepared['date_modified'] = $date_modified;
+		}
+
+		return $prepared;
+	}
+
+	// ------------------------------------------------------------------
 	// Internal: file IO
 	// ------------------------------------------------------------------
 
@@ -1608,19 +1803,45 @@ class ImportService {
 			return $count;
 		}
 
+		if ( 'subscriptions' === $type ) {
+			$count = 0;
+			$seen  = [];
+
+			foreach ( $rows as $i => $row ) {
+				if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
+					continue;
+				}
+
+				$gateway_id = trim( (string) ( $row['gateway_subscription_id'] ?? '' ) );
+
+				if ( '' === $gateway_id || isset( $seen[ $gateway_id ] ) ) {
+					continue;
+				}
+
+				$seen[ $gateway_id ] = true;
+
+				if ( Subscription::find_by_gateway_subscription_id( $gateway_id ) ) {
+					++$count;
+				}
+			}
+
+			return $count;
+		}
+
 		return 0;
 	}
 
 	/**
-	 * Count transaction rows with no gateway_transaction_id. These rows have no
-	 * stable key to deduplicate against, so each import creates a new transaction
-	 * for them. The validation preview surfaces this so the user knows what
-	 * happens on a re-run.
+	 * Count rows with no gateway ID in the given field. These rows have no stable
+	 * key to deduplicate against, so each import creates a new record for them.
+	 * The validation preview surfaces this so the user knows what happens on a
+	 * re-run.
 	 *
 	 * @param array<int, array<string, string>> $rows                Mapped rows.
+	 * @param string                            $field               Gateway field key (e.g. gateway_transaction_id).
 	 * @param array<int, bool>                  $skipped_rows_lookup Rows already flagged for skipping.
 	 */
-	private function count_rows_without_gateway_id( array $rows, array $skipped_rows_lookup = [] ): int {
+	private function count_rows_without_gateway_id( array $rows, string $field, array $skipped_rows_lookup = [] ): int {
 		$count = 0;
 
 		foreach ( $rows as $i => $row ) {
@@ -1628,7 +1849,7 @@ class ImportService {
 				continue;
 			}
 
-			if ( '' === trim( (string) ( $row['gateway_transaction_id'] ?? '' ) ) ) {
+			if ( '' === trim( (string) ( $row[ $field ] ?? '' ) ) ) {
 				++$count;
 			}
 		}

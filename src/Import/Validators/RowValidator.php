@@ -24,7 +24,7 @@ class RowValidator {
 			'donors'        => [ 'email' ],
 			'transactions'  => [ 'amount' ],
 			'campaigns'     => [ 'title' ],
-			'subscriptions' => [ 'amount' ],
+			'subscriptions' => [ 'amount', 'status' ],
 			default         => [],
 		};
 	}
@@ -128,6 +128,58 @@ class RowValidator {
 			}
 		}
 
+		$is_subscriptions = 'subscriptions' === $type;
+
+		if ( $is_subscriptions ) {
+			$status  = trim( (string) ( $row['status'] ?? '' ) );
+			$allowed = [ 'pending', 'active', 'paused', 'cancelled' ];
+
+			// Missing status is already caught by the required-field check above.
+			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'status',
+					'message'  => sprintf(
+						/* translators: %s: invalid status value */
+						__( 'Status \'%s\' is not one of pending/active/paused/cancelled. Row will be skipped.', 'mission-donation-platform' ),
+						$status
+					),
+					'value'    => $status,
+					'severity' => 'error',
+				];
+			}
+
+			$frequency = trim( (string) ( $row['frequency'] ?? '' ) );
+			$allowed_f = [ 'weekly', 'monthly', 'quarterly', 'annually' ];
+
+			if ( '' !== $frequency && ! in_array( strtolower( $frequency ), $allowed_f, true ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'frequency',
+					'message'  => sprintf(
+						/* translators: %s: invalid frequency value */
+						__( 'Frequency \'%s\' is not one of weekly/monthly/quarterly/annually. Will default to monthly.', 'mission-donation-platform' ),
+						$frequency
+					),
+					'value'    => $frequency,
+					'severity' => 'warning',
+				];
+			}
+
+			$status_lower = strtolower( $status );
+			$gateway_id   = trim( (string) ( $row['gateway_subscription_id'] ?? '' ) );
+
+			if ( 'active' === $status_lower && '' === $gateway_id ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'gateway_subscription_id',
+					'message'  => __( 'Active subscription has no Subscription ID, so it cannot renew automatically. It will be imported as a record only.', 'mission-donation-platform' ),
+					'value'    => '',
+					'severity' => 'warning',
+				];
+			}
+		}
+
 		foreach ( [ 'amount', 'fee_amount', 'tip_amount', 'total_amount', 'goal_amount', 'total_donated', 'total_tip' ] as $numeric ) {
 			if ( ! isset( $row[ $numeric ] ) ) {
 				continue;
@@ -140,7 +192,9 @@ class RowValidator {
 			}
 
 			if ( ! $this->looks_like_number( $value ) ) {
-				$is_error = $is_transactions;
+				// Amount is core to a transaction or subscription, so a bad value
+				// skips the row; secondary amounts just import as zero.
+				$is_error = $is_transactions || ( $is_subscriptions && 'amount' === $numeric );
 
 				$warnings[] = [
 					'row'      => $row_number,
@@ -160,7 +214,7 @@ class RowValidator {
 			}
 		}
 
-		foreach ( [ 'date_created', 'date_modified', 'first_transaction', 'last_transaction', 'transaction_date', 'date_start', 'date_end' ] as $date_key ) {
+		foreach ( [ 'date_created', 'date_modified', 'first_transaction', 'last_transaction', 'transaction_date', 'date_start', 'date_end', 'date_next_renewal', 'date_cancelled' ] as $date_key ) {
 			if ( ! isset( $row[ $date_key ] ) ) {
 				continue;
 			}

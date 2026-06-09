@@ -941,6 +941,11 @@ export default function ImportPanel() {
                         'already exist in your database (matched by title)',
                         'mission-donation-platform'
                       ) }
+                    { 'subscriptions' === dataType &&
+                      __(
+                        'already exist in your database (matched by Subscription ID)',
+                        'mission-donation-platform'
+                      ) }
                     { 'donors' === dataType &&
                       __(
                         'already exist in your database (matched by email)',
@@ -970,6 +975,27 @@ export default function ImportPanel() {
                   </span>
                 </div>
               ) }
+              { 'subscriptions' === dataType && rowsWithoutGatewayId > 0 && (
+                <div className="mission-import-warning-item">
+                  <WarningIcon />
+                  <span>
+                    <strong>
+                      { sprintf(
+                        /* translators: %d: number of rows */
+                        __(
+                          '%d rows have no Subscription ID',
+                          'mission-donation-platform'
+                        ),
+                        rowsWithoutGatewayId
+                      ) }
+                    </strong>{ ' ' }
+                    { __(
+                      "and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates.",
+                      'mission-donation-platform'
+                    ) }
+                  </span>
+                </div>
+              ) }
             </div>
           ) }
         </div>
@@ -982,6 +1008,20 @@ export default function ImportPanel() {
             <div className="mission-import-callout__text">
               { __(
                 'Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions.',
+                'mission-donation-platform'
+              ) }
+            </div>
+          </div>
+        ) }
+
+        { 'subscriptions' === dataType && (
+          <div className="mission-import-callout">
+            <div className="mission-import-callout__icon">
+              <InfoIcon />
+            </div>
+            <div className="mission-import-callout__text">
+              { __(
+                'Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway.',
                 'mission-donation-platform'
               ) }
             </div>
@@ -1095,15 +1135,7 @@ export default function ImportPanel() {
               className="mission-settings-save-bar__btn"
               type="button"
               onClick={ executeImport }
-              disabled={ actionCount === 0 || dataType === 'subscriptions' }
-              title={
-                dataType === 'subscriptions'
-                  ? __(
-                      'Subscription imports are coming soon.',
-                      'mission-donation-platform'
-                    )
-                  : ''
-              }
+              disabled={ actionCount === 0 }
             >
               <svg
                 width="14"
@@ -1402,6 +1434,7 @@ export default function ImportPanel() {
       donors: 'mission-donation-platform-donors',
       transactions: 'mission-donation-platform-transactions',
       campaigns: 'mission-donation-platform-campaigns',
+      subscriptions: 'mission-donation-platform-subscriptions',
     }[ dataType ];
 
     const viewUrl = viewPageSlug

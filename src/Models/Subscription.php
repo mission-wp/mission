@@ -83,6 +83,23 @@ class Subscription extends Model {
 	}
 
 	/**
+	 * Find a subscription by its gateway subscription ID.
+	 *
+	 * @param string $gateway_subscription_id Gateway subscription identifier.
+	 *
+	 * @return Subscription|null
+	 */
+	public static function find_by_gateway_subscription_id( string $gateway_subscription_id ): ?self {
+		if ( '' === trim( $gateway_subscription_id ) ) {
+			return null;
+		}
+
+		/** @var SubscriptionDataStore $store */
+		$store = static::store();
+		return $store->read_by_gateway_subscription_id( $gateway_subscription_id );
+	}
+
+	/**
 	 * Get the donor for this subscription.
 	 *
 	 * @return Donor|null

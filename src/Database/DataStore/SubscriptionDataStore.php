@@ -53,6 +53,34 @@ class SubscriptionDataStore implements DataStoreInterface {
 	 * @return int New subscription ID.
 	 */
 	public function create( object $model ): int {
+		$this->insert_row( $model );
+
+		/** @param Subscription $model The subscription. */
+		do_action( 'missiondp_subscription_created', $model );
+
+		return $model->id;
+	}
+
+	/**
+	 * Create a subscription without firing the created hook.
+	 *
+	 * Used by the data importer: listeners (activity feed, notifications) should
+	 * not fire for historical rows being backfilled.
+	 *
+	 * @param Subscription $model Subscription model.
+	 * @return int New subscription ID.
+	 */
+	public function create_silent( Subscription $model ): int {
+		$this->insert_row( $model );
+		return $model->id;
+	}
+
+	/**
+	 * Raw insert path shared by create() and create_silent().
+	 *
+	 * @param object $model Subscription model.
+	 */
+	private function insert_row( object $model ): void {
 		global $wpdb;
 
 		$now  = current_time( 'mysql', true );
@@ -64,11 +92,6 @@ class SubscriptionDataStore implements DataStoreInterface {
 
 		$wpdb->insert( $this->get_table_name(), $data );
 		$model->id = (int) $wpdb->insert_id;
-
-		/** @param Subscription $model The subscription. */
-		do_action( 'missiondp_subscription_created', $model );
-
-		return $model->id;
 	}
 
 	/**
@@ -90,6 +113,32 @@ class SubscriptionDataStore implements DataStoreInterface {
 	}
 
 	/**
+	 * Read a subscription by its gateway subscription ID.
+	 *
+	 * @param string $gateway_subscription_id Gateway subscription identifier.
+	 *
+	 * @return Subscription|null
+	 */
+	public function read_by_gateway_subscription_id( string $gateway_subscription_id ): ?Subscription {
+		global $wpdb;
+
+		if ( '' === trim( $gateway_subscription_id ) ) {
+			return null;
+		}
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE gateway_subscription_id = %s ORDER BY id DESC LIMIT 1',
+				$this->get_table_name(),
+				$gateway_subscription_id
+			),
+			ARRAY_A
+		);
+
+		return $row ? $this->row_to_model( $row ) : null;
+	}
+
+	/**
 	 * Update a subscription.
 	 *
 	 * @param object $model Subscription model.
@@ -97,26 +146,12 @@ class SubscriptionDataStore implements DataStoreInterface {
 	 * @return bool
 	 */
 	public function update( object $model ): bool {
-		global $wpdb;
-
 		$old = $this->read( $model->id );
 		if ( ! $old ) {
 			return false;
 		}
 
-		$data                  = $this->model_to_row( $model );
-		$data['date_modified'] = current_time( 'mysql', true );
-		unset( $data['id'] );
-
-		$result = $wpdb->update(
-			$this->get_table_name(),
-			$data,
-			[ 'id' => $model->id ],
-			null,
-			[ '%d' ]
-		);
-
-		if ( false === $result ) {
+		if ( ! $this->update_row( $model ) ) {
 			return false;
 		}
 
@@ -139,6 +174,44 @@ class SubscriptionDataStore implements DataStoreInterface {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Update a subscription without firing status-transition hooks. Used by the
+	 * data importer (see create_silent).
+	 *
+	 * @param Subscription $model Subscription model with updated values.
+	 * @return bool
+	 */
+	public function update_silent( Subscription $model ): bool {
+		if ( ! $this->read( $model->id ) ) {
+			return false;
+		}
+
+		return $this->update_row( $model );
+	}
+
+	/**
+	 * Raw UPDATE path shared by update() and update_silent().
+	 *
+	 * @param object $model Subscription model.
+	 */
+	private function update_row( object $model ): bool {
+		global $wpdb;
+
+		$data                  = $this->model_to_row( $model );
+		$data['date_modified'] = current_time( 'mysql', true );
+		unset( $data['id'] );
+
+		$result = $wpdb->update(
+			$this->get_table_name(),
+			$data,
+			[ 'id' => $model->id ],
+			null,
+			[ '%d' ]
+		);
+
+		return false !== $result;
 	}
 
 	/**

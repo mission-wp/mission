@@ -171,7 +171,15 @@ class ColumnMapper {
 				'Goal'  => 'goal_amount',
 			],
 			'subscriptions' => [
-				'Donor Email' => 'donor_email',
+				'Donor Email'     => 'donor_email',
+				'Campaign Title'  => 'campaign_title',
+				'Gateway'         => 'payment_gateway',
+				'Subscription ID' => 'gateway_subscription_id',
+				'Customer ID'     => 'gateway_customer_id',
+				'Recurring'       => 'frequency',
+				'Interval'        => 'frequency',
+				'Date'            => 'date_created',
+				'Next Renewal'    => 'date_next_renewal',
 			],
 			default         => [],
 		};
