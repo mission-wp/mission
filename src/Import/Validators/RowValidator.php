@@ -109,6 +109,25 @@ class RowValidator {
 			}
 		}
 
+		if ( 'campaigns' === $type && isset( $row['status'] ) ) {
+			$status  = trim( (string) $row['status'] );
+			$allowed = [ 'active', 'scheduled', 'ended' ];
+
+			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'status',
+					'message'  => sprintf(
+						/* translators: %s: invalid status value */
+						__( 'Status \'%s\' is not one of active/scheduled/ended. It will be set from the campaign dates.', 'mission-donation-platform' ),
+						$status
+					),
+					'value'    => $status,
+					'severity' => 'warning',
+				];
+			}
+		}
+
 		foreach ( [ 'amount', 'fee_amount', 'tip_amount', 'total_amount', 'goal_amount', 'total_donated', 'total_tip' ] as $numeric ) {
 			if ( ! isset( $row[ $numeric ] ) ) {
 				continue;
@@ -141,7 +160,7 @@ class RowValidator {
 			}
 		}
 
-		foreach ( [ 'date_created', 'date_modified', 'first_transaction', 'last_transaction', 'transaction_date' ] as $date_key ) {
+		foreach ( [ 'date_created', 'date_modified', 'first_transaction', 'last_transaction', 'transaction_date', 'date_start', 'date_end' ] as $date_key ) {
 			if ( ! isset( $row[ $date_key ] ) ) {
 				continue;
 			}

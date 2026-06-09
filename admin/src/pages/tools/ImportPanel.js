@@ -931,15 +931,21 @@ export default function ImportPanel() {
                         typeLabel.toLowerCase()
                       ) }
                     </strong>{ ' ' }
-                    { 'transactions' === dataType
-                      ? __(
-                          'already exist in your database (matched by Charge ID)',
-                          'mission-donation-platform'
-                        )
-                      : __(
-                          'already exist in your database (matched by email)',
-                          'mission-donation-platform'
-                        ) }
+                    { 'transactions' === dataType &&
+                      __(
+                        'already exist in your database (matched by Charge ID)',
+                        'mission-donation-platform'
+                      ) }
+                    { 'campaigns' === dataType &&
+                      __(
+                        'already exist in your database (matched by title)',
+                        'mission-donation-platform'
+                      ) }
+                    { 'donors' === dataType &&
+                      __(
+                        'already exist in your database (matched by email)',
+                        'mission-donation-platform'
+                      ) }
                   </span>
                 </div>
               ) }
@@ -967,6 +973,20 @@ export default function ImportPanel() {
             </div>
           ) }
         </div>
+
+        { 'campaigns' === dataType && (
+          <div className="mission-import-callout">
+            <div className="mission-import-callout__icon">
+              <InfoIcon />
+            </div>
+            <div className="mission-import-callout__text">
+              { __(
+                'Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions.',
+                'mission-donation-platform'
+              ) }
+            </div>
+          </div>
+        ) }
 
         { duplicates > 0 && (
           <div className="mission-settings-card">
@@ -1075,14 +1095,11 @@ export default function ImportPanel() {
               className="mission-settings-save-bar__btn"
               type="button"
               onClick={ executeImport }
-              disabled={
-                actionCount === 0 ||
-                ( dataType !== 'donors' && dataType !== 'transactions' )
-              }
+              disabled={ actionCount === 0 || dataType === 'subscriptions' }
               title={
-                dataType !== 'donors' && dataType !== 'transactions'
+                dataType === 'subscriptions'
                   ? __(
-                      'Donor and transaction imports are supported. Campaigns and subscriptions are coming soon.',
+                      'Subscription imports are coming soon.',
                       'mission-donation-platform'
                     )
                   : ''
@@ -1384,6 +1401,7 @@ export default function ImportPanel() {
     const viewPageSlug = {
       donors: 'mission-donation-platform-donors',
       transactions: 'mission-donation-platform-transactions',
+      campaigns: 'mission-donation-platform-campaigns',
     }[ dataType ];
 
     const viewUrl = viewPageSlug
