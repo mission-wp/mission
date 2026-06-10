@@ -30,6 +30,7 @@ logs/
 # Markdown files (internal docs, task tracking, etc.)
 *.md
 !README.md
+!CHANGELOG.md
 
 # Plugin zip
 *.zip
