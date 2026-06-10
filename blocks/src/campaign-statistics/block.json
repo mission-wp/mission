@@ -45,8 +45,7 @@
 			"default": "total_raised"
 		},
 		"heading": {
-			"type": "string",
-			"default": "Total Raised"
+			"type": "string"
 		},
 		"showHeading": {
 			"type": "boolean",

@@ -9,6 +9,7 @@
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: mission-donation-platform
+ * Domain Path: /languages
  * Requires at least: 6.7
  * Requires PHP: 8.0
  *

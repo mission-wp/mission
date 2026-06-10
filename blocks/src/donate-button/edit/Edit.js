@@ -241,7 +241,7 @@ export default function Edit( { attributes, setAttributes } ) {
           value={ text }
           onChange={ ( val ) => setAttributes( { text: val } ) }
           withoutInteractiveFormatting
-          placeholder={ __( 'Add text…', 'mission-donation-platform' ) }
+          placeholder={ __( 'Donate Now', 'mission-donation-platform' ) }
         />
       </div>
     </>

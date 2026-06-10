@@ -411,7 +411,10 @@ export default function Edit( { attributes, setAttributes } ) {
                 ? donor.comment.substring( 0, commentLength ) + '…'
                 : donor.comment }
               { donor.comment.length > commentLength && (
-                <span className="mission-dw-read-more">{ readMoreText }</span>
+                <span className="mission-dw-read-more">
+                  { readMoreText ||
+                    __( 'Read more', 'mission-donation-platform' ) }
+                </span>
               ) }
             </div>
           ) }
@@ -522,7 +525,8 @@ export default function Edit( { attributes, setAttributes } ) {
         { visibleDonors.length < totalDonors && (
           <div className="mission-dw-footer">
             <button type="button" className="mission-dw-load-more" disabled>
-              { loadMoreText }
+              { loadMoreText ||
+                __( 'Show More Donations', 'mission-donation-platform' ) }
             </button>
             <span className="mission-dw-count">
               { `${ __( 'Showing', 'mission-donation-platform' ) } ${
@@ -579,6 +583,10 @@ export default function Edit( { attributes, setAttributes } ) {
           <TextControl
             label={ __( 'Load more text', 'mission-donation-platform' ) }
             value={ loadMoreText }
+            placeholder={ __(
+              'Show More Donations',
+              'mission-donation-platform'
+            ) }
             onChange={ ( val ) => setAttributes( { loadMoreText: val } ) }
           />
         </PanelBody>
@@ -648,6 +656,7 @@ export default function Edit( { attributes, setAttributes } ) {
               <TextControl
                 label={ __( 'Read more text', 'mission-donation-platform' ) }
                 value={ readMoreText }
+                placeholder={ __( 'Read more', 'mission-donation-platform' ) }
                 onChange={ ( val ) => setAttributes( { readMoreText: val } ) }
               />
             </>

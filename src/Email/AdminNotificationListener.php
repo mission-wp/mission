@@ -348,15 +348,19 @@ class AdminNotificationListener {
 	/**
 	 * Milestone labels keyed by milestone ID.
 	 *
-	 * @var array<string, string>
+	 * Method instead of const so the 'first-donation' label can be translated.
+	 *
+	 * @return array<string, string>
 	 */
-	private const MILESTONE_LABELS = [
-		'first-donation' => 'First donation',
-		'25-pct'         => '25%',
-		'50-pct'         => '50%',
-		'75-pct'         => '75%',
-		'100-pct'        => '100%',
-	];
+	private function milestone_labels(): array {
+		return [
+			'first-donation' => __( 'First donation', 'mission-donation-platform' ),
+			'25-pct'         => '25%',
+			'50-pct'         => '50%',
+			'75-pct'         => '75%',
+			'100-pct'        => '100%',
+		];
+	}
 
 	/**
 	 * Send admin notification when a campaign milestone is reached.
@@ -372,7 +376,7 @@ class AdminNotificationListener {
 			return;
 		}
 
-		$milestone_label  = self::MILESTONE_LABELS[ $milestone_id ] ?? $milestone_id;
+		$milestone_label  = $this->milestone_labels()[ $milestone_id ] ?? $milestone_id;
 		$goal_formatted   = $campaign->goal_amount > 0
 			? $this->email->format_amount( $campaign->goal_amount, $campaign->currency )
 			: '';

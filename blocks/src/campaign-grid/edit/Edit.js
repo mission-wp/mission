@@ -168,6 +168,7 @@ export default function Edit( { attributes, setAttributes } ) {
           <TextControl
             label={ __( 'Button text', 'mission-donation-platform' ) }
             value={ buttonText }
+            placeholder={ __( 'View Campaign', 'mission-donation-platform' ) }
             onChange={ ( val ) => setAttributes( { buttonText: val } ) }
           />
         </PanelBody>

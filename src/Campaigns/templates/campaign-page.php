@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 <?php if ( $description ) : ?>
 
 <!-- wp:heading {"style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|10"}}}} -->
-<h2 class="wp-block-heading" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--10)">About This Campaign</h2>
+<h2 class="wp-block-heading" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--10)"><?php echo esc_html__( 'About This Campaign', 'mission-donation-platform' ); ?></h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
@@ -36,15 +36,25 @@ defined( 'ABSPATH' ) || exit;
 <!-- /wp:separator -->
 
 <!-- wp:heading -->
-<h2 class="wp-block-heading">Why Your Support Matters</h2>
+<h2 class="wp-block-heading"><?php echo esc_html__( 'Why Your Support Matters', 'mission-donation-platform' ); ?></h2>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph -->
-<p>Every contribution to <?php echo esc_html( $org_name ); ?> makes a real difference. Your donation goes directly toward our programs and the communities we serve. No amount is too small — together, we can reach our goal and make an even greater impact.</p>
+<p>
+<?php
+	echo esc_html(
+		sprintf(
+			/* translators: %s: organization name. */
+			__( 'Every contribution to %s makes a real difference. Your donation goes directly toward our programs and the communities we serve. No amount is too small. Together, we can reach our goal and make an even greater impact.', 'mission-donation-platform' ),
+			$org_name
+		)
+	);
+	?>
+	</p>
 <!-- /wp:paragraph -->
 
 <!-- wp:paragraph -->
-<p>Thank you for being part of our mission. If you're unable to donate right now, sharing this campaign with your friends and family helps just as much.</p>
+<p><?php echo esc_html__( "Thank you for being part of our mission. If you're unable to donate right now, sharing this campaign with your friends and family helps just as much.", 'mission-donation-platform' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:separator {"className":"is-style-wide","style":{"spacing":{"margin":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30"}},"color":{"background":"#dadada"}}} -->
@@ -66,11 +76,11 @@ defined( 'ABSPATH' ) || exit;
 <!-- /wp:separator -->
 
 <!-- wp:heading {"textAlign":"center","level":3} -->
-<h3 class="wp-block-heading has-text-align-center">Make a Donation</h3>
+<h3 class="wp-block-heading has-text-align-center"><?php echo esc_html__( 'Make a Donation', 'mission-donation-platform' ); ?></h3>
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"align":"center"} -->
-<p class="has-text-align-center">Choose an amount to support our mission.</p>
+<p class="has-text-align-center"><?php echo esc_html__( 'Choose an amount to support our mission.', 'mission-donation-platform' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:mission-donation-platform/donation-form {"campaignId":<?php echo (int) $campaign_id; ?>} /-->

@@ -67,8 +67,7 @@
 	],
 	"attributes": {
 		"text": {
-			"type": "string",
-			"default": "Donate Now"
+			"type": "string"
 		},
 		"donateButtonAction": {
 			"type": "string",

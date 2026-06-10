@@ -155,13 +155,13 @@ ob_start();
 			if ( 'amount' === $goal_type ) {
 				$raised_text = Currency::format_amount( $goal_progress, $currency );
 				$goal_text   = $has_goal
-					/* translators: %s: formatted goal amount */
+					/* translators: %s: goal amount */
 					? sprintf( __( 'of %s', 'mission-donation-platform' ), Currency::format_amount( $goal_amount, $currency ) )
 					: '';
 			} else {
 				$raised_text = number_format_i18n( $goal_progress );
 				$goal_text   = $has_goal
-					/* translators: %s: goal number */
+					/* translators: %s: goal amount */
 					? sprintf( __( 'of %s', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
 					: '';
 			}

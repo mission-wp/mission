@@ -26,18 +26,25 @@ class EmailTestEndpoint {
 	/**
 	 * Default subjects per email type (mirrors listener hardcoded defaults).
 	 *
-	 * @var array<string, string>
+	 * Method instead of const so strings can be translated.
+	 *
+	 * @return array<string, string>
 	 */
-	private const DEFAULT_SUBJECTS = [
-		'donation_receipt'          => 'Thank you for your %s donation',
-		'subscription_activated'    => 'Thank you for your %s %s donation',
-		'renewal_receipt'           => 'Thank you for your %s gift of %s',
-		'payment_failed'            => 'Action needed: Update your payment for your recurring donation',
-		'subscription_cancelled'    => 'Your recurring donation has ended',
-		'account_activation'        => 'Verify your email to activate your donor account',
-		'password_reset'            => 'Reset your password',
-		'email_change_verification' => 'Verify your new email address',
-	];
+	private function default_subjects(): array {
+		return [
+			// translators: %s: formatted donation amount
+			'donation_receipt'          => __( 'Thank you for your %s donation', 'mission-donation-platform' ),
+			// translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly")
+			'subscription_activated'    => __( 'Thank you for your %1$s %2$s donation', 'mission-donation-platform' ),
+			// translators: 1: frequency label (e.g. "monthly"), 2: formatted donation amount
+			'renewal_receipt'           => __( 'Thank you for your %1$s gift of %2$s', 'mission-donation-platform' ),
+			'payment_failed'            => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
+			'subscription_cancelled'    => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
+			'account_activation'        => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
+			'password_reset'            => __( 'Reset your password', 'mission-donation-platform' ),
+			'email_change_verification' => __( 'Verify your new email address', 'mission-donation-platform' ),
+		];
+	}
 
 	/**
 	 * Template file name per email type (hyphenated).
@@ -226,11 +233,13 @@ class EmailTestEndpoint {
 	 * @return string
 	 */
 	private function get_default_subject( string $email_type, array $data ): string {
+		$subjects = $this->default_subjects();
+
 		return match ( $email_type ) {
-			'donation_receipt'       => sprintf( self::DEFAULT_SUBJECTS[ $email_type ], $data['amount_formatted'] ),
-			'subscription_activated' => sprintf( self::DEFAULT_SUBJECTS[ $email_type ], $data['amount_formatted'], strtolower( $data['frequency_label'] ) ),
-			'renewal_receipt'        => sprintf( self::DEFAULT_SUBJECTS[ $email_type ], strtolower( $data['frequency_label'] ), $data['amount_formatted'] ),
-			default                  => self::DEFAULT_SUBJECTS[ $email_type ] ?? '',
+			'donation_receipt'       => sprintf( $subjects[ $email_type ], $data['amount_formatted'] ),
+			'subscription_activated' => sprintf( $subjects[ $email_type ], $data['amount_formatted'], strtolower( $data['frequency_label'] ) ),
+			'renewal_receipt'        => sprintf( $subjects[ $email_type ], strtolower( $data['frequency_label'] ), $data['amount_formatted'] ),
+			default                  => $subjects[ $email_type ] ?? '',
 		};
 	}
 }

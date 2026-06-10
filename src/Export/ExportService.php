@@ -509,62 +509,62 @@ class ExportService {
 		$columns = [
 			[
 				'key'   => 'id',
-				'label' => 'ID',
+				'label' => __( 'ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'user_id',
-				'label' => 'User ID',
+				'label' => __( 'User ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'email',
-				'label' => 'Email',
+				'label' => __( 'Email', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'first_name',
-				'label' => 'First Name',
+				'label' => __( 'First Name', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'last_name',
-				'label' => 'Last Name',
+				'label' => __( 'Last Name', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'phone',
-				'label' => 'Phone',
+				'label' => __( 'Phone', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'address_1',
-				'label' => 'Address 1',
+				'label' => __( 'Address 1', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'address_2',
-				'label' => 'Address 2',
+				'label' => __( 'Address 2', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'city',
-				'label' => 'City',
+				'label' => __( 'City', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'state',
-				'label' => 'State',
+				'label' => __( 'State', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'zip',
-				'label' => 'ZIP',
+				'label' => __( 'ZIP', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'country',
-				'label' => 'Country',
+				'label' => __( 'Country', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 		];
@@ -572,65 +572,65 @@ class ExportService {
 		if ( $is_test ) {
 			$columns[] = [
 				'key'   => 'test_total_donated',
-				'label' => 'Total Donated',
+				'label' => __( 'Total Donated', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			];
 			$columns[] = [
 				'key'   => 'test_total_tip',
-				'label' => 'Total Tip',
+				'label' => __( 'Total Tip', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			];
 			$columns[] = [
 				'key'   => 'test_transaction_count',
-				'label' => 'Transaction Count',
+				'label' => __( 'Transaction Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			];
 			$columns[] = [
 				'key'   => 'test_first_transaction',
-				'label' => 'First Transaction',
+				'label' => __( 'First Transaction', 'mission-donation-platform' ),
 				'type'  => 'date',
 			];
 			$columns[] = [
 				'key'   => 'test_last_transaction',
-				'label' => 'Last Transaction',
+				'label' => __( 'Last Transaction', 'mission-donation-platform' ),
 				'type'  => 'date',
 			];
 		} else {
 			$columns[] = [
 				'key'   => 'total_donated',
-				'label' => 'Total Donated',
+				'label' => __( 'Total Donated', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			];
 			$columns[] = [
 				'key'   => 'total_tip',
-				'label' => 'Total Tip',
+				'label' => __( 'Total Tip', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			];
 			$columns[] = [
 				'key'   => 'transaction_count',
-				'label' => 'Transaction Count',
+				'label' => __( 'Transaction Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			];
 			$columns[] = [
 				'key'   => 'first_transaction',
-				'label' => 'First Transaction',
+				'label' => __( 'First Transaction', 'mission-donation-platform' ),
 				'type'  => 'date',
 			];
 			$columns[] = [
 				'key'   => 'last_transaction',
-				'label' => 'Last Transaction',
+				'label' => __( 'Last Transaction', 'mission-donation-platform' ),
 				'type'  => 'date',
 			];
 		}
 
 		$columns[] = [
 			'key'   => 'date_created',
-			'label' => 'Date Created',
+			'label' => __( 'Date Created', 'mission-donation-platform' ),
 			'type'  => 'date',
 		];
 		$columns[] = [
 			'key'   => 'date_modified',
-			'label' => 'Date Modified',
+			'label' => __( 'Date Modified', 'mission-donation-platform' ),
 			'type'  => 'date',
 		];
 
@@ -646,127 +646,127 @@ class ExportService {
 		return [
 			[
 				'key'   => 'id',
-				'label' => 'ID',
+				'label' => __( 'ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'status',
-				'label' => 'Status',
+				'label' => __( 'Status', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'type',
-				'label' => 'Type',
+				'label' => __( 'Type', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'donor_id',
-				'label' => 'Donor ID',
+				'label' => __( 'Donor ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'subscription_id',
-				'label' => 'Subscription ID',
+				'label' => __( 'Subscription ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'parent_id',
-				'label' => 'Parent ID',
+				'label' => __( 'Parent ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'source_post_id',
-				'label' => 'Source Post ID',
+				'label' => __( 'Source Post ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'campaign_id',
-				'label' => 'Campaign ID',
+				'label' => __( 'Campaign ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'amount',
-				'label' => 'Amount',
+				'label' => __( 'Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'fee_amount',
-				'label' => 'Fee Amount',
+				'label' => __( 'Fee Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'tip_amount',
-				'label' => 'Tip Amount',
+				'label' => __( 'Tip Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'total_amount',
-				'label' => 'Total Amount',
+				'label' => __( 'Total Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'amount_refunded',
-				'label' => 'Amount Refunded',
+				'label' => __( 'Amount Refunded', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'currency',
-				'label' => 'Currency',
+				'label' => __( 'Currency', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'payment_gateway',
-				'label' => 'Payment Gateway',
+				'label' => __( 'Payment Gateway', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'gateway_transaction_id',
-				'label' => 'Gateway Transaction ID',
+				'label' => __( 'Gateway Transaction ID', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'gateway_subscription_id',
-				'label' => 'Gateway Subscription ID',
+				'label' => __( 'Gateway Subscription ID', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'gateway_customer_id',
-				'label' => 'Gateway Customer ID',
+				'label' => __( 'Gateway Customer ID', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'is_anonymous',
-				'label' => 'Anonymous',
+				'label' => __( 'Anonymous', 'mission-donation-platform' ),
 				'type'  => 'bool',
 			],
 			[
 				'key'   => 'is_test',
-				'label' => 'Test',
+				'label' => __( 'Test', 'mission-donation-platform' ),
 				'type'  => 'bool',
 			],
 			[
 				'key'   => 'donor_ip',
-				'label' => 'Donor IP',
+				'label' => __( 'Donor IP', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'date_created',
-				'label' => 'Date Created',
+				'label' => __( 'Date Created', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_completed',
-				'label' => 'Date Completed',
+				'label' => __( 'Date Completed', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_refunded',
-				'label' => 'Date Refunded',
+				'label' => __( 'Date Refunded', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_modified',
-				'label' => 'Date Modified',
+				'label' => __( 'Date Modified', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 		];
@@ -783,32 +783,32 @@ class ExportService {
 		$columns = [
 			[
 				'key'   => 'id',
-				'label' => 'ID',
+				'label' => __( 'ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'post_id',
-				'label' => 'Post ID',
+				'label' => __( 'Post ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'title',
-				'label' => 'Title',
+				'label' => __( 'Title', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'description',
-				'label' => 'Description',
+				'label' => __( 'Description', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'goal_amount',
-				'label' => 'Goal Amount',
+				'label' => __( 'Goal Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'goal_type',
-				'label' => 'Goal Type',
+				'label' => __( 'Goal Type', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 		];
@@ -816,70 +816,70 @@ class ExportService {
 		if ( $is_test ) {
 			$columns[] = [
 				'key'   => 'test_total_raised',
-				'label' => 'Total Raised',
+				'label' => __( 'Total Raised', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			];
 			$columns[] = [
 				'key'   => 'test_transaction_count',
-				'label' => 'Transaction Count',
+				'label' => __( 'Transaction Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			];
 			$columns[] = [
 				'key'   => 'test_donor_count',
-				'label' => 'Donor Count',
+				'label' => __( 'Donor Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			];
 		} else {
 			$columns[] = [
 				'key'   => 'total_raised',
-				'label' => 'Total Raised',
+				'label' => __( 'Total Raised', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			];
 			$columns[] = [
 				'key'   => 'transaction_count',
-				'label' => 'Transaction Count',
+				'label' => __( 'Transaction Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			];
 			$columns[] = [
 				'key'   => 'donor_count',
-				'label' => 'Donor Count',
+				'label' => __( 'Donor Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			];
 		}
 
 		$columns[] = [
 			'key'   => 'currency',
-			'label' => 'Currency',
+			'label' => __( 'Currency', 'mission-donation-platform' ),
 			'type'  => 'string',
 		];
 		$columns[] = [
 			'key'   => 'show_in_listings',
-			'label' => 'Show in Listings',
+			'label' => __( 'Show in Listings', 'mission-donation-platform' ),
 			'type'  => 'bool',
 		];
 		$columns[] = [
 			'key'   => 'status',
-			'label' => 'Status',
+			'label' => __( 'Status', 'mission-donation-platform' ),
 			'type'  => 'string',
 		];
 		$columns[] = [
 			'key'   => 'date_start',
-			'label' => 'Date Start',
+			'label' => __( 'Date Start', 'mission-donation-platform' ),
 			'type'  => 'date',
 		];
 		$columns[] = [
 			'key'   => 'date_end',
-			'label' => 'Date End',
+			'label' => __( 'Date End', 'mission-donation-platform' ),
 			'type'  => 'date',
 		];
 		$columns[] = [
 			'key'   => 'date_created',
-			'label' => 'Date Created',
+			'label' => __( 'Date Created', 'mission-donation-platform' ),
 			'type'  => 'date',
 		];
 		$columns[] = [
 			'key'   => 'date_modified',
-			'label' => 'Date Modified',
+			'label' => __( 'Date Modified', 'mission-donation-platform' ),
 			'type'  => 'date',
 		];
 
@@ -895,112 +895,112 @@ class ExportService {
 		return [
 			[
 				'key'   => 'id',
-				'label' => 'ID',
+				'label' => __( 'ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'status',
-				'label' => 'Status',
+				'label' => __( 'Status', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'donor_id',
-				'label' => 'Donor ID',
+				'label' => __( 'Donor ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'source_post_id',
-				'label' => 'Source Post ID',
+				'label' => __( 'Source Post ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'campaign_id',
-				'label' => 'Campaign ID',
+				'label' => __( 'Campaign ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'initial_transaction_id',
-				'label' => 'Initial Transaction ID',
+				'label' => __( 'Initial Transaction ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'amount',
-				'label' => 'Amount',
+				'label' => __( 'Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'fee_amount',
-				'label' => 'Fee Amount',
+				'label' => __( 'Fee Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'tip_amount',
-				'label' => 'Tip Amount',
+				'label' => __( 'Tip Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'total_amount',
-				'label' => 'Total Amount',
+				'label' => __( 'Total Amount', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'currency',
-				'label' => 'Currency',
+				'label' => __( 'Currency', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'frequency',
-				'label' => 'Frequency',
+				'label' => __( 'Frequency', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'payment_gateway',
-				'label' => 'Payment Gateway',
+				'label' => __( 'Payment Gateway', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'gateway_subscription_id',
-				'label' => 'Gateway Subscription ID',
+				'label' => __( 'Gateway Subscription ID', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'gateway_customer_id',
-				'label' => 'Gateway Customer ID',
+				'label' => __( 'Gateway Customer ID', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'renewal_count',
-				'label' => 'Renewal Count',
+				'label' => __( 'Renewal Count', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'total_renewed',
-				'label' => 'Total Renewed',
+				'label' => __( 'Total Renewed', 'mission-donation-platform' ),
 				'type'  => 'amount',
 			],
 			[
 				'key'   => 'is_test',
-				'label' => 'Test',
+				'label' => __( 'Test', 'mission-donation-platform' ),
 				'type'  => 'bool',
 			],
 			[
 				'key'   => 'date_created',
-				'label' => 'Date Created',
+				'label' => __( 'Date Created', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_next_renewal',
-				'label' => 'Date Next Renewal',
+				'label' => __( 'Date Next Renewal', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_cancelled',
-				'label' => 'Date Cancelled',
+				'label' => __( 'Date Cancelled', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_modified',
-				'label' => 'Date Modified',
+				'label' => __( 'Date Modified', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 		];
@@ -1015,12 +1015,12 @@ class ExportService {
 		return [
 			[
 				'key'   => 'id',
-				'label' => 'ID',
+				'label' => __( 'ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
 				'key'   => 'transaction_id',
-				'label' => 'Transaction ID',
+				'label' => __( 'Transaction ID', 'mission-donation-platform' ),
 				'type'  => 'int',
 			],
 			[
@@ -1030,67 +1030,67 @@ class ExportService {
 			],
 			[
 				'key'   => 'tribute_type',
-				'label' => 'Type',
+				'label' => __( 'Type', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'honoree_name',
-				'label' => 'Honoree Name',
+				'label' => __( 'Honoree Name', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'message',
-				'label' => 'Message',
+				'label' => __( 'Message', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_method',
-				'label' => 'Notify Method',
+				'label' => __( 'Notify Method', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_name',
-				'label' => 'Notify Name',
+				'label' => __( 'Notify Name', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_email',
-				'label' => 'Notify Email',
+				'label' => __( 'Notify Email', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_address_1',
-				'label' => 'Notify Address',
+				'label' => __( 'Notify Address', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_city',
-				'label' => 'Notify City',
+				'label' => __( 'Notify City', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_state',
-				'label' => 'Notify State',
+				'label' => __( 'Notify State', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_zip',
-				'label' => 'Notify Zip',
+				'label' => __( 'Notify Zip', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notify_country',
-				'label' => 'Notify Country',
+				'label' => __( 'Notify Country', 'mission-donation-platform' ),
 				'type'  => 'string',
 			],
 			[
 				'key'   => 'notification_sent_at',
-				'label' => 'Notification Sent',
+				'label' => __( 'Notification Sent', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 			[
 				'key'   => 'date_created',
-				'label' => 'Date Created',
+				'label' => __( 'Date Created', 'mission-donation-platform' ),
 				'type'  => 'date',
 			],
 		];
