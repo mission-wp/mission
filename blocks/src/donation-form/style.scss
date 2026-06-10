@@ -7,8 +7,11 @@
   --mission-error: #dc2626;
   --mission-radius: 12px;
   --mission-transition: 200ms ease;
+  --mission-df-padding-y: 28px;
+  --mission-df-padding-x: 32px;
 
   box-sizing: border-box;
+  container: mission-donation-form / inline-size;
   max-width: 560px;
   margin: 0 auto;
   background: var(--mission-bg);
@@ -16,7 +19,7 @@
   border-top: 2px solid var(--mission-primary);
   border-radius: var(--mission-radius);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
-  padding: 28px 32px;
+  padding: var(--mission-df-padding-y) var(--mission-df-padding-x);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   color: var(--mission-text);
   line-height: 1.5;
@@ -1170,8 +1173,8 @@
   gap: 6px;
   font-size: 13px;
   color: var(--mission-text-secondary);
-  white-space: nowrap;
   flex: 1;
+  min-width: 0;
 }
 
 .mission-df-tip-heart {
@@ -1268,6 +1271,8 @@
 
 .mission-df-tip-custom-input {
   width: 70px;
+  flex: 1 1 auto;
+  min-width: 0;
   height: 42px;
   padding: 0 12px 0 4px;
   border: none;
@@ -1519,8 +1524,8 @@
 // Powered by footer (inside card).
 .mission-df-footer {
   text-align: center;
-  padding: 16px 32px;
-  margin: 24px -32px -28px;
+  padding: 16px var(--mission-df-padding-x);
+  margin: 24px calc(-1 * var(--mission-df-padding-x)) calc(-1 * var(--mission-df-padding-y));
   border-top: 1px solid var(--mission-border);
 }
 
@@ -1806,17 +1811,17 @@ textarea.mission-df-custom-field__input {
 // Responsive.
 @media (max-width: 480px) {
 
+  // The form can't query its own container for its padding, so this one
+  // override stays viewport-based. The footer's negative margins follow
+  // automatically via the custom properties.
   .mission-donation-form {
-    padding: 24px 16px;
+    --mission-df-padding-y: 24px;
+    --mission-df-padding-x: 16px;
   }
+}
 
-  .mission-df-footer {
-    margin-left: -16px;
-    margin-right: -16px;
-    margin-bottom: -24px;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
+// ─── Narrow Container (small screens, sidebars, narrow columns) ─────
+@container mission-donation-form (max-width: 480px) {
 
   .mission-df-name-row {
     grid-template-columns: 1fr;
@@ -1837,8 +1842,31 @@ textarea.mission-df-custom-field__input {
     gap: 12px;
   }
 
-  .mission-df-tip-custom-btn {
-    width: 40px;
+  // Icon-only back button so it can't collide with the centered step title.
+  .mission-df-back-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .mission-df-step-header .mission-df-step-title {
+    padding: 0 28px;
+  }
+
+  // Stack the custom tip stepper below its label.
+  .mission-df-tip-custom-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mission-df-tip-custom.visible {
+    max-height: 120px;
+  }
+
+  .mission-df-tip-custom-row {
+    display: flex;
   }
 }
 
