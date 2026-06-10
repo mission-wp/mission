@@ -23,6 +23,7 @@ use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
 use MissionDP\Plugin;
+use MissionDP\Settings\SettingsService;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -812,13 +813,18 @@ class ImportService {
 			return $campaign_id;
 		}
 
-		$amount          = $this->parse_amount( (string) ( $row['amount'] ?? '0' ) );
-		$fee_amount      = $this->parse_amount( (string) ( $row['fee_amount'] ?? '0' ) );
-		$tip_amount      = $this->parse_amount( (string) ( $row['tip_amount'] ?? '0' ) );
-		$amount_refunded = $this->parse_amount( (string) ( $row['amount_refunded'] ?? '0' ) );
+		$currency = strtolower( trim( (string) ( $row['currency'] ?? '' ) ) );
+		if ( '' === $currency ) {
+			$currency = strtolower( $this->site_currency() );
+		}
+
+		$amount          = $this->parse_amount( (string) ( $row['amount'] ?? '0' ), $currency );
+		$fee_amount      = $this->parse_amount( (string) ( $row['fee_amount'] ?? '0' ), $currency );
+		$tip_amount      = $this->parse_amount( (string) ( $row['tip_amount'] ?? '0' ), $currency );
+		$amount_refunded = $this->parse_amount( (string) ( $row['amount_refunded'] ?? '0' ), $currency );
 
 		$total_amount = isset( $row['total_amount'] ) && '' !== trim( (string) $row['total_amount'] )
-			? $this->parse_amount( (string) $row['total_amount'] )
+			? $this->parse_amount( (string) $row['total_amount'], $currency )
 			: $amount + $fee_amount + $tip_amount;
 
 		$status = strtolower( trim( (string) ( $row['status'] ?? '' ) ) );
@@ -843,7 +849,7 @@ class ImportService {
 			'tip_amount'              => $tip_amount,
 			'total_amount'            => $total_amount,
 			'amount_refunded'         => $amount_refunded,
-			'currency'                => strtolower( trim( (string) ( $row['currency'] ?? 'usd' ) ) ),
+			'currency'                => $currency,
 			'payment_gateway'         => trim( (string) ( $row['payment_gateway'] ?? '' ) ),
 			'gateway_transaction_id'  => trim( (string) ( $row['gateway_transaction_id'] ?? '' ) ) ?: null,
 			'gateway_subscription_id' => trim( (string) ( $row['gateway_subscription_id'] ?? '' ) ) ?: null,
@@ -1212,18 +1218,18 @@ class ImportService {
 			$prepared['description'] = $description;
 		}
 
+		$currency = strtolower( trim( (string) ( $row['currency'] ?? '' ) ) );
+		if ( '' !== $currency ) {
+			$prepared['currency'] = $currency;
+		}
+
 		if ( isset( $row['goal_amount'] ) && '' !== trim( (string) $row['goal_amount'] ) ) {
-			$prepared['goal_amount'] = $this->parse_amount( (string) $row['goal_amount'] );
+			$prepared['goal_amount'] = $this->parse_amount( (string) $row['goal_amount'], $currency ?: null );
 		}
 
 		$goal_type = strtolower( trim( (string) ( $row['goal_type'] ?? '' ) ) );
 		if ( in_array( $goal_type, [ 'amount', 'donations', 'donors' ], true ) ) {
 			$prepared['goal_type'] = $goal_type;
-		}
-
-		$currency = trim( (string) ( $row['currency'] ?? '' ) );
-		if ( '' !== $currency ) {
-			$prepared['currency'] = strtolower( $currency );
 		}
 
 		// Only honor show_in_listings when a value is present; an empty cell must
@@ -1414,12 +1420,17 @@ class ImportService {
 			return $campaign_id;
 		}
 
-		$amount     = $this->parse_amount( (string) ( $row['amount'] ?? '0' ) );
-		$fee_amount = $this->parse_amount( (string) ( $row['fee_amount'] ?? '0' ) );
-		$tip_amount = $this->parse_amount( (string) ( $row['tip_amount'] ?? '0' ) );
+		$currency = strtolower( trim( (string) ( $row['currency'] ?? '' ) ) );
+		if ( '' === $currency ) {
+			$currency = strtolower( $this->site_currency() );
+		}
+
+		$amount     = $this->parse_amount( (string) ( $row['amount'] ?? '0' ), $currency );
+		$fee_amount = $this->parse_amount( (string) ( $row['fee_amount'] ?? '0' ), $currency );
+		$tip_amount = $this->parse_amount( (string) ( $row['tip_amount'] ?? '0' ), $currency );
 
 		$total_amount = isset( $row['total_amount'] ) && '' !== trim( (string) $row['total_amount'] )
-			? $this->parse_amount( (string) $row['total_amount'] )
+			? $this->parse_amount( (string) $row['total_amount'], $currency )
 			: $amount + $fee_amount + $tip_amount;
 
 		$status = strtolower( trim( (string) ( $row['status'] ?? '' ) ) );
@@ -1446,7 +1457,7 @@ class ImportService {
 			'fee_amount'              => $fee_amount,
 			'tip_amount'              => $tip_amount,
 			'total_amount'            => $total_amount,
-			'currency'                => strtolower( trim( (string) ( $row['currency'] ?? 'usd' ) ) ),
+			'currency'                => $currency,
 			'frequency'               => $frequency,
 			'payment_gateway'         => trim( (string) ( $row['payment_gateway'] ?? '' ) ),
 			'gateway_subscription_id' => trim( (string) ( $row['gateway_subscription_id'] ?? '' ) ) ?: null,
@@ -2227,9 +2238,10 @@ class ImportService {
 	/**
 	 * Convert a major-unit currency string into minor units.
 	 *
-	 * @param string $value Raw amount string.
+	 * @param string      $value    Raw amount string.
+	 * @param string|null $currency ISO 4217 code deciding minor-unit decimals; null uses the site currency.
 	 */
-	private function parse_amount( string $value ): int {
+	private function parse_amount( string $value, ?string $currency = null ): int {
 		$cleaned = preg_replace( '/[^0-9.\-]/', '', $value );
 
 		if ( null === $cleaned || '' === $cleaned || ! is_numeric( $cleaned ) ) {
@@ -2237,9 +2249,21 @@ class ImportService {
 		}
 
 		$major      = (float) $cleaned;
-		$multiplier = 10 ** Currency::get_decimals( 'USD' );
+		$multiplier = 10 ** Currency::get_decimals( $currency ?: $this->site_currency() );
 
 		return (int) round( $major * $multiplier );
+	}
+
+	/**
+	 * The site's configured currency code.
+	 *
+	 * Read per call rather than cached: the handler's ImportService instance
+	 * lives for the whole request, and get_option is already cached.
+	 *
+	 * @return string
+	 */
+	private function site_currency(): string {
+		return (string) ( new SettingsService() )->get( 'currency', 'USD' );
 	}
 
 	/**
