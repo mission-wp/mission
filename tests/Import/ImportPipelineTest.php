@@ -524,6 +524,54 @@ class ImportPipelineTest extends WP_UnitTestCase {
 		$this->assertSame( $job->id, Transaction::find_by_gateway_transaction_id( 'ch_fresh_1' )->import_job_id );
 	}
 
+	/**
+	 * Test the update strategy never mutates the dedupe key itself.
+	 *
+	 * Duplicate detection matches on gateway_transaction_id and the update
+	 * branch writes every prepared field back, so this property currently
+	 * holds only because the matched key and the written key come from the
+	 * same CSV cell. This pins that invariant: if a refactor ever lets an
+	 * update change the key, re-imports would stop deduplicating and
+	 * silently create duplicates.
+	 */
+	public function test_update_strategy_never_mutates_the_dedupe_key(): void {
+		$donor = new Donor( [ 'email' => 'pin@example.com', 'first_name' => 'Pin' ] );
+		$donor->save();
+
+		$organic = new Transaction(
+			[
+				'status'                 => 'completed',
+				'donor_id'               => $donor->id,
+				'amount'                 => 1000,
+				'total_amount'           => 1000,
+				'payment_gateway'        => 'stripe',
+				'gateway_transaction_id' => 'ch_pin_1',
+				'date_completed'         => current_time( 'mysql', true ),
+			]
+		);
+		$organic->save();
+
+		$headers = [ 'Donor Email', 'Amount', 'Status', 'Charge ID' ];
+		$rows    = [ [ 'pin@example.com', '20.00', 'completed', 'ch_pin_1' ] ];
+
+		// Two consecutive update imports of the same row. If the first run
+		// mutated the key, the second run would fail to match and insert a
+		// duplicate instead of updating.
+		foreach ( [ 'first', 'second' ] as $run ) {
+			$job = $this->import_csv( $this->write_csv( $headers, $rows ), 'transactions', 'update' );
+
+			$this->assertSame( ImportJob::STATUS_COMPLETED, $job->status, "{$run} run did not complete." );
+			$this->assertSame( 1, $job->updated, "{$run} run should update exactly one row." );
+			$this->assertSame( 0, $job->imported, "{$run} run should create nothing." );
+		}
+
+		$this->assertSame( 1, Transaction::count() );
+
+		$row = Transaction::find( $organic->id );
+		$this->assertSame( 'ch_pin_1', $row->gateway_transaction_id );
+		$this->assertSame( 2000, $row->amount );
+	}
+
 	// -------------------------------------------------------------------------
 	// Cancellation
 	// -------------------------------------------------------------------------
