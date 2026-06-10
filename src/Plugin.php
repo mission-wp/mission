@@ -133,6 +133,10 @@ class Plugin {
 		$this->blocks_module = new Blocks\BlocksModule();
 		$this->blocks_module->init();
 
+		// Initialize shortcodes module (page-builder equivalents of the blocks).
+		$shortcodes_module = new Shortcodes\ShortcodesModule();
+		$shortcodes_module->init();
+
 		// Initialize admin module.
 		$this->admin_module = new Admin\AdminModule();
 		$this->admin_module->init();
