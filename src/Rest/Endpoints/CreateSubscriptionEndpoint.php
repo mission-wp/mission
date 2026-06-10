@@ -90,12 +90,6 @@ class CreateSubscriptionEndpoint {
 						'default'           => 0,
 						'sanitize_callback' => 'absint',
 					],
-					'currency'             => [
-						'required'          => false,
-						'type'              => 'string',
-						'default'           => 'usd',
-						'sanitize_callback' => static fn( $val ) => strtolower( sanitize_text_field( $val ) ),
-					],
 					'donor_email'          => [
 						'required'          => true,
 						'type'              => 'string',
@@ -275,25 +269,31 @@ class CreateSubscriptionEndpoint {
 		$tip_amount      = $request->get_param( 'tip_amount' );
 		$fee_amount      = $request->get_param( 'fee_amount' );
 		$fee_mode        = $request->get_param( 'fee_mode' );
-		$currency        = $request->get_param( 'currency' );
+
+		// Charges are always denominated in the site currency; a client-supplied
+		// currency is never trusted.
+		$currency = strtolower( (string) $this->settings->get( 'currency', 'USD' ) );
 
 		// Preserve the original donation amount (before fee inclusion) for the description.
 		$original_donation = $donation_amount - $fee_amount;
 
-		// Mission absorbs the Stripe fee on its own tip so the nonprofit never
-		// pays higher fees because of our tip.
-		[ $fee_rate, $fee_fixed ] = TipCalculator::get_fee_params_from_settings( $this->settings );
-		TipCalculator::absorb_fee( $donation_amount, $tip_amount, $fee_rate, $fee_fixed );
-
+		// Validate the donor's chosen donation, before fee recovery and fee
+		// absorption inflate it.
 		$minimum_check = $this->validate_minimum_amount(
-			$donation_amount,
+			$original_donation,
 			$request->get_param( 'source_post_id' ),
 			$request->get_param( 'form_id' ),
+			$currency,
 		);
 
 		if ( is_wp_error( $minimum_check ) ) {
 			return $minimum_check;
 		}
+
+		// Mission absorbs the Stripe fee on its own tip so the nonprofit never
+		// pays higher fees because of our tip.
+		[ $fee_rate, $fee_fixed ] = TipCalculator::get_fee_params_from_settings( $this->settings );
+		TipCalculator::absorb_fee( $donation_amount, $tip_amount, $fee_rate, $fee_fixed, $currency );
 
 		$requested_account_id = (string) $request->get_param( 'stripe_account_id' );
 		$resolved_account     = '' !== $requested_account_id
@@ -468,7 +468,7 @@ class CreateSubscriptionEndpoint {
 
 		// Store fee rates at time of transaction.
 		$transaction->add_meta( 'stripe_fee_percent', (string) $this->settings->get( 'stripe_fee_percent', 2.9 ) );
-		$transaction->add_meta( 'stripe_fee_fixed', (string) $this->settings->get( 'stripe_fee_fixed', 30 ) );
+		$transaction->add_meta( 'stripe_fee_fixed', (string) $fee_fixed );
 
 		// Store the platform fee mode so historical records are accurate.
 		$transaction->add_meta( 'fee_mode', $fee_mode );

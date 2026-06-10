@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Traits;
 
+use MissionDP\Currency\Currency;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -17,32 +18,48 @@ defined( 'ABSPATH' ) || exit;
 trait MinimumAmountTrait {
 
 	/**
-	 * Absolute minimum donation in minor units ($1.00).
-	 */
-	private const HARD_FLOOR = 100;
-
-	/**
-	 * Default block minimum in minor units ($5.00).
+	 * Default block minimum in minor units of the site currency.
 	 */
 	private const DEFAULT_BLOCK_MINIMUM = 500;
 
 	/**
 	 * Validate the donation amount against the configured minimum.
 	 *
-	 * Enforces a hard floor of $1.00 unconditionally. When form_id and
-	 * source_post_id are available, looks up the block's minimumAmount
-	 * and validates against that.
+	 * Enforces a hard floor of one major currency unit, raised to Stripe's
+	 * published minimum charge where higher (e.g. ¥50), and whole-unit
+	 * amounts for currencies that can't be charged in fractions (ISK, UGX).
+	 * When form_id and source_post_id are available, looks up the block's
+	 * minimumAmount and validates against that.
 	 *
-	 * @param int    $amount         Donation amount in minor units (cents).
+	 * @param int    $amount         Donation amount in minor units.
 	 * @param int    $source_post_id Post ID containing the donation form block.
 	 * @param string $form_id        The block's formId attribute.
+	 * @param string $currency       ISO 4217 currency code of the amount.
 	 * @return WP_Error|true True if valid, WP_Error if below minimum.
 	 */
-	private function validate_minimum_amount( int $amount, int $source_post_id, string $form_id ): WP_Error|true {
-		if ( $amount < self::HARD_FLOOR ) {
+	private function validate_minimum_amount( int $amount, int $source_post_id, string $form_id, string $currency ): WP_Error|true {
+		$hard_floor = Currency::minimum_charge( $currency );
+
+		if ( $amount < $hard_floor ) {
 			return new WP_Error(
 				'donation_below_minimum',
-				__( 'Donation amount must be at least $1.00.', 'mission-donation-platform' ),
+				sprintf(
+					/* translators: %s: formatted minimum amount */
+					__( 'Donation amount must be at least %s.', 'mission-donation-platform' ),
+					Currency::format_amount( $hard_floor, $currency )
+				),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( 0 !== $amount % Currency::rounding_unit( $currency ) ) {
+			return new WP_Error(
+				'donation_invalid_amount',
+				sprintf(
+					/* translators: %s: ISO currency code (e.g. "ISK") */
+					__( 'Donations in %s must be a whole number.', 'mission-donation-platform' ),
+					strtoupper( $currency )
+				),
 				[ 'status' => 400 ]
 			);
 		}
@@ -60,7 +77,7 @@ trait MinimumAmountTrait {
 				sprintf(
 					/* translators: %s: formatted minimum amount */
 					__( 'Donation amount must be at least %s.', 'mission-donation-platform' ),
-					'$' . number_format( $block_minimum / 100, 2 )
+					Currency::format_amount( $block_minimum, $currency )
 				),
 				[ 'status' => 400 ]
 			);

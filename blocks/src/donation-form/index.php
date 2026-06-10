@@ -10,6 +10,7 @@
 
 use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Currency\Currency;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -67,7 +68,7 @@ $tip_percentages     = $settings['tipPercentages'] ?? [ 5, 10, 15, 20 ];
 $default_tip_percent = 15;
 
 // Primary color: per-form override wins, then global setting, then fallback.
-$mission_settings = get_option( 'missiondp_settings', [] );
+$mission_settings = ( new SettingsService() )->get_all();
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $settings['primaryColor'] ) ? $settings['primaryColor'] : $global_primary;
 

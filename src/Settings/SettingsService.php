@@ -7,6 +7,8 @@
 
 namespace MissionDP\Settings;
 
+use MissionDP\Tip\TipCalculator;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -27,9 +29,19 @@ class SettingsService {
 	 * @return array<string, mixed>
 	 */
 	public function get_all(): array {
-		$stored = get_option( self::OPTION_NAME, [] );
+		$stored   = get_option( self::OPTION_NAME, [] );
+		$stored   = is_array( $stored ) ? $stored : [];
+		$defaults = $this->get_defaults();
 
-		return array_replace_recursive( $this->get_defaults(), is_array( $stored ) ? $stored : [] );
+		// The fixed-fee default is denominated in minor units, so it depends
+		// on the configured currency (30 for USD, 0 for JPY, 300 for KWD).
+		if ( ! isset( $stored['stripe_fee_fixed'] ) ) {
+			$defaults['stripe_fee_fixed'] = TipCalculator::default_fixed_fee(
+				(string) ( $stored['currency'] ?? $defaults['currency'] )
+			);
+		}
+
+		return array_replace_recursive( $defaults, $stored );
 	}
 
 	/**
@@ -53,6 +65,18 @@ class SettingsService {
 	 */
 	public function update( array $values ): array {
 		$current = $this->get_all();
+
+		// A stored fixed fee is denominated in the old currency's minor units,
+		// so it is meaningless after a currency change. Reset it to the new
+		// currency's default unless the same request sets it explicitly.
+		if (
+			isset( $values['currency'] )
+			&& strtoupper( (string) $values['currency'] ) !== strtoupper( (string) $current['currency'] )
+			&& ! isset( $values['stripe_fee_fixed'] )
+		) {
+			$values['stripe_fee_fixed'] = TipCalculator::default_fixed_fee( (string) $values['currency'] );
+		}
+
 		$updated = array_replace_recursive( $current, $values );
 
 		update_option( self::OPTION_NAME, $updated );

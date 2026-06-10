@@ -1,13 +1,16 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { getCurrencySymbol } from '@shared/currency';
 import { minorToMajor } from '@shared/currencies';
+import { defaultFixedFee } from '@shared/fees';
 
 export default function PaymentsTab( { localState, updateField } ) {
+  const currency = window.missiondpFeeSettings?.currency || 'USD';
   const feePercent = window.missiondpFeeSettings?.stripeFeePercent ?? 2.9;
-  const feeFixed = window.missiondpFeeSettings?.stripeFeeFixed ?? 30;
+  const feeFixed =
+    window.missiondpFeeSettings?.stripeFeeFixed ?? defaultFixedFee( currency );
   const stripeAccounts = window.missiondpFeeSettings?.stripeAccounts ?? [];
-  const symbol = getCurrencySymbol();
-  const fixedDisplay = minorToMajor( feeFixed, 'USD' );
+  const symbol = getCurrencySymbol( currency );
+  const fixedDisplay = minorToMajor( feeFixed, currency );
 
   const selectedAccountId = localState.stripeAccountId ?? '';
   const selectedAccountExists =

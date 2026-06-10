@@ -9,6 +9,7 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Rest\RestModule;
 use MissionDP\Settings\SettingsService;
+use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -135,6 +136,12 @@ class SettingsEndpoint {
 			$values[ $key ] = $this->sanitize_value( $key, $value );
 		}
 
+		// Clamp the fixed fee against the currency it will be denominated in.
+		if ( isset( $values['stripe_fee_fixed'] ) ) {
+			$currency                   = (string) ( $values['currency'] ?? $this->settings->get( 'currency', 'USD' ) );
+			$values['stripe_fee_fixed'] = min( $values['stripe_fee_fixed'], TipCalculator::max_fixed_fee( $currency ) );
+		}
+
 		$updated = $this->settings->update( $values );
 
 		unset( $updated['stripe_site_token'], $updated['stripe_webhook_secret'] );
@@ -168,7 +175,7 @@ class SettingsEndpoint {
 			'donor_portal_enabled',
 			'delete_data_on_uninstall' => (bool) $value,
 			'stripe_fee_percent'  => min( 5.0, max( 0.5, round( (float) $value, 2 ) ) ),
-			'stripe_fee_fixed'    => min( 100, max( 0, (int) $value ) ),
+			'stripe_fee_fixed'    => max( 0, (int) $value ),
 			'email_from_name'     => sanitize_text_field( $value ),
 			'email_from_address'  => sanitize_email( $value ),
 			'email_reply_to'      => sanitize_email( $value ),
