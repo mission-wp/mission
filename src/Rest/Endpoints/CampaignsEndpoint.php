@@ -592,7 +592,7 @@ class CampaignsEndpoint {
 			 *
 			 * @param int $campaign_id Campaign ID.
 			 */
-			do_action( 'missiondp_campaign_goal_updated', $campaign->id );
+			do_action( 'mission_campaign_goal_updated', $campaign->id );
 		}
 
 		/**
@@ -601,7 +601,7 @@ class CampaignsEndpoint {
 		 * @param int      $campaign_id Campaign ID.
 		 * @param Campaign $campaign    Campaign model.
 		 */
-		do_action( 'missiondp_campaign_updated', $campaign->id, $campaign );
+		do_action( 'mission_campaign_updated', $campaign->id, $campaign );
 
 		return new WP_REST_Response( $this->prepare_single_campaign( $campaign ), 200 );
 	}

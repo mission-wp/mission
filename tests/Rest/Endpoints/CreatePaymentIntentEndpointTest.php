@@ -1086,11 +1086,11 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$callback   = static function ( $requested, $used ) use ( &$fired_with ) {
 			$fired_with = [ $requested, $used ];
 		};
-		add_action( 'missiondp_stripe_account_fallback', $callback, 10, 2 );
+		add_action( 'mission_stripe_account_fallback', $callback, 10, 2 );
 
 		$this->make_request( [ 'stripe_account_id' => 'acct_does_not_exist' ] );
 
-		remove_action( 'missiondp_stripe_account_fallback', $callback, 10 );
+		remove_action( 'mission_stripe_account_fallback', $callback, 10 );
 
 		$this->assertNotNull( $fired_with );
 		$this->assertSame( 'acct_does_not_exist', $fired_with[0] );
@@ -1108,11 +1108,11 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$callback = static function () use ( &$fired ) {
 			$fired = true;
 		};
-		add_action( 'missiondp_stripe_account_fallback', $callback, 10, 2 );
+		add_action( 'mission_stripe_account_fallback', $callback, 10, 2 );
 
 		$this->make_request( [ 'stripe_account_id' => '' ] );
 
-		remove_action( 'missiondp_stripe_account_fallback', $callback, 10 );
+		remove_action( 'mission_stripe_account_fallback', $callback, 10 );
 
 		$this->assertFalse( $fired );
 		$this->assertSame( 'Bearer tok_test_abc123', $this->last_api_auth );

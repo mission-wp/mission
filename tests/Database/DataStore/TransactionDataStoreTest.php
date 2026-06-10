@@ -320,7 +320,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 
 		$fired = false;
 		add_action(
-			'missiondp_transaction_status_transition',
+			'mission_transaction_status_transition',
 			function ( $d, $old, $new ) use ( &$fired ) {
 				$fired = true;
 				$this->assertSame( 'pending', $old );
@@ -333,7 +333,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 		$transaction->status = 'completed';
 		$this->store->update( $transaction );
 
-		$this->assertTrue( $fired, 'missiondp_transaction_status_transition hook did not fire.' );
+		$this->assertTrue( $fired, 'mission_transaction_status_transition hook did not fire.' );
 	}
 
 	/**
@@ -345,7 +345,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 
 		$fired = false;
 		add_action(
-			'missiondp_transaction_status_pending_to_completed',
+			'mission_transaction_status_pending_to_completed',
 			function () use ( &$fired ) {
 				$fired = true;
 			}
@@ -354,7 +354,7 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 		$transaction->status = 'completed';
 		$this->store->update( $transaction );
 
-		$this->assertTrue( $fired, 'missiondp_transaction_status_pending_to_completed hook did not fire.' );
+		$this->assertTrue( $fired, 'mission_transaction_status_pending_to_completed hook did not fire.' );
 	}
 
 	// -------------------------------------------------------------------------

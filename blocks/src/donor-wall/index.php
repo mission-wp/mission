@@ -368,5 +368,5 @@ $output = ob_get_clean();
  * @param Campaign|null $campaign   Campaign model.
  * @param array         $attributes Block attributes.
  */
-echo wp_kses( apply_filters( 'missiondp_donor_wall_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+echo wp_kses( apply_filters( 'mission_donor_wall_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 } )( $attributes, $content, $block );

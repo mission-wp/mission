@@ -62,7 +62,7 @@ class ColumnMapper {
 		 * @param array<string, string> $map  Alias => canonical key. Aliases are pre-normalized (lowercase, alphanumeric).
 		 * @param string                $type Data type.
 		 */
-		return apply_filters( "missiondp_import_{$type}_column_map", $map, $type );
+		return apply_filters( "mission_import_{$type}_column_map", $map, $type );
 	}
 
 	/**

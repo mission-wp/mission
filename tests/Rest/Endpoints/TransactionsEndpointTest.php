@@ -606,7 +606,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$hook_txn   = null;
 
 		$this->add_tracked_action(
-			'missiondp_transaction_created',
+			'mission_transaction_created',
 			function ( $transaction ) use ( &$hook_fired, &$hook_txn ) {
 				$hook_fired = true;
 				$hook_txn   = $transaction;
@@ -619,7 +619,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			'donation_amount'  => 5000,
 		] );
 
-		$this->assertTrue( $hook_fired, 'missiondp_transaction_created hook should fire.' );
+		$this->assertTrue( $hook_fired, 'mission_transaction_created hook should fire.' );
 		$this->assertInstanceOf( Transaction::class, $hook_txn );
 		$this->assertSame( 'completed', $hook_txn->status );
 	}
@@ -693,11 +693,11 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 			];
 		};
 
-		add_action( 'missiondp_transaction_status_transition', $generic_callback, 10, 3 );
-		$this->hooks_to_remove[] = [ 'missiondp_transaction_status_transition', $generic_callback, 10 ];
+		add_action( 'mission_transaction_status_transition', $generic_callback, 10, 3 );
+		$this->hooks_to_remove[] = [ 'mission_transaction_status_transition', $generic_callback, 10 ];
 
 		$this->add_tracked_action(
-			'missiondp_transaction_status_completed_to_refunded',
+			'mission_transaction_status_completed_to_refunded',
 			function () use ( &$specific_fired ) {
 				$specific_fired = true;
 			},

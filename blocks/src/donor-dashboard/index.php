@@ -178,7 +178,7 @@ else :
 	 * @param array                $panels Panel definitions keyed by panel ID.
 	 * @param \MissionDP\Models\Donor $donor  The current donor.
 	 */
-	$panels = apply_filters( 'missiondp_donor_dashboard_panels', $panels, $donor );
+	$panels = apply_filters( 'mission_donor_dashboard_panels', $panels, $donor );
 
 	$panel_labels = array_combine(
 		array_keys( $panels ),
@@ -202,7 +202,7 @@ else :
 	 * @param array                $nav_items Navigation items.
 	 * @param \MissionDP\Models\Donor $donor     The current donor.
 	 */
-	$nav_items = apply_filters( 'missiondp_donor_dashboard_nav_items', $nav_items, $donor );
+	$nav_items = apply_filters( 'mission_donor_dashboard_nav_items', $nav_items, $donor );
 
 	// Build context and state via the context builder.
 	$builder  = new \MissionDP\DonorDashboard\DashboardContextBuilder( $donor, $mission_settings );
@@ -286,5 +286,5 @@ $output = ob_get_clean();
  * @param string $output     HTML output.
  * @param array  $attributes Block attributes.
  */
-echo wp_kses( apply_filters( 'missiondp_donor_dashboard_output', $output, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+echo wp_kses( apply_filters( 'mission_donor_dashboard_output', $output, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 } )( $attributes, $content, $block );

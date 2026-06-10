@@ -70,7 +70,7 @@ class CampaignDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Campaign $model The campaign. */
-		do_action( 'missiondp_campaign_created', $model );
+		do_action( 'mission_campaign_created', $model );
 
 		return $model->id;
 	}
@@ -197,7 +197,7 @@ class CampaignDataStore implements DataStoreInterface {
 	 * Recompute a campaign's aggregates from the transactions table.
 	 *
 	 * Rebuilds total_raised / transaction_count / donor_count and the three test_*
-	 * mirrors. Fires missiondp_campaign_aggregates_updated so dashboard caches
+	 * mirrors. Fires mission_campaign_aggregates_updated so dashboard caches
 	 * invalidate. No-op if the campaign row doesn't exist.
 	 *
 	 * @param int $campaign_id Campaign ID.
@@ -256,7 +256,7 @@ class CampaignDataStore implements DataStoreInterface {
 			 * @param int  $campaign_id The campaign ID.
 			 * @param bool $is_test     Always false here; recompute updates both arms together.
 			 */
-			do_action( 'missiondp_campaign_aggregates_updated', $campaign_id, false );
+			do_action( 'mission_campaign_aggregates_updated', $campaign_id, false );
 		}
 	}
 

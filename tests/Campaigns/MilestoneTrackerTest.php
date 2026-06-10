@@ -327,7 +327,7 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		$donor = $this->create_donor();
 
 		$fired = [];
-		add_action( 'missiondp_campaign_milestone_reached', function ( $c, $id ) use ( &$fired ) {
+		add_action( 'mission_campaign_milestone_reached', function ( $c, $id ) use ( &$fired ) {
 			$fired[] = $id;
 		}, 10, 2 );
 

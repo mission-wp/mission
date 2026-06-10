@@ -277,7 +277,7 @@ class Subscription extends Model {
 			 * @param int          $old_amount     Previous donation amount in minor units.
 			 * @param int          $new_amount     New donation amount in minor units.
 			 */
-			do_action( 'missiondp_subscription_amount_changed', $this, $old_amount, $donation_amount );
+			do_action( 'mission_subscription_amount_changed', $this, $old_amount, $donation_amount );
 		}
 
 		return true;
@@ -543,7 +543,7 @@ class Subscription extends Model {
 		 * @param Subscription $subscription The subscription.
 		 * @param Transaction  $transaction  The renewal transaction.
 		 */
-		do_action( 'missiondp_subscription_renewed', $this, $transaction );
+		do_action( 'mission_subscription_renewed', $this, $transaction );
 
 		return $transaction;
 	}

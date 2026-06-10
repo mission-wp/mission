@@ -92,14 +92,14 @@ class ImportPipelineTest extends WP_UnitTestCase {
 
 		update_option( SettingsService::OPTION_NAME, [ 'test_mode' => false ] );
 
-		add_filter( 'missiondp_import_batch_size', [ $this, 'filter_batch_size' ] );
+		add_filter( 'mission_import_batch_size', [ $this, 'filter_batch_size' ] );
 	}
 
 	/**
 	 * Clean up after each test.
 	 */
 	public function tear_down(): void {
-		remove_filter( 'missiondp_import_batch_size', [ $this, 'filter_batch_size' ] );
+		remove_filter( 'mission_import_batch_size', [ $this, 'filter_batch_size' ] );
 
 		foreach ( $this->temp_files as $file ) {
 			if ( file_exists( $file ) ) {

@@ -227,5 +227,5 @@ $output = ob_get_clean();
  * @param string $output     HTML output.
  * @param array  $attributes Block attributes.
  */
-echo wp_kses( apply_filters( 'missiondp_donate_button_output', $output, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+echo wp_kses( apply_filters( 'mission_donate_button_output', $output, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 } )( $attributes, $content, $block );

@@ -349,13 +349,13 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test resolve settings are filterable via missiondp_donation_form_settings.
+	 * Test resolve settings are filterable via mission_donation_form_settings.
 	 */
 	public function test_resolve_settings_are_filterable(): void {
 		$filter_args = [];
 
 		add_filter(
-			'missiondp_donation_form_settings',
+			'mission_donation_form_settings',
 			function ( $settings, $attributes, $campaign_id ) use ( &$filter_args ) {
 				$filter_args = [
 					'settings'    => $settings,
@@ -380,6 +380,6 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		// Filter modified the output.
 		$this->assertSame( 'injected', $result['customKey'] );
 
-		remove_all_filters( 'missiondp_donation_form_settings' );
+		remove_all_filters( 'mission_donation_form_settings' );
 	}
 }

@@ -343,7 +343,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$subscription->save();
 
 		// Fire the hook directly (update_amount calls an external API).
-		do_action( 'missiondp_subscription_amount_changed', $subscription, 2500, 5000 );
+		do_action( 'mission_subscription_amount_changed', $subscription, 2500, 5000 );
 
 		$entries = ActivityLog::query( [ 'event' => 'subscription_amount_increased' ] );
 		$this->assertCount( 1, $entries );
@@ -372,7 +372,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		] );
 		$subscription->save();
 
-		do_action( 'missiondp_subscription_amount_changed', $subscription, 5000, 2500 );
+		do_action( 'mission_subscription_amount_changed', $subscription, 5000, 2500 );
 
 		$entries = ActivityLog::query( [ 'event' => 'subscription_amount_decreased' ] );
 		$this->assertCount( 1, $entries );
@@ -467,8 +467,8 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		// phpcs:enable
 
 		$filter = fn() => 40;
-		add_filter( 'missiondp_activity_log_retention_days', $filter );
-		$this->hooks_to_remove[] = [ 'missiondp_activity_log_retention_days', $filter, 10 ];
+		add_filter( 'mission_activity_log_retention_days', $filter );
+		$this->hooks_to_remove[] = [ 'mission_activity_log_retention_days', $filter, 10 ];
 
 		Plugin::instance()->get_activity_feed_module()->run_prune();
 

@@ -112,7 +112,7 @@ class ProfileEndpoint {
 		 *
 		 * @param Donor $donor The updated donor.
 		 */
-		do_action( 'missiondp_donor_profile_updated', $donor );
+		do_action( 'mission_donor_profile_updated', $donor );
 
 		return new WP_REST_Response( $this->prepare_profile( $donor ) );
 	}

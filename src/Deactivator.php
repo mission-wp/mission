@@ -27,7 +27,7 @@ class Deactivator {
 		/**
 		 * Fires before the plugin is deactivated.
 		 */
-		do_action( 'missiondp_plugin_deactivating' );
+		do_action( 'mission_plugin_deactivating' );
 
 		self::clear_scheduled_events();
 		self::clear_action_scheduler_actions();

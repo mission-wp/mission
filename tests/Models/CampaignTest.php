@@ -548,10 +548,10 @@ class CampaignTest extends WP_UnitTestCase {
 	/**
 	 * Test mission_campaign_created action fires on insert.
 	 */
-	public function test_missiondp_campaign_created_action_fires(): void {
+	public function test_mission_campaign_created_action_fires(): void {
 		$fired = false;
 
-		add_action( 'missiondp_campaign_created', function () use ( &$fired ) {
+		add_action( 'mission_campaign_created', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

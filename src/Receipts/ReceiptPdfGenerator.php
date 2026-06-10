@@ -94,9 +94,9 @@ class ReceiptPdfGenerator {
 	 * @return array{name: string, address: string, ein: string}
 	 */
 	private function get_org_data(): array {
-		$name    = apply_filters( 'missiondp_receipt_org_name', $this->settings->get( 'org_name', get_bloginfo( 'name' ) ) );
-		$address = apply_filters( 'missiondp_receipt_org_address', $this->settings->format_org_address() );
-		$ein     = apply_filters( 'missiondp_receipt_org_ein', $this->settings->get( 'org_ein', '' ) );
+		$name    = apply_filters( 'mission_receipt_org_name', $this->settings->get( 'org_name', get_bloginfo( 'name' ) ) );
+		$address = apply_filters( 'mission_receipt_org_address', $this->settings->format_org_address() );
+		$ein     = apply_filters( 'mission_receipt_org_ein', $this->settings->get( 'org_ein', '' ) );
 
 		return [
 			'name'    => $name,
@@ -167,7 +167,7 @@ class ReceiptPdfGenerator {
 			'mission-donation-platform'
 		);
 
-		return apply_filters( 'missiondp_receipt_disclaimer', $disclaimer );
+		return apply_filters( 'mission_receipt_disclaimer', $disclaimer );
 	}
 
 	/**
@@ -187,7 +187,7 @@ class ReceiptPdfGenerator {
 		 * @param string $html The full HTML document.
 		 * @param array  $data Template data.
 		 */
-		$html = apply_filters( 'missiondp_receipt_html', $html, $data );
+		$html = apply_filters( 'mission_receipt_html', $html, $data );
 
 		$options = new Options();
 		$options->set( 'isRemoteEnabled', false );
@@ -201,7 +201,7 @@ class ReceiptPdfGenerator {
 		 * @param Options $options Dompdf Options object.
 		 * @param array   $data    Template data.
 		 */
-		$options = apply_filters( 'missiondp_receipt_pdf_options', $options, $data );
+		$options = apply_filters( 'mission_receipt_pdf_options', $options, $data );
 
 		$dompdf = new Dompdf( $options );
 		$dompdf->loadHtml( $html );

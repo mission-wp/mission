@@ -713,7 +713,7 @@ class StripeWebhookEndpointTest extends WP_UnitTestCase {
 		$hook_fired = false;
 
 		$this->add_tracked_action(
-			'missiondp_webhook_some.unknown.event',
+			'mission_webhook_some.unknown.event',
 			function () use ( &$hook_fired ) {
 				$hook_fired = true;
 			}
@@ -1079,7 +1079,7 @@ class StripeWebhookEndpointTest extends WP_UnitTestCase {
 		$hook_fired = false;
 
 		$this->add_tracked_action(
-			'missiondp_subscription_payment_failed',
+			'mission_subscription_payment_failed',
 			function ( $sub ) use ( &$hook_fired ) {
 				$hook_fired = true;
 			}
@@ -1092,7 +1092,7 @@ class StripeWebhookEndpointTest extends WP_UnitTestCase {
 			],
 		] );
 
-		$this->assertTrue( $hook_fired, 'missiondp_subscription_payment_failed hook should fire.' );
+		$this->assertTrue( $hook_fired, 'mission_subscription_payment_failed hook should fire.' );
 	}
 
 	// =========================================================================

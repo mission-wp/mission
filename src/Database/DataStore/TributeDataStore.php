@@ -43,7 +43,7 @@ class TributeDataStore implements DataStoreInterface {
 		 *
 		 * @param Tribute $model The tribute.
 		 */
-		do_action( 'missiondp_tribute_created', $model );
+		do_action( 'mission_tribute_created', $model );
 
 		return $model->id;
 	}
@@ -115,7 +115,7 @@ class TributeDataStore implements DataStoreInterface {
 		 *
 		 * @param Tribute $model The tribute.
 		 */
-		do_action( 'missiondp_tribute_updated', $model );
+		do_action( 'mission_tribute_updated', $model );
 
 		return true;
 	}
@@ -173,7 +173,7 @@ class TributeDataStore implements DataStoreInterface {
 			 *
 			 * @param Tribute $tribute The deleted tribute.
 			 */
-			do_action( 'missiondp_tribute_deleted', $tribute );
+			do_action( 'mission_tribute_deleted', $tribute );
 		}
 
 		return false !== $result;

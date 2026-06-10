@@ -72,58 +72,58 @@ class ActivityFeedModule {
 	 */
 	private function register_event_listeners(): void {
 		// Donation completed (via status transition or created directly as completed).
-		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
-		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
+		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
 		// Donation refunded.
-		add_action( 'missiondp_transaction_status_completed_to_refunded', [ $this, 'on_donation_refunded' ] );
+		add_action( 'mission_transaction_status_completed_to_refunded', [ $this, 'on_donation_refunded' ] );
 
 		// Subscription created.
-		add_action( 'missiondp_subscription_created', [ $this, 'on_subscription_created' ] );
+		add_action( 'mission_subscription_created', [ $this, 'on_subscription_created' ] );
 
 		// Subscription cancelled.
-		add_action( 'missiondp_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
 		// Subscription failed.
-		add_action( 'missiondp_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
-		add_action( 'missiondp_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
+		add_action( 'mission_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
+		add_action( 'mission_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
 
 		// Subscription amount changed.
-		add_action( 'missiondp_subscription_amount_changed', [ $this, 'on_subscription_amount_changed' ], 10, 3 );
+		add_action( 'mission_subscription_amount_changed', [ $this, 'on_subscription_amount_changed' ], 10, 3 );
 
 		// Campaign created.
-		add_action( 'missiondp_campaign_created', [ $this, 'on_campaign_created' ] );
+		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
 
 		// Campaign milestone reached.
-		add_action( 'missiondp_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
+		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
 
 		// Plugin updated.
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_complete' ], 10, 2 );
 
 		// Plugin deactivated.
-		add_action( 'missiondp_plugin_deactivating', [ $this, 'on_plugin_deactivating' ] );
+		add_action( 'mission_plugin_deactivating', [ $this, 'on_plugin_deactivating' ] );
 
 		// Admin notification sent.
-		add_action( 'missiondp_admin_notification_sent', [ $this, 'on_admin_notification_sent' ], 10, 3 );
+		add_action( 'mission_admin_notification_sent', [ $this, 'on_admin_notification_sent' ], 10, 3 );
 
 		// Payment failed.
-		add_action( 'missiondp_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'mission_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
 
 		// Webhook processed.
-		add_action( 'missiondp_webhook_event_processed', [ $this, 'on_webhook_processed' ], 10, 3 );
+		add_action( 'mission_webhook_event_processed', [ $this, 'on_webhook_processed' ], 10, 3 );
 
 		// Email sent / failed.
-		add_action( 'missiondp_email_sent', [ $this, 'on_email_sent' ], 10, 2 );
-		add_action( 'missiondp_email_failed', [ $this, 'on_email_failed' ], 10, 2 );
+		add_action( 'mission_email_sent', [ $this, 'on_email_sent' ], 10, 2 );
+		add_action( 'mission_email_failed', [ $this, 'on_email_failed' ], 10, 2 );
 
 		// Settings updated.
-		add_action( 'missiondp_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
+		add_action( 'mission_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
 
 		// Stripe account fallback (form requested a disconnected account, used default instead).
-		add_action( 'missiondp_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
+		add_action( 'mission_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
 	}
 
 	/**
@@ -175,7 +175,7 @@ class ActivityFeedModule {
 	 */
 	public function run_prune(): void {
 		/** @var int $days Number of days to retain activity log entries. */
-		$days = (int) apply_filters( 'missiondp_activity_log_retention_days', 90 );
+		$days = (int) apply_filters( 'mission_activity_log_retention_days', 90 );
 
 		/** @var \MissionDP\Database\DataStore\ActivityLogDataStore $store */
 		$store = ActivityLog::store();

@@ -220,7 +220,7 @@ class TransactionsEndpoint {
 		 * @param int    $year         Calendar year.
 		 * @param array  $receipt_data Receipt data.
 		 */
-		$filename = apply_filters( 'missiondp_receipt_filename', $filename, $donor, $year, $receipt_data );
+		$filename = apply_filters( 'mission_receipt_filename', $filename, $donor, $year, $receipt_data );
 
 		$this->stream_pdf( $pdf, $filename );
 
@@ -285,7 +285,7 @@ class TransactionsEndpoint {
 		);
 
 		/** This filter is documented in TransactionsEndpoint::get_receipt_pdf(). */
-		$filename = apply_filters( 'missiondp_receipt_filename', $filename, $donor, null, $transaction_data );
+		$filename = apply_filters( 'mission_receipt_filename', $filename, $donor, null, $transaction_data );
 
 		$this->stream_pdf( $pdf, $filename );
 

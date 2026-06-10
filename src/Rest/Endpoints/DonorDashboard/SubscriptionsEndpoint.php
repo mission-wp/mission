@@ -443,7 +443,7 @@ class SubscriptionsEndpoint {
 		 *
 		 * @param Subscription $subscription The subscription.
 		 */
-		do_action( 'missiondp_subscription_payment_method_updated', $subscription );
+		do_action( 'mission_subscription_payment_method_updated', $subscription );
 
 		return new WP_REST_Response( $card );
 	}

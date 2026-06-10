@@ -218,7 +218,7 @@ class ReportingService {
 
 		return [
 			'is_recurring' => $has_sub,
-			'is_top_donor' => (bool) apply_filters( 'missiondp_donor_is_top_donor', $is_top, $donor ),
+			'is_top_donor' => (bool) apply_filters( 'mission_donor_is_top_donor', $is_top, $donor ),
 		];
 	}
 

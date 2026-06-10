@@ -314,7 +314,7 @@ class CreatePaymentIntentEndpoint {
 			'' !== $requested_account_id
 			&& ( $resolved_account['account_id'] ?? '' ) !== $requested_account_id
 		) {
-			do_action( 'missiondp_stripe_account_fallback', $requested_account_id, $resolved_account['account_id'] ?? '' );
+			do_action( 'mission_stripe_account_fallback', $requested_account_id, $resolved_account['account_id'] ?? '' );
 		}
 
 		$description = $this->build_description( $original_donation, $fee_amount, $tip_amount, $fee_mode, $currency );
@@ -574,7 +574,7 @@ class CreatePaymentIntentEndpoint {
 		 * @param string $fee_mode         Platform fee mode: 'tip' or 'flat'.
 		 * @param string $currency         Lowercase ISO 4217 currency code.
 		 */
-		return apply_filters( 'missiondp_payment_intent_description', $description, $donation_amount, $fee_amount, $tip_amount, $fee_mode, $currency );
+		return apply_filters( 'mission_payment_intent_description', $description, $donation_amount, $fee_amount, $tip_amount, $fee_mode, $currency );
 	}
 
 	/**

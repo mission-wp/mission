@@ -56,7 +56,7 @@ class SubscriptionDataStore implements DataStoreInterface {
 		$this->insert_row( $model );
 
 		/** @param Subscription $model The subscription. */
-		do_action( 'missiondp_subscription_created', $model );
+		do_action( 'mission_subscription_created', $model );
 
 		return $model->id;
 	}
@@ -163,14 +163,14 @@ class SubscriptionDataStore implements DataStoreInterface {
 			 * @param string       $old_status Previous status.
 			 * @param string       $new_status New status.
 			 */
-			do_action( 'missiondp_subscription_status_transition', $model, $old->status, $model->status );
+			do_action( 'mission_subscription_status_transition', $model, $old->status, $model->status );
 
 			/**
 			 * Fires on a specific subscription status transition.
 			 *
 			 * @param Subscription $model The subscription.
 			 */
-			do_action( "missiondp_subscription_status_{$old->status}_to_{$model->status}", $model );
+			do_action( "mission_subscription_status_{$old->status}_to_{$model->status}", $model );
 		}
 
 		return true;

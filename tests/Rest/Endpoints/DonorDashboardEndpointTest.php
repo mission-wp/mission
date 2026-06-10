@@ -1135,7 +1135,7 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$this->hooks_to_remove[] = [ 'pre_http_request', $mock, 10 ];
 
 		$fired = false;
-		$this->add_tracked_action( 'missiondp_subscription_payment_method_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'mission_subscription_payment_method_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

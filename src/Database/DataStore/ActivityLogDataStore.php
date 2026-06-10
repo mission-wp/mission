@@ -51,7 +51,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 		 *
 		 * @param ActivityLog $model The activity log entry.
 		 */
-		do_action( 'missiondp_activity_log_created', $model );
+		do_action( 'mission_activity_log_created', $model );
 
 		return $model->id;
 	}

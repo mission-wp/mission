@@ -217,7 +217,7 @@ class Campaign extends Model {
 		 * @param string   $content     The default block markup.
 		 * @param Campaign $campaign    The campaign being created.
 		 */
-		return apply_filters( 'missiondp_campaign_default_page_content', $content, $this );
+		return apply_filters( 'mission_campaign_default_page_content', $content, $this );
 	}
 
 	/**

@@ -44,7 +44,7 @@ class ShortcodeRenderer {
 		 * @param string               $block_name Full block name being rendered.
 		 * @param array<string, mixed> $raw_atts   Raw shortcode attributes as supplied.
 		 */
-		$attributes = apply_filters( 'missiondp_shortcode_attributes', $attributes, $block_name, $raw_atts );
+		$attributes = apply_filters( 'mission_shortcode_attributes', $attributes, $block_name, $raw_atts );
 
 		return do_blocks(
 			serialize_block(

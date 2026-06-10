@@ -91,7 +91,7 @@ class DonationFormSettings {
 		 * @param array<string, mixed> $attributes  Original block attributes.
 		 * @param int                  $campaign_id The campaign table ID (0 if none).
 		 */
-		return apply_filters( 'missiondp_donation_form_settings', $settings, $attributes, $campaign_id );
+		return apply_filters( 'mission_donation_form_settings', $settings, $attributes, $campaign_id );
 	}
 
 	/**

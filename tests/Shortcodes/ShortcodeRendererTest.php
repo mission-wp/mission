@@ -112,7 +112,7 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The missiondp_shortcode_attributes filter can change what renders.
+	 * The mission_shortcode_attributes filter can change what renders.
 	 */
 	public function test_attributes_filter_affects_output(): void {
 		$force_text = static function ( array $attributes, string $block_name ): array {
@@ -122,9 +122,9 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 			return $attributes;
 		};
 
-		add_filter( 'missiondp_shortcode_attributes', $force_text, 10, 2 );
+		add_filter( 'mission_shortcode_attributes', $force_text, 10, 2 );
 		$output = do_shortcode( '[mission_donate_button]' );
-		remove_filter( 'missiondp_shortcode_attributes', $force_text );
+		remove_filter( 'mission_shortcode_attributes', $force_text );
 
 		$this->assertStringContainsString( 'Filtered Label', $output );
 	}

@@ -170,7 +170,7 @@ class SettingsServiceTest extends WP_UnitTestCase {
 		$fired = false;
 
 		add_action(
-			'missiondp_settings_updated',
+			'mission_settings_updated',
 			static function ( $updated, $values, $previous ) use ( &$fired ) {
 				$fired = true;
 			},
@@ -188,7 +188,7 @@ class SettingsServiceTest extends WP_UnitTestCase {
 	 */
 	public function test_get_defaults_is_filterable(): void {
 		add_filter(
-			'missiondp_settings_defaults',
+			'mission_settings_defaults',
 			static function ( $defaults ) {
 				$defaults['custom_setting'] = 'custom_value';
 				return $defaults;
@@ -199,7 +199,7 @@ class SettingsServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( 'custom_value', $defaults['custom_setting'] );
 
-		remove_all_filters( 'missiondp_settings_defaults' );
+		remove_all_filters( 'mission_settings_defaults' );
 	}
 
 	// =========================================================================

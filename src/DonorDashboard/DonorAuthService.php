@@ -107,7 +107,7 @@ class DonorAuthService {
 		 *
 		 * @param Donor $donor The donor model.
 		 */
-		do_action( 'missiondp_donor_activation_email_sent', $donor );
+		do_action( 'mission_donor_activation_email_sent', $donor );
 	}
 
 	/**
@@ -191,7 +191,7 @@ class DonorAuthService {
 		 * @param Donor    $donor The donor model.
 		 * @param \WP_User $user  The newly created WordPress user.
 		 */
-		do_action( 'missiondp_donor_account_activated', $donor, get_userdata( $user_id ) );
+		do_action( 'mission_donor_account_activated', $donor, get_userdata( $user_id ) );
 
 		return $donor;
 	}
@@ -338,7 +338,7 @@ class DonorAuthService {
 		 *
 		 * @param Donor $donor The donor model.
 		 */
-		do_action( 'missiondp_donor_password_reset_email_sent', $donor );
+		do_action( 'mission_donor_password_reset_email_sent', $donor );
 	}
 
 	/**
@@ -390,7 +390,7 @@ class DonorAuthService {
 		 * @param Donor    $donor The donor model.
 		 * @param \WP_User $user  The WordPress user.
 		 */
-		do_action( 'missiondp_donor_password_reset', $donor, $user );
+		do_action( 'mission_donor_password_reset', $donor, $user );
 
 		return $donor;
 	}
@@ -448,7 +448,7 @@ class DonorAuthService {
 		 *
 		 * @param int $min_length Default minimum length.
 		 */
-		$min_length = (int) apply_filters( 'missiondp_donor_min_password_length', self::MIN_PASSWORD_LENGTH );
+		$min_length = (int) apply_filters( 'mission_donor_min_password_length', self::MIN_PASSWORD_LENGTH );
 
 		if ( strlen( $password ) < $min_length ) {
 			throw new \RuntimeException(

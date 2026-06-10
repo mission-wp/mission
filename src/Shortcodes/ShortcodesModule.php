@@ -55,7 +55,7 @@ class ShortcodesModule {
 		 *
 		 * @param array<string, string> $shortcodes Shortcode tag => full block name.
 		 */
-		$shortcodes = apply_filters( 'missiondp_shortcodes', self::SHORTCODES );
+		$shortcodes = apply_filters( 'mission_shortcodes', self::SHORTCODES );
 
 		foreach ( $shortcodes as $tag => $block_name ) {
 			add_shortcode( $tag, fn( $atts ): string => $this->render( (string) $block_name, $atts ) );

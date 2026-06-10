@@ -57,32 +57,32 @@ class AdminNotificationListener {
 		$this->email    = $email;
 
 		// New donation (one-time).
-		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
-		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
+		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
 		// New donation (first recurring).
-		add_action( 'missiondp_subscription_status_pending_to_active', [ $this, 'on_first_recurring_donation' ] );
+		add_action( 'mission_subscription_status_pending_to_active', [ $this, 'on_first_recurring_donation' ] );
 
 		// Recurring renewal.
-		add_action( 'missiondp_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
+		add_action( 'mission_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
 
 		// Refund processed.
-		add_action( 'missiondp_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
+		add_action( 'mission_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
 
 		// Failed payment.
-		add_action( 'missiondp_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'mission_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
 
 		// Subscription cancelled.
-		add_action( 'missiondp_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
 		// Campaign milestone.
-		add_action( 'missiondp_campaign_milestone_reached', [ $this, 'on_campaign_milestone' ], 10, 3 );
+		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone' ], 10, 3 );
 
 		// Mail dedication pending.
-		add_action( 'missiondp_tribute_created', [ $this, 'on_mail_dedication' ] );
+		add_action( 'mission_tribute_created', [ $this, 'on_mail_dedication' ] );
 	}
 
 	/**

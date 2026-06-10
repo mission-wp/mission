@@ -198,7 +198,7 @@ class EmailChangeEndpoint {
 		 * @param Donor  $donor     The donor requesting the change.
 		 * @param string $new_email The requested new email address.
 		 */
-		do_action( 'missiondp_donor_email_change_requested', $donor, $new_email );
+		do_action( 'mission_donor_email_change_requested', $donor, $new_email );
 
 		return new WP_REST_Response(
 			[
@@ -327,7 +327,7 @@ class EmailChangeEndpoint {
 		 * @param string $old_email Previous email address.
 		 * @param string $new_email New email address.
 		 */
-		do_action( 'missiondp_donor_email_changed', $donor, $old_email, $new_email );
+		do_action( 'mission_donor_email_changed', $donor, $old_email, $new_email );
 
 		return new WP_REST_Response(
 			[

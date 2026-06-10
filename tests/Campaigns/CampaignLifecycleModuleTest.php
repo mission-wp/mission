@@ -334,7 +334,7 @@ class CampaignLifecycleModuleTest extends WP_UnitTestCase {
 	public function test_status_changed_hook_fires(): void {
 		$fired_args = null;
 
-		add_action( 'missiondp_campaign_status_changed', function () use ( &$fired_args ) {
+		add_action( 'mission_campaign_status_changed', function () use ( &$fired_args ) {
 			$fired_args = func_get_args();
 		}, 10, 4 );
 

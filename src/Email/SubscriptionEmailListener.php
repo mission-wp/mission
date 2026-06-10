@@ -45,10 +45,10 @@ class SubscriptionEmailListener {
 	public function init( EmailModule $email ): void {
 		$this->email = $email;
 
-		add_action( 'missiondp_subscription_status_pending_to_active', [ $this, 'on_subscription_activated' ] );
-		add_action( 'missiondp_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
-		add_action( 'missiondp_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
-		add_action( 'missiondp_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_pending_to_active', [ $this, 'on_subscription_activated' ] );
+		add_action( 'mission_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
+		add_action( 'mission_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 	}
 
 	/**

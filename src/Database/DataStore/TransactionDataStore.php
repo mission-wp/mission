@@ -60,7 +60,7 @@ class TransactionDataStore implements DataStoreInterface {
 		 *
 		 * @param Transaction $model The transaction.
 		 */
-		do_action( 'missiondp_transaction_created', $model );
+		do_action( 'mission_transaction_created', $model );
 
 		// Update donor/campaign aggregates if created with a completed status.
 		if ( 'completed' === $model->status ) {
@@ -521,14 +521,14 @@ class TransactionDataStore implements DataStoreInterface {
 		 * @param string      $old_status  Previous status.
 		 * @param string      $new_status  New status.
 		 */
-		do_action( 'missiondp_transaction_status_transition', $transaction, $old_status, $new_status );
+		do_action( 'mission_transaction_status_transition', $transaction, $old_status, $new_status );
 
 		/**
 		 * Fires on a specific transaction status transition.
 		 *
 		 * @param Transaction $transaction The transaction.
 		 */
-		do_action( "missiondp_transaction_status_{$old_status}_to_{$new_status}", $transaction );
+		do_action( "mission_transaction_status_{$old_status}_to_{$new_status}", $transaction );
 
 		// Update donor and campaign aggregates.
 		if ( 'completed' === $new_status ) {
@@ -657,7 +657,7 @@ class TransactionDataStore implements DataStoreInterface {
 			 * @param int  $campaign_id The campaign ID.
 			 * @param bool $is_test     Whether the triggering transaction is a test.
 			 */
-			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 	}
 
@@ -764,7 +764,7 @@ class TransactionDataStore implements DataStoreInterface {
 			 * @param int  $campaign_id The campaign ID.
 			 * @param bool $is_test     Whether the triggering transaction is a test.
 			 */
-			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 	}
 
@@ -842,7 +842,7 @@ class TransactionDataStore implements DataStoreInterface {
 			);
 
 			/** @param int $campaign_id @param bool $is_test */
-			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 
 		/**
@@ -853,7 +853,7 @@ class TransactionDataStore implements DataStoreInterface {
 		 * @param Transaction $transaction  The transaction.
 		 * @param int         $refund_delta Amount refunded in this event (minor units).
 		 */
-		do_action( 'missiondp_transaction_refund_applied', $transaction, $refund_delta );
+		do_action( 'mission_transaction_refund_applied', $transaction, $refund_delta );
 	}
 
 	/**
@@ -933,7 +933,7 @@ class TransactionDataStore implements DataStoreInterface {
 			}
 
 			/** @param int $campaign_id @param bool $is_test */
-			do_action( 'missiondp_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
+			do_action( 'mission_campaign_aggregates_updated', $transaction->campaign_id, (bool) $transaction->is_test );
 		}
 	}
 

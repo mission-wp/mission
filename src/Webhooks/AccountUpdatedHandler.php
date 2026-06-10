@@ -67,14 +67,14 @@ class AccountUpdatedHandler {
 			 *
 			 * @param string $account_id The Stripe account ID that changed.
 			 */
-			do_action( 'missiondp_stripe_charges_enabled', (string) $target['account_id'] );
+			do_action( 'mission_stripe_charges_enabled', (string) $target['account_id'] );
 		} else {
 			/**
 			 * Fires when a connected Stripe account loses the ability to process charges.
 			 *
 			 * @param string $account_id The Stripe account ID that changed.
 			 */
-			do_action( 'missiondp_stripe_charges_disabled', (string) $target['account_id'] );
+			do_action( 'mission_stripe_charges_disabled', (string) $target['account_id'] );
 		}
 	}
 }

@@ -310,7 +310,7 @@ class ImportEndpointTest extends WP_UnitTestCase {
 	 */
 	public function test_concurrent_import_of_same_type_returns_conflict(): void {
 		// Keep the first job unfinished so it stays "active".
-		add_filter( 'missiondp_import_batch_size', fn() => 1 );
+		add_filter( 'mission_import_batch_size', fn() => 1 );
 
 		$first = $this->dispatch_start();
 		$this->assertSame( 202, $first->get_status() );
@@ -320,6 +320,6 @@ class ImportEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 409, $second->get_status() );
 		$this->assertSame( 'import_in_progress', $second->get_data()['code'] );
 
-		remove_all_filters( 'missiondp_import_batch_size' );
+		remove_all_filters( 'mission_import_batch_size' );
 	}
 }

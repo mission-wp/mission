@@ -68,7 +68,7 @@ class DonorDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Donor $model The donor. */
-		do_action( 'missiondp_donor_created', $model );
+		do_action( 'mission_donor_created', $model );
 
 		return $model->id;
 	}
@@ -150,7 +150,7 @@ class DonorDataStore implements DataStoreInterface {
 
 		if ( false !== $result ) {
 			/** @param Donor $model The donor. */
-			do_action( 'missiondp_donor_updated', $model );
+			do_action( 'mission_donor_updated', $model );
 		}
 
 		return false !== $result;
