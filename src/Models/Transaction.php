@@ -104,6 +104,22 @@ class Transaction extends Model {
 	}
 
 	/**
+	 * Map a set of transaction IDs to their gateway transaction IDs in one query.
+	 *
+	 * @param int[] $ids Transaction IDs.
+	 * @return array<int, string> Map of transaction_id => gateway_transaction_id (only non-empty values).
+	 */
+	public static function gateway_ids_for( array $ids ): array {
+		if ( empty( $ids ) ) {
+			return [];
+		}
+
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+		return $store->read_gateway_ids( $ids );
+	}
+
+	/**
 	 * Get the donor for this transaction.
 	 *
 	 * @return Donor|null

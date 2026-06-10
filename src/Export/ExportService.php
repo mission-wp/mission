@@ -211,6 +211,11 @@ class ExportService {
 					'type'  => 'int',
 				],
 				[
+					'key'   => 'gateway_transaction_id',
+					'label' => __( 'Charge ID', 'mission-donation-platform' ),
+					'type'  => 'string',
+				],
+				[
 					'key'   => 'donor_name',
 					'label' => __( 'Donor', 'mission-donation-platform' ),
 					'type'  => 'string',
@@ -335,6 +340,16 @@ class ExportService {
 
 		$all_columns = array_merge( $columns, $meta_columns );
 
+		// Dedications carry the linked transaction's Charge ID so the export can be
+		// re-imported after transactions are re-imported with fresh IDs. Resolve all
+		// of them in one query to avoid an N+1.
+		$tribute_charge_ids = [];
+		if ( 'tributes' === $type && ! empty( $models ) ) {
+			$tribute_charge_ids = Transaction::gateway_ids_for(
+				array_map( static fn( $m ) => (int) $m->transaction_id, $models )
+			);
+		}
+
 		// Build rows.
 		$rows = [];
 		foreach ( $models as $model ) {
@@ -342,6 +357,12 @@ class ExportService {
 
 			foreach ( $columns as $col ) {
 				$row[ $col['key'] ] = $model->{$col['key']} ?? null;
+			}
+
+			// Fill the dedication's Charge ID from the resolved map (virtual column —
+			// not a property on the Tribute model).
+			if ( 'tributes' === $type ) {
+				$row['gateway_transaction_id'] = $tribute_charge_ids[ (int) $model->transaction_id ] ?? '';
 			}
 
 			// Add currency hint for CSV formatter.
@@ -1001,6 +1022,11 @@ class ExportService {
 				'key'   => 'transaction_id',
 				'label' => 'Transaction ID',
 				'type'  => 'int',
+			],
+			[
+				'key'   => 'gateway_transaction_id',
+				'label' => 'Charge ID',
+				'type'  => 'string',
 			],
 			[
 				'key'   => 'tribute_type',

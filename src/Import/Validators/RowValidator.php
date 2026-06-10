@@ -180,6 +180,41 @@ class RowValidator {
 			}
 		}
 
+		if ( 'tributes' === $type ) {
+			$tribute_type = trim( (string) ( $row['tribute_type'] ?? '' ) );
+			$allowed      = [ 'in_honor', 'in_memory' ];
+
+			if ( '' !== $tribute_type && ! in_array( strtolower( $tribute_type ), $allowed, true ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'tribute_type',
+					'message'  => sprintf(
+						/* translators: %s: invalid tribute type value */
+						__( 'Type \'%s\' is not one of in_honor/in_memory. Will default to in_honor.', 'mission-donation-platform' ),
+						$tribute_type
+					),
+					'value'    => $tribute_type,
+					'severity' => 'warning',
+				];
+			}
+
+			$notify_email = trim( (string) ( $row['notify_email'] ?? '' ) );
+
+			if ( '' !== $notify_email && ! is_email( $notify_email ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => 'notify_email',
+					'message'  => sprintf(
+						/* translators: %s: invalid email value */
+						__( 'Notify email \'%s\' is not a valid email. It will be imported as-is; no notification is sent on import.', 'mission-donation-platform' ),
+						$notify_email
+					),
+					'value'    => $notify_email,
+					'severity' => 'warning',
+				];
+			}
+		}
+
 		foreach ( [ 'amount', 'fee_amount', 'tip_amount', 'total_amount', 'goal_amount', 'total_donated', 'total_tip' ] as $numeric ) {
 			if ( ! isset( $row[ $numeric ] ) ) {
 				continue;
@@ -214,7 +249,7 @@ class RowValidator {
 			}
 		}
 
-		foreach ( [ 'date_created', 'date_modified', 'first_transaction', 'last_transaction', 'transaction_date', 'date_start', 'date_end', 'date_next_renewal', 'date_cancelled' ] as $date_key ) {
+		foreach ( [ 'date_created', 'date_modified', 'first_transaction', 'last_transaction', 'transaction_date', 'date_start', 'date_end', 'date_next_renewal', 'date_cancelled', 'notification_sent_at' ] as $date_key ) {
 			if ( ! isset( $row[ $date_key ] ) ) {
 				continue;
 			}

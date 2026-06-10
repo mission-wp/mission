@@ -181,6 +181,15 @@ class ColumnMapper {
 				'Date'            => 'date_created',
 				'Next Renewal'    => 'date_next_renewal',
 			],
+			'tributes'      => [
+				'Charge ID'       => 'gateway_transaction_id',
+				'Type'            => 'tribute_type',
+				'Dedication Type' => 'tribute_type',
+				'Honoree'         => 'honoree_name',
+				'In Honor Of'     => 'honoree_name',
+				'Message'         => 'message',
+				'Notify Email'    => 'notify_email',
+			],
 			default         => [],
 		};
 

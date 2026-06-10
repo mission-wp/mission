@@ -36,15 +36,7 @@ class TributeDataStore implements DataStoreInterface {
 	 * @return int New tribute ID.
 	 */
 	public function create( object $model ): int {
-		global $wpdb;
-
-		$row = $this->model_to_row( $model );
-
-		$row['date_created'] = $row['date_created'] ?: current_time( 'mysql', true );
-		unset( $row['id'] );
-
-		$wpdb->insert( $this->get_table_name(), $row );
-		$model->id = (int) $wpdb->insert_id;
+		$this->insert_row( $model );
 
 		/**
 		 * Fires after a tribute is created.
@@ -54,6 +46,38 @@ class TributeDataStore implements DataStoreInterface {
 		do_action( 'missiondp_tribute_created', $model );
 
 		return $model->id;
+	}
+
+	/**
+	 * Create a tribute without firing the created hook.
+	 *
+	 * Used by the data importer: the tribute hooks send honoree notification and
+	 * admin mail-dedication emails, which must not fire for historical rows being
+	 * backfilled.
+	 *
+	 * @param Tribute $model Tribute model.
+	 * @return int New tribute ID.
+	 */
+	public function create_silent( Tribute $model ): int {
+		$this->insert_row( $model );
+		return $model->id;
+	}
+
+	/**
+	 * Raw insert path shared by create() and create_silent().
+	 *
+	 * @param object $model Tribute model.
+	 */
+	private function insert_row( object $model ): void {
+		global $wpdb;
+
+		$row = $this->model_to_row( $model );
+
+		$row['date_created'] = $row['date_created'] ?: current_time( 'mysql', true );
+		unset( $row['id'] );
+
+		$wpdb->insert( $this->get_table_name(), $row );
+		$model->id = (int) $wpdb->insert_id;
 	}
 
 	/**
@@ -82,6 +106,37 @@ class TributeDataStore implements DataStoreInterface {
 	 * @return bool
 	 */
 	public function update( object $model ): bool {
+		if ( ! $this->update_row( $model ) ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a tribute is updated.
+		 *
+		 * @param Tribute $model The tribute.
+		 */
+		do_action( 'missiondp_tribute_updated', $model );
+
+		return true;
+	}
+
+	/**
+	 * Update a tribute without firing the updated hook. Used by the data importer
+	 * (see create_silent).
+	 *
+	 * @param Tribute $model Tribute model with updated values.
+	 * @return bool
+	 */
+	public function update_silent( Tribute $model ): bool {
+		return $this->update_row( $model );
+	}
+
+	/**
+	 * Raw UPDATE path shared by update() and update_silent().
+	 *
+	 * @param object $model Tribute model.
+	 */
+	private function update_row( object $model ): bool {
 		global $wpdb;
 
 		$data = $this->model_to_row( $model );
@@ -95,18 +150,7 @@ class TributeDataStore implements DataStoreInterface {
 			[ '%d' ]
 		);
 
-		if ( false === $result ) {
-			return false;
-		}
-
-		/**
-		 * Fires after a tribute is updated.
-		 *
-		 * @param Tribute $model The tribute.
-		 */
-		do_action( 'missiondp_tribute_updated', $model );
-
-		return true;
+		return false !== $result;
 	}
 
 	/**

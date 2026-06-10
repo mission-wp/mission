@@ -16,6 +16,10 @@ const DATA_TYPES = [
     value: 'subscriptions',
     label: __( 'Subscriptions', 'mission-donation-platform' ),
   },
+  {
+    value: 'tributes',
+    label: __( 'Dedications', 'mission-donation-platform' ),
+  },
 ];
 
 const DUPLICATE_STRATEGIES = [
@@ -559,6 +563,15 @@ export default function ImportPanel() {
                       ) }
                     </>
                   ) }
+                  { requiredColumns.includes( 'transaction_id' ) && (
+                    <>
+                      { ' ' }
+                      { __(
+                        '(gateway_transaction_id / Charge ID may be used instead of transaction_id)',
+                        'mission-donation-platform'
+                      ) }
+                    </>
+                  ) }
                 </div>
               ) }
             </div>
@@ -946,6 +959,11 @@ export default function ImportPanel() {
                         'already exist in your database (matched by Subscription ID)',
                         'mission-donation-platform'
                       ) }
+                    { 'tributes' === dataType &&
+                      __(
+                        'already exist in your database (matched by transaction)',
+                        'mission-donation-platform'
+                      ) }
                     { 'donors' === dataType &&
                       __(
                         'already exist in your database (matched by email)',
@@ -1022,6 +1040,20 @@ export default function ImportPanel() {
             <div className="mission-import-callout__text">
               { __(
                 'Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway.',
+                'mission-donation-platform'
+              ) }
+            </div>
+          </div>
+        ) }
+
+        { 'tributes' === dataType && (
+          <div className="mission-import-callout">
+            <div className="mission-import-callout__icon">
+              <InfoIcon />
+            </div>
+            <div className="mission-import-callout__text">
+              { __(
+                'Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported.',
                 'mission-donation-platform'
               ) }
             </div>

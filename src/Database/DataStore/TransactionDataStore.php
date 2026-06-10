@@ -150,6 +150,36 @@ class TransactionDataStore implements DataStoreInterface {
 	}
 
 	/**
+	 * Map a set of transaction IDs to their gateway transaction IDs.
+	 *
+	 * @param int[] $ids Transaction IDs.
+	 * @return array<int, string> transaction_id => gateway_transaction_id (non-empty only).
+	 */
+	public function read_gateway_ids( array $ids ): array {
+		global $wpdb;
+
+		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
+
+		if ( empty( $ids ) ) {
+			return [];
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+		$sql          = "SELECT id, gateway_transaction_id FROM %i WHERE id IN ( {$placeholders} ) AND gateway_transaction_id <> ''";
+		$prepare_args = array_merge( [ $this->get_table_name() ], $ids );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$map[ (int) $row['id'] ] = (string) $row['gateway_transaction_id'];
+		}
+
+		return $map;
+	}
+
+	/**
 	 * Update a transaction.
 	 *
 	 * @param object $model Transaction model with updated values.

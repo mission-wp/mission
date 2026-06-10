@@ -13,6 +13,7 @@ use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Database\DataStore\DonorDataStore;
 use MissionDP\Database\DataStore\SubscriptionDataStore;
 use MissionDP\Database\DataStore\TransactionDataStore;
+use MissionDP\Database\DataStore\TributeDataStore;
 use MissionDP\Export\ExportService;
 use MissionDP\Import\Validators\RowValidator;
 use MissionDP\Models\Campaign;
@@ -20,6 +21,7 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\ImportJob;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
+use MissionDP\Models\Tribute;
 use MissionDP\Plugin;
 use WP_Error;
 
@@ -30,7 +32,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class ImportService {
 
-	private const TYPES         = [ 'donors', 'transactions', 'campaigns', 'subscriptions' ];
+	private const TYPES         = [ 'donors', 'transactions', 'campaigns', 'subscriptions', 'tributes' ];
 	private const PREVIEW_ROWS  = 5;
 	private const MAX_BYTES     = 10 * 1024 * 1024;
 	private const FILE_ID_TTL   = HOUR_IN_SECONDS;
@@ -63,6 +65,11 @@ class ImportService {
 	 * @var array<string, int>
 	 */
 	private array $campaign_lookup_cache = [];
+
+	/**
+	 * @var array<string, int>
+	 */
+	private array $transaction_lookup_cache = [];
 
 	/**
 	 * Whether an import type string is supported.
@@ -108,6 +115,7 @@ class ImportService {
 			'transactions'  => [ 'amount', 'donor_email' ],
 			'campaigns'     => [ 'title' ],
 			'subscriptions' => [ 'amount', 'donor_email', 'status' ],
+			'tributes'      => [ 'transaction_id' ],
 			default         => [],
 		};
 	}
@@ -247,7 +255,7 @@ class ImportService {
 			return new WP_Error( 'file_missing', __( 'The uploaded file could not be read.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		if ( ! in_array( $type, [ 'donors', 'transactions', 'campaigns', 'subscriptions' ], true ) ) {
+		if ( ! in_array( $type, [ 'donors', 'transactions', 'campaigns', 'subscriptions', 'tributes' ], true ) ) {
 			return new WP_Error( 'unsupported_type', __( 'This import type is not yet supported.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
@@ -396,6 +404,7 @@ class ImportService {
 			'transactions' => $this->process_transaction_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'], $job->job_id ),
 			'campaigns'    => $this->process_campaign_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
 			'subscriptions' => $this->process_subscription_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
+			'tributes'     => $this->process_tribute_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
 			default        => throw new \RuntimeException( esc_html( "Unsupported import type: {$job->type}" ) ),
 		};
 
@@ -1445,6 +1454,219 @@ class ImportService {
 	}
 
 	// ------------------------------------------------------------------
+	// Tributes (Dedications)
+	// ------------------------------------------------------------------
+
+	/**
+	 * Process a batch of mapped dedication (tribute) rows.
+	 *
+	 * Each dedication attaches to one existing transaction (resolved by Charge ID
+	 * or transaction_id). Writes go through TributeDataStore::create_silent() /
+	 * update_silent() so the honoree-notification and admin mail-dedication emails
+	 * don't fire for historical rows. Tributes have no meta and touch no
+	 * aggregates. Duplicates are matched by transaction (one tribute per
+	 * transaction).
+	 *
+	 * @param array<int, array<string, string>> $rows      Mapped rows from read_batch().
+	 * @param string                            $strategy  Duplicate strategy (skip/update).
+	 * @param int                               $start_row Row number of the first row in this batch.
+	 *
+	 * @return array{imported:int, skipped:int, updated:int, errors:int, error_details: array<int, array{row:int, message:string}>}
+	 */
+	private function process_tribute_rows( array $rows, string $strategy, int $start_row ): array {
+		$imported      = 0;
+		$skipped       = 0;
+		$updated       = 0;
+		$errors        = 0;
+		$error_details = [];
+
+		$this->transaction_lookup_cache = [];
+
+		$tribute_store = new TributeDataStore();
+
+		foreach ( $rows as $i => $row ) {
+			$row_number = $start_row + $i;
+
+			$row_warnings = $this->validator->validate( $row, 'tributes', $row_number );
+
+			foreach ( $row_warnings as $warning ) {
+				if ( 'error' === ( $warning['severity'] ?? 'warning' ) ) {
+					++$skipped;
+					continue 2;
+				}
+			}
+
+			$prepared = $this->prepare_tribute_row( $row );
+
+			if ( is_wp_error( $prepared ) ) {
+				++$errors;
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $prepared->get_error_message(),
+				];
+				continue;
+			}
+
+			/**
+			 * Filter a dedication row right before it is saved.
+			 *
+			 * @param array  $prepared Prepared row data.
+			 * @param array  $row      Original mapped row.
+			 * @param string $strategy Duplicate strategy.
+			 */
+			$prepared = apply_filters( 'missiondp_import_tributes_row', $prepared, $row, $strategy );
+
+			try {
+				$existing = Tribute::find_by_transaction_id( (int) $prepared['transaction_id'] );
+
+				if ( $existing ) {
+					if ( 'skip' === $strategy ) {
+						++$skipped;
+						continue;
+					}
+
+					if ( 'update' === $strategy ) {
+						foreach ( $prepared as $field => $value ) {
+							$existing->{$field} = $value;
+						}
+						$tribute_store->update_silent( $existing );
+						++$updated;
+						continue;
+					}
+				}
+
+				$tribute = new Tribute( $prepared );
+				$tribute_store->create_silent( $tribute );
+				++$imported;
+			} catch ( \Throwable $e ) {
+				++$errors;
+				$error_details[] = [
+					'row'     => $row_number,
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		return [
+			'imported'      => $imported,
+			'skipped'       => $skipped,
+			'updated'       => $updated,
+			'errors'        => $errors,
+			'error_details' => $error_details,
+		];
+	}
+
+	/**
+	 * Convert a mapped row into the data array expected by the Tribute constructor.
+	 *
+	 * @param array<string, string> $row Mapped row keyed by canonical field.
+	 * @return array<string, mixed>|WP_Error
+	 */
+	private function prepare_tribute_row( array $row ): array|WP_Error {
+		$transaction_id = $this->resolve_transaction_id( $row );
+		if ( is_wp_error( $transaction_id ) ) {
+			return $transaction_id;
+		}
+
+		$tribute_type = strtolower( trim( (string) ( $row['tribute_type'] ?? '' ) ) );
+		if ( ! in_array( $tribute_type, [ 'in_honor', 'in_memory' ], true ) ) {
+			$tribute_type = 'in_honor';
+		}
+
+		$notify_method = strtolower( trim( (string) ( $row['notify_method'] ?? '' ) ) );
+		if ( ! in_array( $notify_method, [ 'email', 'mail' ], true ) ) {
+			$notify_method = '';
+		}
+
+		$prepared = [
+			'transaction_id'   => $transaction_id,
+			'tribute_type'     => $tribute_type,
+			'honoree_name'     => trim( (string) ( $row['honoree_name'] ?? '' ) ),
+			'message'          => trim( (string) ( $row['message'] ?? '' ) ),
+			'notify_method'    => $notify_method,
+			'notify_name'      => trim( (string) ( $row['notify_name'] ?? '' ) ),
+			'notify_email'     => trim( (string) ( $row['notify_email'] ?? '' ) ),
+			'notify_address_1' => trim( (string) ( $row['notify_address_1'] ?? '' ) ),
+			'notify_address_2' => trim( (string) ( $row['notify_address_2'] ?? '' ) ),
+			'notify_city'      => trim( (string) ( $row['notify_city'] ?? '' ) ),
+			'notify_state'     => trim( (string) ( $row['notify_state'] ?? '' ) ),
+			'notify_zip'       => trim( (string) ( $row['notify_zip'] ?? '' ) ),
+			'notify_country'   => trim( (string) ( $row['notify_country'] ?? '' ) ),
+		];
+
+		$notification_sent_at = $this->parse_date( (string) ( $row['notification_sent_at'] ?? '' ) );
+		$date_created         = $this->parse_date( (string) ( $row['date_created'] ?? '' ) );
+
+		if ( null !== $notification_sent_at ) {
+			$prepared['notification_sent_at'] = $notification_sent_at;
+		}
+		if ( null !== $date_created ) {
+			$prepared['date_created'] = $date_created;
+		}
+
+		return $prepared;
+	}
+
+	/**
+	 * Resolve a dedication row's transaction, by Charge ID (gateway_transaction_id)
+	 * first, then transaction_id. Caches lookups per batch.
+	 *
+	 * @param array<string, string> $row Mapped row.
+	 * @return int|WP_Error Transaction ID, or error if the row references none / an unknown one.
+	 */
+	private function resolve_transaction_id( array $row ): int|WP_Error {
+		$charge_id = trim( (string) ( $row['gateway_transaction_id'] ?? '' ) );
+
+		if ( '' !== $charge_id ) {
+			/* translators: %s: Charge ID (gateway transaction id) */
+			$not_found_message = __( 'No transaction found for Charge ID "%s". Import transactions first.', 'mission-donation-platform' );
+			$cache_key         = "charge:{$charge_id}";
+
+			if ( isset( $this->transaction_lookup_cache[ $cache_key ] ) ) {
+				if ( 0 === $this->transaction_lookup_cache[ $cache_key ] ) {
+					return new WP_Error( 'transaction_not_found', sprintf( $not_found_message, $charge_id ) );
+				}
+				return $this->transaction_lookup_cache[ $cache_key ];
+			}
+
+			$transaction                                  = Transaction::find_by_gateway_transaction_id( $charge_id );
+			$this->transaction_lookup_cache[ $cache_key ] = $transaction ? $transaction->id : 0;
+
+			if ( $transaction ) {
+				return $transaction->id;
+			}
+
+			return new WP_Error( 'transaction_not_found', sprintf( $not_found_message, $charge_id ) );
+		}
+
+		$id = (int) trim( (string) ( $row['transaction_id'] ?? '' ) );
+
+		if ( $id <= 0 ) {
+			return new WP_Error( 'transaction_missing', __( 'Row has no transaction_id or Charge ID.', 'mission-donation-platform' ) );
+		}
+
+		/* translators: %d: transaction ID */
+		$not_found_message = __( 'No transaction with ID %d.', 'mission-donation-platform' );
+		$cache_key         = "id:{$id}";
+
+		if ( isset( $this->transaction_lookup_cache[ $cache_key ] ) ) {
+			if ( 0 === $this->transaction_lookup_cache[ $cache_key ] ) {
+				return new WP_Error( 'transaction_not_found', sprintf( $not_found_message, $id ) );
+			}
+			return $this->transaction_lookup_cache[ $cache_key ];
+		}
+
+		$transaction                                  = Transaction::find( $id );
+		$this->transaction_lookup_cache[ $cache_key ] = $transaction ? $transaction->id : 0;
+
+		if ( $transaction ) {
+			return $transaction->id;
+		}
+
+		return new WP_Error( 'transaction_not_found', sprintf( $not_found_message, $id ) );
+	}
+
+	// ------------------------------------------------------------------
 	// Internal: file IO
 	// ------------------------------------------------------------------
 
@@ -1821,6 +2043,31 @@ class ImportService {
 				$seen[ $gateway_id ] = true;
 
 				if ( Subscription::find_by_gateway_subscription_id( $gateway_id ) ) {
+					++$count;
+				}
+			}
+
+			return $count;
+		}
+
+		if ( 'tributes' === $type ) {
+			$count = 0;
+			$seen  = [];
+
+			foreach ( $rows as $i => $row ) {
+				if ( isset( $skipped_rows_lookup[ $i + 1 ] ) ) {
+					continue;
+				}
+
+				$transaction_id = $this->resolve_transaction_id( $row );
+
+				if ( is_wp_error( $transaction_id ) || isset( $seen[ $transaction_id ] ) ) {
+					continue;
+				}
+
+				$seen[ $transaction_id ] = true;
+
+				if ( Tribute::find_by_transaction_id( $transaction_id ) ) {
 					++$count;
 				}
 			}
