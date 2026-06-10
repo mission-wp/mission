@@ -208,6 +208,10 @@ class ImportParsingTest extends WP_UnitTestCase {
 			'amt4@example.com' => [ '1,000', 100000 ],
 			'amt5@example.com' => [ '$0.99', 99 ],
 			'amt6@example.com' => [ ' 25.00 ', 2500 ],
+			// Both separators present is unambiguous in any locale: the last
+			// one is the decimal separator.
+			'amt7@example.com' => [ '1.500,50', 150050 ],
+			'amt8@example.com' => [ '€1.234.567,89', 123456789 ],
 		];
 
 		$rows = [];
@@ -397,4 +401,5 @@ class ImportParsingTest extends WP_UnitTestCase {
 		// A fully valid row produces no noise.
 		$this->assertSame( [], $validator->validate( [ 'email' => 'ok@example.com' ], 'donors', 1 ) );
 	}
+
 }

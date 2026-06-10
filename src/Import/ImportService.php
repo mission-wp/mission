@@ -2242,7 +2242,7 @@ class ImportService {
 	 * @param string|null $currency ISO 4217 code deciding minor-unit decimals; null uses the site currency.
 	 */
 	private function parse_amount( string $value, ?string $currency = null ): int {
-		$cleaned = preg_replace( '/[^0-9.\-]/', '', $value );
+		$cleaned = preg_replace( '/[^0-9.\-]/', '', $this->normalize_decimal_separators( $value ) );
 
 		if ( null === $cleaned || '' === $cleaned || ! is_numeric( $cleaned ) ) {
 			return 0;
@@ -2264,6 +2264,32 @@ class ImportService {
 	 */
 	private function site_currency(): string {
 		return (string) ( new SettingsService() )->get( 'currency', 'USD' );
+	}
+
+	/**
+	 * Normalize European-style separators ahead of numeric parsing.
+	 *
+	 * When a value contains both '.' and ',', the last of the two is the
+	 * decimal separator in every locale, so "1.500,50" and "1,500.50" both
+	 * mean 1500.50. Single-separator values keep the US reading (comma as
+	 * thousands separator); RowValidator warns on likely decimal commas.
+	 *
+	 * @param string $value Raw amount string.
+	 * @return string
+	 */
+	private function normalize_decimal_separators( string $value ): string {
+		$last_comma = strrpos( $value, ',' );
+		$last_dot   = strrpos( $value, '.' );
+
+		if ( false === $last_comma || false === $last_dot ) {
+			return $value;
+		}
+
+		if ( $last_comma > $last_dot ) {
+			return str_replace( ',', '.', str_replace( '.', '', $value ) );
+		}
+
+		return $value;
 	}
 
 	/**
