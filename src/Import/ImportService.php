@@ -514,24 +514,36 @@ class ImportService {
 			return;
 		}
 
+		// Nothing was written (e.g. an update run where every row was unchanged or
+		// skipped) — don't record an activity entry; nothing happened.
+		if ( 0 === $job->imported && 0 === $job->updated ) {
+			return;
+		}
+
 		$module = Plugin::instance()->get_activity_feed_module();
 
 		if ( ! $module ) {
 			return;
 		}
 
+		// The import runs in a background job, so there's no current user to
+		// attribute it to — resolve the importer from the job and store the name.
+		$user       = get_userdata( $job->user_id );
+		$actor_name = $user ? ( $user->display_name ?: $user->user_login ) : '';
+
 		$module->log(
 			'data_imported',
 			$job->type,
 			0,
 			[
-				'type'     => $job->type,
-				'strategy' => $job->duplicate_strategy,
-				'imported' => $job->imported,
-				'skipped'  => $job->skipped,
-				'updated'  => $job->updated,
-				'errors'   => $job->errors,
-				'job_id'   => $job->job_id,
+				'type'       => $job->type,
+				'strategy'   => $job->duplicate_strategy,
+				'imported'   => $job->imported,
+				'skipped'    => $job->skipped,
+				'updated'    => $job->updated,
+				'errors'     => $job->errors,
+				'job_id'     => $job->job_id,
+				'actor_name' => $actor_name,
 			],
 			false,
 			$job->errors > 0 ? 'warning' : 'info',
