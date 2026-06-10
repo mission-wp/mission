@@ -193,6 +193,7 @@ This plugin connects to the following third-party services:
 * Donation minimums now follow Stripe's per-currency minimums, with clearer messages when an amount is too low
 * Updated the currency list to match the currencies Stripe currently supports
 * Improved the donation form layout on small screens and in narrow spaces like sidebars
+* Internal code quality and maintainability improvements
 
 = 1.1.7 =
 * Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
