@@ -198,16 +198,16 @@ class CampaignPostType {
 		];
 
 		$args = [
-			'labels'             => $labels,
-			'public'             => true,
-			'has_archive'        => true,
-			'show_in_rest'       => true,
-			'show_in_menu'       => false,
+			'labels'            => $labels,
+			'public'            => true,
+			'has_archive'       => true,
+			'show_in_rest'      => true,
+			'show_in_menu'      => false,
 			// Without this the "Edit Campaign" link is missing from the frontend admin bar,
 			// because show_in_admin_bar defaults to the value of show_in_menu.
-			'show_in_admin_bar'  => true,
-			'rewrite'            => [ 'slug' => 'campaigns' ],
-			'supports'           => [ 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ],
+			'show_in_admin_bar' => true,
+			'rewrite'           => [ 'slug' => 'campaigns' ],
+			'supports'          => [ 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ],
 		];
 
 		register_post_type( self::POST_TYPE, $args );

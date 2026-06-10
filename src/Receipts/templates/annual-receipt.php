@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
 	<?php
 	// Dompdf has no wp_head pipeline; CSS lives in a sibling file and is inlined here at render time.
 	echo wp_kses(
-		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/annual-receipt.css' ) ),
+		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/annual-receipt.css' ) ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local plugin file, not a remote URL.
 		[ 'style' => [] ]
 	);
 	?>
