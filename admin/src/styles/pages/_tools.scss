@@ -1415,10 +1415,10 @@ select.mission-logs-select {
     stroke-dasharray: 326.726;
     stroke-dashoffset: 326.726;
     opacity: 0;
-    // No transition on stroke-dashoffset — JS drives it via requestAnimationFrame
-    // at 60fps and a CSS transition just lags / fights the JS updates. Keep the
-    // opacity transition so the ring fades in cleanly when the determinate mode
-    // class is added.
+    // No transition on stroke-dashoffset. JS drives it via
+    // requestAnimationFrame at 60fps and a CSS transition just lags and
+    // fights the JS updates. Keep the opacity transition so the ring fades
+    // in cleanly when the determinate mode class is added.
     transition: opacity 0.3s ease;
   }
 
