@@ -55,6 +55,7 @@ class Schema {
   gateway_customer_id varchar(255) DEFAULT '' NOT NULL,
   is_anonymous tinyint(1) NOT NULL DEFAULT 0,
   is_test tinyint(1) NOT NULL DEFAULT 0,
+  import_job_id bigint(20) unsigned NOT NULL DEFAULT 0,
   donor_ip varchar(45) NOT NULL DEFAULT '',
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   date_completed datetime DEFAULT NULL,
@@ -67,7 +68,8 @@ class Schema {
   KEY campaign_id (campaign_id),
   KEY gateway_transaction_id (gateway_transaction_id),
   KEY date_created (date_created),
-  KEY is_test (is_test)
+  KEY is_test (is_test),
+  KEY import_job_id (import_job_id)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------

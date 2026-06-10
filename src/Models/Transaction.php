@@ -38,6 +38,7 @@ class Transaction extends Model {
 	public string $gateway_customer_id;
 	public bool $is_anonymous;
 	public bool $is_test;
+	public int $import_job_id;
 	public string $donor_ip;
 	public string $date_created;
 	public ?string $date_completed;
@@ -70,6 +71,7 @@ class Transaction extends Model {
 		$this->gateway_customer_id     = $data['gateway_customer_id'] ?? '';
 		$this->is_anonymous            = (bool) ( $data['is_anonymous'] ?? false );
 		$this->is_test                 = (bool) ( $data['is_test'] ?? false );
+		$this->import_job_id           = (int) ( $data['import_job_id'] ?? 0 );
 		$this->donor_ip                = $data['donor_ip'] ?? '';
 		$this->date_created            = $data['date_created'] ?? current_time( 'mysql', true );
 		$this->date_completed          = $data['date_completed'] ?? null;

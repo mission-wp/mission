@@ -172,6 +172,17 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test import_job_id persists through create and read, and defaults to 0.
+	 */
+	public function test_import_job_id_persists(): void {
+		$imported_id = $this->store->create( $this->make_transaction( array( 'import_job_id' => 42 ) ) );
+		$organic_id  = $this->store->create( $this->make_transaction() );
+
+		$this->assertSame( 42, $this->store->read( $imported_id )->import_job_id );
+		$this->assertSame( 0, $this->store->read( $organic_id )->import_job_id );
+	}
+
+	/**
 	 * Test read nonexistent returns null.
 	 */
 	public function test_read_nonexistent_returns_null(): void {

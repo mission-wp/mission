@@ -976,6 +976,7 @@ class TransactionDataStore implements DataStoreInterface {
 			'gateway_subscription_id' => $model->gateway_subscription_id,
 			'is_anonymous'            => (int) $model->is_anonymous,
 			'is_test'                 => (int) $model->is_test,
+			'import_job_id'           => $model->import_job_id,
 			'donor_ip'                => $model->donor_ip,
 			'date_created'            => $model->date_created,
 			'date_completed'          => $model->date_completed,

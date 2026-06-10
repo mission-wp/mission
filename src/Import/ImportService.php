@@ -767,6 +767,10 @@ class ImportService {
 					}
 				}
 
+				// Stamp provenance on created rows only — an import that updates
+				// an existing transaction must not claim it.
+				$prepared['import_job_id'] = $job_id;
+
 				$transaction = new Transaction( $prepared );
 				$transaction_store->create_silent( $transaction );
 				$this->apply_meta( $transaction, $meta_pairs );
