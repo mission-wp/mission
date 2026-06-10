@@ -401,7 +401,7 @@ class ImportService {
 
 		$deltas = match ( $job->type ) {
 			'donors'       => $this->process_donor_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
-			'transactions' => $this->process_transaction_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'], $job->job_id ),
+			'transactions' => $this->process_transaction_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'], $job ),
 			'campaigns'    => $this->process_campaign_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
 			'subscriptions' => $this->process_subscription_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
 			'tributes'     => $this->process_tribute_rows( $batch['rows'], $job->duplicate_strategy, $batch['start_row'] ),
@@ -695,11 +695,12 @@ class ImportService {
 	 * @param array<int, array<string, string>> $rows      Mapped rows from read_batch().
 	 * @param string                            $strategy  Duplicate strategy (skip/update/create).
 	 * @param int                               $start_row Row number of the first row in this batch.
-	 * @param string                            $job_id    Public job token.
+	 * @param ImportJob                         $job       The job (numeric id stamps provenance, token keys the touched transient).
 	 *
 	 * @return array{imported:int, skipped:int, updated:int, errors:int, error_details: array<int, array{row:int, message:string}>}
 	 */
-	private function process_transaction_rows( array $rows, string $strategy, int $start_row, string $job_id ): array {
+	private function process_transaction_rows( array $rows, string $strategy, int $start_row, ImportJob $job ): array {
+		$job_id        = $job->job_id;
 		$imported      = 0;
 		$skipped       = 0;
 		$updated       = 0;
@@ -767,9 +768,9 @@ class ImportService {
 					}
 				}
 
-				// Stamp provenance on created rows only — an import that updates
+				// Stamp provenance on created rows only. An import that updates
 				// an existing transaction must not claim it.
-				$prepared['import_job_id'] = $job_id;
+				$prepared['import_job_id'] = (int) $job->id;
 
 				$transaction = new Transaction( $prepared );
 				$transaction_store->create_silent( $transaction );
