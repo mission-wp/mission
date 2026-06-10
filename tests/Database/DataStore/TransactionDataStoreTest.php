@@ -183,6 +183,16 @@ class TransactionDataStoreTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test gateway_customer_id persists through create and read.
+	 */
+	public function test_gateway_customer_id_persists(): void {
+		$transaction = $this->make_transaction( array( 'gateway_customer_id' => 'cus_abc123' ) );
+		$id          = $this->store->create( $transaction );
+
+		$this->assertSame( 'cus_abc123', $this->store->read( $id )->gateway_customer_id );
+	}
+
+	/**
 	 * Test read nonexistent returns null.
 	 */
 	public function test_read_nonexistent_returns_null(): void {

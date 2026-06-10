@@ -974,6 +974,7 @@ class TransactionDataStore implements DataStoreInterface {
 			'payment_gateway'         => $model->payment_gateway,
 			'gateway_transaction_id'  => $model->gateway_transaction_id,
 			'gateway_subscription_id' => $model->gateway_subscription_id,
+			'gateway_customer_id'     => $model->gateway_customer_id,
 			'is_anonymous'            => (int) $model->is_anonymous,
 			'is_test'                 => (int) $model->is_test,
 			'import_job_id'           => $model->import_job_id,
