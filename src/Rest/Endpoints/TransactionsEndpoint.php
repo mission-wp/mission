@@ -270,7 +270,7 @@ class TransactionsEndpoint {
 	 * @return WP_REST_Response
 	 */
 	public function get_summary(): WP_REST_Response {
-		$currency = strtolower( get_option( 'missiondp_currency', 'usd' ) );
+		$currency = strtolower( (string) $this->settings->get( 'currency', 'USD' ) );
 
 		return new WP_REST_Response( $this->reporting->transaction_summary( $currency ), 200 );
 	}
@@ -378,7 +378,7 @@ class TransactionsEndpoint {
 				'fee_amount'      => 0,
 				'tip_amount'      => 0,
 				'total_amount'    => $amount,
-				'currency'        => strtolower( get_option( 'missiondp_currency', 'usd' ) ),
+				'currency'        => strtolower( (string) $this->settings->get( 'currency', 'USD' ) ),
 				'payment_gateway' => 'manual',
 				'is_test'         => (bool) $request->get_param( 'is_test' ),
 				'date_created'    => $this->resolve_date_created( $request->get_param( 'date_created' ), $now ),

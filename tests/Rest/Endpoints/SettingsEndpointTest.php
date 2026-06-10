@@ -140,6 +140,76 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test POST clamps the fixed fee to the currency's sanity cap.
+	 */
+	public function test_post_clamps_fixed_fee(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'stripe_fee_fixed' => 50000 ) ) );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 1000, $response->get_data()['stripe_fee_fixed'] );
+
+		$request2 = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
+		$request2->set_header( 'Content-Type', 'application/json' );
+		$request2->set_body( wp_json_encode( array( 'stripe_fee_fixed' => -5 ) ) );
+
+		$response2 = $this->server->dispatch( $request2 );
+
+		$this->assertSame( 0, $response2->get_data()['stripe_fee_fixed'] );
+	}
+
+	/**
+	 * Test POST allows fixed fees above one major unit (e.g. MXN's $3.00 fee).
+	 */
+	public function test_post_allows_fixed_fee_above_one_major_unit(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body(
+			wp_json_encode(
+				array(
+					'currency'         => 'mxn',
+					'stripe_fee_fixed' => 300,
+				)
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 300, $response->get_data()['stripe_fee_fixed'] );
+	}
+
+	/**
+	 * Test POST currency change without a fee resets it to the new default.
+	 */
+	public function test_post_currency_change_resets_fixed_fee(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			array(
+				'currency'         => 'USD',
+				'stripe_fee_fixed' => 30,
+			)
+		);
+
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'currency' => 'jpy' ) ) );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 'JPY', $data['currency'] );
+		$this->assertSame( 0, $data['stripe_fee_fixed'] );
+	}
+
+	/**
 	 * Test POST rejects unauthorized user.
 	 */
 	public function test_post_rejects_unauthorized_user(): void {

@@ -86,7 +86,12 @@ class CsvFormatter implements FormatterInterface {
 		}
 
 		return match ( $col_type ) {
-			'amount' => number_format( Currency::minor_to_major( (int) $value, strtoupper( $currency ) ), 2, '.', '' ),
+			'amount' => number_format(
+				Currency::minor_to_major( (int) $value, strtoupper( $currency ) ),
+				Currency::get_decimals( $currency ),
+				'.',
+				''
+			),
 			'bool'   => $value ? '1' : '0',
 			default  => (string) $value,
 		};

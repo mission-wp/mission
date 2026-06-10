@@ -157,12 +157,13 @@ class BlocksModule {
 		}
 
 		$settings_service = new \MissionDP\Settings\SettingsService();
-		$settings         = get_option( 'missiondp_settings', [] );
+		$settings         = $settings_service->get_all();
 
 		wp_localize_script(
 			$handle,
 			'missiondpFeeSettings',
 			[
+				'currency'         => strtoupper( (string) ( $settings['currency'] ?? 'USD' ) ),
 				'stripeFeePercent' => (float) ( $settings['stripe_fee_percent'] ?? 2.9 ),
 				'stripeFeeFixed'   => (int) ( $settings['stripe_fee_fixed'] ?? 30 ),
 				'stripeAccounts'   => $settings_service->get_stripe_accounts_public(),

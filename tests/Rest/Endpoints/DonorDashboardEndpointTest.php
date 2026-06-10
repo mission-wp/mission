@@ -132,7 +132,6 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 
 		// Configure settings.
 		update_option( SettingsService::OPTION_NAME, [ 'test_mode' => false ] );
-		update_option( 'missiondp_currency', 'usd' );
 
 		// Default: authenticate as donor.
 		wp_set_current_user( $this->donor_user_id );
@@ -160,7 +159,6 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
