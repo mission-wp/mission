@@ -106,6 +106,30 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Find the most recently-created campaign by title (case-insensitive).
+	 *
+	 * @param string $title Campaign title.
+	 * @return self|null
+	 */
+	public static function find_by_title( string $title ): ?self {
+		/** @var CampaignDataStore $store */
+		$store = static::store();
+		return $store->read_by_title( $title );
+	}
+
+	/**
+	 * Find all campaigns matching this title (case-insensitive). Used to detect ambiguity.
+	 *
+	 * @param string $title Campaign title.
+	 * @return self[]
+	 */
+	public static function find_all_by_title( string $title ): array {
+		/** @var CampaignDataStore $store */
+		$store = static::store();
+		return $store->read_all_by_title( $title );
+	}
+
+	/**
 	 * Get IDs of scheduled campaigns whose start date has arrived.
 	 *
 	 * @param string $today Today's date (Y-m-d).

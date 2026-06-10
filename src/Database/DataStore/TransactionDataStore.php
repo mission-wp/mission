@@ -53,17 +53,7 @@ class TransactionDataStore implements DataStoreInterface {
 	 * @return int New transaction ID.
 	 */
 	public function create( object $model ): int {
-		global $wpdb;
-
-		$now  = current_time( 'mysql', true );
-		$data = $this->model_to_row( $model );
-
-		$data['date_created']  = $data['date_created'] ?: $now;
-		$data['date_modified'] = $now;
-		unset( $data['id'] );
-
-		$wpdb->insert( $this->get_table_name(), $data );
-		$model->id = (int) $wpdb->insert_id;
+		$this->insert_row( $model );
 
 		/**
 		 * Fires after a transaction is created.
@@ -78,6 +68,41 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		return $model->id;
+	}
+
+	/**
+	 * Create a transaction without firing side-effect hooks or touching donor /
+	 * campaign aggregates.
+	 *
+	 * Used by the data importer: aggregates are recomputed once at the end of the
+	 * job, and we don't want listeners (Slack pings, thank-you emails, webhook
+	 * posts) firing for historical rows being backfilled.
+	 *
+	 * @param Transaction $model Transaction model.
+	 * @return int New transaction ID.
+	 */
+	public function create_silent( Transaction $model ): int {
+		$this->insert_row( $model );
+		return $model->id;
+	}
+
+	/**
+	 * Raw insert path shared by create() and create_silent().
+	 *
+	 * @param object $model Transaction model.
+	 */
+	private function insert_row( object $model ): void {
+		global $wpdb;
+
+		$now  = current_time( 'mysql', true );
+		$data = $this->model_to_row( $model );
+
+		$data['date_created']  = $data['date_created'] ?: $now;
+		$data['date_modified'] = $now;
+		unset( $data['id'] );
+
+		$wpdb->insert( $this->get_table_name(), $data );
+		$model->id = (int) $wpdb->insert_id;
 	}
 
 	/**
@@ -99,6 +124,62 @@ class TransactionDataStore implements DataStoreInterface {
 	}
 
 	/**
+	 * Read a transaction by its gateway transaction ID.
+	 *
+	 * @param string $gateway_transaction_id Gateway transaction identifier.
+	 *
+	 * @return Transaction|null
+	 */
+	public function read_by_gateway_transaction_id( string $gateway_transaction_id ): ?Transaction {
+		global $wpdb;
+
+		if ( '' === trim( $gateway_transaction_id ) ) {
+			return null;
+		}
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE gateway_transaction_id = %s ORDER BY id DESC LIMIT 1',
+				$this->get_table_name(),
+				$gateway_transaction_id
+			),
+			ARRAY_A
+		);
+
+		return $row ? $this->row_to_model( $row ) : null;
+	}
+
+	/**
+	 * Map a set of transaction IDs to their gateway transaction IDs.
+	 *
+	 * @param int[] $ids Transaction IDs.
+	 * @return array<int, string> transaction_id => gateway_transaction_id (non-empty only).
+	 */
+	public function read_gateway_ids( array $ids ): array {
+		global $wpdb;
+
+		$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
+
+		if ( empty( $ids ) ) {
+			return [];
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+		$sql          = "SELECT id, gateway_transaction_id FROM %i WHERE id IN ( {$placeholders} ) AND gateway_transaction_id <> ''";
+		$prepare_args = array_merge( [ $this->get_table_name() ], $ids );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$map[ (int) $row['id'] ] = (string) $row['gateway_transaction_id'];
+		}
+
+		return $map;
+	}
+
+	/**
 	 * Update a transaction.
 	 *
 	 * @param object $model Transaction model with updated values.
@@ -106,26 +187,12 @@ class TransactionDataStore implements DataStoreInterface {
 	 * @return bool
 	 */
 	public function update( object $model ): bool {
-		global $wpdb;
-
 		$old = $this->read( $model->id );
 		if ( ! $old ) {
 			return false;
 		}
 
-		$data                  = $this->model_to_row( $model );
-		$data['date_modified'] = current_time( 'mysql', true );
-		unset( $data['id'] );
-
-		$result = $wpdb->update(
-			$this->get_table_name(),
-			$data,
-			[ 'id' => $model->id ],
-			null,
-			[ '%d' ]
-		);
-
-		if ( false === $result ) {
+		if ( ! $this->update_row( $model ) ) {
 			return false;
 		}
 
@@ -141,6 +208,44 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Update a transaction without firing status-transition hooks or touching
+	 * donor / campaign aggregates. Used by the data importer (see create_silent).
+	 *
+	 * @param Transaction $model Transaction model with updated values.
+	 * @return bool
+	 */
+	public function update_silent( Transaction $model ): bool {
+		if ( ! $this->read( $model->id ) ) {
+			return false;
+		}
+
+		return $this->update_row( $model );
+	}
+
+	/**
+	 * Raw UPDATE path shared by update() and update_silent().
+	 *
+	 * @param object $model Transaction model.
+	 */
+	private function update_row( object $model ): bool {
+		global $wpdb;
+
+		$data                  = $this->model_to_row( $model );
+		$data['date_modified'] = current_time( 'mysql', true );
+		unset( $data['id'] );
+
+		$result = $wpdb->update(
+			$this->get_table_name(),
+			$data,
+			[ 'id' => $model->id ],
+			null,
+			[ '%d' ]
+		);
+
+		return false !== $result;
 	}
 
 	/**

@@ -153,6 +153,23 @@ const MissionLogoIcon = () => (
   </svg>
 );
 
+const ImportIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
 const ActivityIcon = () => (
   <svg
     width="40"
@@ -199,6 +216,7 @@ const eventMetaMap = {
   campaign_goal_reached: { icon: <FlagIcon />, className: 'is-milestone' },
   campaign_created: { icon: <BullhornIcon />, className: 'is-campaign' },
   campaign_ended: { icon: <CheckmarkIcon />, className: 'is-campaign-ended' },
+  data_imported: { icon: <ImportIcon />, className: 'is-import' },
   plugin_updated: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_installed: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_activated: { icon: <MissionLogoIcon />, className: 'is-system' },
@@ -266,6 +284,26 @@ const freqLabels = {
   quarterly: '/qtr',
   annually: '/yr',
 };
+
+// [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
+const importTypeLabels = {
+  donors: [ 'donor', 'donors' ],
+  transactions: [ 'transaction', 'transactions' ],
+  campaigns: [ 'campaign', 'campaigns' ],
+  subscriptions: [ 'subscription', 'subscriptions' ],
+  tributes: [ 'dedication', 'dedications' ],
+};
+
+/**
+ * Singular/plural noun for an import type ('tributes' shows as 'dedications').
+ *
+ * @param {string} type  Internal import type.
+ * @param {number} count Number the noun agrees with.
+ */
+function importNoun( type, count ) {
+  const labels = importTypeLabels[ type ] || [ type, type ];
+  return count === 1 ? labels[ 0 ] : labels[ 1 ];
+}
 
 /**
  * Build a human-readable description from an activity event.
@@ -506,6 +544,60 @@ function getEventText( event ) {
       : 'Mission plugin updated';
   }
 
+  if ( eventType === 'data_imported' ) {
+    const imported = Number( data.imported ) || 0;
+    const updated = Number( data.updated ) || 0;
+
+    // Nothing was written — don't show this activity at all.
+    if ( imported === 0 && updated === 0 ) {
+      return null;
+    }
+
+    const actor = data.actor_name;
+    // The trailing noun agrees with the last count shown.
+    const noun = importNoun( data.type, updated > 0 ? updated : imported );
+    // Capitalize the leading verb only when there's no actor prefix.
+    const lead = actor ? 'imported' : 'Imported';
+
+    let body;
+    if ( imported > 0 && updated > 0 ) {
+      body = (
+        <>
+          { lead } <strong>{ imported.toLocaleString() }</strong> and updated{ ' ' }
+          <strong>
+            { updated.toLocaleString() } { noun }
+          </strong>
+        </>
+      );
+    } else if ( updated > 0 ) {
+      body = (
+        <>
+          { actor ? 'updated' : 'Updated' }{ ' ' }
+          <strong>
+            { updated.toLocaleString() } { noun }
+          </strong>
+        </>
+      );
+    } else {
+      body = (
+        <>
+          { lead }{ ' ' }
+          <strong>
+            { imported.toLocaleString() } { noun }
+          </strong>
+        </>
+      );
+    }
+
+    return actor ? (
+      <>
+        { actor } { body }
+      </>
+    ) : (
+      body
+    );
+  }
+
   // Fallback: humanize the event name.
   return eventType
     .replace( /_/g, ' ' )
@@ -566,6 +658,11 @@ export default function ActivityFeed( { activity, isLoading, feedRef } ) {
 
               const meta = getEventMeta( event );
               const text = getEventText( event );
+
+              // Some events (e.g. an import that changed nothing) render no text.
+              if ( text === null ) {
+                return null;
+              }
 
               return (
                 <div key={ event.id } className="mission-feed-item">

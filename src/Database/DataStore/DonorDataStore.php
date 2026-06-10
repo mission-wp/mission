@@ -157,6 +157,72 @@ class DonorDataStore implements DataStoreInterface {
 	}
 
 	/**
+	 * Recompute a donor's lifetime aggregates from the transactions table.
+	 *
+	 * Rebuilds total_donated / total_tip / transaction_count / first_transaction /
+	 * last_transaction and the four test_* mirrors. No-op if the donor row doesn't
+	 * exist. Used by the import flow's deferred-recompute pass and by future admin
+	 * "recalculate aggregates" tooling.
+	 *
+	 * @param int $donor_id Donor ID.
+	 */
+	public function recompute_aggregates( int $donor_id ): void {
+		global $wpdb;
+
+		if ( $donor_id <= 0 ) {
+			return;
+		}
+
+		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
+		$donors_table       = $this->get_table_name();
+
+		$stats = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT
+					COALESCE(SUM(CASE WHEN is_test = 0 THEN amount END), 0)        AS total_donated,
+					COALESCE(SUM(CASE WHEN is_test = 0 THEN tip_amount END), 0)    AS total_tip,
+					COALESCE(SUM(CASE WHEN is_test = 0 THEN 1 END), 0)             AS transaction_count,
+					MIN(CASE WHEN is_test = 0 THEN date_completed END)             AS first_transaction,
+					MAX(CASE WHEN is_test = 0 THEN date_completed END)             AS last_transaction,
+					COALESCE(SUM(CASE WHEN is_test = 1 THEN amount END), 0)        AS test_total_donated,
+					COALESCE(SUM(CASE WHEN is_test = 1 THEN tip_amount END), 0)    AS test_total_tip,
+					COALESCE(SUM(CASE WHEN is_test = 1 THEN 1 END), 0)             AS test_transaction_count,
+					MIN(CASE WHEN is_test = 1 THEN date_completed END)             AS test_first_transaction,
+					MAX(CASE WHEN is_test = 1 THEN date_completed END)             AS test_last_transaction
+				FROM %i
+				WHERE donor_id = %d AND status = 'completed'",
+				$transactions_table,
+				$donor_id
+			),
+			ARRAY_A
+		);
+
+		if ( ! $stats ) {
+			return;
+		}
+
+		$wpdb->update(
+			$donors_table,
+			[
+				'total_donated'          => (int) $stats['total_donated'],
+				'total_tip'              => (int) $stats['total_tip'],
+				'transaction_count'      => (int) $stats['transaction_count'],
+				'first_transaction'      => $stats['first_transaction'],
+				'last_transaction'       => $stats['last_transaction'],
+				'test_total_donated'     => (int) $stats['test_total_donated'],
+				'test_total_tip'         => (int) $stats['test_total_tip'],
+				'test_transaction_count' => (int) $stats['test_transaction_count'],
+				'test_first_transaction' => $stats['test_first_transaction'],
+				'test_last_transaction'  => $stats['test_last_transaction'],
+				'date_modified'          => current_time( 'mysql', true ),
+			],
+			[ 'id' => $donor_id ],
+			null,
+			[ '%d' ]
+		);
+	}
+
+	/**
 	 * Delete a donor by ID.
 	 *
 	 * @param int $id Donor ID.

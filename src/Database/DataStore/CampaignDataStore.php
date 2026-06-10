@@ -112,6 +112,58 @@ class CampaignDataStore implements DataStoreInterface {
 	}
 
 	/**
+	 * Find the most recently-created campaign by title (case-insensitive via collation).
+	 *
+	 * @param string $title Campaign title.
+	 *
+	 * @return Campaign|null
+	 */
+	public function read_by_title( string $title ): ?Campaign {
+		global $wpdb;
+
+		if ( '' === trim( $title ) ) {
+			return null;
+		}
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE title = %s ORDER BY id DESC LIMIT 1',
+				$this->get_table_name(),
+				$title
+			),
+			ARRAY_A
+		);
+
+		return $row ? $this->row_to_model( $row ) : null;
+	}
+
+	/**
+	 * Find all campaigns with this title.
+	 *
+	 * @param string $title Campaign title.
+	 *
+	 * @return Campaign[]
+	 */
+	public function read_all_by_title( string $title ): array {
+		global $wpdb;
+
+		if ( '' === trim( $title ) ) {
+			return [];
+		}
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE title = %s ORDER BY id DESC',
+				$this->get_table_name(),
+				$title
+			),
+			ARRAY_A
+		);
+
+		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
+	}
+
+	/**
 	 * Update a campaign.
 	 *
 	 * @param object $model Campaign model.
@@ -139,6 +191,73 @@ class CampaignDataStore implements DataStoreInterface {
 		);
 
 		return false !== $result;
+	}
+
+	/**
+	 * Recompute a campaign's aggregates from the transactions table.
+	 *
+	 * Rebuilds total_raised / transaction_count / donor_count and the three test_*
+	 * mirrors. Fires missiondp_campaign_aggregates_updated so dashboard caches
+	 * invalidate. No-op if the campaign row doesn't exist.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public function recompute_aggregates( int $campaign_id ): void {
+		global $wpdb;
+
+		if ( $campaign_id <= 0 ) {
+			return;
+		}
+
+		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
+		$campaigns_table    = $this->get_table_name();
+
+		$stats = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT
+					COALESCE(SUM(CASE WHEN is_test = 0 THEN amount END), 0)                                  AS total_raised,
+					COALESCE(SUM(CASE WHEN is_test = 0 THEN 1 END), 0)                                       AS transaction_count,
+					COALESCE(COUNT(DISTINCT CASE WHEN is_test = 0 THEN donor_id END), 0)                     AS donor_count,
+					COALESCE(SUM(CASE WHEN is_test = 1 THEN amount END), 0)                                  AS test_total_raised,
+					COALESCE(SUM(CASE WHEN is_test = 1 THEN 1 END), 0)                                       AS test_transaction_count,
+					COALESCE(COUNT(DISTINCT CASE WHEN is_test = 1 THEN donor_id END), 0)                     AS test_donor_count
+				FROM %i
+				WHERE campaign_id = %d AND status = 'completed'",
+				$transactions_table,
+				$campaign_id
+			),
+			ARRAY_A
+		);
+
+		if ( ! $stats ) {
+			return;
+		}
+
+		$updated = $wpdb->update(
+			$campaigns_table,
+			[
+				'total_raised'           => (int) $stats['total_raised'],
+				'transaction_count'      => (int) $stats['transaction_count'],
+				'donor_count'            => (int) $stats['donor_count'],
+				'test_total_raised'      => (int) $stats['test_total_raised'],
+				'test_transaction_count' => (int) $stats['test_transaction_count'],
+				'test_donor_count'       => (int) $stats['test_donor_count'],
+				'date_modified'          => current_time( 'mysql', true ),
+			],
+			[ 'id' => $campaign_id ],
+			null,
+			[ '%d' ]
+		);
+
+		if ( $updated ) {
+			/**
+			 * Fires when a campaign's aggregate columns are recomputed.
+			 *
+			 * @param int  $campaign_id The campaign ID.
+			 * @param bool $is_test     Always false here; recompute updates both arms together.
+			 */
+			do_action( 'missiondp_campaign_aggregates_updated', $campaign_id, false );
+		}
 	}
 
 	/**

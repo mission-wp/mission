@@ -85,6 +85,41 @@ class Transaction extends Model {
 	}
 
 	/**
+	 * Find a transaction by its gateway transaction ID.
+	 *
+	 * Empty strings are treated as no match (we don't want to find every manual
+	 * transaction whose gateway_transaction_id is blank).
+	 *
+	 * @param string $gateway_transaction_id Gateway transaction identifier.
+	 * @return self|null
+	 */
+	public static function find_by_gateway_transaction_id( string $gateway_transaction_id ): ?self {
+		if ( '' === trim( $gateway_transaction_id ) ) {
+			return null;
+		}
+
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+		return $store->read_by_gateway_transaction_id( $gateway_transaction_id );
+	}
+
+	/**
+	 * Map a set of transaction IDs to their gateway transaction IDs in one query.
+	 *
+	 * @param int[] $ids Transaction IDs.
+	 * @return array<int, string> Map of transaction_id => gateway_transaction_id (only non-empty values).
+	 */
+	public static function gateway_ids_for( array $ids ): array {
+		if ( empty( $ids ) ) {
+			return [];
+		}
+
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+		return $store->read_gateway_ids( $ids );
+	}
+
+	/**
 	 * Get the donor for this transaction.
 	 *
 	 * @return Donor|null

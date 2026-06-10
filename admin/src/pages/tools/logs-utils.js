@@ -27,6 +27,27 @@ const freqLabels = {
   annually: '/yr',
 };
 
+// [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
+const importTypeLabels = {
+  donors: [ 'donor', 'donors' ],
+  transactions: [ 'transaction', 'transactions' ],
+  campaigns: [ 'campaign', 'campaigns' ],
+  subscriptions: [ 'subscription', 'subscriptions' ],
+  tributes: [ 'dedication', 'dedications' ],
+};
+
+/**
+ * Singular/plural noun for an import type ('tributes' shows as 'dedications').
+ *
+ * @param {string} type  Internal import type.
+ * @param {number} count Number the noun agrees with.
+ * @return {string} e.g. "transactions".
+ */
+function importNoun( type, count ) {
+  const labels = importTypeLabels[ type ] || [ type, type ];
+  return count === 1 ? labels[ 0 ] : labels[ 1 ];
+}
+
 /**
  * Build a human-readable message string for a log entry.
  *
@@ -173,6 +194,30 @@ export function buildLogMessage( entry ) {
       return keys.length
         ? `Settings updated: <strong>${ keys.join( ', ' ) }</strong>`
         : 'Settings updated';
+    }
+
+    case 'data_imported': {
+      const imported = Number( data.imported ) || 0;
+      const updated = Number( data.updated ) || 0;
+
+      if ( imported === 0 && updated === 0 ) {
+        return 'Import completed with no changes';
+      }
+
+      const noun = importNoun( data.type, updated > 0 ? updated : imported );
+      let msg;
+      if ( imported > 0 && updated > 0 ) {
+        msg = `imported <strong>${ imported.toLocaleString() }</strong> and updated <strong>${ updated.toLocaleString() } ${ noun }</strong>`;
+      } else if ( updated > 0 ) {
+        msg = `updated <strong>${ updated.toLocaleString() } ${ noun }</strong>`;
+      } else {
+        msg = `imported <strong>${ imported.toLocaleString() } ${ noun }</strong>`;
+      }
+
+      const actor = data.actor_name;
+      return actor
+        ? `${ actor } ${ msg }`
+        : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
     }
 
     default:
