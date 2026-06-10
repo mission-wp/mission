@@ -2521,6 +2521,228 @@
 			],
 			"e.g. 12-3456789": [
 				"p. ej. 12-3456789"
+			],
+			"File exceeds the 10 MB limit.": [
+				""
+			],
+			"Only .csv and .json files are supported.": [
+				""
+			],
+			"Skip duplicates": [
+				""
+			],
+			"If a matching record already exists, skip the imported row.": [
+				""
+			],
+			"Update existing": [
+				""
+			],
+			"If a match is found, update the existing record with the imported data.": [
+				""
+			],
+			"The import could not be started.": [
+				""
+			],
+			"Could not validate the file.": [
+				""
+			],
+			"Import Data": [
+				""
+			],
+			"Upload a CSV or JSON file to import data into Mission.": [
+				""
+			],
+			"Supported columns:": [
+				""
+			],
+			"Required:": [
+				""
+			],
+			"(donor_id may be used instead of donor_email)": [
+				""
+			],
+			"(gateway_transaction_id / Charge ID may be used instead of transaction_id)": [
+				""
+			],
+			"Reading file…": [
+				""
+			],
+			"Drag and drop your file here": [
+				""
+			],
+			"or": [
+				""
+			],
+			"Browse files": [
+				""
+			],
+			"Supports .csv and .json files up to 10MB": [
+				""
+			],
+			"Download Templates": [
+				""
+			],
+			"Need a template? Download a blank CSV with the correct column headers.": [
+				""
+			],
+			"This will import %1$d new %3$s and skip %2$d duplicates. This action cannot be undone.": [
+				""
+			],
+			"This will import %1$d new %3$s and update %2$d existing records. This action cannot be undone.": [
+				""
+			],
+			"%d row(s) with errors will be skipped.": [
+				""
+			],
+			"File Summary": [
+				""
+			],
+			"Review the data before importing.": [
+				""
+			],
+			"rows detected": [
+				""
+			],
+			"columns matched": [
+				""
+			],
+			"%1$d error(s), %2$d warning(s)": [
+				""
+			],
+			"warnings": [
+				""
+			],
+			"Row %d:": [
+				""
+			],
+			"And %d more errors.": [
+				""
+			],
+			"And %d more warnings.": [
+				""
+			],
+			"%1$d %2$s": [
+				""
+			],
+			"already exist in your database (matched by Charge ID)": [
+				""
+			],
+			"already exist in your database (matched by title)": [
+				""
+			],
+			"already exist in your database (matched by Subscription ID)": [
+				""
+			],
+			"already exist in your database (matched by transaction)": [
+				""
+			],
+			"already exist in your database (matched by email)": [
+				""
+			],
+			"%d rows have no Charge ID": [
+				""
+			],
+			"and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
+				""
+			],
+			"%d rows have no Subscription ID": [
+				""
+			],
+			"and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
+				""
+			],
+			"Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions.": [
+				""
+			],
+			"Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway.": [
+				""
+			],
+			"Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported.": [
+				""
+			],
+			"Import Options": [
+				""
+			],
+			"Choose how to handle records that already exist.": [
+				""
+			],
+			"Data Preview": [
+				""
+			],
+			"First 5 rows from your uploaded file.": [
+				""
+			],
+			"Update %1$d %2$s": [
+				""
+			],
+			"Import %1$d %2$s": [
+				""
+			],
+			"Cancelling…": [
+				""
+			],
+			"Importing your %s": [
+				""
+			],
+			"%1$d of %2$d rows processed": [
+				""
+			],
+			"Starting up…": [
+				""
+			],
+			"imported": [
+				""
+			],
+			"updated": [
+				""
+			],
+			"skipped": [
+				""
+			],
+			"errors": [
+				""
+			],
+			"You can safely leave this page — the import keeps running in the background. Come back any time to check progress.": [
+				""
+			],
+			"Cancel import": [
+				""
+			],
+			"Import failed": [
+				""
+			],
+			"Something went wrong while running the import.": [
+				""
+			],
+			"%1$d imported, %2$d updated, %3$d skipped before the failure.": [
+				""
+			],
+			"Try again": [
+				""
+			],
+			"%1$d %2$s were successfully imported.": [
+				""
+			],
+			"%d existing records were updated.": [
+				""
+			],
+			"%d duplicates were skipped.": [
+				""
+			],
+			"%d rows failed to import.": [
+				""
+			],
+			"Import complete": [
+				""
+			],
+			"Show error details": [
+				""
+			],
+			"View %s": [
+				""
+			],
+			"Import more data": [
+				""
 			]
 		}
 	}
