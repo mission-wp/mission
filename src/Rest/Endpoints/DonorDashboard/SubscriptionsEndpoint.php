@@ -322,13 +322,28 @@ class SubscriptionsEndpoint {
 		$tip_amount      = (int) $request->get_param( 'tip_amount' );
 		$fee_amount      = (int) $request->get_param( 'fee_amount' );
 
-		if ( $donation_amount < 100 ) {
+		// One major unit, raised to Stripe's published minimum where higher.
+		$minimum = Currency::minimum_charge( $subscription->currency );
+
+		if ( $donation_amount < $minimum ) {
 			return new WP_Error(
 				'amount_too_low',
 				sprintf(
 					/* translators: %s: formatted minimum amount (e.g. "$1.00") */
 					__( 'Donation amount must be at least %s.', 'mission-donation-platform' ),
-					Currency::format_amount( 100, $subscription->currency )
+					Currency::format_amount( $minimum, $subscription->currency )
+				),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( 0 !== $donation_amount % Currency::rounding_unit( $subscription->currency ) ) {
+			return new WP_Error(
+				'invalid_amount',
+				sprintf(
+					/* translators: %s: ISO currency code (e.g. "ISK") */
+					__( 'Donations in %s must be a whole number.', 'mission-donation-platform' ),
+					strtoupper( $subscription->currency )
 				),
 				[ 'status' => 400 ]
 			);

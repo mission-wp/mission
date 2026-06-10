@@ -234,7 +234,6 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 			'donation_amount'  => 5000,
 			'tip_amount'       => 0,
 			'fee_amount'       => 0,
-			'currency'         => 'usd',
 			'donor_email'      => 'jane@example.com',
 			'donor_first_name' => 'Jane',
 			'donor_last_name'  => 'Doe',
@@ -337,6 +336,53 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		] );
 
 		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * Test the minimum is validated against the donor's chosen amount,
+	 * before fee recovery is added.
+	 */
+	public function test_minimum_validated_against_pre_fee_amount(): void {
+		$form_id = 'f_prefee1';
+
+		$post_id = self::factory()->post->create( [
+			'post_content' => '<!-- wp:mission-donation-platform/donation-form {"formId":"' . $form_id . '","minimumAmount":1000} /-->',
+			'post_status'  => 'publish',
+		] );
+
+		// The donor chose $9.50; fee recovery pushes the request amount to
+		// $10.50, above the $10 minimum. The chosen amount must be validated.
+		$response = $this->make_request( [
+			'donation_amount' => 1050,
+			'fee_amount'      => 100,
+			'source_post_id'  => $post_id,
+			'form_id'         => $form_id,
+		] );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'donation_below_minimum', $response->as_error()->get_error_code() );
+	}
+
+	/**
+	 * Test the hard floor scales with the site currency.
+	 */
+	public function test_hard_floor_scales_with_currency(): void {
+		$settings             = get_option( SettingsService::OPTION_NAME );
+		$settings['currency'] = 'JPY';
+		update_option( SettingsService::OPTION_NAME, $settings );
+
+		// ¥99 is above JPY's one-major-unit floor; the old flat 100-minor-unit
+		// floor would have rejected it.
+		$response = $this->make_request( [ 'donation_amount' => 99 ] );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		$response2 = $this->make_request( [
+			'donation_amount' => 0,
+			'donor_email'     => 'zero@example.com',
+		] );
+
+		$this->assertSame( 400, $response2->get_status() );
 	}
 
 	/**
@@ -718,6 +764,22 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$response2 = $this->make_request( [ 'donor_email' => 'test2@example.com' ] );
 		$txn2      = Transaction::find( $response2->get_data()['transaction_id'] );
 		$this->assertFalse( $txn2->is_test );
+	}
+
+	/**
+	 * Test the charge currency comes from settings, never from the client.
+	 */
+	public function test_currency_comes_from_settings_not_request(): void {
+		$settings             = get_option( SettingsService::OPTION_NAME );
+		$settings['currency'] = 'EUR';
+		update_option( SettingsService::OPTION_NAME, $settings );
+
+		// A tampered request supplying a different currency is ignored.
+		$response = $this->make_request( [ 'currency' => 'jpy' ] );
+		$txn      = Transaction::find( $response->get_data()['transaction_id'] );
+
+		$this->assertSame( 'eur', $this->last_api_body['currency'] );
+		$this->assertSame( 'eur', $txn->currency );
 	}
 
 	/**

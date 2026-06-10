@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 ( static function ( $attributes, $content, $block ): void {
 // Primary color.
-$mission_settings = get_option( 'missiondp_settings', [] );
+$mission_settings = ( new \MissionDP\Settings\SettingsService() )->get_all();
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $attributes['primaryColor'] ) ? $attributes['primaryColor'] : $global_primary;
 $color_style      = \MissionDP\DonorDashboard\PrimaryColorResolver::inline_style( $primary_color );

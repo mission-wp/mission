@@ -3,12 +3,13 @@
  * Plugin Name: Mission - Donation Platform
  * Plugin URI: https://missionwp.com
  * Description: The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.
- * Version: 1.1.7
+ * Version: 1.2.0
  * Author: Mission
  * Author URI: https://missionwp.com
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: mission-donation-platform
+ * Domain Path: /languages
  * Requires at least: 6.7
  * Requires PHP: 8.0
  *
@@ -54,7 +55,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 }
 
 // Plugin constants.
-define( 'MISSIONDP_VERSION', '1.1.7' );
+define( 'MISSIONDP_VERSION', '1.2.0' );
 define( 'MISSIONDP_FILE', __FILE__ );
 define( 'MISSIONDP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSIONDP_URL', plugin_dir_url( __FILE__ ) );
@@ -66,6 +67,13 @@ define( 'MISSIONDP_STRIPE_PK_LIVE', 'pk_live_51T5DwoQLFYekpV0Fmd9UBolXWaoBAnSvLu
 $missiondp_autoloader = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( $missiondp_autoloader ) ) {
 	require_once $missiondp_autoloader;
+
+	// Bootstrap Action Scheduler. Its loader picks the highest version if multiple
+	// plugins ship it (e.g. WooCommerce), so this is safe to call directly.
+	$missiondp_action_scheduler = __DIR__ . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
+	if ( file_exists( $missiondp_action_scheduler ) ) {
+		require_once $missiondp_action_scheduler;
+	}
 } else {
 	// If Composer dependencies haven't been installed, show an admin notice.
 	add_action(

@@ -99,7 +99,8 @@ export default function StepBasics( { data, updateData, errors } ) {
           id="ob-ein"
           value={ data.org_ein }
           onChange={ ( e ) => updateData( { org_ein: e.target.value } ) }
-          placeholder="e.g. 12-3456789"
+          // eslint-disable-next-line @wordpress/i18n-hyphenated-range -- EIN format uses a literal hyphen, not a numeric range.
+          placeholder={ __( 'e.g. 12-3456789', 'mission-donation-platform' ) }
         />
         <span className="mission-onboarding-field__hint">
           { __(

@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.1.7
+Stable Tag: 1.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,7 +76,7 @@ Run a single ongoing campaign or dozens of named campaigns side by side:
 * Active, draft, and archived statuses
 * Real-time aggregates that update as donations complete
 
-Mission ships eleven campaign and donation blocks: donation form, donate button, campaign card, campaign grid, campaign image, campaign progress bar, campaign statistic, donor wall, recent donors, top donors, and donor dashboard. Mix and match them to build campaign pages that match your brand.
+Mission ships eleven campaign and donation blocks: donation form, donate button, campaign card, campaign grid, campaign image, campaign progress bar, campaign statistic, donor wall, recent donors, top donors, and donor dashboard. Mix and match them to build campaign pages that match your brand. Not using the block editor? Every block has a shortcode equivalent that works in page builders like Elementor and Bricks.
 
 === 📊 Reports and exports you can actually use ===
 
@@ -147,6 +147,10 @@ No. The donation form is fully public and requires no account. If a donor wants 
 
 Yes. Every form has its own settings: amounts, frequencies, fields, fee handling, color, anonymous donation toggle, tribute support, and custom fields (text, textarea, select, radio, checkbox). Layout, spacing, and typography use WordPress's native block controls, and themes can restyle the form freely thanks to low-specificity CSS, `--mission-*` custom properties, no `!important` declarations, and no inline styles.
 
+= Can I use Mission with Elementor, Bricks, or the Classic Editor? =
+
+Yes. Every Mission block has a shortcode equivalent that works anywhere shortcodes do, including page builders like Elementor, Bricks, and Divi. The available shortcodes are `[mission_donation_form]`, `[mission_donate_button]`, `[mission_campaign]`, `[mission_campaign_grid]`, `[mission_campaign_image]`, `[mission_campaign_progress]`, `[mission_campaign_statistics]`, `[mission_donor_wall]`, `[mission_recent_donors]`, `[mission_top_donors]`, and `[mission_donor_dashboard]`. Attributes mirror the block settings in snake_case, for example: `[mission_donation_form campaign_id="12" amounts="10,25,50" default_amount="25"]`.
+
 = How is Mission different from GiveWP or Charitable? =
 
 The headline difference is the business model. GiveWP and Charitable both run on a freemium model where the most useful features (recurring donations, fee recovery, custom fields, advanced reports, peer-to-peer fundraising) are paid add-ons that stack into a meaningful yearly cost. Mission flips this: every feature is free, and the platform is funded by optional donor tips instead.
@@ -182,6 +186,20 @@ This plugin connects to the following third-party services:
 **Gravatar** supplies donor avatars in the admin and on the Donor Wall block. Email addresses are hashed before being sent. See Gravatar's [Terms](https://wordpress.com/tos/) and [Privacy Policy](https://automattic.com/privacy/).
 
 == Changelog ==
+
+= 1.2.0 =
+* Added a data import tool for donors, transactions, campaigns, subscriptions, and dedications, with CSV and JSON support
+* Preview and validate your file before importing, with per-row warnings and the choice to skip or update existing records
+* Large imports run in the background so they don't time out
+* Mission is now fully translatable and ships with a complete Spanish (es_ES) translation
+* Every block now has a shortcode equivalent, so Mission can be used with page builders like Elementor and Bricks and in the Classic Editor
+* Improved support for international currencies, with correct amounts, fees, and decimals for currencies like the Japanese yen and Kuwaiti dinar
+* Donation minimums now follow Stripe's per-currency minimums, with clearer messages when an amount is too low
+* Updated the currency list to match the currencies Stripe currently supports
+* The Dedications export now includes a Charge ID column so dedications can be matched back to their transactions when re-imported
+* The activity log now shows who ran an import and how many records were imported or updated
+* Improved the donation form layout on small screens and in narrow spaces like sidebars
+* Internal code quality and maintainability improvements
 
 = 1.1.7 =
 * Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations

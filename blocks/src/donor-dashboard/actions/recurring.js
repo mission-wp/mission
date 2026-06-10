@@ -5,9 +5,19 @@
  * and update payment method actions.
  */
 import { getContext, getElement } from '@wordpress/interactivity';
-import { minorToMajor, majorToMinor } from '@shared/currencies';
+import {
+  getCurrencyDecimals,
+  minorToMajor,
+  majorToMinor,
+  roundToCurrency,
+} from '@shared/currencies';
 import { formatAmount } from '@shared/currency';
-import { calculateFee, calculateTip, PLATFORM_FEE_RATE } from '@shared/fees';
+import {
+  calculateFee,
+  calculateTip,
+  defaultFixedFee,
+  PLATFORM_FEE_RATE,
+} from '@shared/fees';
 import { showToast } from '../utils/toast';
 
 /**
@@ -270,10 +280,10 @@ export const recurringState = {
       sub.currency
     );
     const rate = ( sub.stripeFeePercent ?? 2.9 ) / 100;
-    const fixed = sub.stripeFeeFixed ?? 30;
+    const fixed = sub.stripeFeeFixed ?? defaultFixedFee( sub.currency );
     const platform = sub.feeModeFlat ? PLATFORM_FEE_RATE : 0;
     return formatAmount(
-      calculateFee( base, rate, fixed, platform ),
+      calculateFee( base, rate, fixed, platform, sub.currency ),
       sub.currency
     );
   },
@@ -310,7 +320,9 @@ export const recurringState = {
     if ( ! sub ) {
       return '0.00';
     }
-    return minorToMajor( sub.changeCustomTipAmount, sub.currency ).toFixed( 2 );
+    return minorToMajor( sub.changeCustomTipAmount, sub.currency ).toFixed(
+      getCurrencyDecimals( sub.currency )
+    );
   },
   get changeUpdateButtonLabel() {
     const sub = getContext().sub;
@@ -325,17 +337,24 @@ export const recurringState = {
       sub.currency
     );
     const rate = ( sub.stripeFeePercent ?? 2.9 ) / 100;
-    const fixed = sub.stripeFeeFixed ?? 30;
+    const fixed = sub.stripeFeeFixed ?? defaultFixedFee( sub.currency );
     const platform = sub.feeModeFlat ? PLATFORM_FEE_RATE : 0;
     let total = base;
     if ( sub.changeFeeRecoveryChecked ) {
-      total += calculateFee( base, rate, fixed, platform );
+      total += calculateFee( base, rate, fixed, platform, sub.currency );
     }
     if ( ! sub.feeModeFlat ) {
       if ( sub.changeIsCustomTip ) {
-        total += Math.max( 0, sub.changeCustomTipAmount || 0 );
+        total += Math.max(
+          0,
+          roundToCurrency( sub.changeCustomTipAmount || 0, sub.currency )
+        );
       } else {
-        total += calculateTip( base, sub.changeSelectedTipPercent );
+        total += calculateTip(
+          base,
+          sub.changeSelectedTipPercent,
+          sub.currency
+        );
       }
     }
     return `Update to ${ formatAmount( total, sub.currency ) } ${
@@ -608,7 +627,7 @@ export const recurringActions = {
       parseFloat( sub.changeAmountInput ) || 0,
       sub.currency
     );
-    sub.changeCustomTipAmount = calculateTip( amount, 15 );
+    sub.changeCustomTipAmount = calculateTip( amount, 15, sub.currency );
     sub.changeSelectedTipPercent = 0;
     sub.changeTipMenuOpen = false;
   },
@@ -639,7 +658,7 @@ export const recurringActions = {
 
     if ( ! baseAmount || baseAmount < 1 ) {
       sub.changeError = `Please enter an amount of at least ${ formatAmount(
-        100,
+        majorToMinor( 1, sub.currency ),
         sub.currency
       ) }.`;
       return;
@@ -649,10 +668,16 @@ export const recurringActions = {
 
     // Calculate fee recovery.
     const feeRate = ( sub.stripeFeePercent ?? 2.9 ) / 100;
-    const feeFixed = sub.stripeFeeFixed ?? 30;
+    const feeFixed = sub.stripeFeeFixed ?? defaultFixedFee( sub.currency );
     const platformRate = sub.feeModeFlat ? PLATFORM_FEE_RATE : 0;
     const feeAmount = sub.changeFeeRecoveryChecked
-      ? calculateFee( baseAmountMinor, feeRate, feeFixed, platformRate )
+      ? calculateFee(
+          baseAmountMinor,
+          feeRate,
+          feeFixed,
+          platformRate,
+          sub.currency
+        )
       : 0;
 
     // Fee rolls into donation_amount (same as donation form).
@@ -662,11 +687,15 @@ export const recurringActions = {
     let tipAmount = 0;
     if ( ! sub.feeModeFlat ) {
       if ( sub.changeIsCustomTip ) {
-        tipAmount = Math.max( 0, sub.changeCustomTipAmount || 0 );
+        tipAmount = Math.max(
+          0,
+          roundToCurrency( sub.changeCustomTipAmount || 0, sub.currency )
+        );
       } else {
         tipAmount = calculateTip(
           baseAmountMinor,
-          sub.changeSelectedTipPercent
+          sub.changeSelectedTipPercent,
+          sub.currency
         );
       }
     }

@@ -24,10 +24,10 @@
     "showDate": { "type": "boolean", "default": true },
     "showComments": { "type": "boolean", "default": true },
     "commentLength": { "type": "number", "default": 150 },
-    "readMoreText": { "type": "string", "default": "Read more" },
+    "readMoreText": { "type": "string" },
     "showSortControls": { "type": "boolean", "default": true },
     "defaultSort": { "type": "string", "default": "recent" },
-    "loadMoreText": { "type": "string", "default": "Show More Donations" }
+    "loadMoreText": { "type": "string" }
   },
   "example": {},
   "textdomain": "mission-donation-platform",

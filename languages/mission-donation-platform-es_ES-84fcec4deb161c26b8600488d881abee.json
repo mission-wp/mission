@@ -1,0 +1,54 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.12.0",
+    "source": "blocks\/build\/recent-donors\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Campaign": [
+                "Campa\u00f1a"
+            ],
+            "Recent Donors": [
+                "Donantes recientes"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "Selecciona una campa\u00f1a o coloca este bloque en una p\u00e1gina de campa\u00f1a."
+            ],
+            "Scroll to donation form": [
+                "Desplazarse al formulario de donaci\u00f3n"
+            ],
+            "Custom URL": [
+                "URL personalizada"
+            ],
+            "Hide": [
+                "Ocultar"
+            ],
+            "Donate URL": [
+                "URL de donaci\u00f3n"
+            ],
+            "Number of donors": [
+                "N\u00famero de donantes"
+            ],
+            "Donate button (empty state)": [
+                "Bot\u00f3n Donar (estado vac\u00edo)"
+            ],
+            "Show avatars": [
+                "Mostrar avatares"
+            ],
+            "Show dedications": [
+                "Mostrar dedicatorias"
+            ]
+        }
+    }
+}

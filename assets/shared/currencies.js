@@ -20,13 +20,18 @@ export const ZERO_DECIMAL_CURRENCIES = new Set( [
   'MGA',
   'PYG',
   'RWF',
-  'UGX',
   'VND',
   'VUV',
   'XAF',
   'XOF',
   'XPF',
 ] );
+
+/**
+ * Currencies Stripe represents as two-decimal values where the decimal part
+ * must always be 00 — fractions of a unit cannot be charged.
+ */
+export const WHOLE_UNIT_CURRENCIES = new Set( [ 'ISK', 'UGX' ] );
 
 /**
  * Three-decimal currencies — smallest unit is 1/1000.
@@ -84,6 +89,31 @@ export function majorToMinor( displayValue, code ) {
 }
 
 /**
+ * Get the smallest chargeable increment in minor units.
+ *
+ * Mirrors Currency::rounding_unit(): 100 for whole-unit-only currencies
+ * (ISK, UGX), otherwise 1.
+ *
+ * @param {string} code ISO 4217 currency code.
+ * @return {number} Rounding unit in minor units.
+ */
+export function roundingUnit( code ) {
+  return WHOLE_UNIT_CURRENCIES.has( code?.toUpperCase?.() ) ? 100 : 1;
+}
+
+/**
+ * Round a minor-unit amount to the currency's smallest chargeable increment.
+ *
+ * @param {number} minorUnits Amount in minor units.
+ * @param {string} code       ISO 4217 currency code.
+ * @return {number} Rounded amount in minor units.
+ */
+export function roundToCurrency( minorUnits, code ) {
+  const unit = roundingUnit( code );
+  return Math.round( minorUnits / unit ) * unit;
+}
+
+/**
  * All Stripe-supported currencies, sorted by code.
  *
  * Each entry: { label: 'CODE — Name', value: 'CODE' }
@@ -111,6 +141,7 @@ export const CURRENCIES = [
   { label: 'BRL — Brazilian Real', value: 'BRL' },
   { label: 'BSD — Bahamian Dollar', value: 'BSD' },
   { label: 'BWP — Botswana Pula', value: 'BWP' },
+  { label: 'BYN — Belarusian Ruble', value: 'BYN' },
   { label: 'BZD — Belize Dollar', value: 'BZD' },
   { label: 'CAD — Canadian Dollar', value: 'CAD' },
   { label: 'CDF — Congolese Franc', value: 'CDF' },
@@ -139,7 +170,6 @@ export const CURRENCIES = [
   { label: 'GYD — Guyanese Dollar', value: 'GYD' },
   { label: 'HKD — Hong Kong Dollar', value: 'HKD' },
   { label: 'HNL — Honduran Lempira', value: 'HNL' },
-  { label: 'HRK — Croatian Kuna', value: 'HRK' },
   { label: 'HTG — Haitian Gourde', value: 'HTG' },
   { label: 'HUF — Hungarian Forint', value: 'HUF' },
   { label: 'IDR — Indonesian Rupiah', value: 'IDR' },
@@ -158,6 +188,7 @@ export const CURRENCIES = [
   { label: 'KYD — Cayman Islands Dollar', value: 'KYD' },
   { label: 'KZT — Kazakhstani Tenge', value: 'KZT' },
   { label: 'LAK — Lao Kip', value: 'LAK' },
+  { label: 'LBP — Lebanese Pound', value: 'LBP' },
   { label: 'LKR — Sri Lankan Rupee', value: 'LKR' },
   { label: 'LRD — Liberian Dollar', value: 'LRD' },
   { label: 'LSL — Lesotho Loti', value: 'LSL' },
@@ -168,7 +199,6 @@ export const CURRENCIES = [
   { label: 'MMK — Myanmar Kyat', value: 'MMK' },
   { label: 'MNT — Mongolian Togrog', value: 'MNT' },
   { label: 'MOP — Macanese Pataca', value: 'MOP' },
-  { label: 'MRO — Mauritanian Ouguiya', value: 'MRO' },
   { label: 'MUR — Mauritian Rupee', value: 'MUR' },
   { label: 'MVR — Maldivian Rufiyaa', value: 'MVR' },
   { label: 'MWK — Malawian Kwacha', value: 'MWK' },
@@ -200,11 +230,10 @@ export const CURRENCIES = [
   { label: 'SEK — Swedish Krona', value: 'SEK' },
   { label: 'SGD — Singapore Dollar', value: 'SGD' },
   { label: 'SHP — Saint Helenian Pound', value: 'SHP' },
-  { label: 'SLL — Sierra Leonean Leone', value: 'SLL' },
+  { label: 'SLE — Sierra Leonean Leone', value: 'SLE' },
   { label: 'SOS — Somali Shilling', value: 'SOS' },
   { label: 'SRD — Surinamese Dollar', value: 'SRD' },
   { label: 'STD — Sao Tome and Principe Dobra', value: 'STD' },
-  { label: 'SVC — Salvadoran Colon', value: 'SVC' },
   { label: 'SZL — Swazi Lilangeni', value: 'SZL' },
   { label: 'THB — Thai Baht', value: 'THB' },
   { label: 'TJS — Tajikistani Somoni', value: 'TJS' },
@@ -224,6 +253,7 @@ export const CURRENCIES = [
   { label: 'WST — Samoan Tala', value: 'WST' },
   { label: 'XAF — Central African CFA Franc', value: 'XAF' },
   { label: 'XCD — East Caribbean Dollar', value: 'XCD' },
+  { label: 'XCG — Caribbean Guilder', value: 'XCG' },
   { label: 'XOF — West African CFA Franc', value: 'XOF' },
   { label: 'XPF — CFP Franc', value: 'XPF' },
   { label: 'YER — Yemeni Rial', value: 'YER' },

@@ -97,6 +97,73 @@ class SettingsServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the default fixed fee follows the stored currency.
+	 */
+	public function test_get_all_scales_default_fixed_fee_for_currency(): void {
+		update_option( SettingsService::OPTION_NAME, array( 'currency' => 'KWD' ) );
+
+		$this->assertSame( 300, $this->service->get( 'stripe_fee_fixed' ) );
+
+		update_option( SettingsService::OPTION_NAME, array( 'currency' => 'JPY' ) );
+
+		$this->assertSame( 0, $this->service->get( 'stripe_fee_fixed' ) );
+	}
+
+	/**
+	 * Test a stored fixed fee is not overridden by the currency default.
+	 */
+	public function test_get_all_prefers_stored_fixed_fee(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			array(
+				'currency'         => 'JPY',
+				'stripe_fee_fixed' => 50,
+			)
+		);
+
+		$this->assertSame( 50, $this->service->get( 'stripe_fee_fixed' ) );
+	}
+
+	/**
+	 * Test a currency change resets the fixed fee to the new currency's default.
+	 */
+	public function test_update_currency_change_resets_fixed_fee(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			array(
+				'currency'         => 'USD',
+				'stripe_fee_fixed' => 30,
+			)
+		);
+
+		$result = $this->service->update( array( 'currency' => 'JPY' ) );
+
+		$this->assertSame( 0, $result['stripe_fee_fixed'] );
+	}
+
+	/**
+	 * Test an explicit fixed fee in the same update is not reset.
+	 */
+	public function test_update_currency_change_keeps_explicit_fixed_fee(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			array(
+				'currency'         => 'USD',
+				'stripe_fee_fixed' => 30,
+			)
+		);
+
+		$result = $this->service->update(
+			array(
+				'currency'         => 'KWD',
+				'stripe_fee_fixed' => 250,
+			)
+		);
+
+		$this->assertSame( 250, $result['stripe_fee_fixed'] );
+	}
+
+	/**
 	 * Test update fires action hook.
 	 */
 	public function test_update_fires_action_hook(): void {

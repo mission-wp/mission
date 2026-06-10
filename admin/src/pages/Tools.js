@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import CleanupPanel from './tools/CleanupPanel';
 import ComingSoonPanel from './tools/ComingSoonPanel';
 import ExportPanel from './tools/ExportPanel';
+import ImportPanel from './tools/ImportPanel';
 import LogsPanel from './tools/LogsPanel';
 import StatusPanel from './tools/StatusPanel';
 
@@ -212,10 +213,12 @@ export default function Tools() {
           </ul>
         </nav>
 
-        <div>
+        <div className="mission-settings-layout__content">
           { activeTab === 'export' && <ExportPanel /> }
 
-          { [ 'import', 'migration', 'features' ].includes( activeTab ) && (
+          { activeTab === 'import' && <ImportPanel /> }
+
+          { [ 'migration', 'features' ].includes( activeTab ) && (
             <ComingSoonPanel tabId={ activeTab } />
           ) }
 

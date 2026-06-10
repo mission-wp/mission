@@ -34,14 +34,14 @@ defined( 'ABSPATH' ) || exit;
 	</noscript>
 	<?php
 	echo wp_kses(
-		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/header-mso.css' ) ),
+		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/header-mso.css' ) ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local plugin file, not a remote URL.
 		[ 'style' => [] ]
 	);
 	?>
 	<![endif]-->
 	<?php
 	echo wp_kses(
-		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/header.css' ) ),
+		sprintf( '<%1$s>%2$s</%1$s>', 'style', file_get_contents( __DIR__ . '/header.css' ) ), // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- local plugin file, not a remote URL.
 		[ 'style' => [] ]
 	);
 	?>

@@ -2,22 +2,24 @@ import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { computePrimaryColorVars } from '@shared/color';
+import { getCurrencyDecimals, minorToMajor } from '@shared/currencies';
 
 /**
  * Format a minor-unit amount (e.g. 5000 = $50.00) for display.
  *
- * @param {number} minorAmount Amount in minor units (cents).
+ * @param {number} minorAmount Amount in minor units.
  * @param {string} currency    ISO 4217 currency code.
  * @return {string} Formatted string.
  */
 function formatAmount( minorAmount, currency = 'USD' ) {
-  const majorAmount = minorAmount / 100;
+  const majorAmount = minorToMajor( minorAmount, currency );
   try {
     return new Intl.NumberFormat( undefined, {
       style: 'currency',
       currency,
       minimumFractionDigits: 0,
-      maximumFractionDigits: majorAmount % 1 === 0 ? 0 : 2,
+      maximumFractionDigits:
+        majorAmount % 1 === 0 ? 0 : getCurrencyDecimals( currency ),
     } ).format( majorAmount );
   } catch {
     return `$${ majorAmount }`;

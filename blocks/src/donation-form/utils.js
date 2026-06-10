@@ -3,8 +3,12 @@
  *
  * Extracted from view.js so they can be tested in isolation and reused.
  */
-import { getCurrencyDecimals, majorToMinor } from '@shared/currencies';
-import { calculateTip } from '@shared/fees';
+import {
+  getCurrencyDecimals,
+  majorToMinor,
+  roundToCurrency,
+} from '@shared/currencies';
+import { calculateTip, defaultFixedFee } from '@shared/fees';
 
 /**
  * Format minor units (cents) as a currency string.
@@ -93,7 +97,8 @@ export function resetAmountForFrequency( ctx, frequency ) {
  */
 export function getFeeParams( ctx ) {
   const percent = ctx.stripeFeePercent ?? 2.9;
-  const fixed = ctx.stripeFeeFixed ?? 30;
+  const fixed =
+    ctx.stripeFeeFixed ?? defaultFixedFee( ctx.settings?.currency || 'USD' );
   return { rate: percent / 100, fixed };
 }
 
@@ -111,10 +116,11 @@ export { calculateFee, calculateTip } from '@shared/fees';
  * @return {number} Tip in minor units.
  */
 export function getTipAmount( ctx, amount ) {
+  const currency = ctx.settings?.currency || 'USD';
   if ( ctx.isCustomTip ) {
-    return Math.max( 0, ctx.customTipAmount || 0 );
+    return Math.max( 0, roundToCurrency( ctx.customTipAmount || 0, currency ) );
   }
-  return calculateTip( amount, ctx.selectedTipPercent );
+  return calculateTip( amount, ctx.selectedTipPercent, currency );
 }
 
 /**

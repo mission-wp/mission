@@ -38,6 +38,7 @@ class Transaction extends Model {
 	public string $gateway_customer_id;
 	public bool $is_anonymous;
 	public bool $is_test;
+	public int $import_job_id;
 	public string $donor_ip;
 	public string $date_created;
 	public ?string $date_completed;
@@ -70,6 +71,7 @@ class Transaction extends Model {
 		$this->gateway_customer_id     = $data['gateway_customer_id'] ?? '';
 		$this->is_anonymous            = (bool) ( $data['is_anonymous'] ?? false );
 		$this->is_test                 = (bool) ( $data['is_test'] ?? false );
+		$this->import_job_id           = (int) ( $data['import_job_id'] ?? 0 );
 		$this->donor_ip                = $data['donor_ip'] ?? '';
 		$this->date_created            = $data['date_created'] ?? current_time( 'mysql', true );
 		$this->date_completed          = $data['date_completed'] ?? null;
@@ -82,6 +84,41 @@ class Transaction extends Model {
 	 */
 	protected static function new_store(): DataStoreInterface {
 		return new TransactionDataStore();
+	}
+
+	/**
+	 * Find a transaction by its gateway transaction ID.
+	 *
+	 * Empty strings are treated as no match (we don't want to find every manual
+	 * transaction whose gateway_transaction_id is blank).
+	 *
+	 * @param string $gateway_transaction_id Gateway transaction identifier.
+	 * @return self|null
+	 */
+	public static function find_by_gateway_transaction_id( string $gateway_transaction_id ): ?self {
+		if ( '' === trim( $gateway_transaction_id ) ) {
+			return null;
+		}
+
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+		return $store->read_by_gateway_transaction_id( $gateway_transaction_id );
+	}
+
+	/**
+	 * Map a set of transaction IDs to their gateway transaction IDs in one query.
+	 *
+	 * @param int[] $ids Transaction IDs.
+	 * @return array<int, string> Map of transaction_id => gateway_transaction_id (only non-empty values).
+	 */
+	public static function gateway_ids_for( array $ids ): array {
+		if ( empty( $ids ) ) {
+			return [];
+		}
+
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+		return $store->read_gateway_ids( $ids );
 	}
 
 	/**

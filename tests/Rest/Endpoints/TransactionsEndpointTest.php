@@ -116,12 +116,10 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		// Configure settings.
 		update_option( SettingsService::OPTION_NAME, [
 			'test_mode'          => false,
+			'currency'           => 'USD',
 			'stripe_fee_percent' => 2.9,
 			'stripe_fee_fixed'   => 30,
 		] );
-
-		// Set currency.
-		update_option( 'missiondp_currency', 'usd' );
 	}
 
 	/**
@@ -145,7 +143,6 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );
@@ -555,6 +552,25 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test POST stores the configured site currency, not a hardcoded default.
+	 */
+	public function test_post_create_uses_settings_currency(): void {
+		$settings             = get_option( SettingsService::OPTION_NAME );
+		$settings['currency'] = 'EUR';
+		update_option( SettingsService::OPTION_NAME, $settings );
+
+		$response = $this->dispatch_post( '/mission-donation-platform/v1/transactions', [
+			'donor_email'      => 'euro@example.com',
+			'donor_first_name' => 'Euro',
+			'donation_amount'  => 10000,
+		] );
+
+		$transaction = Transaction::find( $response->get_data()['transaction_id'] );
+
+		$this->assertSame( 'eur', $transaction->currency );
+	}
+
+	/**
 	 * Test POST validates donation_amount is required.
 	 *
 	 * The schema defines donation_amount as required. Omitting it returns 400.
@@ -768,6 +784,25 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 5000, $data['average_donation'] );
 		$this->assertSame( 1, $data['total_refunded'] );
 		$this->assertSame( 2000, $data['total_refunded_amount'] );
+	}
+
+	/**
+	 * Test GET summary aggregates the configured site currency, not 'usd'.
+	 */
+	public function test_get_summary_uses_settings_currency(): void {
+		$settings             = get_option( SettingsService::OPTION_NAME );
+		$settings['currency'] = 'EUR';
+		update_option( SettingsService::OPTION_NAME, $settings );
+
+		$this->create_transaction( [ 'amount' => 3000, 'total_amount' => 3000, 'currency' => 'eur' ] );
+		$this->create_transaction( [ 'amount' => 5000, 'total_amount' => 5000, 'currency' => 'usd' ] );
+
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions/summary' );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 3000, $data['total_revenue'] );
+		$this->assertSame( 1, $data['total_donations'] );
 	}
 
 	// =========================================================================

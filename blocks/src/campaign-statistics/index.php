@@ -64,8 +64,16 @@ $formatted_value = $is_currency
 	? Currency::format_amount( $raw_value, $currency )
 	: number_format_i18n( $raw_value );
 
-// Heading.
-$heading      = $attributes['heading'] ?? __( 'Total Raised', 'mission-donation-platform' );
+// Heading. When unset, fall back to the default label for the chosen stat type
+// so it stays translatable instead of baking English into saved block content.
+$default_heading = match ( $stat_type ) {
+	'donation_count'   => __( 'Number of Donations', 'mission-donation-platform' ),
+	'donor_count'      => __( 'Number of Donors', 'mission-donation-platform' ),
+	'average_donation' => __( 'Average Donation', 'mission-donation-platform' ),
+	'top_donation'     => __( 'Top Donation', 'mission-donation-platform' ),
+	default            => __( 'Total Raised', 'mission-donation-platform' ),
+};
+$heading      = $attributes['heading'] ?? $default_heading;
 $show_heading = $attributes['showHeading'] ?? true;
 
 // Wrapper classes and CSS custom properties.

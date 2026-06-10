@@ -1,6 +1,6 @@
 {
 	"name": "mission-donation-platform",
-	"version": "1.1.7",
+	"version": "1.2.0",
 	"description": "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.",
 	"private": true,
 	"scripts": {
@@ -22,6 +22,12 @@
 		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/mission-donation-platform vendor/bin/phpunit",
 		"lint:php": "vendor/bin/phpcs",
 		"lint:php:fix": "vendor/bin/phpcbf",
+		"i18n:pot": "wp-env run cli --env-cwd=wp-content/plugins/mission-donation-platform php -d memory_limit=1024M /usr/local/bin/wp i18n make-pot . languages/mission-donation-platform.pot --slug=mission-donation-platform --domain=mission-donation-platform --exclude=node_modules,vendor,tests,artifacts,specs,tasks",
+		"i18n:json": "wp-env run cli --env-cwd=wp-content/plugins/mission-donation-platform wp i18n make-json languages --no-purge --pretty-print && npm run i18n:fix",
+		"i18n:fix": "node scripts/i18n-postprocess.mjs",
+		"i18n:po": "wp-env run cli --env-cwd=wp-content/plugins/mission-donation-platform wp i18n update-po languages/mission-donation-platform.pot languages",
+		"i18n:mo": "wp-env run cli --env-cwd=wp-content/plugins/mission-donation-platform wp i18n make-mo languages",
+		"i18n": "npm run i18n:pot && npm run i18n:po && npm run i18n:mo && npm run i18n:json",
 		"plugin-zip": "npm run build && find admin/build blocks/build -name '*.map' -delete && composer install --no-dev --optimize-autoloader && wp-scripts plugin-zip && composer install"
 	},
 	"devDependencies": {
@@ -43,7 +49,8 @@
 		"vendor/",
 		"admin/build/",
 		"blocks/build/",
-		"assets/img/"
+		"assets/img/",
+		"languages/"
 	],
 	"dependencies": {
 		"@wordpress/dataviews": "^14.3.0",

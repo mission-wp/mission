@@ -55,6 +55,7 @@ class Schema {
   gateway_customer_id varchar(255) DEFAULT '' NOT NULL,
   is_anonymous tinyint(1) NOT NULL DEFAULT 0,
   is_test tinyint(1) NOT NULL DEFAULT 0,
+  import_job_id bigint(20) unsigned NOT NULL DEFAULT 0,
   donor_ip varchar(45) NOT NULL DEFAULT '',
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   date_completed datetime DEFAULT NULL,
@@ -67,7 +68,8 @@ class Schema {
   KEY campaign_id (campaign_id),
   KEY gateway_transaction_id (gateway_transaction_id),
   KEY date_created (date_created),
-  KEY is_test (is_test)
+  KEY is_test (is_test),
+  KEY import_job_id (import_job_id)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
@@ -276,6 +278,36 @@ class Schema {
   PRIMARY KEY  (id),
   UNIQUE KEY transaction_id (transaction_id),
   KEY tribute_type (tribute_type)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Import Jobs
+			// ----------------------------------------------------------------
+			"{$prefix}import_jobs"         => "CREATE TABLE {$prefix}import_jobs (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  job_id varchar(64) NOT NULL DEFAULT '',
+  user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  type varchar(20) NOT NULL DEFAULT 'donors',
+  duplicate_strategy varchar(20) NOT NULL DEFAULT 'skip',
+  status varchar(20) NOT NULL DEFAULT 'queued',
+  file_path text NOT NULL,
+  original_filename varchar(255) NOT NULL DEFAULT '',
+  total_rows int(10) unsigned NOT NULL DEFAULT 0,
+  processed_rows int(10) unsigned NOT NULL DEFAULT 0,
+  imported int(10) unsigned NOT NULL DEFAULT 0,
+  skipped int(10) unsigned NOT NULL DEFAULT 0,
+  updated int(10) unsigned NOT NULL DEFAULT 0,
+  errors int(10) unsigned NOT NULL DEFAULT 0,
+  error_details longtext,
+  last_error text,
+  started_at datetime DEFAULT NULL,
+  completed_at datetime DEFAULT NULL,
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  UNIQUE KEY job_id (job_id),
+  KEY user_status (user_id, status),
+  KEY status (status),
+  KEY date_created (date_created)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------

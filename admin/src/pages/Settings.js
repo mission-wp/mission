@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import { Modal, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
+import { defaultFixedFee } from '@shared/fees';
 
 import Toast from '../components/Toast';
 import GeneralPanel from './settings/GeneralPanel';
@@ -472,6 +473,12 @@ export default function Settings() {
               className="components-button is-primary"
               onClick={ () => {
                 updateField( 'currency', pendingCurrency );
+                // The fixed fee is denominated in minor units of the old
+                // currency, so carry over the new currency's default instead.
+                updateField(
+                  'stripe_fee_fixed',
+                  defaultFixedFee( pendingCurrency )
+                );
                 setPendingCurrency( null );
               } }
               style={ { backgroundColor: '#2fa36b', borderColor: '#2fa36b' } }

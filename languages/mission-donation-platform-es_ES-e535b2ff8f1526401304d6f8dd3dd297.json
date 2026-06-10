@@ -1,0 +1,45 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.12.0",
+    "source": "blocks\/build\/donor-dashboard\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Overview": [
+                "Resumen"
+            ],
+            "Donation History": [
+                "Historial de donaciones"
+            ],
+            "Recurring Donations": [
+                "Donaciones recurrentes"
+            ],
+            "Annual Receipts": [
+                "Recibos anuales"
+            ],
+            "Profile": [
+                "Perfil"
+            ],
+            "Donor Dashboard": [
+                "Panel del donante"
+            ],
+            "Lifetime Given": [
+                "Total donado"
+            ],
+            "Avg. Donation": [
+                "Donaci\u00f3n media"
+            ],
+            "Donations": [
+                "Donaciones"
+            ],
+            "Donors will see a self-service portal here with their donation history, recurring gifts, tax receipts, and profile settings.": [
+                "Aqu\u00ed los donantes ver\u00e1n un portal de autoservicio con su historial de donaciones, donativos recurrentes, recibos fiscales y ajustes del perfil."
+            ]
+        }
+    }
+}

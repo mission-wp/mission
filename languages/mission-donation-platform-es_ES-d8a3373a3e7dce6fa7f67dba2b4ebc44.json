@@ -1,0 +1,2749 @@
+{
+	"translation-revision-date": "2026-06-08 16:00+0000",
+	"generator": "WP-CLI/2.12.0",
+	"source": "admin/build/mission-admin.js",
+	"domain": "messages",
+	"locale_data": {
+		"messages": {
+			"": {
+				"domain": "messages",
+				"lang": "es_ES",
+				"plural-forms": "nplurals=2; plural=(n != 1);"
+			},
+			"Mission": [
+				"Mission"
+			],
+			"Ended": [
+				"Finalizada"
+			],
+			"donors": [
+				"donantes"
+			],
+			"raised": [
+				"recaudado"
+			],
+			"donations": [
+				"donaciones"
+			],
+			"Total Raised": [
+				"Total recaudado"
+			],
+			"Weekly": [
+				"Semanal"
+			],
+			"Monthly": [
+				"Mensual"
+			],
+			"Quarterly": [
+				"Trimestral"
+			],
+			"Annually": [
+				"Anual"
+			],
+			"In honor of": [
+				"En honor de"
+			],
+			"In memory of": [
+				"En memoria de"
+			],
+			"Honoree name": [
+				"Nombre del homenajeado"
+			],
+			"Email": [
+				"Correo electrónico"
+			],
+			"Mail": [
+				"Correo postal"
+			],
+			"Country": [
+				"País"
+			],
+			"Street Address": [
+				"Dirección"
+			],
+			"City": [
+				"Ciudad"
+			],
+			"Continue": [
+				"Continuar"
+			],
+			"Back": [
+				"Atrás"
+			],
+			"This field is required.": [
+				"Este campo es obligatorio."
+			],
+			"Edit": [
+				"Editar"
+			],
+			"First Name": [
+				"Nombre"
+			],
+			"Last Name": [
+				"Apellidos"
+			],
+			"Overview": [
+				"Resumen"
+			],
+			"Donation History": [
+				"Historial de donaciones"
+			],
+			"Recurring Donations": [
+				"Donaciones recurrentes"
+			],
+			"Email address": [
+				"Dirección de correo electrónico"
+			],
+			"One-time": [
+				"Única"
+			],
+			"Recurring": [
+				"Recurrente"
+			],
+			"Loading…": [
+				"Cargando…"
+			],
+			"Donation history": [
+				"Historial de donaciones"
+			],
+			"Date": [
+				"Fecha"
+			],
+			"Amount": [
+				"Importe"
+			],
+			"Campaign": [
+				"Campaña"
+			],
+			"Type": [
+				"Tipo"
+			],
+			"Status": [
+				"Estado"
+			],
+			"Cancel": [
+				"Cancelar"
+			],
+			"Phone": [
+				"Teléfono"
+			],
+			"Address": [
+				"Dirección"
+			],
+			"State": [
+				"Provincia"
+			],
+			"Download PDF": [
+				"Descargar PDF"
+			],
+			"Active": [
+				"Activa"
+			],
+			"Paused": [
+				"En pausa"
+			],
+			"Frequency": [
+				"Frecuencia"
+			],
+			"Started": [
+				"Iniciada"
+			],
+			"Cancelled": [
+				"Cancelada"
+			],
+			"Anonymous": [
+				"Anónimo"
+			],
+			"No donations yet": [
+				"Todavía no hay donaciones"
+			],
+			"Campaigns": [
+				"Campañas"
+			],
+			"Transactions": [
+				"Transacciones"
+			],
+			"Donors": [
+				"Donantes"
+			],
+			"Subscriptions": [
+				"Suscripciones"
+			],
+			"Settings": [
+				"Ajustes"
+			],
+			"Tools": [
+				"Herramientas"
+			],
+			"Avg. Donation": [
+				"Donación media"
+			],
+			"First donation": [
+				"Primera donación"
+			],
+			"Donation": [
+				"Donación"
+			],
+			"Message": [
+				"Mensaje"
+			],
+			"Goal": [
+				"Meta"
+			],
+			"Donor": [
+				"Donante"
+			],
+			"Refund amount": [
+				"Importe del reembolso"
+			],
+			"Payment failed": [
+				"Pago fallido"
+			],
+			"Next payment": [
+				"Próximo pago"
+			],
+			"Subscription cancelled": [
+				"Suscripción cancelada"
+			],
+			"Name": [
+				"Nombre"
+			],
+			"Donations": [
+				"Donaciones"
+			],
+			"ID": [
+				"ID"
+			],
+			"Raised": [
+				"Recaudado"
+			],
+			"Transaction": [
+				"Transacción"
+			],
+			"Honoree": [
+				"Homenajeado"
+			],
+			"Total Donated": [
+				"Total donado"
+			],
+			"Currency": [
+				"Moneda"
+			],
+			"Payment Gateway": [
+				"Pasarela de pago"
+			],
+			"Test": [
+				"Prueba"
+			],
+			"Description": [
+				"Descripción"
+			],
+			"Goal Amount": [
+				"Importe de la meta"
+			],
+			"Goal Type": [
+				"Tipo de meta"
+			],
+			"Yes": [
+				"Sí"
+			],
+			"No": [
+				"No"
+			],
+			"Organization": [
+				"Organización"
+			],
+			"Campaign not found.": [
+				"Campaña no encontrada."
+			],
+			"Goal amount cannot be negative.": [
+				"El importe de la meta no puede ser negativo."
+			],
+			"Transaction not found.": [
+				"Transacción no encontrada."
+			],
+			"Subscription not found.": [
+				"Suscripción no encontrada."
+			],
+			"Donor not found.": [
+				"Donante no encontrado."
+			],
+			"Not available": [
+				"No disponible"
+			],
+			"Test Mode": [
+				"Modo de prueba"
+			],
+			"No real charges are being made. Stats shown are based on test transactions.": [
+				"No se está realizando ningún cargo real. Las estadísticas mostradas se basan en transacciones de prueba."
+			],
+			"Go Live": [
+				"Pasar a producción"
+			],
+			"Winter": [
+				"Invierno"
+			],
+			"Spring": [
+				"Primavera"
+			],
+			"Summer": [
+				"Verano"
+			],
+			"Fall": [
+				"Otoño"
+			],
+			"e.g. %1$s Fundraiser %2$s": [
+				"p. ej. Campaña de recaudación %1$s %2$s"
+			],
+			"Campaign Name": [
+				"Nombre de la campaña"
+			],
+			"Short Description": [
+				"Descripción breve"
+			],
+			"Briefly describe the purpose of this campaign. This will be used as a starting point for your campaign page.": [
+				"Describe brevemente el propósito de esta campaña. Se usará como punto de partida para la página de tu campaña."
+			],
+			"Amount Raised": [
+				"Importe recaudado"
+			],
+			"Number of Donations": [
+				"Número de donaciones"
+			],
+			"Number of Donors": [
+				"Número de donantes"
+			],
+			"Fundraising Goal": [
+				"Meta de recaudación"
+			],
+			"Donation Goal": [
+				"Meta de donaciones"
+			],
+			"Donor Goal": [
+				"Meta de donantes"
+			],
+			"Enter a goal above zero": [
+				"Introduce una meta superior a cero"
+			],
+			"Start Date": [
+				"Fecha de inicio"
+			],
+			"Leave blank to start immediately": [
+				"Déjalo en blanco para empezar de inmediato"
+			],
+			"End Date": [
+				"Fecha de finalización"
+			],
+			"Leave blank for an ongoing campaign": [
+				"Déjalo en blanco para una campaña continua"
+			],
+			"Select Campaign Image": [
+				"Seleccionar imagen de la campaña"
+			],
+			"Use this image": [
+				"Usar esta imagen"
+			],
+			"Campaign Image": [
+				"Imagen de la campaña"
+			],
+			"Campaign image preview": [
+				"Vista previa de la imagen de la campaña"
+			],
+			"Replace": [
+				"Reemplazar"
+			],
+			"Remove": [
+				"Eliminar"
+			],
+			"Click to upload or drag and drop": [
+				"Haz clic para subir o arrastra y suelta"
+			],
+			"PNG, JPG, or WebP up to 5MB": [
+				"PNG, JPG o WebP de hasta 5 MB"
+			],
+			"This image will appear on your campaign page and in listings": [
+				"Esta imagen aparecerá en la página de tu campaña y en los listados"
+			],
+			"Details": [
+				"Detalles"
+			],
+			"Goal & Timeline": [
+				"Meta y cronograma"
+			],
+			"Image": [
+				"Imagen"
+			],
+			"Create Campaign": [
+				"Crear campaña"
+			],
+			"Something went wrong. Please try again.": [
+				"Algo ha salido mal. Inténtalo de nuevo."
+			],
+			"Scheduled": [
+				"Programada"
+			],
+			"Progress": [
+				"Progreso"
+			],
+			"Starts": [
+				"Empieza"
+			],
+			"Ends": [
+				"Termina"
+			],
+			"active": [
+				"activa"
+			],
+			"ended": [
+				"finalizada"
+			],
+			"scheduled": [
+				"programada"
+			],
+			"All": [
+				"Todas"
+			],
+			"View": [
+				"Ver"
+			],
+			"Delete": [
+				"Eliminar"
+			],
+			"Are you sure you want to delete this campaign?": [
+				"¿Seguro que quieres eliminar esta campaña?"
+			],
+			"This action cannot be undone.": [
+				"Esta acción no se puede deshacer."
+			],
+			"Total Campaigns": [
+				"Total de campañas"
+			],
+			"Avg. per Campaign": [
+				"Media por campaña"
+			],
+			"Across active campaigns": [
+				"En campañas activas"
+			],
+			"Top Campaign": [
+				"Campaña destacada"
+			],
+			"Create and manage your fundraising campaigns.": [
+				"Crea y gestiona tus campañas de recaudación."
+			],
+			"No campaigns yet": [
+				"Aún no hay campañas"
+			],
+			"Create your first campaign to start accepting donations.": [
+				"Crea tu primera campaña para empezar a aceptar donaciones."
+			],
+			"Create a Campaign": [
+				"Crear una campaña"
+			],
+			"Add Campaign": [
+				"Añadir campaña"
+			],
+			"Copied!": [
+				"¡Copiado!"
+			],
+			"Copy URL": [
+				"Copiar URL"
+			],
+			"View Campaign Page": [
+				"Ver página de la campaña"
+			],
+			"of": [
+				"de"
+			],
+			"funded": [
+				"financiado"
+			],
+			"Edit Page": [
+				"Editar página"
+			],
+			"Completed": [
+				"Completada"
+			],
+			"Pending": [
+				"Pendiente"
+			],
+			"Refunded": [
+				"Reembolsada"
+			],
+			"Failed": [
+				"Fallida"
+			],
+			"Campaign created": [
+				"Campaña creada"
+			],
+			"First donation received": [
+				"Primera donación recibida"
+			],
+			"25% milestone reached": [
+				"Hito del 25 % alcanzado"
+			],
+			"25% milestone": [
+				"Hito del 25 %"
+			],
+			"50% milestone reached": [
+				"Hito del 50 % alcanzado"
+			],
+			"50% milestone": [
+				"Hito del 50 %"
+			],
+			"75% milestone reached": [
+				"Hito del 75 % alcanzado"
+			],
+			"75% milestone": [
+				"Hito del 75 %"
+			],
+			"100% — Goal reached!": [
+				"100 % — ¡Meta alcanzada!"
+			],
+			"more needed": [
+				"más por recaudar"
+			],
+			"Donations to this campaign will appear here as they come in": [
+				"Las donaciones a esta campaña aparecerán aquí a medida que se reciban"
+			],
+			"Milestones": [
+				"Hitos"
+			],
+			"Loading editor…": [
+				"Cargando editor…"
+			],
+			"Toggle block inserter": [
+				"Alternar el insertador de bloques"
+			],
+			"Open full editor": [
+				"Abrir el editor completo"
+			],
+			"Visibility": [
+				"Visibilidad"
+			],
+			"Campaign page": [
+				"Página de la campaña"
+			],
+			"Give this campaign its own dedicated page where donors can learn more and give": [
+				"Dale a esta campaña su propia página dedicada donde los donantes pueden conocer más y donar"
+			],
+			"Show in campaign listings": [
+				"Mostrar en los listados de campañas"
+			],
+			"Display this campaign on your public campaigns page": [
+				"Muestra esta campaña en tu página pública de campañas"
+			],
+			"Campaign URL": [
+				"URL de la campaña"
+			],
+			"A brief summary shown in campaign listings and search results…": [
+				"Un breve resumen que se muestra en los listados de campañas y en los resultados de búsqueda…"
+			],
+			"Changes Saved": [
+				"Cambios guardados"
+			],
+			"Save Changes": [
+				"Guardar cambios"
+			],
+			"Danger Zone": [
+				"Zona de peligro"
+			],
+			"Permanently delete this campaign. This action cannot be undone.": [
+				"Elimina esta campaña permanentemente. Esta acción no se puede deshacer."
+			],
+			"Delete Campaign": [
+				"Eliminar campaña"
+			],
+			"Are you sure you want to delete": [
+				"¿Seguro que quieres eliminar"
+			],
+			"Campaign Details": [
+				"Detalles de la campaña"
+			],
+			"Leave blank for no goal": [
+				"Déjalo en blanco para no fijar ninguna meta"
+			],
+			"End campaign early when goal is reached": [
+				"Finalizar la campaña antes de tiempo cuando se alcance la meta"
+			],
+			"Campaign will also end when the goal is reached": [
+				"La campaña también finalizará cuando se alcance la meta"
+			],
+			"When Campaign Ends": [
+				"Cuando finaliza la campaña"
+			],
+			"Stop accepting donations": [
+				"Dejar de aceptar donaciones"
+			],
+			"Donation forms for this campaign will be disabled": [
+				"Los formularios de donación de esta campaña se desactivarán"
+			],
+			"Show \"campaign ended\" message": [
+				"Mostrar el mensaje de «campaña finalizada»"
+			],
+			"Replace the campaign page with a message and link to other active campaigns": [
+				"Sustituye la página de la campaña por un mensaje y un enlace a otras campañas activas"
+			],
+			"Remove from campaign listings": [
+				"Quitar de los listados de campañas"
+			],
+			"Hide this campaign from the public campaigns page": [
+				"Oculta esta campaña de la página pública de campañas"
+			],
+			"Keep recurring donations active": [
+				"Mantener activas las donaciones recurrentes"
+			],
+			"Existing recurring donations will continue unchanged": [
+				"Las donaciones recurrentes existentes continuarán sin cambios"
+			],
+			"Cancel recurring donations": [
+				"Cancelar las donaciones recurrentes"
+			],
+			"Active subscriptions will be canceled and donors notified": [
+				"Las suscripciones activas se cancelarán y se avisará a los donantes"
+			],
+			"Redirect funds to another campaign": [
+				"Redirigir los fondos a otra campaña"
+			],
+			"Future recurring donations will be designated to another campaign": [
+				"Las futuras donaciones recurrentes se asignarán a otra campaña"
+			],
+			"Redirect funds to": [
+				"Redirigir los fondos a"
+			],
+			"Select a campaign…": [
+				"Selecciona una campaña…"
+			],
+			"Settings Saved": [
+				"Ajustes guardados"
+			],
+			"Save Settings": [
+				"Guardar ajustes"
+			],
+			"Failed to load campaign.": [
+				"No se ha podido cargar la campaña."
+			],
+			"Campaign saved.": [
+				"Campaña guardada."
+			],
+			"Failed to save campaign.": [
+				"No se ha podido guardar la campaña."
+			],
+			"Back to Campaigns": [
+				"Volver a las campañas"
+			],
+			"No donations have come in today.": [
+				"Hoy no se ha recibido ninguna donación."
+			],
+			"No donations this week.": [
+				"No hay donaciones esta semana."
+			],
+			"No donations this month.": [
+				"No hay donaciones este mes."
+			],
+			"Donations Over Time": [
+				"Donaciones a lo largo del tiempo"
+			],
+			"Donation trends will appear here once you receive your first gift.": [
+				"Las tendencias de donaciones aparecerán aquí en cuanto recibas tu primer donativo."
+			],
+			"Top Campaigns": [
+				"Campañas destacadas"
+			],
+			"By amount raised": [
+				"Por importe recaudado"
+			],
+			"Create a campaign to start tracking donations.": [
+				"Crea una campaña para empezar a hacer seguimiento de las donaciones."
+			],
+			"View all campaigns": [
+				"Ver todas las campañas"
+			],
+			"Recent Activity": [
+				"Actividad reciente"
+			],
+			"<donor /> donated <amount /> to <campaign />": [
+				"<donor /> donó <amount /> a <campaign />"
+			],
+			"<donor /> donated <amount />": [
+				"<donor /> donó <amount />"
+			],
+			"%s donation received": [
+				"Donación de %s recibida"
+			],
+			"Donation received": [
+				"Donación recibida"
+			],
+			"<donor />'s <amount /><suffix /> recurring donation was processed": [
+				"Se ha procesado la donación recurrente de <amount /><suffix /> de <donor />"
+			],
+			"Recurring donation processed": [
+				"Donación recurrente procesada"
+			],
+			"<amount /> refund processed for <donor />": [
+				"Se ha procesado un reembolso de <amount /> para <donor />"
+			],
+			"%s refund processed": [
+				"Reembolso de %s procesado"
+			],
+			"Refund processed": [
+				"Reembolso procesado"
+			],
+			"<donor /> started a <amount /><suffix /> recurring donation to <campaign />": [
+				"<donor /> inició una donación recurrente de <amount /><suffix /> a <campaign />"
+			],
+			"<donor /> started a <amount /><suffix /> recurring donation": [
+				"<donor /> inició una donación recurrente de <amount /><suffix />"
+			],
+			"New recurring donation started": [
+				"Nueva donación recurrente iniciada"
+			],
+			"<donor /> increased recurring donation to <amount /><suffix />": [
+				"<donor /> aumentó su donación recurrente a <amount /><suffix />"
+			],
+			"Recurring donation amount increased": [
+				"Importe de la donación recurrente aumentado"
+			],
+			"<donor /> decreased recurring donation to <amount /><suffix />": [
+				"<donor /> redujo su donación recurrente a <amount /><suffix />"
+			],
+			"Recurring donation amount decreased": [
+				"Importe de la donación recurrente reducido"
+			],
+			"<donor /> cancelled their recurring donation": [
+				"<donor /> canceló su donación recurrente"
+			],
+			"Recurring donation cancelled": [
+				"Donación recurrente cancelada"
+			],
+			"Recurring donation failed for <donor />": [
+				"La donación recurrente de <donor /> ha fallado"
+			],
+			"Recurring donation failed": [
+				"Donación recurrente fallida"
+			],
+			"New campaign <campaign /> was created": [
+				"Se ha creado la nueva campaña <campaign />"
+			],
+			"New campaign created": [
+				"Nueva campaña creada"
+			],
+			"<campaign /> campaign has ended": [
+				"La campaña <campaign /> ha finalizado"
+			],
+			"Campaign has ended": [
+				"La campaña ha finalizado"
+			],
+			"<campaign /> is <pct />% toward its goal": [
+				"<campaign /> ha alcanzado el <pct /> % de su meta"
+			],
+			"Campaign milestone reached": [
+				"Hito de campaña alcanzado"
+			],
+			"%s donor": [
+				"%s donante"
+			],
+			"%s donation": [
+				"%s donación"
+			],
+			"<campaign /> reached its <goal /> goal": [
+				"<campaign /> alcanzó su meta de <goal />"
+			],
+			"<campaign /> reached its goal": [
+				"<campaign /> alcanzó su meta"
+			],
+			"Campaign reached its goal": [
+				"La campaña alcanzó su meta"
+			],
+			"Mission plugin installed": [
+				"Plugin Mission instalado"
+			],
+			"Mission plugin activated": [
+				"Plugin Mission activado"
+			],
+			"Mission plugin deactivated": [
+				"Plugin Mission desactivado"
+			],
+			"Mission plugin updated to %s": [
+				"Plugin Mission actualizado a %s"
+			],
+			"Mission plugin updated": [
+				"Plugin Mission actualizado"
+			],
+			"No activity yet": [
+				"Aún no hay actividad"
+			],
+			"Activity will appear here as donations come in.": [
+				"La actividad aparecerá aquí a medida que lleguen las donaciones."
+			],
+			"Dismiss": [
+				"Descartar"
+			],
+			"Enjoying Mission?": [
+				"¿Te gusta Mission?"
+			],
+			"Congratulations on raising over": [
+				"Enhorabuena por recaudar más de"
+			],
+			"with Mission! How would you rate your experience?": [
+				"con Mission. ¿Cómo valorarías tu experiencia?"
+			],
+			"Thank you for your feedback! We'll use it to make Mission better.": [
+				"¡Gracias por tus comentarios! Los usaremos para mejorar Mission."
+			],
+			"Start accepting donations": [
+				"Empieza a aceptar donaciones"
+			],
+			"Connect your Stripe account": [
+				"Conecta tu cuenta de Stripe"
+			],
+			"to begin processing donations securely. It only takes a couple of minutes and you'll be ready to receive your first gift.": [
+				"para empezar a procesar donaciones de forma segura. Solo lleva un par de minutos y estarás listo para recibir tu primer donativo."
+			],
+			"Connect Stripe": [
+				"Conectar Stripe"
+			],
+			"Today": [
+				"Hoy"
+			],
+			"Week": [
+				"Semana"
+			],
+			"Month": [
+				"Mes"
+			],
+			"Basics": [
+				"Conceptos básicos"
+			],
+			"Payments": [
+				"Pagos"
+			],
+			"Done": [
+				"Hecho"
+			],
+			"Welcome to Mission Donation Platform": [
+				"Te damos la bienvenida a Mission Donation Platform"
+			],
+			"Let’s get your nonprofit set up to start accepting donations. This will only take a few minutes.": [
+				"Vamos a configurar tu organización sin ánimo de lucro para que empiece a aceptar donaciones. Esto solo llevará unos minutos."
+			],
+			"Organization Name": [
+				"Nombre de la organización"
+			],
+			"Tax ID / EIN": [
+				"ID fiscal / EIN"
+			],
+			"— optional": [
+				"— opcional"
+			],
+			"Used on tax receipts. You can add this later.": [
+				"Se usa en los recibos fiscales. Puedes añadirlo más tarde."
+			],
+			"Organization details": [
+				"Detalles de la organización"
+			],
+			"This information appears on donation receipts and email footers.": [
+				"Esta información aparece en los recibos de donación y en los pies de los correos electrónicos."
+			],
+			"Springfield": [
+				"Springfield"
+			],
+			"Select": [
+				"Seleccionar"
+			],
+			"Brand Color": [
+				"Color de marca"
+			],
+			"Used for donation forms, emails, and receipts.": [
+				"Se usa en los formularios de donación, los correos electrónicos y los recibos."
+			],
+			"Connect your payment processor": [
+				"Conecta tu procesador de pagos"
+			],
+			"Stripe handles all payment processing securely. Connect your existing Stripe account or create a new one — it only takes a minute.": [
+				"Stripe gestiona todo el procesamiento de pagos de forma segura. Conecta tu cuenta de Stripe existente o crea una nueva. Solo lleva un minuto."
+			],
+			"Connected": [
+				"Conectado"
+			],
+			"Connect with Stripe": [
+				"Conectar con Stripe"
+			],
+			"You’ll be redirected to Stripe to connect or create an account, then returned here automatically.": [
+				"Se te redirigirá a Stripe para conectar o crear una cuenta y luego volverás aquí automáticamente."
+			],
+			"You can skip this for now, but you won’t be able to accept donations until Stripe is connected.": [
+				"Puedes omitir esto por ahora, pero no podrás aceptar donaciones hasta que Stripe esté conectado."
+			],
+			"Create a campaign": [
+				"Crear una campaña"
+			],
+			"Campaigns organize your fundraising efforts. Fill out the details below to generate a ready-to-share campaign page.": [
+				"Las campañas organizan tus esfuerzos de recaudación. Rellena los detalles a continuación para generar una página de campaña lista para compartir."
+			],
+			"e.g. General Fund": [
+				"p. ej. Fondo general"
+			],
+			"A brief description of this campaign…": [
+				"Una breve descripción de esta campaña…"
+			],
+			"Click to upload or select from media library": [
+				"Haz clic para subir o selecciona desde la biblioteca multimedia"
+			],
+			"You’re all set!": [
+				"¡Ya está todo listo!"
+			],
+			"Mission is configured and ready to accept donations. Here’s a summary of your setup.": [
+				"Mission está configurado y listo para aceptar donaciones. Aquí tienes un resumen de tu configuración."
+			],
+			"Configuration Summary": [
+				"Resumen de la configuración"
+			],
+			"Organization:": [
+				"Organización:"
+			],
+			"Not set": [
+				"Sin definir"
+			],
+			"configured": [
+				"configurado"
+			],
+			"not configured": [
+				"sin configurar"
+			],
+			"Add now": [
+				"Añadir ahora"
+			],
+			"Stripe": [
+				"Stripe"
+			],
+			"connected": [
+				"conectado"
+			],
+			"not connected": [
+				"no conectado"
+			],
+			"Connect now": [
+				"Conectar ahora"
+			],
+			"Campaign:": [
+				"Campaña:"
+			],
+			"not created": [
+				"no creada"
+			],
+			"Create now": [
+				"Crear ahora"
+			],
+			"Go to Dashboard": [
+				"Ir al panel"
+			],
+			"Stripe connection was cancelled. You can try again whenever you’re ready.": [
+				"Se canceló la conexión con Stripe. Puedes volver a intentarlo cuando quieras."
+			],
+			"Stripe connected, but your account isn’t ready to accept payments yet. Finish setting up your account on the Stripe Dashboard.": [
+				"Stripe se conectó, pero tu cuenta aún no está lista para aceptar pagos. Termina de configurar tu cuenta en el panel de Stripe."
+			],
+			"Setup": [
+				"Configuración"
+			],
+			"Close": [
+				"Cerrar"
+			],
+			"Skip step": [
+				"Omitir paso"
+			],
+			"Organization name is required.": [
+				"El nombre de la organización es obligatorio."
+			],
+			"Campaign name is required.": [
+				"El nombre de la campaña es obligatorio."
+			],
+			"Goal amount is required.": [
+				"El importe de la meta es obligatorio."
+			],
+			"vs yesterday": [
+				"frente a ayer"
+			],
+			"vs last week": [
+				"frente a la semana pasada"
+			],
+			"vs last month": [
+				"frente al mes pasado"
+			],
+			"Last 7 days": [
+				"Últimos 7 días"
+			],
+			"Last 30 days": [
+				"Últimos 30 días"
+			],
+			"Please enter a valid email address.": [
+				"Introduce una dirección de correo electrónico válida."
+			],
+			"Please fix the errors below and try again.": [
+				"Corrige los errores de abajo e inténtalo de nuevo."
+			],
+			"Something went wrong.": [
+				"Algo ha ido mal."
+			],
+			"Save Donor": [
+				"Guardar donante"
+			],
+			"Add Donor": [
+				"Añadir donante"
+			],
+			"Address Line 1": [
+				"Dirección, línea 1"
+			],
+			"Address Line 2": [
+				"Dirección, línea 2"
+			],
+			"Select…": [
+				"Seleccionar…"
+			],
+			"Note": [
+				"Nota"
+			],
+			"Last Donation": [
+				"Última donación"
+			],
+			"Date Added": [
+				"Fecha de alta"
+			],
+			"View and manage all donors.": [
+				"Consulta y gestiona todos los donantes."
+			],
+			"Total Donors": [
+				"Total de donantes"
+			],
+			"Top Donor": [
+				"Donante principal"
+			],
+			"lifetime": [
+				"histórico"
+			],
+			"Average Donated": [
+				"Donación media"
+			],
+			"Repeat Donors": [
+				"Donantes recurrentes"
+			],
+			"of all donors": [
+				"del total de donantes"
+			],
+			"No donors yet.": [
+				"Aún no hay donantes."
+			],
+			"Donors will appear here once people start giving.": [
+				"Los donantes aparecerán aquí cuando la gente empiece a donar."
+			],
+			"No donations yet.": [
+				"Aún no hay donaciones."
+			],
+			"Past Due": [
+				"Vencida"
+			],
+			"Created": [
+				"Creada"
+			],
+			"Full name": [
+				"Nombre completo"
+			],
+			"+ Add name": [
+				"+ Añadir nombre"
+			],
+			"+ Add phone": [
+				"+ Añadir teléfono"
+			],
+			"+ Add address": [
+				"+ Añadir dirección"
+			],
+			"No notes yet.": [
+				"Aún no hay notas."
+			],
+			"Delete note": [
+				"Eliminar nota"
+			],
+			"Write a note…": [
+				"Escribe una nota…"
+			],
+			"Saving…": [
+				"Guardando…"
+			],
+			"Save": [
+				"Guardar"
+			],
+			"Add a note": [
+				"Añadir una nota"
+			],
+			"Edit Donor": [
+				"Editar donante"
+			],
+			"Failed to load donor.": [
+				"No se pudo cargar el donante."
+			],
+			"Back to Donors": [
+				"Volver a donantes"
+			],
+			"Since": [
+				"Desde"
+			],
+			"Lifetime given": [
+				"Total donado"
+			],
+			"Avg. donation": [
+				"Donación media"
+			],
+			"Internal Notes": [
+				"Notas internas"
+			],
+			"Only visible to your organization.": [
+				"Solo visible para tu organización."
+			],
+			"You have unsaved changes.": [
+				"Tienes cambios sin guardar."
+			],
+			"All changes saved.": [
+				"Todos los cambios guardados."
+			],
+			"Save changes": [
+				"Guardar cambios"
+			],
+			"Stripe account": [
+				"Cuenta de Stripe"
+			],
+			"Default": [
+				"Predeterminada"
+			],
+			"Make default": [
+				"Establecer como predeterminada"
+			],
+			"Disconnect": [
+				"Desconectar"
+			],
+			"Connect one or more Stripe accounts to process donations. New donations are routed through your default account.": [
+				"Conecta una o varias cuentas de Stripe para procesar las donaciones. Las nuevas donaciones se dirigen a través de tu cuenta predeterminada."
+			],
+			"Connect your Stripe account to process donations.": [
+				"Conecta tu cuenta de Stripe para procesar las donaciones."
+			],
+			"Connection error — please try again.": [
+				"Error de conexión: inténtalo de nuevo."
+			],
+			"Connect another Stripe account": [
+				"Conectar otra cuenta de Stripe"
+			],
+			"Connected accounts": [
+				"Cuentas conectadas"
+			],
+			"One or more connected accounts can’t accept charges yet. Finish setting them up on the Stripe Dashboard.": [
+				"Una o varias cuentas conectadas aún no pueden aceptar cargos. Termina de configurarlas en el panel de Stripe."
+			],
+			"Your default Stripe account isn’t ready to accept charges. Finish setting it up before donations can complete.": [
+				"Tu cuenta de Stripe predeterminada no está lista para aceptar cargos. Termina de configurarla antes de que las donaciones puedan completarse."
+			],
+			"Go to Stripe Dashboard →": [
+				"Ir al panel de Stripe →"
+			],
+			"Test mode": [
+				"Modo de prueba"
+			],
+			"Using Stripe test keys — no real charges.": [
+				"Usando claves de prueba de Stripe: no se realizan cargos reales."
+			],
+			"Using Stripe live keys — real charges.": [
+				"Usando claves reales de Stripe: se realizan cargos reales."
+			],
+			"Used on donation receipts and tax documents.": [
+				"Se usa en los recibos de donación y los documentos fiscales."
+			],
+			"Organization name": [
+				"Nombre de la organización"
+			],
+			"Shown on donation receipts, emails, and the donor dashboard. Defaults to your site name.": [
+				"Se muestra en los recibos de donación, los correos electrónicos y el panel del donante. Por defecto se usa el nombre de tu sitio."
+			],
+			"Street address": [
+				"Dirección postal"
+			],
+			"EIN": [
+				"EIN"
+			],
+			"Your Employer Identification Number for tax receipts.": [
+				"Tu número de identificación de empleador (EIN) para los recibos fiscales."
+			],
+			"The currency used for all donations.": [
+				"La moneda utilizada para todas las donaciones."
+			],
+			"Percentage (%)": [
+				"Porcentaje (%)"
+			],
+			"Fixed fee": [
+				"Comisión fija"
+			],
+			"Used when calculating fee recovery. Nonprofits may qualify for discounted Stripe rates.": [
+				"Se usa al calcular la recuperación de comisiones. Las organizaciones sin ánimo de lucro pueden optar a tarifas reducidas de Stripe."
+			],
+			"Appearance": [
+				"Apariencia"
+			],
+			"Customize how Mission looks on your site.": [
+				"Personaliza el aspecto de Mission en tu sitio."
+			],
+			"Primary color": [
+				"Color principal"
+			],
+			"Used as the primary accent color throughout Mission.": [
+				"Se usa como color de acento principal en todo Mission."
+			],
+			"Show Mission credit on donation forms": [
+				"Mostrar el crédito de Mission en los formularios de donación"
+			],
+			"Displays a \"Secure donation powered by Mission\" badge below donation forms that links to missionwp.com.": [
+				"Muestra una insignia \"Donación segura con tecnología de Mission\" debajo de los formularios de donación que enlaza a missionwp.com."
+			],
+			"Setup Wizard": [
+				"Asistente de configuración"
+			],
+			"Re-run the guided setup to update your organization details, reconnect Stripe, or create a campaign.": [
+				"Vuelve a ejecutar la configuración guiada para actualizar los datos de tu organización, reconectar Stripe o crear una campaña."
+			],
+			"Run setup wizard": [
+				"Ejecutar el asistente de configuración"
+			],
+			"Data": [
+				"Datos"
+			],
+			"Control what happens to your donation data when the plugin is removed.": [
+				"Controla qué ocurre con los datos de tus donaciones cuando se elimina el plugin."
+			],
+			"Remove all data on uninstall": [
+				"Eliminar todos los datos al desinstalar"
+			],
+			"When enabled, all donation records, donor information, campaigns, and settings will be permanently deleted if the plugin is uninstalled. This cannot be undone.": [
+				"Cuando se activa, todos los registros de donaciones, la información de los donantes, las campañas y los ajustes se eliminarán de forma permanente si se desinstala el plugin. Esto no se puede deshacer."
+			],
+			"Donor name": [
+				"Nombre del donante"
+			],
+			"One-time donation receipt": [
+				"Recibo de donación única"
+			],
+			"Sent after a completed one-time transaction": [
+				"Se envía tras completarse una transacción única"
+			],
+			"Receipt ID": [
+				"ID del recibo"
+			],
+			"Subscription activated": [
+				"Suscripción activada"
+			],
+			"Sent when a recurring donation goes active": [
+				"Se envía cuando una donación recurrente pasa a estar activa"
+			],
+			"Next renewal": [
+				"Próxima renovación"
+			],
+			"Renewal receipt": [
+				"Recibo de renovación"
+			],
+			"Sent each time a recurring payment is processed": [
+				"Se envía cada vez que se procesa un pago recurrente"
+			],
+			"Sent when a renewal charge fails": [
+				"Se envía cuando falla un cargo de renovación"
+			],
+			"Donor dashboard URL": [
+				"URL del panel del donante"
+			],
+			"Sent when a donor cancels their subscription": [
+				"Se envía cuando un donante cancela su suscripción"
+			],
+			"Donor note": [
+				"Nota del donante"
+			],
+			"Sent when a donor-visible note is added to a transaction": [
+				"Se envía cuando se añade a una transacción una nota visible para el donante"
+			],
+			"Note content": [
+				"Contenido de la nota"
+			],
+			"Tribute notification": [
+				"Notificación de homenaje"
+			],
+			"Sent to the recipient of a dedication": [
+				"Se envía al destinatario de una dedicatoria"
+			],
+			"Tribute type": [
+				"Tipo de homenaje"
+			],
+			"Personal message": [
+				"Mensaje personal"
+			],
+			"New donation": [
+				"Nueva donación"
+			],
+			"Sent when a one-time or first recurring donation is received": [
+				"Se envía cuando se recibe una donación única o la primera donación recurrente"
+			],
+			"Recurring renewal": [
+				"Renovación recurrente"
+			],
+			"Sent each time a recurring donation renews": [
+				"Se envía cada vez que se renueva una donación recurrente"
+			],
+			"Sent when a donation is fully or partially refunded": [
+				"Se envía cuando una donación se reembolsa total o parcialmente"
+			],
+			"Failed payment": [
+				"Pago fallido"
+			],
+			"Sent when a recurring charge is declined": [
+				"Se envía cuando se rechaza un cobro recurrente"
+			],
+			"Sent when a donor cancels their recurring donation": [
+				"Se envía cuando un donante cancela su donación recurrente"
+			],
+			"Campaign milestone": [
+				"Hito de campaña"
+			],
+			"Sent when a campaign reaches 50%, 75%, or 100% of its goal": [
+				"Se envía cuando una campaña alcanza el 50 %, el 75 % o el 100 % de su meta"
+			],
+			"Mail dedication pending": [
+				"Dedicatoria por correo postal pendiente"
+			],
+			"Sent when a donation includes a dedication that needs to be mailed": [
+				"Se envía cuando una donación incluye una dedicatoria que debe enviarse por correo postal"
+			],
+			"Account activation": [
+				"Activación de la cuenta"
+			],
+			"Email verification for the donor dashboard": [
+				"Verificación de correo electrónico para el panel del donante"
+			],
+			"Password reset": [
+				"Restablecimiento de contraseña"
+			],
+			"Sent when a donor requests a new password": [
+				"Se envía cuando un donante solicita una nueva contraseña"
+			],
+			"Email change verification": [
+				"Verificación de cambio de correo electrónico"
+			],
+			"Sent to the new address for confirmation": [
+				"Se envía a la nueva dirección para su confirmación"
+			],
+			"New email": [
+				"Nuevo correo electrónico"
+			],
+			"Subject line": [
+				"Línea de asunto"
+			],
+			"Email body": [
+				"Cuerpo del correo electrónico"
+			],
+			"Preview": [
+				"Vista previa"
+			],
+			"Edit HTML": [
+				"Editar HTML"
+			],
+			"Loading preview…": [
+				"Cargando vista previa…"
+			],
+			"Email preview": [
+				"Vista previa del correo electrónico"
+			],
+			"Reset to default template": [
+				"Restablecer a la plantilla predeterminada"
+			],
+			"Send test email": [
+				"Enviar correo de prueba"
+			],
+			"Sending…": [
+				"Enviando…"
+			],
+			"Sent!": [
+				"¡Enviado!"
+			],
+			"Failed to send": [
+				"Error al enviar"
+			],
+			"and %d others": [
+				"y %d más"
+			],
+			"default": [
+				"predeterminado"
+			],
+			"Remove %s": [
+				"Eliminar %s"
+			],
+			"Add email…": [
+				"Añadir correo electrónico…"
+			],
+			"Press Enter to add. Default is your WordPress admin email.": [
+				"Pulsa Intro para añadir. El valor predeterminado es el correo electrónico de administración de WordPress."
+			],
+			"Sender Details": [
+				"Datos del remitente"
+			],
+			"Used as the “from” address on all outgoing emails.": [
+				"Se usa como dirección «de» en todos los correos electrónicos salientes."
+			],
+			"From name": [
+				"Nombre del remitente"
+			],
+			"From email": [
+				"Correo electrónico del remitente"
+			],
+			"Reply-to email": [
+				"Correo electrónico de respuesta"
+			],
+			"Leave blank to use the from email address.": [
+				"Déjalo en blanco para usar la dirección de correo electrónico del remitente."
+			],
+			"Donation Emails": [
+				"Correos de donaciones"
+			],
+			"Account Emails": [
+				"Correos de cuenta"
+			],
+			"Admin Notifications": [
+				"Notificaciones de administración"
+			],
+			"Let donors view past donations and download receipts.": [
+				"Permite a los donantes ver donaciones anteriores y descargar recibos."
+			],
+			"Manage recurring gifts": [
+				"Gestionar donativos recurrentes"
+			],
+			"Allow donors to pause, resume, or cancel their recurring donations.": [
+				"Permite a los donantes pausar, reanudar o cancelar sus donaciones recurrentes."
+			],
+			"Update payment method": [
+				"Actualizar método de pago"
+			],
+			"Let donors update the card on file for recurring donations.": [
+				"Permite a los donantes actualizar la tarjeta registrada para las donaciones recurrentes."
+			],
+			"Profile editing": [
+				"Edición del perfil"
+			],
+			"Allow donors to update their name, email, and mailing address.": [
+				"Permite a los donantes actualizar su nombre, correo electrónico y dirección postal."
+			],
+			"Annual tax summary": [
+				"Resumen fiscal anual"
+			],
+			"Provide a downloadable year-end giving summary for tax purposes.": [
+				"Proporciona un resumen de donaciones de fin de año descargable con fines fiscales."
+			],
+			"Donor Portal": [
+				"Portal del donante"
+			],
+			"Let donors manage their account on your site.": [
+				"Permite a los donantes gestionar su cuenta en tu sitio."
+			],
+			"Enable donor portal": [
+				"Activar el portal del donante"
+			],
+			"Allow donors to create accounts, view donation history, and manage recurring gifts.": [
+				"Permite a los donantes crear cuentas, ver el historial de donaciones y gestionar los donativos recurrentes."
+			],
+			"Dashboard page": [
+				"Página del panel"
+			],
+			"The page where the donor dashboard block is placed.": [
+				"La página donde se ubica el bloque del panel del donante."
+			],
+			"Portal Features": [
+				"Funciones del portal"
+			],
+			"Control what donors can do from their dashboard.": [
+				"Controla lo que los donantes pueden hacer desde su panel."
+			],
+			"General": [
+				"General"
+			],
+			"Emails": [
+				"Correos electrónicos"
+			],
+			"Subscription": [
+				"Suscripción"
+			],
+			"Next Renewal": [
+				"Próxima renovación"
+			],
+			"Manage recurring donations.": [
+				"Gestiona las donaciones recurrentes."
+			],
+			"Monthly Recurring": [
+				"Recurrente mensual"
+			],
+			"Active Subscriptions": [
+				"Suscripciones activas"
+			],
+			"new this month": [
+				"nuevas este mes"
+			],
+			"Avg. Subscription": [
+				"Suscripción media"
+			],
+			"Per month": [
+				"Al mes"
+			],
+			"Churned": [
+				"Canceladas"
+			],
+			"/mo lost": [
+				"/mes perdidos"
+			],
+			"No subscriptions yet": [
+				"Todavía no hay suscripciones"
+			],
+			"Recurring donations will appear here once donors subscribe.": [
+				"Las donaciones recurrentes aparecerán aquí cuando los donantes se suscriban."
+			],
+			"Anonymous or deleted donor": [
+				"Donante anónimo o eliminado"
+			],
+			"View profile": [
+				"Ver perfil"
+			],
+			"donation": [
+				"donación"
+			],
+			"Email notification sent to": [
+				"Notificación por correo electrónico enviada a"
+			],
+			"Mail notification sent to": [
+				"Notificación por correo postal enviada a"
+			],
+			"Mail notification pending for": [
+				"Notificación por correo postal pendiente para"
+			],
+			"Marking…": [
+				"Marcando…"
+			],
+			"Mark as sent": [
+				"Marcar como enviada"
+			],
+			"Dedication": [
+				"Dedicatoria"
+			],
+			"Notification": [
+				"Notificación"
+			],
+			"Send notification": [
+				"Enviar notificación"
+			],
+			"Recipient name": [
+				"Nombre del destinatario"
+			],
+			"Postal code": [
+				"Código postal"
+			],
+			"Add Dedication": [
+				"Añadir dedicatoria"
+			],
+			"Remove this dedication?": [
+				"¿Eliminar esta dedicatoria?"
+			],
+			"This will permanently remove the dedication from this transaction.": [
+				"Esto eliminará permanentemente la dedicatoria de esta transacción."
+			],
+			"Removing…": [
+				"Eliminando…"
+			],
+			"Remove Dedication": [
+				"Eliminar dedicatoria"
+			],
+			"No dedication on this donation": [
+				"No hay dedicatoria en esta donación"
+			],
+			"No campaign": [
+				"Sin campaña"
+			],
+			"Search campaigns…": [
+				"Buscar campañas…"
+			],
+			"No results": [
+				"Sin resultados"
+			],
+			"Transaction Details": [
+				"Detalles de la transacción"
+			],
+			"Payment method": [
+				"Método de pago"
+			],
+			"Billing address": [
+				"Dirección de facturación"
+			],
+			"Payment Breakdown": [
+				"Desglose del pago"
+			],
+			"Donation amount": [
+				"Importe de la donación"
+			],
+			"Processing fee": [
+				"Comisión de procesamiento"
+			],
+			"Stripe fees deducted from this payment": [
+				"Comisiones de Stripe deducidas de este pago"
+			],
+			"Fee recovered": [
+				"Comisión recuperada"
+			],
+			"The donor covered processing fees so you receive the full donation.": [
+				"El donante cubrió las comisiones de procesamiento para que recibas la donación íntegra."
+			],
+			"Mission tip": [
+				"Propina para Mission"
+			],
+			"Optional tip from the donor to support the Mission platform. Doesn't affect your payout.": [
+				"Propina opcional del donante para apoyar la plataforma Mission. No afecta a tu pago."
+			],
+			"Net amount": [
+				"Importe neto"
+			],
+			"Additional Info": [
+				"Información adicional"
+			],
+			"No additional info": [
+				"Sin información adicional"
+			],
+			"Payment Data": [
+				"Datos del pago"
+			],
+			"Payment gateway": [
+				"Pasarela de pago"
+			],
+			"Stripe payment": [
+				"Pago con Stripe"
+			],
+			"Stripe customer": [
+				"Cliente de Stripe"
+			],
+			"Source": [
+				"Origen"
+			],
+			"View page": [
+				"Ver página"
+			],
+			"IP address": [
+				"Dirección IP"
+			],
+			"Mode": [
+				"Modo"
+			],
+			"/wk": [
+				"/sem"
+			],
+			"/mo": [
+				"/mes"
+			],
+			"/qtr": [
+				"/trim"
+			],
+			"/yr": [
+				"/año"
+			],
+			"Payment History": [
+				"Historial de pagos"
+			],
+			"total": [
+				"total"
+			],
+			"Subscription Details": [
+				"Detalles de la suscripción"
+			],
+			"Fee Summary": [
+				"Resumen de comisiones"
+			],
+			"Processing fees": [
+				"Comisiones de procesamiento"
+			],
+			"Stripe fees deducted from payments": [
+				"Comisiones de Stripe deducidas de los pagos"
+			],
+			"Fees recovered": [
+				"Comisiones recuperadas"
+			],
+			"Mission tips": [
+				"Propinas de Mission"
+			],
+			"Optional tips from the donor to support the Mission platform. Doesn't affect your payout.": [
+				"Propinas opcionales del donante para apoyar la plataforma Mission. No afectan a tu pago."
+			],
+			"Stripe subscription": [
+				"Suscripción de Stripe"
+			],
+			"Subscription created": [
+				"Suscripción creada"
+			],
+			"Subscription paused": [
+				"Suscripción pausada"
+			],
+			"Subscription resumed": [
+				"Suscripción reanudada"
+			],
+			"Payment received": [
+				"Pago recibido"
+			],
+			"Payment method updated": [
+				"Método de pago actualizado"
+			],
+			"Payment completed": [
+				"Pago completado"
+			],
+			"Status changed": [
+				"Estado cambiado"
+			],
+			"Amount increased from %1$s to %2$s": [
+				"Importe aumentado de %1$s a %2$s"
+			],
+			"Amount decreased from %1$s to %2$s": [
+				"Importe reducido de %1$s a %2$s"
+			],
+			"Activity": [
+				"Actividad"
+			],
+			"Actions": [
+				"Acciones"
+			],
+			"Resume Subscription": [
+				"Reanudar suscripción"
+			],
+			"Pause Subscription": [
+				"Pausar suscripción"
+			],
+			"Cancel Subscription": [
+				"Cancelar suscripción"
+			],
+			"Failed to load subscription.": [
+				"No se pudo cargar la suscripción."
+			],
+			"Back to Subscriptions": [
+				"Volver a suscripciones"
+			],
+			"Subscription resumed.": [
+				"Suscripción reanudada."
+			],
+			"Failed to resume subscription.": [
+				"No se pudo reanudar la suscripción."
+			],
+			"payment": [
+				"pago"
+			],
+			"payments": [
+				"pagos"
+			],
+			"Subscription updated.": [
+				"Suscripción actualizada."
+			],
+			"Failed to update subscription.": [
+				"No se pudo actualizar la suscripción."
+			],
+			"Only visible to your team.": [
+				"Solo visible para tu equipo."
+			],
+			"Pausing will stop future renewal charges until the subscription is resumed. The donor will not be charged during this time.": [
+				"Al pausar se detendrán los cargos de renovación futuros hasta que se reanude la suscripción. Al donante no se le cobrará durante este tiempo."
+			],
+			"Keep Active": [
+				"Mantener activa"
+			],
+			"Subscription paused.": [
+				"Suscripción pausada."
+			],
+			"Failed to pause subscription.": [
+				"No se pudo pausar la suscripción."
+			],
+			"Are you sure you want to cancel this subscription? This will also cancel the subscription on Stripe.": [
+				"¿Seguro que quieres cancelar esta suscripción? Esto también cancelará la suscripción en Stripe."
+			],
+			"Keep Subscription": [
+				"Mantener suscripción"
+			],
+			"Subscription cancelled.": [
+				"Suscripción cancelada."
+			],
+			"Failed to cancel subscription.": [
+				"No se pudo cancelar la suscripción."
+			],
+			"Are you sure?": [
+				"¿Estás seguro?"
+			],
+			"to confirm": [
+				"para confirmar"
+			],
+			"Confirm": [
+				"Confirmar"
+			],
+			"Cache & Transients": [
+				"Caché y transitorios"
+			],
+			"Clear cached data. This is safe and won't remove any donor or transaction records.": [
+				"Borra los datos en caché. Es seguro y no eliminará ningún registro de donantes ni de transacciones."
+			],
+			"Clear dashboard cache": [
+				"Borrar la caché del panel"
+			],
+			"Refresh cached stats, chart data, and campaign totals on the dashboard.": [
+				"Actualiza las estadísticas, los datos de los gráficos y los totales de campaña almacenados en caché en el panel."
+			],
+			"Dashboard cache cleared.": [
+				"Caché del panel borrada."
+			],
+			"Clear email template cache": [
+				"Borrar la caché de plantillas de correo"
+			],
+			"Force email templates to regenerate. Useful if receipt styles appear outdated.": [
+				"Fuerza la regeneración de las plantillas de correo. Útil si los estilos de los recibos parecen desactualizados."
+			],
+			"Email template cache cleared.": [
+				"Caché de plantillas de correo borrada."
+			],
+			"Flush Stripe sync cache": [
+				"Vaciar la caché de sincronización de Stripe"
+			],
+			"Clear cached Stripe data and re-sync subscription statuses on next page load.": [
+				"Borra los datos de Stripe en caché y vuelve a sincronizar los estados de las suscripciones en la próxima carga de página."
+			],
+			"Stripe sync cache cleared.": [
+				"Caché de sincronización de Stripe borrada."
+			],
+			"Logs & History": [
+				"Registros e historial"
+			],
+			"Remove activity history. This does not affect donor or transaction data.": [
+				"Elimina el historial de actividad. Esto no afecta a los datos de donantes ni de transacciones."
+			],
+			"Clear activity log": [
+				"Borrar el registro de actividad"
+			],
+			"Remove all entries from the activity feed.": [
+				"Elimina todas las entradas del feed de actividad."
+			],
+			"Remove all entries from the activity feed. %s currently stored.": [
+				"Elimina todas las entradas del feed de actividad. %s almacenadas actualmente."
+			],
+			"entry": [
+				"entrada"
+			],
+			"entries": [
+				"entradas"
+			],
+			"This will permanently delete all %s activity log entries.": [
+				"Esto eliminará permanentemente las %s entradas del registro de actividad."
+			],
+			"Activity log cleared.": [
+				"Registro de actividad borrado."
+			],
+			"Test Data": [
+				"Datos de prueba"
+			],
+			"Remove data created while in Stripe test mode. Only test mode data is affected.": [
+				"Elimina los datos creados en el modo de prueba de Stripe. Solo se ven afectados los datos del modo de prueba."
+			],
+			"Delete test transactions": [
+				"Eliminar transacciones de prueba"
+			],
+			"Remove all transactions made with Stripe test mode keys.": [
+				"Elimina todas las transacciones realizadas con claves del modo de prueba de Stripe."
+			],
+			"Remove all transactions made with Stripe test mode keys. %s found.": [
+				"Elimina todas las transacciones realizadas con claves del modo de prueba de Stripe. %s encontradas."
+			],
+			"test transactions": [
+				"transacciones de prueba"
+			],
+			"This will permanently delete %s test transactions. This cannot be undone.": [
+				"Esto eliminará permanentemente %s transacciones de prueba. No se puede deshacer."
+			],
+			"Test transactions deleted.": [
+				"Transacciones de prueba eliminadas."
+			],
+			"Delete test donors": [
+				"Eliminar donantes de prueba"
+			],
+			"Remove donors that only have test mode transactions (no live donations).": [
+				"Elimina los donantes que solo tienen transacciones del modo de prueba (sin donaciones reales)."
+			],
+			"Remove donors that only have test mode transactions (no live donations). %s found.": [
+				"Elimina los donantes que solo tienen transacciones del modo de prueba (sin donaciones reales). %s encontrados."
+			],
+			"test-only donors": [
+				"donantes solo de prueba"
+			],
+			"This will permanently delete %s test-only donors and their associated data. This cannot be undone.": [
+				"Esto eliminará permanentemente %s donantes solo de prueba y sus datos asociados. No se puede deshacer."
+			],
+			"Test donors deleted.": [
+				"Donantes de prueba eliminados."
+			],
+			"Delete all test data": [
+				"Eliminar todos los datos de prueba"
+			],
+			"Remove all test transactions, test donors, and test subscriptions in one step.": [
+				"Elimina todas las transacciones, donantes y suscripciones de prueba en un solo paso."
+			],
+			"This will permanently delete all test mode data (%1$s transactions, %2$s donors, %3$s subscriptions). This cannot be undone.": [
+				"Esto eliminará permanentemente todos los datos del modo de prueba (%1$s transacciones, %2$s donantes, %3$s suscripciones). No se puede deshacer."
+			],
+			"All test data deleted.": [
+				"Todos los datos de prueba eliminados."
+			],
+			"These actions are irreversible and will permanently delete data.": [
+				"Estas acciones son irreversibles y eliminarán datos de forma permanente."
+			],
+			"Reset all settings": [
+				"Restablecer todos los ajustes"
+			],
+			"Restore all Mission settings to their defaults. Stripe will be disconnected. Donor and transaction data is preserved.": [
+				"Restaura todos los ajustes de Mission a sus valores predeterminados. Stripe se desconectará. Los datos de donantes y transacciones se conservan."
+			],
+			"This will reset ALL Mission settings to defaults and disconnect Stripe. Your donor and transaction data will NOT be deleted, but you will need to reconfigure the plugin.": [
+				"Esto restablecerá TODOS los ajustes de Mission a sus valores predeterminados y desconectará Stripe. Tus datos de donantes y transacciones NO se eliminarán, pero tendrás que volver a configurar el plugin."
+			],
+			"All settings reset to defaults.": [
+				"Todos los ajustes restablecidos a sus valores predeterminados."
+			],
+			"Delete all Mission data": [
+				"Eliminar todos los datos de Mission"
+			],
+			"Completely remove all donors, transactions, campaigns, subscriptions, and settings. This is equivalent to a fresh install.": [
+				"Elimina por completo todos los donantes, transacciones, campañas, suscripciones y ajustes. Equivale a una instalación nueva."
+			],
+			"This will PERMANENTLY DELETE all Mission data including donors, transactions, campaigns, subscriptions, and settings. This action CANNOT be undone.": [
+				"Esto ELIMINARÁ PERMANENTEMENTE todos los datos de Mission, incluidos donantes, transacciones, campañas, suscripciones y ajustes. Esta acción NO se puede deshacer."
+			],
+			"All Mission data has been deleted.": [
+				"Se han eliminado todos los datos de Mission."
+			],
+			"Running…": [
+				"Ejecutando…"
+			],
+			"Run": [
+				"Ejecutar"
+			],
+			"Bring your data home": [
+				"Trae tus datos a casa"
+			],
+			"Import donors, transactions, campaigns, and subscriptions from a CSV or JSON file.": [
+				"Importa donantes, transacciones, campañas y suscripciones desde un archivo CSV o JSON."
+			],
+			"Automatic column detection and field mapping": [
+				"Detección automática de columnas y asignación de campos"
+			],
+			"Duplicate detection to avoid double-counting donors": [
+				"Detección de duplicados para evitar contar donantes por partida doble"
+			],
+			"Preview your import before anything changes": [
+				"Previsualiza tu importación antes de que cambie nada"
+			],
+			"Downloadable CSV templates for each data type": [
+				"Plantillas CSV descargables para cada tipo de datos"
+			],
+			"Switch from another plugin": [
+				"Cambia desde otro plugin"
+			],
+			"Already using a different donation plugin? The migration tool moves your donors, transactions, campaigns, and subscriptions over automatically.": [
+				"¿Ya usas un plugin de donaciones diferente? La herramienta de migración traslada tus donantes, transacciones, campañas y suscripciones automáticamente."
+			],
+			"One-click migration from GiveWP, Charitable, and more": [
+				"Migración con un clic desde GiveWP, Charitable y más"
+			],
+			"Moves donors, transactions, campaigns, and subscriptions": [
+				"Traslada donantes, transacciones, campañas y suscripciones"
+			],
+			"Automatic field mapping between plugins": [
+				"Asignación automática de campos entre plugins"
+			],
+			"Your old data stays untouched": [
+				"Tus datos antiguos permanecen intactos"
+			],
+			"No add-ons. Everything is free.": [
+				"Sin complementos. Todo es gratis."
+			],
+			"Other donation plugins charge for recurring donations, donor management, and custom fields. Mission includes all of that in one plugin at no cost. Bigger features are on the way, and they will be free too.": [
+				"Otros plugins de donaciones cobran por las donaciones recurrentes, la gestión de donantes y los campos personalizados. Mission incluye todo eso en un solo plugin sin coste. Vienen funciones más grandes en camino, y también serán gratis."
+			],
+			"Peer-to-peer fundraising": [
+				"Recaudación entre particulares"
+			],
+			"Designated funds": [
+				"Fondos designados"
+			],
+			"Ticketed events": [
+				"Eventos con entradas"
+			],
+			"Get notified when they ship": [
+				"Recibe un aviso cuando se publiquen"
+			],
+			"You’re on the list": [
+				"Estás en la lista"
+			],
+			"Remove me from notifications": [
+				"Quitarme de las notificaciones"
+			],
+			"Notify me": [
+				"Avísame"
+			],
+			"Coming Soon": [
+				"Próximamente"
+			],
+			"Get notified when it ships": [
+				"Recibe un aviso cuando se publique"
+			],
+			"Dedications": [
+				"Dedicatorias"
+			],
+			"Export Data": [
+				"Exportar datos"
+			],
+			"Download your Mission data as a file.": [
+				"Descarga tus datos de Mission como un archivo."
+			],
+			"Data type": [
+				"Tipo de datos"
+			],
+			"File format": [
+				"Formato de archivo"
+			],
+			"From": [
+				"Desde"
+			],
+			"To": [
+				"Hasta"
+			],
+			"Leave blank to export all.": [
+				"Déjalo en blanco para exportarlo todo."
+			],
+			"Notify method": [
+				"Método de notificación"
+			],
+			"Notification status": [
+				"Estado de la notificación"
+			],
+			"Sent": [
+				"Enviado"
+			],
+			"will be exported": [
+				"se exportarán"
+			],
+			"Export": [
+				"Exportar"
+			],
+			"First 5 records that will be included in your export.": [
+				"Primeros 5 registros que se incluirán en tu exportación."
+			],
+			"Export All Data": [
+				"Exportar todos los datos"
+			],
+			"Download all donors, transactions, campaigns, and subscriptions as a single ZIP file.": [
+				"Descarga todos los donantes, transacciones, campañas y suscripciones en un único archivo ZIP."
+			],
+			"Download ZIP": [
+				"Descargar ZIP"
+			],
+			"All levels": [
+				"Todos los niveles"
+			],
+			"Info": [
+				"Información"
+			],
+			"Warnings": [
+				"Avisos"
+			],
+			"Errors": [
+				"Errores"
+			],
+			"All categories": [
+				"Todas las categorías"
+			],
+			"Payment": [
+				"Pago"
+			],
+			"Webhook": [
+				"Webhook"
+			],
+			"System": [
+				"Sistema"
+			],
+			"1 entry": [
+				"1 entrada"
+			],
+			"%s entries": [
+				"%s entradas"
+			],
+			"Search logs…": [
+				"Buscar registros…"
+			],
+			"Clear logs": [
+				"Borrar registros"
+			],
+			"No log entries match your filters.": [
+				"Ninguna entrada del registro coincide con tus filtros."
+			],
+			"No log entries yet.": [
+				"Aún no hay entradas en el registro."
+			],
+			"Load more (%s remaining)": [
+				"Cargar más (%s restantes)"
+			],
+			"Clear all logs": [
+				"Borrar todos los registros"
+			],
+			"This will permanently delete all %s log entries.": [
+				"Esto eliminará permanentemente las %s entradas del registro."
+			],
+			"Mission Environment": [
+				"Entorno de Mission"
+			],
+			"Mission version": [
+				"Versión de Mission"
+			],
+			"Database version": [
+				"Versión de la base de datos"
+			],
+			"Stripe connections": [
+				"Conexiones de Stripe"
+			],
+			"Webhook endpoint": [
+				"Endpoint del webhook"
+			],
+			"Active campaigns": [
+				"Campañas activas"
+			],
+			"Total donors": [
+				"Total de donantes"
+			],
+			"Total transactions": [
+				"Total de transacciones"
+			],
+			"Log directory": [
+				"Directorio de registros"
+			],
+			"WordPress Environment": [
+				"Entorno de WordPress"
+			],
+			"Site URL": [
+				"URL del sitio"
+			],
+			"Home URL": [
+				"URL de inicio"
+			],
+			"WordPress version": [
+				"Versión de WordPress"
+			],
+			"Multisite": [
+				"Multisitio"
+			],
+			"Memory limit": [
+				"Límite de memoria"
+			],
+			"Debug mode": [
+				"Modo de depuración"
+			],
+			"Cron": [
+				"Cron"
+			],
+			"Language": [
+				"Idioma"
+			],
+			"Timezone": [
+				"Zona horaria"
+			],
+			"Server Environment": [
+				"Entorno del servidor"
+			],
+			"Server software": [
+				"Software del servidor"
+			],
+			"PHP version": [
+				"Versión de PHP"
+			],
+			"PHP memory limit": [
+				"Límite de memoria de PHP"
+			],
+			"PHP max execution time": [
+				"Tiempo máximo de ejecución de PHP"
+			],
+			"PHP max input vars": [
+				"Variables de entrada máximas de PHP"
+			],
+			"PHP max upload size": [
+				"Tamaño máximo de subida de PHP"
+			],
+			"MySQL version": [
+				"Versión de MySQL"
+			],
+			"cURL version": [
+				"Versión de cURL"
+			],
+			"fsockopen / cURL": [
+				"fsockopen / cURL"
+			],
+			"Database": [
+				"Base de datos"
+			],
+			"Active Plugins": [
+				"Plugins activos"
+			],
+			"Theme": [
+				"Tema"
+			],
+			"System Status": [
+				"Estado del sistema"
+			],
+			"Copy this report when contacting support.": [
+				"Copia este informe cuando contactes con el soporte."
+			],
+			"Copy system report": [
+				"Copiar informe del sistema"
+			],
+			"Stripe connection": [
+				"Conexión de Stripe",
+				"Conexiones de Stripe"
+			],
+			"%s mode": [
+				"Modo %s"
+			],
+			"Not connected": [
+				"No conectado"
+			],
+			"Not configured": [
+				"No configurado"
+			],
+			"Enabled": [
+				"Activado"
+			],
+			"Disabled": [
+				"Desactivado"
+			],
+			"Available": [
+				"Disponible"
+			],
+			"seconds": [
+				"segundos"
+			],
+			"Database prefix": [
+				"Prefijo de la base de datos"
+			],
+			"Total database size": [
+				"Tamaño total de la base de datos"
+			],
+			"Mission tables size": [
+				"Tamaño de las tablas de Mission"
+			],
+			"by": [
+				"por"
+			],
+			"Version": [
+				"Versión"
+			],
+			"Author": [
+				"Autor"
+			],
+			"Child theme": [
+				"Tema hijo"
+			],
+			"Block theme": [
+				"Tema de bloques"
+			],
+			"Mission Donation Platform Environment": [
+				"Entorno de Mission - Plataforma de donaciones"
+			],
+			"Import": [
+				"Importar"
+			],
+			"Migration": [
+				"Migración"
+			],
+			"Features": [
+				"Características"
+			],
+			"Logs": [
+				"Registros"
+			],
+			"Cleanup": [
+				"Limpieza"
+			],
+			"Remove donor": [
+				"Quitar donante"
+			],
+			"Please select a donor.": [
+				"Selecciona un donante."
+			],
+			"Please enter a valid amount.": [
+				"Introduce un importe válido."
+			],
+			"Save Donation": [
+				"Guardar donación"
+			],
+			"Add Donation": [
+				"Añadir donación"
+			],
+			"Test mode is active. This donation will be recorded as a test transaction.": [
+				"El modo de pruebas está activo. Esta donación se registrará como una transacción de prueba."
+			],
+			"Search by name or email…": [
+				"Buscar por nombre o correo electrónico…"
+			],
+			"No donors found.": [
+				"No se han encontrado donantes."
+			],
+			"Add a new donor": [
+				"Añadir un nuevo donante"
+			],
+			"Select an existing donor instead": [
+				"Seleccionar un donante existente en su lugar"
+			],
+			"Notes": [
+				"Notas"
+			],
+			"Billing Address": [
+				"Dirección de facturación"
+			],
+			"Send donation receipt email to donor": [
+				"Enviar el correo de recibo de donación al donante"
+			],
+			"Mail — pending": [
+				"Correo postal — pendiente"
+			],
+			"Mail — sent": [
+				"Correo postal — enviado"
+			],
+			"Email — sent": [
+				"Correo electrónico — enviado"
+			],
+			"Has dedication": [
+				"Tiene dedicatoria"
+			],
+			"refund": [
+				"reembolso"
+			],
+			"refunds": [
+				"reembolsos"
+			],
+			"View and manage all donations.": [
+				"Consulta y gestiona todas las donaciones."
+			],
+			"Total Revenue": [
+				"Ingresos totales"
+			],
+			"Total Donations": [
+				"Total de donaciones"
+			],
+			"Average Donation": [
+				"Donación media"
+			],
+			"Across all campaigns": [
+				"En todas las campañas"
+			],
+			"Refunds": [
+				"Reembolsos"
+			],
+			"No transactions yet": [
+				"Aún no hay transacciones"
+			],
+			"Transactions will appear here once donors start giving.": [
+				"Las transacciones aparecerán aquí cuando los donantes empiecen a donar."
+			],
+			"Payment initiated": [
+				"Pago iniciado"
+			],
+			"Refund initiated": [
+				"Reembolso iniciado"
+			],
+			"Refund completed": [
+				"Reembolso completado"
+			],
+			"Partial refund": [
+				"Reembolso parcial"
+			],
+			"Receipt sent": [
+				"Recibo enviado"
+			],
+			"Sent to": [
+				"Enviado a"
+			],
+			"By": [
+				"Por"
+			],
+			"returned to": [
+				"devuelto a"
+			],
+			"returned": [
+				"devuelto"
+			],
+			"This transaction is part of a recurring subscription.": [
+				"Esta transacción forma parte de una suscripción recurrente."
+			],
+			"View Subscription": [
+				"Ver suscripción"
+			],
+			"Resend Receipt": [
+				"Reenviar recibo"
+			],
+			"Refund": [
+				"Reembolsar"
+			],
+			"Export CSV": [
+				"Exportar CSV"
+			],
+			"Delete Transaction": [
+				"Eliminar transacción"
+			],
+			"Failed to load transaction.": [
+				"No se ha podido cargar la transacción."
+			],
+			"Transaction updated.": [
+				"Transacción actualizada."
+			],
+			"Failed to update transaction.": [
+				"No se ha podido actualizar la transacción."
+			],
+			"Back to Transactions": [
+				"Volver a transacciones"
+			],
+			"Receipt sent to %s": [
+				"Recibo enviado a %s"
+			],
+			"Failed to send receipt.": [
+				"No se ha podido enviar el recibo."
+			],
+			"Donor Notes": [
+				"Notas del donante"
+			],
+			"Visible to the donor. Sent via email when added.": [
+				"Visible para el donante. Se envía por correo electrónico al añadirla."
+			],
+			"Send Note to Donor?": [
+				"¿Enviar la nota al donante?"
+			],
+			"This note will be emailed to the donor. Are you sure you want to send it?": [
+				"Esta nota se enviará por correo electrónico al donante. ¿Seguro que quieres enviarla?"
+			],
+			"Send Note": [
+				"Enviar nota"
+			],
+			"Refund Transaction": [
+				"Reembolsar transacción"
+			],
+			"Original amount: %s": [
+				"Importe original: %s"
+			],
+			"%s already refunded": [
+				"%s ya reembolsado"
+			],
+			"Amount exceeds refundable balance.": [
+				"El importe supera el saldo reembolsable."
+			],
+			"%s refunded successfully": [
+				"%s reembolsado correctamente"
+			],
+			"Failed to process refund.": [
+				"No se ha podido procesar el reembolso."
+			],
+			"Process Refund": [
+				"Procesar reembolso"
+			],
+			"Are you sure you want to delete transaction": [
+				"¿Seguro que quieres eliminar la transacción"
+			],
+			"Change Status to Refunded?": [
+				"¿Cambiar el estado a reembolsado?"
+			],
+			"This will only update the status on this record — it will not issue a refund through Stripe. The donor will not receive any money back.": [
+				"Esto solo actualizará el estado de este registro: no se emitirá un reembolso a través de Stripe. El donante no recibirá ningún reembolso."
+			],
+			"To process an actual refund, use the Refund action from the Actions menu or refund directly in your Stripe dashboard.": [
+				"Para procesar un reembolso real, usa la acción Reembolsar del menú de acciones o reembolsa directamente desde tu panel de Stripe."
+			],
+			"Update Status Only": [
+				"Actualizar solo el estado"
+			],
+			"Mission Dashboard": [
+				"Panel de Mission"
+			],
+			"Your donation activity at a glance": [
+				"Tu actividad de donaciones de un vistazo"
+			],
+			"Stripe connected successfully!": [
+				"¡Stripe conectado correctamente!"
+			],
+			"Failed to connect Stripe.": [
+				"No se ha podido conectar con Stripe."
+			],
+			"Settings saved.": [
+				"Ajustes guardados."
+			],
+			"Failed to save settings.": [
+				"No se han podido guardar los ajustes."
+			],
+			"Configure your Mission plugin": [
+				"Configura tu plugin Mission"
+			],
+			"Connecting to Stripe…": [
+				"Conectando con Stripe…"
+			],
+			"Default Stripe account updated.": [
+				"Cuenta de Stripe predeterminada actualizada."
+			],
+			"Failed to update the default account.": [
+				"No se ha podido actualizar la cuenta predeterminada."
+			],
+			"Change Currency": [
+				"Cambiar moneda"
+			],
+			"Make sure this matches the default currency on your Stripe account. Mismatched currencies may cause payment failures.": [
+				"Asegúrate de que coincide con la moneda predeterminada de tu cuenta de Stripe. Las monedas que no coinciden pueden provocar fallos en los pagos."
+			],
+			"Disconnect Stripe": [
+				"Desconectar Stripe"
+			],
+			"This is your default Stripe account. Disconnecting it will route donations through another connected account, or block new donations if no accounts remain.": [
+				"Esta es tu cuenta de Stripe predeterminada. Al desconectarla, las donaciones se enrutarán a través de otra cuenta conectada, o se bloquearán las nuevas donaciones si no queda ninguna cuenta."
+			],
+			"Donation forms set to use this account will fall back to your default account once it’s disconnected.": [
+				"Los formularios de donación configurados para usar esta cuenta recurrirán a tu cuenta predeterminada una vez que se desconecte."
+			],
+			"Stripe disconnected.": [
+				"Stripe desconectado."
+			],
+			"Failed to disconnect Stripe.": [
+				"No se ha podido desconectar Stripe."
+			],
+			"Utilities and configuration for Mission": [
+				"Utilidades y configuración de Mission"
+			],
+			"e.g. 12-3456789": [
+				"p. ej. 12-3456789"
+			],
+			"File exceeds the 10 MB limit.": [
+				"El archivo supera el límite de 10 MB."
+			],
+			"Only .csv and .json files are supported.": [
+				"Solo se admiten archivos .csv y .json."
+			],
+			"Skip duplicates": [
+				"Omitir duplicados"
+			],
+			"If a matching record already exists, skip the imported row.": [
+				"Si ya existe un registro coincidente, se omite la fila importada."
+			],
+			"Update existing": [
+				"Actualizar existentes"
+			],
+			"If a match is found, update the existing record with the imported data.": [
+				"Si se encuentra una coincidencia, se actualiza el registro existente con los datos importados."
+			],
+			"The import could not be started.": [
+				"No se ha podido iniciar la importación."
+			],
+			"Could not validate the file.": [
+				"No se ha podido validar el archivo."
+			],
+			"Import Data": [
+				"Importar datos"
+			],
+			"Upload a CSV or JSON file to import data into Mission.": [
+				"Sube un archivo CSV o JSON para importar datos a Mission."
+			],
+			"Supported columns:": [
+				"Columnas compatibles:"
+			],
+			"Required:": [
+				"Obligatorias:"
+			],
+			"(donor_id may be used instead of donor_email)": [
+				"(donor_id puede usarse en lugar de donor_email)"
+			],
+			"(gateway_transaction_id / Charge ID may be used instead of transaction_id)": [
+				"(gateway_transaction_id / ID de cargo puede usarse en lugar de transaction_id)"
+			],
+			"Reading file…": [
+				"Leyendo el archivo…"
+			],
+			"Drag and drop your file here": [
+				"Arrastra y suelta tu archivo aquí"
+			],
+			"or": [
+				"o"
+			],
+			"Browse files": [
+				"Buscar archivos"
+			],
+			"Supports .csv and .json files up to 10MB": [
+				"Admite archivos .csv y .json de hasta 10 MB"
+			],
+			"Download Templates": [
+				"Descargar plantillas"
+			],
+			"Need a template? Download a blank CSV with the correct column headers.": [
+				"¿Necesitas una plantilla? Descarga un CSV en blanco con las cabeceras de columna correctas."
+			],
+			"This will import %1$d new %3$s and skip %2$d duplicates. This action cannot be undone.": [
+				"Esto importará %1$d %3$s y omitirá %2$d duplicados. Esta acción no se puede deshacer."
+			],
+			"This will import %1$d new %3$s and update %2$d existing records. This action cannot be undone.": [
+				"Esto importará %1$d %3$s y actualizará %2$d registros existentes. Esta acción no se puede deshacer."
+			],
+			"%d row(s) with errors will be skipped.": [
+				"Se omitirán %d fila(s) con errores."
+			],
+			"File Summary": [
+				"Resumen del archivo"
+			],
+			"Review the data before importing.": [
+				"Revisa los datos antes de importar."
+			],
+			"rows detected": [
+				"filas detectadas"
+			],
+			"columns matched": [
+				"columnas coincidentes"
+			],
+			"%1$d error(s), %2$d warning(s)": [
+				"%1$d error(es), %2$d aviso(s)"
+			],
+			"warnings": [
+				"avisos"
+			],
+			"Row %d:": [
+				"Fila %d:"
+			],
+			"And %d more errors.": [
+				"Y %d errores más."
+			],
+			"And %d more warnings.": [
+				"Y %d avisos más."
+			],
+			"%1$d %2$s": [
+				"%1$d %2$s"
+			],
+			"already exist in your database (matched by Charge ID)": [
+				"ya existen en tu base de datos (coincidencia por ID de cargo)"
+			],
+			"already exist in your database (matched by title)": [
+				"ya existen en tu base de datos (coincidencia por título)"
+			],
+			"already exist in your database (matched by Subscription ID)": [
+				"ya existen en tu base de datos (coincidencia por ID de suscripción)"
+			],
+			"already exist in your database (matched by transaction)": [
+				"ya existen en tu base de datos (coincidencia por transacción)"
+			],
+			"already exist in your database (matched by email)": [
+				"ya existen en tu base de datos (coincidencia por correo electrónico)"
+			],
+			"%d rows have no Charge ID": [
+				"%d filas no tienen ID de cargo"
+			],
+			"and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
+				"y se importarán como transacciones nuevas cada vez. Elimina estas filas de tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
+			],
+			"%d rows have no Subscription ID": [
+				"%d filas no tienen ID de suscripción"
+			],
+			"and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
+				"y se importarán como suscripciones nuevas cada vez. Elimina estas filas de tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
+			],
+			"Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions.": [
+				"Cada campaña crea su propia página de campaña. Los totales recaudados, los recuentos de donantes y los recuentos de transacciones empiezan en cero y se actualizan automáticamente a medida que importas o registras transacciones."
+			],
+			"Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway.": [
+				"Las suscripciones importadas son solo registros. No se cobra ningún pago y los recuentos de renovaciones empiezan en cero. Una suscripción solo se renueva automáticamente si su ID de suscripción coincide con una suscripción activa en tu pasarela de pago."
+			],
+			"Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported.": [
+				"Cada dedicatoria se asocia a una transacción existente, con coincidencia por ID de cargo o ID de transacción. Importa primero las transacciones; las filas cuya transacción no se encuentre se omiten. No se envían correos electrónicos de notificación cuando se importan dedicatorias."
+			],
+			"Import Options": [
+				"Opciones de importación"
+			],
+			"Choose how to handle records that already exist.": [
+				"Elige cómo gestionar los registros que ya existen."
+			],
+			"Data Preview": [
+				"Vista previa de los datos"
+			],
+			"First 5 rows from your uploaded file.": [
+				"Las primeras 5 filas de tu archivo subido."
+			],
+			"Update %1$d %2$s": [
+				"Actualizar %1$d %2$s"
+			],
+			"Import %1$d %2$s": [
+				"Importar %1$d %2$s"
+			],
+			"Cancelling…": [
+				"Cancelando…"
+			],
+			"Importing your %s": [
+				"Importando tus %s"
+			],
+			"%1$d of %2$d rows processed": [
+				"%1$d de %2$d filas procesadas"
+			],
+			"Starting up…": [
+				"Iniciando…"
+			],
+			"imported": [
+				"importadas"
+			],
+			"updated": [
+				"actualizadas"
+			],
+			"skipped": [
+				"omitidas"
+			],
+			"errors": [
+				"errores"
+			],
+			"You can safely leave this page — the import keeps running in the background. Come back any time to check progress.": [
+				"Puedes salir de esta página con total tranquilidad; la importación sigue ejecutándose en segundo plano. Vuelve en cualquier momento para comprobar el progreso."
+			],
+			"Cancel import": [
+				"Cancelar la importación"
+			],
+			"Import failed": [
+				"La importación ha fallado"
+			],
+			"Something went wrong while running the import.": [
+				"Algo ha ido mal al ejecutar la importación."
+			],
+			"%1$d imported, %2$d updated, %3$d skipped before the failure.": [
+				"%1$d importadas, %2$d actualizadas, %3$d omitidas antes del fallo."
+			],
+			"Try again": [
+				"Inténtalo de nuevo"
+			],
+			"%1$d %2$s were successfully imported.": [
+				"%1$d %2$s se han importado correctamente."
+			],
+			"%d existing records were updated.": [
+				"Se han actualizado %d registros existentes."
+			],
+			"%d duplicates were skipped.": [
+				"Se han omitido %d duplicados."
+			],
+			"%d rows failed to import.": [
+				"%d filas no se han podido importar."
+			],
+			"Import complete": [
+				"Importación completada"
+			],
+			"Show error details": [
+				"Mostrar los detalles de los errores"
+			],
+			"View %s": [
+				"Ver %s"
+			],
+			"Import more data": [
+				"Importar más datos"
+			]
+		}
+	}
+}

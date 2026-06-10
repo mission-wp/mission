@@ -1,7 +1,13 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { CURRENCIES, minorToMajor, majorToMinor } from '@shared/currencies';
+import {
+  CURRENCIES,
+  getCurrencyDecimals,
+  minorToMajor,
+  majorToMinor,
+} from '@shared/currencies';
 import { getCurrencyCode } from '@shared/currency';
+import { defaultFixedFee, maxFixedFee } from '@shared/fees';
 import { COUNTRIES, getRegionConfig } from '@shared/address';
 import ColorPicker from '@shared/components/ColorPicker';
 
@@ -122,6 +128,10 @@ export default function GeneralPanel( {
     ? settings.stripe_accounts
     : [];
   const hasAccounts = accounts.length > 0;
+  // Use the (possibly unsaved) currency from form state so the fixed-fee
+  // input converts and constrains against what will actually be saved.
+  const feeCurrency = settings.currency || getCurrencyCode();
+  const feeDecimals = getCurrencyDecimals( feeCurrency );
   const stripeConnectUrl = window.missiondpAdmin?.stripeConnectUrl;
   const defaultChargesEnabled = accounts.some(
     ( a ) => a.is_default && a.charges_enabled
@@ -533,26 +543,30 @@ export default function GeneralPanel( {
                   type="number"
                   id="mission-fee-fixed"
                   className="mission-settings-field__input"
-                  step="0.01"
+                  step={ String( 10 ** -feeDecimals ) }
                   min="0"
-                  max="1"
+                  max={ String(
+                    minorToMajor( maxFixedFee( feeCurrency ), feeCurrency )
+                  ) }
                   value={
                     settings.stripe_fee_fixed !== null &&
                     settings.stripe_fee_fixed !== undefined
                       ? String(
+                          minorToMajor( settings.stripe_fee_fixed, feeCurrency )
+                        )
+                      : String(
                           minorToMajor(
-                            settings.stripe_fee_fixed,
-                            getCurrencyCode()
+                            defaultFixedFee( feeCurrency ),
+                            feeCurrency
                           )
                         )
-                      : '0.30'
                   }
                   onChange={ ( e ) =>
                     updateField(
                       'stripe_fee_fixed',
                       majorToMinor(
                         parseFloat( e.target.value ) || 0,
-                        getCurrencyCode()
+                        feeCurrency
                       )
                     )
                   }

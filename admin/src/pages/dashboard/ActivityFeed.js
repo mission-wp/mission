@@ -1,4 +1,5 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
 import { timeAgo } from '@shared/time';
 import { formatAmount } from '@shared/currency';
 import EmptyState from '../../components/EmptyState';
@@ -153,6 +154,23 @@ const MissionLogoIcon = () => (
   </svg>
 );
 
+const ImportIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
 const ActivityIcon = () => (
   <svg
     width="40"
@@ -199,6 +217,7 @@ const eventMetaMap = {
   campaign_goal_reached: { icon: <FlagIcon />, className: 'is-milestone' },
   campaign_created: { icon: <BullhornIcon />, className: 'is-campaign' },
   campaign_ended: { icon: <CheckmarkIcon />, className: 'is-campaign-ended' },
+  data_imported: { icon: <ImportIcon />, className: 'is-import' },
   plugin_updated: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_installed: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_activated: { icon: <MissionLogoIcon />, className: 'is-system' },
@@ -267,6 +286,26 @@ const freqLabels = {
   annually: '/yr',
 };
 
+// [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
+const importTypeLabels = {
+  donors: [ 'donor', 'donors' ],
+  transactions: [ 'transaction', 'transactions' ],
+  campaigns: [ 'campaign', 'campaigns' ],
+  subscriptions: [ 'subscription', 'subscriptions' ],
+  tributes: [ 'dedication', 'dedications' ],
+};
+
+/**
+ * Singular/plural noun for an import type ('tributes' shows as 'dedications').
+ *
+ * @param {string} type  Internal import type.
+ * @param {number} count Number the noun agrees with.
+ */
+function importNoun( type, count ) {
+  const labels = importTypeLabels[ type ] || [ type, type ];
+  return count === 1 ? labels[ 0 ] : labels[ 1 ];
+}
+
 /**
  * Build a human-readable description from an activity event.
  *
@@ -290,23 +329,35 @@ function getEventText( event ) {
     const campaign = campaignLink( data.campaign_title, data.campaign_id );
 
     if ( donor && amount && campaign ) {
-      return (
-        <>
-          { donor } donated { amount } to { campaign }
-        </>
+      return createInterpolateElement(
+        __(
+          '<donor /> donated <amount /> to <campaign />',
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+          campaign,
+        }
       );
     }
     if ( donor && amount ) {
-      return (
-        <>
-          { donor } donated { amount }
-        </>
+      return createInterpolateElement(
+        __( '<donor /> donated <amount />', 'mission-donation-platform' ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+        }
       );
     }
     if ( amount ) {
-      return `${ amount } donation received`;
+      return sprintf(
+        // translators: %s: formatted donation amount.
+        __( '%s donation received', 'mission-donation-platform' ),
+        amount
+      );
     }
-    return 'Donation received';
+    return __( 'Donation received', 'mission-donation-platform' );
   }
 
   if ( eventType === 'recurring_donation_processed' ) {
@@ -315,14 +366,19 @@ function getEventText( event ) {
     const suffix = freqLabels[ data.frequency ] || '';
 
     if ( donor && amount ) {
-      return (
-        <>
-          { donor }&apos;s { amount }
-          { suffix } recurring donation was processed
-        </>
+      return createInterpolateElement(
+        __(
+          "<donor />'s <amount /><suffix /> recurring donation was processed",
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+          suffix: <>{ suffix }</>,
+        }
       );
     }
-    return 'Recurring donation processed';
+    return __( 'Recurring donation processed', 'mission-donation-platform' );
   }
 
   if (
@@ -333,13 +389,25 @@ function getEventText( event ) {
     const donor = donorLink( data.donor_name, data.donor_id );
 
     if ( amount && donor ) {
-      return (
-        <>
-          { amount } refund processed for { donor }
-        </>
+      return createInterpolateElement(
+        __(
+          '<amount /> refund processed for <donor />',
+          'mission-donation-platform'
+        ),
+        {
+          amount: <>{ amount }</>,
+          donor,
+        }
       );
     }
-    return amount ? `${ amount } refund processed` : 'Refund processed';
+    if ( amount ) {
+      return sprintf(
+        // translators: %s: formatted refund amount.
+        __( '%s refund processed', 'mission-donation-platform' ),
+        amount
+      );
+    }
+    return __( 'Refund processed', 'mission-donation-platform' );
   }
 
   if ( eventType === 'subscription_created' ) {
@@ -352,22 +420,33 @@ function getEventText( event ) {
     const campaign = campaignLink( data.campaign_title, data.campaign_id );
 
     if ( donor && amount && campaign ) {
-      return (
-        <>
-          { donor } started a { amount }
-          { suffix } recurring donation to { campaign }
-        </>
+      return createInterpolateElement(
+        __(
+          '<donor /> started a <amount /><suffix /> recurring donation to <campaign />',
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+          suffix: <>{ suffix }</>,
+          campaign,
+        }
       );
     }
     if ( donor && amount ) {
-      return (
-        <>
-          { donor } started a { amount }
-          { suffix } recurring donation
-        </>
+      return createInterpolateElement(
+        __(
+          '<donor /> started a <amount /><suffix /> recurring donation',
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+          suffix: <>{ suffix }</>,
+        }
       );
     }
-    return 'New recurring donation started';
+    return __( 'New recurring donation started', 'mission-donation-platform' );
   }
 
   if ( eventType === 'subscription_amount_increased' ) {
@@ -376,14 +455,22 @@ function getEventText( event ) {
     const suffix = freqLabels[ data.frequency ] || '';
 
     if ( donor && amount ) {
-      return (
-        <>
-          { donor } increased recurring donation to { amount }
-          { suffix }
-        </>
+      return createInterpolateElement(
+        __(
+          '<donor /> increased recurring donation to <amount /><suffix />',
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+          suffix: <>{ suffix }</>,
+        }
       );
     }
-    return 'Recurring donation amount increased';
+    return __(
+      'Recurring donation amount increased',
+      'mission-donation-platform'
+    );
   }
 
   if ( eventType === 'subscription_amount_decreased' ) {
@@ -392,32 +479,52 @@ function getEventText( event ) {
     const suffix = freqLabels[ data.frequency ] || '';
 
     if ( donor && amount ) {
-      return (
-        <>
-          { donor } decreased recurring donation to { amount }
-          { suffix }
-        </>
+      return createInterpolateElement(
+        __(
+          '<donor /> decreased recurring donation to <amount /><suffix />',
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          amount: <>{ amount }</>,
+          suffix: <>{ suffix }</>,
+        }
       );
     }
-    return 'Recurring donation amount decreased';
+    return __(
+      'Recurring donation amount decreased',
+      'mission-donation-platform'
+    );
   }
 
   if ( eventType === 'subscription_cancelled' ) {
     const donor = donorLink( data.donor_name, data.donor_id );
 
     if ( donor ) {
-      return <>{ donor } cancelled their recurring donation</>;
+      return createInterpolateElement(
+        __(
+          '<donor /> cancelled their recurring donation',
+          'mission-donation-platform'
+        ),
+        { donor }
+      );
     }
-    return 'Recurring donation cancelled';
+    return __( 'Recurring donation cancelled', 'mission-donation-platform' );
   }
 
   if ( eventType === 'subscription_failed' ) {
     const donor = donorLink( data.donor_name, data.donor_id );
 
     if ( donor ) {
-      return <>Recurring donation failed for { donor }</>;
+      return createInterpolateElement(
+        __(
+          'Recurring donation failed for <donor />',
+          'mission-donation-platform'
+        ),
+        { donor }
+      );
     }
-    return 'Recurring donation failed';
+    return __( 'Recurring donation failed', 'mission-donation-platform' );
   }
 
   if ( eventType === 'campaign_created' ) {
@@ -426,9 +533,15 @@ function getEventText( event ) {
     const link = campaignLink( title, id );
 
     if ( link ) {
-      return <>New campaign { link } was created</>;
+      return createInterpolateElement(
+        __(
+          'New campaign <campaign /> was created',
+          'mission-donation-platform'
+        ),
+        { campaign: link }
+      );
     }
-    return 'New campaign created';
+    return __( 'New campaign created', 'mission-donation-platform' );
   }
 
   if ( eventType === 'campaign_ended' ) {
@@ -437,9 +550,12 @@ function getEventText( event ) {
     const link = campaignLink( title, id );
 
     if ( link ) {
-      return <>{ link } campaign has ended</>;
+      return createInterpolateElement(
+        __( '<campaign /> campaign has ended', 'mission-donation-platform' ),
+        { campaign: link }
+      );
     }
-    return 'Campaign has ended';
+    return __( 'Campaign has ended', 'mission-donation-platform' );
   }
 
   if ( eventType === 'campaign_milestone_reached' ) {
@@ -449,13 +565,18 @@ function getEventText( event ) {
     const pct = data.percentage || '';
 
     if ( link && pct ) {
-      return (
-        <>
-          { link } is { pct }% toward its goal
-        </>
+      return createInterpolateElement(
+        __(
+          '<campaign /> is <pct />% toward its goal',
+          'mission-donation-platform'
+        ),
+        {
+          campaign: link,
+          pct: <>{ pct }</>,
+        }
       );
     }
-    return 'Campaign milestone reached';
+    return __( 'Campaign milestone reached', 'mission-donation-platform' );
   }
 
   if ( eventType === 'campaign_goal_reached' ) {
@@ -469,41 +590,120 @@ function getEventText( event ) {
       if ( gType === 'amount' ) {
         goal = formatAmount( data.goal_amount );
       } else {
-        const unit = gType === 'donors' ? 'donor' : 'donation';
-        goal = `${ Number( data.goal_amount ).toLocaleString() } ${ unit }`;
+        const count = Number( data.goal_amount ).toLocaleString();
+        if ( gType === 'donors' ) {
+          goal = sprintf(
+            // translators: %s: donor count toward goal.
+            __( '%s donor', 'mission-donation-platform' ),
+            count
+          );
+        } else {
+          goal = sprintf(
+            // translators: %s: donation count toward goal.
+            __( '%s donation', 'mission-donation-platform' ),
+            count
+          );
+        }
       }
     }
 
     if ( link && goal ) {
-      return (
-        <>
-          { link } reached its { goal } goal
-        </>
+      return createInterpolateElement(
+        __(
+          '<campaign /> reached its <goal /> goal',
+          'mission-donation-platform'
+        ),
+        {
+          campaign: link,
+          goal: <>{ goal }</>,
+        }
       );
     }
     if ( link ) {
-      return <>{ link } reached its goal</>;
+      return createInterpolateElement(
+        __( '<campaign /> reached its goal', 'mission-donation-platform' ),
+        { campaign: link }
+      );
     }
-    return 'Campaign reached its goal';
+    return __( 'Campaign reached its goal', 'mission-donation-platform' );
   }
 
   if ( eventType === 'plugin_installed' ) {
-    return 'Mission plugin installed';
+    return __( 'Mission plugin installed', 'mission-donation-platform' );
   }
 
   if ( eventType === 'plugin_activated' ) {
-    return 'Mission plugin activated';
+    return __( 'Mission plugin activated', 'mission-donation-platform' );
   }
 
   if ( eventType === 'plugin_deactivated' ) {
-    return 'Mission plugin deactivated';
+    return __( 'Mission plugin deactivated', 'mission-donation-platform' );
   }
 
   if ( eventType === 'plugin_updated' ) {
     const version = data.new_version || '';
-    return version
-      ? `Mission plugin updated to ${ version }`
-      : 'Mission plugin updated';
+    if ( version ) {
+      return sprintf(
+        // translators: %s: new plugin version (e.g. "1.2.0").
+        __( 'Mission plugin updated to %s', 'mission-donation-platform' ),
+        version
+      );
+    }
+    return __( 'Mission plugin updated', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'data_imported' ) {
+    const imported = Number( data.imported ) || 0;
+    const updated = Number( data.updated ) || 0;
+
+    // Nothing was written — don't show this activity at all.
+    if ( imported === 0 && updated === 0 ) {
+      return null;
+    }
+
+    const actor = data.actor_name;
+    // The trailing noun agrees with the last count shown.
+    const noun = importNoun( data.type, updated > 0 ? updated : imported );
+    // Capitalize the leading verb only when there's no actor prefix.
+    const lead = actor ? 'imported' : 'Imported';
+
+    let body;
+    if ( imported > 0 && updated > 0 ) {
+      body = (
+        <>
+          { lead } <strong>{ imported.toLocaleString() }</strong> and updated{ ' ' }
+          <strong>
+            { updated.toLocaleString() } { noun }
+          </strong>
+        </>
+      );
+    } else if ( updated > 0 ) {
+      body = (
+        <>
+          { actor ? 'updated' : 'Updated' }{ ' ' }
+          <strong>
+            { updated.toLocaleString() } { noun }
+          </strong>
+        </>
+      );
+    } else {
+      body = (
+        <>
+          { lead }{ ' ' }
+          <strong>
+            { imported.toLocaleString() } { noun }
+          </strong>
+        </>
+      );
+    }
+
+    return actor ? (
+      <>
+        { actor } { body }
+      </>
+    ) : (
+      body
+    );
   }
 
   // Fallback: humanize the event name.
@@ -566,6 +766,11 @@ export default function ActivityFeed( { activity, isLoading, feedRef } ) {
 
               const meta = getEventMeta( event );
               const text = getEventText( event );
+
+              // Some events (e.g. an import that changed nothing) render no text.
+              if ( text === null ) {
+                return null;
+              }
 
               return (
                 <div key={ event.id } className="mission-feed-item">

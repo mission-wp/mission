@@ -80,7 +80,8 @@
   }
 }
 
-// Scoped under .mission-donor-dashboard so the input rule beats theme `input[type="text"]` defaults.
+// Scoped under .mission-donor-dashboard so the input rule beats
+// theme `input[type="text"]` defaults.
 .mission-donor-dashboard .mission-dd-auth-input {
   background: var(--mission-bg, #fff);
   border: 1px solid var(--mission-border, #ddd);

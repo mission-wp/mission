@@ -133,8 +133,6 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 			'stripe_site_token' => 'test_site_token_123',
 		] );
 
-		// Set currency.
-		update_option( 'missiondp_currency', 'usd' );
 
 		// Default HTTP mock: cancel API returns 200.
 		$this->add_tracked_filter(
@@ -173,7 +171,6 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'missiondp_currency' );
 
 		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
 			remove_action( $hook, $callback, $priority );

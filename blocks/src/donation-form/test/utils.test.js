@@ -238,6 +238,13 @@ describe( 'getFeeParams', () => {
     expect( fixed ).toBe( 30 );
   } );
 
+  it( 'scales the default fixed fee with the currency', () => {
+    expect( getFeeParams( { settings: { currency: 'JPY' } } ).fixed ).toBe( 0 );
+    expect( getFeeParams( { settings: { currency: 'KWD' } } ).fixed ).toBe(
+      300
+    );
+  } );
+
   it( 'respects custom fee values', () => {
     const ctx = { stripeFeePercent: 3.5, stripeFeeFixed: 50 };
     const { rate, fixed } = getFeeParams( ctx );

@@ -70,7 +70,7 @@ class SubscriptionEmailListener {
 		$data = $this->build_email_data( $subscription, $donor );
 
 		$subject = sprintf(
-			/* translators: 1: formatted amount, 2: frequency label (e.g. "monthly") */
+			/* translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly") */
 			__( 'Thank you for your %1$s %2$s donation', 'mission-donation-platform' ),
 			$data['amount_formatted'],
 			strtolower( $data['frequency_label'] ),
@@ -106,7 +106,7 @@ class SubscriptionEmailListener {
 		$data['transaction'] = $transaction;
 
 		$subject = sprintf(
-			/* translators: 1: frequency label (e.g. "monthly"), 2: formatted amount */
+			/* translators: 1: frequency label (e.g. "monthly"), 2: formatted donation amount */
 			__( 'Thank you for your %1$s gift of %2$s', 'mission-donation-platform' ),
 			strtolower( $data['frequency_label'] ),
 			$data['amount_formatted'],

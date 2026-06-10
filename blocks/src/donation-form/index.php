@@ -10,6 +10,7 @@
 
 use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Currency\Currency;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -67,7 +68,7 @@ $tip_percentages     = $settings['tipPercentages'] ?? [ 5, 10, 15, 20 ];
 $default_tip_percent = 15;
 
 // Primary color: per-form override wins, then global setting, then fallback.
-$mission_settings = get_option( 'missiondp_settings', [] );
+$mission_settings = ( new SettingsService() )->get_all();
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $settings['primaryColor'] ) ? $settings['primaryColor'] : $global_primary;
 
@@ -540,7 +541,7 @@ $context = [
 		<div class="mission-df-step-header">
 			<button type="button" class="mission-df-back-link" data-wp-on--click="actions.prevStep">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
-				<?php esc_html_e( 'Back', 'mission-donation-platform' ); ?>
+				<span class="mission-df-back-text"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></span>
 			</button>
 			<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['additionalInfoHeading'] ) ? $settings['additionalInfoHeading'] : __( 'Additional Information', 'mission-donation-platform' ) ); ?></h2>
 		</div>
@@ -692,7 +693,7 @@ $context = [
 		<div class="mission-df-step-header">
 			<button type="button" class="mission-df-back-link" data-wp-on--click="actions.prevStep">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
-				<?php esc_html_e( 'Back', 'mission-donation-platform' ); ?>
+				<span class="mission-df-back-text"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></span>
 			</button>
 			<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['summaryHeading'] ) ? $settings['summaryHeading'] : __( 'Complete Your Gift', 'mission-donation-platform' ) ); ?></h2>
 		</div>

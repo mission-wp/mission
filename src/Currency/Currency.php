@@ -28,7 +28,6 @@ class Currency {
 		'MGA',
 		'PYG',
 		'RWF',
-		'UGX',
 		'VND',
 		'VUV',
 		'XAF',
@@ -45,6 +44,38 @@ class Currency {
 		'KWD',
 		'OMR',
 		'TND',
+	];
+
+	/**
+	 * Currencies Stripe represents as two-decimal values where the decimal
+	 * part must always be 00 (charging fractions is not possible).
+	 */
+	private const WHOLE_UNIT = [
+		'ISK',
+		'UGX',
+	];
+
+	/**
+	 * Stripe's published minimum charge amounts, in minor units, for the
+	 * currencies where that minimum exceeds one major unit.
+	 *
+	 * @see https://docs.stripe.com/currencies#minimum-and-maximum-charge-amounts
+	 */
+	private const STRIPE_MINIMUMS = [
+		'AED' => 200,
+		'CZK' => 1500,
+		'DKK' => 250,
+		'HKD' => 400,
+		'HUF' => 17500,
+		'JPY' => 50,
+		'KRW' => 50,
+		'MXN' => 1000,
+		'MYR' => 200,
+		'NOK' => 300,
+		'PLN' => 200,
+		'RON' => 200,
+		'SEK' => 300,
+		'THB' => 1000,
 	];
 
 	/**
@@ -114,6 +145,37 @@ class Currency {
 		}
 
 		return 2;
+	}
+
+	/**
+	 * Get the smallest chargeable increment in minor units.
+	 *
+	 * ISK and UGX are represented as two-decimal values but cannot be charged
+	 * in fractions, so their amounts must be multiples of 100 minor units.
+	 *
+	 * @param string $code ISO 4217 currency code.
+	 *
+	 * @return int 100 for whole-unit-only currencies, otherwise 1.
+	 */
+	public static function rounding_unit( string $code ): int {
+		return in_array( strtoupper( $code ), self::WHOLE_UNIT, true ) ? 100 : 1;
+	}
+
+	/**
+	 * Get the minimum chargeable donation in minor units.
+	 *
+	 * One major unit, raised to Stripe's published minimum charge amount where
+	 * that is higher (e.g. ¥50, 175 HUF). Stripe's minimums technically apply
+	 * to the settlement currency, so this is a best-effort guard.
+	 *
+	 * @param string $code ISO 4217 currency code.
+	 *
+	 * @return int Minimum amount in minor units.
+	 */
+	public static function minimum_charge( string $code ): int {
+		$code = strtoupper( $code );
+
+		return max( 10 ** self::get_decimals( $code ), self::STRIPE_MINIMUMS[ $code ] ?? 0 );
 	}
 
 	/**

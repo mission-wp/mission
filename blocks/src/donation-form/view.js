@@ -14,7 +14,11 @@ import {
   getPaymentStep,
   validateCustomFields,
 } from './utils';
-import { majorToMinor, minorToMajor } from '@shared/currencies';
+import {
+  getCurrencyDecimals,
+  majorToMinor,
+  minorToMajor,
+} from '@shared/currencies';
 import { PLATFORM_FEE_RATE } from '@shared/fees';
 
 /**
@@ -398,7 +402,7 @@ store( 'mission-donation-platform/donation-form', {
       ctx.isCustomTip = true;
       // Pre-fill at 15% of donation amount.
       const amount = getEffectiveAmount( ctx );
-      ctx.customTipAmount = calculateTip( amount, 15 );
+      ctx.customTipAmount = calculateTip( amount, 15, ctx.settings.currency );
       ctx.selectedTipPercent = 0;
       ctx.tipMenuOpen = false;
     },
@@ -614,7 +618,13 @@ store( 'mission-donation-platform/donation-form', {
         const { rate, fixed } = getFeeParams( ctx );
         const platformRate = getPlatformRate( ctx );
         const feeAmount = ctx.feeRecoveryChecked
-          ? calculateFee( donationAmount, rate, fixed, platformRate )
+          ? calculateFee(
+              donationAmount,
+              rate,
+              fixed,
+              platformRate,
+              ctx.settings.currency
+            )
           : 0;
 
         const isRecurring = ctx.selectedFrequency !== 'one_time';
@@ -636,7 +646,6 @@ store( 'mission-donation-platform/donation-form', {
               tip_amount: tipAmount,
               fee_amount: feeAmount,
               fee_mode: ctx.settings.tipEnabled ? 'tip' : 'flat',
-              currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
               donor_email: ctx.email,
               donor_first_name: ctx.firstName,
               donor_last_name: ctx.lastName,
@@ -907,10 +916,10 @@ store( 'mission-donation-platform/donation-form', {
     },
     customTipDisplayValue() {
       const ctx = getContext();
-      return minorToMajor(
-        ctx.customTipAmount,
-        ctx.settings.currency || 'USD'
-      ).toFixed( 2 );
+      const currency = ctx.settings.currency || 'USD';
+      return minorToMajor( ctx.customTipAmount, currency ).toFixed(
+        getCurrencyDecimals( currency )
+      );
     },
     notifyLinkLabel() {
       return getContext().notifyEnabled
@@ -977,7 +986,13 @@ store( 'mission-donation-platform/donation-form', {
       const amount = getEffectiveAmount( ctx );
       const { rate, fixed } = getFeeParams( ctx );
       return formatCurrency(
-        calculateFee( amount, rate, fixed, getPlatformRate( ctx ) ),
+        calculateFee(
+          amount,
+          rate,
+          fixed,
+          getPlatformRate( ctx ),
+          ctx.settings.currency
+        ),
         ctx.settings.currency
       );
     },
@@ -995,7 +1010,13 @@ store( 'mission-donation-platform/donation-form', {
       let total = amount;
       if ( ctx.feeRecoveryChecked ) {
         const { rate, fixed } = getFeeParams( ctx );
-        total += calculateFee( amount, rate, fixed, getPlatformRate( ctx ) );
+        total += calculateFee(
+          amount,
+          rate,
+          fixed,
+          getPlatformRate( ctx ),
+          ctx.settings.currency
+        );
       }
       total += getTipAmount( ctx, amount );
       return formatCurrency( total, ctx.settings.currency );
@@ -1043,10 +1064,20 @@ store( 'mission-donation-platform/donation-form', {
       } );
 
       const amount = getEffectiveAmount( ctx );
-      const tip = calculateTip( amount, ctx.selectedTipPercent );
+      const tip = calculateTip(
+        amount,
+        ctx.selectedTipPercent,
+        ctx.settings.currency
+      );
       const { rate: feeRate, fixed: feeFixed } = getFeeParams( ctx );
       const fee = ctx.feeRecoveryChecked
-        ? calculateFee( amount, feeRate, feeFixed, getPlatformRate( ctx ) )
+        ? calculateFee(
+            amount,
+            feeRate,
+            feeFixed,
+            getPlatformRate( ctx ),
+            ctx.settings.currency
+          )
         : 0;
 
       const customAppearance = ctx.stripeAppearance || {};
@@ -1149,7 +1180,13 @@ store( 'mission-donation-platform/donation-form', {
       const tip = getTipAmount( ctx, amount );
       const { rate: feeRate, fixed: feeFixed } = getFeeParams( ctx );
       const fee = ctx.feeRecoveryChecked
-        ? calculateFee( amount, feeRate, feeFixed, getPlatformRate( ctx ) )
+        ? calculateFee(
+            amount,
+            feeRate,
+            feeFixed,
+            getPlatformRate( ctx ),
+            ctx.settings.currency
+          )
         : 0;
       const total = amount + fee + tip;
       const isRecurring = ctx.selectedFrequency !== 'one_time';
