@@ -81,9 +81,6 @@ class ReportingServiceTest extends WP_UnitTestCase {
 		update_option( SettingsService::OPTION_NAME, [
 			'test_mode' => false,
 		] );
-
-		// Set currency.
-		update_option( 'missiondp_currency', 'usd' );
 	}
 
 	/**
@@ -104,7 +101,6 @@ class ReportingServiceTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 
 		delete_option( SettingsService::OPTION_NAME );
-		delete_option( 'missiondp_currency' );
 
 		parent::tear_down();
 	}
