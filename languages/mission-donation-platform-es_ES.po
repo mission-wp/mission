@@ -23,7 +23,7 @@ msgstr "Mission - Plataforma de donaciones"
 #. Author URI of the plugin
 #: mission-donation-platform.php
 msgid "https://missionwp.com"
-msgstr ""
+msgstr "https://missionwp.com"
 
 #. Description of the plugin
 #: mission-donation-platform.php
@@ -38,7 +38,7 @@ msgstr "El plugin de donaciones gratuito para organizaciones sin ánimo de lucro
 #: admin/build/mission-admin.js:167
 #: admin/src/components/OnboardingModal.js:476
 msgid "Mission"
-msgstr ""
+msgstr "Mission"
 
 #: blocks/build/campaign-grid/index.php:94
 #: blocks/build/campaign/index.php:70
@@ -9088,358 +9088,388 @@ msgstr "p. ej. 12-3456789"
 
 #: src/Export/ExportService.php:215
 msgid "Charge ID"
-msgstr ""
+msgstr "ID de cargo"
 
 #: src/Import/ImportService.php:134
 #: src/Rest/Endpoints/ImportEndpoint.php:186
 #: src/Rest/Endpoints/ImportEndpoint.php:208
 #: src/Rest/Endpoints/ImportEndpoint.php:320
 msgid "Unsupported import type."
-msgstr ""
+msgstr "Tipo de importación no compatible."
 
 #: src/Import/ImportService.php:138
 msgid "File upload failed."
-msgstr ""
+msgstr "Error al subir el archivo."
 
 #: src/Import/ImportService.php:142
 msgid "Uploaded file is not readable."
-msgstr ""
+msgstr "El archivo subido no se puede leer."
 
 #: src/Import/ImportService.php:146
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:426
 msgid "File exceeds the 10 MB limit."
-msgstr ""
+msgstr "El archivo supera el límite de 10 MB."
 
 #: src/Import/ImportService.php:154
 #: src/Import/ImportService.php:1833
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:416
 msgid "Only .csv and .json files are supported."
-msgstr ""
+msgstr "Solo se admiten archivos .csv y .json."
 
 #: src/Import/ImportService.php:165
 msgid "No header row was detected in the file."
-msgstr ""
+msgstr "No se ha detectado ninguna fila de cabeceras en el archivo."
 
 #: src/Import/ImportService.php:238
 msgid "Invalid duplicate strategy."
-msgstr ""
+msgstr "Estrategia de duplicados no válida."
 
 #: src/Import/ImportService.php:242
 msgid "You must be signed in to start an import."
-msgstr ""
+msgstr "Debes acceder para iniciar una importación."
 
 #: src/Import/ImportService.php:248
 msgid "The uploaded file has expired. Please upload it again."
-msgstr ""
+msgstr "El archivo subido ha caducado. Por favor, súbelo de nuevo."
 
 #: src/Import/ImportService.php:256
 msgid "The uploaded file could not be read."
-msgstr ""
+msgstr "El archivo subido no se ha podido leer."
 
 #: src/Import/ImportService.php:260
 msgid "This import type is not yet supported."
-msgstr ""
+msgstr "Este tipo de importación aún no es compatible."
 
 #: src/Import/ImportService.php:269
 msgid "An import is already running for this data type. Resume or cancel it before starting another."
 msgstr ""
+"Ya hay una importación en curso para este tipo de datos. Reanúdala o "
+"cancélala antes de iniciar otra."
 
 #: src/Import/ImportService.php:428
 #: src/Import/ImportService.php:444
 msgid "Import job not found."
-msgstr ""
+msgstr "No se ha encontrado la tarea de importación."
 
 #: src/Import/ImportService.php:570
 msgid "Import file is no longer available."
-msgstr ""
+msgstr "El archivo de importación ya no está disponible."
 
 #: src/Import/ImportService.php:578
 msgid "Unknown file format."
-msgstr ""
+msgstr "Formato de archivo desconocido."
 
 #. translators: %d: donor ID
 #: src/Import/ImportService.php:891
 #, php-format
 msgid "No donor with ID %d."
-msgstr ""
+msgstr "No hay ningún donante con el ID %d."
 
 #: src/Import/ImportService.php:915
 msgid "Row has no donor_email or donor_id."
-msgstr ""
+msgstr "La fila no tiene donor_email ni donor_id."
 
 #. translators: %s: donor email
 #: src/Import/ImportService.php:919
 #, php-format
 msgid "No donor found for email \"%s\". Import donors first."
 msgstr ""
+"No se ha encontrado ningún donante con el correo electrónico «%s». Importa "
+"primero los donantes."
 
 #. translators: %d: campaign ID
 #: src/Import/ImportService.php:952
 #, php-format
 msgid "No campaign with ID %d."
-msgstr ""
+msgstr "No hay ninguna campaña con el ID %d."
 
 #. translators: %s: campaign title
 #: src/Import/ImportService.php:980
 #, php-format
 msgid "No campaign found with title \"%s\"."
-msgstr ""
+msgstr "No se ha encontrado ninguna campaña con el título «%s»."
 
 #. translators: %s: Charge ID (gateway transaction id)
 #: src/Import/ImportService.php:1650
 #, php-format
 msgid "No transaction found for Charge ID \"%s\". Import transactions first."
 msgstr ""
+"No se ha encontrado ninguna transacción para el ID de cargo «%s». Importa "
+"primero las transacciones."
 
 #: src/Import/ImportService.php:1673
 msgid "Row has no transaction_id or Charge ID."
-msgstr ""
+msgstr "La fila no tiene transaction_id ni ID de cargo."
 
 #. translators: %d: transaction ID
 #: src/Import/ImportService.php:1677
 #, php-format
 msgid "No transaction with ID %d."
-msgstr ""
+msgstr "No hay ninguna transacción con el ID %d."
 
 #: src/Import/ImportService.php:1715
 #: src/Import/ImportService.php:1804
 #: src/Import/ImportService.php:1869
 msgid "Could not open the uploaded file."
-msgstr ""
+msgstr "No se ha podido abrir el archivo subido."
 
 #: src/Import/ImportService.php:1722
 #: src/Import/ImportService.php:1876
 msgid "The file appears to be empty."
-msgstr ""
+msgstr "El archivo parece estar vacío."
 
 #: src/Import/ImportService.php:1911
 msgid "Could not read the uploaded file."
-msgstr ""
+msgstr "No se ha podido leer el archivo subido."
 
 #: src/Import/ImportService.php:1917
 msgid "The JSON file is empty or malformed."
-msgstr ""
+msgstr "El archivo JSON está vacío o tiene un formato incorrecto."
 
 #: src/Import/ImportService.php:2332
 msgid "Could not store the import file."
-msgstr ""
+msgstr "No se ha podido guardar el archivo de importación."
 
 #: src/Import/ImportService.php:2348
 msgid "Uploads directory is not writable."
-msgstr ""
+msgstr "No se puede escribir en el directorio de subidas."
 
 #: src/Import/ImportService.php:2356
 msgid "Could not create the import storage directory."
-msgstr ""
+msgstr "No se ha podido crear el directorio de almacenamiento de la importación."
 
 #. translators: %s: column name
 #: src/Import/Validators/RowValidator.php:57
 #, php-format
 msgid "Missing required value for \"%s\". Row will be skipped."
-msgstr ""
+msgstr "Falta el valor obligatorio de «%s». La fila se omitirá."
 
 #. translators: 1: column name, 2: invalid email value
 #: src/Import/Validators/RowValidator.php:82
 #, php-format
 msgid "Column \"%1$s\" has invalid email '%2$s'. Row will be skipped."
 msgstr ""
+"La columna «%1$s» tiene el correo electrónico no válido '%2$s'. La fila se "
+"omitirá."
 
 #. translators: %s: invalid status value
 #: src/Import/Validators/RowValidator.php:103
 #, php-format
 msgid "Status '%s' is not one of pending/completed/refunded/cancelled/failed. Row will be skipped."
 msgstr ""
+"El estado '%s' no es uno de pending/completed/refunded/cancelled/failed. La "
+"fila se omitirá."
 
 #. translators: %s: invalid status value
 #: src/Import/Validators/RowValidator.php:122
 #, php-format
 msgid "Status '%s' is not one of active/scheduled/ended. It will be set from the campaign dates."
 msgstr ""
+"El estado '%s' no es uno de active/scheduled/ended. Se establecerá a partir "
+"de las fechas de la campaña."
 
 #. translators: %s: invalid status value
 #: src/Import/Validators/RowValidator.php:144
 #, php-format
 msgid "Status '%s' is not one of pending/active/paused/cancelled. Row will be skipped."
 msgstr ""
+"El estado '%s' no es uno de pending/active/paused/cancelled. La fila se "
+"omitirá."
 
 #. translators: %s: invalid frequency value
 #: src/Import/Validators/RowValidator.php:161
 #, php-format
 msgid "Frequency '%s' is not one of weekly/monthly/quarterly/annually. Will default to monthly."
 msgstr ""
+"La frecuencia '%s' no es una de weekly/monthly/quarterly/annually. Se usará "
+"monthly por defecto."
 
 #: src/Import/Validators/RowValidator.php:176
 msgid "Active subscription has no Subscription ID, so it cannot renew automatically. It will be imported as a record only."
 msgstr ""
+"La suscripción activa no tiene ID de suscripción, por lo que no puede "
+"renovarse automáticamente. Se importará solo como un registro."
 
 #. translators: %s: invalid tribute type value
 #: src/Import/Validators/RowValidator.php:193
 #, php-format
 msgid "Type '%s' is not one of in_honor/in_memory. Will default to in_honor."
-msgstr ""
+msgstr "El tipo '%s' no es uno de in_honor/in_memory. Se usará in_honor por defecto."
 
 #. translators: %s: invalid email value
 #: src/Import/Validators/RowValidator.php:209
 #, php-format
 msgid "Notify email '%s' is not a valid email. It will be imported as-is; no notification is sent on import."
 msgstr ""
+"El correo electrónico de notificación '%s' no es válido. Se importará tal "
+"cual; no se envía ninguna notificación al importar."
 
 #. translators: 1: column name, 2: invalid value, 3: trailing sentence
 #: src/Import/Validators/RowValidator.php:239
 #, php-format
 msgid "Column \"%1$s\" has non-numeric value '%2$s'. %3$s"
-msgstr ""
+msgstr "La columna «%1$s» tiene el valor no numérico '%2$s'. %3$s"
 
 #: src/Import/Validators/RowValidator.php:243
 #: src/Import/Validators/RowValidator.php:317
 msgid "Row will be skipped."
-msgstr ""
+msgstr "La fila se omitirá."
 
 #: src/Import/Validators/RowValidator.php:244
 msgid "Will be imported as zero."
-msgstr ""
+msgstr "Se importará como cero."
 
 #. translators: 1: column name, 2: negative value, 3: trailing sentence
 #: src/Import/Validators/RowValidator.php:264
 #, php-format
 msgid "Column \"%1$s\" has negative value '%2$s'. %3$s"
-msgstr ""
+msgstr "La columna «%1$s» tiene el valor negativo '%2$s'. %3$s"
 
 #: src/Import/Validators/RowValidator.php:268
 msgid "Import refunds with the refunded status instead. Row will be skipped."
 msgstr ""
+"Importa los reembolsos con el estado refunded en su lugar. La fila se "
+"omitirá."
 
 #: src/Import/Validators/RowValidator.php:269
 msgid "It will be imported as a negative value."
-msgstr ""
+msgstr "Se importará como un valor negativo."
 
 #. translators: 1: column name, 2: ambiguous value
 #: src/Import/Validators/RowValidator.php:284
 #, php-format
 msgid "Column \"%1$s\" value '%2$s' may use a decimal comma. It will be read with the comma as a thousands separator; use a decimal point if that is wrong."
 msgstr ""
+"El valor '%2$s' de la columna «%1$s» puede usar una coma decimal. Se leerá "
+"con la coma como separador de miles; usa un punto decimal si no es correcto."
 
 #. translators: 1: column name, 2: invalid value, 3: trailing sentence
 #: src/Import/Validators/RowValidator.php:313
 #, php-format
 msgid "Column \"%1$s\" has unparseable date '%2$s'. %3$s"
-msgstr ""
+msgstr "La columna «%1$s» tiene la fecha no interpretable '%2$s'. %3$s"
 
 #: src/Import/Validators/RowValidator.php:318
 msgid "Will be left blank."
-msgstr ""
+msgstr "Se dejará en blanco."
 
 #. translators: %s: ISO currency code (e.g. "ISK")
 #: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:345
 #: src/Rest/Traits/MinimumAmountTrait.php:60
 #, php-format
 msgid "Donations in %s must be a whole number."
-msgstr ""
+msgstr "Las donaciones en %s deben ser un número entero."
 
 #: src/Rest/Endpoints/ImportEndpoint.php:169
 msgid "You do not have permission to import data."
-msgstr ""
+msgstr "No tienes permiso para importar datos."
 
 #: src/Rest/Endpoints/ImportEndpoint.php:236
 msgid "No file was uploaded."
-msgstr ""
+msgstr "No se ha subido ningún archivo."
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:28
 msgid "Skip duplicates"
-msgstr ""
+msgstr "Omitir duplicados"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:29
 msgid "If a matching record already exists, skip the imported row."
-msgstr ""
+msgstr "Si ya existe un registro coincidente, se omite la fila importada."
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:36
 msgid "Update existing"
-msgstr ""
+msgstr "Actualizar existentes"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:37
 msgid "If a match is found, update the existing record with the imported data."
 msgstr ""
+"Si se encuentra una coincidencia, se actualiza el registro existente con los "
+"datos importados."
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:372
 msgid "The import could not be started."
-msgstr ""
+msgstr "No se ha podido iniciar la importación."
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:449
 msgid "Could not validate the file."
-msgstr ""
+msgstr "No se ha podido validar el archivo."
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:493
 msgid "Import Data"
-msgstr ""
+msgstr "Importar datos"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:496
 msgid "Upload a CSV or JSON file to import data into Mission."
-msgstr ""
+msgstr "Sube un archivo CSV o JSON para importar datos a Mission."
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:540
 msgid "Supported columns:"
-msgstr ""
+msgstr "Columnas compatibles:"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:550
 msgid "Required:"
-msgstr ""
+msgstr "Obligatorias:"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:560
 msgid "(donor_id may be used instead of donor_email)"
-msgstr ""
+msgstr "(donor_id puede usarse en lugar de donor_email)"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:569
 msgid "(gateway_transaction_id / Charge ID may be used instead of transaction_id)"
 msgstr ""
+"(gateway_transaction_id / ID de cargo puede usarse en lugar de "
+"transaction_id)"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:618
 msgid "Reading file…"
-msgstr ""
+msgstr "Leyendo el archivo…"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:619
 msgid "Drag and drop your file here"
-msgstr ""
+msgstr "Arrastra y suelta tu archivo aquí"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:627
 msgid "or"
-msgstr ""
+msgstr "o"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:637
 msgid "Browse files"
-msgstr ""
+msgstr "Buscar archivos"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:642
 msgid "Supports .csv and .json files up to 10MB"
-msgstr ""
+msgstr "Admite archivos .csv y .json de hasta 10 MB"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:660
 msgid "Download Templates"
-msgstr ""
+msgstr "Descargar plantillas"
 
 #: admin/build/mission-admin.js:178
 #: admin/src/pages/tools/ImportPanel.js:663
 msgid "Need a template? Download a blank CSV with the correct column headers."
 msgstr ""
+"¿Necesitas una plantilla? Descarga un CSV en blanco con las cabeceras de "
+"columna correctas."
 
 #. translators: 1: new row count, 2: duplicate count, 3: data type
 #: admin/build/mission-admin.js:179
@@ -9447,6 +9477,8 @@ msgstr ""
 #, js-format
 msgid "This will import %1$d new %3$s and skip %2$d duplicates. This action cannot be undone."
 msgstr ""
+"Esto importará %1$d %3$s y omitirá %2$d duplicados. Esta acción no se puede "
+"deshacer."
 
 #. translators: 1: new row count, 2: duplicate count, 3: data type
 #: admin/build/mission-admin.js:180
@@ -9454,45 +9486,47 @@ msgstr ""
 #, js-format
 msgid "This will import %1$d new %3$s and update %2$d existing records. This action cannot be undone."
 msgstr ""
+"Esto importará %1$d %3$s y actualizará %2$d registros existentes. Esta "
+"acción no se puede deshacer."
 
 #. translators: %d: number of rows being skipped due to errors
 #: admin/build/mission-admin.js:181
 #: admin/src/pages/tools/ImportPanel.js:749
 #, js-format
 msgid "%d row(s) with errors will be skipped."
-msgstr ""
+msgstr "Se omitirán %d fila(s) con errores."
 
 #: admin/build/mission-admin.js:181
 #: admin/src/pages/tools/ImportPanel.js:768
 msgid "File Summary"
-msgstr ""
+msgstr "Resumen del archivo"
 
 #: admin/build/mission-admin.js:181
 #: admin/src/pages/tools/ImportPanel.js:771
 msgid "Review the data before importing."
-msgstr ""
+msgstr "Revisa los datos antes de importar."
 
 #: admin/build/mission-admin.js:181
 #: admin/src/pages/tools/ImportPanel.js:819
 msgid "rows detected"
-msgstr ""
+msgstr "filas detectadas"
 
 #: admin/build/mission-admin.js:181
 #: admin/src/pages/tools/ImportPanel.js:832
 msgid "columns matched"
-msgstr ""
+msgstr "columnas coincidentes"
 
 #. translators: 1: error count, 2: warning count
 #: admin/build/mission-admin.js:182
 #: admin/src/pages/tools/ImportPanel.js:854
 #, js-format
 msgid "%1$d error(s), %2$d warning(s)"
-msgstr ""
+msgstr "%1$d error(es), %2$d aviso(s)"
 
 #: admin/build/mission-admin.js:182
 #: admin/src/pages/tools/ImportPanel.js:861
 msgid "warnings"
-msgstr ""
+msgstr "avisos"
 
 #. translators: %d: row number
 #: admin/build/mission-admin.js:183
@@ -9503,251 +9537,269 @@ msgstr ""
 #: admin/src/pages/tools/ImportPanel.js:1513
 #, js-format
 msgid "Row %d:"
-msgstr ""
+msgstr "Fila %d:"
 
 #. translators: %d: number of additional errors
 #: admin/build/mission-admin.js:184
 #: admin/src/pages/tools/ImportPanel.js:896
 #, js-format
 msgid "And %d more errors."
-msgstr ""
+msgstr "Y %d errores más."
 
 #. translators: %d: number of additional warnings
 #: admin/build/mission-admin.js:186
 #: admin/src/pages/tools/ImportPanel.js:926
 #, js-format
 msgid "And %d more warnings."
-msgstr ""
+msgstr "Y %d avisos más."
 
 #. translators: 1: count, 2: type label
 #: admin/build/mission-admin.js:187
 #: admin/src/pages/tools/ImportPanel.js:942
 #, js-format
 msgid "%1$d %2$s"
-msgstr ""
+msgstr "%1$d %2$s"
 
 #: admin/build/mission-admin.js:187
 #: admin/src/pages/tools/ImportPanel.js:948
 msgid "already exist in your database (matched by Charge ID)"
-msgstr ""
+msgstr "ya existen en tu base de datos (coincidencia por ID de cargo)"
 
 #: admin/build/mission-admin.js:187
 #: admin/src/pages/tools/ImportPanel.js:953
 msgid "already exist in your database (matched by title)"
-msgstr ""
+msgstr "ya existen en tu base de datos (coincidencia por título)"
 
 #: admin/build/mission-admin.js:187
 #: admin/src/pages/tools/ImportPanel.js:958
 msgid "already exist in your database (matched by Subscription ID)"
-msgstr ""
+msgstr "ya existen en tu base de datos (coincidencia por ID de suscripción)"
 
 #: admin/build/mission-admin.js:187
 #: admin/src/pages/tools/ImportPanel.js:963
 msgid "already exist in your database (matched by transaction)"
-msgstr ""
+msgstr "ya existen en tu base de datos (coincidencia por transacción)"
 
 #: admin/build/mission-admin.js:187
 #: admin/src/pages/tools/ImportPanel.js:968
 msgid "already exist in your database (matched by email)"
-msgstr ""
+msgstr "ya existen en tu base de datos (coincidencia por correo electrónico)"
 
 #. translators: %d: number of rows
 #: admin/build/mission-admin.js:188
 #: admin/src/pages/tools/ImportPanel.js:982
 #, js-format
 msgid "%d rows have no Charge ID"
-msgstr ""
+msgstr "%d filas no tienen ID de cargo"
 
 #: admin/build/mission-admin.js:188
 #: admin/src/pages/tools/ImportPanel.js:989
 msgid "and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates."
 msgstr ""
+"y se importarán como transacciones nuevas cada vez. Elimina estas filas de "
+"tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
 
 #. translators: %d: number of rows
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1003
 #, js-format
 msgid "%d rows have no Subscription ID"
-msgstr ""
+msgstr "%d filas no tienen ID de suscripción"
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1010
 msgid "and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates."
 msgstr ""
+"y se importarán como suscripciones nuevas cada vez. Elimina estas filas de "
+"tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1027
 msgid "Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions."
 msgstr ""
+"Cada campaña crea su propia página de campaña. Los totales recaudados, los "
+"recuentos de donantes y los recuentos de transacciones empiezan en cero y se "
+"actualizan automáticamente a medida que importas o registras transacciones."
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1041
 msgid "Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway."
 msgstr ""
+"Las suscripciones importadas son solo registros. No se cobra ningún pago y "
+"los recuentos de renovaciones empiezan en cero. Una suscripción solo se "
+"renueva automáticamente si su ID de suscripción coincide con una suscripción "
+"activa en tu pasarela de pago."
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1055
 msgid "Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported."
 msgstr ""
+"Cada dedicatoria se asocia a una transacción existente, con coincidencia por "
+"ID de cargo o ID de transacción. Importa primero las transacciones; las "
+"filas cuya transacción no se encuentre se omiten. No se envían correos "
+"electrónicos de notificación cuando se importan dedicatorias."
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1067
 msgid "Import Options"
-msgstr ""
+msgstr "Opciones de importación"
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1070
 msgid "Choose how to handle records that already exist."
-msgstr ""
+msgstr "Elige cómo gestionar los registros que ya existen."
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1104
 msgid "Data Preview"
-msgstr ""
+msgstr "Vista previa de los datos"
 
 #: admin/build/mission-admin.js:189
 #: admin/src/pages/tools/ImportPanel.js:1107
 msgid "First 5 rows from your uploaded file."
-msgstr ""
+msgstr "Las primeras 5 filas de tu archivo subido."
 
 #. translators: 1: number, 2: type label
 #: admin/build/mission-admin.js:190
 #: admin/src/pages/tools/ImportPanel.js:1189
 #, js-format
 msgid "Update %1$d %2$s"
-msgstr ""
+msgstr "Actualizar %1$d %2$s"
 
 #. translators: 1: number, 2: type label
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/tools/ImportPanel.js:1195
 #, js-format
 msgid "Import %1$d %2$s"
-msgstr ""
+msgstr "Importar %1$d %2$s"
 
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1277
 #: admin/src/pages/tools/ImportPanel.js:1351
 msgid "Cancelling…"
-msgstr ""
+msgstr "Cancelando…"
 
 #. translators: %s: data type label
 #: admin/build/mission-admin.js:192
 #: admin/src/pages/tools/ImportPanel.js:1280
 #, js-format
 msgid "Importing your %s"
-msgstr ""
+msgstr "Importando tus %s"
 
 #. translators: 1: processed rows, 2: total rows
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1288
 #, js-format
 msgid "%1$d of %2$d rows processed"
-msgstr ""
+msgstr "%1$d de %2$d filas procesadas"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1295
 msgid "Starting up…"
-msgstr ""
+msgstr "Iniciando…"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1303
 msgid "imported"
-msgstr ""
+msgstr "importadas"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1311
 msgid "updated"
-msgstr ""
+msgstr "actualizadas"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1319
 msgid "skipped"
-msgstr ""
+msgstr "omitidas"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1328
 msgid "errors"
-msgstr ""
+msgstr "errores"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1334
 msgid "You can safely leave this page — the import keeps running in the background. Come back any time to check progress."
 msgstr ""
+"Puedes salir de esta página con total tranquilidad; la importación sigue "
+"ejecutándose en segundo plano. Vuelve en cualquier momento para comprobar el "
+"progreso."
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1352
 msgid "Cancel import"
-msgstr ""
+msgstr "Cancelar la importación"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1373
 msgid "Import failed"
-msgstr ""
+msgstr "La importación ha fallado"
 
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/tools/ImportPanel.js:1377
 msgid "Something went wrong while running the import."
-msgstr ""
+msgstr "Algo ha ido mal al ejecutar la importación."
 
 #. translators: 1: imported, 2: updated, 3: skipped
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/tools/ImportPanel.js:1388
 #, js-format
 msgid "%1$d imported, %2$d updated, %3$d skipped before the failure."
-msgstr ""
+msgstr "%1$d importadas, %2$d actualizadas, %3$d omitidas antes del fallo."
 
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/tools/ImportPanel.js:1404
 msgid "Try again"
-msgstr ""
+msgstr "Inténtalo de nuevo"
 
 #. translators: 1: count, 2: data type
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/tools/ImportPanel.js:1425
 #, js-format
 msgid "%1$d %2$s were successfully imported."
-msgstr ""
+msgstr "%1$d %2$s se han importado correctamente."
 
 #. translators: %d: count
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/tools/ImportPanel.js:1438
 #, js-format
 msgid "%d existing records were updated."
-msgstr ""
+msgstr "Se han actualizado %d registros existentes."
 
 #. translators: %d: count
 #: admin/build/mission-admin.js:197
 #: admin/src/pages/tools/ImportPanel.js:1450
 #, js-format
 msgid "%d duplicates were skipped."
-msgstr ""
+msgstr "Se han omitido %d duplicados."
 
 #. translators: %d: count
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/tools/ImportPanel.js:1459
 #, js-format
 msgid "%d rows failed to import."
-msgstr ""
+msgstr "%d filas no se han podido importar."
 
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/tools/ImportPanel.js:1497
 msgid "Import complete"
-msgstr ""
+msgstr "Importación completada"
 
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/tools/ImportPanel.js:1505
 msgid "Show error details"
-msgstr ""
+msgstr "Mostrar los detalles de los errores"
 
 #. translators: %s: data type label
 #: admin/build/mission-admin.js:200
 #: admin/src/pages/tools/ImportPanel.js:1528
 #, js-format
 msgid "View %s"
-msgstr ""
+msgstr "Ver %s"
 
 #: admin/build/mission-admin.js:200
 #: admin/src/pages/tools/ImportPanel.js:1538
 msgid "Import more data"
-msgstr ""
+msgstr "Importar más datos"

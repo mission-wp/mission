@@ -11,7 +11,7 @@
 				"plural-forms": "nplurals=2; plural=(n != 1);"
 			},
 			"Mission": [
-				""
+				"Mission"
 			],
 			"Ended": [
 				"Finalizada"
@@ -2523,226 +2523,226 @@
 				"p. ej. 12-3456789"
 			],
 			"File exceeds the 10 MB limit.": [
-				""
+				"El archivo supera el límite de 10 MB."
 			],
 			"Only .csv and .json files are supported.": [
-				""
+				"Solo se admiten archivos .csv y .json."
 			],
 			"Skip duplicates": [
-				""
+				"Omitir duplicados"
 			],
 			"If a matching record already exists, skip the imported row.": [
-				""
+				"Si ya existe un registro coincidente, se omite la fila importada."
 			],
 			"Update existing": [
-				""
+				"Actualizar existentes"
 			],
 			"If a match is found, update the existing record with the imported data.": [
-				""
+				"Si se encuentra una coincidencia, se actualiza el registro existente con los datos importados."
 			],
 			"The import could not be started.": [
-				""
+				"No se ha podido iniciar la importación."
 			],
 			"Could not validate the file.": [
-				""
+				"No se ha podido validar el archivo."
 			],
 			"Import Data": [
-				""
+				"Importar datos"
 			],
 			"Upload a CSV or JSON file to import data into Mission.": [
-				""
+				"Sube un archivo CSV o JSON para importar datos a Mission."
 			],
 			"Supported columns:": [
-				""
+				"Columnas compatibles:"
 			],
 			"Required:": [
-				""
+				"Obligatorias:"
 			],
 			"(donor_id may be used instead of donor_email)": [
-				""
+				"(donor_id puede usarse en lugar de donor_email)"
 			],
 			"(gateway_transaction_id / Charge ID may be used instead of transaction_id)": [
-				""
+				"(gateway_transaction_id / ID de cargo puede usarse en lugar de transaction_id)"
 			],
 			"Reading file…": [
-				""
+				"Leyendo el archivo…"
 			],
 			"Drag and drop your file here": [
-				""
+				"Arrastra y suelta tu archivo aquí"
 			],
 			"or": [
-				""
+				"o"
 			],
 			"Browse files": [
-				""
+				"Buscar archivos"
 			],
 			"Supports .csv and .json files up to 10MB": [
-				""
+				"Admite archivos .csv y .json de hasta 10 MB"
 			],
 			"Download Templates": [
-				""
+				"Descargar plantillas"
 			],
 			"Need a template? Download a blank CSV with the correct column headers.": [
-				""
+				"¿Necesitas una plantilla? Descarga un CSV en blanco con las cabeceras de columna correctas."
 			],
 			"This will import %1$d new %3$s and skip %2$d duplicates. This action cannot be undone.": [
-				""
+				"Esto importará %1$d %3$s y omitirá %2$d duplicados. Esta acción no se puede deshacer."
 			],
 			"This will import %1$d new %3$s and update %2$d existing records. This action cannot be undone.": [
-				""
+				"Esto importará %1$d %3$s y actualizará %2$d registros existentes. Esta acción no se puede deshacer."
 			],
 			"%d row(s) with errors will be skipped.": [
-				""
+				"Se omitirán %d fila(s) con errores."
 			],
 			"File Summary": [
-				""
+				"Resumen del archivo"
 			],
 			"Review the data before importing.": [
-				""
+				"Revisa los datos antes de importar."
 			],
 			"rows detected": [
-				""
+				"filas detectadas"
 			],
 			"columns matched": [
-				""
+				"columnas coincidentes"
 			],
 			"%1$d error(s), %2$d warning(s)": [
-				""
+				"%1$d error(es), %2$d aviso(s)"
 			],
 			"warnings": [
-				""
+				"avisos"
 			],
 			"Row %d:": [
-				""
+				"Fila %d:"
 			],
 			"And %d more errors.": [
-				""
+				"Y %d errores más."
 			],
 			"And %d more warnings.": [
-				""
+				"Y %d avisos más."
 			],
 			"%1$d %2$s": [
-				""
+				"%1$d %2$s"
 			],
 			"already exist in your database (matched by Charge ID)": [
-				""
+				"ya existen en tu base de datos (coincidencia por ID de cargo)"
 			],
 			"already exist in your database (matched by title)": [
-				""
+				"ya existen en tu base de datos (coincidencia por título)"
 			],
 			"already exist in your database (matched by Subscription ID)": [
-				""
+				"ya existen en tu base de datos (coincidencia por ID de suscripción)"
 			],
 			"already exist in your database (matched by transaction)": [
-				""
+				"ya existen en tu base de datos (coincidencia por transacción)"
 			],
 			"already exist in your database (matched by email)": [
-				""
+				"ya existen en tu base de datos (coincidencia por correo electrónico)"
 			],
 			"%d rows have no Charge ID": [
-				""
+				"%d filas no tienen ID de cargo"
 			],
 			"and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
-				""
+				"y se importarán como transacciones nuevas cada vez. Elimina estas filas de tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
 			],
 			"%d rows have no Subscription ID": [
-				""
+				"%d filas no tienen ID de suscripción"
 			],
 			"and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
-				""
+				"y se importarán como suscripciones nuevas cada vez. Elimina estas filas de tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
 			],
 			"Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions.": [
-				""
+				"Cada campaña crea su propia página de campaña. Los totales recaudados, los recuentos de donantes y los recuentos de transacciones empiezan en cero y se actualizan automáticamente a medida que importas o registras transacciones."
 			],
 			"Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway.": [
-				""
+				"Las suscripciones importadas son solo registros. No se cobra ningún pago y los recuentos de renovaciones empiezan en cero. Una suscripción solo se renueva automáticamente si su ID de suscripción coincide con una suscripción activa en tu pasarela de pago."
 			],
 			"Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported.": [
-				""
+				"Cada dedicatoria se asocia a una transacción existente, con coincidencia por ID de cargo o ID de transacción. Importa primero las transacciones; las filas cuya transacción no se encuentre se omiten. No se envían correos electrónicos de notificación cuando se importan dedicatorias."
 			],
 			"Import Options": [
-				""
+				"Opciones de importación"
 			],
 			"Choose how to handle records that already exist.": [
-				""
+				"Elige cómo gestionar los registros que ya existen."
 			],
 			"Data Preview": [
-				""
+				"Vista previa de los datos"
 			],
 			"First 5 rows from your uploaded file.": [
-				""
+				"Las primeras 5 filas de tu archivo subido."
 			],
 			"Update %1$d %2$s": [
-				""
+				"Actualizar %1$d %2$s"
 			],
 			"Import %1$d %2$s": [
-				""
+				"Importar %1$d %2$s"
 			],
 			"Cancelling…": [
-				""
+				"Cancelando…"
 			],
 			"Importing your %s": [
-				""
+				"Importando tus %s"
 			],
 			"%1$d of %2$d rows processed": [
-				""
+				"%1$d de %2$d filas procesadas"
 			],
 			"Starting up…": [
-				""
+				"Iniciando…"
 			],
 			"imported": [
-				""
+				"importadas"
 			],
 			"updated": [
-				""
+				"actualizadas"
 			],
 			"skipped": [
-				""
+				"omitidas"
 			],
 			"errors": [
-				""
+				"errores"
 			],
 			"You can safely leave this page — the import keeps running in the background. Come back any time to check progress.": [
-				""
+				"Puedes salir de esta página con total tranquilidad; la importación sigue ejecutándose en segundo plano. Vuelve en cualquier momento para comprobar el progreso."
 			],
 			"Cancel import": [
-				""
+				"Cancelar la importación"
 			],
 			"Import failed": [
-				""
+				"La importación ha fallado"
 			],
 			"Something went wrong while running the import.": [
-				""
+				"Algo ha ido mal al ejecutar la importación."
 			],
 			"%1$d imported, %2$d updated, %3$d skipped before the failure.": [
-				""
+				"%1$d importadas, %2$d actualizadas, %3$d omitidas antes del fallo."
 			],
 			"Try again": [
-				""
+				"Inténtalo de nuevo"
 			],
 			"%1$d %2$s were successfully imported.": [
-				""
+				"%1$d %2$s se han importado correctamente."
 			],
 			"%d existing records were updated.": [
-				""
+				"Se han actualizado %d registros existentes."
 			],
 			"%d duplicates were skipped.": [
-				""
+				"Se han omitido %d duplicados."
 			],
 			"%d rows failed to import.": [
-				""
+				"%d filas no se han podido importar."
 			],
 			"Import complete": [
-				""
+				"Importación completada"
 			],
 			"Show error details": [
-				""
+				"Mostrar los detalles de los errores"
 			],
 			"View %s": [
-				""
+				"Ver %s"
 			],
 			"Import more data": [
-				""
+				"Importar más datos"
 			]
 		}
 	}
