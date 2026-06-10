@@ -189,6 +189,9 @@ This plugin connects to the following third-party services:
 * Large imports run in the background so they don't time out
 * The Dedications export now includes a Charge ID column so dedications can be matched back to their transactions when re-imported
 * The activity log now shows who ran an import and how many records were imported or updated
+* Improved support for international currencies, with correct amounts, fees, and decimals for currencies like the Japanese yen and Kuwaiti dinar
+* Donation minimums now follow Stripe's per-currency minimums, with clearer messages when an amount is too low
+* Updated the currency list to match the currencies Stripe currently supports
 
 = 1.1.7 =
 * Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
