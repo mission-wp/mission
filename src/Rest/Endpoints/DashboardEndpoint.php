@@ -205,8 +205,9 @@ class DashboardEndpoint {
 	/**
 	 * Get review banner data for the current user.
 	 *
-	 * The banner shows when: 25+ live donations, 14+ days since install,
-	 * and the current user hasn't dismissed it.
+	 * The banner shows when the install is old enough, has received enough
+	 * live (non-imported) donations and raised enough through Mission, and
+	 * the current user hasn't dismissed it.
 	 *
 	 * @return array{show: bool, total_raised?: int}
 	 */
@@ -217,7 +218,24 @@ class DashboardEndpoint {
 			return [ 'show' => false ];
 		}
 
-		// Check activation date (14+ days ago).
+		/**
+		 * Filters the requirements for showing the review banner.
+		 *
+		 * @param array $requirements {
+		 *     @type int $min_days      Minimum days since install.
+		 *     @type int $min_donations Minimum completed live donations.
+		 *     @type int $min_raised    Minimum total raised, in minor currency units.
+		 * }
+		 */
+		$requirements = apply_filters(
+			'missiondp_review_banner_requirements',
+			[
+				'min_days'      => 7,
+				'min_donations' => 10,
+				'min_raised'    => 25000,
+			]
+		);
+
 		$installed_at = get_option( 'missiondp_installed_at' );
 
 		if ( ! $installed_at ) {
@@ -226,13 +244,13 @@ class DashboardEndpoint {
 
 		$days_since = ( time() - strtotime( $installed_at ) ) / DAY_IN_SECONDS;
 
-		if ( $days_since < 14 ) {
+		if ( $days_since < $requirements['min_days'] ) {
 			return [ 'show' => false ];
 		}
 
 		$stats = $this->reporting->review_banner_stats();
 
-		if ( $stats['donation_count'] < 25 ) {
+		if ( $stats['donation_count'] < $requirements['min_donations'] || $stats['total_raised'] < $requirements['min_raised'] ) {
 			return [ 'show' => false ];
 		}
 

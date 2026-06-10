@@ -312,26 +312,29 @@ class ReportingService {
 	 * Get live (non-test) stats for the review banner.
 	 *
 	 * Always uses live data regardless of the current test mode setting.
+	 * Imported transactions are excluded — the banner congratulates the user
+	 * on money raised through Mission, not on a migrated history.
 	 *
 	 * @return array{total_raised: int, donation_count: int}
 	 */
 	public function review_banner_stats(): array {
 		global $wpdb;
 
-		$campaigns_table    = $wpdb->prefix . 'missiondp_campaigns';
 		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
 
-		$total_raised = (int) $wpdb->get_var(
-			$wpdb->prepare( 'SELECT COALESCE(SUM(total_raised), 0) FROM %i', $campaigns_table )
-		);
-
-		$donation_count = (int) $wpdb->get_var(
-			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = \'completed\' AND is_test = 0', $transactions_table )
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT COALESCE(SUM(amount), 0) AS total_raised, COUNT(*) AS donation_count
+				 FROM %i
+				 WHERE status = \'completed\' AND is_test = 0 AND import_job_id = 0',
+				$transactions_table
+			),
+			ARRAY_A
 		);
 
 		return [
-			'total_raised'   => $total_raised,
-			'donation_count' => $donation_count,
+			'total_raised'   => (int) ( $row['total_raised'] ?? 0 ),
+			'donation_count' => (int) ( $row['donation_count'] ?? 0 ),
 		];
 	}
 

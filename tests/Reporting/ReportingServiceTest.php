@@ -1268,4 +1268,49 @@ class ReportingServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( [], $result );
 	}
+
+	// =========================================================================
+	// review_banner_stats(): organic live donations only
+	// =========================================================================
+
+	/**
+	 * Test review_banner_stats sums and counts completed live transactions.
+	 */
+	public function test_review_banner_stats_counts_completed_live_donations(): void {
+		$this->create_transaction( [ 'amount' => 3000, 'total_amount' => 3000 ] );
+		$this->create_transaction( [ 'amount' => 7000, 'total_amount' => 7000 ] );
+
+		$stats = $this->make_service()->review_banner_stats();
+
+		$this->assertSame( 10000, $stats['total_raised'] );
+		$this->assertSame( 2, $stats['donation_count'] );
+	}
+
+	/**
+	 * Test review_banner_stats excludes imported transactions.
+	 */
+	public function test_review_banner_stats_excludes_imported(): void {
+		$this->create_transaction( [ 'amount' => 3000, 'total_amount' => 3000 ] );
+		$this->create_transaction( [ 'amount' => 50000, 'total_amount' => 50000, 'import_job_id' => 7 ] );
+
+		$stats = $this->make_service()->review_banner_stats();
+
+		$this->assertSame( 3000, $stats['total_raised'] );
+		$this->assertSame( 1, $stats['donation_count'] );
+	}
+
+	/**
+	 * Test review_banner_stats excludes test and incomplete transactions.
+	 */
+	public function test_review_banner_stats_excludes_test_and_incomplete(): void {
+		$this->create_transaction( [ 'amount' => 3000, 'total_amount' => 3000 ] );
+		$this->create_transaction( [ 'amount' => 4000, 'total_amount' => 4000, 'is_test' => true ] );
+		$this->create_transaction( [ 'amount' => 5000, 'total_amount' => 5000, 'status' => 'pending', 'date_completed' => null ] );
+		$this->create_transaction( [ 'amount' => 6000, 'total_amount' => 6000, 'status' => 'refunded' ] );
+
+		$stats = $this->make_service()->review_banner_stats();
+
+		$this->assertSame( 3000, $stats['total_raised'] );
+		$this->assertSame( 1, $stats['donation_count'] );
+	}
 }
