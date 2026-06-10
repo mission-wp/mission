@@ -5,6 +5,7 @@
  */
 /* global navigator */
 import { store, getContext } from '@wordpress/interactivity';
+import { getCurrencyDecimals, minorToMajor } from '@shared/currencies';
 
 const SORT_MAP = {
   recent: { orderby: 'date_completed', order: 'DESC' },
@@ -32,16 +33,18 @@ const FREQUENCY_LABELS = {
  * @return {string} Formatted amount.
  */
 function formatAmount( amount, currency = 'USD' ) {
-  const major = amount / 100;
+  const code = currency.toUpperCase();
+  const decimals = getCurrencyDecimals( code );
+  const major = minorToMajor( amount, code );
   try {
     return new Intl.NumberFormat( navigator.language || 'en-US', {
       style: 'currency',
-      currency: currency.toUpperCase(),
-      minimumFractionDigits: Number.isInteger( major ) ? 0 : 2,
-      maximumFractionDigits: 2,
+      currency: code,
+      minimumFractionDigits: Number.isInteger( major ) ? 0 : decimals,
+      maximumFractionDigits: decimals,
     } ).format( major );
   } catch {
-    return `$${ major.toFixed( 2 ) }`;
+    return `$${ major.toFixed( decimals ) }`;
   }
 }
 
