@@ -402,4 +402,50 @@ class ImportParsingTest extends WP_UnitTestCase {
 		$this->assertSame( [], $validator->validate( [ 'email' => 'ok@example.com' ], 'donors', 1 ) );
 	}
 
+	/**
+	 * Test negative amounts block primary fields and warn on secondary ones.
+	 *
+	 * Mission models refunds as a refunded status, not negative rows, so a
+	 * negative donation amount would silently corrupt aggregates.
+	 */
+	public function test_validator_flags_negative_amounts(): void {
+		$validator = new RowValidator();
+
+		$warnings = $validator->validate( [ 'amount' => '-10.00', 'donor_email' => 'a@b.com' ], 'transactions', 1 );
+		$this->assertSame( 'error', $warnings[0]['severity'] );
+		$this->assertSame( 'amount', $warnings[0]['column'] );
+
+		// Subscriptions also warn about the missing gateway ID, so find the
+		// amount issue by column instead of position.
+		$warnings = $validator->validate( [ 'amount' => '-25', 'status' => 'active', 'donor_email' => 'a@b.com' ], 'subscriptions', 1 );
+		$amount_warnings = array_values( array_filter( $warnings, static fn( $w ) => 'amount' === $w['column'] ) );
+		$this->assertCount( 1, $amount_warnings );
+		$this->assertSame( 'error', $amount_warnings[0]['severity'] );
+
+		// Secondary amounts warn but do not block.
+		$warnings = $validator->validate( [ 'amount' => '10', 'fee_amount' => '-0.50', 'donor_email' => 'a@b.com' ], 'transactions', 1 );
+		$this->assertSame( 'warning', $warnings[0]['severity'] );
+		$this->assertSame( 'fee_amount', $warnings[0]['column'] );
+
+		$warnings = $validator->validate( [ 'email' => 'a@b.com', 'total_donated' => '-100' ], 'donors', 1 );
+		$this->assertSame( 'warning', $warnings[0]['severity'] );
+	}
+
+	/**
+	 * Test likely decimal-comma values warn while thousands separators don't.
+	 */
+	public function test_validator_warns_on_likely_decimal_comma(): void {
+		$validator = new RowValidator();
+
+		// "1,50" is probably €1.50, but will be read as 150.
+		$warnings = $validator->validate( [ 'email' => 'a@b.com', 'total_donated' => '1,50' ], 'donors', 1 );
+		$this->assertCount( 1, $warnings );
+		$this->assertSame( 'warning', $warnings[0]['severity'] );
+
+		// "1,500" reads as a thousands separator; no warning.
+		$this->assertSame( [], $validator->validate( [ 'email' => 'a@b.com', 'total_donated' => '1,500' ], 'donors', 1 ) );
+
+		// Both separators are unambiguous and parsed correctly; no warning.
+		$this->assertSame( [], $validator->validate( [ 'email' => 'a@b.com', 'total_donated' => '1.500,50' ], 'donors', 1 ) );
+	}
 }

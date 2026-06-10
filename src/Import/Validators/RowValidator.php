@@ -246,6 +246,48 @@ class RowValidator {
 					'value'    => $value,
 					'severity' => $is_error ? 'error' : 'warning',
 				];
+
+				continue;
+			}
+
+			if ( $this->is_negative_number( $value ) ) {
+				// Mission models refunds as a refunded status plus amount_refunded,
+				// so a negative primary amount has no meaning and would corrupt
+				// donor/campaign aggregates. Secondary amounts only warn.
+				$is_error = in_array( $numeric, [ 'amount', 'total_amount' ], true ) && ( $is_transactions || $is_subscriptions );
+
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => $numeric,
+					'message'  => sprintf(
+						/* translators: 1: column name, 2: negative value, 3: trailing sentence */
+						__( 'Column "%1$s" has negative value \'%2$s\'. %3$s', 'mission-donation-platform' ),
+						$numeric,
+						$value,
+						$is_error
+							? __( 'Import refunds with the refunded status instead. Row will be skipped.', 'mission-donation-platform' )
+							: __( 'It will be imported as a negative value.', 'mission-donation-platform' )
+					),
+					'value'    => $value,
+					'severity' => $is_error ? 'error' : 'warning',
+				];
+
+				continue;
+			}
+
+			if ( $this->looks_like_decimal_comma( $value ) ) {
+				$warnings[] = [
+					'row'      => $row_number,
+					'column'   => $numeric,
+					'message'  => sprintf(
+						/* translators: 1: column name, 2: ambiguous value */
+						__( 'Column "%1$s" value \'%2$s\' may use a decimal comma. It will be read with the comma as a thousands separator; use a decimal point if that is wrong.', 'mission-donation-platform' ),
+						$numeric,
+						$value
+					),
+					'value'    => $value,
+					'severity' => 'warning',
+				];
 			}
 		}
 
@@ -304,5 +346,30 @@ class RowValidator {
 		$cleaned = preg_replace( '/[^0-9.\-]/', '', $value );
 
 		return null !== $cleaned && '' !== $cleaned && is_numeric( $cleaned );
+	}
+
+	/**
+	 * Whether a numeric-looking value is negative.
+	 *
+	 * @param string $value Raw value.
+	 */
+	private function is_negative_number( string $value ): bool {
+		$cleaned = preg_replace( '/[^0-9.\-]/', '', $value );
+
+		return is_numeric( $cleaned ) && (float) $cleaned < 0;
+	}
+
+	/**
+	 * Whether a value likely uses a comma as its decimal separator ("1,50").
+	 *
+	 * Values with both separators are unambiguous (the parser handles them),
+	 * so this only flags a lone comma followed by 1-2 trailing digits. Three
+	 * trailing digits ("1,500") reads as a thousands separator and is not
+	 * flagged.
+	 *
+	 * @param string $value Raw value.
+	 */
+	private function looks_like_decimal_comma( string $value ): bool {
+		return ! str_contains( $value, '.' ) && 1 === preg_match( '/,\d{1,2}$/', trim( $value ) );
 	}
 }
