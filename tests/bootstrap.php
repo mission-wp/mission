@@ -18,6 +18,11 @@ if ( ! $_tests_dir ) {
 // Give access to tests_add_filter() function.
 require_once $_tests_dir . '/includes/functions.php';
 
+// The suite runs without Action Scheduler: the plugin file skips loading it
+// when MISSIONDP_TESTING is set (phpunit.xml.dist), so async work falls back
+// to synchronous do_action() calls and tests fire scheduling hooks manually
+// (see ImportPipelineTest).
+
 /**
  * Manually load the plugin being tested.
  */
