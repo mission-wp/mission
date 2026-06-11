@@ -76,6 +76,13 @@ function init() {
       return;
     }
 
+    // Reasons marked no-send (temporary deactivation) carry no useful
+    // signal, so deactivate immediately without calling the API.
+    if ( checked.dataset.noSend ) {
+      window.location.assign( link.href );
+      return;
+    }
+
     submitButton.disabled = true;
     cancelButton.disabled = true;
     submitButton.textContent = submitButton.dataset.busyLabel;

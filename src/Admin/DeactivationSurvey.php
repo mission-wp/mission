@@ -104,6 +104,9 @@ class DeactivationSurvey {
 									<?php if ( ! empty( $reason['followup'] ) ) : ?>
 										data-followup="<?php echo esc_attr( $reason['followup'] ); ?>"
 									<?php endif; ?>
+									<?php if ( isset( $reason['send'] ) && ! $reason['send'] ) : ?>
+										data-no-send="1"
+									<?php endif; ?>
 								/>
 								<span><?php echo esc_html( $reason['label'] ); ?></span>
 							</label>
@@ -150,13 +153,17 @@ class DeactivationSurvey {
 	 * Keys come from DeactivationSurveyEndpoint::REASONS so the markup and
 	 * REST validation cannot drift apart.
 	 *
-	 * @return array<string, array{label: string, followup: string, help?: string}>
+	 * Reasons with 'send' => false (e.g. a temporary deactivation while
+	 * troubleshooting) deactivate immediately without reporting to the API.
+	 *
+	 * @return array<string, array{label: string, followup: string, help?: string, send?: bool}>
 	 */
 	private function get_reasons(): array {
 		$labels = [
 			'temporary'           => [
 				'label'    => __( "It's a temporary deactivation, I'm troubleshooting", 'mission-donation-platform' ),
 				'followup' => '',
+				'send'     => false,
 			],
 			'no-longer-needed'    => [
 				'label'    => __( 'I no longer need the plugin', 'mission-donation-platform' ),
