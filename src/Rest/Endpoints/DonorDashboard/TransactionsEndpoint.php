@@ -96,6 +96,7 @@ class TransactionsEndpoint {
 						'minimum'           => 2000,
 						'maximum'           => 9999,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]
@@ -322,6 +323,7 @@ class TransactionsEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page'    => [
 				'type'              => 'integer',
@@ -329,19 +331,22 @@ class TransactionsEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'year'        => [
 				'type'              => 'integer',
 				'minimum'           => 2000,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'campaign_id' => [
 				'type'              => 'integer',
 				'sanitize_callback' => 'absint',
 			],
 			'type'        => [
-				'type' => 'string',
-				'enum' => [ 'one_time', 'recurring', 'weekly', 'monthly', 'quarterly', 'annually' ],
+				'type'              => 'string',
+				'enum'              => [ 'one_time', 'recurring', 'weekly', 'monthly', 'quarterly', 'annually' ],
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}

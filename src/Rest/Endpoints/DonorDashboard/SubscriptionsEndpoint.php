@@ -110,12 +110,14 @@ class SubscriptionsEndpoint {
 						'required'          => true,
 						'minimum'           => 100,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 					'tip_amount'      => [
 						'type'              => 'integer',
 						'required'          => true,
 						'minimum'           => 0,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 					'fee_amount'      => [
 						'type'              => 'integer',
@@ -123,6 +125,7 @@ class SubscriptionsEndpoint {
 						'default'           => 0,
 						'minimum'           => 0,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]

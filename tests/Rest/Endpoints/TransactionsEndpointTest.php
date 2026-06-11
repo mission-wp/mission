@@ -304,6 +304,20 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test GET list rejects values outside the declared enums.
+	 */
+	public function test_get_list_rejects_out_of_enum_filters(): void {
+		$this->create_transaction();
+
+		foreach ( [ 'status', 'orderby', 'order', 'dedication' ] as $param ) {
+			$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ $param => 'bogus-value' ] );
+
+			$this->assertSame( 400, $response->get_status(), "Expected 400 for invalid {$param}" );
+			$this->assertSame( 'rest_invalid_param', $response->get_data()['code'] );
+		}
+	}
+
+	/**
 	 * Test GET list filters by campaign_id.
 	 */
 	public function test_get_list_filters_by_campaign_id(): void {

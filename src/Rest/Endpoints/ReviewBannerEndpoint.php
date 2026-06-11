@@ -51,6 +51,7 @@ class ReviewBannerEndpoint {
 						'minimum'           => 1,
 						'maximum'           => 5,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]

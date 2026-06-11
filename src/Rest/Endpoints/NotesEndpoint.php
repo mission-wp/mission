@@ -296,6 +296,7 @@ class NotesEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'internal', 'donor' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			];
 		}
 
@@ -329,6 +330,7 @@ class NotesEndpoint {
 				'required'          => true,
 				'enum'              => [ 'internal', 'donor' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			];
 		}
 

@@ -531,6 +531,7 @@ class OutgoingWebhooksEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page' => [
 				'type'              => 'integer',
@@ -538,6 +539,7 @@ class OutgoingWebhooksEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}
@@ -570,6 +572,7 @@ class OutgoingWebhooksEndpoint {
 				'default'           => 'active',
 				'enum'              => [ 'active', 'paused' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}
@@ -606,6 +609,7 @@ class OutgoingWebhooksEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page' => [
 				'type'              => 'integer',
@@ -613,6 +617,7 @@ class OutgoingWebhooksEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}

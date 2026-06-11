@@ -409,6 +409,7 @@ class DonorsEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page' => [
 				'type'              => 'integer',
@@ -416,18 +417,21 @@ class DonorsEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'orderby'  => [
 				'type'              => 'string',
 				'default'           => 'date_created',
 				'enum'              => [ 'date_created', 'total_donated', 'transaction_count', 'last_transaction' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'order'    => [
 				'type'              => 'string',
 				'default'           => 'DESC',
 				'enum'              => [ 'ASC', 'DESC' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'search'   => [
 				'type'              => 'string',

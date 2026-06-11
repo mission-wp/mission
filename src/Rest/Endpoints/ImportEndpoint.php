@@ -102,6 +102,7 @@ class ImportEndpoint {
 						'required'          => true,
 						'enum'              => [ 'skip', 'update' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]

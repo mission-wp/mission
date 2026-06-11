@@ -198,6 +198,7 @@ class TributeEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'in_honor', 'in_memory' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'honoree_name'         => [
 				'type'              => 'string',
@@ -219,6 +220,7 @@ class TributeEndpoint {
 				'type'              => 'string',
 				'enum'              => [ '', 'email', 'mail' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'notify_address_1'     => [
 				'type'              => 'string',

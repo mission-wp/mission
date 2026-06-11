@@ -55,6 +55,7 @@ class DashboardEndpoint {
 						'default'           => 'month',
 						'enum'              => [ 'today', 'week', 'month' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]
