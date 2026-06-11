@@ -180,6 +180,48 @@ class TransactionDataStore implements DataStoreInterface {
 	}
 
 	/**
+	 * Map gateway transaction IDs to transaction IDs in one query.
+	 *
+	 * Used by batch consumers (e.g. migration) to detect records that already
+	 * exist for the same gateway charge. Empty values never match; when
+	 * multiple rows share a value, the lowest ID wins.
+	 *
+	 * @param string[] $gateway_ids Gateway transaction identifiers.
+	 *
+	 * @return array<string, int> Map of gateway_transaction_id => transaction ID.
+	 */
+	public function read_ids_by_gateway_transaction_ids( array $gateway_ids ): array {
+		global $wpdb;
+
+		$gateway_ids = array_values(
+			array_unique(
+				array_filter(
+					array_map( 'strval', $gateway_ids ),
+					static fn( string $value ): bool => '' !== trim( $value )
+				)
+			)
+		);
+
+		if ( empty( $gateway_ids ) ) {
+			return [];
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $gateway_ids ), '%s' ) );
+		$sql          = "SELECT id, gateway_transaction_id FROM %i WHERE gateway_transaction_id IN ( {$placeholders} ) ORDER BY id ASC";
+		$prepare_args = array_merge( [ $this->get_table_name() ], $gateway_ids );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, values via %s placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$map[ (string) $row['gateway_transaction_id'] ] ??= (int) $row['id'];
+		}
+
+		return $map;
+	}
+
+	/**
 	 * Update a transaction.
 	 *
 	 * @param object $model Transaction model with updated values.

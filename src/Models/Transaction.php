@@ -106,6 +106,20 @@ class Transaction extends Model {
 	}
 
 	/**
+	 * Map gateway transaction IDs to transaction IDs in one query.
+	 *
+	 * Empty values never match (manual transactions have blank gateway IDs).
+	 *
+	 * @param string[] $gateway_ids Gateway transaction identifiers.
+	 * @return array<string, int> Map of gateway_transaction_id => transaction ID.
+	 */
+	public static function find_ids_by_gateway_transaction_ids( array $gateway_ids ): array {
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+		return $store->read_ids_by_gateway_transaction_ids( $gateway_ids );
+	}
+
+	/**
 	 * Map a set of transaction IDs to their gateway transaction IDs in one query.
 	 *
 	 * @param int[] $ids Transaction IDs.

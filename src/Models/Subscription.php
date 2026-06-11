@@ -100,6 +100,20 @@ class Subscription extends Model {
 	}
 
 	/**
+	 * Map gateway subscription IDs to subscription IDs in one query.
+	 *
+	 * Empty values never match.
+	 *
+	 * @param string[] $gateway_ids Gateway subscription identifiers.
+	 * @return array<string, int> Map of gateway_subscription_id => subscription ID.
+	 */
+	public static function find_ids_by_gateway_subscription_ids( array $gateway_ids ): array {
+		/** @var SubscriptionDataStore $store */
+		$store = static::store();
+		return $store->read_ids_by_gateway_subscription_ids( $gateway_ids );
+	}
+
+	/**
 	 * Get the donor for this subscription.
 	 *
 	 * @return Donor|null

@@ -28,6 +28,9 @@ use MissionDP\Rest\Endpoints\ImportEndpoint;
 use MissionDP\Import\ColumnMapper;
 use MissionDP\Import\ImportService;
 use MissionDP\Import\Validators\RowValidator;
+use MissionDP\Rest\Endpoints\MigrationEndpoint;
+use MissionDP\Migration\MigrationService;
+use MissionDP\Migration\MigratorRegistry;
 use MissionDP\Rest\Endpoints\DonorWallEndpoint;
 use MissionDP\Rest\Endpoints\EmailTemplateEndpoint;
 use MissionDP\Rest\Endpoints\EmailTestEndpoint;
@@ -115,6 +118,7 @@ class RestModule {
 		$export_service = new ExportService( $settings );
 		( new ExportEndpoint( $export_service ) )->register();
 		( new ImportEndpoint( new ImportService( $export_service, new ColumnMapper( $export_service ), new RowValidator() ) ) )->register();
+		( new MigrationEndpoint( new MigrationService( new MigratorRegistry() ) ) )->register();
 		( new SystemStatusEndpoint( $settings ) )->register();
 		( new CleanupEndpoint( new CleanupService( $settings ) ) )->register();
 		( new OutgoingWebhooksEndpoint() )->register();

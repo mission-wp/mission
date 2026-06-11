@@ -129,6 +129,11 @@ class ActivityFeedModule {
 		add_action( 'mission_outgoing_webhook_created', [ $this, 'on_outgoing_webhook_created' ] );
 		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ], 10, 2 );
 		add_action( 'mission_outgoing_webhook_auto_paused', [ $this, 'on_outgoing_webhook_auto_paused' ] );
+
+		// Migration runs.
+		add_action( 'mission_migration_completed', [ $this, 'on_migration_completed' ], 10, 2 );
+		add_action( 'mission_migration_rolled_back', [ $this, 'on_migration_rolled_back' ], 10, 2 );
+		add_action( 'mission_migration_failed', [ $this, 'on_migration_failed' ], 10, 3 );
 	}
 
 	/**
@@ -140,6 +145,103 @@ class ActivityFeedModule {
 		$user = get_userdata( get_current_user_id() );
 
 		return $user ? ( $user->display_name ?: $user->user_login ) : '';
+	}
+
+	/**
+	 * Resolve a user's display name for activity data (migration ticks run in
+	 * Action Scheduler workers, where there is no current user).
+	 *
+	 * @param int $user_id WP user ID recorded on the job.
+	 *
+	 * @return string Empty string when the user no longer exists.
+	 */
+	private function get_user_name( int $user_id ): string {
+		$user = get_userdata( $user_id );
+
+		return $user ? ( $user->display_name ?: $user->user_login ) : '';
+	}
+
+	/**
+	 * Log when a migration run completes.
+	 *
+	 * @param string   $job_id Job token.
+	 * @param object[] $phases MigrationPhase rows.
+	 *
+	 * @return void
+	 */
+	public function on_migration_completed( string $job_id, array $phases ): void {
+		if ( empty( $phases ) ) {
+			return;
+		}
+
+		$counts = [];
+		$errors = 0;
+		foreach ( $phases as $phase ) {
+			$counts[ $phase->entity ] = $phase->imported;
+			$errors                  += $phase->errors;
+		}
+
+		$this->log(
+			'data_migrated',
+			'migration',
+			0,
+			[
+				'source'     => $phases[0]->source,
+				'counts'     => $counts,
+				'errors'     => $errors,
+				'job_id'     => $job_id,
+				'actor_name' => $this->get_user_name( $phases[0]->user_id ),
+			],
+			false,
+			$errors > 0 ? 'warning' : 'info',
+		);
+	}
+
+	/**
+	 * Log when a migration rollback completes.
+	 *
+	 * @param string $job_id Rollback job token.
+	 * @param object $phase  Final MigrationPhase row.
+	 *
+	 * @return void
+	 */
+	public function on_migration_rolled_back( string $job_id, object $phase ): void {
+		$this->log(
+			'migration_rolled_back',
+			'migration',
+			0,
+			[
+				'source'     => $phase->source,
+				'job_id'     => $job_id,
+				'actor_name' => $this->get_user_name( $phase->user_id ),
+			],
+		);
+	}
+
+	/**
+	 * Log when a migration run fails.
+	 *
+	 * @param string $job_id Job token.
+	 * @param object $phase  The failed MigrationPhase row.
+	 * @param string $reason Failure reason.
+	 *
+	 * @return void
+	 */
+	public function on_migration_failed( string $job_id, object $phase, string $reason ): void {
+		$this->log(
+			'migration_failed',
+			'migration',
+			0,
+			[
+				'source'     => $phase->source,
+				'entity'     => $phase->entity,
+				'reason'     => $reason,
+				'job_id'     => $job_id,
+				'actor_name' => $this->get_user_name( $phase->user_id ),
+			],
+			false,
+			'error',
+		);
 	}
 
 	/**

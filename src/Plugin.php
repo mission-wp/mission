@@ -203,6 +203,11 @@ class Plugin {
 		);
 		( new Import\ImportJobHandler( $import_service ) )->register();
 		( new Import\ImportCleanup( $import_service ) )->register();
+
+		// Same deal for the migration job handler.
+		$migration_service = new Migration\MigrationService( new Migration\MigratorRegistry() );
+		( new Migration\MigrationJobHandler( $migration_service ) )->register();
+		( new Migration\MigrationCleanup() )->register();
 	}
 
 	/**
