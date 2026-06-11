@@ -2519,6 +2519,9 @@
 			"Utilities and configuration for Mission": [
 				"Utilidades y configuración de Mission"
 			],
+			"Options": [
+				"Opciones"
+			],
 			"e.g. 12-3456789": [
 				"p. ej. 12-3456789"
 			],
@@ -2929,6 +2932,186 @@
 			],
 			"A webhook was paused automatically after repeated failures": [
 				"Un webhook se pausó automáticamente tras fallos repetidos"
+			],
+			"another plugin": [
+				"otro plugin"
+			],
+			"Migration from %s finished with no new records": [
+				"La migración desde %s terminó sin registros nuevos"
+			],
+			"%1$s migrated <count /> records from %2$s": [
+				"%1$s migró <count /> registros desde %2$s"
+			],
+			"Migrated <count /> records from %s": [
+				"Se migraron <count /> registros desde %s"
+			],
+			"%1$s removed the data migrated from %2$s": [
+				"%1$s eliminó los datos migrados desde %2$s"
+			],
+			"Removed the data migrated from %s": [
+				"Se eliminaron los datos migrados desde %s"
+			],
+			"Migration from %s failed": [
+				"La migración desde %s falló"
+			],
+			"Migrate from another plugin": [
+				"Migrar desde otro plugin"
+			],
+			"Mission can bring over your donors, transactions, campaigns, and subscriptions. GiveWP migration is ready today, and support for more plugins is on the way.": [
+				"Mission puede traer tus donantes, transacciones, campañas y suscripciones. La migración desde GiveWP ya está disponible, y pronto habrá soporte para más plugins."
+			],
+			"No data from this plugin was found on your site.": [
+				"No se encontraron datos de este plugin en tu sitio."
+			],
+			"Coming soon": [
+				"Próximamente"
+			],
+			"Don't see your plugin? You can use the <a>Import</a> tool to manually upload a CSV file with your data.": [
+				"¿No ves tu plugin? Puedes usar la herramienta de <a>Importación</a> para subir manualmente un archivo CSV con tus datos."
+			],
+			"Scan": [
+				"Escanear"
+			],
+			"Migrate": [
+				"Migrar"
+			],
+			"Review": [
+				"Revisar"
+			],
+			"Migrate from %s to Mission": [
+				"Migrar de %s a Mission"
+			],
+			"Bring your donors, transactions, campaigns, and subscriptions with you. Mission scans your site first and flags anything that needs attention before a single record is written.": [
+				"Trae contigo tus donantes, transacciones, campañas y suscripciones. Mission escanea primero tu sitio y señala cualquier cosa que necesite atención antes de escribir un solo registro."
+			],
+			"Back up before you begin.": [
+				"Haz una copia de seguridad antes de empezar."
+			],
+			"The migration writes new records to your database, and a quick backup means you can always rewind.": [
+				"La migración escribe registros nuevos en tu base de datos, y una copia de seguridad rápida te permite volver atrás en cualquier momento."
+			],
+			"Scanning your site…": [
+				"Escaneando tu sitio…"
+			],
+			"Scan My Site": [
+				"Escanear mi sitio"
+			],
+			"Choose a different plugin": [
+				"Elegir otro plugin"
+			],
+			"Scan results": [
+				"Resultados del escaneo"
+			],
+			"Your site is ready. Review what will be migrated below.": [
+				"Tu sitio está listo. Revisa abajo lo que se va a migrar."
+			],
+			"Scanning…": [
+				"Escaneando…"
+			],
+			"Run again": [
+				"Ejecutar de nuevo"
+			],
+			"System status": [
+				"Estado del sistema"
+			],
+			"What will be migrated": [
+				"Qué se va a migrar"
+			],
+			"Include test-mode donations": [
+				"Incluir donaciones en modo de prueba"
+			],
+			"%3$s has %1$s test-mode donations and %2$s test-mode subscriptions made in test/sandbox mode.": [
+				"%3$s tiene %1$s donaciones y %2$s suscripciones realizadas en modo de prueba/sandbox."
+			],
+			"Mission copies your data. Nothing is deleted from %s, and existing Mission data is not affected.": [
+				"Mission copia tus datos. No se elimina nada de %s, y los datos existentes de Mission no se ven afectados."
+			],
+			"Start Migration": [
+				"Iniciar migración"
+			],
+			"Finishing up": [
+				"Finalizando"
+			],
+			"Queued": [
+				"En cola"
+			],
+			"Working…": [
+				"Trabajando…"
+			],
+			"%s processed": [
+				"%s procesados"
+			],
+			"%1$s / %2$s": [
+				"%1$s / %2$s"
+			],
+			"Removing migrated data": [
+				"Eliminando los datos migrados"
+			],
+			"Migration in progress": [
+				"Migración en curso"
+			],
+			"You can safely leave this page. The migration keeps running in the background, and you can come back any time to check progress.": [
+				"Puedes salir de esta página sin problema. La migración sigue ejecutándose en segundo plano, y puedes volver en cualquier momento para ver el progreso."
+			],
+			"Cancel migration": [
+				"Cancelar la migración"
+			],
+			"Migration complete": [
+				"Migración completada"
+			],
+			"Migration failed": [
+				"La migración falló"
+			],
+			"Migration cancelled": [
+				"Migración cancelada"
+			],
+			"All your %s data has been moved to Mission. Review the migration receipt below.": [
+				"Todos tus datos de %s se han movido a Mission. Revisa abajo el comprobante de la migración."
+			],
+			"The migration stopped before finishing. Anything already migrated is listed below, and you can remove it with Reset migration.": [
+				"La migración se detuvo antes de terminar. Lo ya migrado aparece abajo, y puedes eliminarlo con «Restablecer migración»."
+			],
+			"Migration receipt": [
+				"Comprobante de la migración"
+			],
+			"How many records were migrated, out of everything found in the scan.": [
+				"Cuántos registros se migraron, de todo lo encontrado en el escaneo."
+			],
+			"Show details": [
+				"Mostrar detalles"
+			],
+			"%1$s #%2$d:": [
+				"%1$s n.º %2$d:"
+			],
+			"Once you've verified your data in Mission, you can safely deactivate your old donation plugin. Your original data stays untouched in case you ever need it.": [
+				"Una vez que hayas verificado tus datos en Mission, puedes desactivar tu antiguo plugin de donaciones sin problema. Tus datos originales quedan intactos por si alguna vez los necesitas."
+			],
+			"Reset migration": [
+				"Restablecer migración"
+			],
+			"Migrate another plugin": [
+				"Migrar otro plugin"
+			],
+			"Migrated data has been removed.": [
+				"Los datos migrados se han eliminado."
+			],
+			"The reset did not finish. Try again from the receipt.": [
+				"El restablecimiento no terminó. Inténtalo de nuevo desde el comprobante."
+			],
+			"The scan could not be completed.": [
+				"El escaneo no se pudo completar."
+			],
+			"The migration could not be started.": [
+				"La migración no se pudo iniciar."
+			],
+			"The reset could not be started.": [
+				"El restablecimiento no se pudo iniciar."
+			],
+			"This permanently deletes every donor, transaction, campaign, and subscription this migration created in Mission. Records that existed in Mission before the migration are kept, and your %s data is not touched.": [
+				"Esto elimina de forma permanente todos los donantes, transacciones, campañas y suscripciones que esta migración creó en Mission. Los registros que existían en Mission antes de la migración se conservan, y tus datos de %s no se tocan."
+			],
+			"Delete migrated data": [
+				"Eliminar los datos migrados"
 			]
 		}
 	}

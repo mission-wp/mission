@@ -2,6 +2,7 @@
 
 ## 1.3.0 (Unreleased)
 
+* New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
 * New: Outgoing webhooks. Notify external services when donations, subscriptions, donors, or campaigns change, with signed payloads, automatic retries, and a delivery log (Tools > Webhooks)
 * Enhancement: The donation form shortcode now inherits the campaign's configured form settings when campaign_id is set
 * Fix: Mission now works on SQLite-based WordPress installs (WordPress Playground, WP Studio) by removing MySQL-only SQL from campaign, subscription, reporting, and cleanup queries
