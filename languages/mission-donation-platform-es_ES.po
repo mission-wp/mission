@@ -32,8 +32,8 @@ msgstr "El plugin de donaciones gratuito para organizaciones sin ánimo de lucro
 
 #. Author of the plugin
 #: mission-donation-platform.php
-#: src/Admin/AdminModule.php:299
-#: src/Admin/AdminModule.php:300
+#: src/Admin/AdminModule.php:301
+#: src/Admin/AdminModule.php:302
 #: src/Blocks/BlocksModule.php:204
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:476
@@ -337,6 +337,7 @@ msgstr "Selecciona la frecuencia"
 #: blocks/src/donation-form/index.php:304
 #: blocks/src/donation-form/index.php:888
 #: blocks/src/donor-dashboard/parts/recurring.php:179
+#: src/Admin/DeactivationSurvey.php:181
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:133
 msgid "Other"
@@ -1441,6 +1442,7 @@ msgstr "Verificación enviada a"
 #: blocks/src/donor-dashboard/parts/recurring.php:107
 #: blocks/src/donor-dashboard/parts/recurring.php:224
 #: blocks/src/donor-dashboard/parts/recurring.php:250
+#: src/Admin/DeactivationSurvey.php:127
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
@@ -1963,13 +1965,13 @@ msgstr "Mission Donation Platform requiere WordPress 6.7 o superior."
 msgid "Mission Donor"
 msgstr "Donante de Mission"
 
-#: src/Admin/AdminModule.php:310
-#: src/Admin/AdminModule.php:311
+#: src/Admin/AdminModule.php:312
+#: src/Admin/AdminModule.php:313
 msgid "Dashboard"
 msgstr "Panel"
 
-#: src/Admin/AdminModule.php:319
-#: src/Admin/AdminModule.php:320
+#: src/Admin/AdminModule.php:321
+#: src/Admin/AdminModule.php:322
 #: src/Campaigns/CampaignPostType.php:115
 #: src/Campaigns/CampaignPostType.php:232
 #: src/Campaigns/CampaignPostType.php:242
@@ -1988,8 +1990,8 @@ msgstr "Panel"
 msgid "Campaigns"
 msgstr "Campañas"
 
-#: src/Admin/AdminModule.php:328
-#: src/Admin/AdminModule.php:329
+#: src/Admin/AdminModule.php:330
+#: src/Admin/AdminModule.php:331
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:236
@@ -2007,8 +2009,8 @@ msgstr "Campañas"
 msgid "Transactions"
 msgstr "Transacciones"
 
-#: src/Admin/AdminModule.php:337
-#: src/Admin/AdminModule.php:338
+#: src/Admin/AdminModule.php:339
+#: src/Admin/AdminModule.php:340
 #: src/Export/ExportService.php:171
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:204
@@ -2025,8 +2027,8 @@ msgstr "Transacciones"
 msgid "Donors"
 msgstr "Donantes"
 
-#: src/Admin/AdminModule.php:346
-#: src/Admin/AdminModule.php:347
+#: src/Admin/AdminModule.php:348
+#: src/Admin/AdminModule.php:349
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:204
@@ -2044,9 +2046,9 @@ msgstr "Donantes"
 msgid "Subscriptions"
 msgstr "Suscripciones"
 
-#: src/Admin/AdminModule.php:355
-#: src/Admin/AdminModule.php:356
-#: src/Admin/AdminModule.php:383
+#: src/Admin/AdminModule.php:357
+#: src/Admin/AdminModule.php:358
+#: src/Admin/AdminModule.php:385
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/campaigns/CampaignTabNav.js:6
@@ -2072,14 +2074,14 @@ msgstr "Suscripciones"
 msgid "Settings"
 msgstr "Ajustes"
 
-#: src/Admin/AdminModule.php:364
-#: src/Admin/AdminModule.php:365
+#: src/Admin/AdminModule.php:366
+#: src/Admin/AdminModule.php:367
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Tools.js:206
 msgid "Tools"
 msgstr "Herramientas"
 
-#: src/Admin/AdminModule.php:452
+#: src/Admin/AdminModule.php:454
 msgid "Mission Test Mode Active"
 msgstr "Modo de pruebas de Mission activo"
 
@@ -3610,6 +3612,7 @@ msgstr "Tipo de objeto no válido."
 msgid "%s not found."
 msgstr "%s no encontrado."
 
+#: src/Rest/Endpoints/DeactivationSurveyEndpoint.php:86
 #: src/Rest/Endpoints/ReviewBannerEndpoint.php:69
 #: src/Rest/Endpoints/SystemStatusEndpoint.php:66
 msgid "You do not have permission to perform this action."
@@ -5531,37 +5534,37 @@ msgid "Displays a \"Secure donation powered by Mission\" badge below donation fo
 msgstr "Muestra una insignia \"Donación segura con tecnología de Mission\" debajo de los formularios de donación que enlaza a missionwp.com."
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:713
+#: admin/src/pages/settings/GeneralPanel.js:709
 msgid "Setup Wizard"
 msgstr "Asistente de configuración"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:716
+#: admin/src/pages/settings/GeneralPanel.js:712
 msgid "Re-run the guided setup to update your organization details, reconnect Stripe, or create a campaign."
 msgstr "Vuelve a ejecutar la configuración guiada para actualizar los datos de tu organización, reconectar Stripe o crear una campaña."
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:753
+#: admin/src/pages/settings/GeneralPanel.js:749
 msgid "Run setup wizard"
 msgstr "Ejecutar el asistente de configuración"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:761
+#: admin/src/pages/settings/GeneralPanel.js:757
 msgid "Data"
 msgstr "Datos"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:764
+#: admin/src/pages/settings/GeneralPanel.js:760
 msgid "Control what happens to your donation data when the plugin is removed."
 msgstr "Controla qué ocurre con los datos de tus donaciones cuando se elimina el plugin."
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:781
+#: admin/src/pages/settings/GeneralPanel.js:777
 msgid "Remove all data on uninstall"
 msgstr "Eliminar todos los datos al desinstalar"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:787
+#: admin/src/pages/settings/GeneralPanel.js:783
 msgid "When enabled, all donation records, donor information, campaigns, and settings will be permanently deleted if the plugin is uninstalled. This cannot be undone."
 msgstr "Cuando se activa, todos los registros de donaciones, la información de los donantes, las campañas y los ajustes se eliminarán de forma permanente si se desinstala el plugin. Esto no se puede deshacer."
 
@@ -10716,3 +10719,91 @@ msgstr "Controla la dirección web de tus páginas de campaña."
 #: admin/src/pages/settings/GeneralPanel.js:676
 msgid "URL slug"
 msgstr "Slug de URL"
+
+#: src/Admin/DeactivationSurvey.php:92
+msgid "Quick feedback before you go"
+msgstr "Un comentario rápido antes de irte"
+
+#: src/Admin/DeactivationSurvey.php:95
+msgid "If you have a moment, tell us why you are deactivating Mission. Responses are anonymous and help us improve the plugin."
+msgstr "Si tienes un momento, cuéntanos por qué estás desactivando Mission. Las respuestas son anónimas y nos ayudan a mejorar el plugin."
+
+#: src/Admin/DeactivationSurvey.php:97
+msgid "Reason for deactivating"
+msgstr "Motivo de la desactivación"
+
+#: src/Admin/DeactivationSurvey.php:120
+msgid "Additional feedback"
+msgstr "Comentarios adicionales"
+
+#: src/Admin/DeactivationSurvey.php:125
+msgid "Skip & Deactivate"
+msgstr "Omitir y desactivar"
+
+#: src/Admin/DeactivationSurvey.php:128
+msgid "Submitting…"
+msgstr "Enviando…"
+
+#: src/Admin/DeactivationSurvey.php:128
+msgid "Submit & Deactivate"
+msgstr "Enviar y desactivar"
+
+#: src/Admin/DeactivationSurvey.php:147
+msgid "It's a temporary deactivation, I'm troubleshooting"
+msgstr "Es una desactivación temporal, estoy solucionando un problema"
+
+#: src/Admin/DeactivationSurvey.php:151
+msgid "I no longer need the plugin"
+msgstr "Ya no necesito el plugin"
+
+#: src/Admin/DeactivationSurvey.php:155
+msgid "I found a better plugin"
+msgstr "Encontré un plugin mejor"
+
+#: src/Admin/DeactivationSurvey.php:156
+msgid "Which plugin did you switch to?"
+msgstr "¿A qué plugin te cambiaste?"
+
+#: src/Admin/DeactivationSurvey.php:159
+msgid "It's missing a feature I need"
+msgstr "Le falta una función que necesito"
+
+#: src/Admin/DeactivationSurvey.php:160
+msgid "What feature is missing?"
+msgstr "¿Qué función falta?"
+
+#: src/Admin/DeactivationSurvey.php:163
+msgid "Something isn't working"
+msgstr "Algo no funciona"
+
+#: src/Admin/DeactivationSurvey.php:164
+msgid "What went wrong? Any detail helps."
+msgstr "¿Qué falló? Cualquier detalle ayuda."
+
+#: src/Admin/DeactivationSurvey.php:172
+msgid "It's too complicated to set up"
+msgstr "Es demasiado complicado de configurar"
+
+#: src/Admin/DeactivationSurvey.php:173
+msgid "What was confusing or hard?"
+msgstr "¿Qué te resultó confuso o difícil?"
+
+#: src/Admin/DeactivationSurvey.php:182
+msgid "Tell us more (optional)"
+msgstr "Cuéntanos más (opcional)"
+
+#. translators: %s: link to the support forum.
+#: src/Admin/DeactivationSurvey.php:167
+#, php-format
+msgid "Sorry about that! Most issues can be fixed quickly. %s and we'll take a look right away."
+msgstr "¡Lo sentimos! La mayoría de los problemas se pueden solucionar rápidamente. %s y lo revisaremos de inmediato."
+
+#: src/Admin/DeactivationSurvey.php:168
+msgid "Open a support topic"
+msgstr "Abre un tema de soporte"
+
+#. translators: %s: hello@missionwp.com mailto link.
+#: src/Admin/DeactivationSurvey.php:176
+#, php-format
+msgid "Email us at %s and we'll personally help you set it up."
+msgstr "Escríbenos a %s y te ayudaremos personalmente a configurarlo."

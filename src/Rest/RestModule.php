@@ -15,6 +15,7 @@ use MissionDP\Rest\Endpoints\ConfirmDonationEndpoint;
 use MissionDP\Rest\Endpoints\ConfirmSubscriptionEndpoint;
 use MissionDP\Rest\Endpoints\CreatePaymentIntentEndpoint;
 use MissionDP\Rest\Endpoints\CreateSubscriptionEndpoint;
+use MissionDP\Rest\Endpoints\DeactivationSurveyEndpoint;
 use MissionDP\Rest\Endpoints\PaymentConfigEndpoint;
 use MissionDP\Rest\Endpoints\ReviewBannerEndpoint;
 use MissionDP\Rest\Endpoints\SettingsEndpoint;
@@ -104,6 +105,7 @@ class RestModule {
 		( new ActivityFeedEndpoint( $settings ) )->register();
 		( new DashboardEndpoint( $reporting, $settings ) )->register();
 		( new ReviewBannerEndpoint() )->register();
+		( new DeactivationSurveyEndpoint() )->register();
 		( new DonationFormSettingsEndpoint() )->register();
 		( new DonorWallEndpoint( $reporting, $settings ) )->register();
 		( new StripeWebhookEndpoint( $settings ) )->register();

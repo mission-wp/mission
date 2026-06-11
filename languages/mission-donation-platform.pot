@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-11T19:44:28+00:00\n"
+"POT-Creation-Date: 2026-06-11T22:26:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -32,8 +32,8 @@ msgstr ""
 
 #. Author of the plugin
 #: mission-donation-platform.php
-#: src/Admin/AdminModule.php:299
-#: src/Admin/AdminModule.php:300
+#: src/Admin/AdminModule.php:301
+#: src/Admin/AdminModule.php:302
 #: src/Blocks/BlocksModule.php:204
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:476
@@ -380,6 +380,7 @@ msgstr ""
 #: blocks/src/donation-form/index.php:304
 #: blocks/src/donation-form/index.php:888
 #: blocks/src/donor-dashboard/parts/recurring.php:179
+#: src/Admin/DeactivationSurvey.php:181
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:133
 msgid "Other"
@@ -1484,6 +1485,7 @@ msgstr ""
 #: blocks/src/donor-dashboard/parts/recurring.php:107
 #: blocks/src/donor-dashboard/parts/recurring.php:224
 #: blocks/src/donor-dashboard/parts/recurring.php:250
+#: src/Admin/DeactivationSurvey.php:127
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
@@ -2006,13 +2008,13 @@ msgstr ""
 msgid "Mission Donor"
 msgstr ""
 
-#: src/Admin/AdminModule.php:310
-#: src/Admin/AdminModule.php:311
+#: src/Admin/AdminModule.php:312
+#: src/Admin/AdminModule.php:313
 msgid "Dashboard"
 msgstr ""
 
-#: src/Admin/AdminModule.php:319
-#: src/Admin/AdminModule.php:320
+#: src/Admin/AdminModule.php:321
+#: src/Admin/AdminModule.php:322
 #: src/Campaigns/CampaignPostType.php:115
 #: src/Campaigns/CampaignPostType.php:232
 #: src/Campaigns/CampaignPostType.php:242
@@ -2031,8 +2033,8 @@ msgstr ""
 msgid "Campaigns"
 msgstr ""
 
-#: src/Admin/AdminModule.php:328
-#: src/Admin/AdminModule.php:329
+#: src/Admin/AdminModule.php:330
+#: src/Admin/AdminModule.php:331
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:236
@@ -2050,8 +2052,8 @@ msgstr ""
 msgid "Transactions"
 msgstr ""
 
-#: src/Admin/AdminModule.php:337
-#: src/Admin/AdminModule.php:338
+#: src/Admin/AdminModule.php:339
+#: src/Admin/AdminModule.php:340
 #: src/Export/ExportService.php:171
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:204
@@ -2068,8 +2070,8 @@ msgstr ""
 msgid "Donors"
 msgstr ""
 
-#: src/Admin/AdminModule.php:346
-#: src/Admin/AdminModule.php:347
+#: src/Admin/AdminModule.php:348
+#: src/Admin/AdminModule.php:349
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:204
@@ -2087,9 +2089,9 @@ msgstr ""
 msgid "Subscriptions"
 msgstr ""
 
-#: src/Admin/AdminModule.php:355
-#: src/Admin/AdminModule.php:356
-#: src/Admin/AdminModule.php:383
+#: src/Admin/AdminModule.php:357
+#: src/Admin/AdminModule.php:358
+#: src/Admin/AdminModule.php:385
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/campaigns/CampaignTabNav.js:6
@@ -2115,15 +2117,103 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/AdminModule.php:364
-#: src/Admin/AdminModule.php:365
+#: src/Admin/AdminModule.php:366
+#: src/Admin/AdminModule.php:367
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Tools.js:206
 msgid "Tools"
 msgstr ""
 
-#: src/Admin/AdminModule.php:452
+#: src/Admin/AdminModule.php:454
 msgid "Mission Test Mode Active"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:92
+msgid "Quick feedback before you go"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:95
+msgid "If you have a moment, tell us why you are deactivating Mission. Responses are anonymous and help us improve the plugin."
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:97
+msgid "Reason for deactivating"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:120
+msgid "Additional feedback"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:125
+msgid "Skip & Deactivate"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:128
+msgid "Submitting…"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:128
+msgid "Submit & Deactivate"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:147
+msgid "It's a temporary deactivation, I'm troubleshooting"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:151
+msgid "I no longer need the plugin"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:155
+msgid "I found a better plugin"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:156
+msgid "Which plugin did you switch to?"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:159
+msgid "It's missing a feature I need"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:160
+msgid "What feature is missing?"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:163
+msgid "Something isn't working"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:164
+msgid "What went wrong? Any detail helps."
+msgstr ""
+
+#. translators: %s: link to the support forum.
+#: src/Admin/DeactivationSurvey.php:167
+#, php-format
+msgid "Sorry about that! Most issues can be fixed quickly. %s and we'll take a look right away."
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:168
+msgid "Open a support topic"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:172
+msgid "It's too complicated to set up"
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:173
+msgid "What was confusing or hard?"
+msgstr ""
+
+#. translators: %s: hello@missionwp.com mailto link.
+#: src/Admin/DeactivationSurvey.php:176
+#, php-format
+msgid "Email us at %s and we'll personally help you set it up."
+msgstr ""
+
+#: src/Admin/DeactivationSurvey.php:182
+msgid "Tell us more (optional)"
 msgstr ""
 
 #: src/Campaigns/CampaignPostType.php:107
@@ -3854,6 +3944,12 @@ msgstr ""
 msgid "You do not have permission to view the dashboard."
 msgstr ""
 
+#: src/Rest/Endpoints/DeactivationSurveyEndpoint.php:86
+#: src/Rest/Endpoints/ReviewBannerEndpoint.php:69
+#: src/Rest/Endpoints/SystemStatusEndpoint.php:66
+msgid "You do not have permission to perform this action."
+msgstr ""
+
 #: src/Rest/Endpoints/DonorAuthEndpoint.php:234
 msgid "If a donor account exists for that email, a verification link has been sent."
 msgstr ""
@@ -4139,11 +4235,6 @@ msgstr ""
 #: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:462
 #, php-format
 msgid "Invalid event: %s"
-msgstr ""
-
-#: src/Rest/Endpoints/ReviewBannerEndpoint.php:69
-#: src/Rest/Endpoints/SystemStatusEndpoint.php:66
-msgid "You do not have permission to perform this action."
 msgstr ""
 
 #: src/Rest/Endpoints/SettingsEndpoint.php:76
@@ -6158,37 +6249,37 @@ msgid "URL slug"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:713
+#: admin/src/pages/settings/GeneralPanel.js:709
 msgid "Setup Wizard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:716
+#: admin/src/pages/settings/GeneralPanel.js:712
 msgid "Re-run the guided setup to update your organization details, reconnect Stripe, or create a campaign."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:753
+#: admin/src/pages/settings/GeneralPanel.js:749
 msgid "Run setup wizard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:761
+#: admin/src/pages/settings/GeneralPanel.js:757
 msgid "Data"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:764
+#: admin/src/pages/settings/GeneralPanel.js:760
 msgid "Control what happens to your donation data when the plugin is removed."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:781
+#: admin/src/pages/settings/GeneralPanel.js:777
 msgid "Remove all data on uninstall"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:787
+#: admin/src/pages/settings/GeneralPanel.js:783
 msgid "When enabled, all donation records, donor information, campaigns, and settings will be permanently deleted if the plugin is uninstalled. This cannot be undone."
 msgstr ""
 

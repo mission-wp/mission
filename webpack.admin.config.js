@@ -8,6 +8,7 @@ module.exports = {
   name: 'admin',
   entry: {
     'mission-admin': './admin/src/index.js',
+    'mission-deactivation': './admin/src/deactivation/index.js',
   },
   output: {
     ...defaultConfig.output,
