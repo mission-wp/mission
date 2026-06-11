@@ -560,4 +560,62 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertTrue( $fired );
 	}
 
+	// -------------------------------------------------------------------------
+	// Donation form attributes tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test get_donation_form_attributes returns the form block's attributes.
+	 */
+	public function test_get_donation_form_attributes_returns_block_attrs(): void {
+		$campaign = $this->create_campaign();
+
+		wp_update_post(
+			[
+				'ID'           => $campaign->post_id,
+				'post_content' => '<!-- wp:mission-donation-platform/donation-form {"campaignId":' . $campaign->id . ',"recurringEnabled":false,"donateButtonText":"Give Now"} /-->',
+			]
+		);
+
+		$attrs = $campaign->get_donation_form_attributes();
+
+		$this->assertSame( $campaign->id, $attrs['campaignId'] );
+		$this->assertFalse( $attrs['recurringEnabled'] );
+		$this->assertSame( 'Give Now', $attrs['donateButtonText'] );
+	}
+
+	/**
+	 * Test get_donation_form_attributes finds a form block nested in other blocks.
+	 */
+	public function test_get_donation_form_attributes_finds_nested_block(): void {
+		$campaign = $this->create_campaign();
+
+		wp_update_post(
+			[
+				'ID'           => $campaign->post_id,
+				'post_content' => '<!-- wp:group --><div class="wp-block-group"><!-- wp:column --><!-- wp:mission-donation-platform/donation-form {"tipEnabled":false} /--><!-- /wp:column --></div><!-- /wp:group -->',
+			]
+		);
+
+		$attrs = $campaign->get_donation_form_attributes();
+
+		$this->assertFalse( $attrs['tipEnabled'] );
+	}
+
+	/**
+	 * Test get_donation_form_attributes returns empty array when the page has no form block.
+	 */
+	public function test_get_donation_form_attributes_empty_without_form_block(): void {
+		$campaign = $this->create_campaign();
+
+		wp_update_post(
+			[
+				'ID'           => $campaign->post_id,
+				'post_content' => '<!-- wp:paragraph --><p>No form here.</p><!-- /wp:paragraph -->',
+			]
+		);
+
+		$this->assertSame( [], $campaign->get_donation_form_attributes() );
+	}
+
 }

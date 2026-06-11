@@ -188,6 +188,7 @@ This plugin connects to the following third-party services:
 == Changelog ==
 
 = 1.3.0 =
+* Enhancement: The donation form shortcode now inherits the campaign's configured form settings when campaign_id is set
 * Tweak: Renamed all developer hooks (actions and filters) from missiondp_ to mission_. If you have custom code hooking into Mission, update the hook names. Scheduled task hooks, options, and database tables are unchanged.
 
 = 1.2.0 =
