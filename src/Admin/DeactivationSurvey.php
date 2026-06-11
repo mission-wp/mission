@@ -113,7 +113,18 @@ class DeactivationSurvey {
 						<?php foreach ( $this->get_reasons() as $key => $reason ) : ?>
 							<?php if ( ! empty( $reason['help'] ) ) : ?>
 								<p class="mission-ds__help" data-reason="<?php echo esc_attr( $key ); ?>" hidden>
-									<?php echo wp_kses( $reason['help'], [ 'a' => [ 'href' => [], 'target' => [], 'rel' => [] ] ] ); ?>
+									<?php
+									echo wp_kses(
+										$reason['help'],
+										[
+											'a' => [
+												'href'   => [],
+												'target' => [],
+												'rel'    => [],
+											],
+										]
+									);
+									?>
 								</p>
 							<?php endif; ?>
 						<?php endforeach; ?>
