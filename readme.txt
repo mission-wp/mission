@@ -189,6 +189,8 @@ This plugin connects to the following third-party services:
 
 = 1.3.0 =
 * Enhancement: The donation form shortcode now inherits the campaign's configured form settings when campaign_id is set
+* Fix: Mission now works on SQLite-based WordPress installs (WordPress Playground, WP Studio) by removing MySQL-only SQL from campaign, subscription, reporting, and cleanup queries
+* Fix: The "delete test data" tools now also remove the meta rows belonging to deleted test transactions, donors, and subscriptions (the cleanup previously referenced the wrong meta column and silently skipped them)
 * Tweak: Renamed all developer hooks (actions and filters) from missiondp_ to mission_. If you have custom code hooking into Mission, update the hook names. Scheduled task hooks, options, and database tables are unchanged.
 
 = 1.2.0 =

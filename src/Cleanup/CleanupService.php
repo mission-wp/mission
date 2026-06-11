@@ -216,38 +216,21 @@ class CleanupService {
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$ids_csv = implode( ',', array_map( 'intval', $ids ) );
+			$ids          = array_map( 'intval', $ids );
+			$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+			$meta_sql     = "DELETE FROM %i WHERE missiondp_transaction_id IN ( {$placeholders} )";
+			$by_txn_sql   = "DELETE FROM %i WHERE transaction_id IN ( {$placeholders} )";
+			$notes_sql    = "DELETE FROM %i WHERE object_type = %s AND object_id IN ( {$placeholders} )";
 
 			// Cascade: meta, history, notes, tributes.
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
-					$prefix . 'transactionmeta',
-					$ids_csv
-				)
-			);
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
-					$prefix . 'transaction_history',
-					$ids_csv
-				)
-			);
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE object_type = %s AND FIND_IN_SET( object_id, %s ) > 0',
-					$prefix . 'notes',
-					'transaction',
-					$ids_csv
-				)
-			);
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
-					$prefix . 'tributes',
-					$ids_csv
-				)
-			);
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $meta_sql, array_merge( [ $prefix . 'transactionmeta' ], $ids ) ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $by_txn_sql, array_merge( [ $prefix . 'transaction_history' ], $ids ) ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $notes_sql, array_merge( [ $prefix . 'notes', 'transaction' ], $ids ) ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $by_txn_sql, array_merge( [ $prefix . 'tributes' ], $ids ) ) );
 
 			// Delete the transactions.
 			$wpdb->query(
@@ -306,30 +289,18 @@ class CleanupService {
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$ids_csv = implode( ',', array_map( 'intval', $ids ) );
+			$ids          = array_map( 'intval', $ids );
+			$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+			$meta_sql     = "DELETE FROM %i WHERE missiondp_donor_id IN ( {$placeholders} )";
+			$notes_sql    = "DELETE FROM %i WHERE object_type = %s AND object_id IN ( {$placeholders} )";
+			$donors_sql   = "DELETE FROM %i WHERE id IN ( {$placeholders} )";
 
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE FIND_IN_SET( donor_id, %s ) > 0',
-					$prefix . 'donormeta',
-					$ids_csv
-				)
-			);
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE object_type = %s AND FIND_IN_SET( object_id, %s ) > 0',
-					$prefix . 'notes',
-					'donor',
-					$ids_csv
-				)
-			);
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE FIND_IN_SET( id, %s ) > 0',
-					$prefix . 'donors',
-					$ids_csv
-				)
-			);
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $meta_sql, array_merge( [ $prefix . 'donormeta' ], $ids ) ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $notes_sql, array_merge( [ $prefix . 'notes', 'donor' ], $ids ) ) );
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $donors_sql, array_merge( [ $prefix . 'donors' ], $ids ) ) );
 		}
 
 		$this->log_activity( 'test_donors_deleted', 'settings', 0, [ 'count' => $count ] );
@@ -354,15 +325,12 @@ class CleanupService {
 		$count = count( $ids );
 
 		if ( $count > 0 ) {
-			$ids_csv = implode( ',', array_map( 'intval', $ids ) );
+			$ids          = array_map( 'intval', $ids );
+			$placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+			$meta_sql     = "DELETE FROM %i WHERE missiondp_subscription_id IN ( {$placeholders} )";
 
-			$wpdb->query(
-				$wpdb->prepare(
-					'DELETE FROM %i WHERE FIND_IN_SET( subscription_id, %s ) > 0',
-					$prefix . 'subscriptionmeta',
-					$ids_csv
-				)
-			);
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$wpdb->query( $wpdb->prepare( $meta_sql, array_merge( [ $prefix . 'subscriptionmeta' ], $ids ) ) );
 			$wpdb->query(
 				$wpdb->prepare( 'DELETE FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
 			);

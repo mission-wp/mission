@@ -605,15 +605,13 @@ class ReportingService {
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$campaign_ids_csv = implode( ',', array_map( 'intval', $campaign_ids ) );
-			$campaigns        = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT id, title FROM %i WHERE FIND_IN_SET( id, %s ) > 0',
-					$wpdb->prefix . 'missiondp_campaigns',
-					$campaign_ids_csv
-				),
-				ARRAY_A
-			);
+			$campaign_ids = array_map( 'intval', $campaign_ids );
+			$placeholders = implode( ', ', array_fill( 0, count( $campaign_ids ), '%d' ) );
+			$sql          = "SELECT id, title FROM %i WHERE id IN ( {$placeholders} )";
+			$prepare_args = array_merge( [ $wpdb->prefix . 'missiondp_campaigns' ], $campaign_ids );
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$campaigns = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 			foreach ( $campaigns as $campaign ) {
 				$campaign_map[ $campaign['id'] ] = $campaign['title'];
 			}
@@ -730,15 +728,13 @@ class ReportingService {
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
-			$campaign_ids_csv = implode( ',', array_map( 'intval', $campaign_ids ) );
-			$campaigns        = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT id, title FROM %i WHERE FIND_IN_SET( id, %s ) > 0',
-					$wpdb->prefix . 'missiondp_campaigns',
-					$campaign_ids_csv
-				),
-				ARRAY_A
-			);
+			$campaign_ids = array_map( 'intval', $campaign_ids );
+			$placeholders = implode( ', ', array_fill( 0, count( $campaign_ids ), '%d' ) );
+			$sql          = "SELECT id, title FROM %i WHERE id IN ( {$placeholders} )";
+			$prepare_args = array_merge( [ $wpdb->prefix . 'missiondp_campaigns' ], $campaign_ids );
+
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+			$campaigns = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 			foreach ( $campaigns as $campaign ) {
 				$campaign_map[ $campaign['id'] ] = $campaign['title'];
 			}
@@ -1073,30 +1069,26 @@ class ReportingService {
 		$txn_table     = $wpdb->prefix . 'missiondp_transactions';
 		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
 		$is_test       = (int) $this->is_test_mode();
-		$donor_ids_csv = implode( ',', array_map( 'intval', $donor_ids ) );
+		$donor_ids     = array_map( 'intval', $donor_ids );
+		$placeholders  = implode( ', ', array_fill( 0, count( $donor_ids ), '%d' ) );
 
-		// Get the most recent transaction ID per donor, then join tributes.
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT sub.donor_id, tr.tribute_type, tr.honoree_name
+		$sql = "SELECT sub.donor_id, tr.tribute_type, tr.honoree_name
 				 FROM (
 					 SELECT donor_id, MAX(id) AS max_txn_id
 					 FROM %i
-					 WHERE FIND_IN_SET( donor_id, %s ) > 0
+					 WHERE donor_id IN ( {$placeholders} )
 						AND campaign_id = %d
-						AND status = \'completed\'
+						AND status = 'completed'
 						AND is_test = %d
 					 GROUP BY donor_id
 				 ) AS sub
-				 INNER JOIN %i AS tr ON tr.transaction_id = sub.max_txn_id',
-				$txn_table,
-				$donor_ids_csv,
-				$campaign_id,
-				$is_test,
-				$tribute_table
-			),
-			ARRAY_A
-		);
+				 INNER JOIN %i AS tr ON tr.transaction_id = sub.max_txn_id";
+
+		$prepare_args = array_merge( [ $txn_table ], $donor_ids, [ $campaign_id, $is_test, $tribute_table ] );
+
+		// Get the most recent transaction ID per donor, then join tributes.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1122,17 +1114,14 @@ class ReportingService {
 			return [];
 		}
 
-		$tribute_table       = $wpdb->prefix . 'missiondp_tributes';
-		$transaction_ids_csv = implode( ',', array_map( 'intval', $transaction_ids ) );
+		$tribute_table   = $wpdb->prefix . 'missiondp_tributes';
+		$transaction_ids = array_map( 'intval', $transaction_ids );
+		$placeholders    = implode( ', ', array_fill( 0, count( $transaction_ids ), '%d' ) );
+		$sql             = "SELECT transaction_id, tribute_type, honoree_name FROM %i WHERE transaction_id IN ( {$placeholders} )";
+		$prepare_args    = array_merge( [ $tribute_table ], $transaction_ids );
 
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT transaction_id, tribute_type, honoree_name FROM %i WHERE FIND_IN_SET( transaction_id, %s ) > 0',
-				$tribute_table,
-				$transaction_ids_csv
-			),
-			ARRAY_A
-		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
@@ -1294,18 +1283,14 @@ class ReportingService {
 			return [];
 		}
 
-		$meta_table          = $wpdb->prefix . 'missiondp_transactionmeta';
-		$transaction_ids_csv = implode( ',', array_map( 'intval', $transaction_ids ) );
+		$meta_table      = $wpdb->prefix . 'missiondp_transactionmeta';
+		$transaction_ids = array_map( 'intval', $transaction_ids );
+		$placeholders    = implode( ', ', array_fill( 0, count( $transaction_ids ), '%d' ) );
+		$sql             = "SELECT missiondp_transaction_id, meta_value FROM %i WHERE missiondp_transaction_id IN ( {$placeholders} ) AND meta_key = %s";
+		$prepare_args    = array_merge( [ $meta_table ], $transaction_ids, [ 'donor_comment' ] );
 
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT missiondp_transaction_id, meta_value FROM %i WHERE FIND_IN_SET( missiondp_transaction_id, %s ) > 0 AND meta_key = %s',
-				$meta_table,
-				$transaction_ids_csv,
-				'donor_comment'
-			),
-			ARRAY_A
-		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
 		$map = [];
 		foreach ( $rows ?: [] as $row ) {
