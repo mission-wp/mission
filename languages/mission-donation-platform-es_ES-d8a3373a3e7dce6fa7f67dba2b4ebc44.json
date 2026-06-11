@@ -3112,6 +3112,15 @@
 			],
 			"Delete migrated data": [
 				"Eliminar los datos migrados"
+			],
+			"Campaign URLs": [
+				"URLs de campañas"
+			],
+			"Controls the web address for your campaign pages.": [
+				"Controla la dirección web de tus páginas de campaña."
+			],
+			"URL slug": [
+				"Slug de URL"
 			]
 		}
 	}

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-11T17:10:53+00:00\n"
+"POT-Creation-Date: 2026-06-11T19:44:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -32,8 +32,8 @@ msgstr ""
 
 #. Author of the plugin
 #: mission-donation-platform.php
-#: src/Admin/AdminModule.php:298
 #: src/Admin/AdminModule.php:299
+#: src/Admin/AdminModule.php:300
 #: src/Blocks/BlocksModule.php:204
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:476
@@ -44,7 +44,7 @@ msgstr ""
 #: blocks/build/campaign/index.php:70
 #: blocks/src/campaign-grid/index.php:94
 #: blocks/src/campaign/index.php:70
-#: src/Campaigns/CampaignPostType.php:193
+#: src/Campaigns/CampaignPostType.php:238
 #: src/Email/templates/admin-milestone.php:84
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign/index.js:1
@@ -521,7 +521,7 @@ msgstr ""
 #: admin/src/pages/donors/AddDonorDrawer.js:330
 #: admin/src/pages/donors/DonorDetailsCard.js:84
 #: admin/src/pages/donors/EditDonorDrawer.js:371
-#: admin/src/pages/settings/GeneralPanel.js:335
+#: admin/src/pages/settings/GeneralPanel.js:336
 #: admin/src/pages/transactions/AddDonationDrawer.js:710
 msgid "Country"
 msgstr ""
@@ -589,7 +589,7 @@ msgstr ""
 #: admin/src/components/onboarding/StepDetails.js:37
 #: admin/src/pages/donors/AddDonorDrawer.js:284
 #: admin/src/pages/donors/EditDonorDrawer.js:321
-#: admin/src/pages/settings/GeneralPanel.js:371
+#: admin/src/pages/settings/GeneralPanel.js:372
 #: admin/src/pages/transactions/AddDonationDrawer.js:734
 #: admin/src/pages/transactions/DedicationSection.js:514
 msgid "City"
@@ -1290,7 +1290,7 @@ msgstr ""
 #: blocks/build/donor-dashboard/parts/overview.php:37
 #: blocks/src/donor-dashboard/parts/history.php:62
 #: blocks/src/donor-dashboard/parts/overview.php:37
-#: src/Campaigns/CampaignPostType.php:188
+#: src/Campaigns/CampaignPostType.php:233
 #: src/Email/templates/admin-milestone.php:47
 #: src/Email/templates/admin-new-donation.php:95
 #: src/Email/templates/admin-payment-failed.php:69
@@ -2006,16 +2006,16 @@ msgstr ""
 msgid "Mission Donor"
 msgstr ""
 
-#: src/Admin/AdminModule.php:309
 #: src/Admin/AdminModule.php:310
+#: src/Admin/AdminModule.php:311
 msgid "Dashboard"
 msgstr ""
 
-#: src/Admin/AdminModule.php:318
 #: src/Admin/AdminModule.php:319
-#: src/Campaigns/CampaignPostType.php:74
-#: src/Campaigns/CampaignPostType.php:187
-#: src/Campaigns/CampaignPostType.php:197
+#: src/Admin/AdminModule.php:320
+#: src/Campaigns/CampaignPostType.php:115
+#: src/Campaigns/CampaignPostType.php:232
+#: src/Campaigns/CampaignPostType.php:242
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:236
@@ -2031,8 +2031,8 @@ msgstr ""
 msgid "Campaigns"
 msgstr ""
 
-#: src/Admin/AdminModule.php:327
 #: src/Admin/AdminModule.php:328
+#: src/Admin/AdminModule.php:329
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:236
@@ -2050,8 +2050,8 @@ msgstr ""
 msgid "Transactions"
 msgstr ""
 
-#: src/Admin/AdminModule.php:336
 #: src/Admin/AdminModule.php:337
+#: src/Admin/AdminModule.php:338
 #: src/Export/ExportService.php:171
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:204
@@ -2068,8 +2068,8 @@ msgstr ""
 msgid "Donors"
 msgstr ""
 
-#: src/Admin/AdminModule.php:345
 #: src/Admin/AdminModule.php:346
+#: src/Admin/AdminModule.php:347
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:204
@@ -2087,9 +2087,9 @@ msgstr ""
 msgid "Subscriptions"
 msgstr ""
 
-#: src/Admin/AdminModule.php:354
 #: src/Admin/AdminModule.php:355
-#: src/Admin/AdminModule.php:382
+#: src/Admin/AdminModule.php:356
+#: src/Admin/AdminModule.php:383
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/campaigns/CampaignTabNav.js:6
@@ -2115,60 +2115,60 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/AdminModule.php:363
 #: src/Admin/AdminModule.php:364
+#: src/Admin/AdminModule.php:365
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Tools.js:206
 msgid "Tools"
 msgstr ""
 
-#: src/Admin/AdminModule.php:451
+#: src/Admin/AdminModule.php:452
 msgid "Mission Test Mode Active"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:66
+#: src/Campaigns/CampaignPostType.php:107
 msgid "Campaigns Archive"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:67
+#: src/Campaigns/CampaignPostType.php:108
 msgid "Displays all campaigns."
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:89
+#: src/Campaigns/CampaignPostType.php:130
 msgid "Campaign Page"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:90
+#: src/Campaigns/CampaignPostType.php:131
 msgid "Displays a single campaign page."
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:189
+#: src/Campaigns/CampaignPostType.php:234
 msgid "Add New"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:190
+#: src/Campaigns/CampaignPostType.php:235
 msgid "Add New Campaign"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:191
+#: src/Campaigns/CampaignPostType.php:236
 msgid "Edit Campaign"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:192
+#: src/Campaigns/CampaignPostType.php:237
 msgid "New Campaign"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:194
+#: src/Campaigns/CampaignPostType.php:239
 msgid "Search Campaigns"
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:195
+#: src/Campaigns/CampaignPostType.php:240
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/src/campaign-grid/edit/GridPreview.js:83
 msgid "No campaigns found."
 msgstr ""
 
-#: src/Campaigns/CampaignPostType.php:196
+#: src/Campaigns/CampaignPostType.php:241
 msgid "No campaigns found in Trash."
 msgstr ""
 
@@ -3000,8 +3000,8 @@ msgstr ""
 #: admin/build/mission-admin.js:243
 #: admin/build/mission-admin.js:244
 #: admin/src/components/onboarding/StepBasics.js:72
-#: admin/src/pages/settings/GeneralPanel.js:457
-#: admin/src/pages/settings/GeneralPanel.js:471
+#: admin/src/pages/settings/GeneralPanel.js:458
+#: admin/src/pages/settings/GeneralPanel.js:472
 #: admin/src/pages/tools/StatusPanel.js:70
 #: admin/src/pages/tools/StatusPanel.js:346
 msgid "Currency"
@@ -3010,7 +3010,7 @@ msgstr ""
 #: src/Export/ExportService.php:719
 #: src/Export/ExportService.php:958
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:147
+#: admin/src/pages/settings/GeneralPanel.js:148
 msgid "Payment Gateway"
 msgstr ""
 
@@ -3503,11 +3503,11 @@ msgstr ""
 msgid "Billing cadence \"%1$s x%2$d\" is not supported and was migrated as monthly."
 msgstr ""
 
-#: src/Migration/Writers/SubscriptionWriter.php:57
+#: src/Migration/Writers/SubscriptionWriter.php:76
 msgid "The subscription donor was not migrated, so the subscription was skipped."
 msgstr ""
 
-#: src/Migration/Writers/TransactionWriter.php:67
+#: src/Migration/Writers/TransactionWriter.php:85
 msgid "The donation donor was not migrated, so the donation was skipped."
 msgstr ""
 
@@ -3645,7 +3645,7 @@ msgstr ""
 #: src/Receipts/templates/annual-receipt.php:77
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/settings/email-templates.js:19
-#: admin/src/pages/settings/GeneralPanel.js:300
+#: admin/src/pages/settings/GeneralPanel.js:301
 msgid "Organization"
 msgstr ""
 
@@ -4146,9 +4146,25 @@ msgstr ""
 msgid "You do not have permission to perform this action."
 msgstr ""
 
-#: src/Rest/Endpoints/SettingsEndpoint.php:75
+#: src/Rest/Endpoints/SettingsEndpoint.php:76
 #: src/Rest/Endpoints/StripeConnectEndpoint.php:112
 msgid "You do not have permission to manage settings."
+msgstr ""
+
+#: src/Rest/Endpoints/SettingsEndpoint.php:176
+msgid "The campaign URL slug cannot be empty."
+msgstr ""
+
+#. translators: %s: the slug the user entered.
+#: src/Rest/Endpoints/SettingsEndpoint.php:186
+#, php-format
+msgid "\"%s\" is reserved by WordPress and can't be used as the campaign URL slug."
+msgstr ""
+
+#. translators: 1: the slug the user entered, 2: the title of the existing page using it.
+#: src/Rest/Endpoints/SettingsEndpoint.php:205
+#, php-format
+msgid "The URL slug \"%1$s\" is already used by \"%2$s\". Choose a different slug."
 msgstr ""
 
 #: src/Rest/Endpoints/StripeConnectEndpoint.php:159
@@ -5482,13 +5498,13 @@ msgstr ""
 #: admin/build/mission-admin.js:191
 #: admin/src/components/onboarding/StepPayments.js:46
 #: admin/src/components/onboarding/StepPayments.js:50
-#: admin/src/pages/settings/GeneralPanel.js:88
+#: admin/src/pages/settings/GeneralPanel.js:89
 msgid "Connected"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/src/components/onboarding/StepPayments.js:72
-#: admin/src/pages/settings/GeneralPanel.js:185
+#: admin/src/pages/settings/GeneralPanel.js:186
 msgid "Connect with Stripe"
 msgstr ""
 
@@ -5957,7 +5973,7 @@ msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:243
-#: admin/src/pages/settings/GeneralPanel.js:70
+#: admin/src/pages/settings/GeneralPanel.js:71
 #: admin/src/pages/tools/StatusPanel.js:269
 #: blocks/build/donation-form/index.js:2
 #: blocks/src/donation-form/edit/tabs/PaymentsTab.js:85
@@ -5965,199 +5981,214 @@ msgid "Stripe account"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:75
+#: admin/src/pages/settings/GeneralPanel.js:76
 msgid "Default"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:99
+#: admin/src/pages/settings/GeneralPanel.js:100
 msgid "Make default"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Settings.js:548
-#: admin/src/pages/settings/GeneralPanel.js:108
+#: admin/src/pages/settings/GeneralPanel.js:109
 msgid "Disconnect"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:151
+#: admin/src/pages/settings/GeneralPanel.js:152
 msgid "Connect one or more Stripe accounts to process donations. New donations are routed through your default account."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:155
+#: admin/src/pages/settings/GeneralPanel.js:156
 msgid "Connect your Stripe account to process donations."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:170
+#: admin/src/pages/settings/GeneralPanel.js:171
 msgid "Connection error — please try again."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:181
+#: admin/src/pages/settings/GeneralPanel.js:182
 msgid "Connect another Stripe account"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:192
+#: admin/src/pages/settings/GeneralPanel.js:193
 msgid "Connected accounts"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:226
+#: admin/src/pages/settings/GeneralPanel.js:227
 msgid "One or more connected accounts can’t accept charges yet. Finish setting them up on the Stripe Dashboard."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:230
+#: admin/src/pages/settings/GeneralPanel.js:231
 msgid "Your default Stripe account isn’t ready to accept charges. Finish setting it up before donations can complete."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:240
+#: admin/src/pages/settings/GeneralPanel.js:241
 msgid "Go to Stripe Dashboard →"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:243
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/settings/GeneralPanel.js:262
-#: admin/src/pages/settings/GeneralPanel.js:279
+#: admin/src/pages/settings/GeneralPanel.js:263
+#: admin/src/pages/settings/GeneralPanel.js:280
 #: admin/src/pages/tools/StatusPanel.js:69
 #: admin/src/pages/tools/StatusPanel.js:335
 msgid "Test mode"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:266
+#: admin/src/pages/settings/GeneralPanel.js:267
 msgid "Using Stripe test keys — no real charges."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:270
+#: admin/src/pages/settings/GeneralPanel.js:271
 msgid "Using Stripe live keys — real charges."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:303
+#: admin/src/pages/settings/GeneralPanel.js:304
 msgid "Used on donation receipts and tax documents."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:314
+#: admin/src/pages/settings/GeneralPanel.js:315
 msgid "Organization name"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:324
+#: admin/src/pages/settings/GeneralPanel.js:325
 msgid "Shown on donation receipts, emails, and the donor dashboard. Defaults to your site name."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/GeneralPanel.js:355
+#: admin/src/pages/settings/GeneralPanel.js:356
 #: admin/src/pages/transactions/DedicationSection.js:497
 msgid "Street address"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:435
+#: admin/src/pages/settings/GeneralPanel.js:436
 msgid "EIN"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:445
+#: admin/src/pages/settings/GeneralPanel.js:446
 msgid "Your Employer Identification Number for tax receipts."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:460
+#: admin/src/pages/settings/GeneralPanel.js:461
 msgid "The currency used for all donations."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:509
+#: admin/src/pages/settings/GeneralPanel.js:510
 msgid "Percentage (%)"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:540
+#: admin/src/pages/settings/GeneralPanel.js:541
 msgid "Fixed fee"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:577
+#: admin/src/pages/settings/GeneralPanel.js:578
 msgid "Used when calculating fee recovery. Nonprofits may qualify for discounted Stripe rates."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:590
+#: admin/src/pages/settings/GeneralPanel.js:591
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/FormSettingsModal.js:27
 msgid "Appearance"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:593
+#: admin/src/pages/settings/GeneralPanel.js:594
 msgid "Customize how Mission looks on your site."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:604
+#: admin/src/pages/settings/GeneralPanel.js:605
 msgid "Primary color"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:612
+#: admin/src/pages/settings/GeneralPanel.js:613
 msgid "Used as the primary accent color throughout Mission."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:625
-#: admin/src/pages/settings/GeneralPanel.js:640
+#: admin/src/pages/settings/GeneralPanel.js:626
+#: admin/src/pages/settings/GeneralPanel.js:641
 msgid "Show Mission credit on donation forms"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:631
+#: admin/src/pages/settings/GeneralPanel.js:632
 msgid "Displays a \"Secure donation powered by Mission\" badge below donation forms that links to missionwp.com."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:661
+#: admin/src/pages/settings/GeneralPanel.js:662
+msgid "Campaign URLs"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/GeneralPanel.js:665
+msgid "Controls the web address for your campaign pages."
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/GeneralPanel.js:676
+msgid "URL slug"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/GeneralPanel.js:713
 msgid "Setup Wizard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:664
+#: admin/src/pages/settings/GeneralPanel.js:716
 msgid "Re-run the guided setup to update your organization details, reconnect Stripe, or create a campaign."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:701
+#: admin/src/pages/settings/GeneralPanel.js:753
 msgid "Run setup wizard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:709
+#: admin/src/pages/settings/GeneralPanel.js:761
 msgid "Data"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:712
+#: admin/src/pages/settings/GeneralPanel.js:764
 msgid "Control what happens to your donation data when the plugin is removed."
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:729
+#: admin/src/pages/settings/GeneralPanel.js:781
 msgid "Remove all data on uninstall"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/GeneralPanel.js:735
+#: admin/src/pages/settings/GeneralPanel.js:787
 msgid "When enabled, all donation records, donor information, campaigns, and settings will be permanently deleted if the plugin is uninstalled. This cannot be undone."
 msgstr ""
 
