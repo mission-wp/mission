@@ -112,6 +112,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	wp_clear_scheduled_hook( 'missiondp_check_recurring_payments' );
 	wp_clear_scheduled_hook( 'missiondp_campaign_lifecycle' );
 
+	// Action Scheduler actions.
+	if ( function_exists( 'as_unschedule_all_actions' ) ) {
+		as_unschedule_all_actions( 'missiondp_deliver_webhook' );
+	}
+
 	// Clear the cache to ensure stale data isn't served.
 	wp_cache_flush();
 } )();

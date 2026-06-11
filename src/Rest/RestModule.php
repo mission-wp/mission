@@ -45,6 +45,7 @@ use MissionDP\Rest\Endpoints\SubscriptionsEndpoint;
 use MissionDP\Rest\Endpoints\SystemStatusEndpoint;
 use MissionDP\Rest\Endpoints\TransactionsEndpoint;
 use MissionDP\Rest\Endpoints\CleanupEndpoint;
+use MissionDP\Rest\Endpoints\OutgoingWebhooksEndpoint;
 use MissionDP\Cleanup\CleanupService;
 use MissionDP\DonorDashboard\DonorAuthService;
 use MissionDP\Payments\PaymentIntentVerifier;
@@ -116,5 +117,6 @@ class RestModule {
 		( new ImportEndpoint( new ImportService( $export_service, new ColumnMapper( $export_service ), new RowValidator() ) ) )->register();
 		( new SystemStatusEndpoint( $settings ) )->register();
 		( new CleanupEndpoint( new CleanupService( $settings ) ) )->register();
+		( new OutgoingWebhooksEndpoint() )->register();
 	}
 }

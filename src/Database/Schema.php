@@ -331,6 +331,54 @@ class Schema {
   KEY level_category (level, category),
   KEY date_created (date_created)
 ) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Outgoing Webhooks
+			// ----------------------------------------------------------------
+			"{$prefix}outgoing_webhooks"   => "CREATE TABLE {$prefix}outgoing_webhooks (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  name varchar(200) NOT NULL DEFAULT '',
+  url varchar(2048) NOT NULL DEFAULT '',
+  secret varchar(64) NOT NULL DEFAULT '',
+  events longtext NOT NULL,
+  status varchar(20) NOT NULL DEFAULT 'active',
+  health varchar(20) NOT NULL DEFAULT 'healthy',
+  failure_count int(10) unsigned NOT NULL DEFAULT 0,
+  failing_since datetime DEFAULT NULL,
+  last_delivery_at datetime DEFAULT NULL,
+  last_response_code smallint(5) unsigned DEFAULT NULL,
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  KEY status (status),
+  KEY health (health)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Webhook Deliveries
+			// ----------------------------------------------------------------
+			"{$prefix}webhook_deliveries"  => "CREATE TABLE {$prefix}webhook_deliveries (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  webhook_id bigint(20) unsigned NOT NULL,
+  event varchar(100) NOT NULL DEFAULT '',
+  event_id varchar(50) NOT NULL DEFAULT '',
+  url varchar(2048) NOT NULL DEFAULT '',
+  request_headers longtext,
+  request_body longtext,
+  response_code smallint(5) unsigned DEFAULT NULL,
+  response_headers longtext,
+  response_body longtext,
+  duration_ms int(10) unsigned DEFAULT NULL,
+  attempt int(10) unsigned NOT NULL DEFAULT 1,
+  status varchar(20) NOT NULL DEFAULT 'pending',
+  error_message varchar(500) DEFAULT NULL,
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  KEY webhook_id (webhook_id),
+  KEY event_id (event_id),
+  KEY status (status),
+  KEY date_created (date_created)
+) {$charset_collate};",
 		];
 	}
 
