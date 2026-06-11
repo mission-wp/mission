@@ -1,14 +1,15 @@
 # Changelog
 
-## 1.3.0 (Unreleased)
+## 1.3.0 (2026-06-11)
 
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
 * New: Outgoing webhooks. Notify external services when donations, subscriptions, donors, or campaigns change, with signed payloads, automatic retries, and a delivery log (Tools > Webhooks)
 * New: Choose the URL slug used for campaign pages (Settings > General). Fresh installs automatically avoid clashing with an existing "campaigns" page
 * Enhancement: The donation form shortcode now inherits the campaign's configured form settings when campaign_id is set
-* Fix: Mission now works on SQLite-based WordPress installs (WordPress Playground, WP Studio) by removing MySQL-only SQL from campaign, subscription, reporting, and cleanup queries
+* Fix: Mission now works on SQLite-based WordPress installs (WordPress Playground, WP Studio) by removing MySQL-only SQL from campaign, subscription, reporting, cleanup, and activity log queries
 * Fix: The "delete test data" tools now also remove the meta rows belonging to deleted test transactions, donors, and subscriptions (the cleanup previously referenced the wrong meta column and silently skipped them)
 * Tweak: Renamed all developer hooks (actions and filters) from missiondp_ to mission_. If you have custom code hooking into Mission, update the hook names. Scheduled task hooks, options, and database tables are unchanged.
+* Tweak: REST API parameters that declare allowed values or numeric ranges now reject invalid input with a clear 400 error instead of silently accepting it
 
 ## 1.2.0 (2026-06-10)
 
