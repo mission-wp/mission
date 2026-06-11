@@ -2905,6 +2905,30 @@
 			],
 			"Webhooks": [
 				"Webhooks"
+			],
+			"%s created <name /> webhook": [
+				"%s creó el webhook <name />"
+			],
+			"%s deleted <name /> webhook": [
+				"%s eliminó el webhook <name />"
+			],
+			"Created <name /> webhook": [
+				"Webhook <name /> creado"
+			],
+			"Deleted <name /> webhook": [
+				"Webhook <name /> eliminado"
+			],
+			"Webhook created": [
+				"Webhook creado"
+			],
+			"Webhook deleted": [
+				"Webhook eliminado"
+			],
+			"<name /> webhook was paused automatically after repeated failures": [
+				"El webhook <name /> se pausó automáticamente tras fallos repetidos"
+			],
+			"A webhook was paused automatically after repeated failures": [
+				"Un webhook se pausó automáticamente tras fallos repetidos"
 			]
 		}
 	}
