@@ -93,6 +93,24 @@ const TABS = [
     ),
   },
   {
+    id: 'webhooks',
+    label: __( 'Webhooks', 'mission-donation-platform' ),
+    icon: (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+      </svg>
+    ),
+  },
+  {
     id: 'logs',
     label: __( 'Logs', 'mission-donation-platform' ),
     icon: (
@@ -153,24 +171,6 @@ const TABS = [
         <path d="M10 11v6" />
         <path d="M14 11v6" />
         <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-      </svg>
-    ),
-  },
-  {
-    id: 'webhooks',
-    label: __( 'Webhooks', 'mission-donation-platform' ),
-    icon: (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
       </svg>
     ),
   },
@@ -241,13 +241,13 @@ export default function Tools() {
             <ComingSoonPanel tabId={ activeTab } />
           ) }
 
+          { activeTab === 'webhooks' && <WebhooksPanel /> }
+
           { activeTab === 'logs' && <LogsPanel /> }
 
           { activeTab === 'status' && <StatusPanel /> }
 
           { activeTab === 'cleanup' && <CleanupPanel /> }
-
-          { activeTab === 'webhooks' && <WebhooksPanel /> }
         </div>
       </div>
     </div>
