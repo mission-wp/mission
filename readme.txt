@@ -188,6 +188,7 @@ This plugin connects to the following third-party services:
 == Changelog ==
 
 = 1.3.0 =
+* New: Outgoing webhooks. Send signed JSON payloads to external URLs when donations, subscriptions, donors, and campaigns change, with automatic retries, delivery logs, and health monitoring (Tools > Webhooks)
 * Enhancement: The donation form shortcode now inherits the campaign's configured form settings when campaign_id is set
 * Fix: Mission now works on SQLite-based WordPress installs (WordPress Playground, WP Studio) by removing MySQL-only SQL from campaign, subscription, reporting, and cleanup queries
 * Fix: The "delete test data" tools now also remove the meta rows belonging to deleted test transactions, donors, and subscriptions (the cleanup previously referenced the wrong meta column and silently skipped them)

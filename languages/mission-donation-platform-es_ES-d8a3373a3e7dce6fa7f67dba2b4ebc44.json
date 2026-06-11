@@ -2743,6 +2743,168 @@
 			],
 			"Import more data": [
 				"Importar más datos"
+			],
+			"Clear webhook delivery log": [
+				"Borrar el registro de entregas de webhooks"
+			],
+			"Remove all outgoing webhook delivery records.": [
+				"Elimina todos los registros de entregas de webhooks salientes."
+			],
+			"Remove all outgoing webhook delivery records. %s currently stored.": [
+				"Elimina todos los registros de entregas de webhooks salientes. %s almacenados actualmente."
+			],
+			"record": [
+				"registro"
+			],
+			"records": [
+				"registros"
+			],
+			"This will permanently delete all %s webhook delivery records.": [
+				"Esto eliminará permanentemente los %s registros de entregas de webhooks."
+			],
+			"Webhook delivery log cleared.": [
+				"Registro de entregas de webhooks borrado."
+			],
+			"Error": [
+				"Error"
+			],
+			"Error:": [
+				"Error:"
+			],
+			"Request": [
+				"Solicitud"
+			],
+			"Headers": [
+				"Cabeceras"
+			],
+			"Body": [
+				"Cuerpo"
+			],
+			"Response": [
+				"Respuesta"
+			],
+			"Back to Webhooks": [
+				"Volver a webhooks"
+			],
+			"Delivery Log": [
+				"Registro de entregas"
+			],
+			"delivery": [
+				"entrega"
+			],
+			"deliveries": [
+				"entregas"
+			],
+			"No deliveries recorded yet.": [
+				"Aún no se han registrado entregas."
+			],
+			"Event": [
+				"Evento"
+			],
+			"Duration": [
+				"Duración"
+			],
+			"Attempt": [
+				"Intento"
+			],
+			"Load More": [
+				"Cargar más"
+			],
+			"Edit Webhook": [
+				"Editar webhook"
+			],
+			"Add Webhook": [
+				"Añadir webhook"
+			],
+			"Endpoint URL": [
+				"URL del endpoint"
+			],
+			"The URL that will receive POST requests when events occur.": [
+				"La URL que recibirá solicitudes POST cuando ocurran eventos."
+			],
+			"e.g. Zapier integration, CRM sync": [
+				"p. ej. Integración con Zapier, sincronización con CRM"
+			],
+			"Events": [
+				"Eventos"
+			],
+			"Search events…": [
+				"Buscar eventos…"
+			],
+			"No matching events": [
+				"No hay eventos coincidentes"
+			],
+			"Deselect All": [
+				"Deseleccionar todo"
+			],
+			"Select All": [
+				"Seleccionar todo"
+			],
+			"Choose which events trigger this webhook.": [
+				"Elige qué eventos activan este webhook."
+			],
+			"Signing Secret": [
+				"Secreto de firma"
+			],
+			"Copy": [
+				"Copiar"
+			],
+			"Regenerate": [
+				"Regenerar"
+			],
+			"Used to verify webhook payloads. Regenerating will invalidate the current secret.": [
+				"Se usa para verificar los contenidos del webhook. Regenerarlo invalidará el secreto actual."
+			],
+			"Save Webhook": [
+				"Guardar webhook"
+			],
+			"webhook": [
+				"webhook"
+			],
+			"webhooks": [
+				"webhooks"
+			],
+			"Endpoint": [
+				"Endpoint"
+			],
+			"Delete Webhook": [
+				"Eliminar webhook"
+			],
+			"Delete the webhook": [
+				"Eliminar el webhook"
+			],
+			"All events": [
+				"Todos los eventos"
+			],
+			"event": [
+				"evento"
+			],
+			"events": [
+				"eventos"
+			],
+			"Click to reveal full URL": [
+				"Haz clic para mostrar la URL completa"
+			],
+			"Secret": [
+				"Secreto"
+			],
+			"Send Test Ping": [
+				"Enviar ping de prueba"
+			],
+			"Ping successful": [
+				"Ping correcto"
+			],
+			"Ping failed": [
+				"Ping fallido"
+			],
+			"No webhooks configured yet": [
+				"Aún no hay webhooks configurados"
+			],
+			"Webhooks send real-time notifications to external services when events happen in Mission, like a new donation or a canceled subscription.": [
+				"Los webhooks envían avisos en tiempo real a servicios externos cuando ocurren eventos en Mission, como una nueva donación o una suscripción cancelada."
+			],
+			"Webhooks": [
+				"Webhooks"
 			]
 		}
 	}
