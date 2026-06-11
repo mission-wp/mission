@@ -169,6 +169,7 @@ class AdminModule {
 				'restUrl'                   => rest_url( 'mission-donation-platform/v1/' ),
 				'restNonce'                 => wp_create_nonce( 'wp_rest' ),
 				'adminUrl'                  => admin_url(),
+				'pluginUrl'                 => MISSIONDP_URL,
 				'page'                      => $screen->id,
 				'version'                   => MISSIONDP_VERSION,
 				'currency'                  => $settings['currency'] ?? 'USD',

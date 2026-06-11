@@ -6,6 +6,7 @@ import ComingSoonPanel from './tools/ComingSoonPanel';
 import ExportPanel from './tools/ExportPanel';
 import ImportPanel from './tools/ImportPanel';
 import LogsPanel from './tools/LogsPanel';
+import MigrationPanel from './tools/MigrationPanel';
 import StatusPanel from './tools/StatusPanel';
 import WebhooksPanel from './tools/WebhooksPanel';
 
@@ -237,7 +238,11 @@ export default function Tools() {
 
           { activeTab === 'import' && <ImportPanel /> }
 
-          { [ 'migration', 'features' ].includes( activeTab ) && (
+          { activeTab === 'migration' && (
+            <MigrationPanel onSwitchTab={ handleTabChange } />
+          ) }
+
+          { activeTab === 'features' && (
             <ComingSoonPanel tabId={ activeTab } />
           ) }
 
