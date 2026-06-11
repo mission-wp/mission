@@ -653,6 +653,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$data = json_decode( $entry->data, true );
 		$this->assertSame( 'Feed test hook', $data['name'] );
 		$this->assertSame( 'https://example.com/feed-hook', $data['url'] );
+		$this->assertSame( wp_get_current_user()->display_name, $data['actor_name'] );
 	}
 
 	/**
@@ -675,6 +676,10 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $entries );
 		$this->assertSame( 'webhook', $entries[0]->object_type );
 		$this->assertSame( $id, $entries[0]->object_id );
+
+		$data = json_decode( $entries[0]->data, true );
+		$this->assertSame( 'Doomed hook', $data['name'] );
+		$this->assertSame( wp_get_current_user()->display_name, $data['actor_name'] );
 	}
 
 	/**

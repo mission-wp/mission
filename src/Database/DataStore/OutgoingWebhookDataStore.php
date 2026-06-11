@@ -118,6 +118,9 @@ class OutgoingWebhookDataStore implements DataStoreInterface {
 	public function delete( int $id ): bool {
 		global $wpdb;
 
+		// Read first so listeners still get the webhook's details.
+		$webhook = $this->read( $id );
+
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
 		if ( false !== $result ) {
@@ -127,9 +130,10 @@ class OutgoingWebhookDataStore implements DataStoreInterface {
 			/**
 			 * Fires after an outgoing webhook is deleted.
 			 *
-			 * @param int $id The deleted webhook ID.
+			 * @param int                  $id      The deleted webhook ID.
+			 * @param OutgoingWebhook|null $webhook The webhook as it was before deletion.
 			 */
-			do_action( 'mission_outgoing_webhook_deleted', $id );
+			do_action( 'mission_outgoing_webhook_deleted', $id, $webhook );
 		}
 
 		return false !== $result;

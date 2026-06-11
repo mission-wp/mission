@@ -127,8 +127,19 @@ class ActivityFeedModule {
 
 		// Outgoing webhooks.
 		add_action( 'mission_outgoing_webhook_created', [ $this, 'on_outgoing_webhook_created' ] );
-		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ] );
+		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ], 10, 2 );
 		add_action( 'mission_outgoing_webhook_auto_paused', [ $this, 'on_outgoing_webhook_auto_paused' ] );
+	}
+
+	/**
+	 * Get the current user's display name for activity log data.
+	 *
+	 * @return string Empty string when there is no logged-in user.
+	 */
+	private function get_actor_name(): string {
+		$user = get_userdata( get_current_user_id() );
+
+		return $user ? ( $user->display_name ?: $user->user_login ) : '';
 	}
 
 	/**
@@ -144,8 +155,9 @@ class ActivityFeedModule {
 			'webhook',
 			$webhook->id,
 			[
-				'name' => $webhook->name,
-				'url'  => $webhook->url,
+				'name'       => $webhook->name,
+				'url'        => $webhook->url,
+				'actor_name' => $this->get_actor_name(),
 			],
 			category: 'webhook',
 		);
@@ -154,16 +166,21 @@ class ActivityFeedModule {
 	/**
 	 * Log when an outgoing webhook is deleted.
 	 *
-	 * @param int $webhook_id Deleted webhook ID.
+	 * @param int         $webhook_id Deleted webhook ID.
+	 * @param object|null $webhook    The webhook as it was before deletion.
 	 *
 	 * @return void
 	 */
-	public function on_outgoing_webhook_deleted( int $webhook_id ): void {
+	public function on_outgoing_webhook_deleted( int $webhook_id, ?object $webhook = null ): void {
 		$this->log(
 			'outgoing_webhook_deleted',
 			'webhook',
 			$webhook_id,
-			[],
+			[
+				'name'       => $webhook->name ?? '',
+				'url'        => $webhook->url ?? '',
+				'actor_name' => $this->get_actor_name(),
+			],
 			category: 'webhook',
 		);
 	}

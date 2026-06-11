@@ -220,6 +220,28 @@ export function buildLogMessage( entry ) {
         : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
     }
 
+    case 'outgoing_webhook_created':
+    case 'outgoing_webhook_deleted': {
+      const verb = event === 'outgoing_webhook_created' ? 'created' : 'deleted';
+      const actor = data.actor_name;
+      const name = data.name;
+
+      if ( ! name ) {
+        return `Webhook ${ verb }`;
+      }
+      const msg = `${ verb } <strong>${ name }</strong> webhook`;
+      return actor
+        ? `${ actor } ${ msg }`
+        : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
+    }
+
+    case 'outgoing_webhook_auto_paused': {
+      const name = data.name;
+      return name
+        ? `<strong>${ name }</strong> webhook paused automatically after repeated failures`
+        : 'A webhook was paused automatically after repeated failures';
+    }
+
     default:
       return event
         .replace( /_/g, ' ' )

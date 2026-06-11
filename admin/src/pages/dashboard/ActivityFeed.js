@@ -186,6 +186,21 @@ const ActivityIcon = () => (
   </svg>
 );
 
+const WebhookIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  </svg>
+);
+
 /**
  * Map of backend event names to display metadata.
  */
@@ -222,6 +237,12 @@ const eventMetaMap = {
   plugin_installed: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_activated: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_deactivated: { icon: <MissionLogoIcon />, className: 'is-system' },
+  outgoing_webhook_created: { icon: <WebhookIcon />, className: 'is-webhook' },
+  outgoing_webhook_deleted: { icon: <WebhookIcon />, className: 'is-webhook' },
+  outgoing_webhook_auto_paused: {
+    icon: <WebhookIcon />,
+    className: 'is-failed',
+  },
 };
 
 const defaultMeta = { icon: <MissionLogoIcon />, className: 'is-system' };
@@ -703,6 +724,59 @@ function getEventText( event ) {
       </>
     ) : (
       body
+    );
+  }
+
+  if (
+    eventType === 'outgoing_webhook_created' ||
+    eventType === 'outgoing_webhook_deleted'
+  ) {
+    const actor = data.actor_name;
+    const name = data.name;
+    const created = eventType === 'outgoing_webhook_created';
+
+    if ( actor && name ) {
+      const text = created
+        ? sprintf(
+            // translators: %s: admin display name.
+            __( '%s created <name /> webhook', 'mission-donation-platform' ),
+            actor
+          )
+        : sprintf(
+            // translators: %s: admin display name.
+            __( '%s deleted <name /> webhook', 'mission-donation-platform' ),
+            actor
+          );
+      return createInterpolateElement( text, {
+        name: <strong>{ name }</strong>,
+      } );
+    }
+    if ( name ) {
+      return createInterpolateElement(
+        created
+          ? __( 'Created <name /> webhook', 'mission-donation-platform' )
+          : __( 'Deleted <name /> webhook', 'mission-donation-platform' ),
+        { name: <strong>{ name }</strong> }
+      );
+    }
+    return created
+      ? __( 'Webhook created', 'mission-donation-platform' )
+      : __( 'Webhook deleted', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'outgoing_webhook_auto_paused' ) {
+    if ( data.name ) {
+      return createInterpolateElement(
+        __(
+          '<name /> webhook was paused automatically after repeated failures',
+          'mission-donation-platform'
+        ),
+        { name: <strong>{ data.name }</strong> }
+      );
+    }
+    return __(
+      'A webhook was paused automatically after repeated failures',
+      'mission-donation-platform'
     );
   }
 
