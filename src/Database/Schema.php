@@ -311,6 +311,36 @@ class Schema {
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
+			// Migration Phases
+			// ----------------------------------------------------------------
+			"{$prefix}migration_phases"    => "CREATE TABLE {$prefix}migration_phases (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  job_id varchar(64) NOT NULL DEFAULT '',
+  user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  source varchar(50) NOT NULL DEFAULT '',
+  job_type varchar(20) NOT NULL DEFAULT 'migrate',
+  entity varchar(20) NOT NULL DEFAULT '',
+  phase_order int(10) unsigned NOT NULL DEFAULT 0,
+  status varchar(20) NOT NULL DEFAULT 'queued',
+  options longtext,
+  total_items int(10) unsigned NOT NULL DEFAULT 0,
+  processed_items int(10) unsigned NOT NULL DEFAULT 0,
+  imported int(10) unsigned NOT NULL DEFAULT 0,
+  skipped int(10) unsigned NOT NULL DEFAULT 0,
+  errors int(10) unsigned NOT NULL DEFAULT 0,
+  error_details longtext,
+  last_error text,
+  last_source_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  started_at datetime DEFAULT NULL,
+  completed_at datetime DEFAULT NULL,
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  KEY job_id (job_id),
+  KEY status (status),
+  KEY job_phase (job_id, phase_order)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
 			// Activity Log
 			// ----------------------------------------------------------------
 			"{$prefix}activity_log"        => "CREATE TABLE {$prefix}activity_log (

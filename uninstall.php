@@ -42,6 +42,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		'missiondp_settings',
 		'missiondp_dashboard_page_id',
 		'missiondp_installed_at',
+		'missiondp_migration_lock',
 	];
 
 	foreach ( $options as $option ) {
@@ -114,6 +115,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 	// Action Scheduler actions.
 	if ( function_exists( 'as_unschedule_all_actions' ) ) {
+		as_unschedule_all_actions( 'missiondp_import_tick' );
+		as_unschedule_all_actions( 'missiondp_migration_tick' );
 		as_unschedule_all_actions( 'missiondp_deliver_webhook' );
 	}
 

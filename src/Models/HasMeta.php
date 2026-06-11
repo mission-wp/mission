@@ -71,4 +71,28 @@ trait HasMeta {
 	public function get_all_meta(): array {
 		return static::store()->get_all_meta( $this->id );
 	}
+
+	/**
+	 * Map meta values to object IDs in one query.
+	 *
+	 * @param string            $key    Meta key to match.
+	 * @param array<int|string> $values Values to look up.
+	 * @return array<string, int> Map of meta_value => object ID.
+	 */
+	public static function find_ids_by_meta( string $key, array $values ): array {
+		return static::store()->find_object_ids_by_meta( $key, $values );
+	}
+
+	/**
+	 * Get object IDs carrying a meta key/value pair, cursor-paginated.
+	 *
+	 * @param string $key      Meta key to match.
+	 * @param string $value    Meta value to match.
+	 * @param int    $limit    Max IDs to return.
+	 * @param int    $after_id Only return object IDs greater than this.
+	 * @return int[] Ascending object IDs.
+	 */
+	public static function find_ids_with_meta( string $key, string $value, int $limit = 100, int $after_id = 0 ): array {
+		return static::store()->find_object_ids_with_meta( $key, $value, $limit, $after_id );
+	}
 }

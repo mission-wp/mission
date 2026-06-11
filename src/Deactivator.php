@@ -47,6 +47,7 @@ class Deactivator {
 	private static function clear_action_scheduler_actions(): void {
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( 'missiondp_import_tick' );
+			as_unschedule_all_actions( 'missiondp_migration_tick' );
 			as_unschedule_all_actions( 'missiondp_deliver_webhook' );
 		}
 	}
