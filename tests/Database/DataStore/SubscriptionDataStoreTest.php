@@ -162,7 +162,7 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 		$specific_fired = false;
 
 		add_action(
-			'missiondp_subscription_status_transition',
+			'mission_subscription_status_transition',
 			function ( $s, $old, $new ) use ( &$generic_fired ) {
 				$generic_fired = true;
 				$this->assertSame( 'pending', $old );
@@ -173,7 +173,7 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 		);
 
 		add_action(
-			'missiondp_subscription_status_pending_to_active',
+			'mission_subscription_status_pending_to_active',
 			function () use ( &$specific_fired ) {
 				$specific_fired = true;
 			}

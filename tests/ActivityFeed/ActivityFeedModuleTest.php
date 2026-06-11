@@ -11,6 +11,7 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
+use MissionDP\Models\OutgoingWebhook;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Plugin;
@@ -91,6 +92,8 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_outgoing_webhooks" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_webhook_deliveries" );
 		// phpcs:enable
 
 		delete_option( SettingsService::OPTION_NAME );
@@ -343,7 +346,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$subscription->save();
 
 		// Fire the hook directly (update_amount calls an external API).
-		do_action( 'missiondp_subscription_amount_changed', $subscription, 2500, 5000 );
+		do_action( 'mission_subscription_amount_changed', $subscription, 2500, 5000 );
 
 		$entries = ActivityLog::query( [ 'event' => 'subscription_amount_increased' ] );
 		$this->assertCount( 1, $entries );
@@ -372,7 +375,7 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		] );
 		$subscription->save();
 
-		do_action( 'missiondp_subscription_amount_changed', $subscription, 5000, 2500 );
+		do_action( 'mission_subscription_amount_changed', $subscription, 5000, 2500 );
 
 		$entries = ActivityLog::query( [ 'event' => 'subscription_amount_decreased' ] );
 		$this->assertCount( 1, $entries );
@@ -467,8 +470,8 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		// phpcs:enable
 
 		$filter = fn() => 40;
-		add_filter( 'missiondp_activity_log_retention_days', $filter );
-		$this->hooks_to_remove[] = [ 'missiondp_activity_log_retention_days', $filter, 10 ];
+		add_filter( 'mission_activity_log_retention_days', $filter );
+		$this->hooks_to_remove[] = [ 'mission_activity_log_retention_days', $filter, 10 ];
 
 		Plugin::instance()->get_activity_feed_module()->run_prune();
 
@@ -624,5 +627,88 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 
 		$entries = ActivityLog::query( [ 'event' => 'plugin_updated' ] );
 		$this->assertCount( 0, $entries );
+	}
+
+	/**
+	 * Test outgoing webhook creation is logged with the webhook category.
+	 */
+	public function test_logs_event_on_outgoing_webhook_created(): void {
+		$webhook = new OutgoingWebhook(
+			[
+				'name'   => 'Feed test hook',
+				'url'    => 'https://example.com/feed-hook',
+				'events' => [ '*' ],
+			]
+		);
+		$webhook->save();
+
+		$entries = ActivityLog::query( [ 'event' => 'outgoing_webhook_created' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'webhook', $entry->object_type );
+		$this->assertSame( $webhook->id, $entry->object_id );
+		$this->assertSame( 'webhook', $entry->category );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( 'Feed test hook', $data['name'] );
+		$this->assertSame( 'https://example.com/feed-hook', $data['url'] );
+		$this->assertSame( wp_get_current_user()->display_name, $data['actor_name'] );
+	}
+
+	/**
+	 * Test outgoing webhook deletion is logged.
+	 */
+	public function test_logs_event_on_outgoing_webhook_deleted(): void {
+		$webhook = new OutgoingWebhook(
+			[
+				'name'   => 'Doomed hook',
+				'url'    => 'https://example.com/doomed',
+				'events' => [ '*' ],
+			]
+		);
+		$webhook->save();
+		$id = $webhook->id;
+
+		$webhook->delete();
+
+		$entries = ActivityLog::query( [ 'event' => 'outgoing_webhook_deleted' ] );
+		$this->assertCount( 1, $entries );
+		$this->assertSame( 'webhook', $entries[0]->object_type );
+		$this->assertSame( $id, $entries[0]->object_id );
+
+		$data = json_decode( $entries[0]->data, true );
+		$this->assertSame( 'Doomed hook', $data['name'] );
+		$this->assertSame( wp_get_current_user()->display_name, $data['actor_name'] );
+	}
+
+	/**
+	 * Test webhook auto-pause is logged as a warning.
+	 */
+	public function test_logs_warning_on_outgoing_webhook_auto_paused(): void {
+		$webhook = new OutgoingWebhook(
+			[
+				'name'          => 'Failing hook',
+				'url'           => 'https://example.com/failing',
+				'events'        => [ '*' ],
+				'failure_count' => 20,
+				'failing_since' => gmdate( 'Y-m-d H:i:s', time() - 8 * DAY_IN_SECONDS ),
+			]
+		);
+		$webhook->save();
+
+		do_action( 'mission_outgoing_webhook_auto_paused', $webhook );
+
+		$entries = ActivityLog::query( [ 'event' => 'outgoing_webhook_auto_paused' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'webhook', $entry->object_type );
+		$this->assertSame( $webhook->id, $entry->object_id );
+		$this->assertSame( 'warning', $entry->level );
+		$this->assertSame( 'webhook', $entry->category );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( 20, $data['failure_count'] );
 	}
 }

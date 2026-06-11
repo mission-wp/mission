@@ -592,7 +592,7 @@ class CampaignsEndpoint {
 			 *
 			 * @param int $campaign_id Campaign ID.
 			 */
-			do_action( 'missiondp_campaign_goal_updated', $campaign->id );
+			do_action( 'mission_campaign_goal_updated', $campaign->id );
 		}
 
 		/**
@@ -601,7 +601,7 @@ class CampaignsEndpoint {
 		 * @param int      $campaign_id Campaign ID.
 		 * @param Campaign $campaign    Campaign model.
 		 */
-		do_action( 'missiondp_campaign_updated', $campaign->id, $campaign );
+		do_action( 'mission_campaign_updated', $campaign->id, $campaign );
 
 		return new WP_REST_Response( $this->prepare_single_campaign( $campaign ), 200 );
 	}
@@ -632,6 +632,7 @@ class CampaignsEndpoint {
 				'default'           => 'amount',
 				'enum'              => [ 'amount', 'donations', 'donors' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'date_start'  => [
 				'type' => [ 'string', 'null' ],
@@ -673,6 +674,7 @@ class CampaignsEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'amount', 'donations', 'donors' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'date_start'                  => [
 				'type' => [ 'string', 'null' ],
@@ -728,6 +730,7 @@ class CampaignsEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page' => [
 				'type'              => 'integer',
@@ -735,18 +738,21 @@ class CampaignsEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'orderby'  => [
 				'type'              => 'string',
 				'default'           => 'date',
 				'enum'              => [ 'date', 'title', 'date_start', 'date_end', 'goal_amount', 'total_raised', 'transaction_count' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'order'    => [
 				'type'              => 'string',
 				'default'           => 'DESC',
 				'enum'              => [ 'ASC', 'DESC' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'search'   => [
 				'type'              => 'string',
@@ -756,6 +762,7 @@ class CampaignsEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'active', 'scheduled', 'ended' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}

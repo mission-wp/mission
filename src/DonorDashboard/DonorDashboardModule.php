@@ -28,12 +28,12 @@ class DonorDashboardModule {
 		add_action( 'admin_init', [ $this, 'redirect_donor_from_admin' ] );
 		add_filter( 'login_redirect', [ $this, 'redirect_donor_after_login' ], 10, 3 );
 		add_action( 'delete_user', [ $this, 'unlink_donor_on_user_delete' ] );
-		add_action( 'missiondp_donor_profile_updated', [ $this, 'sync_donor_email_to_wp_user' ] );
+		add_action( 'mission_donor_profile_updated', [ $this, 'sync_donor_email_to_wp_user' ] );
 		add_action( 'profile_update', [ $this, 'sync_wp_user_email_to_donor' ], 10, 2 );
 		add_filter( 'retrieve_password_message', [ $this, 'filter_password_reset_url' ], 10, 4 );
 		add_filter( 'show_admin_bar', [ $this, 'hide_admin_bar_for_donors' ] );
 		add_filter( 'display_post_states', [ $this, 'add_dashboard_post_state' ], 10, 2 );
-		add_action( 'missiondp_settings_updated', [ $this, 'handle_portal_toggle' ], 10, 3 );
+		add_action( 'mission_settings_updated', [ $this, 'handle_portal_toggle' ], 10, 3 );
 	}
 
 	/**
@@ -262,7 +262,7 @@ class DonorDashboardModule {
 	/**
 	 * Create or delete the dashboard page when the portal toggle changes.
 	 *
-	 * Listens to the `missiondp_settings_updated` action fired by SettingsService.
+	 * Listens to the `mission_settings_updated` action fired by SettingsService.
 	 *
 	 * @param array<string, mixed> $updated  Full settings after update.
 	 * @param array<string, mixed> $values   Only the changed values.

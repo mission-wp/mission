@@ -163,6 +163,7 @@ class ActivityFeedEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page'    => [
 				'type'              => 'integer',
@@ -170,6 +171,7 @@ class ActivityFeedEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'object_type' => [
 				'type'              => 'string',
@@ -191,11 +193,13 @@ class ActivityFeedEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'info', 'warning', 'error' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'category'    => [
 				'type'              => 'string',
 				'enum'              => [ 'payment', 'webhook', 'email', 'subscription', 'system' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'search'      => [
 				'type'              => 'string',

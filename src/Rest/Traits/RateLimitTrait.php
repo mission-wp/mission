@@ -32,7 +32,7 @@ trait RateLimitTrait {
 		 * @param int    $limit  Maximum attempts.
 		 * @param string $action Action identifier.
 		 */
-		$limit = (int) apply_filters( 'missiondp_rate_limit', $limit, $action );
+		$limit = (int) apply_filters( 'mission_rate_limit', $limit, $action );
 
 		/**
 		 * Filter the time window (in seconds) for a rate-limited action.
@@ -40,7 +40,7 @@ trait RateLimitTrait {
 		 * @param int    $window Time window in seconds.
 		 * @param string $action Action identifier.
 		 */
-		$window = (int) apply_filters( 'missiondp_rate_window', $window, $action );
+		$window = (int) apply_filters( 'mission_rate_window', $window, $action );
 
 		$ip  = $this->get_client_ip();
 		$key = 'missiondp_rl_' . $action . '_' . md5( $ip );

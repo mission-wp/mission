@@ -48,6 +48,22 @@ function importNoun( type, count ) {
   return count === 1 ? labels[ 0 ] : labels[ 1 ];
 }
 
+const migrationSourceNames = {
+  givewp: 'GiveWP',
+  charitable: 'Charitable',
+  donorbox: 'Donorbox',
+};
+
+/**
+ * Display name for a migration source slug.
+ *
+ * @param {string} source Source slug (e.g. 'givewp').
+ * @return {string} e.g. "GiveWP".
+ */
+function migrationSourceName( source ) {
+  return migrationSourceNames[ source ] || source || 'another plugin';
+}
+
 /**
  * Build a human-readable message string for a log entry.
  *
@@ -218,6 +234,64 @@ export function buildLogMessage( entry ) {
       return actor
         ? `${ actor } ${ msg }`
         : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
+    }
+
+    case 'data_migrated': {
+      const counts = data.counts || {};
+      const total = Object.values( counts ).reduce(
+        ( sum, count ) => sum + ( Number( count ) || 0 ),
+        0
+      );
+      const source = migrationSourceName( data.source );
+
+      if ( total === 0 ) {
+        return `Migration from ${ source } finished with no new records`;
+      }
+
+      const msg = `migrated <strong>${ total.toLocaleString() }</strong> records from ${ source }`;
+      const actor = data.actor_name;
+      return actor
+        ? `${ actor } ${ msg }`
+        : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
+    }
+
+    case 'migration_rolled_back': {
+      const source = migrationSourceName( data.source );
+      const actor = data.actor_name;
+      const msg = `removed the data migrated from ${ source }`;
+      return actor
+        ? `${ actor } ${ msg }`
+        : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
+    }
+
+    case 'migration_failed': {
+      const source = migrationSourceName( data.source );
+      const reason = data.reason;
+      return reason
+        ? `Migration from ${ source } failed: ${ reason }`
+        : `Migration from ${ source } failed`;
+    }
+
+    case 'outgoing_webhook_created':
+    case 'outgoing_webhook_deleted': {
+      const verb = event === 'outgoing_webhook_created' ? 'created' : 'deleted';
+      const actor = data.actor_name;
+      const name = data.name;
+
+      if ( ! name ) {
+        return `Webhook ${ verb }`;
+      }
+      const msg = `${ verb } <strong>${ name }</strong> webhook`;
+      return actor
+        ? `${ actor } ${ msg }`
+        : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
+    }
+
+    case 'outgoing_webhook_auto_paused': {
+      const name = data.name;
+      return name
+        ? `<strong>${ name }</strong> webhook paused automatically after repeated failures`
+        : 'A webhook was paused automatically after repeated failures';
     }
 
     default:

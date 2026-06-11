@@ -227,7 +227,7 @@ class StripeWebhookEndpoint {
 		 * @param array<string, mixed> $data       Event data.
 		 * @param array<string, mixed> $payload    Full event payload.
 		 */
-		do_action( 'missiondp_webhook_event', $event_type, $data, $payload );
+		do_action( 'mission_webhook_event', $event_type, $data, $payload );
 
 		match ( $event_type ) {
 			'account.updated'                => ( new AccountUpdatedHandler() )->handle( $data, $account_id ),
@@ -250,7 +250,7 @@ class StripeWebhookEndpoint {
 		 * @param array<string, mixed> $data       Event data.
 		 * @param array<string, mixed> $payload    Full event payload.
 		 */
-		do_action( 'missiondp_webhook_event_processed', $event_type, $data, $payload );
+		do_action( 'mission_webhook_event_processed', $event_type, $data, $payload );
 	}
 
 	/**
@@ -320,6 +320,6 @@ class StripeWebhookEndpoint {
 		 *
 		 * @param array<string, mixed> $data Event data.
 		 */
-		do_action( "missiondp_webhook_{$event_type}", $data );
+		do_action( "mission_webhook_{$event_type}", $data );
 	}
 }

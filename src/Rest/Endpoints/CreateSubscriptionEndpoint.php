@@ -314,7 +314,7 @@ class CreateSubscriptionEndpoint {
 			'' !== $requested_account_id
 			&& ( $resolved_account['account_id'] ?? '' ) !== $requested_account_id
 		) {
-			do_action( 'missiondp_stripe_account_fallback', $requested_account_id, $resolved_account['account_id'] ?? '' );
+			do_action( 'mission_stripe_account_fallback', $requested_account_id, $resolved_account['account_id'] ?? '' );
 		}
 
 		$donor_name = trim(
@@ -617,6 +617,6 @@ class CreateSubscriptionEndpoint {
 		 * @param string $currency         Lowercase ISO 4217 currency code.
 		 * @param string $frequency        Billing frequency.
 		 */
-		return apply_filters( 'missiondp_subscription_description', $description, $donation_amount, $fee_amount, $tip_amount, $fee_mode, $currency, $frequency );
+		return apply_filters( 'mission_subscription_description', $description, $donation_amount, $fee_amount, $tip_amount, $fee_mode, $currency, $frequency );
 	}
 }

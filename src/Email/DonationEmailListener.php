@@ -34,11 +34,11 @@ class DonationEmailListener {
 	public function init( EmailModule $email ): void {
 		$this->email = $email;
 
-		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
-		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
-		add_action( 'missiondp_note_created', [ $this, 'on_donor_note_created' ] );
-		add_action( 'missiondp_tribute_created', [ $this, 'on_tribute_saved' ] );
-		add_action( 'missiondp_tribute_updated', [ $this, 'on_tribute_saved' ] );
+		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
+		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'mission_note_created', [ $this, 'on_donor_note_created' ] );
+		add_action( 'mission_tribute_created', [ $this, 'on_tribute_saved' ] );
+		add_action( 'mission_tribute_updated', [ $this, 'on_tribute_saved' ] );
 	}
 
 	/**

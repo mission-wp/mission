@@ -202,7 +202,7 @@ class AccountUpdatedHandlerTest extends WP_UnitTestCase {
 
 		$fired = false;
 		$this->add_action_with_cleanup(
-			'missiondp_stripe_charges_enabled',
+			'mission_stripe_charges_enabled',
 			static function () use ( &$fired ) {
 				$fired = true;
 			}
@@ -227,7 +227,7 @@ class AccountUpdatedHandlerTest extends WP_UnitTestCase {
 
 		$received = null;
 		$this->add_action_with_cleanup(
-			'missiondp_stripe_charges_enabled',
+			'mission_stripe_charges_enabled',
 			static function ( $account_id ) use ( &$received ) {
 				$received = $account_id;
 			}

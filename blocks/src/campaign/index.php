@@ -85,7 +85,7 @@ if ( $show_tag ) {
 	 *
 	 * @param int $days Threshold in days. Default 30.
 	 */
-	$ending_soon_days = (int) apply_filters( 'missiondp_campaign_card_ending_soon_days', 30 );
+	$ending_soon_days = (int) apply_filters( 'mission_campaign_card_ending_soon_days', 30 );
 
 	if ( $is_ended || ( $has_end_date && 0 === $days_remaining ) ) {
 		$tag_text  = __( 'Ended', 'mission-donation-platform' );
@@ -240,5 +240,5 @@ $output = ob_get_clean();
  * @param Campaign $campaign   Campaign model.
  * @param array    $attributes Block attributes.
  */
-echo wp_kses( apply_filters( 'missiondp_campaign_card_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+echo wp_kses( apply_filters( 'mission_campaign_card_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 } )( $attributes, $content, $block );

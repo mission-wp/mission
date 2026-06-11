@@ -51,7 +51,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 		 *
 		 * @param ActivityLog $model The activity log entry.
 		 */
-		do_action( 'missiondp_activity_log_created', $model );
+		do_action( 'mission_activity_log_created', $model );
 
 		return $model->id;
 	}
@@ -311,12 +311,13 @@ class ActivityLogDataStore implements DataStoreInterface {
 	public function prune( int $days ): int {
 		global $wpdb;
 
+		$cutoff = gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS );
+
 		$wpdb->query(
 			$wpdb->prepare(
-				'DELETE FROM %i WHERE date_created < DATE_SUB(%s, INTERVAL %d DAY)',
+				'DELETE FROM %i WHERE date_created < %s',
 				$this->get_table_name(),
-				current_time( 'mysql', true ),
-				$days
+				$cutoff
 			)
 		);
 

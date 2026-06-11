@@ -6,7 +6,9 @@ import ComingSoonPanel from './tools/ComingSoonPanel';
 import ExportPanel from './tools/ExportPanel';
 import ImportPanel from './tools/ImportPanel';
 import LogsPanel from './tools/LogsPanel';
+import MigrationPanel from './tools/MigrationPanel';
 import StatusPanel from './tools/StatusPanel';
+import WebhooksPanel from './tools/WebhooksPanel';
 
 const TABS = [
   {
@@ -88,6 +90,24 @@ const TABS = [
         <rect x="14" y="3" width="7" height="7" rx="1" />
         <rect x="3" y="14" width="7" height="7" rx="1" />
         <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    id: 'webhooks',
+    label: __( 'Webhooks', 'mission-donation-platform' ),
+    icon: (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
       </svg>
     ),
   },
@@ -218,9 +238,15 @@ export default function Tools() {
 
           { activeTab === 'import' && <ImportPanel /> }
 
-          { [ 'migration', 'features' ].includes( activeTab ) && (
+          { activeTab === 'migration' && (
+            <MigrationPanel onSwitchTab={ handleTabChange } />
+          ) }
+
+          { activeTab === 'features' && (
             <ComingSoonPanel tabId={ activeTab } />
           ) }
+
+          { activeTab === 'webhooks' && <WebhooksPanel /> }
 
           { activeTab === 'logs' && <LogsPanel /> }
 

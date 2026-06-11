@@ -22,10 +22,11 @@ class ShortcodeRenderer {
 	 * @param string               $block_name Full block name (e.g. mission-donation-platform/donation-form).
 	 * @param array<string, mixed> $raw_atts   Raw shortcode attributes.
 	 * @param array<string, mixed> $overrides  Typed block attributes merged over the coerced ones.
+	 * @param array<string, mixed> $inherited  Typed block attributes used as a base under the coerced ones.
 	 *
 	 * @return string Rendered block HTML, or an empty string if the block is not registered.
 	 */
-	public static function render( string $block_name, array $raw_atts, array $overrides = [] ): string {
+	public static function render( string $block_name, array $raw_atts, array $overrides = [], array $inherited = [] ): string {
 		$block_type = \WP_Block_Type_Registry::get_instance()->get_registered( $block_name );
 
 		if ( ! $block_type ) {
@@ -33,6 +34,7 @@ class ShortcodeRenderer {
 		}
 
 		$attributes = array_merge(
+			$inherited,
 			AttributeCoercer::coerce( $block_type->attributes ?? [], $raw_atts ),
 			$overrides
 		);
@@ -44,7 +46,7 @@ class ShortcodeRenderer {
 		 * @param string               $block_name Full block name being rendered.
 		 * @param array<string, mixed> $raw_atts   Raw shortcode attributes as supplied.
 		 */
-		$attributes = apply_filters( 'missiondp_shortcode_attributes', $attributes, $block_name, $raw_atts );
+		$attributes = apply_filters( 'mission_shortcode_attributes', $attributes, $block_name, $raw_atts );
 
 		return do_blocks(
 			serialize_block(

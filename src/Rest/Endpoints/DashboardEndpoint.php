@@ -55,6 +55,7 @@ class DashboardEndpoint {
 						'default'           => 'month',
 						'enum'              => [ 'today', 'week', 'month' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]
@@ -106,7 +107,7 @@ class DashboardEndpoint {
 		 * @param array  $data   Dashboard data.
 		 * @param string $period The requested period.
 		 */
-		$data = apply_filters( 'missiondp_dashboard_data', $data, $period );
+		$data = apply_filters( 'mission_dashboard_data', $data, $period );
 
 		return new WP_REST_Response( $data, 200 );
 	}
@@ -157,7 +158,7 @@ class DashboardEndpoint {
 		 *
 		 * @param string[] $excluded Object types to hide (e.g. 'settings', 'donor').
 		 */
-		$excluded_types = apply_filters( 'missiondp_dashboard_activity_excluded_types', [ 'settings' ] );
+		$excluded_types = apply_filters( 'mission_dashboard_activity_excluded_types', [ 'settings' ] );
 
 		/**
 		 * Filters the event names excluded from the dashboard activity feed.
@@ -165,7 +166,7 @@ class DashboardEndpoint {
 		 * @param string[] $excluded Event names to hide (e.g. 'admin_notification_sent').
 		 */
 		$excluded_events = apply_filters(
-			'missiondp_dashboard_activity_excluded_events',
+			'mission_dashboard_activity_excluded_events',
 			[
 				'admin_notification_sent',
 				'donor_send_activation_suppressed',
@@ -228,7 +229,7 @@ class DashboardEndpoint {
 		 * }
 		 */
 		$requirements = apply_filters(
-			'missiondp_review_banner_requirements',
+			'mission_review_banner_requirements',
 			[
 				'min_days'      => 7,
 				'min_donations' => 10,

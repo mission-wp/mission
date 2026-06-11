@@ -593,7 +593,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign = $this->create_campaign();
 		$fired    = false;
 
-		$this->add_tracked_action( 'missiondp_campaign_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'mission_campaign_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
@@ -614,7 +614,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign = $this->create_campaign( [ 'goal_amount' => 100000 ] );
 		$fired    = false;
 
-		$this->add_tracked_action( 'missiondp_campaign_goal_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'mission_campaign_goal_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 
@@ -635,7 +635,7 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$campaign = $this->create_campaign( [ 'goal_amount' => 100000 ] );
 		$fired    = false;
 
-		$this->add_tracked_action( 'missiondp_campaign_goal_updated', function () use ( &$fired ) {
+		$this->add_tracked_action( 'mission_campaign_goal_updated', function () use ( &$fired ) {
 			$fired = true;
 		} );
 

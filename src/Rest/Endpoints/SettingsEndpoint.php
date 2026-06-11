@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Campaigns\CampaignSlug;
 use MissionDP\Rest\RestModule;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Tip\TipCalculator;
@@ -102,9 +103,9 @@ class SettingsEndpoint {
 	 * POST handler — partial update with validation.
 	 *
 	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public function update_settings( WP_REST_Request $request ): WP_REST_Response {
+	public function update_settings( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$params   = $request->get_json_params();
 		$defaults = $this->settings->get_defaults();
 		$values   = [];
@@ -142,6 +143,15 @@ class SettingsEndpoint {
 			$values['stripe_fee_fixed'] = min( $values['stripe_fee_fixed'], TipCalculator::max_fixed_fee( $currency ) );
 		}
 
+		// Reject the whole save if the campaign slug would break an existing page.
+		if ( array_key_exists( 'campaign_url_slug', $values ) ) {
+			$error = $this->validate_campaign_slug( (string) $values['campaign_url_slug'] );
+
+			if ( $error ) {
+				return $error;
+			}
+		}
+
 		$updated = $this->settings->update( $values );
 
 		unset( $updated['stripe_site_token'], $updated['stripe_webhook_secret'] );
@@ -151,6 +161,56 @@ class SettingsEndpoint {
 		$this->inject_page_keys( $updated );
 
 		return new WP_REST_Response( $updated, 200 );
+	}
+
+	/**
+	 * Validate a sanitized campaign URL slug.
+	 *
+	 * @param string $slug Sanitized slug.
+	 * @return WP_Error|null Error to return to the client, or null if valid.
+	 */
+	private function validate_campaign_slug( string $slug ): ?WP_Error {
+		if ( '' === $slug ) {
+			return new WP_Error(
+				'missiondp_invalid_campaign_slug',
+				__( 'The campaign URL slug cannot be empty.', 'mission-donation-platform' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		if ( CampaignSlug::is_reserved( $slug ) ) {
+			return new WP_Error(
+				'missiondp_reserved_campaign_slug',
+				sprintf(
+					/* translators: %s: the slug the user entered. */
+					__( '"%s" is reserved by WordPress and can\'t be used as the campaign URL slug.', 'mission-donation-platform' ),
+					$slug
+				),
+				[ 'status' => 400 ]
+			);
+		}
+
+		// Saving the current slug again is a no-op, never a conflict.
+		if ( $slug === (string) $this->settings->get( 'campaign_url_slug', CampaignSlug::DEFAULT_SLUG ) ) {
+			return null;
+		}
+
+		$conflict = CampaignSlug::find_conflict( $slug );
+
+		if ( $conflict ) {
+			return new WP_Error(
+				'missiondp_campaign_slug_conflict',
+				sprintf(
+					/* translators: 1: the slug the user entered, 2: the title of the existing page using it. */
+					__( 'The URL slug "%1$s" is already used by "%2$s". Choose a different slug.', 'mission-donation-platform' ),
+					$slug,
+					get_the_title( $conflict )
+				),
+				[ 'status' => 409 ]
+			);
+		}
+
+		return null;
 	}
 
 	/**
@@ -168,6 +228,7 @@ class SettingsEndpoint {
 
 		return match ( $key ) {
 			'currency'            => strtoupper( sanitize_text_field( $value ) ),
+			'campaign_url_slug'   => CampaignSlug::sanitize( (string) $value ),
 			'primary_color'       => sanitize_hex_color( $value ) ?: '#2fa36b',
 			'show_powered_by',
 			'test_mode',

@@ -42,7 +42,7 @@ if ( 'all' === $status_filter ) {
  * @param array $query_args Query arguments for Campaign::query().
  * @param array $attributes Block attributes.
  */
-$query_args = apply_filters( 'missiondp_campaign_grid_query_args', $query_args, $attributes );
+$query_args = apply_filters( 'mission_campaign_grid_query_args', $query_args, $attributes );
 
 $campaigns = Campaign::query( $query_args );
 
@@ -52,7 +52,7 @@ $campaigns = Campaign::query( $query_args );
  * @param Campaign[] $campaigns  The queried campaigns.
  * @param array      $attributes Block attributes.
  */
-$campaigns = apply_filters( 'missiondp_campaign_grid_campaigns', $campaigns, $attributes );
+$campaigns = apply_filters( 'mission_campaign_grid_campaigns', $campaigns, $attributes );
 
 if ( empty( $campaigns ) ) {
 	return;
@@ -94,7 +94,7 @@ $show_donor_count = $attributes['showDonorCount'] ?? true;
 $button_text      = $attributes['buttonText'] ?? __( 'View Campaign', 'mission-donation-platform' );
 
 /** This filter is documented in blocks/src/campaign/index.php */
-$ending_soon_days = (int) apply_filters( 'missiondp_campaign_card_ending_soon_days', 30 );
+$ending_soon_days = (int) apply_filters( 'mission_campaign_card_ending_soon_days', 30 );
 
 // Build the output.
 ob_start();
@@ -255,7 +255,7 @@ ob_start();
 			 * @param array    $attributes Block attributes.
 			 */
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo wp_kses( apply_filters( 'missiondp_campaign_grid_card_output', $card_html, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+			echo wp_kses( apply_filters( 'mission_campaign_grid_card_output', $card_html, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 			?>
 		<?php endforeach; ?>
 	</div>
@@ -270,5 +270,5 @@ $output = ob_get_clean();
  * @param Campaign[] $campaigns  The campaigns.
  * @param array      $attributes Block attributes.
  */
-echo wp_kses( apply_filters( 'missiondp_campaign_grid_output', $output, $campaigns, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+echo wp_kses( apply_filters( 'mission_campaign_grid_output', $output, $campaigns, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 } )( $attributes, $content, $block );

@@ -561,6 +561,6 @@ class DashboardContextBuilder {
 		 * @param array $stats Stats array.
 		 * @param Donor $donor The current donor.
 		 */
-		return apply_filters( 'missiondp_donor_dashboard_overview_stats', $stats, $this->donor );
+		return apply_filters( 'mission_donor_dashboard_overview_stats', $stats, $this->donor );
 	}
 }

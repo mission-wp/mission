@@ -7,6 +7,8 @@
 
 namespace MissionDP\Shortcodes;
 
+use MissionDP\Models\Campaign;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -55,7 +57,7 @@ class ShortcodesModule {
 		 *
 		 * @param array<string, string> $shortcodes Shortcode tag => full block name.
 		 */
-		$shortcodes = apply_filters( 'missiondp_shortcodes', self::SHORTCODES );
+		$shortcodes = apply_filters( 'mission_shortcodes', self::SHORTCODES );
 
 		foreach ( $shortcodes as $tag => $block_name ) {
 			add_shortcode( $tag, fn( $atts ): string => $this->render( (string) $block_name, $atts ) );
@@ -73,10 +75,37 @@ class ShortcodesModule {
 	public function render( string $block_name, array|string $atts ): string {
 		$atts = is_array( $atts ) ? $atts : [];
 
-		$overrides = 'mission-donation-platform/donation-form' === $block_name
-			? DonationFormAliases::expand( $atts )
-			: [];
+		$is_donation_form = 'mission-donation-platform/donation-form' === $block_name;
 
-		return ShortcodeRenderer::render( $block_name, $atts, $overrides );
+		$overrides = $is_donation_form ? DonationFormAliases::expand( $atts ) : [];
+		$inherited = $is_donation_form ? $this->campaign_form_attributes( $atts ) : [];
+
+		return ShortcodeRenderer::render( $block_name, $atts, $overrides, $inherited );
+	}
+
+	/**
+	 * Get the form attributes saved on the referenced campaign's page.
+	 *
+	 * Unlike the block, the shortcode has no settings UI, so it inherits the
+	 * form configured on the campaign page. Attributes set on the shortcode
+	 * itself still win over inherited values.
+	 *
+	 * @param array<string, mixed> $atts Raw shortcode attributes.
+	 *
+	 * @return array<string, mixed> Block attributes to merge under the coerced ones.
+	 */
+	private function campaign_form_attributes( array $atts ): array {
+		$campaign_id = (int) ( $atts['campaign_id'] ?? $atts['campaignid'] ?? 0 );
+
+		if ( ! $campaign_id ) {
+			return [];
+		}
+
+		$attributes = Campaign::find( $campaign_id )?->get_donation_form_attributes() ?? [];
+
+		// Identity attributes describe the placement, not the form's configuration.
+		unset( $attributes['campaignId'], $attributes['formId'] );
+
+		return $attributes;
 	}
 }

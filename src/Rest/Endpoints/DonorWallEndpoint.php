@@ -73,12 +73,14 @@ class DonorWallEndpoint {
 						'default'           => 'date_completed',
 						'enum'              => [ 'date_completed', 'amount' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 					'order'          => [
 						'type'              => 'string',
 						'default'           => 'DESC',
 						'enum'              => [ 'ASC', 'DESC' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 					'show_anonymous' => [
 						'type'    => 'boolean',

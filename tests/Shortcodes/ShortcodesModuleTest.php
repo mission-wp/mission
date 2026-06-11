@@ -53,7 +53,7 @@ class ShortcodesModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The missiondp_shortcodes filter can register an extra alias tag.
+	 * The mission_shortcodes filter can register an extra alias tag.
 	 */
 	public function test_filter_can_add_alias(): void {
 		$add_alias = static function ( array $shortcodes ): array {
@@ -61,9 +61,9 @@ class ShortcodesModuleTest extends WP_UnitTestCase {
 			return $shortcodes;
 		};
 
-		add_filter( 'missiondp_shortcodes', $add_alias );
+		add_filter( 'mission_shortcodes', $add_alias );
 		( new ShortcodesModule() )->register_shortcodes();
-		remove_filter( 'missiondp_shortcodes', $add_alias );
+		remove_filter( 'mission_shortcodes', $add_alias );
 
 		$this->assertTrue( shortcode_exists( 'my_form' ) );
 
@@ -71,7 +71,7 @@ class ShortcodesModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The missiondp_shortcodes filter can drop a tag from registration.
+	 * The mission_shortcodes filter can drop a tag from registration.
 	 */
 	public function test_filter_can_remove_tag(): void {
 		remove_shortcode( 'mission_top_donors' );
@@ -81,9 +81,9 @@ class ShortcodesModuleTest extends WP_UnitTestCase {
 			return $shortcodes;
 		};
 
-		add_filter( 'missiondp_shortcodes', $without_tag );
+		add_filter( 'mission_shortcodes', $without_tag );
 		( new ShortcodesModule() )->register_shortcodes();
-		remove_filter( 'missiondp_shortcodes', $without_tag );
+		remove_filter( 'mission_shortcodes', $without_tag );
 
 		$this->assertFalse( shortcode_exists( 'mission_top_donors' ) );
 	}

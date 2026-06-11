@@ -88,7 +88,7 @@ class SettingsService {
 		 * @param array<string, mixed> $values   Only the changed values.
 		 * @param array<string, mixed> $current  Settings before update.
 		 */
-		do_action( 'missiondp_settings_updated', $updated, $values, $current );
+		do_action( 'mission_settings_updated', $updated, $values, $current );
 
 		return $updated;
 	}
@@ -311,7 +311,7 @@ class SettingsService {
 		 * @param array<string, mixed> $changed Only the changed values.
 		 * @param array<string, mixed> $current Settings before update.
 		 */
-		do_action( 'missiondp_settings_updated', $updated, $changed, $current );
+		do_action( 'mission_settings_updated', $updated, $changed, $current );
 	}
 
 	/**
@@ -448,6 +448,7 @@ class SettingsService {
 			'primary_color'            => '#2fa36b',
 			'show_powered_by'          => false,
 			'test_mode'                => true,
+			'campaign_url_slug'        => 'campaigns',
 			// Connected Stripe accounts. Each record:
 			// site_id, site_token, account_id, display_name, connection_status,
 			// charges_enabled, webhook_secret, is_default, connected_at.
@@ -572,6 +573,6 @@ class SettingsService {
 		 *
 		 * @param array<string, mixed> $defaults Default settings.
 		 */
-		return apply_filters( 'missiondp_settings_defaults', $defaults );
+		return apply_filters( 'mission_settings_defaults', $defaults );
 	}
 }

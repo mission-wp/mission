@@ -317,7 +317,7 @@ class ImportService {
 		 * @param string $strategy  Duplicate strategy.
 		 * @param string $job_id    Public job token.
 		 */
-		do_action( "missiondp_import_{$type}_before", $type, $total_rows, $duplicate_strategy, $job_id );
+		do_action( "mission_import_{$type}_before", $type, $total_rows, $duplicate_strategy, $job_id );
 
 		// Enqueue the first tick. Each tick reschedules itself until done.
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
@@ -474,7 +474,7 @@ class ImportService {
 		 *
 		 * @param int $batch_size Default batch size.
 		 */
-		return max( 1, (int) apply_filters( 'missiondp_import_batch_size', self::BATCH_DEFAULT ) );
+		return max( 1, (int) apply_filters( 'mission_import_batch_size', self::BATCH_DEFAULT ) );
 	}
 
 	/**
@@ -631,7 +631,7 @@ class ImportService {
 			 * @param array  $row      Original mapped row.
 			 * @param string $strategy Duplicate strategy.
 			 */
-			$prepared = apply_filters( 'missiondp_import_donors_row', $prepared, $row, $strategy );
+			$prepared = apply_filters( 'mission_import_donors_row', $prepared, $row, $strategy );
 
 			$meta_pairs = $this->extract_meta_pairs( $row );
 
@@ -689,7 +689,7 @@ class ImportService {
 	 * Process a batch of mapped transaction rows.
 	 *
 	 * Inserts go through TransactionDataStore::create_silent() so we don't fire
-	 * missiondp_transaction_created or per-row aggregate updates. Touched donor
+	 * mission_transaction_created or per-row aggregate updates. Touched donor
 	 * and campaign IDs are accumulated in the job's transient so the end-of-job
 	 * recompute can rebuild aggregates in a single pass.
 	 *
@@ -743,7 +743,7 @@ class ImportService {
 			 * @param array  $row      Original mapped row.
 			 * @param string $strategy Duplicate strategy.
 			 */
-			$prepared = apply_filters( 'missiondp_import_transactions_row', $prepared, $row, $strategy );
+			$prepared = apply_filters( 'mission_import_transactions_row', $prepared, $row, $strategy );
 
 			$meta_pairs = $this->extract_meta_pairs( $row );
 
@@ -1136,7 +1136,7 @@ class ImportService {
 			 * @param array  $row      Original mapped row.
 			 * @param string $strategy Duplicate strategy.
 			 */
-			$prepared = apply_filters( 'missiondp_import_campaigns_row', $prepared, $row, $strategy );
+			$prepared = apply_filters( 'mission_import_campaigns_row', $prepared, $row, $strategy );
 
 			$meta_pairs = $this->extract_meta_pairs( $row );
 
@@ -1350,7 +1350,7 @@ class ImportService {
 			 * @param array  $row      Original mapped row.
 			 * @param string $strategy Duplicate strategy.
 			 */
-			$prepared = apply_filters( 'missiondp_import_subscriptions_row', $prepared, $row, $strategy );
+			$prepared = apply_filters( 'mission_import_subscriptions_row', $prepared, $row, $strategy );
 
 			$meta_pairs = $this->extract_meta_pairs( $row );
 
@@ -1542,7 +1542,7 @@ class ImportService {
 			 * @param array  $row      Original mapped row.
 			 * @param string $strategy Duplicate strategy.
 			 */
-			$prepared = apply_filters( 'missiondp_import_tributes_row', $prepared, $row, $strategy );
+			$prepared = apply_filters( 'mission_import_tributes_row', $prepared, $row, $strategy );
 
 			try {
 				$existing = Tribute::find_by_transaction_id( (int) $prepared['transaction_id'] );

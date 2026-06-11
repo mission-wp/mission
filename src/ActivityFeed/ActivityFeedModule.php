@@ -72,58 +72,242 @@ class ActivityFeedModule {
 	 */
 	private function register_event_listeners(): void {
 		// Donation completed (via status transition or created directly as completed).
-		add_action( 'missiondp_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
-		add_action( 'missiondp_transaction_created', [ $this, 'on_transaction_created' ] );
+		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
+		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
 		// Donation refunded.
-		add_action( 'missiondp_transaction_status_completed_to_refunded', [ $this, 'on_donation_refunded' ] );
+		add_action( 'mission_transaction_status_completed_to_refunded', [ $this, 'on_donation_refunded' ] );
 
 		// Subscription created.
-		add_action( 'missiondp_subscription_created', [ $this, 'on_subscription_created' ] );
+		add_action( 'mission_subscription_created', [ $this, 'on_subscription_created' ] );
 
 		// Subscription cancelled.
-		add_action( 'missiondp_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
-		add_action( 'missiondp_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
+		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
 		// Subscription failed.
-		add_action( 'missiondp_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
-		add_action( 'missiondp_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
+		add_action( 'mission_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
+		add_action( 'mission_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
 
 		// Subscription amount changed.
-		add_action( 'missiondp_subscription_amount_changed', [ $this, 'on_subscription_amount_changed' ], 10, 3 );
+		add_action( 'mission_subscription_amount_changed', [ $this, 'on_subscription_amount_changed' ], 10, 3 );
 
 		// Campaign created.
-		add_action( 'missiondp_campaign_created', [ $this, 'on_campaign_created' ] );
+		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
 
 		// Campaign milestone reached.
-		add_action( 'missiondp_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
+		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
 
 		// Plugin updated.
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_complete' ], 10, 2 );
 
 		// Plugin deactivated.
-		add_action( 'missiondp_plugin_deactivating', [ $this, 'on_plugin_deactivating' ] );
+		add_action( 'mission_plugin_deactivating', [ $this, 'on_plugin_deactivating' ] );
 
 		// Admin notification sent.
-		add_action( 'missiondp_admin_notification_sent', [ $this, 'on_admin_notification_sent' ], 10, 3 );
+		add_action( 'mission_admin_notification_sent', [ $this, 'on_admin_notification_sent' ], 10, 3 );
 
 		// Payment failed.
-		add_action( 'missiondp_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
+		add_action( 'mission_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
 
 		// Webhook processed.
-		add_action( 'missiondp_webhook_event_processed', [ $this, 'on_webhook_processed' ], 10, 3 );
+		add_action( 'mission_webhook_event_processed', [ $this, 'on_webhook_processed' ], 10, 3 );
 
 		// Email sent / failed.
-		add_action( 'missiondp_email_sent', [ $this, 'on_email_sent' ], 10, 2 );
-		add_action( 'missiondp_email_failed', [ $this, 'on_email_failed' ], 10, 2 );
+		add_action( 'mission_email_sent', [ $this, 'on_email_sent' ], 10, 2 );
+		add_action( 'mission_email_failed', [ $this, 'on_email_failed' ], 10, 2 );
 
 		// Settings updated.
-		add_action( 'missiondp_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
+		add_action( 'mission_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
 
 		// Stripe account fallback (form requested a disconnected account, used default instead).
-		add_action( 'missiondp_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
+		add_action( 'mission_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
+
+		// Outgoing webhooks.
+		add_action( 'mission_outgoing_webhook_created', [ $this, 'on_outgoing_webhook_created' ] );
+		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ], 10, 2 );
+		add_action( 'mission_outgoing_webhook_auto_paused', [ $this, 'on_outgoing_webhook_auto_paused' ] );
+
+		// Migration runs.
+		add_action( 'mission_migration_completed', [ $this, 'on_migration_completed' ], 10, 2 );
+		add_action( 'mission_migration_rolled_back', [ $this, 'on_migration_rolled_back' ], 10, 2 );
+		add_action( 'mission_migration_failed', [ $this, 'on_migration_failed' ], 10, 3 );
+	}
+
+	/**
+	 * Get the current user's display name for activity log data.
+	 *
+	 * @return string Empty string when there is no logged-in user.
+	 */
+	private function get_actor_name(): string {
+		$user = get_userdata( get_current_user_id() );
+
+		return $user ? ( $user->display_name ?: $user->user_login ) : '';
+	}
+
+	/**
+	 * Resolve a user's display name for activity data (migration ticks run in
+	 * Action Scheduler workers, where there is no current user).
+	 *
+	 * @param int $user_id WP user ID recorded on the job.
+	 *
+	 * @return string Empty string when the user no longer exists.
+	 */
+	private function get_user_name( int $user_id ): string {
+		$user = get_userdata( $user_id );
+
+		return $user ? ( $user->display_name ?: $user->user_login ) : '';
+	}
+
+	/**
+	 * Log when a migration run completes.
+	 *
+	 * @param string   $job_id Job token.
+	 * @param object[] $phases MigrationPhase rows.
+	 *
+	 * @return void
+	 */
+	public function on_migration_completed( string $job_id, array $phases ): void {
+		if ( empty( $phases ) ) {
+			return;
+		}
+
+		$counts = [];
+		$errors = 0;
+		foreach ( $phases as $phase ) {
+			$counts[ $phase->entity ] = $phase->imported;
+			$errors                  += $phase->errors;
+		}
+
+		$this->log(
+			'data_migrated',
+			'migration',
+			0,
+			[
+				'source'     => $phases[0]->source,
+				'counts'     => $counts,
+				'errors'     => $errors,
+				'job_id'     => $job_id,
+				'actor_name' => $this->get_user_name( $phases[0]->user_id ),
+			],
+			false,
+			$errors > 0 ? 'warning' : 'info',
+		);
+	}
+
+	/**
+	 * Log when a migration rollback completes.
+	 *
+	 * @param string $job_id Rollback job token.
+	 * @param object $phase  Final MigrationPhase row.
+	 *
+	 * @return void
+	 */
+	public function on_migration_rolled_back( string $job_id, object $phase ): void {
+		$this->log(
+			'migration_rolled_back',
+			'migration',
+			0,
+			[
+				'source'     => $phase->source,
+				'job_id'     => $job_id,
+				'actor_name' => $this->get_user_name( $phase->user_id ),
+			],
+		);
+	}
+
+	/**
+	 * Log when a migration run fails.
+	 *
+	 * @param string $job_id Job token.
+	 * @param object $phase  The failed MigrationPhase row.
+	 * @param string $reason Failure reason.
+	 *
+	 * @return void
+	 */
+	public function on_migration_failed( string $job_id, object $phase, string $reason ): void {
+		$this->log(
+			'migration_failed',
+			'migration',
+			0,
+			[
+				'source'     => $phase->source,
+				'entity'     => $phase->entity,
+				'reason'     => $reason,
+				'job_id'     => $job_id,
+				'actor_name' => $this->get_user_name( $phase->user_id ),
+			],
+			false,
+			'error',
+		);
+	}
+
+	/**
+	 * Log when an outgoing webhook is created.
+	 *
+	 * @param object $webhook OutgoingWebhook model.
+	 *
+	 * @return void
+	 */
+	public function on_outgoing_webhook_created( object $webhook ): void {
+		$this->log(
+			'outgoing_webhook_created',
+			'webhook',
+			$webhook->id,
+			[
+				'name'       => $webhook->name,
+				'url'        => $webhook->url,
+				'actor_name' => $this->get_actor_name(),
+			],
+			category: 'webhook',
+		);
+	}
+
+	/**
+	 * Log when an outgoing webhook is deleted.
+	 *
+	 * @param int         $webhook_id Deleted webhook ID.
+	 * @param object|null $webhook    The webhook as it was before deletion.
+	 *
+	 * @return void
+	 */
+	public function on_outgoing_webhook_deleted( int $webhook_id, ?object $webhook = null ): void {
+		$this->log(
+			'outgoing_webhook_deleted',
+			'webhook',
+			$webhook_id,
+			[
+				'name'       => $webhook->name ?? '',
+				'url'        => $webhook->url ?? '',
+				'actor_name' => $this->get_actor_name(),
+			],
+			category: 'webhook',
+		);
+	}
+
+	/**
+	 * Log when an outgoing webhook is auto-paused after prolonged failures.
+	 *
+	 * @param object $webhook OutgoingWebhook model.
+	 *
+	 * @return void
+	 */
+	public function on_outgoing_webhook_auto_paused( object $webhook ): void {
+		$this->log(
+			'outgoing_webhook_auto_paused',
+			'webhook',
+			$webhook->id,
+			[
+				'name'          => $webhook->name,
+				'url'           => $webhook->url,
+				'failure_count' => $webhook->failure_count,
+				'failing_since' => $webhook->failing_since,
+			],
+			level: 'warning',
+			category: 'webhook',
+		);
 	}
 
 	/**
@@ -175,7 +359,7 @@ class ActivityFeedModule {
 	 */
 	public function run_prune(): void {
 		/** @var int $days Number of days to retain activity log entries. */
-		$days = (int) apply_filters( 'missiondp_activity_log_retention_days', 90 );
+		$days = (int) apply_filters( 'mission_activity_log_retention_days', 90 );
 
 		/** @var \MissionDP\Database\DataStore\ActivityLogDataStore $store */
 		$store = ActivityLog::store();

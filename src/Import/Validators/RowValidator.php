@@ -331,7 +331,7 @@ class RowValidator {
 		 * @param int    $row_number Row number.
 		 * @param string $type       Data type.
 		 */
-		return apply_filters( "missiondp_import_{$type}_validate_row", $warnings, $row, $row_number, $type );
+		return apply_filters( "mission_import_{$type}_validate_row", $warnings, $row, $row_number, $type );
 	}
 
 	/**

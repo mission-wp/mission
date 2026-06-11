@@ -8,6 +8,7 @@
 namespace MissionDP\Campaigns;
 
 use MissionDP\Models\Campaign;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -18,16 +19,56 @@ class CampaignPostType {
 
 	public const POST_TYPE = 'missiondp_campaign';
 
+	public const FLUSH_FLAG_OPTION = 'missiondp_flush_rewrite_rules';
+
 	/**
 	 * Register hooks.
 	 */
 	public function init(): void {
 		add_action( 'init', [ $this, 'register' ] );
 		add_action( 'init', [ $this, 'register_block_templates' ] );
+		// Priority 20 so a pending flush runs after register() at 10.
+		add_action( 'init', [ $this, 'maybe_flush_rewrite_rules' ], 20 );
+		add_action( 'mission_settings_updated', [ $this, 'schedule_flush_on_slug_change' ], 10, 3 );
 		add_action( 'template_redirect', [ $this, 'block_disabled_campaign_pages' ] );
 		add_filter( 'map_meta_cap', [ $this, 'restrict_editor_delete' ], 10, 4 );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'restrict_editor_ui' ] );
 		add_filter( 'rest_pre_insert_' . self::POST_TYPE, [ $this, 'lock_slug_and_status' ] );
+	}
+
+	/**
+	 * Schedule a rewrite flush when the campaign URL slug setting changes.
+	 *
+	 * Flushing immediately would regenerate rules from the post type as
+	 * registered earlier in the request (with the old slug), so set a flag
+	 * and flush on the next init instead.
+	 *
+	 * @param array<string, mixed> $updated  Full settings after update.
+	 * @param array<string, mixed> $changed  Only the submitted values.
+	 * @param array<string, mixed> $previous Settings before update.
+	 */
+	public function schedule_flush_on_slug_change( array $updated, array $changed, array $previous ): void {
+		if ( ! array_key_exists( 'campaign_url_slug', $changed ) ) {
+			return;
+		}
+
+		// The admin UI posts the full settings object, so key presence
+		// alone doesn't mean the slug changed.
+		if ( ( $previous['campaign_url_slug'] ?? CampaignSlug::DEFAULT_SLUG ) === $changed['campaign_url_slug'] ) {
+			return;
+		}
+
+		update_option( self::FLUSH_FLAG_OPTION, 1 );
+	}
+
+	/**
+	 * Flush rewrite rules if a slug change scheduled it.
+	 */
+	public function maybe_flush_rewrite_rules(): void {
+		if ( get_option( self::FLUSH_FLAG_OPTION ) ) {
+			delete_option( self::FLUSH_FLAG_OPTION );
+			flush_rewrite_rules();
+		}
 	}
 
 	/**
@@ -183,6 +224,10 @@ class CampaignPostType {
 	 * Register the missiondp_campaign post type.
 	 */
 	private function register_post_type(): void {
+		$slug = CampaignSlug::sanitize(
+			(string) ( new SettingsService() )->get( 'campaign_url_slug', CampaignSlug::DEFAULT_SLUG )
+		);
+
 		$labels = [
 			'name'               => __( 'Campaigns', 'mission-donation-platform' ),
 			'singular_name'      => __( 'Campaign', 'mission-donation-platform' ),
@@ -206,7 +251,7 @@ class CampaignPostType {
 			// Without this the "Edit Campaign" link is missing from the frontend admin bar,
 			// because show_in_admin_bar defaults to the value of show_in_menu.
 			'show_in_admin_bar' => true,
-			'rewrite'           => [ 'slug' => 'campaigns' ],
+			'rewrite'           => [ 'slug' => $slug ?: CampaignSlug::DEFAULT_SLUG ],
 			'supports'          => [ 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ],
 		];
 

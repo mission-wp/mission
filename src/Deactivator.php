@@ -27,26 +27,30 @@ class Deactivator {
 		/**
 		 * Fires before the plugin is deactivated.
 		 */
-		do_action( 'missiondp_plugin_deactivating' );
+		do_action( 'mission_plugin_deactivating' );
 
 		self::clear_scheduled_events();
 		self::clear_action_scheduler_actions();
 		self::clear_transients();
 
+		// A pending slug-change flush is moot once rules are flushed here.
+		delete_option( Campaigns\CampaignPostType::FLUSH_FLAG_OPTION );
 		flush_rewrite_rules();
 	}
 
 	/**
 	 * Cancel any pending Action Scheduler actions owned by the plugin.
 	 *
-	 * Prevents queued import ticks from sitting around in the AS table after
-	 * the plugin is deactivated.
+	 * Prevents queued import ticks and webhook deliveries from sitting around
+	 * in the AS table after the plugin is deactivated.
 	 *
 	 * @return void
 	 */
 	private static function clear_action_scheduler_actions(): void {
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( 'missiondp_import_tick' );
+			as_unschedule_all_actions( 'missiondp_migration_tick' );
+			as_unschedule_all_actions( 'missiondp_deliver_webhook' );
 		}
 	}
 

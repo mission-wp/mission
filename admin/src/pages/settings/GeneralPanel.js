@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
+import { cleanForSlug } from '@wordpress/url';
 import {
   CURRENCIES,
   getCurrencyDecimals,
@@ -651,6 +652,53 @@ export default function GeneralPanel( {
             />
             <span className="mission-toggle-sm__slider" />
           </label>
+        </div>
+      </div>
+
+      { /* Campaign URLs */ }
+      <div className="mission-settings-card">
+        <div className="mission-settings-card__header">
+          <h2 className="mission-settings-card__title">
+            { __( 'Campaign URLs', 'mission-donation-platform' ) }
+          </h2>
+          <p className="mission-settings-card__desc">
+            { __(
+              'Controls the web address for your campaign pages.',
+              'mission-donation-platform'
+            ) }
+          </p>
+        </div>
+        <div className="mission-settings-field">
+          <label
+            className="mission-settings-field__label"
+            htmlFor="mission-campaign-slug"
+          >
+            { __( 'URL slug', 'mission-donation-platform' ) }
+          </label>
+          <div className="mission-field-slug">
+            <span className="mission-field-slug__prefix">
+              { window.missiondpAdmin?.homeUrl || '/' }
+            </span>
+            <input
+              type="text"
+              id="mission-campaign-slug"
+              className="mission-field-input"
+              value={ settings.campaign_url_slug ?? 'campaigns' }
+              onChange={ ( e ) =>
+                updateField(
+                  'campaign_url_slug',
+                  e.target.value.toLowerCase().replace( /[\s/]+/g, '-' )
+                )
+              }
+              onBlur={ ( e ) =>
+                updateField(
+                  'campaign_url_slug',
+                  cleanForSlug( e.target.value )
+                )
+              }
+              style={ { width: '260px' } }
+            />
+          </div>
         </div>
       </div>
 

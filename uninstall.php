@@ -42,6 +42,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		'missiondp_settings',
 		'missiondp_dashboard_page_id',
 		'missiondp_installed_at',
+		'missiondp_migration_lock',
+		'missiondp_flush_rewrite_rules',
 	];
 
 	foreach ( $options as $option ) {
@@ -111,6 +113,13 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	wp_clear_scheduled_hook( 'missiondp_daily_cleanup' );
 	wp_clear_scheduled_hook( 'missiondp_check_recurring_payments' );
 	wp_clear_scheduled_hook( 'missiondp_campaign_lifecycle' );
+
+	// Action Scheduler actions.
+	if ( function_exists( 'as_unschedule_all_actions' ) ) {
+		as_unschedule_all_actions( 'missiondp_import_tick' );
+		as_unschedule_all_actions( 'missiondp_migration_tick' );
+		as_unschedule_all_actions( 'missiondp_deliver_webhook' );
+	}
 
 	// Clear the cache to ensure stale data isn't served.
 	wp_cache_flush();

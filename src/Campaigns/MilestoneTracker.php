@@ -21,9 +21,9 @@ class MilestoneTracker {
 	 * Register event listeners.
 	 */
 	public function init(): void {
-		add_action( 'missiondp_campaign_created', [ $this, 'on_campaign_created' ] );
-		add_action( 'missiondp_campaign_aggregates_updated', [ $this, 'recompile' ], 10, 2 );
-		add_action( 'missiondp_campaign_goal_updated', [ $this, 'recompile' ] );
+		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
+		add_action( 'mission_campaign_aggregates_updated', [ $this, 'recompile' ], 10, 2 );
+		add_action( 'mission_campaign_goal_updated', [ $this, 'recompile' ] );
 	}
 
 	/**
@@ -140,7 +140,7 @@ class MilestoneTracker {
 				 * @param string   $milestone_id Milestone ID (e.g. 'first-donation', '25-pct', '100-pct').
 				 * @param bool     $is_test      Whether the triggering transaction is a test.
 				 */
-				do_action( 'missiondp_campaign_milestone_reached', $campaign, $m['id'], $is_test );
+				do_action( 'mission_campaign_milestone_reached', $campaign, $m['id'], $is_test );
 			}
 		}
 	}

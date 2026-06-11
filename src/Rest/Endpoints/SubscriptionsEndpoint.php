@@ -137,6 +137,7 @@ class SubscriptionsEndpoint {
 						'type'              => 'string',
 						'enum'              => [ 'active', 'pending', 'past_due', 'paused', 'cancelled' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 					'campaign_id' => [
 						'type' => [ 'integer', 'null' ],
@@ -520,12 +521,14 @@ class SubscriptionsEndpoint {
 				'default'           => 'date_created',
 				'enum'              => [ 'date_created', 'date_next_renewal', 'amount', 'status' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'order'       => [
 				'type'              => 'string',
 				'default'           => 'DESC',
 				'enum'              => [ 'ASC', 'DESC' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'status'      => [
 				'type'              => 'string',

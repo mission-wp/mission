@@ -79,7 +79,7 @@ class ImportCleanup {
 		 *
 		 * @param int $days Retention window.
 		 */
-		$days   = max( 1, (int) apply_filters( 'missiondp_import_job_retention_days', self::ROW_TTL_DAYS ) );
+		$days   = max( 1, (int) apply_filters( 'mission_import_job_retention_days', self::ROW_TTL_DAYS ) );
 		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
 
 		$jobs = ImportJob::query(
@@ -106,6 +106,6 @@ class ImportCleanup {
 		 *
 		 * @param int $hours Hours.
 		 */
-		return max( 1, (int) apply_filters( 'missiondp_import_file_retention_hours', self::FILE_TTL_HOURS ) ) * HOUR_IN_SECONDS;
+		return max( 1, (int) apply_filters( 'mission_import_file_retention_hours', self::FILE_TTL_HOURS ) ) * HOUR_IN_SECONDS;
 	}
 }

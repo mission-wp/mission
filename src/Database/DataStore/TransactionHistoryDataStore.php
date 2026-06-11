@@ -51,7 +51,7 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 		 *
 		 * @param TransactionHistory $model The history entry.
 		 */
-		do_action( 'missiondp_transaction_history_created', $model );
+		do_action( 'mission_transaction_history_created', $model );
 
 		return $model->id;
 	}

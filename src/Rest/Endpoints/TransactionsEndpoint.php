@@ -102,6 +102,7 @@ class TransactionsEndpoint {
 						'type'              => 'string',
 						'enum'              => [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ],
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 					'campaign_id'  => [
 						'type' => [ 'integer', 'null' ],
@@ -145,6 +146,7 @@ class TransactionsEndpoint {
 						'required'          => true,
 						'minimum'           => 1,
 						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]
@@ -599,6 +601,7 @@ class TransactionsEndpoint {
 				'default'           => 1,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'per_page'    => [
 				'type'              => 'integer',
@@ -606,23 +609,27 @@ class TransactionsEndpoint {
 				'minimum'           => 1,
 				'maximum'           => 100,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'orderby'     => [
 				'type'              => 'string',
 				'default'           => 'date_created',
 				'enum'              => [ 'date_created', 'amount' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'order'       => [
 				'type'              => 'string',
 				'default'           => 'DESC',
 				'enum'              => [ 'ASC', 'DESC' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'status'      => [
 				'type'              => 'string',
 				'enum'              => [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'campaign_id' => [
 				'type'              => 'integer',
@@ -640,6 +647,7 @@ class TransactionsEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}
@@ -671,6 +679,7 @@ class TransactionsEndpoint {
 				'required'          => true,
 				'minimum'           => 1,
 				'sanitize_callback' => 'absint',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'campaign_id'      => [
 				'type'              => 'integer',
@@ -682,6 +691,7 @@ class TransactionsEndpoint {
 				'default'           => 'one_time',
 				'enum'              => [ 'one_time', 'monthly', 'quarterly', 'annually' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'date_created'     => [
 				'type'              => 'string',

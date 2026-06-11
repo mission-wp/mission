@@ -3,7 +3,7 @@
  * Plugin Name: Mission - Donation Platform
  * Plugin URI: https://missionwp.com
  * Description: The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.
- * Version: 1.2.0
+ * Version: 1.3.0
  * Author: Mission
  * Author URI: https://missionwp.com
  * License: GPL-2.0-or-later
@@ -55,7 +55,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 }
 
 // Plugin constants.
-define( 'MISSIONDP_VERSION', '1.2.0' );
+define( 'MISSIONDP_VERSION', '1.3.0' );
 define( 'MISSIONDP_FILE', __FILE__ );
 define( 'MISSIONDP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSIONDP_URL', plugin_dir_url( __FILE__ ) );
@@ -70,8 +70,10 @@ if ( file_exists( $missiondp_autoloader ) ) {
 
 	// Bootstrap Action Scheduler. Its loader picks the highest version if multiple
 	// plugins ship it (e.g. WooCommerce), so this is safe to call directly.
+	// Skipped in PHPUnit: the suite relies on the synchronous fallbacks and
+	// fires scheduling hooks manually.
 	$missiondp_action_scheduler = __DIR__ . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
-	if ( file_exists( $missiondp_action_scheduler ) ) {
+	if ( file_exists( $missiondp_action_scheduler ) && ! defined( 'MISSIONDP_TESTING' ) ) {
 		require_once $missiondp_action_scheduler;
 	}
 } else {

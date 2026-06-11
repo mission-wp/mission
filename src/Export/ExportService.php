@@ -75,7 +75,7 @@ class ExportService {
 		 *
 		 * @param array  $columns Column definitions.
 		 */
-		return apply_filters( "missiondp_export_{$type}_columns", $columns );
+		return apply_filters( "mission_export_{$type}_columns", $columns );
 	}
 
 	/**
@@ -249,7 +249,7 @@ class ExportService {
 		 *
 		 * @param array $columns Preview column definitions.
 		 */
-		return apply_filters( "missiondp_export_{$type}_preview_columns", $columns );
+		return apply_filters( "mission_export_{$type}_preview_columns", $columns );
 	}
 
 	/**
@@ -382,7 +382,7 @@ class ExportService {
 			 * @param array $row   Row data keyed by column key.
 			 * @param Model $model The source model instance.
 			 */
-			$rows[] = apply_filters( "missiondp_export_{$type}_row", $row, $model );
+			$rows[] = apply_filters( "mission_export_{$type}_row", $row, $model );
 		}
 
 		return [
@@ -411,7 +411,7 @@ class ExportService {
 		 *
 		 * @param array<string, FormatterInterface> $formatters Keyed by format identifier.
 		 */
-		$formatters = apply_filters( 'missiondp_export_formats', $formatters );
+		$formatters = apply_filters( 'mission_export_formats', $formatters );
 
 		return $formatters[ $format ] ?? null;
 	}
@@ -467,7 +467,7 @@ class ExportService {
 		 * @param array $query_args The query arguments for Model::query().
 		 * @param array $params     The original request parameters.
 		 */
-		return apply_filters( "missiondp_export_{$type}_query_args", $query_args, $params );
+		return apply_filters( "mission_export_{$type}_query_args", $query_args, $params );
 	}
 
 	/**
@@ -1236,6 +1236,6 @@ class ExportService {
 		 *
 		 * @param string[] $meta_keys Sorted meta key names.
 		 */
-		return apply_filters( "missiondp_export_{$type}_meta_keys", $meta_keys );
+		return apply_filters( "mission_export_{$type}_meta_keys", $meta_keys );
 	}
 }

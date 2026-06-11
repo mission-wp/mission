@@ -219,8 +219,8 @@ class EmailModule {
 		$from_name  = $this->settings->get( 'email_from_name', get_bloginfo( 'name' ) );
 		$from_email = $this->settings->get( 'email_from_address', get_bloginfo( 'admin_email' ) );
 
-		$from_name  = apply_filters( 'missiondp_email_from_name', $from_name );
-		$from_email = apply_filters( 'missiondp_email_from_email', $from_email );
+		$from_name  = apply_filters( 'mission_email_from_name', $from_name );
+		$from_email = apply_filters( 'mission_email_from_email', $from_email );
 
 		$reply_to = $this->settings->get( 'email_reply_to', '' );
 
@@ -233,7 +233,7 @@ class EmailModule {
 			$headers[] = 'Reply-To: ' . $reply_to;
 		}
 
-		return apply_filters( 'missiondp_email_headers', $headers );
+		return apply_filters( 'mission_email_headers', $headers );
 	}
 
 	/**
@@ -250,8 +250,8 @@ class EmailModule {
 			$headers = $this->get_default_headers();
 		}
 
-		$subject = apply_filters( 'missiondp_email_subject', $subject, $to );
-		$message = apply_filters( 'missiondp_email_message', $message, $to );
+		$subject = apply_filters( 'mission_email_subject', $subject, $to );
+		$message = apply_filters( 'mission_email_message', $message, $to );
 
 		$result = wp_mail( $to, $subject, $message, $headers );
 
@@ -262,7 +262,7 @@ class EmailModule {
 			 * @param string $to      Recipient email address.
 			 * @param string $subject Email subject.
 			 */
-			do_action( 'missiondp_email_sent', $to, $subject );
+			do_action( 'mission_email_sent', $to, $subject );
 		} else {
 			/**
 			 * Fires when an email fails to send.
@@ -270,7 +270,7 @@ class EmailModule {
 			 * @param string $to      Recipient email address.
 			 * @param string $subject Email subject.
 			 */
-			do_action( 'missiondp_email_failed', $to, $subject );
+			do_action( 'mission_email_failed', $to, $subject );
 		}
 
 		return $result;

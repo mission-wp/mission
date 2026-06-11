@@ -83,7 +83,7 @@ class ImportJobHandler {
 			 * @param ImportJob $job    The failed job.
 			 * @param string    $reason Failure reason.
 			 */
-			do_action( "missiondp_import_{$job->type}_failed", $job, $e->getMessage() );
+			do_action( "mission_import_{$job->type}_failed", $job, $e->getMessage() );
 
 			return;
 		}
@@ -133,7 +133,7 @@ class ImportJobHandler {
 			 *
 			 * @param ImportJob $job Completed job.
 			 */
-			do_action( "missiondp_import_{$fresh->type}_after", $fresh );
+			do_action( "mission_import_{$fresh->type}_after", $fresh );
 			return;
 		}
 

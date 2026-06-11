@@ -52,6 +52,11 @@ class Campaign extends Model {
 	private ?\WP_Post $post = null;
 
 	/**
+	 * Full block name of the donation form block.
+	 */
+	private const DONATION_FORM_BLOCK = 'mission-donation-platform/donation-form';
+
+	/**
 	 * Map of virtual property names to WP_Post fields.
 	 */
 	private const POST_PROPERTIES = [
@@ -217,7 +222,53 @@ class Campaign extends Model {
 		 * @param string   $content     The default block markup.
 		 * @param Campaign $campaign    The campaign being created.
 		 */
-		return apply_filters( 'missiondp_campaign_default_page_content', $content, $this );
+		return apply_filters( 'mission_campaign_default_page_content', $content, $this );
+	}
+
+	/**
+	 * Get the attributes of the donation form block saved on the campaign page.
+	 *
+	 * The campaign's form customizations live as block attributes in the page
+	 * content, so this is what other render contexts (shortcodes, forms placed
+	 * on other pages) inherit when they reference the campaign by ID.
+	 *
+	 * @return array<string, mixed> Block attributes, or an empty array when the page has no donation form block.
+	 */
+	public function get_donation_form_attributes(): array {
+		$content = $this->page_content;
+
+		if ( ! $content || ! str_contains( $content, self::DONATION_FORM_BLOCK ) ) {
+			return [];
+		}
+
+		$block = self::find_donation_form_block( parse_blocks( $content ) );
+
+		return $block['attrs'] ?? [];
+	}
+
+	/**
+	 * Recursively find the first donation form block in a parsed block tree.
+	 *
+	 * @param array<int, array<string, mixed>> $blocks Parsed blocks.
+	 *
+	 * @return array<string, mixed>|null The block, or null when not found.
+	 */
+	private static function find_donation_form_block( array $blocks ): ?array {
+		foreach ( $blocks as $block ) {
+			if ( self::DONATION_FORM_BLOCK === ( $block['blockName'] ?? '' ) ) {
+				return $block;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$found = self::find_donation_form_block( $block['innerBlocks'] );
+
+				if ( $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**

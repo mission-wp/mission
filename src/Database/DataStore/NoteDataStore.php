@@ -50,7 +50,7 @@ class NoteDataStore implements DataStoreInterface {
 		 *
 		 * @param Note $model The note.
 		 */
-		do_action( 'missiondp_note_created', $model );
+		do_action( 'mission_note_created', $model );
 
 		return $model->id;
 	}
@@ -101,7 +101,7 @@ class NoteDataStore implements DataStoreInterface {
 			 *
 			 * @param Note $note The deleted note.
 			 */
-			do_action( 'missiondp_note_deleted', $note );
+			do_action( 'mission_note_deleted', $note );
 		}
 
 		return false !== $result;

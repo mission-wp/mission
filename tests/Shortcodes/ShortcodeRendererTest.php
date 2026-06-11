@@ -112,7 +112,7 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The missiondp_shortcode_attributes filter can change what renders.
+	 * The mission_shortcode_attributes filter can change what renders.
 	 */
 	public function test_attributes_filter_affects_output(): void {
 		$force_text = static function ( array $attributes, string $block_name ): array {
@@ -122,9 +122,9 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 			return $attributes;
 		};
 
-		add_filter( 'missiondp_shortcode_attributes', $force_text, 10, 2 );
+		add_filter( 'mission_shortcode_attributes', $force_text, 10, 2 );
 		$output = do_shortcode( '[mission_donate_button]' );
-		remove_filter( 'missiondp_shortcode_attributes', $force_text );
+		remove_filter( 'mission_shortcode_attributes', $force_text );
 
 		$this->assertStringContainsString( 'Filtered Label', $output );
 	}
@@ -146,5 +146,95 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 		$output = do_shortcode( '[mission_donation_form]' );
 
 		$this->assertStringContainsString( 'data-wp-interactive', $output );
+	}
+
+	// -------------------------------------------------------------------------
+	// Campaign form inheritance tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Create a campaign whose page contains a customized donation form block.
+	 *
+	 * @param array<string, mixed> $form_attrs Donation form block attributes.
+	 * @return Campaign
+	 */
+	private function create_campaign_with_form( array $form_attrs ): Campaign {
+		$campaign = $this->create_campaign();
+
+		wp_update_post(
+			[
+				'ID'           => $campaign->post_id,
+				'post_content' => '<!-- wp:mission-donation-platform/donation-form ' . wp_json_encode( $form_attrs ) . ' /-->',
+			]
+		);
+
+		return $campaign;
+	}
+
+	/**
+	 * The donation form shortcode inherits the form saved on the campaign page.
+	 */
+	public function test_donation_form_inherits_campaign_form_settings(): void {
+		$campaign = $this->create_campaign_with_form(
+			[
+				'recurringEnabled'  => false,
+				'chooseGiftHeading' => 'Support Our Cause',
+				'stripeAccountId'   => 'acct_123',
+			]
+		);
+
+		$output = do_shortcode( '[mission_donation_form campaign_id="' . $campaign->id . '"]' );
+
+		$this->assertStringContainsString( 'Support Our Cause', $output );
+		$this->assertStringContainsString( 'acct_123', $output );
+		$this->assertStringNotContainsString( 'mission-df-frequency-toggle', $output );
+	}
+
+	/**
+	 * Attributes set on the shortcode override inherited campaign values.
+	 */
+	public function test_donation_form_shortcode_attributes_override_inherited(): void {
+		$campaign = $this->create_campaign_with_form(
+			[
+				'recurringEnabled'  => false,
+				'chooseGiftHeading' => 'Support Our Cause',
+			]
+		);
+
+		$output = do_shortcode(
+			'[mission_donation_form campaign_id="' . $campaign->id . '" choose_gift_heading="Pick An Amount"]'
+		);
+
+		$this->assertStringContainsString( 'Pick An Amount', $output );
+		$this->assertStringNotContainsString( 'Support Our Cause', $output );
+		// Attributes the shortcode does not set are still inherited.
+		$this->assertStringNotContainsString( 'mission-df-frequency-toggle', $output );
+	}
+
+	/**
+	 * An unknown campaign ID falls back to the default form without erroring.
+	 */
+	public function test_donation_form_with_unknown_campaign_uses_defaults(): void {
+		$output = do_shortcode( '[mission_donation_form campaign_id="999999"]' );
+
+		$this->assertStringContainsString( 'data-wp-interactive', $output );
+		$this->assertStringContainsString( 'mission-df-frequency-toggle', $output );
+	}
+
+	/**
+	 * The donation form block does not inherit; only the shortcode does.
+	 */
+	public function test_donation_form_block_does_not_inherit(): void {
+		$campaign = $this->create_campaign_with_form(
+			[
+				'recurringEnabled'  => false,
+				'chooseGiftHeading' => 'Support Our Cause',
+			]
+		);
+
+		$output = do_blocks( '<!-- wp:mission-donation-platform/donation-form {"campaignId":' . $campaign->id . '} /-->' );
+
+		$this->assertStringNotContainsString( 'Support Our Cause', $output );
+		$this->assertStringContainsString( 'mission-df-frequency-toggle', $output );
 	}
 }

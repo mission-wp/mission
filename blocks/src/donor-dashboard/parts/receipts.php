@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 ( static function (): void {
 $receipt_intro = apply_filters(
-	'missiondp_receipt_intro_text',
+	'mission_receipt_intro_text',
 	sprintf(
 		/* translators: %s: site/organization name */
 		__( 'Download your annual donation receipts for tax purposes. %s — All donations are tax-deductible to the extent allowed by law.', 'mission-donation-platform' ),

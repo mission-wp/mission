@@ -256,7 +256,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test GET settings are filterable via missiondp_donation_form_settings hook.
+	 * Test GET settings are filterable via mission_donation_form_settings hook.
 	 */
 	public function test_get_settings_are_filterable(): void {
 		$filter = function ( array $settings ): array {
@@ -264,7 +264,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			return $settings;
 		};
 
-		add_filter( 'missiondp_donation_form_settings', $filter );
+		add_filter( 'mission_donation_form_settings', $filter );
 
 		$response = $this->dispatch_get();
 		$data     = $response->get_data();
@@ -272,7 +272,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 1000, $data['minimumAmount'] );
 
-		remove_filter( 'missiondp_donation_form_settings', $filter );
+		remove_filter( 'mission_donation_form_settings', $filter );
 	}
 
 	/**
@@ -285,7 +285,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			return $settings;
 		};
 
-		add_filter( 'missiondp_donation_form_settings', $filter_invalid );
+		add_filter( 'mission_donation_form_settings', $filter_invalid );
 
 		$response = $this->dispatch_get();
 		$data     = $response->get_data();
@@ -297,7 +297,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 		// Verify the response is valid (200) — the filter overrides post-sanitization.
 		$this->assertSame( 'not-a-color', $data['primaryColor'] );
 
-		remove_filter( 'missiondp_donation_form_settings', $filter_invalid );
+		remove_filter( 'mission_donation_form_settings', $filter_invalid );
 
 		// Test sanitization via block attributes — since endpoint passes [], test that empty primaryColor
 		// (the default) is preserved and a valid color set via pre-filter works.
@@ -306,14 +306,14 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			return $settings;
 		};
 
-		add_filter( 'missiondp_donation_form_settings', $filter_valid );
+		add_filter( 'mission_donation_form_settings', $filter_valid );
 
 		$response = $this->dispatch_get();
 		$data     = $response->get_data();
 
 		$this->assertSame( '#abc123', $data['primaryColor'] );
 
-		remove_filter( 'missiondp_donation_form_settings', $filter_valid );
+		remove_filter( 'mission_donation_form_settings', $filter_valid );
 	}
 
 	/**

@@ -1,0 +1,769 @@
+// Migration tab (Tools page).
+// Layout, nav, and card classes are shared with Settings (_settings.scss);
+// callout, error, and action-bar classes are shared with Import (_tools.scss).
+
+// --------------------------------
+// Source selection
+// --------------------------------
+.mission-migration-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mission-migration-source__arrow {
+  color: #9b9ba8;
+  flex-shrink: 0;
+  display: inline-flex;
+  transition: all 0.15s;
+}
+
+.mission-migration-source {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: none;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  transition: all 0.15s;
+
+  &:not(.is-disabled):hover {
+    border-color: #2fa36b;
+    background: rgba(47, 163, 107, 0.06);
+
+    .mission-migration-source__arrow {
+      color: #2fa36b;
+      transform: translateX(2px);
+    }
+  }
+
+  &.is-disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+}
+
+.mission-migration-source-icon {
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  &.is-square {
+    border-radius: 10px;
+  }
+}
+
+.mission-migration-source__info {
+  flex: 1;
+  min-width: 0;
+  display: block;
+}
+
+.mission-migration-source__name {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e1e1e;
+  margin-bottom: 1px;
+}
+
+.mission-migration-source__desc {
+  display: block;
+  font-size: 11.8px;
+  color: #9b9ba8;
+}
+
+.mission-migration-source__badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #f0eeeb;
+  color: #8a7e72;
+  flex-shrink: 0;
+}
+
+// Inline text-style button (Import deep link, back link, reset).
+.mission-migration-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: #2fa36b;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.is-danger {
+    color: #b32d2e;
+  }
+}
+
+// --------------------------------
+// Stepper
+// --------------------------------
+.mission-migration-stepper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 4px 0 24px;
+}
+
+.mission-migration-step {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 3px solid #dcdcde;
+  transition: border-color 0.35s;
+
+  &__num {
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: #9b9ba8;
+    transition: color 0.35s;
+  }
+
+  &__label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #9b9ba8;
+    transition: color 0.35s;
+  }
+
+  &__check {
+    display: none;
+    color: #2fa36b;
+    align-self: center;
+  }
+
+  &.is-active {
+    border-top-color: #2fa36b;
+
+    .mission-migration-step__num {
+      color: #2fa36b;
+    }
+
+    .mission-migration-step__label {
+      color: #1e1e1e;
+    }
+  }
+
+  &.is-done {
+    border-top-color: rgba(47, 163, 107, 0.45);
+
+    .mission-migration-step__label {
+      color: #6b6b7b;
+    }
+
+    .mission-migration-step__check {
+      display: inline-flex;
+    }
+  }
+}
+
+// --------------------------------
+// Pre-flight intro
+// --------------------------------
+.mission-migration-intro {
+  text-align: center;
+  padding: 28px 24px 32px;
+}
+
+.mission-migration-intro__logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 22px;
+
+  .mission-migration-source-icon.is-square {
+    border-radius: 14px;
+  }
+}
+
+// Dotted track with data particles flowing source to Mission.
+.mission-migration-intro__track {
+  position: relative;
+  width: 90px;
+  height: 20px;
+  flex-shrink: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    top: 50%;
+    border-top: 2px dotted #dcdcde;
+  }
+}
+
+.mission-migration-intro__dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  border-radius: 50%;
+  opacity: 0;
+  animation: mission-migration-flow-dot 2.4s linear infinite;
+
+  &:nth-child(1) {
+    width: 7px;
+    height: 7px;
+    margin-top: -3.5px;
+    background: #2fa36b;
+  }
+
+  &:nth-child(2) {
+    width: 5px;
+    height: 5px;
+    margin-top: -2.5px;
+    background: #5a7a64;
+    animation-delay: 0.8s;
+  }
+
+  &:nth-child(3) {
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    background: #4a7a9b;
+    animation-delay: 1.6s;
+  }
+}
+
+@keyframes mission-migration-flow-dot {
+
+  0% {
+    transform: translateX(0) scale(0.4);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+    transform: translateX(12px) scale(1);
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(83px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .mission-migration-intro__dot {
+    animation: none;
+  }
+}
+
+.mission-migration-intro__title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #1e1e1e;
+  margin: 0 0 8px;
+}
+
+.mission-migration-intro__desc {
+  font-size: 13px;
+  color: #6b6b7b;
+  line-height: 1.6;
+  max-width: 460px;
+  margin: 0 auto 22px;
+}
+
+.mission-migration-backup-callout {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  padding: 12px 18px;
+  background: #fef9f0;
+  border: 1px solid rgba(224, 182, 84, 0.45);
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #6b6b7b;
+  line-height: 1.45;
+  margin-bottom: 26px;
+
+  svg {
+    color: #b8860b;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  strong {
+    font-weight: 600;
+    color: #1e1e1e;
+  }
+}
+
+.mission-migration-intro__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 12px;
+  color: #9b9ba8;
+
+  &:hover {
+    color: #1e1e1e;
+    text-decoration: none;
+  }
+}
+
+// --------------------------------
+// Scan results
+// --------------------------------
+.mission-migration-results-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mission-migration-result-section {
+  padding: 18px 0;
+  border-top: 1px solid #f0f0f2;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.mission-migration-section-label {
+  font-size: 10.8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9b9ba8;
+  margin-bottom: 14px;
+}
+
+.mission-migration-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mission-migration-status-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #1e1e1e;
+
+  &.is-muted {
+    color: #9b9ba8;
+  }
+}
+
+.mission-migration-check-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.is-ok {
+    background: rgba(47, 163, 107, 0.12);
+    color: #2fa36b;
+  }
+
+  &.is-warn {
+    background: rgba(210, 160, 60, 0.14);
+    color: #b8860b;
+  }
+
+  &.is-info {
+    background: rgba(0, 0, 0, 0.05);
+    color: #9b9ba8;
+  }
+}
+
+.mission-migration-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  @media (max-width: 782px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.mission-migration-preview-box {
+  padding: 16px;
+  background: #f9f9fa;
+  border: 1px solid #dcdcde;
+  border-radius: 10px;
+
+  &__num {
+    font-size: 21px;
+    font-weight: 700;
+    color: #1e1e1e;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9b9ba8;
+  }
+}
+
+// Include-test-mode checkbox.
+.mission-migration-option__check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid #dcdcde;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  color: transparent;
+  transition: all 0.15s;
+}
+
+.mission-migration-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+
+  input {
+    display: none;
+  }
+
+  input:checked ~ .mission-migration-option__check {
+    background: #2fa36b;
+    border-color: #2fa36b;
+    color: #fff;
+  }
+}
+
+.mission-migration-option__name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e1e1e;
+}
+
+.mission-migration-option__hint {
+  display: block;
+  font-size: 12px;
+  color: #9b9ba8;
+  margin-top: 2px;
+}
+
+// --------------------------------
+// Progress phase timeline
+// --------------------------------
+.mission-migration-phases {
+  display: flex;
+  flex-direction: column;
+}
+
+.mission-migration-phase__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 20px;
+}
+
+.mission-migration-phase__marker {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #dcdcde;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all 0.3s;
+}
+
+.mission-migration-phase__line {
+  flex: 1;
+  width: 2px;
+  background: #f0f0f2;
+  margin: 4px 0;
+}
+
+.mission-migration-phase__body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 22px;
+}
+
+.mission-migration-phase {
+  display: flex;
+  gap: 14px;
+
+  &:last-child .mission-migration-phase__line {
+    display: none;
+  }
+
+  &:last-child .mission-migration-phase__body {
+    padding-bottom: 4px;
+  }
+}
+
+.mission-migration-phase__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.mission-migration-phase__name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #9b9ba8;
+  transition: color 0.3s;
+}
+
+.mission-migration-phase__count {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11.5px;
+  color: #9b9ba8;
+  font-variant-numeric: tabular-nums;
+}
+
+.mission-migration-phase__bar {
+  height: 6px;
+  border-radius: 3px;
+  background: #f0f0f2;
+  overflow: hidden;
+}
+
+.mission-migration-phase__bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  background: #2fa36b;
+  transition: width 0.4s ease;
+}
+
+.mission-migration-phase.is-running {
+
+  .mission-migration-phase__marker {
+    border-color: #2fa36b;
+    border-top-color: transparent;
+    animation: mission-migration-spin 0.7s linear infinite;
+  }
+
+  .mission-migration-phase__name {
+    color: #1e1e1e;
+  }
+}
+
+.mission-migration-phase.is-done {
+
+  .mission-migration-phase__marker {
+    border-color: #2fa36b;
+    background: #2fa36b;
+  }
+
+  .mission-migration-phase__name {
+    color: #1e1e1e;
+  }
+
+  .mission-migration-phase__line {
+    background: rgba(47, 163, 107, 0.35);
+  }
+}
+
+.mission-migration-phase.is-failed {
+
+  .mission-migration-phase__marker {
+    border-color: #b32d2e;
+  }
+
+  .mission-migration-phase__name,
+  .mission-migration-phase__count {
+    color: #b32d2e;
+  }
+}
+
+@keyframes mission-migration-spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .mission-migration-phase.is-running .mission-migration-phase__marker {
+    animation: none;
+    border-top-color: #2fa36b;
+  }
+}
+
+.mission-migration-progress-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+// --------------------------------
+// Receipt
+// --------------------------------
+.mission-migration-complete-card {
+  padding: 36px 32px 10px;
+}
+
+.mission-migration-receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mission-migration-receipt__row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.mission-migration-receipt__name {
+  font-weight: 600;
+  color: #1e1e1e;
+  flex-shrink: 0;
+}
+
+.mission-migration-receipt__dots {
+  flex: 1;
+  border-bottom: 2px dotted #dcdcde;
+  transform: translateY(-3px);
+}
+
+.mission-migration-receipt__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12.3px;
+  color: #1e1e1e;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+
+  &.is-zero {
+    color: #9b9ba8;
+  }
+
+  &.is-errors {
+    color: #b32d2e;
+    font-weight: 600;
+  }
+}
+
+.mission-migration-receipt__of {
+  color: #9b9ba8;
+}
+
+.mission-migration-receipt__check {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(47, 163, 107, 0.12);
+  color: #2fa36b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mission-migration-receipt__notes {
+  margin-top: 16px;
+}
+
+.mission-migration-report-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 0;
+}
+
+// --------------------------------
+// Loading skeleton
+// --------------------------------
+.mission-migration-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mission-migration-skeleton__line,
+.mission-migration-skeleton__row {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0f0f2 25%, #f7f7f8 50%, #f0f0f2 75%);
+  background-size: 200% 100%;
+  animation: mission-migration-shimmer 1.4s ease-in-out infinite;
+}
+
+.mission-migration-skeleton__line {
+  height: 14px;
+}
+
+.mission-migration-skeleton__row {
+  height: 56px;
+  border-radius: 10px;
+}
+
+@keyframes mission-migration-shimmer {
+
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .mission-migration-skeleton__line,
+  .mission-migration-skeleton__row {
+    animation: none;
+  }
+}

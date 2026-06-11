@@ -15,6 +15,7 @@ use MissionDP\Rest\Endpoints\ConfirmDonationEndpoint;
 use MissionDP\Rest\Endpoints\ConfirmSubscriptionEndpoint;
 use MissionDP\Rest\Endpoints\CreatePaymentIntentEndpoint;
 use MissionDP\Rest\Endpoints\CreateSubscriptionEndpoint;
+use MissionDP\Rest\Endpoints\DeactivationSurveyEndpoint;
 use MissionDP\Rest\Endpoints\PaymentConfigEndpoint;
 use MissionDP\Rest\Endpoints\ReviewBannerEndpoint;
 use MissionDP\Rest\Endpoints\SettingsEndpoint;
@@ -28,6 +29,9 @@ use MissionDP\Rest\Endpoints\ImportEndpoint;
 use MissionDP\Import\ColumnMapper;
 use MissionDP\Import\ImportService;
 use MissionDP\Import\Validators\RowValidator;
+use MissionDP\Rest\Endpoints\MigrationEndpoint;
+use MissionDP\Migration\MigrationService;
+use MissionDP\Migration\MigratorRegistry;
 use MissionDP\Rest\Endpoints\DonorWallEndpoint;
 use MissionDP\Rest\Endpoints\EmailTemplateEndpoint;
 use MissionDP\Rest\Endpoints\EmailTestEndpoint;
@@ -45,6 +49,7 @@ use MissionDP\Rest\Endpoints\SubscriptionsEndpoint;
 use MissionDP\Rest\Endpoints\SystemStatusEndpoint;
 use MissionDP\Rest\Endpoints\TransactionsEndpoint;
 use MissionDP\Rest\Endpoints\CleanupEndpoint;
+use MissionDP\Rest\Endpoints\OutgoingWebhooksEndpoint;
 use MissionDP\Cleanup\CleanupService;
 use MissionDP\DonorDashboard\DonorAuthService;
 use MissionDP\Payments\PaymentIntentVerifier;
@@ -100,6 +105,7 @@ class RestModule {
 		( new ActivityFeedEndpoint( $settings ) )->register();
 		( new DashboardEndpoint( $reporting, $settings ) )->register();
 		( new ReviewBannerEndpoint() )->register();
+		( new DeactivationSurveyEndpoint() )->register();
 		( new DonationFormSettingsEndpoint() )->register();
 		( new DonorWallEndpoint( $reporting, $settings ) )->register();
 		( new StripeWebhookEndpoint( $settings ) )->register();
@@ -114,7 +120,9 @@ class RestModule {
 		$export_service = new ExportService( $settings );
 		( new ExportEndpoint( $export_service ) )->register();
 		( new ImportEndpoint( new ImportService( $export_service, new ColumnMapper( $export_service ), new RowValidator() ) ) )->register();
+		( new MigrationEndpoint( new MigrationService( new MigratorRegistry() ) ) )->register();
 		( new SystemStatusEndpoint( $settings ) )->register();
 		( new CleanupEndpoint( new CleanupService( $settings ) ) )->register();
+		( new OutgoingWebhooksEndpoint() )->register();
 	}
 }

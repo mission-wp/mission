@@ -186,6 +186,21 @@ const ActivityIcon = () => (
   </svg>
 );
 
+const WebhookIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  </svg>
+);
+
 /**
  * Map of backend event names to display metadata.
  */
@@ -218,10 +233,19 @@ const eventMetaMap = {
   campaign_created: { icon: <BullhornIcon />, className: 'is-campaign' },
   campaign_ended: { icon: <CheckmarkIcon />, className: 'is-campaign-ended' },
   data_imported: { icon: <ImportIcon />, className: 'is-import' },
+  data_migrated: { icon: <ImportIcon />, className: 'is-import' },
+  migration_rolled_back: { icon: <ImportIcon />, className: 'is-import' },
+  migration_failed: { icon: <XCircleIcon />, className: 'is-failed' },
   plugin_updated: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_installed: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_activated: { icon: <MissionLogoIcon />, className: 'is-system' },
   plugin_deactivated: { icon: <MissionLogoIcon />, className: 'is-system' },
+  outgoing_webhook_created: { icon: <WebhookIcon />, className: 'is-webhook' },
+  outgoing_webhook_deleted: { icon: <WebhookIcon />, className: 'is-webhook' },
+  outgoing_webhook_auto_paused: {
+    icon: <WebhookIcon />,
+    className: 'is-failed',
+  },
 };
 
 const defaultMeta = { icon: <MissionLogoIcon />, className: 'is-system' };
@@ -304,6 +328,25 @@ const importTypeLabels = {
 function importNoun( type, count ) {
   const labels = importTypeLabels[ type ] || [ type, type ];
   return count === 1 ? labels[ 0 ] : labels[ 1 ];
+}
+
+const migrationSourceNames = {
+  givewp: 'GiveWP',
+  charitable: 'Charitable',
+  donorbox: 'Donorbox',
+};
+
+/**
+ * Display name for a migration source slug.
+ *
+ * @param {string} source Source slug (e.g. 'givewp').
+ */
+function migrationSourceName( source ) {
+  return (
+    migrationSourceNames[ source ] ||
+    source ||
+    __( 'another plugin', 'mission-donation-platform' )
+  );
 }
 
 /**
@@ -703,6 +746,135 @@ function getEventText( event ) {
       </>
     ) : (
       body
+    );
+  }
+
+  if ( eventType === 'data_migrated' ) {
+    const counts = data.counts || {};
+    const total = Object.values( counts ).reduce(
+      ( sum, count ) => sum + ( Number( count ) || 0 ),
+      0
+    );
+    const sourceName = migrationSourceName( data.source );
+    const actor = data.actor_name;
+
+    if ( total === 0 ) {
+      return sprintf(
+        // translators: %s: source plugin name (e.g. "GiveWP").
+        __(
+          'Migration from %s finished with no new records',
+          'mission-donation-platform'
+        ),
+        sourceName
+      );
+    }
+
+    const text = actor
+      ? sprintf(
+          // translators: 1: admin display name, 2: source plugin name.
+          __(
+            '%1$s migrated <count /> records from %2$s',
+            'mission-donation-platform'
+          ),
+          actor,
+          sourceName
+        )
+      : sprintf(
+          // translators: %s: source plugin name.
+          __(
+            'Migrated <count /> records from %s',
+            'mission-donation-platform'
+          ),
+          sourceName
+        );
+
+    return createInterpolateElement( text, {
+      count: <strong>{ total.toLocaleString() }</strong>,
+    } );
+  }
+
+  if ( eventType === 'migration_rolled_back' ) {
+    const sourceName = migrationSourceName( data.source );
+    const actor = data.actor_name;
+
+    return actor
+      ? sprintf(
+          // translators: 1: admin display name, 2: source plugin name.
+          __(
+            '%1$s removed the data migrated from %2$s',
+            'mission-donation-platform'
+          ),
+          actor,
+          sourceName
+        )
+      : sprintf(
+          // translators: %s: source plugin name.
+          __(
+            'Removed the data migrated from %s',
+            'mission-donation-platform'
+          ),
+          sourceName
+        );
+  }
+
+  if ( eventType === 'migration_failed' ) {
+    return sprintf(
+      // translators: %s: source plugin name.
+      __( 'Migration from %s failed', 'mission-donation-platform' ),
+      migrationSourceName( data.source )
+    );
+  }
+
+  if (
+    eventType === 'outgoing_webhook_created' ||
+    eventType === 'outgoing_webhook_deleted'
+  ) {
+    const actor = data.actor_name;
+    const name = data.name;
+    const created = eventType === 'outgoing_webhook_created';
+
+    if ( actor && name ) {
+      const text = created
+        ? sprintf(
+            // translators: %s: admin display name.
+            __( '%s created <name /> webhook', 'mission-donation-platform' ),
+            actor
+          )
+        : sprintf(
+            // translators: %s: admin display name.
+            __( '%s deleted <name /> webhook', 'mission-donation-platform' ),
+            actor
+          );
+      return createInterpolateElement( text, {
+        name: <strong>{ name }</strong>,
+      } );
+    }
+    if ( name ) {
+      return createInterpolateElement(
+        created
+          ? __( 'Created <name /> webhook', 'mission-donation-platform' )
+          : __( 'Deleted <name /> webhook', 'mission-donation-platform' ),
+        { name: <strong>{ name }</strong> }
+      );
+    }
+    return created
+      ? __( 'Webhook created', 'mission-donation-platform' )
+      : __( 'Webhook deleted', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'outgoing_webhook_auto_paused' ) {
+    if ( data.name ) {
+      return createInterpolateElement(
+        __(
+          '<name /> webhook was paused automatically after repeated failures',
+          'mission-donation-platform'
+        ),
+        { name: <strong>{ data.name }</strong> }
+      );
+    }
+    return __(
+      'A webhook was paused automatically after repeated failures',
+      'mission-donation-platform'
     );
   }
 

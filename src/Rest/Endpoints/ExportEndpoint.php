@@ -350,11 +350,13 @@ class ExportEndpoint {
 				'type'              => 'string',
 				'enum'              => [ 'email', 'mail' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 			'notification_status' => [
 				'type'              => 'string',
 				'enum'              => [ 'pending', 'sent' ],
 				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];
 	}

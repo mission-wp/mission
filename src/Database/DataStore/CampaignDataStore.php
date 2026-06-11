@@ -70,7 +70,7 @@ class CampaignDataStore implements DataStoreInterface {
 		$model->id = (int) $wpdb->insert_id;
 
 		/** @param Campaign $model The campaign. */
-		do_action( 'missiondp_campaign_created', $model );
+		do_action( 'mission_campaign_created', $model );
 
 		return $model->id;
 	}
@@ -197,7 +197,7 @@ class CampaignDataStore implements DataStoreInterface {
 	 * Recompute a campaign's aggregates from the transactions table.
 	 *
 	 * Rebuilds total_raised / transaction_count / donor_count and the three test_*
-	 * mirrors. Fires missiondp_campaign_aggregates_updated so dashboard caches
+	 * mirrors. Fires mission_campaign_aggregates_updated so dashboard caches
 	 * invalidate. No-op if the campaign row doesn't exist.
 	 *
 	 * @param int $campaign_id Campaign ID.
@@ -256,7 +256,7 @@ class CampaignDataStore implements DataStoreInterface {
 			 * @param int  $campaign_id The campaign ID.
 			 * @param bool $is_test     Always false here; recompute updates both arms together.
 			 */
-			do_action( 'missiondp_campaign_aggregates_updated', $campaign_id, false );
+			do_action( 'mission_campaign_aggregates_updated', $campaign_id, false );
 		}
 	}
 
@@ -285,81 +285,63 @@ class CampaignDataStore implements DataStoreInterface {
 	public function query( array $args = [] ): array {
 		global $wpdb;
 
-		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
-		$has_search  = '' !== $search_like ? 1 : 0;
-
-		$status     = ! empty( $args['status'] ) ? (string) $args['status'] : '';
-		$has_status = '' !== $status ? 1 : 0;
-
-		$status_in_list = ( ! empty( $args['status__in'] ) && is_array( $args['status__in'] ) )
-			? implode( ',', array_map( 'strval', $args['status__in'] ) )
-			: '';
-		$has_status_in  = '' !== $status_in_list ? 1 : 0;
-
-		$has_show_in_listings = isset( $args['show_in_listings'] ) ? 1 : 0;
-		$show_in_listings     = (int) ( $args['show_in_listings'] ?? 0 );
+		[ $where, $values ] = $this->build_where_clause( $args );
 
 		$allowed_orderby = [ 'id', 'title', 'status', 'date_created', 'date_modified', 'date_start', 'date_end', 'goal_amount', 'total_raised', 'transaction_count', 'donor_count', 'test_total_raised', 'test_transaction_count', 'test_donor_count' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
 		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		if ( $order_asc ) {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR title LIKE %s )
-					   AND ( %d = 0 OR status = %s )
-					   AND ( %d = 0 OR FIND_IN_SET( status, %s ) > 0 )
-					   AND ( %d = 0 OR show_in_listings = %d )
-					 ORDER BY %i ASC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_search,
-					$search_like,
-					$has_status,
-					$status,
-					$has_status_in,
-					$status_in_list,
-					$has_show_in_listings,
-					$show_in_listings,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR title LIKE %s )
-					   AND ( %d = 0 OR status = %s )
-					   AND ( %d = 0 OR FIND_IN_SET( status, %s ) > 0 )
-					   AND ( %d = 0 OR show_in_listings = %d )
-					 ORDER BY %i DESC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_search,
-					$search_like,
-					$has_status,
-					$status,
-					$has_status_in,
-					$status_in_list,
-					$has_show_in_listings,
-					$show_in_listings,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		}
+		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order} LIMIT %d OFFSET %d";
+		$prepare_args = array_merge( [ $this->get_table_name() ], $values, [ $orderby, $per_page, $offset ] );
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via placeholders built from counted arrays, direction whitelisted.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
+	}
+
+	/**
+	 * Build a WHERE clause and its placeholder values from query args.
+	 *
+	 * Clauses are added only when the corresponding filter is present, keeping
+	 * the SQL portable (no MySQL-only functions, works on SQLite installs).
+	 *
+	 * @param array<string, mixed> $args Query arguments.
+	 *
+	 * @return array{string, array<int, string|int>} WHERE fragment and prepare values.
+	 */
+	private function build_where_clause( array $args ): array {
+		global $wpdb;
+
+		$clauses = [];
+		$values  = [];
+
+		if ( ! empty( $args['search'] ) ) {
+			$clauses[] = 'title LIKE %s';
+			$values[]  = '%' . $wpdb->esc_like( (string) $args['search'] ) . '%';
+		}
+
+		if ( ! empty( $args['status'] ) ) {
+			$clauses[] = 'status = %s';
+			$values[]  = (string) $args['status'];
+		}
+
+		if ( ! empty( $args['status__in'] ) && is_array( $args['status__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['status__in'] ), '%s' ) );
+			$clauses[]    = "status IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'strval', $args['status__in'] ) );
+		}
+
+		if ( isset( $args['show_in_listings'] ) ) {
+			$clauses[] = 'show_in_listings = %d';
+			$values[]  = (int) $args['show_in_listings'];
+		}
+
+		return [ $clauses ? implode( ' AND ', $clauses ) : '1 = 1', $values ];
 	}
 
 	/**
@@ -412,38 +394,13 @@ class CampaignDataStore implements DataStoreInterface {
 	public function count( array $args = [] ): int {
 		global $wpdb;
 
-		$search_like = ! empty( $args['search'] ) ? '%' . $wpdb->esc_like( $args['search'] ) . '%' : '';
-		$has_search  = '' !== $search_like ? 1 : 0;
+		[ $where, $values ] = $this->build_where_clause( $args );
 
-		$status     = ! empty( $args['status'] ) ? (string) $args['status'] : '';
-		$has_status = '' !== $status ? 1 : 0;
+		$sql          = "SELECT COUNT(*) FROM %i WHERE {$where}";
+		$prepare_args = array_merge( [ $this->get_table_name() ], $values );
 
-		$status_in_list = ( ! empty( $args['status__in'] ) && is_array( $args['status__in'] ) )
-			? implode( ',', array_map( 'strval', $args['status__in'] ) )
-			: '';
-		$has_status_in  = '' !== $status_in_list ? 1 : 0;
-
-		$has_show_in_listings = isset( $args['show_in_listings'] ) ? 1 : 0;
-		$show_in_listings     = (int) ( $args['show_in_listings'] ?? 0 );
-
-		return (int) $wpdb->get_var(
-			$wpdb->prepare(
-				'SELECT COUNT(*) FROM %i
-				 WHERE ( %d = 0 OR title LIKE %s )
-				   AND ( %d = 0 OR status = %s )
-				   AND ( %d = 0 OR FIND_IN_SET( status, %s ) > 0 )
-				   AND ( %d = 0 OR show_in_listings = %d )',
-				$this->get_table_name(),
-				$has_search,
-				$search_like,
-				$has_status,
-				$status,
-				$has_status_in,
-				$status_in_list,
-				$has_show_in_listings,
-				$show_in_listings
-			)
-		);
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, filters via placeholders built from counted arrays.
+		return (int) $wpdb->get_var( $wpdb->prepare( $sql, $prepare_args ) );
 	}
 
 	/**

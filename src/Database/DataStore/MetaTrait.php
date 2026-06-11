@@ -114,4 +114,88 @@ trait MetaTrait {
 	public function delete_meta( int $object_id, string $meta_key ): bool {
 		return delete_metadata( $this->get_meta_type(), $object_id, $meta_key );
 	}
+
+	/**
+	 * Map meta values to object IDs in one query.
+	 *
+	 * Used by batch consumers (e.g. migration writers) to resolve many source
+	 * IDs at once instead of one get_meta() per record. When multiple objects
+	 * share a value, the lowest object ID wins.
+	 *
+	 * @param string                    $meta_key    Meta key to match.
+	 * @param array<int|string>         $meta_values Values to look up.
+	 *
+	 * @return array<string, int> Map of meta_value => object ID.
+	 */
+	public function find_object_ids_by_meta( string $meta_key, array $meta_values ): array {
+		global $wpdb;
+
+		$meta_values = array_values(
+			array_unique(
+				array_filter(
+					array_map( 'strval', $meta_values ),
+					static fn( string $value ): bool => '' !== $value
+				)
+			)
+		);
+
+		if ( empty( $meta_values ) ) {
+			return [];
+		}
+
+		$id_column    = $this->get_meta_type() . '_id';
+		$placeholders = implode( ', ', array_fill( 0, count( $meta_values ), '%s' ) );
+
+		$sql = "SELECT meta_value, %i AS object_id FROM %i WHERE meta_key = %s AND meta_value IN ( {$placeholders} ) ORDER BY %i ASC";
+
+		$prepare_args = array_merge(
+			[ $id_column, $this->get_meta_table_name(), $meta_key ],
+			$meta_values,
+			[ $id_column ]
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- identifiers use %i, values use counted %s placeholders.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$map[ (string) $row['meta_value'] ] ??= (int) $row['object_id'];
+		}
+
+		return $map;
+	}
+
+	/**
+	 * Get object IDs carrying a specific meta key/value pair, cursor-paginated.
+	 *
+	 * Used to walk large sets (e.g. migration rollback) in batches.
+	 *
+	 * @param string $meta_key   Meta key to match.
+	 * @param string $meta_value Meta value to match.
+	 * @param int    $limit      Max IDs to return.
+	 * @param int    $after_id   Only return object IDs greater than this.
+	 *
+	 * @return int[] Ascending object IDs.
+	 */
+	public function find_object_ids_with_meta( string $meta_key, string $meta_value, int $limit = 100, int $after_id = 0 ): array {
+		global $wpdb;
+
+		$id_column = $this->get_meta_type() . '_id';
+
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				'SELECT DISTINCT %i FROM %i WHERE meta_key = %s AND meta_value = %s AND %i > %d ORDER BY %i ASC LIMIT %d',
+				$id_column,
+				$this->get_meta_table_name(),
+				$meta_key,
+				$meta_value,
+				$id_column,
+				$after_id,
+				$id_column,
+				$limit
+			)
+		);
+
+		return array_map( 'intval', $ids ?: [] );
+	}
 }

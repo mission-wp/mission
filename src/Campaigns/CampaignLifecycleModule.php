@@ -49,13 +49,13 @@ class CampaignLifecycleModule {
 		add_action( 'init', [ $this, 'ensure_cron_scheduled' ] );
 
 		// Close-on-goal: synchronous check when campaign aggregates change.
-		add_action( 'missiondp_campaign_aggregates_updated', [ $this, 'check_close_on_goal' ] );
+		add_action( 'mission_campaign_aggregates_updated', [ $this, 'check_close_on_goal' ] );
 
 		// Recompute status when campaign is updated via REST (date changes).
-		add_action( 'missiondp_campaign_updated', [ $this, 'maybe_update_status_on_save' ], 10, 2 );
+		add_action( 'mission_campaign_updated', [ $this, 'maybe_update_status_on_save' ], 10, 2 );
 
 		// Set initial status on new campaigns.
-		add_action( 'missiondp_campaign_created', [ $this, 'set_initial_status' ] );
+		add_action( 'mission_campaign_created', [ $this, 'set_initial_status' ] );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class CampaignLifecycleModule {
 		 * @param string   $new_status New status.
 		 * @param string   $reason     Reason for the transition.
 		 */
-		do_action( 'missiondp_campaign_status_changed', $campaign, $old_status, $new_status, $reason );
+		do_action( 'mission_campaign_status_changed', $campaign, $old_status, $new_status, $reason );
 
 		if ( 'ended' === $new_status ) {
 			$this->execute_end_actions( $campaign );

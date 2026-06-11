@@ -41,7 +41,7 @@ class JsonFormatter implements FormatterInterface {
 		 * @param array  $columns Column definitions.
 		 * @param array  $rows    Row data.
 		 */
-		return apply_filters( "missiondp_export_{$type}_json", $json, $columns, $rows );
+		return apply_filters( "mission_export_{$type}_json", $json, $columns, $rows );
 	}
 
 	/**

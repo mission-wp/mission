@@ -92,6 +92,8 @@ class AdminModule {
 		add_filter( 'parent_file', [ $this, 'set_campaign_parent_menu' ] );
 		add_filter( 'submenu_file', [ $this, 'set_campaign_submenu_file' ] );
 		add_filter( 'plugin_action_links_' . MISSIONDP_BASENAME, [ $this, 'add_plugin_action_links' ] );
+
+		( new DeactivationSurvey() )->init();
 	}
 
 	/**
@@ -169,6 +171,8 @@ class AdminModule {
 				'restUrl'                   => rest_url( 'mission-donation-platform/v1/' ),
 				'restNonce'                 => wp_create_nonce( 'wp_rest' ),
 				'adminUrl'                  => admin_url(),
+				'homeUrl'                   => home_url( '/' ),
+				'pluginUrl'                 => MISSIONDP_URL,
 				'page'                      => $screen->id,
 				'version'                   => MISSIONDP_VERSION,
 				'currency'                  => $settings['currency'] ?? 'USD',

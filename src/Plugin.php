@@ -98,6 +98,13 @@ class Plugin {
 	 */
 	private ?Email\AdminNotificationListener $admin_notification_listener = null;
 
+	/**
+	 * Outgoing webhook module instance.
+	 *
+	 * @var OutgoingWebhooks\OutgoingWebhookModule|null
+	 */
+	private ?OutgoingWebhooks\OutgoingWebhookModule $outgoing_webhook_module = null;
+
 
 	/**
 	 * Get plugin instance.
@@ -144,6 +151,10 @@ class Plugin {
 		// Initialize activity feed module.
 		$this->activity_feed_module = new ActivityFeed\ActivityFeedModule();
 		$this->activity_feed_module->init();
+
+		// Initialize outgoing webhook module.
+		$this->outgoing_webhook_module = new OutgoingWebhooks\OutgoingWebhookModule();
+		$this->outgoing_webhook_module->init();
 
 		// Initialize campaign lifecycle module (status transitions and end-of-campaign actions).
 		$this->campaign_lifecycle_module = new Campaigns\CampaignLifecycleModule();
@@ -192,6 +203,11 @@ class Plugin {
 		);
 		( new Import\ImportJobHandler( $import_service ) )->register();
 		( new Import\ImportCleanup( $import_service ) )->register();
+
+		// Same deal for the migration job handler.
+		$migration_service = new Migration\MigrationService( new Migration\MigratorRegistry() );
+		( new Migration\MigrationJobHandler( $migration_service ) )->register();
+		( new Migration\MigrationCleanup() )->register();
 	}
 
 	/**
@@ -264,5 +280,14 @@ class Plugin {
 	 */
 	public function get_admin_notification_listener(): ?Email\AdminNotificationListener {
 		return $this->admin_notification_listener;
+	}
+
+	/**
+	 * Get outgoing webhook module instance.
+	 *
+	 * @return OutgoingWebhooks\OutgoingWebhookModule|null
+	 */
+	public function get_outgoing_webhook_module(): ?OutgoingWebhooks\OutgoingWebhookModule {
+		return $this->outgoing_webhook_module;
 	}
 }

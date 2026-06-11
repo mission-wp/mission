@@ -159,7 +159,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 		$specific_fired = false;
 
 		$this->add_tracked_action(
-			'missiondp_transaction_status_transition',
+			'mission_transaction_status_transition',
 			function ( $txn, $old, $new ) use ( &$generic_fired, &$generic_args ) {
 				$generic_fired = true;
 				$generic_args  = [ 'old_status' => $old, 'new_status' => $new ];
@@ -168,7 +168,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 			3
 		);
 		$this->add_tracked_action(
-			'missiondp_transaction_status_pending_to_completed',
+			'mission_transaction_status_pending_to_completed',
 			function () use ( &$specific_fired ) {
 				$specific_fired = true;
 			},
@@ -301,7 +301,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 
 		$fired = 0;
 		$this->add_tracked_action(
-			'missiondp_transaction_status_pending_to_completed',
+			'mission_transaction_status_pending_to_completed',
 			function () use ( &$fired ) {
 				$fired++;
 			},
@@ -325,7 +325,7 @@ class PaymentIntentSucceededHandlerTest extends WP_UnitTestCase {
 
 		$fired = false;
 		$this->add_tracked_action(
-			'missiondp_transaction_status_transition',
+			'mission_transaction_status_transition',
 			function () use ( &$fired ) {
 				$fired = true;
 			},
