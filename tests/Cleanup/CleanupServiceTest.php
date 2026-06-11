@@ -14,6 +14,7 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
+use MissionDP\Models\WebhookDelivery;
 use MissionDP\Settings\SettingsService;
 use WP_UnitTestCase;
 
@@ -53,7 +54,7 @@ class CleanupServiceTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		foreach ( [ 'transactionmeta', 'transactions', 'tributes', 'transaction_history', 'subscriptionmeta', 'subscriptions', 'donormeta', 'donors', 'notes' ] as $table ) {
+		foreach ( [ 'transactionmeta', 'transactions', 'tributes', 'transaction_history', 'subscriptionmeta', 'subscriptions', 'donormeta', 'donors', 'notes', 'webhook_deliveries', 'activity_log' ] as $table ) {
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_{$table}" );
 		}
 		// phpcs:enable
@@ -205,5 +206,51 @@ class CleanupServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( 1, $this->count_meta_rows( 'subscriptionmeta', 'missiondp_subscription_id', $live_sub->id ) );
 		$this->assertSame( 0, $this->count_meta_rows( 'subscriptionmeta', 'missiondp_subscription_id', $test_sub->id ) );
+	}
+
+	/**
+	 * Create a webhook delivery row.
+	 *
+	 * @param string $event_id Unique event ID.
+	 * @return WebhookDelivery
+	 */
+	private function create_webhook_delivery( string $event_id ): WebhookDelivery {
+		$delivery = new WebhookDelivery(
+			[
+				'webhook_id' => 1,
+				'event'      => 'donation.completed',
+				'event_id'   => $event_id,
+				'url'        => 'https://example.com/hook',
+			]
+		);
+		$delivery->save();
+
+		return $delivery;
+	}
+
+	/**
+	 * Test get_stats reports the webhook delivery count.
+	 */
+	public function test_get_stats_includes_webhook_delivery_count(): void {
+		$this->create_webhook_delivery( 'evt_stats1' );
+		$this->create_webhook_delivery( 'evt_stats2' );
+
+		$stats = $this->cleanup->get_stats();
+
+		$this->assertSame( 2, $stats['webhook_delivery_count'] );
+	}
+
+	/**
+	 * Test clear_webhook_deliveries truncates the table and reports the count.
+	 */
+	public function test_clear_webhook_deliveries_truncates_and_reports_count(): void {
+		$this->create_webhook_delivery( 'evt_clear1' );
+		$this->create_webhook_delivery( 'evt_clear2' );
+		$this->create_webhook_delivery( 'evt_clear3' );
+
+		$result = $this->cleanup->clear_webhook_deliveries();
+
+		$this->assertSame( [ 'deleted' => 3 ], $result );
+		$this->assertSame( 0, WebhookDelivery::count() );
 	}
 }

@@ -124,6 +124,71 @@ class ActivityFeedModule {
 
 		// Stripe account fallback (form requested a disconnected account, used default instead).
 		add_action( 'mission_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
+
+		// Outgoing webhooks.
+		add_action( 'mission_outgoing_webhook_created', [ $this, 'on_outgoing_webhook_created' ] );
+		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ] );
+		add_action( 'mission_outgoing_webhook_auto_paused', [ $this, 'on_outgoing_webhook_auto_paused' ] );
+	}
+
+	/**
+	 * Log when an outgoing webhook is created.
+	 *
+	 * @param object $webhook OutgoingWebhook model.
+	 *
+	 * @return void
+	 */
+	public function on_outgoing_webhook_created( object $webhook ): void {
+		$this->log(
+			'outgoing_webhook_created',
+			'webhook',
+			$webhook->id,
+			[
+				'name' => $webhook->name,
+				'url'  => $webhook->url,
+			],
+			category: 'webhook',
+		);
+	}
+
+	/**
+	 * Log when an outgoing webhook is deleted.
+	 *
+	 * @param int $webhook_id Deleted webhook ID.
+	 *
+	 * @return void
+	 */
+	public function on_outgoing_webhook_deleted( int $webhook_id ): void {
+		$this->log(
+			'outgoing_webhook_deleted',
+			'webhook',
+			$webhook_id,
+			[],
+			category: 'webhook',
+		);
+	}
+
+	/**
+	 * Log when an outgoing webhook is auto-paused after prolonged failures.
+	 *
+	 * @param object $webhook OutgoingWebhook model.
+	 *
+	 * @return void
+	 */
+	public function on_outgoing_webhook_auto_paused( object $webhook ): void {
+		$this->log(
+			'outgoing_webhook_auto_paused',
+			'webhook',
+			$webhook->id,
+			[
+				'name'          => $webhook->name,
+				'url'           => $webhook->url,
+				'failure_count' => $webhook->failure_count,
+				'failing_since' => $webhook->failing_since,
+			],
+			level: 'warning',
+			category: 'webhook',
+		);
 	}
 
 	/**

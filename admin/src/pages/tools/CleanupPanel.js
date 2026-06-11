@@ -97,6 +97,44 @@ const SECTIONS = [
           'mission-donation-platform'
         ),
       },
+      {
+        id: 'clear_webhook_deliveries',
+        label: __( 'Clear webhook delivery log', 'mission-donation-platform' ),
+        getDescription: ( stats ) => {
+          const count = stats?.webhook_delivery_count;
+          if ( count === undefined ) {
+            return __(
+              'Remove all outgoing webhook delivery records.',
+              'mission-donation-platform'
+            );
+          }
+          return sprintf(
+            /* translators: %s: entry count with HTML markup */
+            __(
+              'Remove all outgoing webhook delivery records. %s currently stored.',
+              'mission-donation-platform'
+            ),
+            `<strong>${ count.toLocaleString() } ${
+              count === 1
+                ? __( 'record', 'mission-donation-platform' )
+                : __( 'records', 'mission-donation-platform' )
+            }</strong>`
+          );
+        },
+        getConfirmMessage: ( stats ) =>
+          sprintf(
+            /* translators: %s: number of records */
+            __(
+              'This will permanently delete all %s webhook delivery records.',
+              'mission-donation-platform'
+            ),
+            ( stats?.webhook_delivery_count || 0 ).toLocaleString()
+          ),
+        successMessage: __(
+          'Webhook delivery log cleared.',
+          'mission-donation-platform'
+        ),
+      },
     ],
   },
   {

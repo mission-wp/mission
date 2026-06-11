@@ -79,8 +79,14 @@ class CleanupService {
 			)
 		);
 
+		// Webhook delivery count.
+		$webhook_delivery_count = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $prefix . 'webhook_deliveries' )
+		);
+
 		return [
 			'activity_log_count'      => $activity_log_count,
+			'webhook_delivery_count'  => $webhook_delivery_count,
 			'log_files_size'          => $log_files_size,
 			'log_files_count'         => $log_files_count,
 			'test_transaction_count'  => $test_transaction_count,
@@ -149,6 +155,27 @@ class CleanupService {
 		);
 
 		$this->log_activity( 'activity_log_cleared', 'settings', 0, [ 'entries_deleted' => $count ] );
+
+		$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
+
+		return [ 'deleted' => $count ];
+	}
+
+	/**
+	 * Clear all webhook delivery records.
+	 *
+	 * @return array{deleted: int}
+	 */
+	public function clear_webhook_deliveries(): array {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'missiondp_webhook_deliveries';
+
+		$count = (int) $wpdb->get_var(
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table )
+		);
+
+		$this->log_activity( 'webhook_deliveries_cleared', 'settings', 0, [ 'entries_deleted' => $count ] );
 
 		$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 
