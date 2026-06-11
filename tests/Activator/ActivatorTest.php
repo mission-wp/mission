@@ -87,6 +87,76 @@ class ActivatorTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that a fresh install with no conflicting content uses the default campaign slug.
+	 */
+	public function test_fresh_install_uses_default_campaign_slug(): void {
+		Activator::activate();
+
+		$settings = get_option( 'missiondp_settings' );
+
+		$this->assertSame( 'campaigns', $settings['campaign_url_slug'] );
+	}
+
+	/**
+	 * Test that a fresh install picks the next candidate when "campaigns" is taken.
+	 */
+	public function test_fresh_install_avoids_existing_campaigns_page(): void {
+		self::factory()->post->create(
+			[
+				'post_type'   => 'page',
+				'post_name'   => 'campaigns',
+				'post_status' => 'publish',
+			]
+		);
+
+		Activator::activate();
+
+		$settings = get_option( 'missiondp_settings' );
+
+		$this->assertSame( 'giving', $settings['campaign_url_slug'] );
+	}
+
+	/**
+	 * Test that a fresh install falls back to a numbered slug when every candidate is taken.
+	 */
+	public function test_fresh_install_falls_back_to_numbered_slug(): void {
+		foreach ( [ 'campaigns', 'giving', 'fundraisers', 'mission-campaigns' ] as $slug ) {
+			self::factory()->post->create(
+				[
+					'post_type'   => 'page',
+					'post_name'   => $slug,
+					'post_status' => 'publish',
+				]
+			);
+		}
+
+		Activator::activate();
+
+		$settings = get_option( 'missiondp_settings' );
+
+		$this->assertSame( 'campaigns-2', $settings['campaign_url_slug'] );
+	}
+
+	/**
+	 * Test that reactivating an existing install does not add the slug setting,
+	 * and that it resolves to the default through the settings service.
+	 */
+	public function test_existing_install_keeps_resolving_default_slug(): void {
+		update_option( 'missiondp_settings', [ 'currency' => 'EUR' ] );
+		update_option( 'missiondp_version', '1.2.0' );
+
+		Activator::activate();
+
+		$stored = get_option( 'missiondp_settings' );
+
+		$this->assertArrayNotHasKey( 'campaign_url_slug', $stored );
+		$this->assertSame(
+			'campaigns',
+			( new \MissionDP\Settings\SettingsService() )->get( 'campaign_url_slug' )
+		);
+	}
+
+	/**
 	 * Test that activation does not overwrite existing settings.
 	 */
 	public function test_does_not_overwrite_existing_settings(): void {

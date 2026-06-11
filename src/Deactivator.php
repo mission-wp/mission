@@ -33,6 +33,8 @@ class Deactivator {
 		self::clear_action_scheduler_actions();
 		self::clear_transients();
 
+		// A pending slug-change flush is moot once rules are flushed here.
+		delete_option( Campaigns\CampaignPostType::FLUSH_FLAG_OPTION );
 		flush_rewrite_rules();
 	}
 

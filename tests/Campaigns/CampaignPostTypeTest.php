@@ -103,6 +103,84 @@ class CampaignPostTypeTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that the rewrite slug defaults to campaigns.
+	 */
+	public function test_rewrite_slug_defaults_to_campaigns(): void {
+		$post_type = get_post_type_object( CampaignPostType::POST_TYPE );
+
+		$this->assertSame( 'campaigns', $post_type->rewrite['slug'] );
+	}
+
+	/**
+	 * Test that the rewrite slug reads the campaign_url_slug setting.
+	 */
+	public function test_rewrite_slug_reads_setting(): void {
+		update_option( 'missiondp_settings', [ 'campaign_url_slug' => 'giving' ] );
+
+		( new CampaignPostType() )->register();
+
+		$post_type = get_post_type_object( CampaignPostType::POST_TYPE );
+
+		$this->assertSame( 'giving', $post_type->rewrite['slug'] );
+	}
+
+	/**
+	 * Test that an unusable stored slug falls back to the default.
+	 */
+	public function test_rewrite_slug_falls_back_when_setting_unusable(): void {
+		update_option( 'missiondp_settings', [ 'campaign_url_slug' => '!!!' ] );
+
+		( new CampaignPostType() )->register();
+
+		$post_type = get_post_type_object( CampaignPostType::POST_TYPE );
+
+		$this->assertSame( 'campaigns', $post_type->rewrite['slug'] );
+	}
+
+	/**
+	 * Test that changing the slug setting schedules a rewrite flush.
+	 */
+	public function test_slug_change_schedules_flush(): void {
+		$cpt = new CampaignPostType();
+
+		$cpt->schedule_flush_on_slug_change(
+			[ 'campaign_url_slug' => 'giving' ],
+			[ 'campaign_url_slug' => 'giving' ],
+			[ 'campaign_url_slug' => 'campaigns' ]
+		);
+
+		$this->assertNotEmpty( get_option( CampaignPostType::FLUSH_FLAG_OPTION ) );
+
+		delete_option( CampaignPostType::FLUSH_FLAG_OPTION );
+	}
+
+	/**
+	 * Test that saving an unchanged slug does not schedule a flush.
+	 */
+	public function test_unchanged_slug_does_not_schedule_flush(): void {
+		$cpt = new CampaignPostType();
+
+		$cpt->schedule_flush_on_slug_change(
+			[ 'campaign_url_slug' => 'campaigns', 'currency' => 'EUR' ],
+			[ 'campaign_url_slug' => 'campaigns', 'currency' => 'EUR' ],
+			[ 'campaign_url_slug' => 'campaigns', 'currency' => 'USD' ]
+		);
+
+		$this->assertFalse( get_option( CampaignPostType::FLUSH_FLAG_OPTION ) );
+	}
+
+	/**
+	 * Test that a scheduled flush consumes the flag.
+	 */
+	public function test_maybe_flush_consumes_flag(): void {
+		update_option( CampaignPostType::FLUSH_FLAG_OPTION, 1 );
+
+		( new CampaignPostType() )->maybe_flush_rewrite_rules();
+
+		$this->assertFalse( get_option( CampaignPostType::FLUSH_FLAG_OPTION ) );
+	}
+
+	/**
 	 * Test that a disabled campaign page returns 404 on the frontend.
 	 */
 	public function test_disabled_campaign_page_returns_404(): void {

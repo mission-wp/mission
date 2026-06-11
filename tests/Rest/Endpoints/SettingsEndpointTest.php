@@ -270,6 +270,118 @@ class SettingsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test POST updates the campaign URL slug.
+	 */
+	public function test_post_updates_campaign_url_slug(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->post_settings( array( 'campaign_url_slug' => 'giving' ) );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'giving', $response->get_data()['campaign_url_slug'] );
+		$this->assertSame( 'giving', get_option( SettingsService::OPTION_NAME )['campaign_url_slug'] );
+	}
+
+	/**
+	 * Test POST sanitizes the campaign URL slug.
+	 */
+	public function test_post_sanitizes_campaign_url_slug(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->post_settings( array( 'campaign_url_slug' => 'Giving Page!' ) );
+
+		$this->assertSame( 'giving-page', $response->get_data()['campaign_url_slug'] );
+	}
+
+	/**
+	 * Test POST rejects a campaign slug used by an existing page, saving nothing.
+	 */
+	public function test_post_rejects_conflicting_campaign_slug(): void {
+		self::factory()->post->create(
+			array(
+				'post_type'   => 'page',
+				'post_name'   => 'giving',
+				'post_title'  => 'Giving',
+				'post_status' => 'publish',
+			)
+		);
+
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->post_settings(
+			array(
+				'campaign_url_slug' => 'giving',
+				'currency'          => 'eur',
+			)
+		);
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertSame( 'missiondp_campaign_slug_conflict', $response->get_data()['code'] );
+
+		// The whole save is rejected atomically.
+		$stored = get_option( SettingsService::OPTION_NAME );
+		$this->assertFalse( $stored );
+	}
+
+	/**
+	 * Test POST accepts re-saving the current slug even when other content uses it.
+	 */
+	public function test_post_allows_resaving_current_campaign_slug(): void {
+		update_option( SettingsService::OPTION_NAME, array( 'campaign_url_slug' => 'giving' ) );
+		self::factory()->post->create(
+			array(
+				'post_type'   => 'page',
+				'post_name'   => 'giving',
+				'post_status' => 'publish',
+			)
+		);
+
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->post_settings( array( 'campaign_url_slug' => 'giving' ) );
+
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * Test POST rejects an empty campaign slug.
+	 */
+	public function test_post_rejects_empty_campaign_slug(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->post_settings( array( 'campaign_url_slug' => '!!!' ) );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'missiondp_invalid_campaign_slug', $response->get_data()['code'] );
+	}
+
+	/**
+	 * Test POST rejects a reserved campaign slug.
+	 */
+	public function test_post_rejects_reserved_campaign_slug(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$response = $this->post_settings( array( 'campaign_url_slug' => 'category' ) );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'missiondp_reserved_campaign_slug', $response->get_data()['code'] );
+	}
+
+	/**
+	 * Dispatch a settings POST with a JSON body.
+	 *
+	 * @param array<string, mixed> $body Request body.
+	 * @return \WP_REST_Response
+	 */
+	private function post_settings( array $body ): \WP_REST_Response {
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/settings' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( $body ) );
+
+		return $this->server->dispatch( $request );
+	}
+
+	/**
 	 * Test POST ignores unknown keys.
 	 */
 	public function test_post_ignores_unknown_keys(): void {

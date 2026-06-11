@@ -191,6 +191,8 @@ class Activator {
 			'primary_color'            => '#2fa36b',
 			'show_powered_by'          => false,
 			'test_mode'                => true,
+			// Avoid shadowing an existing page (e.g. a site's own /campaigns/).
+			'campaign_url_slug'        => Campaigns\CampaignSlug::first_available(),
 			'stripe_site_id'           => '',
 			'stripe_site_token'        => '',
 			'stripe_account_id'        => '',

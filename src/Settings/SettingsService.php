@@ -448,6 +448,7 @@ class SettingsService {
 			'primary_color'            => '#2fa36b',
 			'show_powered_by'          => false,
 			'test_mode'                => true,
+			'campaign_url_slug'        => 'campaigns',
 			// Connected Stripe accounts. Each record:
 			// site_id, site_token, account_id, display_name, connection_status,
 			// charges_enabled, webhook_secret, is_default, connected_at.
