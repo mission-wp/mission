@@ -7,6 +7,7 @@ import ExportPanel from './tools/ExportPanel';
 import ImportPanel from './tools/ImportPanel';
 import LogsPanel from './tools/LogsPanel';
 import StatusPanel from './tools/StatusPanel';
+import WebhooksPanel from './tools/WebhooksPanel';
 
 const TABS = [
   {
@@ -155,6 +156,24 @@ const TABS = [
       </svg>
     ),
   },
+  {
+    id: 'webhooks',
+    label: __( 'Webhooks', 'mission-donation-platform' ),
+    icon: (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+      </svg>
+    ),
+  },
 ];
 
 const STORAGE_KEY = 'missiondp_tools_tab';
@@ -227,6 +246,8 @@ export default function Tools() {
           { activeTab === 'status' && <StatusPanel /> }
 
           { activeTab === 'cleanup' && <CleanupPanel /> }
+
+          { activeTab === 'webhooks' && <WebhooksPanel /> }
         </div>
       </div>
     </div>

@@ -1,6 +1,9 @@
 // Back link.
 
 .mission-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   color: #2fa36b;
   text-decoration: none;
   font-size: 13px;
