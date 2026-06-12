@@ -190,6 +190,8 @@ This plugin connects to the following third-party services:
 = 1.3.1 =
 * Enhancement: Faster dashboard and reports on sites with many donations, thanks to new compound database indexes on the transactions and subscriptions tables
 * Enhancement: New developer action hooks fire for completed imports, exports, and cleanup operations, and clearing the activity log now leaves an audit entry recording when it was cleared and how many entries were removed
+* Enhancement: Subscription cancel, pause, resume, and update errors now report the real cause
+* Fix: Campaigns that end with more than 50 active recurring donations no longer skip cancelling (or redirecting) some of them
 * Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
 * Fix: Weekly recurring donations now show as recurring instead of one-time in admin donation lists, and weekly is accepted by the REST API frequency filter
 * Tweak: Refactored the data importer into focused components and added model-level save_silent() and recompute_aggregates() methods for developers, so all data access flows through the model layer
