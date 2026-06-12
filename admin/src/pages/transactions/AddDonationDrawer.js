@@ -26,34 +26,15 @@ import { majorToMinor } from '@shared/currencies';
 import { COUNTRIES, getRegionConfig } from '@shared/address';
 import { BRAND_COLOR } from '@shared/color';
 import Drawer from '../../components/Drawer';
+import {
+  errorStyle,
+  errorHintStyle,
+  isValidEmail,
+  RequiredLabel,
+} from '../../components/form-validation';
 import { FREQUENCY } from '../../constants';
 
-const ERROR_COLOR = '#dc2626';
 const isTestMode = !! window.missiondpAdmin?.testMode;
-
-const errorStyle = {
-  borderColor: ERROR_COLOR,
-  boxShadow: '0 0 0 1px ' + ERROR_COLOR,
-};
-
-const errorHintStyle = {
-  margin: '4px 0 0',
-  fontSize: '13px',
-  color: ERROR_COLOR,
-};
-
-function isValidEmail( email ) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test( email );
-}
-
-function RequiredLabel( { text } ) {
-  return (
-    <>
-      { text }
-      <span style={ { color: ERROR_COLOR, marginLeft: '4px' } }>*</span>
-    </>
-  );
-}
 
 function todayString() {
   return new Date().toISOString().slice( 0, 10 );
