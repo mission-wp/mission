@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
+import {
+  IMPORT_JOB_STATUS,
+  IMPORT_MAX_BYTES as MAX_BYTES,
+  IMPORT_TERMINAL_STATUSES as TERMINAL_STATUSES,
+} from '../../constants';
 
 const DATA_TYPES = [
   { value: 'donors', label: __( 'Donors', 'mission-donation-platform' ) },
@@ -40,8 +45,6 @@ const DUPLICATE_STRATEGIES = [
     ),
   },
 ];
-
-const MAX_BYTES = 10 * 1024 * 1024;
 
 function formatBytes( bytes ) {
   if ( bytes < 1024 ) {
@@ -131,7 +134,6 @@ const MIN_MS_PER_ROW = 250;
 const MIN_PROGRESS_FLOOR_MS = 2500;
 const MIN_PROGRESS_CEIL_MS = 8000;
 const POLL_INTERVAL_MS = 2000;
-const TERMINAL_STATUSES = [ 'completed', 'failed', 'cancelled' ];
 
 function computeMinDuration( totalRows ) {
   if ( ! totalRows || totalRows <= 0 ) {
@@ -325,11 +327,11 @@ export default function ImportPanel() {
       : minDuration;
     const wait = Math.max( 0, minDuration - elapsed );
     const timeout = setTimeout( () => {
-      if ( 'completed' === jobStatusStatus ) {
+      if ( IMPORT_JOB_STATUS.COMPLETED === jobStatusStatus ) {
         setUploadState( 'success' );
-      } else if ( 'failed' === jobStatusStatus ) {
+      } else if ( IMPORT_JOB_STATUS.FAILED === jobStatusStatus ) {
         setUploadState( 'failed' );
-      } else if ( 'cancelled' === jobStatusStatus ) {
+      } else if ( IMPORT_JOB_STATUS.CANCELLED === jobStatusStatus ) {
         // After cancel, drop back to upload so the user can try again.
         resetToUpload();
       }
@@ -1273,7 +1275,7 @@ export default function ImportPanel() {
               </div>
             </div>
             <div className="mission-import-progress__title">
-              { 'cancelled' === jobStatus?.status
+              { IMPORT_JOB_STATUS.CANCELLED === jobStatus?.status
                 ? __( 'Cancelling…', 'mission-donation-platform' )
                 : sprintf(
                     /* translators: %s: data type label */

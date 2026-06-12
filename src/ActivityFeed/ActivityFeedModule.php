@@ -8,6 +8,7 @@
 namespace MissionDP\ActivityFeed;
 
 use MissionDP\Models\ActivityLog;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -374,7 +375,7 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	public function on_transaction_created( object $transaction ): void {
-		if ( 'completed' === $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED === $transaction->status ) {
 			$this->on_donation_completed( $transaction );
 		}
 	}

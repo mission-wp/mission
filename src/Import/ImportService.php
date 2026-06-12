@@ -8,6 +8,7 @@
 
 namespace MissionDP\Import;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
 use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Database\DataStore\DonorDataStore;
@@ -35,7 +36,7 @@ class ImportService {
 
 	private const TYPES         = [ 'donors', 'transactions', 'campaigns', 'subscriptions', 'tributes' ];
 	private const PREVIEW_ROWS  = 5;
-	private const MAX_BYTES     = 10 * 1024 * 1024;
+	public const MAX_BYTES      = 10 * 1024 * 1024;
 	private const FILE_ID_TTL   = HOUR_IN_SECONDS;
 	private const BATCH_DEFAULT = 200;
 	private const STORAGE_DIR   = 'mission-imports';
@@ -828,15 +829,15 @@ class ImportService {
 			: $amount + $fee_amount + $tip_amount;
 
 		$status = strtolower( trim( (string) ( $row['status'] ?? '' ) ) );
-		if ( ! in_array( $status, [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ], true ) ) {
-			$status = 'completed';
+		if ( ! in_array( $status, Transaction::STATUSES, true ) ) {
+			$status = Transaction::STATUS_COMPLETED;
 		}
 
 		$date_created   = $this->parse_date( (string) ( $row['date_created'] ?? '' ) );
 		$date_completed = $this->parse_date( (string) ( $row['date_completed'] ?? '' ) );
 		$date_refunded  = $this->parse_date( (string) ( $row['date_refunded'] ?? '' ) );
 
-		if ( 'completed' === $status && null === $date_completed ) {
+		if ( Transaction::STATUS_COMPLETED === $status && null === $date_completed ) {
 			$date_completed = $date_created ?? current_time( 'mysql', true );
 		}
 
@@ -1016,9 +1017,9 @@ class ImportService {
 	 * @param string      $job_id      Public job token.
 	 */
 	private function mark_touched_from_transaction( Transaction $transaction, string $job_id ): void {
-		if ( 'completed' !== $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED !== $transaction->status ) {
 			// We still want refunds tracked, since the refund path can change donor totals.
-			if ( 'refunded' !== $transaction->status ) {
+			if ( Transaction::STATUS_REFUNDED !== $transaction->status ) {
 				return;
 			}
 		}
@@ -1272,21 +1273,21 @@ class ImportService {
 	private function resolve_campaign_status( string $raw, ?string $date_start, ?string $date_end ): string {
 		$status = strtolower( trim( $raw ) );
 
-		if ( in_array( $status, [ 'active', 'scheduled', 'ended' ], true ) ) {
+		if ( in_array( $status, Campaign::STATUSES, true ) ) {
 			return $status;
 		}
 
 		$now = current_time( 'mysql', true );
 
 		if ( null !== $date_start && $date_start > $now ) {
-			return 'scheduled';
+			return Campaign::STATUS_SCHEDULED;
 		}
 
 		if ( null !== $date_end && $date_end < $now ) {
-			return 'ended';
+			return Campaign::STATUS_ENDED;
 		}
 
-		return 'active';
+		return Campaign::STATUS_ACTIVE;
 	}
 
 	// ------------------------------------------------------------------
@@ -1436,8 +1437,8 @@ class ImportService {
 		$status = strtolower( trim( (string) ( $row['status'] ?? '' ) ) );
 
 		$frequency = strtolower( trim( (string) ( $row['frequency'] ?? '' ) ) );
-		if ( ! in_array( $frequency, [ 'weekly', 'monthly', 'quarterly', 'annually' ], true ) ) {
-			$frequency = 'monthly';
+		if ( ! in_array( $frequency, Frequency::RECURRING, true ) ) {
+			$frequency = Frequency::MONTHLY;
 		}
 
 		$date_created      = $this->parse_date( (string) ( $row['date_created'] ?? '' ) );
@@ -1445,7 +1446,7 @@ class ImportService {
 		$date_cancelled    = $this->parse_date( (string) ( $row['date_cancelled'] ?? '' ) );
 		$date_modified     = $this->parse_date( (string) ( $row['date_modified'] ?? '' ) );
 
-		if ( 'cancelled' === $status && null === $date_cancelled ) {
+		if ( Subscription::STATUS_CANCELLED === $status && null === $date_cancelled ) {
 			$date_cancelled = $date_created ?? current_time( 'mysql', true );
 		}
 

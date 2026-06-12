@@ -25,6 +25,7 @@ import { getCurrencySymbol, getCurrencyCode } from '@shared/currency';
 import { majorToMinor } from '@shared/currencies';
 import { COUNTRIES, getRegionConfig } from '@shared/address';
 import Drawer from '../../components/Drawer';
+import { FREQUENCY } from '../../constants';
 
 const BRAND_COLOR = '#2FA36B';
 const ERROR_COLOR = '#dc2626';
@@ -374,7 +375,7 @@ export default function AddDonationDrawer( {
           donor_last_name: form.lastName,
           donation_amount: cents,
           campaign_id: form.campaignId ? Number( form.campaignId ) : 0,
-          frequency: 'one_time',
+          frequency: FREQUENCY.ONE_TIME,
           date_created: form.date || undefined,
           notes: form.notes || undefined,
           send_receipt: form.sendReceipt,

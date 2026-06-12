@@ -20,6 +20,7 @@ import TransactionDetailsCard from './TransactionDetailsCard';
 import TransactionDonorCard from './TransactionDonorCard';
 import TransactionActivityCard from './TransactionActivityCard';
 import NotesCard from '../../components/NotesCard';
+import { TRANSACTION_STATUS } from '../../constants';
 
 function TransactionSubscriptionLink( { subscriptionId } ) {
   const adminUrl = window.missiondpAdmin?.adminUrl || '';
@@ -291,7 +292,7 @@ export default function TransactionDetail( { id } ) {
 
   const handleStatusChange = ( newStatus ) => {
     if (
-      newStatus === 'refunded' &&
+      newStatus === TRANSACTION_STATUS.REFUNDED &&
       transaction.payment_gateway &&
       transaction.payment_gateway !== 'manual'
     ) {
@@ -765,7 +766,7 @@ export default function TransactionDetail( { id } ) {
                 variant="primary"
                 onClick={ () => {
                   setShowRefundConfirm( false );
-                  applyStatusChange( 'refunded' );
+                  applyStatusChange( TRANSACTION_STATUS.REFUNDED );
                 } }
                 __next40pxDefaultSize
               >

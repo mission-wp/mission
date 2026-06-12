@@ -22,11 +22,11 @@ class SubscriptionUpdatedHandler {
 	 * @var array<string, string>
 	 */
 	private const STATUS_MAP = [
-		'active'   => 'active',
-		'past_due' => 'past_due',
-		'unpaid'   => 'past_due',
-		'canceled' => 'cancelled',
-		'paused'   => 'paused',
+		'active'   => Subscription::STATUS_ACTIVE,
+		'past_due' => Subscription::STATUS_PAST_DUE,
+		'unpaid'   => Subscription::STATUS_PAST_DUE,
+		'canceled' => Subscription::STATUS_CANCELLED,
+		'paused'   => Subscription::STATUS_PAUSED,
 	];
 
 	/**
@@ -69,7 +69,7 @@ class SubscriptionUpdatedHandler {
 
 		$subscription->status = $local_status;
 
-		if ( 'cancelled' === $local_status && ! $subscription->date_cancelled ) {
+		if ( Subscription::STATUS_CANCELLED === $local_status && ! $subscription->date_cancelled ) {
 			$subscription->date_cancelled = current_time( 'mysql', true );
 		}
 

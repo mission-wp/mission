@@ -140,7 +140,7 @@ class ConfirmSubscriptionEndpoint {
 		$subscription_id   = (int) $request->get_param( 'subscription_id' );
 
 		// Happy path: the webhook arrived before the client's confirm call.
-		if ( 'completed' === $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED === $transaction->status ) {
 			return new WP_REST_Response(
 				[
 					'status'          => 'completed',
@@ -151,7 +151,7 @@ class ConfirmSubscriptionEndpoint {
 			);
 		}
 
-		if ( in_array( $transaction->status, [ 'failed', 'cancelled' ], true ) ) {
+		if ( in_array( $transaction->status, [ Transaction::STATUS_FAILED, Transaction::STATUS_CANCELLED ], true ) ) {
 			return new WP_Error(
 				'payment_failed',
 				__( 'The payment was not successful.', 'mission-donation-platform' ),
@@ -193,7 +193,7 @@ class ConfirmSubscriptionEndpoint {
 		}
 
 		if ( in_array( $stripe_status, [ 'canceled', 'requires_payment_method' ], true ) ) {
-			$transaction->status = 'failed';
+			$transaction->status = Transaction::STATUS_FAILED;
 			$transaction->save();
 
 			return new WP_Error(
@@ -223,7 +223,7 @@ class ConfirmSubscriptionEndpoint {
 	 * @return void
 	 */
 	private function complete_transaction_and_activate( Transaction $transaction, array $verification ): void {
-		$transaction->status         = 'completed';
+		$transaction->status         = Transaction::STATUS_COMPLETED;
 		$transaction->date_completed = current_time( 'mysql', true );
 		$transaction->save();
 
@@ -240,7 +240,7 @@ class ConfirmSubscriptionEndpoint {
 
 		$subscription = Subscription::find( $transaction->subscription_id );
 
-		if ( $subscription && 'pending' === $subscription->status ) {
+		if ( $subscription && Subscription::STATUS_PENDING === $subscription->status ) {
 			$subscription->activate( $transaction->id );
 
 			if ( $brand ) {

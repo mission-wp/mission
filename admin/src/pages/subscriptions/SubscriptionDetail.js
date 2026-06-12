@@ -16,13 +16,11 @@ import TransactionDonorCard from '../transactions/TransactionDonorCard';
 import SubscriptionDetailsCard from './SubscriptionDetailsCard';
 import SubscriptionActivityCard from './SubscriptionActivityCard';
 import NotesCard from '../../components/NotesCard';
-
-const FREQUENCY_SUFFIXES = {
-  weekly: __( '/wk', 'mission-donation-platform' ),
-  monthly: __( '/mo', 'mission-donation-platform' ),
-  quarterly: __( '/qtr', 'mission-donation-platform' ),
-  annually: __( '/yr', 'mission-donation-platform' ),
-};
+import {
+  FREQUENCY_SUFFIXES,
+  SUBSCRIPTION_STATUS,
+  TRANSACTION_STATUS,
+} from '../../constants';
 
 function StatusBadge( { status } ) {
   const label = status
@@ -52,7 +50,7 @@ function ActionsDropdown( { status, onPause, onResume, onCancel } ) {
     return () => document.removeEventListener( 'click', close, true );
   }, [ isOpen ] );
 
-  const isPaused = status === 'paused';
+  const isPaused = status === SUBSCRIPTION_STATUS.PAUSED;
 
   return (
     <div className="mission-dropdown" ref={ ref }>
@@ -199,7 +197,7 @@ export default function SubscriptionDetail( { id } ) {
       } );
       setSubscription( ( prev ) => ( {
         ...prev,
-        status: 'cancelled',
+        status: SUBSCRIPTION_STATUS.CANCELLED,
         date_cancelled: new Date().toISOString(),
       } ) );
       setShowCancelModal( false );
@@ -228,7 +226,10 @@ export default function SubscriptionDetail( { id } ) {
         path: `/mission-donation-platform/v1/subscriptions/${ id }/pause`,
         method: 'POST',
       } );
-      setSubscription( ( prev ) => ( { ...prev, status: 'paused' } ) );
+      setSubscription( ( prev ) => ( {
+        ...prev,
+        status: SUBSCRIPTION_STATUS.PAUSED,
+      } ) );
       setShowPauseModal( false );
       setToastKey( ( k ) => k + 1 );
       setToast( {
@@ -256,7 +257,7 @@ export default function SubscriptionDetail( { id } ) {
       } );
       setSubscription( ( prev ) => ( {
         ...prev,
-        status: result.status || 'active',
+        status: result.status || SUBSCRIPTION_STATUS.ACTIVE,
       } ) );
       setToastKey( ( k ) => k + 1 );
       setToast( {
@@ -361,11 +362,14 @@ export default function SubscriptionDetail( { id } ) {
   }
 
   const s = subscription;
-  const hasActions = [ 'active', 'past_due', 'pending', 'paused' ].includes(
-    s.status
-  );
+  const hasActions = [
+    SUBSCRIPTION_STATUS.ACTIVE,
+    SUBSCRIPTION_STATUS.PAST_DUE,
+    SUBSCRIPTION_STATUS.PENDING,
+    SUBSCRIPTION_STATUS.PAUSED,
+  ].includes( s.status );
   const paymentCount = ( s.transactions || [] ).filter(
-    ( t ) => t.status === 'completed'
+    ( t ) => t.status === TRANSACTION_STATUS.COMPLETED
   ).length;
   const freqSuffix = FREQUENCY_SUFFIXES[ s.frequency ] || '';
 

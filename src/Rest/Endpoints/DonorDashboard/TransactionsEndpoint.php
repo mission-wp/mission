@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Receipts\ReceiptPdfGenerator;
@@ -136,7 +137,7 @@ class TransactionsEndpoint {
 
 		$type = $request->get_param( 'type' );
 		if ( 'recurring' === $type ) {
-			$query_args['type__not'] = 'one_time';
+			$query_args['type__not'] = Frequency::ONE_TIME;
 		} elseif ( $type ) {
 			$query_args['type'] = $type;
 		}
@@ -259,7 +260,7 @@ class TransactionsEndpoint {
 			);
 		}
 
-		if ( 'completed' !== $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED !== $transaction->status ) {
 			return new WP_Error(
 				'transaction_not_completed',
 				__( 'Receipts are only available for completed transactions.', 'mission-donation-platform' ),
@@ -345,7 +346,7 @@ class TransactionsEndpoint {
 			],
 			'type'        => [
 				'type'              => 'string',
-				'enum'              => [ 'one_time', 'recurring', 'weekly', 'monthly', 'quarterly', 'annually' ],
+				'enum'              => [ Frequency::ONE_TIME, 'recurring', Frequency::WEEKLY, Frequency::MONTHLY, Frequency::QUARTERLY, Frequency::ANNUALLY ],
 				'validate_callback' => 'rest_validate_request_arg',
 			],
 		];

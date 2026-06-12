@@ -9,10 +9,12 @@ namespace MissionDP\Migration\Migrators\GiveWP\Readers;
 
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- Reads a foreign plugin's tables; no higher-level API exists.
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Migration\AmountConverter;
 use MissionDP\Migration\Migrators\GiveWP\GiveWPSource;
 use MissionDP\Migration\Migrators\GiveWP\Maps\GatewayMap;
 use MissionDP\Migration\Migrators\GiveWP\Maps\StatusMap;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -141,7 +143,7 @@ class PaymentReader {
 			$record = [
 				'source_id'              => $payment_id,
 				'status'                 => $status,
-				'type'                   => $is_recurring ? 'recurring' : 'one_time',
+				'type'                   => $is_recurring ? 'recurring' : Frequency::ONE_TIME,
 				'amount'                 => $amount,
 				'total_amount'           => $amount,
 				'currency'               => $currency,
@@ -151,7 +153,7 @@ class PaymentReader {
 				'is_anonymous'           => ! empty( $m['_give_anonymous_donation'] ),
 				'donor_ip'               => (string) ( $m['_give_payment_donor_ip'] ?? '' ),
 				'date_created'           => (string) $row['post_date_gmt'],
-				'date_completed'         => 'completed' === $status
+				'date_completed'         => Transaction::STATUS_COMPLETED === $status
 					? ( (string) ( $m['_give_completed_date'] ?? '' ) ?: (string) $row['post_date_gmt'] )
 					: null,
 				'source_donor_id'        => (int) ( $m['_give_payment_donor_id'] ?? 0 ),

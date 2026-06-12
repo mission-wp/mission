@@ -199,7 +199,7 @@ class SubscriptionsEndpoint {
 			return $subscription;
 		}
 
-		if ( ! in_array( $subscription->status, [ 'active', 'paused', 'past_due' ], true ) ) {
+		if ( ! in_array( $subscription->status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED, Subscription::STATUS_PAST_DUE ], true ) ) {
 			return new WP_Error(
 				'subscription_not_cancellable',
 				__( 'This subscription cannot be cancelled.', 'mission-donation-platform' ),
@@ -237,7 +237,7 @@ class SubscriptionsEndpoint {
 			return $subscription;
 		}
 
-		if ( 'active' !== $subscription->status ) {
+		if ( Subscription::STATUS_ACTIVE !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_pausable',
 				__( 'Only active subscriptions can be paused.', 'mission-donation-platform' ),
@@ -275,7 +275,7 @@ class SubscriptionsEndpoint {
 			return $subscription;
 		}
 
-		if ( 'paused' !== $subscription->status ) {
+		if ( Subscription::STATUS_PAUSED !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_resumable',
 				__( 'Only paused subscriptions can be resumed.', 'mission-donation-platform' ),
@@ -313,7 +313,7 @@ class SubscriptionsEndpoint {
 			return $subscription;
 		}
 
-		if ( ! in_array( $subscription->status, [ 'active', 'paused' ], true ) ) {
+		if ( ! in_array( $subscription->status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ], true ) ) {
 			return new WP_Error(
 				'subscription_not_updatable',
 				__( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),
@@ -384,7 +384,7 @@ class SubscriptionsEndpoint {
 			return $subscription;
 		}
 
-		if ( ! in_array( $subscription->status, [ 'active', 'paused' ], true ) ) {
+		if ( ! in_array( $subscription->status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ], true ) ) {
 			return new WP_Error(
 				'subscription_not_updatable',
 				__( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),
@@ -423,7 +423,7 @@ class SubscriptionsEndpoint {
 			return $subscription;
 		}
 
-		if ( ! in_array( $subscription->status, [ 'active', 'paused' ], true ) ) {
+		if ( ! in_array( $subscription->status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ], true ) ) {
 			return new WP_Error(
 				'subscription_not_updatable',
 				__( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),

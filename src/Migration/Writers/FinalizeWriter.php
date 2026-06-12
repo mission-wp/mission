@@ -101,7 +101,7 @@ class FinalizeWriter extends AbstractWriter {
 		$renewal_count = 0;
 		$total_renewed = 0;
 		foreach ( $transactions as $transaction ) {
-			if ( 'completed' !== $transaction->status || $transaction->id === $initial_id ) {
+			if ( Transaction::STATUS_COMPLETED !== $transaction->status || $transaction->id === $initial_id ) {
 				continue;
 			}
 

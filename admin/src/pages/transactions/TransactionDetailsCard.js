@@ -10,39 +10,10 @@ import {
   formatAddress,
 } from '../shared/DetailComponents';
 import DedicationSection from './DedicationSection';
-
-const STATUS_OPTIONS = [
-  {
-    value: 'completed',
-    label: __( 'Completed', 'mission-donation-platform' ),
-    backgroundColor: 'rgba(47, 163, 107, 0.12)',
-    color: '#278f5c',
-  },
-  {
-    value: 'pending',
-    label: __( 'Pending', 'mission-donation-platform' ),
-    backgroundColor: '#e4eff5',
-    color: '#4a7a9b',
-  },
-  {
-    value: 'refunded',
-    label: __( 'Refunded', 'mission-donation-platform' ),
-    backgroundColor: '#f5e8e8',
-    color: '#b85c5c',
-  },
-  {
-    value: 'cancelled',
-    label: __( 'Cancelled', 'mission-donation-platform' ),
-    backgroundColor: '#f0eeeb',
-    color: '#8a7e72',
-  },
-  {
-    value: 'failed',
-    label: __( 'Failed', 'mission-donation-platform' ),
-    backgroundColor: '#fce8e8',
-    color: '#c0392b',
-  },
-];
+import {
+  isRecurringType,
+  TRANSACTION_STATUS_OPTIONS as STATUS_OPTIONS,
+} from '../../constants';
 
 function StatusDropdown( { status, onChange } ) {
   const [ isOpen, setIsOpen ] = useState( false );
@@ -223,7 +194,7 @@ export function CampaignDropdown( { campaign, campaigns, onChange } ) {
 }
 
 function TypeBadge( { type } ) {
-  const isRecurring = [ 'monthly', 'quarterly', 'annually' ].includes( type );
+  const isRecurring = isRecurringType( type );
   const className = isRecurring
     ? 'mission-detail-badge is-recurring'
     : 'mission-detail-badge';

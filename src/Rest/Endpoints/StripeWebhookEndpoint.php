@@ -280,7 +280,7 @@ class StripeWebhookEndpoint {
 		$transaction = $transactions[0];
 
 		// Idempotency: skip if already fully refunded.
-		if ( 'refunded' === $transaction->status ) {
+		if ( Transaction::STATUS_REFUNDED === $transaction->status ) {
 			return;
 		}
 
@@ -299,7 +299,7 @@ class StripeWebhookEndpoint {
 
 		// Mark as fully refunded when the entire amount has been returned.
 		if ( $new_refunded >= $transaction->total_amount ) {
-			$transaction->status        = 'refunded';
+			$transaction->status        = Transaction::STATUS_REFUNDED;
 			$transaction->date_refunded = current_time( 'mysql', true );
 		}
 

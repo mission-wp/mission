@@ -2,21 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
-
-const STATUS_LABELS = {
-  active: __( 'Active', 'mission-donation-platform' ),
-  pending: __( 'Pending', 'mission-donation-platform' ),
-  cancelled: __( 'Cancelled', 'mission-donation-platform' ),
-  paused: __( 'Paused', 'mission-donation-platform' ),
-  past_due: __( 'Past Due', 'mission-donation-platform' ),
-};
-
-const FREQUENCY_LABELS = {
-  weekly: __( 'Weekly', 'mission-donation-platform' ),
-  monthly: __( 'Monthly', 'mission-donation-platform' ),
-  quarterly: __( 'Quarterly', 'mission-donation-platform' ),
-  annually: __( 'Annually', 'mission-donation-platform' ),
-};
+import { SUBSCRIPTION_STATUS_LABELS, FREQUENCY_LABELS } from '../../constants';
 
 export default function DonorSubscriptionsCard( { subscriptions } ) {
   const adminUrl = window.missiondpAdmin?.adminUrl || '';
@@ -61,7 +47,7 @@ export default function DonorSubscriptionsCard( { subscriptions } ) {
                     <span
                       className={ `mission-status-badge is-${ sub.status }` }
                     >
-                      { STATUS_LABELS[ sub.status ] || sub.status }
+                      { SUBSCRIPTION_STATUS_LABELS[ sub.status ] || sub.status }
                     </span>
                   </td>
                   <td className="mission-detail-table__muted">

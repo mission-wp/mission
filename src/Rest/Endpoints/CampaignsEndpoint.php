@@ -760,7 +760,7 @@ class CampaignsEndpoint {
 			],
 			'status'   => [
 				'type'              => 'string',
-				'enum'              => [ 'active', 'scheduled', 'ended' ],
+				'enum'              => Campaign::STATUSES,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],

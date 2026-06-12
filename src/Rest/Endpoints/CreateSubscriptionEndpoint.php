@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
@@ -44,7 +45,7 @@ class CreateSubscriptionEndpoint {
 	 *
 	 * @var string[]
 	 */
-	private const ALLOWED_FREQUENCIES = [ 'weekly', 'monthly', 'quarterly', 'annually' ];
+	private const ALLOWED_FREQUENCIES = Frequency::RECURRING;
 
 	/**
 	 * Constructor.
@@ -416,7 +417,7 @@ class CreateSubscriptionEndpoint {
 		// Create subscription record.
 		$subscription = new Subscription(
 			[
-				'status'                  => 'pending',
+				'status'                  => Subscription::STATUS_PENDING,
 				'donor_id'                => $donor->id,
 				'source_post_id'          => $request->get_param( 'source_post_id' ),
 				'campaign_id'             => $campaign_id,
@@ -441,7 +442,7 @@ class CreateSubscriptionEndpoint {
 		// Create pending transaction for the initial payment.
 		$transaction = new Transaction(
 			[
-				'status'                  => 'pending',
+				'status'                  => Transaction::STATUS_PENDING,
 				'type'                    => $frequency,
 				'donor_id'                => $donor->id,
 				'subscription_id'         => $subscription->id,
@@ -575,10 +576,10 @@ class CreateSubscriptionEndpoint {
 		$donation_formatted = Currency::format_amount( $donation_amount, $currency_upper );
 
 		$frequency_labels = [
-			'weekly'    => __( 'weekly', 'mission-donation-platform' ),
-			'monthly'   => __( 'monthly', 'mission-donation-platform' ),
-			'quarterly' => __( 'quarterly', 'mission-donation-platform' ),
-			'annually'  => __( 'annual', 'mission-donation-platform' ),
+			Frequency::WEEKLY    => __( 'weekly', 'mission-donation-platform' ),
+			Frequency::MONTHLY   => __( 'monthly', 'mission-donation-platform' ),
+			Frequency::QUARTERLY => __( 'quarterly', 'mission-donation-platform' ),
+			Frequency::ANNUALLY  => __( 'annual', 'mission-donation-platform' ),
 		];
 
 		$frequency_label = $frequency_labels[ $frequency ] ?? $frequency;

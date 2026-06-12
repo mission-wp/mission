@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
+use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\RestModule;
@@ -73,7 +74,7 @@ class OverviewEndpoint {
 		$recent = $donor->transactions(
 			[
 				'per_page' => 5,
-				'status'   => 'completed',
+				'status'   => Transaction::STATUS_COMPLETED,
 				'is_test'  => $is_test,
 				'orderby'  => 'date_completed',
 				'order'    => 'DESC',
@@ -82,7 +83,7 @@ class OverviewEndpoint {
 
 		$active_subs = $donor->subscriptions(
 			[
-				'status__in' => [ 'active', 'paused' ],
+				'status__in' => [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ],
 				'is_test'    => $is_test,
 			]
 		);

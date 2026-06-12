@@ -9,6 +9,7 @@ namespace MissionDP\Models;
 
 use DateTime;
 use DateTimeZone;
+use MissionDP\Constants\Frequency;
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\SubscriptionDataStore;
 use MissionDP\Plugin;
@@ -22,6 +23,25 @@ defined( 'ABSPATH' ) || exit;
 class Subscription extends Model {
 
 	use HasMeta;
+
+	public const STATUS_PENDING   = 'pending';
+	public const STATUS_ACTIVE    = 'active';
+	public const STATUS_PAST_DUE  = 'past_due';
+	public const STATUS_PAUSED    = 'paused';
+	public const STATUS_CANCELLED = 'cancelled';
+
+	/**
+	 * Every subscription status.
+	 *
+	 * @var string[]
+	 */
+	public const STATUSES = [
+		self::STATUS_PENDING,
+		self::STATUS_ACTIVE,
+		self::STATUS_PAST_DUE,
+		self::STATUS_PAUSED,
+		self::STATUS_CANCELLED,
+	];
 
 	public string $status;
 	public int $donor_id;
@@ -52,7 +72,7 @@ class Subscription extends Model {
 	 */
 	public function __construct( array $data = [] ) {
 		$this->id                      = isset( $data['id'] ) ? (int) $data['id'] : null;
-		$this->status                  = $data['status'] ?? 'pending';
+		$this->status                  = $data['status'] ?? self::STATUS_PENDING;
 		$this->donor_id                = (int) ( $data['donor_id'] ?? 0 );
 		$this->source_post_id          = (int) ( $data['source_post_id'] ?? 0 );
 		$this->campaign_id             = isset( $data['campaign_id'] ) ? (int) $data['campaign_id'] : null;
@@ -62,7 +82,7 @@ class Subscription extends Model {
 		$this->tip_amount              = (int) ( $data['tip_amount'] ?? 0 );
 		$this->total_amount            = (int) ( $data['total_amount'] ?? 0 );
 		$this->currency                = $data['currency'] ?? 'usd';
-		$this->frequency               = $data['frequency'] ?? 'monthly';
+		$this->frequency               = $data['frequency'] ?? Frequency::MONTHLY;
 		$this->payment_gateway         = $data['payment_gateway'] ?? '';
 		$this->gateway_subscription_id = $data['gateway_subscription_id'] ?? null;
 		$this->gateway_customer_id     = $data['gateway_customer_id'] ?? null;
@@ -169,7 +189,7 @@ class Subscription extends Model {
 	 * @return void
 	 */
 	public function activate( int $initial_transaction_id ): void {
-		$this->status                 = 'active';
+		$this->status                 = self::STATUS_ACTIVE;
 		$this->initial_transaction_id = $initial_transaction_id;
 		$this->date_next_renewal      = $this->calculate_next_renewal_date( current_time( 'mysql', true ) );
 		$this->save();
@@ -181,7 +201,7 @@ class Subscription extends Model {
 	 * @return bool True if cancellation succeeded.
 	 */
 	public function cancel(): bool {
-		if ( 'cancelled' === $this->status ) {
+		if ( self::STATUS_CANCELLED === $this->status ) {
 			return true;
 		}
 
@@ -189,7 +209,7 @@ class Subscription extends Model {
 			return false;
 		}
 
-		$this->status         = 'cancelled';
+		$this->status         = self::STATUS_CANCELLED;
 		$this->date_cancelled = current_time( 'mysql', true );
 		$this->save();
 
@@ -204,11 +224,11 @@ class Subscription extends Model {
 	 * @return bool True if pausing succeeded.
 	 */
 	public function pause(): bool {
-		if ( 'paused' === $this->status ) {
+		if ( self::STATUS_PAUSED === $this->status ) {
 			return true;
 		}
 
-		if ( 'active' !== $this->status ) {
+		if ( self::STATUS_ACTIVE !== $this->status ) {
 			return false;
 		}
 
@@ -216,7 +236,7 @@ class Subscription extends Model {
 			return false;
 		}
 
-		$this->status = 'paused';
+		$this->status = self::STATUS_PAUSED;
 		$this->save();
 
 		return true;
@@ -230,11 +250,11 @@ class Subscription extends Model {
 	 * @return bool True if resuming succeeded.
 	 */
 	public function resume(): bool {
-		if ( 'active' === $this->status ) {
+		if ( self::STATUS_ACTIVE === $this->status ) {
 			return true;
 		}
 
-		if ( 'paused' !== $this->status ) {
+		if ( self::STATUS_PAUSED !== $this->status ) {
 			return false;
 		}
 
@@ -242,7 +262,7 @@ class Subscription extends Model {
 			return false;
 		}
 
-		$this->status            = 'active';
+		$this->status            = self::STATUS_ACTIVE;
 		$this->date_next_renewal = $this->calculate_next_renewal_date( current_time( 'mysql', true ) );
 		$this->save();
 
@@ -259,7 +279,7 @@ class Subscription extends Model {
 	 * @return bool True if the update succeeded.
 	 */
 	public function update_amount( int $donation_amount, int $tip_amount, int $fee_amount = 0 ): bool {
-		if ( ! in_array( $this->status, [ 'active', 'paused' ], true ) ) {
+		if ( ! in_array( $this->status, [ self::STATUS_ACTIVE, self::STATUS_PAUSED ], true ) ) {
 			return false;
 		}
 
@@ -325,7 +345,7 @@ class Subscription extends Model {
 	 * @return array{brand: string, last4: string, exp_month: int, exp_year: int}|false
 	 */
 	public function update_payment_method( string $payment_method_id ): array|false {
-		if ( ! in_array( $this->status, [ 'active', 'paused' ], true ) ) {
+		if ( ! in_array( $this->status, [ self::STATUS_ACTIVE, self::STATUS_PAUSED ], true ) ) {
 			return false;
 		}
 
@@ -519,7 +539,7 @@ class Subscription extends Model {
 		$transaction = new Transaction(
 			array_merge(
 				[
-					'status'          => 'completed',
+					'status'          => Transaction::STATUS_COMPLETED,
 					'type'            => $this->frequency,
 					'donor_id'        => $this->donor_id,
 					'subscription_id' => $this->id,
@@ -574,11 +594,11 @@ class Subscription extends Model {
 		$date = new DateTime( $base, new DateTimeZone( 'UTC' ) );
 
 		match ( $this->frequency ) {
-			'weekly'    => $date->modify( '+1 week' ),
-			'monthly'   => $date->modify( '+1 month' ),
-			'quarterly' => $date->modify( '+3 months' ),
-			'annually'  => $date->modify( '+1 year' ),
-			default     => $date->modify( '+1 month' ),
+			Frequency::WEEKLY    => $date->modify( '+1 week' ),
+			Frequency::MONTHLY   => $date->modify( '+1 month' ),
+			Frequency::QUARTERLY => $date->modify( '+3 months' ),
+			Frequency::ANNUALLY  => $date->modify( '+1 year' ),
+			default              => $date->modify( '+1 month' ),
 		};
 
 		return $date->format( 'Y-m-d H:i:s' );

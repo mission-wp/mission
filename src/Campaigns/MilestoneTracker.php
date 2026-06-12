@@ -158,7 +158,7 @@ class MilestoneTracker {
 		$transactions = Transaction::query(
 			[
 				'campaign_id' => $campaign_id,
-				'status'      => 'completed',
+				'status'      => Transaction::STATUS_COMPLETED,
 				'is_test'     => (int) $is_test,
 				'orderby'     => 'date_completed',
 				'order'       => 'ASC',

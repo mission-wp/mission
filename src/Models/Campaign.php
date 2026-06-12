@@ -27,6 +27,21 @@ class Campaign extends Model {
 
 	use HasMeta;
 
+	public const STATUS_ACTIVE    = 'active';
+	public const STATUS_SCHEDULED = 'scheduled';
+	public const STATUS_ENDED     = 'ended';
+
+	/**
+	 * Every campaign status.
+	 *
+	 * @var string[]
+	 */
+	public const STATUSES = [
+		self::STATUS_ACTIVE,
+		self::STATUS_SCHEDULED,
+		self::STATUS_ENDED,
+	];
+
 	public int $post_id;
 	public string $title;
 	public string $description;
@@ -84,7 +99,7 @@ class Campaign extends Model {
 		$this->test_donor_count       = (int) ( $data['test_donor_count'] ?? 0 );
 		$this->currency               = $data['currency'] ?? 'usd';
 		$this->show_in_listings       = (bool) ( $data['show_in_listings'] ?? true );
-		$this->status                 = $data['status'] ?? 'active';
+		$this->status                 = $data['status'] ?? self::STATUS_ACTIVE;
 		$this->date_start             = $data['date_start'] ?? null;
 		$this->date_end               = $data['date_end'] ?? null;
 		$this->date_created           = $data['date_created'] ?? current_time( 'mysql', true );

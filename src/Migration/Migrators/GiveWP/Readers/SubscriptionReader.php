@@ -14,6 +14,7 @@ use MissionDP\Migration\Migrators\GiveWP\GiveWPSource;
 use MissionDP\Migration\Migrators\GiveWP\Maps\FrequencyMap;
 use MissionDP\Migration\Migrators\GiveWP\Maps\GatewayMap;
 use MissionDP\Migration\Migrators\GiveWP\Maps\StatusMap;
+use MissionDP\Models\Subscription;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -155,7 +156,7 @@ class SubscriptionReader {
 				'gateway_customer_id'     => (string) ( $m['_give_stripe_customer_id'] ?? '' ) ?: null,
 				'is_test'                 => $is_test,
 				'date_created'            => (string) $row['created'],
-				'date_next_renewal'       => in_array( $status, [ 'active', 'past_due' ], true )
+				'date_next_renewal'       => in_array( $status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAST_DUE ], true )
 					? $this->normalize_date( $row['expiration'] ?? null )
 					: null,
 				'source_donor_id'         => (int) $row['customer_id'],

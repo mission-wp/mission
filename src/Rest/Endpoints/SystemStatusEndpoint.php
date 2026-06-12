@@ -112,7 +112,7 @@ class SystemStatusEndpoint {
 			'test_mode'                 => $test_mode,
 			'currency'                  => $currency,
 			'currency_symbol'           => $symbol,
-			'active_campaigns'          => Campaign::count( [ 'status' => 'active' ] ),
+			'active_campaigns'          => Campaign::count( [ 'status' => Campaign::STATUS_ACTIVE ] ),
 			'total_donors'              => Donor::count(),
 			'total_transactions'        => Transaction::count(),
 		];

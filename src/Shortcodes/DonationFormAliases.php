@@ -7,6 +7,7 @@
 
 namespace MissionDP\Shortcodes;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
 
 defined( 'ABSPATH' ) || exit;
@@ -24,7 +25,7 @@ class DonationFormAliases {
 	 *
 	 * @var array<string>
 	 */
-	private const FREQUENCIES = [ 'one_time', 'weekly', 'monthly', 'quarterly', 'annually' ];
+	private const FREQUENCIES = Frequency::ALL;
 
 	/**
 	 * Expand alias attributes into typed block attributes.

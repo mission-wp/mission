@@ -7,6 +7,7 @@
 
 namespace MissionDP\Email;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
@@ -25,10 +26,10 @@ class AdminNotificationListener {
 	 * @var array<string, string>
 	 */
 	private const FREQUENCY_LABELS = [
-		'weekly'    => 'Weekly',
-		'monthly'   => 'Monthly',
-		'quarterly' => 'Quarterly',
-		'annually'  => 'Annually',
+		Frequency::WEEKLY    => 'Weekly',
+		Frequency::MONTHLY   => 'Monthly',
+		Frequency::QUARTERLY => 'Quarterly',
+		Frequency::ANNUALLY  => 'Annually',
 	];
 
 	/**
@@ -92,7 +93,7 @@ class AdminNotificationListener {
 	 * @return void
 	 */
 	public function on_transaction_created( Transaction $transaction ): void {
-		if ( 'completed' === $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED === $transaction->status ) {
 			$this->on_donation_completed( $transaction );
 		}
 	}
@@ -104,7 +105,7 @@ class AdminNotificationListener {
 	 * @return void
 	 */
 	public function on_donation_completed( Transaction $transaction ): void {
-		if ( 'one_time' !== $transaction->type ) {
+		if ( Frequency::ONE_TIME !== $transaction->type ) {
 			return;
 		}
 

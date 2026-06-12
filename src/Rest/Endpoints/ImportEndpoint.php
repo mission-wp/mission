@@ -8,6 +8,7 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Import\ImportService;
+use MissionDP\Models\ImportJob;
 use MissionDP\Rest\RestModule;
 use WP_Error;
 use WP_REST_Request;
@@ -282,7 +283,7 @@ class ImportEndpoint {
 
 		// Safety net for environments where AS auto-dispatch never fires, and
 		// for resuming after the runner hits its own time limit mid-job.
-		if ( ! in_array( $result['status'], [ 'completed', 'failed', 'cancelled' ], true ) ) {
+		if ( ! in_array( $result['status'], ImportJob::TERMINAL_STATUSES, true ) ) {
 			$this->import->kick_queue_runner();
 		}
 

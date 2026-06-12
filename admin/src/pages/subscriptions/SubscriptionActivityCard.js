@@ -4,13 +4,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDateTime } from '@shared/date';
 import { formatAmount } from '@shared/currency';
-
-const FREQ_SUFFIXES = {
-  monthly: '/mo',
-  weekly: '/wk',
-  quarterly: '/qtr',
-  annually: '/yr',
-};
+import { FREQUENCY_SUFFIXES, TRANSACTION_STATUS } from '../../constants';
 
 const EVENT_LABELS = {
   subscription_created: __(
@@ -66,7 +60,7 @@ function getEventLabel( entry ) {
   }
 
   if ( entry.event === 'subscription_amount_increased' && entry.data ) {
-    const suffix = FREQ_SUFFIXES[ entry.data.frequency ] || '';
+    const suffix = FREQUENCY_SUFFIXES[ entry.data.frequency ] || '';
     const from = formatAmount( entry.data.old_amount ) + suffix;
     const to = formatAmount( entry.data.new_amount ) + suffix;
     return sprintf(
@@ -78,7 +72,7 @@ function getEventLabel( entry ) {
   }
 
   if ( entry.event === 'subscription_amount_decreased' && entry.data ) {
-    const suffix = FREQ_SUFFIXES[ entry.data.frequency ] || '';
+    const suffix = FREQUENCY_SUFFIXES[ entry.data.frequency ] || '';
     const from = formatAmount( entry.data.old_amount ) + suffix;
     const to = formatAmount( entry.data.new_amount ) + suffix;
     return sprintf(
@@ -116,7 +110,7 @@ function deriveFallbackEvents( subscription ) {
   // Add completed transaction events.
   const transactions = subscription.transactions || [];
   transactions.forEach( ( txn ) => {
-    if ( txn.status === 'completed' && txn.date_completed ) {
+    if ( txn.status === TRANSACTION_STATUS.COMPLETED && txn.date_completed ) {
       events.push( {
         title: __( 'Payment completed', 'mission-donation-platform' ),
         date: formatDateTime( txn.date_completed ),

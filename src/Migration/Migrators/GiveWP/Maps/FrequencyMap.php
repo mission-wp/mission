@@ -7,6 +7,8 @@
 
 namespace MissionDP\Migration\Migrators\GiveWP\Maps;
 
+use MissionDP\Constants\Frequency;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -28,10 +30,10 @@ class FrequencyMap {
 	 */
 	public static function map( string $period, int $frequency ): array {
 		$exact = match ( true ) {
-			'week' === $period && 1 === $frequency => 'weekly',
-			'month' === $period && 1 === $frequency => 'monthly',
-			'month' === $period && 3 === $frequency, 'quarter' === $period && 1 === $frequency => 'quarterly',
-			'year' === $period && 1 === $frequency => 'annually',
+			'week' === $period && 1 === $frequency => Frequency::WEEKLY,
+			'month' === $period && 1 === $frequency => Frequency::MONTHLY,
+			'month' === $period && 3 === $frequency, 'quarter' === $period && 1 === $frequency => Frequency::QUARTERLY,
+			'year' === $period && 1 === $frequency => Frequency::ANNUALLY,
 			default => null,
 		};
 
@@ -43,7 +45,7 @@ class FrequencyMap {
 		}
 
 		return [
-			'frequency' => 'monthly',
+			'frequency' => Frequency::MONTHLY,
 			'lossy'     => true,
 		];
 	}

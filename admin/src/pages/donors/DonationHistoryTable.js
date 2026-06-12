@@ -4,6 +4,7 @@ import ClickableRows from '@shared/components/ClickableRows';
 import Pagination from '@shared/components/Pagination';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
+import { isRecurringType } from '../../constants';
 
 const PER_PAGE = 10;
 
@@ -40,11 +41,7 @@ export default function DonationHistoryTable( { transactions } ) {
                 </thead>
                 <tbody>
                   { paginatedTxns.map( ( txn ) => {
-                    const isRecurring = [
-                      'monthly',
-                      'quarterly',
-                      'annually',
-                    ].includes( txn.type );
+                    const isRecurring = isRecurringType( txn.type );
                     return (
                       <tr key={ txn.id }>
                         <td>

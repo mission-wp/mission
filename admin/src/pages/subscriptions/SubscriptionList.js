@@ -14,6 +14,11 @@ import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
 import EmptyState from '../../components/EmptyState';
+import {
+  SUBSCRIPTION_STATUS,
+  SUBSCRIPTION_STATUS_LABELS,
+  FREQUENCY_SUFFIXES,
+} from '../../constants';
 
 const RecurringIcon = () => (
   <svg
@@ -32,21 +37,6 @@ const RecurringIcon = () => (
     <path d="M12 38v-8h8" />
   </svg>
 );
-
-const STATUS_LABELS = {
-  active: __( 'Active', 'mission-donation-platform' ),
-  pending: __( 'Pending', 'mission-donation-platform' ),
-  paused: __( 'Paused', 'mission-donation-platform' ),
-  cancelled: __( 'Cancelled', 'mission-donation-platform' ),
-  past_due: __( 'Past Due', 'mission-donation-platform' ),
-};
-
-const FREQUENCY_SUFFIXES = {
-  weekly: '/wk',
-  monthly: '/mo',
-  quarterly: '/qrt',
-  annually: '/yr',
-};
 
 function getDelta( current, previous ) {
   if ( ! previous ) {
@@ -258,28 +248,28 @@ function buildFields() {
           <SkeletonBar width="70px" height="22px" />
         ) : (
           <span className={ `mission-status-badge is-${ item.status }` }>
-            { STATUS_LABELS[ item.status ] || item.status }
+            { SUBSCRIPTION_STATUS_LABELS[ item.status ] || item.status }
           </span>
         ),
       elements: [
         {
-          value: 'active',
+          value: SUBSCRIPTION_STATUS.ACTIVE,
           label: __( 'Active', 'mission-donation-platform' ),
         },
         {
-          value: 'pending',
+          value: SUBSCRIPTION_STATUS.PENDING,
           label: __( 'Pending', 'mission-donation-platform' ),
         },
         {
-          value: 'paused',
+          value: SUBSCRIPTION_STATUS.PAUSED,
           label: __( 'Paused', 'mission-donation-platform' ),
         },
         {
-          value: 'cancelled',
+          value: SUBSCRIPTION_STATUS.CANCELLED,
           label: __( 'Cancelled', 'mission-donation-platform' ),
         },
         {
-          value: 'past_due',
+          value: SUBSCRIPTION_STATUS.PAST_DUE,
           label: __( 'Past Due', 'mission-donation-platform' ),
         },
       ],

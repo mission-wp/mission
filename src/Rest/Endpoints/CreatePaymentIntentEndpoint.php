@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
@@ -100,7 +101,7 @@ class CreatePaymentIntentEndpoint {
 					'frequency'            => [
 						'required'          => false,
 						'type'              => 'string',
-						'default'           => 'one_time',
+						'default'           => Frequency::ONE_TIME,
 						'sanitize_callback' => 'sanitize_text_field',
 					],
 					'campaign_id'          => [
@@ -410,7 +411,7 @@ class CreatePaymentIntentEndpoint {
 
 		$transaction = new Transaction(
 			[
-				'status'                 => 'pending',
+				'status'                 => Transaction::STATUS_PENDING,
 				'type'                   => $request->get_param( 'frequency' ),
 				'donor_id'               => $donor->id,
 				'source_post_id'         => $request->get_param( 'source_post_id' ),

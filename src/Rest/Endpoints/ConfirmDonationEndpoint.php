@@ -123,7 +123,7 @@ class ConfirmDonationEndpoint {
 		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );
 
 		// Happy path: the webhook arrived before the client's confirm call.
-		if ( 'completed' === $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED === $transaction->status ) {
 			return new WP_REST_Response(
 				[
 					'status'         => 'completed',
@@ -133,7 +133,7 @@ class ConfirmDonationEndpoint {
 			);
 		}
 
-		if ( in_array( $transaction->status, [ 'failed', 'cancelled' ], true ) ) {
+		if ( in_array( $transaction->status, [ Transaction::STATUS_FAILED, Transaction::STATUS_CANCELLED ], true ) ) {
 			return new WP_Error(
 				'payment_failed',
 				__( 'The payment was not successful.', 'mission-donation-platform' ),
@@ -176,7 +176,7 @@ class ConfirmDonationEndpoint {
 		}
 
 		if ( in_array( $stripe_status, [ 'canceled', 'requires_payment_method' ], true ) ) {
-			$transaction->status = 'failed';
+			$transaction->status = Transaction::STATUS_FAILED;
 			$transaction->save();
 
 			return new WP_Error(
@@ -205,7 +205,7 @@ class ConfirmDonationEndpoint {
 	 * @return void
 	 */
 	private function complete_transaction( Transaction $transaction, array $verification ): void {
-		$transaction->status         = 'completed';
+		$transaction->status         = Transaction::STATUS_COMPLETED;
 		$transaction->date_completed = current_time( 'mysql', true );
 		$transaction->save();
 

@@ -54,8 +54,8 @@ class PaymentIntentSucceededHandler {
 		// be redelivered; subsequent deliveries see a non-pending status and
 		// skip the transition. `save()` fires the status transition hooks
 		// that update donor/campaign aggregates and send receipt emails.
-		if ( 'pending' === $transaction->status ) {
-			$transaction->status         = 'completed';
+		if ( Transaction::STATUS_PENDING === $transaction->status ) {
+			$transaction->status         = Transaction::STATUS_COMPLETED;
 			$transaction->date_completed = current_time( 'mysql', true );
 			$transaction->save();
 		}
@@ -64,7 +64,7 @@ class PaymentIntentSucceededHandler {
 		if ( $transaction->subscription_id ) {
 			$subscription = Subscription::find( $transaction->subscription_id );
 
-			if ( $subscription && 'pending' === $subscription->status ) {
+			if ( $subscription && Subscription::STATUS_PENDING === $subscription->status ) {
 				$subscription->activate( $transaction->id );
 			}
 		}

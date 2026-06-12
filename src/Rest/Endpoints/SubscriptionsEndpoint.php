@@ -135,7 +135,7 @@ class SubscriptionsEndpoint {
 					],
 					'status'      => [
 						'type'              => 'string',
-						'enum'              => [ 'active', 'pending', 'past_due', 'paused', 'cancelled' ],
+						'enum'              => Subscription::STATUSES,
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => 'rest_validate_request_arg',
 					],
@@ -242,7 +242,7 @@ class SubscriptionsEndpoint {
 			);
 		}
 
-		if ( ! in_array( $subscription->status, [ 'active', 'past_due', 'pending' ], true ) ) {
+		if ( ! in_array( $subscription->status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAST_DUE, Subscription::STATUS_PENDING ], true ) ) {
 			return new WP_Error(
 				'subscription_not_cancellable',
 				__( 'This subscription cannot be cancelled.', 'mission-donation-platform' ),
@@ -287,7 +287,7 @@ class SubscriptionsEndpoint {
 			);
 		}
 
-		if ( 'active' !== $subscription->status ) {
+		if ( Subscription::STATUS_ACTIVE !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_pausable',
 				__( 'Only active subscriptions can be paused.', 'mission-donation-platform' ),
@@ -330,7 +330,7 @@ class SubscriptionsEndpoint {
 			);
 		}
 
-		if ( 'paused' !== $subscription->status ) {
+		if ( Subscription::STATUS_PAUSED !== $subscription->status ) {
 			return new WP_Error(
 				'subscription_not_resumable',
 				__( 'Only paused subscriptions can be resumed.', 'mission-donation-platform' ),

@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Plugin;
@@ -100,7 +101,7 @@ class TransactionsEndpoint {
 					],
 					'status'       => [
 						'type'              => 'string',
-						'enum'              => [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ],
+						'enum'              => Transaction::STATUSES,
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => 'rest_validate_request_arg',
 					],
@@ -367,12 +368,12 @@ class TransactionsEndpoint {
 
 		$amount      = (int) $request->get_param( 'donation_amount' );
 		$campaign_id = $request->get_param( 'campaign_id' ) ? (int) $request->get_param( 'campaign_id' ) : null;
-		$frequency   = $request->get_param( 'frequency' ) ?? 'one_time';
+		$frequency   = $request->get_param( 'frequency' ) ?? Frequency::ONE_TIME;
 		$now         = current_time( 'mysql', true );
 
 		$transaction = new Transaction(
 			[
-				'status'          => 'completed',
+				'status'          => Transaction::STATUS_COMPLETED,
 				'type'            => $frequency,
 				'donor_id'        => $donor->id,
 				'campaign_id'     => $campaign_id,
@@ -627,7 +628,7 @@ class TransactionsEndpoint {
 			],
 			'status'      => [
 				'type'              => 'string',
-				'enum'              => [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ],
+				'enum'              => Transaction::STATUSES,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
@@ -688,8 +689,8 @@ class TransactionsEndpoint {
 			],
 			'frequency'        => [
 				'type'              => 'string',
-				'default'           => 'one_time',
-				'enum'              => [ 'one_time', 'monthly', 'quarterly', 'annually' ],
+				'default'           => Frequency::ONE_TIME,
+				'enum'              => Frequency::ALL,
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			],
@@ -753,7 +754,7 @@ class TransactionsEndpoint {
 			);
 		}
 
-		if ( 'completed' !== $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED !== $transaction->status ) {
 			return new WP_Error(
 				'not_refundable',
 				__( 'Only completed transactions can be refunded.', 'mission-donation-platform' ),
@@ -857,7 +858,7 @@ class TransactionsEndpoint {
 		$transaction->amount_refunded = $transaction->amount_refunded + $refund_amount;
 
 		if ( $transaction->amount_refunded >= $transaction->total_amount ) {
-			$transaction->status        = 'refunded';
+			$transaction->status        = Transaction::STATUS_REFUNDED;
 			$transaction->date_refunded = current_time( 'mysql', true );
 		}
 

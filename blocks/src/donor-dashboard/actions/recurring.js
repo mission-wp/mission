@@ -451,14 +451,16 @@ export const recurringActions = {
         }
       );
 
+      const data = yield response.json();
+
       if ( ! response.ok ) {
-        const data = yield response.json();
         sub.actionError = data.message || 'Failed to pause. Please try again.';
         sub.pauseLoading = false;
         return;
       }
 
-      sub.status = 'paused';
+      // The endpoint returns the resulting status; don't assume it here.
+      sub.status = data.status;
       sub.pauseLoading = false;
       showToast( ctx, 'Subscription paused' );
     } catch {
@@ -487,14 +489,16 @@ export const recurringActions = {
         }
       );
 
+      const data = yield response.json();
+
       if ( ! response.ok ) {
-        const data = yield response.json();
         sub.actionError = data.message || 'Failed to resume. Please try again.';
         sub.pauseLoading = false;
         return;
       }
 
-      sub.status = 'active';
+      // The endpoint returns the resulting status; don't assume it here.
+      sub.status = data.status;
       sub.pauseLoading = false;
       showToast( ctx, 'Subscription resumed' );
     } catch {
