@@ -30,10 +30,10 @@
 		}
 	},
 	"selectors": {
-		"border": ".wp-block-mission-campaign-image img, .wp-block-mission-campaign-image .components-placeholder",
-		"shadow": ".wp-block-mission-campaign-image img, .wp-block-mission-campaign-image .components-placeholder",
+		"border": ".wp-block-mission-donation-platform-campaign-image img, .wp-block-mission-donation-platform-campaign-image .components-placeholder",
+		"shadow": ".wp-block-mission-donation-platform-campaign-image img, .wp-block-mission-donation-platform-campaign-image .components-placeholder",
 		"filter": {
-			"duotone": ".wp-block-mission-campaign-image img, .wp-block-mission-campaign-image .components-placeholder"
+			"duotone": ".wp-block-mission-donation-platform-campaign-image img, .wp-block-mission-donation-platform-campaign-image .components-placeholder"
 		}
 	},
 	"styles": [
