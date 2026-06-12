@@ -9,6 +9,8 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Donor;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
 use MissionDP\Rest\RestModule;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
@@ -50,43 +52,19 @@ class DonorWallEndpoint {
 				// returns only the donor data the site owner has chosen to expose
 				// (name, optional message, donation amount). No private fields.
 				'permission_callback' => '__return_true',
-				'args'                => [
-					'campaign_id'    => [
-						'type'              => 'integer',
-						'default'           => 0,
-						'sanitize_callback' => 'absint',
-					],
-					'per_page'       => [
-						'type'              => 'integer',
-						'default'           => 12,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => static fn( $val ) => $val >= 1 && $val <= 50,
-					],
-					'page'           => [
-						'type'              => 'integer',
-						'default'           => 1,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => static fn( $val ) => $val >= 1,
-					],
-					'orderby'        => [
-						'type'              => 'string',
-						'default'           => 'date_completed',
-						'enum'              => [ 'date_completed', 'amount' ],
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
-					'order'          => [
-						'type'              => 'string',
-						'default'           => 'DESC',
-						'enum'              => [ 'ASC', 'DESC' ],
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
-					'show_anonymous' => [
-						'type'    => 'boolean',
-						'default' => true,
-					],
-				],
+				'args'                => array_merge(
+					CollectionParams::base(
+						orderby: [ 'date_completed', 'amount' ],
+						default_orderby: 'date_completed',
+						per_page: 12,
+						max_per_page: 50,
+						search: false
+					),
+					[
+						'campaign_id'    => Args::integer( [ 'default' => 0 ] ),
+						'show_anonymous' => Args::boolean( [ 'default' => true ] ),
+					]
+				),
 			]
 		);
 	}

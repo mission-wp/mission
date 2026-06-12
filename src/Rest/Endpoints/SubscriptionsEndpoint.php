@@ -11,6 +11,7 @@ use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
 use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\AdminPermissionTrait;
@@ -457,47 +458,16 @@ class SubscriptionsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'        => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'sanitize_callback' => 'absint',
-			],
-			'per_page'    => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'sanitize_callback' => static fn( $val ) => min( absint( $val ), 100 ),
-			],
-			'orderby'     => [
-				'type'              => 'string',
-				'default'           => 'date_created',
-				'enum'              => [ 'date_created', 'date_next_renewal', 'amount', 'status' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'order'       => [
-				'type'              => 'string',
-				'default'           => 'DESC',
-				'enum'              => [ 'ASC', 'DESC' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'status'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'donor_id'    => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'campaign_id' => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'search'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-		];
+		return array_merge(
+			CollectionParams::base(
+				orderby: [ 'date_created', 'date_next_renewal', 'amount', 'status' ],
+				default_orderby: 'date_created'
+			),
+			[
+				'status'      => Args::string(),
+				'donor_id'    => Args::integer(),
+				'campaign_id' => Args::integer(),
+			]
+		);
 	}
 }
