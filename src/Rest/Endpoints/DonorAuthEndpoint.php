@@ -35,7 +35,7 @@ class DonorAuthEndpoint {
 	 * @param DonorAuthService $auth Auth service.
 	 */
 	public function __construct(
-		private readonly DonorAuthService $auth,
+		private DonorAuthService $auth,
 	) {}
 
 	/**

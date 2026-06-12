@@ -26,7 +26,7 @@ class ImportEndpoint {
 	 * @param ImportService $import Import service.
 	 */
 	public function __construct(
-		private readonly ImportService $import,
+		private ImportService $import,
 	) {}
 
 	/**

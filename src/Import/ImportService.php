@@ -48,9 +48,9 @@ class ImportService {
 	 * @param RowValidator  $validator Row validator.
 	 */
 	public function __construct(
-		private readonly ExportService $export,
-		private readonly ColumnMapper $mapper,
-		private readonly RowValidator $validator,
+		private ExportService $export,
+		private ColumnMapper $mapper,
+		private RowValidator $validator,
 	) {}
 
 	/**

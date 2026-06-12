@@ -47,7 +47,7 @@ class CleanupEndpoint {
 	 * @param CleanupService $cleanup Cleanup service.
 	 */
 	public function __construct(
-		private readonly CleanupService $cleanup,
+		private CleanupService $cleanup,
 	) {}
 
 	/**

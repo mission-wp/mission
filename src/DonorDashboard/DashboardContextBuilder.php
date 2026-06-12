@@ -58,8 +58,8 @@ class DashboardContextBuilder {
 	 * @param array $settings Plugin settings (missiondp_settings option).
 	 */
 	public function __construct(
-		private readonly Donor $donor,
-		private readonly array $settings,
+		private Donor $donor,
+		private array $settings,
 	) {
 		$this->currency  = strtoupper( $this->settings['currency'] ?? 'USD' );
 		$this->is_test   = ! empty( $this->settings['test_mode'] );

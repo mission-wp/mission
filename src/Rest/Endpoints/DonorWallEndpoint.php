@@ -30,8 +30,8 @@ class DonorWallEndpoint {
 	 * @param SettingsService  $settings  Settings service.
 	 */
 	public function __construct(
-		private readonly ReportingService $reporting,
-		private readonly SettingsService $settings,
+		private ReportingService $reporting,
+		private SettingsService $settings,
 	) {}
 
 	/**

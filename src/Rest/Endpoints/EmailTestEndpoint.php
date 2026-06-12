@@ -68,7 +68,7 @@ class EmailTestEndpoint {
 	 * @param SettingsService $settings Settings service.
 	 */
 	public function __construct(
-		private readonly SettingsService $settings,
+		private SettingsService $settings,
 	) {}
 
 	/**

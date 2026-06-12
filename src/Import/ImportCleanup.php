@@ -25,7 +25,7 @@ class ImportCleanup {
 	 * @param ImportService $import Import service (for file deletion).
 	 */
 	public function __construct(
-		private readonly ImportService $import,
+		private ImportService $import,
 	) {}
 
 	/**

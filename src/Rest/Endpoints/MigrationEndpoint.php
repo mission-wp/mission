@@ -26,7 +26,7 @@ class MigrationEndpoint {
 	 * @param MigrationService $service Migration service.
 	 */
 	public function __construct(
-		private readonly MigrationService $service,
+		private MigrationService $service,
 	) {}
 
 	/**

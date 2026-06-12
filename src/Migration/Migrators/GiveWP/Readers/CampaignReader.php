@@ -28,8 +28,8 @@ class CampaignReader {
 	 * @param string       $currency Site currency code for goal conversion.
 	 */
 	public function __construct(
-		private readonly GiveWPSource $source,
-		private readonly string $currency,
+		private GiveWPSource $source,
+		private string $currency,
 	) {}
 
 	/**

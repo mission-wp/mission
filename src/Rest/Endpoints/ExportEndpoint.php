@@ -28,7 +28,7 @@ class ExportEndpoint {
 	 * @param ExportService $export Export service.
 	 */
 	public function __construct(
-		private readonly ExportService $export,
+		private ExportService $export,
 	) {}
 
 	/**

@@ -45,8 +45,8 @@ class SubscriptionReader {
 	 * @param string       $currency Site currency fallback.
 	 */
 	public function __construct(
-		private readonly GiveWPSource $source,
-		private readonly string $currency,
+		private GiveWPSource $source,
+		private string $currency,
 	) {}
 
 	/**

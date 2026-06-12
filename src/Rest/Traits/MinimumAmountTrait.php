@@ -19,8 +19,12 @@ trait MinimumAmountTrait {
 
 	/**
 	 * Default block minimum in minor units of the site currency.
+	 *
+	 * Declared as a static property because trait constants require PHP 8.2.
+	 *
+	 * @var int
 	 */
-	private const DEFAULT_BLOCK_MINIMUM = 500;
+	private static int $default_block_minimum = 500;
 
 	/**
 	 * Validate the donation amount against the configured minimum.
@@ -37,7 +41,7 @@ trait MinimumAmountTrait {
 	 * @param string $currency       ISO 4217 currency code of the amount.
 	 * @return WP_Error|true True if valid, WP_Error if below minimum.
 	 */
-	private function validate_minimum_amount( int $amount, int $source_post_id, string $form_id, string $currency ): WP_Error|true {
+	private function validate_minimum_amount( int $amount, int $source_post_id, string $form_id, string $currency ): WP_Error|bool {
 		$hard_floor = Currency::minimum_charge( $currency );
 
 		if ( $amount < $hard_floor ) {
@@ -117,7 +121,7 @@ trait MinimumAmountTrait {
 			if ( 'mission-donation-platform/donation-form' === $block['blockName'] ) {
 				$block_form_id = $block['attrs']['formId'] ?? '';
 				if ( $block_form_id === $form_id ) {
-					return (int) ( $block['attrs']['minimumAmount'] ?? self::DEFAULT_BLOCK_MINIMUM );
+					return (int) ( $block['attrs']['minimumAmount'] ?? self::$default_block_minimum );
 				}
 			}
 

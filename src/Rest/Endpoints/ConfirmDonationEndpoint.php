@@ -37,7 +37,7 @@ class ConfirmDonationEndpoint {
 	 * @param PaymentIntentVerifier $verifier PaymentIntent verifier service.
 	 */
 	public function __construct(
-		private readonly PaymentIntentVerifier $verifier,
+		private PaymentIntentVerifier $verifier,
 	) {}
 
 	/**

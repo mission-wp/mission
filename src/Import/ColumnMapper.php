@@ -22,7 +22,7 @@ class ColumnMapper {
 	 * @param ExportService $export Export service (source of canonical column lists).
 	 */
 	public function __construct(
-		private readonly ExportService $export,
+		private ExportService $export,
 	) {}
 
 	/**

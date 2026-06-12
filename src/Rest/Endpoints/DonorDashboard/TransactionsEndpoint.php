@@ -36,8 +36,8 @@ class TransactionsEndpoint {
 	 * @param SettingsService  $settings  Settings service.
 	 */
 	public function __construct(
-		private readonly ReportingService $reporting,
-		private readonly SettingsService $settings,
+		private ReportingService $reporting,
+		private SettingsService $settings,
 	) {}
 
 	/**
@@ -298,9 +298,9 @@ class TransactionsEndpoint {
 	 *
 	 * @param string $pdf      Raw PDF binary content.
 	 * @param string $filename Download filename.
-	 * @return never
+	 * @return void This method exits and never returns.
 	 */
-	private function stream_pdf( string $pdf, string $filename ): never {
+	private function stream_pdf( string $pdf, string $filename ): void {
 		header( 'Content-Type: application/pdf' );
 		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
 		header( 'Content-Length: ' . strlen( $pdf ) );

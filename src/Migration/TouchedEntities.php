@@ -24,7 +24,7 @@ class TouchedEntities {
 	 *
 	 * @param string $job_id Public job token.
 	 */
-	public function __construct( private readonly string $job_id ) {}
+	public function __construct( private string $job_id ) {}
 
 	/**
 	 * Accumulate distinct touched IDs for a bucket.
