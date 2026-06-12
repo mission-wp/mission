@@ -187,6 +187,10 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.3.1 =
+* Enhancement: Faster dashboard and reports on sites with many donations, thanks to new compound database indexes on the transactions and subscriptions tables
+* Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
+
 = 1.3.0 =
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
 * New: Outgoing webhooks. Notify external services when donations, subscriptions, donors, or campaigns change, with signed payloads, automatic retries, and a delivery log (Tools > Webhooks)
@@ -219,13 +223,5 @@ This plugin connects to the following third-party services:
 = 1.1.6 =
 * Enhancement: Expanded the country dropdown to the full ISO 3166-1 list so any country is selectable
 * Fix: Fixed the plugin update entry in the activity log to show the correct new version
-
-= 1.1.5 =
-* New: Added a data export tool for transactions, donors, subscriptions, and campaigns
-* New: Shows an admin notice when the site is running PHP below 8.0
-* Enhancement: Auto-scrolls to the first newly loaded entry when expanding the logs list
-* Fix: Donors can now sign in with their new email address after changing it on the donor dashboard
-* Fix: Fixed donor dashboard form fields losing their class and id attributes
-* Fix: Restored the database size display in System Status
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

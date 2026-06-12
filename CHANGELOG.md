@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.1 (2026-06-11)
+
+* Enhancement: Faster dashboard and reports on sites with many donations, thanks to new compound database indexes on the transactions and subscriptions tables
+* Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
+
 ## 1.3.0 (2026-06-11)
 
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
