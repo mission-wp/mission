@@ -111,12 +111,6 @@ class ActivityFeedEndpoint {
 	}
 
 	/**
-	 * Prepare an activity log entry for REST response.
-	 *
-	 * @param ActivityLog $entry Activity log entry.
-	 * @return array<string, mixed>
-	 */
-	/**
 	 * DELETE handler — clears all activity log entries for the current mode.
 	 *
 	 * @return WP_REST_Response
@@ -133,6 +127,12 @@ class ActivityFeedEndpoint {
 		return new WP_REST_Response( [ 'deleted' => $deleted ], 200 );
 	}
 
+	/**
+	 * Prepare an activity log entry for REST response.
+	 *
+	 * @param ActivityLog $entry Activity log entry.
+	 * @return array<string, mixed>
+	 */
 	private function prepare_entry( ActivityLog $entry ): array {
 		return [
 			'id'           => $entry->id,

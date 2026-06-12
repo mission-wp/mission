@@ -170,11 +170,6 @@ class CampaignsEndpoint {
 	}
 
 	/**
-	 * GET handler — returns aggregate campaign statistics.
-	 *
-	 * @return WP_REST_Response
-	 */
-	/**
 	 * Whether test mode is active.
 	 *
 	 * @return bool
@@ -183,6 +178,11 @@ class CampaignsEndpoint {
 		return (bool) $this->settings->get( 'test_mode' );
 	}
 
+	/**
+	 * GET handler — returns aggregate campaign statistics.
+	 *
+	 * @return WP_REST_Response
+	 */
 	public function get_summary(): WP_REST_Response {
 		return new WP_REST_Response( $this->reporting->campaign_summary(), 200 );
 	}
