@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard from '@shared/components/StatCard';
 import {
   Button,
   Card,
@@ -82,30 +83,6 @@ export function StatusBadge( { status } ) {
     >
       { style.label }
     </span>
-  );
-}
-
-function StatCard( { label, value, subtitle, isLoading: loading, className } ) {
-  const classes = [ 'mission-stat-card', className ]
-    .filter( Boolean )
-    .join( ' ' );
-  return (
-    <Card className={ classes }>
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { subtitle && ! loading && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-        { loading && (
-          <div className="mission-stat-card__subtitle">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-      </CardBody>
-    </Card>
   );
 }
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard from '@shared/components/StatCard';
 import {
   Button,
   Card,
@@ -39,27 +40,6 @@ const PeopleIcon = () => (
 );
 
 const BRAND_COLOR = '#2FA36B';
-
-function StatCard( { label, value, subtitle, isLoading: loading } ) {
-  return (
-    <Card className="mission-stat-card">
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { subtitle && ! loading && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-        { loading && (
-          <div className="mission-stat-card__subtitle">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-      </CardBody>
-    </Card>
-  );
-}
 
 const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
   id: `skeleton-${ i }`,

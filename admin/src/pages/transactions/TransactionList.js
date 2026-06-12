@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard, { getDelta } from '@shared/components/StatCard';
 import {
   Button,
   Card,
@@ -108,81 +109,6 @@ function TypeBadge( { type } ) {
     >
       { label }
     </span>
-  );
-}
-
-function getDelta( current, previous ) {
-  if ( ! previous ) {
-    return { value: 0, direction: 'neutral' };
-  }
-  const pct = ( ( current - previous ) / previous ) * 100;
-  const rounded = Math.abs( Math.round( pct * 10 ) / 10 );
-  if ( pct > 0 ) {
-    return { value: rounded, direction: 'positive' };
-  }
-  if ( pct < 0 ) {
-    return { value: rounded, direction: 'negative' };
-  }
-  return { value: 0, direction: 'neutral' };
-}
-
-const ArrowUp = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="2,8 6,3 10,8" />
-  </svg>
-);
-
-const ArrowDown = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="2,4 6,9 10,4" />
-  </svg>
-);
-
-function StatCard( { label, value, delta, subtitle, isLoading: loading } ) {
-  return (
-    <Card className="mission-stat-card">
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { loading && (
-          <div className="mission-stat-card__delta">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-        { ! loading && delta && (
-          <div className={ `mission-stat-card__delta is-${ delta.direction }` }>
-            { delta.direction === 'positive' && <ArrowUp /> }
-            { delta.direction === 'negative' && <ArrowDown /> }
-            <span>
-              { delta.value }% { delta.label }
-            </span>
-          </div>
-        ) }
-        { ! loading && ! delta && subtitle && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-      </CardBody>
-    </Card>
   );
 }
 
