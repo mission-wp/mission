@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
 import {
   Card,
   CardBody,
@@ -82,21 +83,6 @@ const ArrowDown = () => (
     <polyline points="2,4 6,9 10,4" />
   </svg>
 );
-
-function SkeletonBar( { width = '60%', height = '24px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
-  );
-}
 
 function StatCard( { label, value, delta, subtitle, isLoading: loading } ) {
   return (

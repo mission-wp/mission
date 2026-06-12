@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
+import SkeletonBar from '@shared/components/SkeletonBar';
 
 const DATA_TYPES = [
   { value: 'donors', label: __( 'Donors', 'mission-donation-platform' ) },
@@ -21,21 +22,6 @@ const DATA_TYPES = [
     label: __( 'Dedications', 'mission-donation-platform' ),
   },
 ];
-
-function SkeletonBar( { width = '60%', height = '16px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
-  );
-}
 
 function buildQueryString( params ) {
   return Object.entries( params )

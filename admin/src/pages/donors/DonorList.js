@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
 import {
   Button,
   Card,
@@ -38,21 +39,6 @@ const PeopleIcon = () => (
 );
 
 const BRAND_COLOR = '#2FA36B';
-
-function SkeletonBar( { width = '60%', height = '24px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#eee9e3',
-      } }
-    />
-  );
-}
 
 function StatCard( { label, value, subtitle, isLoading: loading } ) {
   return (
