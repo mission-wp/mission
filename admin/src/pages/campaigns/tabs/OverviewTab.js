@@ -1,12 +1,11 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
 import { DataViews } from '@wordpress/dataviews';
-import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDate } from '@shared/date';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../../components/EmptyState';
 import { TRANSACTION_STATUS, isRecurringType } from '../../../constants';
 
@@ -327,65 +326,16 @@ function prepareMilestones( campaign ) {
 }
 
 export default function OverviewTab( { campaignId, campaign } ) {
-  const [ data, setData ] = useState( [] );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
   const { view, setView } = usePersistedView(
     `campaign-donations-${ campaignId }`,
     DEFAULT_VIEW
   );
-  const fetchTransactions = useCallback( async () => {
-    setIsLoading( true );
-    const params = new URLSearchParams( {
-      campaign_id: String( campaignId ),
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    const statusFilter = view.filters?.find( ( f ) => f.field === 'status' );
-    if ( statusFilter?.value ) {
-      params.set( 'status', statusFilter.value );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/transactions?${ params.toString() }`,
-        parse: false,
-      } );
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [
-    campaignId,
-    view.page,
-    view.perPage,
-    view.sort,
-    view.filters,
-    view.search,
-  ] );
-
-  useEffect( () => {
-    fetchTransactions();
-  }, [ fetchTransactions ] );
+  const { data, totalItems, totalPages, isLoading } = usePaginatedFetch( {
+    path: '/mission-donation-platform/v1/transactions',
+    view,
+    filterFields: [ 'status' ],
+    extraParams: { campaign_id: String( campaignId ) },
+  } );
 
   const hasGoal = campaign.goal_amount > 0;
   const milestones = hasGoal ? prepareMilestones( campaign ) : [];

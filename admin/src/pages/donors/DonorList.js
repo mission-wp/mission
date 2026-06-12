@@ -18,6 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import DonorAvatar from '../../components/DonorAvatar';
 import EmptyState from '../../components/EmptyState';
 import AddDonorDrawer from './AddDonorDrawer';
@@ -168,14 +169,15 @@ const DEFAULT_VIEW = {
 };
 
 export default function DonorList() {
-  const [ data, setData ] = useState( [] );
   const { view, setView, isModified, resetToDefault } = usePersistedView(
     'donors',
     DEFAULT_VIEW
   );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
+  const { data, totalItems, totalPages, isLoading, refresh } =
+    usePaginatedFetch( {
+      path: '/mission-donation-platform/v1/donors',
+      view,
+    } );
   const [ summary, setSummary ] = useState( null );
   const [ showDrawer, setShowDrawer ] = useState( false );
 
@@ -188,48 +190,6 @@ export default function DonorList() {
   useEffect( () => {
     fetchSummary();
   }, [ fetchSummary ] );
-
-  const fetchDonors = useCallback( async () => {
-    setIsLoading( true );
-
-    const params = new URLSearchParams( {
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/donors?${ params.toString() }`,
-        parse: false,
-      } );
-
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [ view.page, view.perPage, view.sort, view.search ] );
-
-  useEffect( () => {
-    fetchDonors();
-  }, [ fetchDonors ] );
 
   const hasNoFilters = ! view.filters || view.filters.length === 0;
   const showEmptyState =
@@ -302,7 +262,7 @@ export default function DonorList() {
           onClose={ () => setShowDrawer( false ) }
           onCreated={ () => {
             setShowDrawer( false );
-            fetchDonors();
+            refresh();
             fetchSummary();
           } }
         />
@@ -401,7 +361,7 @@ export default function DonorList() {
         onClose={ () => setShowDrawer( false ) }
         onCreated={ () => {
           setShowDrawer( false );
-          fetchDonors();
+          refresh();
           fetchSummary();
         } }
       />

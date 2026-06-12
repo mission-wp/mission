@@ -15,6 +15,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../components/EmptyState';
 import {
   SUBSCRIPTION_STATUS,
@@ -214,14 +215,15 @@ const DEFAULT_VIEW = {
 };
 
 export default function SubscriptionList() {
-  const [ data, setData ] = useState( [] );
   const { view, setView, isModified, resetToDefault } = usePersistedView(
     'subscriptions',
     DEFAULT_VIEW
   );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
+  const { data, totalItems, totalPages, isLoading } = usePaginatedFetch( {
+    path: '/mission-donation-platform/v1/subscriptions',
+    view,
+    filterFields: [ 'status' ],
+  } );
   const [ summary, setSummary ] = useState( null );
 
   const fetchSummary = useCallback( () => {
@@ -233,53 +235,6 @@ export default function SubscriptionList() {
   useEffect( () => {
     fetchSummary();
   }, [ fetchSummary ] );
-
-  const fetchSubscriptions = useCallback( async () => {
-    setIsLoading( true );
-
-    const params = new URLSearchParams( {
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    const statusFilter = view.filters?.find( ( f ) => f.field === 'status' );
-    if ( statusFilter?.value ) {
-      params.set( 'status', statusFilter.value );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/subscriptions?${ params.toString() }`,
-        parse: false,
-      } );
-
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [ view.page, view.perPage, view.sort, view.filters, view.search ] );
-
-  useEffect( () => {
-    fetchSubscriptions();
-  }, [ fetchSubscriptions ] );
 
   const fields = buildFields();
 
