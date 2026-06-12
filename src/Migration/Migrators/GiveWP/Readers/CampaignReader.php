@@ -12,6 +12,7 @@ namespace MissionDP\Migration\Migrators\GiveWP\Readers;
 use MissionDP\Migration\AmountConverter;
 use MissionDP\Migration\Migrators\GiveWP\GiveWPSource;
 use MissionDP\Migration\Migrators\GiveWP\Maps\StatusMap;
+use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,8 +29,8 @@ class CampaignReader {
 	 * @param string       $currency Site currency code for goal conversion.
 	 */
 	public function __construct(
-		private readonly GiveWPSource $source,
-		private readonly string $currency,
+		private GiveWPSource $source,
+		private string $currency,
 	) {}
 
 	/**
@@ -170,7 +171,7 @@ class CampaignReader {
 				'goal_amount'     => $has_goal
 					? AmountConverter::to_minor_units( (string) ( $form_meta['_give_set_goal'] ?? '0' ), $this->currency )
 					: 0,
-				'status'          => 'publish' === $row['post_status'] ? 'active' : 'ended',
+				'status'          => 'publish' === $row['post_status'] ? Campaign::STATUS_ACTIVE : Campaign::STATUS_ENDED,
 				'date_start'      => null,
 				'date_end'        => null,
 				'date_created'    => (string) $row['post_date_gmt'],
@@ -192,23 +193,23 @@ class CampaignReader {
 		$now = current_time( 'mysql', true );
 
 		if ( in_array( $status, [ 'archived', 'inactive' ], true ) ) {
-			return 'ended';
+			return Campaign::STATUS_ENDED;
 		}
 
 		if ( null !== $date_end && $date_end < $now ) {
-			return 'ended';
+			return Campaign::STATUS_ENDED;
 		}
 
 		if ( null !== $date_start && $date_start > $now ) {
-			return 'scheduled';
+			return Campaign::STATUS_SCHEDULED;
 		}
 
 		// Draft and pending campaigns have not gone live yet.
 		if ( 'active' !== $status ) {
-			return 'scheduled';
+			return Campaign::STATUS_SCHEDULED;
 		}
 
-		return 'active';
+		return Campaign::STATUS_ACTIVE;
 	}
 
 	/**

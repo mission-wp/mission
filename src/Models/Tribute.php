@@ -65,6 +65,27 @@ class Tribute extends Model {
 	}
 
 	/**
+	 * Save without firing side-effect hooks (honoree notification emails).
+	 *
+	 * For bulk backfill paths (import, migration) that must not trigger
+	 * listeners for historical rows.
+	 *
+	 * @return int|bool New ID on insert, true on update, false on failure.
+	 */
+	public function save_silent(): int|bool {
+		/** @var TributeDataStore $store */
+		$store = static::store();
+
+		if ( $this->id ) {
+			return $store->update_silent( $this );
+		}
+
+		$this->id = $store->create_silent( $this );
+
+		return $this->id;
+	}
+
+	/**
 	 * Get the transaction this tribute belongs to.
 	 *
 	 * @return Transaction|null

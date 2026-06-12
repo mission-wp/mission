@@ -46,7 +46,7 @@ class MigrationService {
 	 *
 	 * @param MigratorRegistry $registry Migrator registry.
 	 */
-	public function __construct( private readonly MigratorRegistry $registry ) {}
+	public function __construct( private MigratorRegistry $registry ) {}
 
 	/**
 	 * Get the registry (used by the endpoint for the sources payload).

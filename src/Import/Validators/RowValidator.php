@@ -7,6 +7,11 @@
 
 namespace MissionDP\Import\Validators;
 
+use MissionDP\Constants\Frequency;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -92,7 +97,7 @@ class RowValidator {
 
 		if ( $is_transactions && isset( $row['status'] ) ) {
 			$status  = trim( (string) $row['status'] );
-			$allowed = [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ];
+			$allowed = Transaction::STATUSES;
 
 			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
 				$warnings[] = [
@@ -111,7 +116,7 @@ class RowValidator {
 
 		if ( 'campaigns' === $type && isset( $row['status'] ) ) {
 			$status  = trim( (string) $row['status'] );
-			$allowed = [ 'active', 'scheduled', 'ended' ];
+			$allowed = Campaign::STATUSES;
 
 			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
 				$warnings[] = [
@@ -131,8 +136,15 @@ class RowValidator {
 		$is_subscriptions = 'subscriptions' === $type;
 
 		if ( $is_subscriptions ) {
-			$status  = trim( (string) ( $row['status'] ?? '' ) );
-			$allowed = [ 'pending', 'active', 'paused', 'cancelled' ];
+			$status = trim( (string) ( $row['status'] ?? '' ) );
+
+			// Imports never create past_due rows; that status only comes from Stripe.
+			$allowed = [
+				Subscription::STATUS_PENDING,
+				Subscription::STATUS_ACTIVE,
+				Subscription::STATUS_PAUSED,
+				Subscription::STATUS_CANCELLED,
+			];
 
 			// Missing status is already caught by the required-field check above.
 			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
@@ -150,7 +162,7 @@ class RowValidator {
 			}
 
 			$frequency = trim( (string) ( $row['frequency'] ?? '' ) );
-			$allowed_f = [ 'weekly', 'monthly', 'quarterly', 'annually' ];
+			$allowed_f = Frequency::RECURRING;
 
 			if ( '' !== $frequency && ! in_array( strtolower( $frequency ), $allowed_f, true ) ) {
 				$warnings[] = [
@@ -169,7 +181,7 @@ class RowValidator {
 			$status_lower = strtolower( $status );
 			$gateway_id   = trim( (string) ( $row['gateway_subscription_id'] ?? '' ) );
 
-			if ( 'active' === $status_lower && '' === $gateway_id ) {
+			if ( Subscription::STATUS_ACTIVE === $status_lower && '' === $gateway_id ) {
 				$warnings[] = [
 					'row'      => $row_number,
 					'column'   => 'gateway_subscription_id',

@@ -8,6 +8,7 @@
 namespace MissionDP\Blocks;
 
 use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Constants\Frequency;
 use MissionDP\Models\Campaign;
 
 defined( 'ABSPATH' ) || exit;
@@ -24,15 +25,15 @@ class DonationFormSettings {
 	 */
 	private const DEFAULTS = [
 		'amountsByFrequency'      => [
-			'one_time' => [ 1000, 2500, 5000, 10000 ],
-			'monthly'  => [ 1000, 2500, 5000, 10000 ],
+			Frequency::ONE_TIME => [ 1000, 2500, 5000, 10000 ],
+			Frequency::MONTHLY  => [ 1000, 2500, 5000, 10000 ],
 		],
 		'defaultAmounts'          => [],
 		'customAmount'            => true,
 		'minimumAmount'           => 500,
 		'recurringEnabled'        => true,
-		'recurringFrequencies'    => [ 'monthly', 'quarterly', 'annually' ],
-		'recurringDefault'        => 'one_time',
+		'recurringFrequencies'    => [ Frequency::MONTHLY, Frequency::QUARTERLY, Frequency::ANNUALLY ],
+		'recurringDefault'        => Frequency::ONE_TIME,
 		'feeRecovery'             => true,
 		'feeMode'                 => 'optional',
 		'tipEnabled'              => true,

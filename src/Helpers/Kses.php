@@ -72,8 +72,10 @@ class Kses {
 		];
 
 		// Tags that appear in our block templates and may carry Interactivity
-		// API directives, custom data-* attrs, or ARIA attrs.
+		// API directives, custom data-* attrs, or ARIA attrs. `template` is
+		// load-bearing: data-wp-each renders nothing without it.
 		$interactive_tags = [
+			'template',
 			'div',
 			'span',
 			'a',

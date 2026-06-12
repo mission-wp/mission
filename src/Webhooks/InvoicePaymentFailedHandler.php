@@ -44,8 +44,8 @@ class InvoicePaymentFailedHandler {
 
 		// Mark past_due immediately so the local status doesn't depend on
 		// a separate customer.subscription.updated event arriving in time.
-		if ( 'active' === $subscription->status ) {
-			$subscription->status = 'past_due';
+		if ( Subscription::STATUS_ACTIVE === $subscription->status ) {
+			$subscription->status = Subscription::STATUS_PAST_DUE;
 			$subscription->save();
 		}
 

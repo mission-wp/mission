@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
-
-const BRAND_COLOR = '#2FA36B';
+import { BRAND_COLOR } from '@shared/color';
 
 export default function CampaignProgressBar( {
   raised,

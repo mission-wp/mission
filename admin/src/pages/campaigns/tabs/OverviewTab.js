@@ -1,12 +1,13 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
 import { DataViews } from '@wordpress/dataviews';
-import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDate } from '@shared/date';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../../components/EmptyState';
+import { TRANSACTION_STATUS, isRecurringType } from '../../../constants';
 
 const TableIcon = () => (
   <svg
@@ -26,27 +27,27 @@ const TableIcon = () => (
 );
 
 const STATUS_STYLES = {
-  completed: {
+  [ TRANSACTION_STATUS.COMPLETED ]: {
     backgroundColor: '#eafaf0',
     color: '#1a7338',
     label: __( 'Completed', 'mission-donation-platform' ),
   },
-  pending: {
+  [ TRANSACTION_STATUS.PENDING ]: {
     backgroundColor: '#fef3c7',
     color: '#92400e',
     label: __( 'Pending', 'mission-donation-platform' ),
   },
-  refunded: {
+  [ TRANSACTION_STATUS.REFUNDED ]: {
     backgroundColor: '#fef2f2',
     color: '#dc2626',
     label: __( 'Refunded', 'mission-donation-platform' ),
   },
-  cancelled: {
+  [ TRANSACTION_STATUS.CANCELLED ]: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
     label: __( 'Cancelled', 'mission-donation-platform' ),
   },
-  failed: {
+  [ TRANSACTION_STATUS.FAILED ]: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
     label: __( 'Failed', 'mission-donation-platform' ),
@@ -54,7 +55,8 @@ const STATUS_STYLES = {
 };
 
 function StatusBadge( { status } ) {
-  const style = STATUS_STYLES[ status ] || STATUS_STYLES.pending;
+  const style =
+    STATUS_STYLES[ status ] || STATUS_STYLES[ TRANSACTION_STATUS.PENDING ];
   return (
     <span
       style={ {
@@ -73,7 +75,7 @@ function StatusBadge( { status } ) {
 }
 
 function TypeBadge( { type } ) {
-  const isRecurring = [ 'monthly', 'quarterly', 'annually' ].includes( type );
+  const isRecurring = isRecurringType( type );
   const bg = isRecurring ? '#eafaf0' : '#f0f0f5';
   const color = isRecurring ? '#1a7338' : '#6b6b7b';
   const label = isRecurring
@@ -94,21 +96,6 @@ function TypeBadge( { type } ) {
     >
       { label }
     </span>
-  );
-}
-
-function SkeletonBar( { width = '60%', height = '16px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
   );
 }
 
@@ -215,22 +202,25 @@ const fields = [
       ),
     elements: [
       {
-        value: 'pending',
+        value: TRANSACTION_STATUS.PENDING,
         label: __( 'Pending', 'mission-donation-platform' ),
       },
       {
-        value: 'completed',
+        value: TRANSACTION_STATUS.COMPLETED,
         label: __( 'Completed', 'mission-donation-platform' ),
       },
       {
-        value: 'refunded',
+        value: TRANSACTION_STATUS.REFUNDED,
         label: __( 'Refunded', 'mission-donation-platform' ),
       },
       {
-        value: 'cancelled',
+        value: TRANSACTION_STATUS.CANCELLED,
         label: __( 'Cancelled', 'mission-donation-platform' ),
       },
-      { value: 'failed', label: __( 'Failed', 'mission-donation-platform' ) },
+      {
+        value: TRANSACTION_STATUS.FAILED,
+        label: __( 'Failed', 'mission-donation-platform' ),
+      },
     ],
     filterBy: {
       operators: [ 'is' ],
@@ -336,65 +326,16 @@ function prepareMilestones( campaign ) {
 }
 
 export default function OverviewTab( { campaignId, campaign } ) {
-  const [ data, setData ] = useState( [] );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
   const { view, setView } = usePersistedView(
     `campaign-donations-${ campaignId }`,
     DEFAULT_VIEW
   );
-  const fetchTransactions = useCallback( async () => {
-    setIsLoading( true );
-    const params = new URLSearchParams( {
-      campaign_id: String( campaignId ),
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    const statusFilter = view.filters?.find( ( f ) => f.field === 'status' );
-    if ( statusFilter?.value ) {
-      params.set( 'status', statusFilter.value );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/transactions?${ params.toString() }`,
-        parse: false,
-      } );
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [
-    campaignId,
-    view.page,
-    view.perPage,
-    view.sort,
-    view.filters,
-    view.search,
-  ] );
-
-  useEffect( () => {
-    fetchTransactions();
-  }, [ fetchTransactions ] );
+  const { data, totalItems, totalPages, isLoading } = usePaginatedFetch( {
+    path: '/mission-donation-platform/v1/transactions',
+    view,
+    filterFields: [ 'status' ],
+    extraParams: { campaign_id: String( campaignId ) },
+  } );
 
   const hasGoal = campaign.goal_amount > 0;
   const milestones = hasGoal ? prepareMilestones( campaign ) : [];

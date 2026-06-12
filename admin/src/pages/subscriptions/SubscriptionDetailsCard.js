@@ -12,88 +12,15 @@ import {
   formatAddress,
 } from '../shared/DetailComponents';
 import { CampaignDropdown } from '../transactions/TransactionDetailsCard';
+import {
+  FREQUENCY_LABELS,
+  FREQUENCY_SUFFIXES,
+  SUBSCRIPTION_STATUS_OPTIONS,
+  TRANSACTION_STATUS,
+  TRANSACTION_STATUS_OPTIONS,
+} from '../../constants';
 
-const FREQUENCY_LABELS = {
-  weekly: __( 'Weekly', 'mission-donation-platform' ),
-  monthly: __( 'Monthly', 'mission-donation-platform' ),
-  quarterly: __( 'Quarterly', 'mission-donation-platform' ),
-  annually: __( 'Annually', 'mission-donation-platform' ),
-};
-
-const FREQUENCY_SUFFIXES = {
-  weekly: __( '/wk', 'mission-donation-platform' ),
-  monthly: __( '/mo', 'mission-donation-platform' ),
-  quarterly: __( '/qtr', 'mission-donation-platform' ),
-  annually: __( '/yr', 'mission-donation-platform' ),
-};
-
-const STATUS_OPTIONS = [
-  {
-    value: 'active',
-    label: __( 'Active', 'mission-donation-platform' ),
-    backgroundColor: 'rgba(47, 163, 107, 0.12)',
-    color: '#278f5c',
-  },
-  {
-    value: 'pending',
-    label: __( 'Pending', 'mission-donation-platform' ),
-    backgroundColor: '#e4eff5',
-    color: '#4a7a9b',
-  },
-  {
-    value: 'past_due',
-    label: __( 'Past Due', 'mission-donation-platform' ),
-    backgroundColor: '#fdf8ef',
-    color: '#b8860b',
-  },
-  {
-    value: 'paused',
-    label: __( 'Paused', 'mission-donation-platform' ),
-    backgroundColor: '#ebebed',
-    color: '#82828c',
-  },
-  {
-    value: 'cancelled',
-    label: __( 'Cancelled', 'mission-donation-platform' ),
-    backgroundColor: '#f0eeeb',
-    color: '#8a7e72',
-  },
-];
-
-const TRANSACTION_STATUS_OPTIONS = [
-  {
-    value: 'completed',
-    label: __( 'Completed', 'mission-donation-platform' ),
-    backgroundColor: 'rgba(47, 163, 107, 0.12)',
-    color: '#278f5c',
-  },
-  {
-    value: 'pending',
-    label: __( 'Pending', 'mission-donation-platform' ),
-    backgroundColor: '#e4eff5',
-    color: '#4a7a9b',
-  },
-  {
-    value: 'refunded',
-    label: __( 'Refunded', 'mission-donation-platform' ),
-    backgroundColor: '#f5e8e8',
-    color: '#b85c5c',
-  },
-  {
-    value: 'failed',
-    label: __( 'Failed', 'mission-donation-platform' ),
-    backgroundColor: '#fce8e8',
-    color: '#c0392b',
-  },
-  {
-    value: 'cancelled',
-    label: __( 'Cancelled', 'mission-donation-platform' ),
-    backgroundColor: '#f0eeeb',
-    color: '#8a7e72',
-  },
-];
-
-function StatusBadge( { status, options = STATUS_OPTIONS } ) {
+function StatusBadge( { status, options = SUBSCRIPTION_STATUS_OPTIONS } ) {
   const current = options.find( ( o ) => o.value === status ) || options[ 1 ];
   return (
     <span
@@ -112,7 +39,8 @@ function StatusDropdown( { status, onChange } ) {
   const [ isOpen, setIsOpen ] = useState( false );
   const ref = useRef();
   const current =
-    STATUS_OPTIONS.find( ( o ) => o.value === status ) || STATUS_OPTIONS[ 1 ];
+    SUBSCRIPTION_STATUS_OPTIONS.find( ( o ) => o.value === status ) ||
+    SUBSCRIPTION_STATUS_OPTIONS[ 1 ];
 
   useEffect( () => {
     if ( ! isOpen ) {
@@ -153,7 +81,7 @@ function StatusDropdown( { status, onChange } ) {
       </button>
       { isOpen && (
         <div className="mission-detail-dropdown__menu">
-          { STATUS_OPTIONS.map( ( opt ) => (
+          { SUBSCRIPTION_STATUS_OPTIONS.map( ( opt ) => (
             <button
               key={ opt.value }
               className={ `mission-detail-dropdown__item${
@@ -295,7 +223,7 @@ export default function SubscriptionDetailsCard( {
 
   // Payment history calculations.
   const completedTxns = ( s.transactions || [] ).filter(
-    ( t ) => t.status === 'completed'
+    ( t ) => t.status === TRANSACTION_STATUS.COMPLETED
   );
   const totalGiven = completedTxns.reduce(
     ( sum, t ) => sum + ( t.total_amount || 0 ),

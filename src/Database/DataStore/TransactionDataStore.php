@@ -63,7 +63,7 @@ class TransactionDataStore implements DataStoreInterface {
 		do_action( 'mission_transaction_created', $model );
 
 		// Update donor/campaign aggregates if created with a completed status.
-		if ( 'completed' === $model->status ) {
+		if ( Transaction::STATUS_COMPLETED === $model->status ) {
 			$this->increment_aggregates( $model );
 		}
 
@@ -77,6 +77,8 @@ class TransactionDataStore implements DataStoreInterface {
 	 * Used by the data importer: aggregates are recomputed once at the end of the
 	 * job, and we don't want listeners (Slack pings, thank-you emails, webhook
 	 * posts) firing for historical rows being backfilled.
+	 *
+	 * Internal — consumer code should use Transaction::save_silent().
 	 *
 	 * @param Transaction $model Transaction model.
 	 * @return int New transaction ID.
@@ -256,6 +258,8 @@ class TransactionDataStore implements DataStoreInterface {
 	 * Update a transaction without firing status-transition hooks or touching
 	 * donor / campaign aggregates. Used by the data importer (see create_silent).
 	 *
+	 * Internal — consumer code should use Transaction::save_silent().
+	 *
 	 * @param Transaction $model Transaction model with updated values.
 	 * @return bool
 	 */
@@ -302,7 +306,7 @@ class TransactionDataStore implements DataStoreInterface {
 
 		// Decrement aggregates before deleting if the transaction was completed.
 		$transaction = $this->read( $id );
-		if ( $transaction && 'completed' === $transaction->status ) {
+		if ( $transaction && Transaction::STATUS_COMPLETED === $transaction->status ) {
 			$this->decrement_aggregates( $transaction );
 		}
 
@@ -573,10 +577,10 @@ class TransactionDataStore implements DataStoreInterface {
 		do_action( "mission_transaction_status_{$old_status}_to_{$new_status}", $transaction );
 
 		// Update donor and campaign aggregates.
-		if ( 'completed' === $new_status ) {
+		if ( Transaction::STATUS_COMPLETED === $new_status ) {
 			$this->increment_aggregates( $transaction );
-		} elseif ( 'completed' === $old_status && in_array( $new_status, [ 'refunded', 'cancelled', 'failed' ], true ) ) {
-			if ( 'refunded' === $new_status && $transaction->amount_refunded > 0 ) {
+		} elseif ( Transaction::STATUS_COMPLETED === $old_status && in_array( $new_status, [ Transaction::STATUS_REFUNDED, Transaction::STATUS_CANCELLED, Transaction::STATUS_FAILED ], true ) ) {
+			if ( Transaction::STATUS_REFUNDED === $new_status && $transaction->amount_refunded > 0 ) {
 				// Dollar amounts already adjusted by adjust_aggregates_for_refund().
 				// Only decrement counts.
 				$this->decrement_counts( $transaction );

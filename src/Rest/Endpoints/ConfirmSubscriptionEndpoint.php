@@ -17,6 +17,8 @@ namespace MissionDP\Rest\Endpoints;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Payments\PaymentIntentVerifier;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\RateLimitTrait;
 use WP_REST_Request;
@@ -38,7 +40,7 @@ class ConfirmSubscriptionEndpoint {
 	 * @param PaymentIntentVerifier $verifier PaymentIntent verifier service.
 	 */
 	public function __construct(
-		private readonly PaymentIntentVerifier $verifier,
+		private PaymentIntentVerifier $verifier,
 	) {}
 
 	/**
@@ -55,21 +57,9 @@ class ConfirmSubscriptionEndpoint {
 				'callback'            => [ $this, 'handle' ],
 				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
-					'transaction_id'    => [
-						'required'          => true,
-						'type'              => 'integer',
-						'sanitize_callback' => 'absint',
-					],
-					'subscription_id'   => [
-						'required'          => true,
-						'type'              => 'integer',
-						'sanitize_callback' => 'absint',
-					],
-					'payment_intent_id' => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'transaction_id'    => Args::integer( [ 'required' => true ] ),
+					'subscription_id'   => Args::integer( [ 'required' => true ] ),
+					'payment_intent_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -93,11 +83,7 @@ class ConfirmSubscriptionEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'transaction_id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );
@@ -140,7 +126,7 @@ class ConfirmSubscriptionEndpoint {
 		$subscription_id   = (int) $request->get_param( 'subscription_id' );
 
 		// Happy path: the webhook arrived before the client's confirm call.
-		if ( 'completed' === $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED === $transaction->status ) {
 			return new WP_REST_Response(
 				[
 					'status'          => 'completed',
@@ -151,7 +137,7 @@ class ConfirmSubscriptionEndpoint {
 			);
 		}
 
-		if ( in_array( $transaction->status, [ 'failed', 'cancelled' ], true ) ) {
+		if ( in_array( $transaction->status, [ Transaction::STATUS_FAILED, Transaction::STATUS_CANCELLED ], true ) ) {
 			return new WP_Error(
 				'payment_failed',
 				__( 'The payment was not successful.', 'mission-donation-platform' ),
@@ -193,7 +179,7 @@ class ConfirmSubscriptionEndpoint {
 		}
 
 		if ( in_array( $stripe_status, [ 'canceled', 'requires_payment_method' ], true ) ) {
-			$transaction->status = 'failed';
+			$transaction->status = Transaction::STATUS_FAILED;
 			$transaction->save();
 
 			return new WP_Error(
@@ -223,7 +209,7 @@ class ConfirmSubscriptionEndpoint {
 	 * @return void
 	 */
 	private function complete_transaction_and_activate( Transaction $transaction, array $verification ): void {
-		$transaction->status         = 'completed';
+		$transaction->status         = Transaction::STATUS_COMPLETED;
 		$transaction->date_completed = current_time( 'mysql', true );
 		$transaction->save();
 
@@ -240,7 +226,7 @@ class ConfirmSubscriptionEndpoint {
 
 		$subscription = Subscription::find( $transaction->subscription_id );
 
-		if ( $subscription && 'pending' === $subscription->status ) {
+		if ( $subscription && Subscription::STATUS_PENDING === $subscription->status ) {
 			$subscription->activate( $transaction->id );
 
 			if ( $brand ) {

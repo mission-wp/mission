@@ -377,6 +377,52 @@ class HasMetaTraitTest extends WP_UnitTestCase {
 		$this->assertSame( [], $model->get_meta( 'tag', false ) );
 	}
 
+	// -------------------------------------------------------------------------
+	// get_meta_for_all() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * @dataProvider model_provider
+	 */
+	public function test_get_meta_for_all_unserializes_values( string $class ): void {
+		$model = $this->create_model( $class );
+		$data  = [ 'alpha', 'beta' ];
+
+		$model->update_meta( 'batch_key', $data );
+
+		$this->assertSame( [ $model->id => $data ], $class::get_meta_for_all( 'batch_key' ) );
+	}
+
+	/**
+	 * Test that get_meta_for_all() only includes objects carrying the key.
+	 */
+	public function test_get_meta_for_all_omits_objects_without_the_key(): void {
+		$with    = $this->create_campaign();
+		$without = $this->create_campaign();
+
+		$with->update_meta( 'batch_key', 'value-1' );
+
+		$map = Campaign::get_meta_for_all( 'batch_key' );
+
+		$this->assertSame( 'value-1', $map[ $with->id ] );
+		$this->assertArrayNotHasKey( $without->id, $map );
+	}
+
+	/**
+	 * Test that get_meta_for_all() keeps the first value for duplicate keys,
+	 * matching get_meta() single=true behavior.
+	 */
+	public function test_get_meta_for_all_keeps_first_value_for_duplicate_keys(): void {
+		$campaign = $this->create_campaign();
+
+		$campaign->add_meta( 'tag', 'alpha' );
+		$campaign->add_meta( 'tag', 'beta' );
+
+		$map = Campaign::get_meta_for_all( 'tag' );
+
+		$this->assertSame( 'alpha', $map[ $campaign->id ] );
+	}
+
 	/**
 	 * @dataProvider model_provider
 	 */

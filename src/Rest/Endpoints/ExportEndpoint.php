@@ -8,8 +8,9 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Export\ExportService;
-use MissionDP\Plugin;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -22,13 +23,15 @@ defined( 'ABSPATH' ) || exit;
  */
 class ExportEndpoint {
 
+	use AdminPermissionTrait;
+
 	/**
 	 * Constructor.
 	 *
 	 * @param ExportService $export Export service.
 	 */
 	public function __construct(
-		private readonly ExportService $export,
+		private ExportService $export,
 	) {}
 
 	/**
@@ -43,7 +46,7 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_count' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_filter_params(),
 			]
 		);
@@ -54,7 +57,7 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_preview' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_filter_params(),
 			]
 		);
@@ -65,15 +68,11 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => array_merge(
 					$this->get_filter_params(),
 					[
-						'format' => [
-							'type'              => 'string',
-							'default'           => 'csv',
-							'sanitize_callback' => 'sanitize_text_field',
-						],
+						'format' => Args::string( [ 'default' => 'csv' ] ),
 					]
 				),
 			]
@@ -85,33 +84,21 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download_all' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'format' => [
-						'type'              => 'string',
-						'default'           => 'csv',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'format' => Args::string( [ 'default' => 'csv' ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Check if the current user has permission.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to export data.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to export data.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -185,7 +172,15 @@ class ExportEndpoint {
 			sprintf( 'mission-%s-export-%s.%s', $type, gmdate( 'Y-m-d' ), $formatter->get_extension() )
 		);
 
-		$this->log_export( $type, $format, count( $result['rows'] ) );
+		/**
+		 * Fires when a data export is downloaded.
+		 *
+		 * @param string $type   Data type exported.
+		 * @param string $format File format.
+		 * @param int    $count  Number of records exported.
+		 */
+		do_action( 'mission_data_exported', $type, $format, count( $result['rows'] ) );
+
 		$this->stream_download( $content, $filename, $formatter->get_content_type() );
 	}
 
@@ -255,7 +250,9 @@ class ExportEndpoint {
 			sprintf( 'mission-export-%s.zip', gmdate( 'Y-m-d' ) )
 		);
 
-		$this->log_export( 'all', $format, $total_count );
+		/** This action is documented in src/Rest/Endpoints/ExportEndpoint.php */
+		do_action( 'mission_data_exported', 'all', $format, $total_count );
+
 		$this->stream_download( $zip_content, $filename, 'application/zip' );
 	}
 
@@ -277,30 +274,6 @@ class ExportEndpoint {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary/text export content.
 		echo $content;
 		exit;
-	}
-
-	/**
-	 * Log an export event to the activity feed.
-	 *
-	 * @param string $type   Data type exported.
-	 * @param string $format File format.
-	 * @param int    $count  Number of records exported.
-	 */
-	private function log_export( string $type, string $format, int $count ): void {
-		$activity = Plugin::instance()->get_activity_feed_module();
-
-		if ( $activity ) {
-			$activity->log(
-				'data_exported',
-				'settings',
-				0,
-				[
-					'type'   => $type,
-					'format' => $format,
-					'count'  => $count,
-				]
-			);
-		}
 	}
 
 	/**
@@ -329,35 +302,12 @@ class ExportEndpoint {
 	 */
 	private function get_filter_params(): array {
 		return [
-			'type'                => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'id'                  => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'date_from'           => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'date_to'             => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notify_method'       => [
-				'type'              => 'string',
-				'enum'              => [ 'email', 'mail' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'notification_status' => [
-				'type'              => 'string',
-				'enum'              => [ 'pending', 'sent' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'type'                => Args::string( [ 'required' => true ] ),
+			'id'                  => Args::integer(),
+			'date_from'           => Args::string(),
+			'date_to'             => Args::string(),
+			'notify_method'       => Args::enum( [ 'email', 'mail' ] ),
+			'notification_status' => Args::enum( [ 'pending', 'sent' ] ),
 		];
 	}
 

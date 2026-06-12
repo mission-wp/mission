@@ -3,6 +3,7 @@ import { Modal, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { defaultFixedFee } from '@shared/fees';
+import SkeletonBar from '@shared/components/SkeletonBar';
 
 import Toast from '../components/Toast';
 import GeneralPanel from './settings/GeneralPanel';
@@ -69,21 +70,6 @@ const TABS = [
   },
 ];
 
-function SkeletonBar( { width = '60%', height = '14px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
-  );
-}
-
 function SkeletonField() {
   return (
     <div style={ { marginBottom: '20px' } }>
@@ -103,7 +89,10 @@ function SettingsSkeleton() {
           <div className="mission-settings-card__header">
             <SkeletonBar width={ i === 0 ? '140px' : '100px' } height="16px" />
             <div style={ { marginTop: '6px' } }>
-              <SkeletonBar width={ i === 0 ? '280px' : '220px' } />
+              <SkeletonBar
+                width={ i === 0 ? '280px' : '220px' }
+                height="14px"
+              />
             </div>
           </div>
           <SkeletonField />

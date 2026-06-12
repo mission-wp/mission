@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { formatAmount } from '@shared/currency';
-import StatCard from './dashboard/StatCard';
+import StatCard, { getDelta } from '@shared/components/StatCard';
 import DonationsChart from './dashboard/DonationsChart';
 import TopCampaigns from './dashboard/TopCampaigns';
 import ActivityFeed from './dashboard/ActivityFeed';
@@ -173,25 +173,37 @@ export default function Dashboard() {
             <StatCard
               label={ __( 'Total Donations', 'mission-donation-platform' ) }
               value={ stats ? formatAmount( stats.total_donations ) : '' }
-              current={ stats?.total_donations }
-              previous={ stats?.total_donations_previous }
-              periodLabel={ periodLabel }
+              delta={ {
+                ...getDelta(
+                  stats?.total_donations,
+                  stats?.total_donations_previous
+                ),
+                label: periodLabel,
+              } }
               isLoading={ isLoading }
             />
             <StatCard
               label={ __( 'Total Donors', 'mission-donation-platform' ) }
               value={ stats ? stats.total_donors.toLocaleString() : '' }
-              current={ stats?.total_donors }
-              previous={ stats?.total_donors_previous }
-              periodLabel={ periodLabel }
+              delta={ {
+                ...getDelta(
+                  stats?.total_donors,
+                  stats?.total_donors_previous
+                ),
+                label: periodLabel,
+              } }
               isLoading={ isLoading }
             />
             <StatCard
               label={ __( 'Avg. Donation', 'mission-donation-platform' ) }
               value={ stats ? formatAmount( stats.average_donation ) : '' }
-              current={ stats?.average_donation }
-              previous={ stats?.average_donation_previous }
-              periodLabel={ periodLabel }
+              delta={ {
+                ...getDelta(
+                  stats?.average_donation,
+                  stats?.average_donation_previous
+                ),
+                label: periodLabel,
+              } }
               isLoading={ isLoading }
             />
           </div>

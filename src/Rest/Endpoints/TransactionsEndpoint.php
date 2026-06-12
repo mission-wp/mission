@@ -7,12 +7,17 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Constants\Frequency;
+use MissionDP\Email\EmailModule;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
-use MissionDP\Plugin;
 use MissionDP\Receipts\ReceiptPdfGenerator;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
@@ -26,15 +31,19 @@ defined( 'ABSPATH' ) || exit;
  */
 class TransactionsEndpoint {
 
+	use AdminPermissionTrait;
+
 	/**
 	 * Constructor.
 	 *
 	 * @param ReportingService $reporting Reporting service.
 	 * @param SettingsService  $settings  Settings service.
+	 * @param EmailModule      $email     Email module.
 	 */
 	public function __construct(
-		private readonly ReportingService $reporting,
-		private readonly SettingsService $settings,
+		private ReportingService $reporting,
+		private SettingsService $settings,
+		private EmailModule $email,
 	) {}
 
 	/**
@@ -49,7 +58,7 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_transactions' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_collection_params(),
 			]
 		);
@@ -60,7 +69,7 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'create_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_create_params(),
 			]
 		);
@@ -71,13 +80,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -88,22 +93,11 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'PATCH',
 				'callback'            => [ $this, 'update_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id'           => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'is_anonymous' => [
-						'type' => 'boolean',
-					],
-					'status'       => [
-						'type'              => 'string',
-						'enum'              => [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ],
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'id'           => Args::id(),
+					'is_anonymous' => Args::boolean(),
+					'status'       => Args::enum( Transaction::STATUSES ),
 					'campaign_id'  => [
 						'type' => [ 'integer', 'null' ],
 					],
@@ -117,13 +111,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'DELETE',
 				'callback'            => [ $this, 'delete_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -134,20 +124,15 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'refund_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id'     => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'amount' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'minimum'           => 1,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'id'     => Args::id(),
+					'amount' => Args::integer(
+						[
+							'required' => true,
+							'minimum'  => 1,
+						]
+					),
 				],
 			]
 		);
@@ -158,13 +143,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download_receipt_pdf' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -175,13 +156,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'resend_receipt' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -192,26 +169,18 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_summary' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view transactions.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view transactions.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -256,11 +225,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		return new WP_REST_Response( $this->prepare_transaction_detail( $transaction ), 200 );
@@ -287,11 +252,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		if ( $request->has_param( 'is_anonymous' ) ) {
@@ -322,11 +283,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$transaction->delete();
@@ -367,12 +324,12 @@ class TransactionsEndpoint {
 
 		$amount      = (int) $request->get_param( 'donation_amount' );
 		$campaign_id = $request->get_param( 'campaign_id' ) ? (int) $request->get_param( 'campaign_id' ) : null;
-		$frequency   = $request->get_param( 'frequency' ) ?? 'one_time';
+		$frequency   = $request->get_param( 'frequency' ) ?? Frequency::ONE_TIME;
 		$now         = current_time( 'mysql', true );
 
 		$transaction = new Transaction(
 			[
-				'status'          => 'completed',
+				'status'          => Transaction::STATUS_COMPLETED,
 				'type'            => $frequency,
 				'donor_id'        => $donor->id,
 				'campaign_id'     => $campaign_id,
@@ -459,6 +416,7 @@ class TransactionsEndpoint {
 		$donor    = $txn->donor();
 		$campaign = $txn->campaign();
 		$is_test  = (bool) $this->settings->get( 'test_mode' );
+		$meta     = $txn->get_all_meta();
 
 		return [
 			'id'                      => $txn->id,
@@ -509,14 +467,14 @@ class TransactionsEndpoint {
 			] : null,
 			'tribute'                 => $this->prepare_tribute( $txn ),
 			'billing_address'         => [
-				'address_1' => $txn->get_meta( 'address_1' ),
-				'address_2' => $txn->get_meta( 'address_2' ),
-				'city'      => $txn->get_meta( 'city' ),
-				'state'     => $txn->get_meta( 'state' ),
-				'zip'       => $txn->get_meta( 'zip' ),
-				'country'   => $txn->get_meta( 'country' ),
+				'address_1' => $meta['address_1'] ?? '',
+				'address_2' => $meta['address_2'] ?? '',
+				'city'      => $meta['city'] ?? '',
+				'state'     => $meta['state'] ?? '',
+				'zip'       => $meta['zip'] ?? '',
+				'country'   => $meta['country'] ?? '',
 			],
-			'meta'                    => $txn->get_all_meta(),
+			'meta'                    => $meta,
 		];
 	}
 
@@ -595,61 +553,15 @@ class TransactionsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'        => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page'    => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'orderby'     => [
-				'type'              => 'string',
-				'default'           => 'date_created',
-				'enum'              => [ 'date_created', 'amount' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'order'       => [
-				'type'              => 'string',
-				'default'           => 'DESC',
-				'enum'              => [ 'ASC', 'DESC' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'status'      => [
-				'type'              => 'string',
-				'enum'              => [ 'pending', 'completed', 'refunded', 'cancelled', 'failed' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'campaign_id' => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'donor_id'    => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'search'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'dedication'  => [
-				'type'              => 'string',
-				'enum'              => [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-		];
+		return array_merge(
+			CollectionParams::base( orderby: [ 'date_created', 'amount' ], default_orderby: 'date_created' ),
+			[
+				'status'      => Args::enum( Transaction::STATUSES ),
+				'campaign_id' => Args::integer(),
+				'donor_id'    => Args::integer(),
+				'dedication'  => Args::enum( [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ] ),
+			]
+		);
 	}
 
 	/**
@@ -664,75 +576,29 @@ class TransactionsEndpoint {
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_email',
 			],
-			'donor_first_name' => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'donor_last_name'  => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'donation_amount'  => [
-				'type'              => 'integer',
-				'required'          => true,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'campaign_id'      => [
-				'type'              => 'integer',
-				'default'           => 0,
-				'sanitize_callback' => 'absint',
-			],
-			'frequency'        => [
-				'type'              => 'string',
-				'default'           => 'one_time',
-				'enum'              => [ 'one_time', 'monthly', 'quarterly', 'annually' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'date_created'     => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'donor_first_name' => Args::string( [ 'required' => true ] ),
+			'donor_last_name'  => Args::string( [ 'default' => '' ] ),
+			'donation_amount'  => Args::integer(
+				[
+					'required' => true,
+					'minimum'  => 1,
+				]
+			),
+			'campaign_id'      => Args::integer( [ 'default' => 0 ] ),
+			'frequency'        => Args::enum( Frequency::ALL, [ 'default' => Frequency::ONE_TIME ] ),
+			'date_created'     => Args::string(),
 			'notes'            => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_textarea_field',
 			],
-			'is_test'          => [
-				'type'    => 'boolean',
-				'default' => false,
-			],
-			'send_receipt'     => [
-				'type'    => 'boolean',
-				'default' => true,
-			],
-			'address_1'        => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'address_2'        => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'city'             => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'state'            => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'zip'              => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'country'          => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'is_test'          => Args::boolean( [ 'default' => false ] ),
+			'send_receipt'     => Args::boolean( [ 'default' => true ] ),
+			'address_1'        => Args::string(),
+			'address_2'        => Args::string(),
+			'city'             => Args::string(),
+			'state'            => Args::string(),
+			'zip'              => Args::string(),
+			'country'          => Args::string(),
 		];
 	}
 
@@ -746,14 +612,10 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
-		if ( 'completed' !== $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED !== $transaction->status ) {
 			return new WP_Error(
 				'not_refundable',
 				__( 'Only completed transactions can be refunded.', 'mission-donation-platform' ),
@@ -808,20 +670,19 @@ class TransactionsEndpoint {
 			]
 		);
 
-		$activity = Plugin::instance()->get_activity_feed_module();
-
 		if ( is_wp_error( $response ) ) {
-			$activity?->log(
-				'refund_api_call_failed',
-				'transaction',
-				$transaction->id,
-				[
-					'reason' => 'wp_error',
-					'error'  => $response->get_error_message(),
-				],
-				(bool) $transaction->is_test,
-				'error',
-				'payment'
+			/**
+			 * Fires when a Mission refund API call fails.
+			 *
+			 * @param Transaction         $transaction The transaction being refunded.
+			 * @param string              $reason      Short reason code (wp_error, http_error).
+			 * @param array<string,mixed> $context     Additional context (error message, status, body).
+			 */
+			do_action(
+				'mission_refund_api_call_failed',
+				$transaction,
+				'wp_error',
+				[ 'error' => $response->get_error_message() ]
 			);
 			return new WP_Error(
 				'refund_failed',
@@ -836,18 +697,15 @@ class TransactionsEndpoint {
 			$body    = json_decode( wp_remote_retrieve_body( $response ), true );
 			$message = $body['error'] ?? __( 'Failed to process refund. Please try again.', 'mission-donation-platform' );
 
-			$activity?->log(
-				'refund_api_call_failed',
-				'transaction',
-				$transaction->id,
+			/** This action is documented in src/Rest/Endpoints/TransactionsEndpoint.php */
+			do_action(
+				'mission_refund_api_call_failed',
+				$transaction,
+				'http_error',
 				[
-					'reason' => 'http_error',
 					'status' => $status_code,
 					'body'   => wp_remote_retrieve_body( $response ),
-				],
-				(bool) $transaction->is_test,
-				'error',
-				'payment'
+				]
 			);
 			return new WP_Error( 'refund_failed', $message, [ 'status' => $status_code ] );
 		}
@@ -857,7 +715,7 @@ class TransactionsEndpoint {
 		$transaction->amount_refunded = $transaction->amount_refunded + $refund_amount;
 
 		if ( $transaction->amount_refunded >= $transaction->total_amount ) {
-			$transaction->status        = 'refunded';
+			$transaction->status        = Transaction::STATUS_REFUNDED;
 			$transaction->date_refunded = current_time( 'mysql', true );
 		}
 
@@ -876,11 +734,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$donor = $transaction->donor();
@@ -930,11 +784,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$donor = $transaction->donor();
@@ -947,40 +797,7 @@ class TransactionsEndpoint {
 			);
 		}
 
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
-		$campaign     = $transaction->campaign();
-
-		$data = [
-			'transaction'      => $transaction,
-			'donor'            => $donor,
-			'amount_formatted' => $email_module->format_amount( $transaction->amount, $transaction->currency ),
-			'date_formatted'   => wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ?: $transaction->date_created ) ),
-			'campaign_name'    => $campaign?->title,
-		];
-
-		$subject = sprintf(
-			/* translators: %s: formatted donation amount */
-			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
-			$data['amount_formatted'],
-		);
-
-		$custom_subject = $email_module->get_custom_subject( 'donation_receipt' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{amount}'       => $data['amount_formatted'],
-					'{campaign}'     => $data['campaign_name'] ?? '',
-					'{date}'         => $data['date_formatted'],
-					'{organization}' => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
-					'{receipt_id}'   => (string) $transaction->id,
-				]
-			);
-		}
-
-		$html = $email_module->render_template( 'donation-receipt', array_merge( $data, [ 'subject' => $subject ] ) );
-		$sent = $email_module->send( $donor->email, $subject, $html );
+		$sent = $this->email->send_donation_receipt( $transaction, $donor );
 
 		if ( ! $sent ) {
 			return new WP_Error(

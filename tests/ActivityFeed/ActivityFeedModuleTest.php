@@ -11,6 +11,7 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
+use MissionDP\Models\ImportJob;
 use MissionDP\Models\OutgoingWebhook;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
@@ -710,5 +711,216 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 
 		$data = json_decode( $entry->data, true );
 		$this->assertSame( 20, $data['failure_count'] );
+	}
+
+	/**
+	 * Test that a subscription Mission API failure is logged via the action.
+	 */
+	public function test_logs_subscription_api_call_failed(): void {
+		$donor = $this->create_donor();
+
+		$subscription = new Subscription( [
+			'status'          => 'active',
+			'donor_id'        => $donor->id,
+			'amount'          => 2500,
+			'total_amount'    => 2500,
+			'frequency'       => 'monthly',
+			'payment_gateway' => 'stripe',
+			'is_test'         => true,
+		] );
+		$subscription->save();
+
+		do_action(
+			'mission_subscription_api_call_failed',
+			$subscription,
+			'/subscription/cancel',
+			'http_error',
+			[
+				'status' => 500,
+				'body'   => 'Server error',
+			]
+		);
+
+		$entries = ActivityLog::query( [ 'event' => 'subscription_api_call_failed' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'subscription', $entry->object_type );
+		$this->assertSame( $subscription->id, $entry->object_id );
+		$this->assertSame( 'error', $entry->level );
+		$this->assertSame( 'subscription', $entry->category );
+		$this->assertTrue( $entry->is_test );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( '/subscription/cancel', $data['endpoint'] );
+		$this->assertSame( 'http_error', $data['reason'] );
+		$this->assertSame( 500, $data['status'] );
+	}
+
+	/**
+	 * Test that a refund Mission API failure is logged via the action.
+	 */
+	public function test_logs_refund_api_call_failed(): void {
+		$transaction = $this->create_pending_transaction( [ 'is_test' => true ] );
+
+		do_action(
+			'mission_refund_api_call_failed',
+			$transaction,
+			'wp_error',
+			[ 'error' => 'Could not connect' ]
+		);
+
+		$entries = ActivityLog::query( [ 'event' => 'refund_api_call_failed' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'transaction', $entry->object_type );
+		$this->assertSame( $transaction->id, $entry->object_id );
+		$this->assertSame( 'error', $entry->level );
+		$this->assertSame( 'payment', $entry->category );
+		$this->assertTrue( $entry->is_test );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( 'wp_error', $data['reason'] );
+		$this->assertSame( 'Could not connect', $data['error'] );
+	}
+
+	/**
+	 * Test that campaign_ended is logged when a campaign transitions to ended,
+	 * and not for other transitions.
+	 */
+	public function test_logs_campaign_ended_on_status_change(): void {
+		$campaign = new Campaign( [ 'title' => 'Ending Campaign', 'description' => 'Desc' ] );
+		$campaign->save();
+
+		do_action( 'mission_campaign_status_changed', $campaign, 'scheduled', 'active', 'start_date_reached' );
+		$this->assertCount( 0, ActivityLog::query( [ 'event' => 'campaign_ended' ] ) );
+
+		do_action( 'mission_campaign_status_changed', $campaign, 'active', 'ended', 'end_date_reached' );
+
+		$entries = ActivityLog::query( [ 'event' => 'campaign_ended' ] );
+		$this->assertCount( 1, $entries );
+		$this->assertSame( 'campaign', $entries[0]->object_type );
+		$this->assertSame( $campaign->id, $entries[0]->object_id );
+
+		$data = json_decode( $entries[0]->data, true );
+		$this->assertSame( 'Ending Campaign', $data['title'] );
+		$this->assertSame( $campaign->id, $data['campaign_id'] );
+	}
+
+	/**
+	 * Test that a completed import is logged with the importer's name resolved
+	 * from the job's user ID.
+	 */
+	public function test_logs_import_completed(): void {
+		$job = new ImportJob( [
+			'job_id'             => 'test-job-123',
+			'user_id'            => $this->admin_id,
+			'type'               => 'donors',
+			'duplicate_strategy' => 'skip',
+			'imported'           => 10,
+			'skipped'            => 2,
+			'updated'            => 0,
+			'errors'             => 1,
+		] );
+
+		do_action( 'mission_import_completed', $job );
+
+		$entries = ActivityLog::query( [ 'event' => 'data_imported' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'donors', $entry->object_type );
+		$this->assertSame( 'warning', $entry->level );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( 10, $data['imported'] );
+		$this->assertSame( 2, $data['skipped'] );
+		$this->assertSame( 1, $data['errors'] );
+		$this->assertSame( 'test-job-123', $data['job_id'] );
+
+		$user = get_userdata( $this->admin_id );
+		$this->assertSame( $user->display_name ?: $user->user_login, $data['actor_name'] );
+	}
+
+	/**
+	 * Test that an import that wrote nothing is not logged.
+	 */
+	public function test_skips_import_completed_with_no_writes(): void {
+		$job = new ImportJob( [
+			'job_id'             => 'test-job-456',
+			'user_id'            => $this->admin_id,
+			'type'               => 'donors',
+			'duplicate_strategy' => 'update',
+			'imported'           => 0,
+			'skipped'            => 5,
+			'updated'            => 0,
+			'errors'             => 0,
+		] );
+
+		do_action( 'mission_import_completed', $job );
+
+		$this->assertCount( 0, ActivityLog::query( [ 'event' => 'data_imported' ] ) );
+	}
+
+	/**
+	 * Test that a data export is logged via the action.
+	 */
+	public function test_logs_data_exported(): void {
+		do_action( 'mission_data_exported', 'donors', 'csv', 42 );
+
+		$entries = ActivityLog::query( [ 'event' => 'data_exported' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'settings', $entry->object_type );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( 'donors', $data['type'] );
+		$this->assertSame( 'csv', $data['format'] );
+		$this->assertSame( 42, $data['count'] );
+	}
+
+	/**
+	 * Test that a cleanup operation is logged under its operation name.
+	 */
+	public function test_logs_cleanup_performed(): void {
+		do_action( 'mission_cleanup_performed', 'test_transactions_deleted', [ 'count' => 7 ] );
+
+		$entries = ActivityLog::query( [ 'event' => 'test_transactions_deleted' ] );
+		$this->assertCount( 1, $entries );
+
+		$entry = $entries[0];
+		$this->assertSame( 'settings', $entry->object_type );
+		$this->assertSame( 0, $entry->object_id );
+
+		$data = json_decode( $entry->data, true );
+		$this->assertSame( 7, $data['count'] );
+	}
+
+	/**
+	 * Test that suppressed donor auth email failures are logged without the
+	 * attempted email address.
+	 */
+	public function test_logs_suppressed_donor_auth_emails_without_address(): void {
+		do_action( 'mission_donor_activation_email_suppressed', 'probe@example.com', 'No donor found' );
+		do_action( 'mission_donor_password_reset_email_suppressed', 'probe@example.com', 'No account found' );
+
+		foreach ( [
+			'donor_send_activation_suppressed'  => 'No donor found',
+			'donor_forgot_password_suppressed'  => 'No account found',
+		] as $event => $error ) {
+			$entries = ActivityLog::query( [ 'event' => $event ] );
+			$this->assertCount( 1, $entries, $event );
+
+			$entry = $entries[0];
+			$this->assertSame( 'donor', $entry->object_type );
+			$this->assertSame( 'warning', $entry->level );
+			$this->assertSame( 'email', $entry->category );
+
+			$data = json_decode( $entry->data, true );
+			$this->assertSame( [ 'error' => $error ], $data );
+			$this->assertStringNotContainsString( 'probe@example.com', $entry->data );
+		}
 	}
 }

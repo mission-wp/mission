@@ -8,7 +8,9 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Cleanup\CleanupService;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -19,6 +21,8 @@ defined( 'ABSPATH' ) || exit;
  * Cleanup endpoint class.
  */
 class CleanupEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Allowed cleanup actions.
@@ -47,7 +51,7 @@ class CleanupEndpoint {
 	 * @param CleanupService $cleanup Cleanup service.
 	 */
 	public function __construct(
-		private readonly CleanupService $cleanup,
+		private CleanupService $cleanup,
 	) {}
 
 	/**
@@ -62,7 +66,7 @@ class CleanupEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_stats' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 
@@ -72,37 +76,26 @@ class CleanupEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'run_action' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
 					'action'       => [
 						'type'              => 'string',
 						'required'          => true,
 						'validate_callback' => [ $this, 'validate_action' ],
 					],
-					'confirmation' => [
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'confirmation' => Args::string(),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Check if the current user has permission.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to perform cleanup operations.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to perform cleanup operations.', 'mission-donation-platform' );
 	}
 
 	/**

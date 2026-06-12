@@ -7,6 +7,7 @@
 
 namespace MissionDP\Email;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 
@@ -23,10 +24,10 @@ class SubscriptionEmailListener {
 	 * @var array<string, string>
 	 */
 	private const FREQUENCY_LABELS = [
-		'weekly'    => 'Weekly',
-		'monthly'   => 'Monthly',
-		'quarterly' => 'Quarterly',
-		'annually'  => 'Annually',
+		Frequency::WEEKLY    => 'Weekly',
+		Frequency::MONTHLY   => 'Monthly',
+		Frequency::QUARTERLY => 'Quarterly',
+		Frequency::ANNUALLY  => 'Annually',
 	];
 
 	/**

@@ -8,7 +8,10 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Import\ImportService;
+use MissionDP\Models\ImportJob;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -20,13 +23,15 @@ defined( 'ABSPATH' ) || exit;
  */
 class ImportEndpoint {
 
+	use AdminPermissionTrait;
+
 	/**
 	 * Constructor.
 	 *
 	 * @param ImportService $import Import service.
 	 */
 	public function __construct(
-		private readonly ImportService $import,
+		private ImportService $import,
 	) {}
 
 	/**
@@ -39,13 +44,9 @@ class ImportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_columns' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'type' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'type' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -56,13 +57,9 @@ class ImportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download_template' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'type' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'type' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -73,13 +70,9 @@ class ImportEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'validate_upload' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'type' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'type' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -90,20 +83,10 @@ class ImportEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'start_import' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'file_id'            => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
-					'duplicate_strategy' => [
-						'type'              => 'string',
-						'required'          => true,
-						'enum'              => [ 'skip', 'update' ],
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'file_id'            => Args::string( [ 'required' => true ] ),
+					'duplicate_strategy' => Args::enum( [ 'skip', 'update' ], [ 'required' => true ] ),
 				],
 			]
 		);
@@ -114,13 +97,9 @@ class ImportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_status' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'job_id' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'job_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -131,13 +110,9 @@ class ImportEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'cancel' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'job_id' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'job_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -148,31 +123,21 @@ class ImportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_active' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'type' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'type' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check.
+	 * Message returned when the capability check fails.
+	 *
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to import data.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to import data.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -282,7 +247,7 @@ class ImportEndpoint {
 
 		// Safety net for environments where AS auto-dispatch never fires, and
 		// for resuming after the runner hits its own time limit mid-job.
-		if ( ! in_array( $result['status'], [ 'completed', 'failed', 'cancelled' ], true ) ) {
+		if ( ! in_array( $result['status'], ImportJob::TERMINAL_STATUSES, true ) ) {
 			$this->import->kick_queue_runner();
 		}
 

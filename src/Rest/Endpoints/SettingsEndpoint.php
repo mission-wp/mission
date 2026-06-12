@@ -9,6 +9,7 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Campaigns\CampaignSlug;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
@@ -21,6 +22,8 @@ defined( 'ABSPATH' ) || exit;
  * Settings endpoint class.
  */
 class SettingsEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Settings that accept only specific values.
@@ -37,7 +40,7 @@ class SettingsEndpoint {
 	 * @param SettingsService $settings Settings service.
 	 */
 	public function __construct(
-		private readonly SettingsService $settings,
+		private SettingsService $settings,
 	) {}
 
 	/**
@@ -53,32 +56,24 @@ class SettingsEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_settings' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 				],
 				[
 					'methods'             => 'POST',
 					'callback'            => [ $this, 'update_settings' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to manage settings.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage settings.', 'mission-donation-platform' );
 	}
 
 	/**

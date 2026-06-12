@@ -36,8 +36,8 @@ abstract class AbstractWriter {
 	 * @param string $job_id     Public job token.
 	 */
 	public function __construct(
-		protected readonly string $key_prefix,
-		protected readonly string $job_id,
+		protected string $key_prefix,
+		protected string $job_id,
 	) {}
 
 	/**

@@ -55,6 +55,8 @@ class TributeDataStore implements DataStoreInterface {
 	 * admin mail-dedication emails, which must not fire for historical rows being
 	 * backfilled.
 	 *
+	 * Internal — consumer code should use Tribute::save_silent().
+	 *
 	 * @param Tribute $model Tribute model.
 	 * @return int New tribute ID.
 	 */
@@ -123,6 +125,8 @@ class TributeDataStore implements DataStoreInterface {
 	/**
 	 * Update a tribute without firing the updated hook. Used by the data importer
 	 * (see create_silent).
+	 *
+	 * Internal — consumer code should use Tribute::save_silent().
 	 *
 	 * @param Tribute $model Tribute model with updated values.
 	 * @return bool

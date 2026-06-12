@@ -23,6 +23,17 @@ class ImportJob extends Model {
 	public const STATUS_FAILED     = 'failed';
 	public const STATUS_CANCELLED  = 'cancelled';
 
+	/**
+	 * Statuses a job can never leave.
+	 *
+	 * @var string[]
+	 */
+	public const TERMINAL_STATUSES = [
+		self::STATUS_COMPLETED,
+		self::STATUS_FAILED,
+		self::STATUS_CANCELLED,
+	];
+
 	public string $job_id;
 	public int $user_id;
 	public string $type;

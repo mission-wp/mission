@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.1 (2026-06-11)
+
+* Enhancement: Faster dashboard and reports on sites with many donations
+* Enhancement: New developer hooks fire when imports, exports, and cleanup operations complete, and clearing the activity log now leaves an audit entry
+* Enhancement: Clearer error messages when cancelling, pausing, resuming, or updating subscriptions
+* Fix: Ending a campaign now cancels or redirects all of its active recurring donations, no matter how many there are
+* Fix: Restored the donate button's filled/outline styles and the campaign image block's border, shadow, and duotone settings
+* Fix: Restored donor card rendering on the donor wall
+* Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
+* Fix: Weekly recurring donations now show as recurring in admin donation lists and are accepted by the REST API frequency filter
+* Tweak: Added save_silent() and recompute_aggregates() model methods for developers
+* Tweak: REST API not-found errors now use entity-specific error codes (e.g. campaign_not_found)
+* Tweak: The subscriptions and donor wall list endpoints now validate page and per_page ranges like all other endpoints
+
 ## 1.3.0 (2026-06-11)
 
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)

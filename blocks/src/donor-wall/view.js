@@ -5,7 +5,7 @@
  */
 /* global navigator */
 import { store, getContext } from '@wordpress/interactivity';
-import { getCurrencyDecimals, minorToMajor } from '@shared/currencies';
+import { formatAmount } from '@shared/currency';
 
 const SORT_MAP = {
   recent: { orderby: 'date_completed', order: 'DESC' },
@@ -24,29 +24,6 @@ const FREQUENCY_LABELS = {
   quarterly: 'Quarterly',
   annually: 'Annually',
 };
-
-/**
- * Format a minor-unit amount to a display string.
- *
- * @param {number} amount   Amount in minor units (cents).
- * @param {string} currency ISO currency code.
- * @return {string} Formatted amount.
- */
-function formatAmount( amount, currency = 'USD' ) {
-  const code = currency.toUpperCase();
-  const decimals = getCurrencyDecimals( code );
-  const major = minorToMajor( amount, code );
-  try {
-    return new Intl.NumberFormat( navigator.language || 'en-US', {
-      style: 'currency',
-      currency: code,
-      minimumFractionDigits: Number.isInteger( major ) ? 0 : decimals,
-      maximumFractionDigits: decimals,
-    } ).format( major );
-  } catch {
-    return `$${ major.toFixed( decimals ) }`;
-  }
-}
 
 /**
  * Format a date string to a relative or absolute display.
@@ -82,6 +59,18 @@ function formatDate( dateStr ) {
     day: 'numeric',
     year: 'numeric',
   } );
+}
+
+/**
+ * Recompute whether the footer (load more + count) should be hidden.
+ *
+ * Mirrors the server-side calculation in index.php; context rather than
+ * derived state so the server can evaluate it when rendering.
+ *
+ * @param {Object} ctx Store context.
+ */
+function updateFooterHidden( ctx ) {
+  ctx.footerHidden = ctx.total <= ctx.items.length && ctx.total <= ctx.perPage;
 }
 
 /**
@@ -124,7 +113,10 @@ function enrichItems( items, currency, startIndex = 0, commentLength = 150 ) {
     const isTruncated = comment.length > commentLength;
     return {
       ...item,
-      formattedAmount: formatAmount( item.amount, currency || 'USD' ) + suffix,
+      formattedAmount:
+        formatAmount( item.amount, currency || 'USD', {
+          stripZeroCents: true,
+        } ) + suffix,
       formattedDate: formatDate( item.date ),
       frequencyLabel,
       gravatarSrc: item.gravatar_hash
@@ -185,6 +177,7 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
         ctx.items = enrichItems( data.items, currency, 0, ctx.commentLength );
         ctx.total = data.total;
         ctx.page = 1;
+        updateFooterHidden( ctx );
       } catch {
         // Silently fail — keep existing data.
       } finally {
@@ -219,6 +212,7 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
         ctx.items = [ ...ctx.items, ...newItems ];
         ctx.total = data.total;
         ctx.page = nextPage;
+        updateFooterHidden( ctx );
       } catch {
         // Silently fail — keep existing data.
       } finally {

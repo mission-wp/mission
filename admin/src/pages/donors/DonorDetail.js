@@ -9,14 +9,13 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
+import { BRAND_COLOR } from '@shared/color';
 import DonorAvatar from '../../components/DonorAvatar';
 import DonationHistoryTable from './DonationHistoryTable';
 import DonorSubscriptionsCard from './DonorSubscriptionsCard';
 import DonorDetailsCard from './DonorDetailsCard';
 import NotesCard from '../../components/NotesCard';
 import EditDonorDrawer from './EditDonorDrawer';
-
-const BRAND_COLOR = '#2FA36B';
 
 function Badge( { children, style } ) {
   return (

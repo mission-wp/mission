@@ -11,7 +11,10 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Note;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -22,6 +25,8 @@ defined( 'ABSPATH' ) || exit;
  * Notes endpoint class.
  */
 class NotesEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Map of object type to model class and route parameter name.
@@ -62,13 +67,13 @@ class NotesEndpoint {
 					[
 						'methods'             => 'GET',
 						'callback'            => fn( WP_REST_Request $r ) => $this->get_notes( $r, $object_type ),
-						'permission_callback' => [ $this, 'check_permission' ],
+						'permission_callback' => [ $this, 'check_admin_permission' ],
 						'args'                => $this->get_collection_args( $object_type ),
 					],
 					[
 						'methods'             => 'POST',
 						'callback'            => fn( WP_REST_Request $r ) => $this->create_note( $r, $object_type ),
-						'permission_callback' => [ $this, 'check_permission' ],
+						'permission_callback' => [ $this, 'check_admin_permission' ],
 						'args'                => $this->get_create_args( $object_type ),
 					],
 				]
@@ -80,18 +85,10 @@ class NotesEndpoint {
 				[
 					'methods'             => 'DELETE',
 					'callback'            => fn( WP_REST_Request $r ) => $this->delete_note( $r, $object_type ),
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => [
-						'object_id' => [
-							'type'              => 'integer',
-							'required'          => true,
-							'sanitize_callback' => 'absint',
-						],
-						'note_id'   => [
-							'type'              => 'integer',
-							'required'          => true,
-							'sanitize_callback' => 'absint',
-						],
+						'object_id' => Args::integer( [ 'required' => true ] ),
+						'note_id'   => Args::integer( [ 'required' => true ] ),
 					],
 				]
 			);
@@ -99,20 +96,12 @@ class NotesEndpoint {
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to manage notes.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage notes.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -202,11 +191,7 @@ class NotesEndpoint {
 		$note = Note::find( $note_id );
 
 		if ( ! $note || $note->object_type !== $object_type || $note->object_id !== $object_id ) {
-			return new WP_Error(
-				'note_not_found',
-				__( 'Note not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::note_not_found();
 		}
 
 		$note->delete();
@@ -235,11 +220,10 @@ class NotesEndpoint {
 		$parent = $model_class::find( $object_id );
 
 		if ( ! $parent ) {
-			return new WP_Error(
+			return RestErrors::not_found(
 				"{$object_type}_not_found",
 				/* translators: %s: object type (e.g. "transaction", "donor") */
-				sprintf( __( '%s not found.', 'mission-donation-platform' ), ucfirst( $object_type ) ),
-				[ 'status' => 404 ]
+				sprintf( __( '%s not found.', 'mission-donation-platform' ), ucfirst( $object_type ) )
 			);
 		}
 
@@ -283,21 +267,12 @@ class NotesEndpoint {
 	 */
 	private function get_collection_args( string $object_type ): array {
 		$args = [
-			'object_id' => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
+			'object_id' => Args::integer( [ 'required' => true ] ),
 		];
 
 		// Only transactions support type filtering (internal vs donor).
 		if ( 'transaction' === $object_type ) {
-			$args['type'] = [
-				'type'              => 'string',
-				'enum'              => [ 'internal', 'donor' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			];
+			$args['type'] = Args::enum( [ 'internal', 'donor' ] );
 		}
 
 		return $args;
@@ -311,11 +286,7 @@ class NotesEndpoint {
 	 */
 	private function get_create_args( string $object_type ): array {
 		$args = [
-			'object_id' => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
+			'object_id' => Args::integer( [ 'required' => true ] ),
 			'content'   => [
 				'type'              => 'string',
 				'required'          => true,
@@ -325,13 +296,7 @@ class NotesEndpoint {
 
 		// Only transactions support type selection.
 		if ( 'transaction' === $object_type ) {
-			$args['type'] = [
-				'type'              => 'string',
-				'required'          => true,
-				'enum'              => [ 'internal', 'donor' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			];
+			$args['type'] = Args::enum( [ 'internal', 'donor' ], [ 'required' => true ] );
 		}
 
 		return $args;

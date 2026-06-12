@@ -164,13 +164,13 @@ class Plugin {
 		$this->transaction_history_module = new TransactionHistory\TransactionHistoryModule();
 		$this->transaction_history_module->init();
 
-		// Initialize REST module.
-		$this->rest_module = new Rest\RestModule();
-		$this->rest_module->init();
-
-		// Initialize email module.
+		// Initialize email module (before REST, which injects it into endpoints).
 		$this->email_module = new Email\EmailModule();
 		$this->email_module->init();
+
+		// Initialize REST module.
+		$this->rest_module = new Rest\RestModule( $this->email_module );
+		$this->rest_module->init();
 
 		// Initialize subscription email listener.
 		$subscription_email_listener = new Email\SubscriptionEmailListener();

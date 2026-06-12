@@ -7,6 +7,7 @@
 
 namespace MissionDP\Models;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\TransactionDataStore;
 
@@ -18,6 +19,25 @@ defined( 'ABSPATH' ) || exit;
 class Transaction extends Model {
 
 	use HasMeta;
+
+	public const STATUS_PENDING   = 'pending';
+	public const STATUS_COMPLETED = 'completed';
+	public const STATUS_REFUNDED  = 'refunded';
+	public const STATUS_CANCELLED = 'cancelled';
+	public const STATUS_FAILED    = 'failed';
+
+	/**
+	 * Every transaction status.
+	 *
+	 * @var string[]
+	 */
+	public const STATUSES = [
+		self::STATUS_PENDING,
+		self::STATUS_COMPLETED,
+		self::STATUS_REFUNDED,
+		self::STATUS_CANCELLED,
+		self::STATUS_FAILED,
+	];
 
 	public string $status;
 	public string $type;
@@ -52,8 +72,8 @@ class Transaction extends Model {
 	 */
 	public function __construct( array $data = [] ) {
 		$this->id                      = isset( $data['id'] ) ? (int) $data['id'] : null;
-		$this->status                  = $data['status'] ?? 'pending';
-		$this->type                    = $data['type'] ?? 'one_time';
+		$this->status                  = $data['status'] ?? self::STATUS_PENDING;
+		$this->type                    = $data['type'] ?? Frequency::ONE_TIME;
 		$this->donor_id                = (int) ( $data['donor_id'] ?? 0 );
 		$this->subscription_id         = isset( $data['subscription_id'] ) ? (int) $data['subscription_id'] : null;
 		$this->parent_id               = isset( $data['parent_id'] ) ? (int) $data['parent_id'] : null;
@@ -84,6 +104,27 @@ class Transaction extends Model {
 	 */
 	protected static function new_store(): DataStoreInterface {
 		return new TransactionDataStore();
+	}
+
+	/**
+	 * Save without firing side-effect hooks or per-row aggregate updates.
+	 *
+	 * For bulk backfill paths (import, migration) that recompute aggregates once
+	 * at job end and must not trigger emails/webhooks for historical rows.
+	 *
+	 * @return int|bool New ID on insert, true on update, false on failure.
+	 */
+	public function save_silent(): int|bool {
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+
+		if ( $this->id ) {
+			return $store->update_silent( $this );
+		}
+
+		$this->id = $store->create_silent( $this );
+
+		return $this->id;
 	}
 
 	/**

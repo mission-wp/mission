@@ -52,6 +52,7 @@ use MissionDP\Rest\Endpoints\CleanupEndpoint;
 use MissionDP\Rest\Endpoints\OutgoingWebhooksEndpoint;
 use MissionDP\Cleanup\CleanupService;
 use MissionDP\DonorDashboard\DonorAuthService;
+use MissionDP\Email\EmailModule;
 use MissionDP\Payments\PaymentIntentVerifier;
 use MissionDP\Settings\SettingsService;
 
@@ -68,6 +69,15 @@ class RestModule {
 	 * @var string
 	 */
 	public const NAMESPACE = 'mission-donation-platform/v1';
+
+	/**
+	 * Constructor.
+	 *
+	 * @param EmailModule $email Email module, injected into endpoints that render or send email.
+	 */
+	public function __construct(
+		private EmailModule $email,
+	) {}
 
 	/**
 	 * Initialize the REST module.
@@ -98,7 +108,7 @@ class RestModule {
 		( new PaymentConfigEndpoint( $settings ) )->register();
 		( new DonorsEndpoint( $reporting, $settings ) )->register();
 		( new NotesEndpoint() )->register();
-		( new TransactionsEndpoint( $reporting, $settings ) )->register();
+		( new TransactionsEndpoint( $reporting, $settings, $this->email ) )->register();
 		( new SubscriptionsEndpoint( $reporting, $settings ) )->register();
 		( new TransactionHistoryEndpoint() )->register();
 		( new TributeEndpoint() )->register();
@@ -109,14 +119,14 @@ class RestModule {
 		( new DonationFormSettingsEndpoint() )->register();
 		( new DonorWallEndpoint( $reporting, $settings ) )->register();
 		( new StripeWebhookEndpoint( $settings ) )->register();
-		( new DonorAuthEndpoint( new DonorAuthService() ) )->register();
+		( new DonorAuthEndpoint( new DonorAuthService( $this->email ) ) )->register();
 		( new DashboardOverviewEndpoint( $reporting, $settings ) )->register();
 		( new DashboardTransactionsEndpoint( $reporting, $settings ) )->register();
 		( new DashboardSubscriptionsEndpoint( $settings ) )->register();
 		( new DashboardProfileEndpoint() )->register();
-		( new DashboardEmailChangeEndpoint() )->register();
-		( new EmailTestEndpoint( $settings ) )->register();
-		( new EmailTemplateEndpoint() )->register();
+		( new DashboardEmailChangeEndpoint( $this->email ) )->register();
+		( new EmailTestEndpoint( $settings, $this->email ) )->register();
+		( new EmailTemplateEndpoint( $this->email ) )->register();
 		$export_service = new ExportService( $settings );
 		( new ExportEndpoint( $export_service ) )->register();
 		( new ImportEndpoint( new ImportService( $export_service, new ColumnMapper( $export_service ), new RowValidator() ) ) )->register();

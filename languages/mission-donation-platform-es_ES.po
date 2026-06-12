@@ -15,25 +15,21 @@ msgstr ""
 "X-Generator: WP-CLI 2.12.0\n"
 
 #. Plugin Name of the plugin
-#: mission-donation-platform.php
 msgid "Mission - Donation Platform"
 msgstr "Mission - Plataforma de donaciones"
 
 #. Plugin URI of the plugin
 #. Author URI of the plugin
-#: mission-donation-platform.php
 msgid "https://missionwp.com"
 msgstr "https://missionwp.com"
 
 #. Description of the plugin
-#: mission-donation-platform.php
 msgid "The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required."
 msgstr "El plugin de donaciones gratuito para organizaciones sin ánimo de lucro. Funciones potentes, formularios modernos y sin necesidad de extensiones."
 
 #. Author of the plugin
-#: mission-donation-platform.php
-#: src/Admin/AdminModule.php:301
-#: src/Admin/AdminModule.php:302
+#: src/Admin/AdminModule.php:309
+#: src/Admin/AdminModule.php:310
 #: src/Blocks/BlocksModule.php:204
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:476
@@ -147,7 +143,7 @@ msgstr "En curso"
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignHero.js:103
 #: admin/src/pages/campaigns/CampaignProgressBar.js:23
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:296
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:301
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/campaign/index.js:1
@@ -168,7 +164,7 @@ msgstr "recaudado de la meta de %s"
 #: blocks/src/campaign-progress/index.php:79
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:509
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:301
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:306
 msgid "raised"
 msgstr "recaudado"
 
@@ -185,7 +181,7 @@ msgstr "donaciones de la meta de %s"
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/campaigns/CampaignHero.js:104
 #: admin/src/pages/campaigns/CampaignProgressBar.js:24
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:299
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:304
 #: admin/src/pages/transactions/TransactionDonorCard.js:91
 msgid "donations"
 msgstr "donaciones"
@@ -244,11 +240,9 @@ msgstr "Una vez"
 
 #: blocks/build/donation-form/index.php:34
 #: blocks/src/donation-form/index.php:34
-#: src/DonorDashboard/DashboardContextBuilder.php:76
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:15
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:17
+#: src/DonorDashboard/DashboardContextBuilder.php:77
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:76
 #: assets/shared/components/FrequencyChips.js:5
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/tabs/AmountsTab.js:143
@@ -259,12 +253,10 @@ msgstr "Semanal"
 #: blocks/build/donor-wall/index.php:114
 #: blocks/src/donation-form/index.php:35
 #: blocks/src/donor-wall/index.php:114
-#: src/DonorDashboard/DashboardContextBuilder.php:77
-#: src/Rest/Endpoints/EmailTestEndpoint.php:202
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:16
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:18
+#: src/DonorDashboard/DashboardContextBuilder.php:78
+#: src/Rest/Endpoints/EmailTestEndpoint.php:196
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:77
 #: assets/shared/components/FrequencyChips.js:6
 #: blocks/build/donation-form/index.js:1
 #: blocks/build/donor-wall/index.js:1
@@ -277,11 +269,9 @@ msgstr "Mensual"
 #: blocks/build/donor-wall/index.php:115
 #: blocks/src/donation-form/index.php:36
 #: blocks/src/donor-wall/index.php:115
-#: src/DonorDashboard/DashboardContextBuilder.php:78
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:17
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:19
+#: src/DonorDashboard/DashboardContextBuilder.php:79
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:78
 #: assets/shared/components/FrequencyChips.js:7
 #: blocks/build/donation-form/index.js:1
 #: blocks/build/donor-wall/index.js:1
@@ -294,11 +284,9 @@ msgstr "Trimestral"
 #: blocks/build/donor-wall/index.php:116
 #: blocks/src/donation-form/index.php:37
 #: blocks/src/donor-wall/index.php:116
-#: src/DonorDashboard/DashboardContextBuilder.php:79
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:18
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:20
+#: src/DonorDashboard/DashboardContextBuilder.php:80
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:79
 #: assets/shared/components/FrequencyChips.js:8
 #: blocks/build/donation-form/index.js:1
 #: blocks/build/donor-wall/index.js:1
@@ -337,7 +325,7 @@ msgstr "Selecciona la frecuencia"
 #: blocks/src/donation-form/index.php:304
 #: blocks/src/donation-form/index.php:888
 #: blocks/src/donor-dashboard/parts/recurring.php:179
-#: src/Admin/DeactivationSurvey.php:181
+#: src/Admin/DeactivationSurvey.php:199
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:133
 msgid "Other"
@@ -411,12 +399,12 @@ msgstr "Indica el nombre del homenajeado."
 #: admin/src/pages/donors/DonorDetailsCard.js:64
 #: admin/src/pages/donors/DonorList.js:121
 #: admin/src/pages/donors/EditDonorDrawer.js:246
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:355
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:283
 #: admin/src/pages/tools/ExportPanel.js:251
-#: admin/src/pages/tools/logs-utils.js:15
-#: admin/src/pages/transactions/AddDonationDrawer.js:562
+#: admin/src/pages/tools/logs-utils.js:16
+#: admin/src/pages/transactions/AddDonationDrawer.js:563
 #: admin/src/pages/transactions/DedicationSection.js:407
-#: admin/src/pages/transactions/TransactionDetailsCard.js:300
+#: admin/src/pages/transactions/TransactionDetailsCard.js:271
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -480,7 +468,7 @@ msgstr "Indica una dirección de correo electrónico válida."
 #: admin/src/pages/donors/DonorDetailsCard.js:84
 #: admin/src/pages/donors/EditDonorDrawer.js:371
 #: admin/src/pages/settings/GeneralPanel.js:336
-#: admin/src/pages/transactions/AddDonationDrawer.js:710
+#: admin/src/pages/transactions/AddDonationDrawer.js:711
 msgid "Country"
 msgstr "País"
 
@@ -548,7 +536,7 @@ msgstr "Dirección"
 #: admin/src/pages/donors/AddDonorDrawer.js:284
 #: admin/src/pages/donors/EditDonorDrawer.js:321
 #: admin/src/pages/settings/GeneralPanel.js:372
-#: admin/src/pages/transactions/AddDonationDrawer.js:734
+#: admin/src/pages/transactions/AddDonationDrawer.js:735
 #: admin/src/pages/transactions/DedicationSection.js:514
 msgid "City"
 msgstr "Ciudad"
@@ -621,9 +609,9 @@ msgstr "Selecciona una opción"
 #: admin/src/pages/donors/AddDonorDrawer.js:103
 #: admin/src/pages/donors/EditDonorDrawer.js:125
 #: admin/src/pages/donors/EditDonorDrawer.js:136
-#: admin/src/pages/transactions/AddDonationDrawer.js:307
-#: admin/src/pages/transactions/AddDonationDrawer.js:319
-#: admin/src/pages/transactions/AddDonationDrawer.js:327
+#: admin/src/pages/transactions/AddDonationDrawer.js:308
+#: admin/src/pages/transactions/AddDonationDrawer.js:320
+#: admin/src/pages/transactions/AddDonationDrawer.js:328
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
@@ -677,7 +665,7 @@ msgstr "Quiero cubrir la comisión"
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:235
 #: admin/src/pages/donors/EditDonorDrawer.js:267
-#: admin/src/pages/transactions/AddDonationDrawer.js:582
+#: admin/src/pages/transactions/AddDonationDrawer.js:583
 msgid "First Name"
 msgstr "Nombre"
 
@@ -697,7 +685,7 @@ msgstr "Este campo está incompleto."
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:251
 #: admin/src/pages/donors/EditDonorDrawer.js:284
-#: admin/src/pages/transactions/AddDonationDrawer.js:598
+#: admin/src/pages/transactions/AddDonationDrawer.js:599
 msgid "Last Name"
 msgstr "Apellidos"
 
@@ -809,15 +797,15 @@ msgstr "Donación segura con la tecnología de %s"
 
 #: blocks/build/donor-dashboard/index.php:47
 #: blocks/src/donor-dashboard/index.php:47
-#: src/DonorDashboard/DonorAuthService.php:170
+#: src/DonorDashboard/DonorAuthService.php:178
 msgid "This activation link is invalid or has expired. Please request a new one."
 msgstr "Este enlace de activación no es válido o ha caducado. Solicita uno nuevo."
 
 #: blocks/build/donor-dashboard/index.php:63
 #: blocks/src/donor-dashboard/index.php:63
-#: src/DonorDashboard/DonorAuthService.php:362
-#: src/DonorDashboard/DonorAuthService.php:366
-#: src/DonorDashboard/DonorAuthService.php:372
+#: src/DonorDashboard/DonorAuthService.php:369
+#: src/DonorDashboard/DonorAuthService.php:373
+#: src/DonorDashboard/DonorAuthService.php:379
 msgid "This password reset link is invalid or has expired. Please request a new one."
 msgstr "Este enlace para restablecer la contraseña no es válido o ha caducado. Solicita uno nuevo."
 
@@ -828,7 +816,7 @@ msgstr "Mostrar la contraseña"
 
 #: blocks/build/donor-dashboard/index.php:128
 #: blocks/src/donor-dashboard/index.php:128
-#: src/DonorDashboard/DashboardContextBuilder.php:225
+#: src/DonorDashboard/DashboardContextBuilder.php:226
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignTabNav.js:4
 #: blocks/build/donor-dashboard/index.js:1
@@ -839,7 +827,7 @@ msgstr "Resumen"
 #: blocks/build/donor-dashboard/index.php:133
 #: blocks/src/donor-dashboard/index.php:133
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/donors/DonationHistoryTable.js:20
+#: admin/src/pages/donors/DonationHistoryTable.js:21
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:36
 msgid "Donation History"
@@ -1132,16 +1120,16 @@ msgstr "Todos los tipos"
 
 #: blocks/build/donor-dashboard/parts/history.php:44
 #: blocks/src/donor-dashboard/parts/history.php:44
-#: src/DonorDashboard/DashboardContextBuilder.php:455
+#: src/DonorDashboard/DashboardContextBuilder.php:456
 #: src/Email/templates/admin-new-donation.php:79
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:81
-#: admin/src/pages/donors/DonationHistoryTable.js:81
-#: admin/src/pages/transactions/TransactionDetailsCard.js:235
-#: admin/src/pages/transactions/TransactionList.js:92
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:83
+#: admin/src/pages/donors/DonationHistoryTable.js:78
+#: admin/src/pages/transactions/TransactionDetailsCard.js:206
+#: admin/src/pages/transactions/TransactionList.js:94
 #: assets/shared/components/FrequencyChips.js:4
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/tabs/AmountsTab.js:142
@@ -1150,16 +1138,16 @@ msgstr "Única"
 
 #: blocks/build/donor-dashboard/parts/history.php:45
 #: blocks/src/donor-dashboard/parts/history.php:45
-#: src/DonorDashboard/DashboardContextBuilder.php:455
+#: src/DonorDashboard/DashboardContextBuilder.php:456
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:80
-#: admin/src/pages/donors/DonationHistoryTable.js:80
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:82
+#: admin/src/pages/donors/DonationHistoryTable.js:77
 #: admin/src/pages/donors/DonorDetail.js:159
-#: admin/src/pages/transactions/TransactionDetailsCard.js:234
-#: admin/src/pages/transactions/TransactionList.js:91
+#: admin/src/pages/transactions/TransactionDetailsCard.js:205
+#: admin/src/pages/transactions/TransactionList.js:93
 msgid "Recurring"
 msgstr "Recurrente"
 
@@ -1195,15 +1183,15 @@ msgstr "Historial de donaciones"
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:184
-#: admin/src/pages/donors/DonationHistoryTable.js:34
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:186
+#: admin/src/pages/donors/DonationHistoryTable.js:35
 #: admin/src/pages/settings/email-templates.js:40
 #: admin/src/pages/settings/email-templates.js:85
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:213
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:141
 #: admin/src/pages/tools/WebhookDeliveryLog.js:271
-#: admin/src/pages/transactions/AddDonationDrawer.js:676
-#: admin/src/pages/transactions/TransactionDetailsCard.js:314
-#: admin/src/pages/transactions/TransactionList.js:285
+#: admin/src/pages/transactions/AddDonationDrawer.js:677
+#: admin/src/pages/transactions/TransactionDetailsCard.js:285
+#: admin/src/pages/transactions/TransactionList.js:287
 msgid "Date"
 msgstr "Fecha"
 
@@ -1227,20 +1215,20 @@ msgstr "Fecha"
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:171
-#: admin/src/pages/donors/DonationHistoryTable.js:35
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:35
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:173
+#: admin/src/pages/donors/DonationHistoryTable.js:36
+#: admin/src/pages/donors/DonorSubscriptionsCard.js:21
 #: admin/src/pages/settings/email-templates.js:35
 #: admin/src/pages/settings/email-templates.js:58
 #: admin/src/pages/settings/email-templates.js:84
 #: admin/src/pages/settings/email-templates.js:109
 #: admin/src/pages/settings/email-templates.js:131
 #: admin/src/pages/settings/email-templates.js:153
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:214
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:373
-#: admin/src/pages/subscriptions/SubscriptionList.js:197
-#: admin/src/pages/transactions/AddDonationDrawer.js:636
-#: admin/src/pages/transactions/TransactionList.js:257
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:142
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:301
+#: admin/src/pages/subscriptions/SubscriptionList.js:187
+#: admin/src/pages/transactions/AddDonationDrawer.js:637
+#: admin/src/pages/transactions/TransactionList.js:259
 msgid "Amount"
 msgstr "Importe"
 
@@ -1265,14 +1253,14 @@ msgstr "Importe"
 #: admin/src/components/onboarding/StepDone.js:171
 #: admin/src/components/onboarding/StepNav.js:8
 #: admin/src/pages/campaigns/CampaignList.js:140
-#: admin/src/pages/donors/DonationHistoryTable.js:36
+#: admin/src/pages/donors/DonationHistoryTable.js:37
 #: admin/src/pages/settings/email-templates.js:38
 #: admin/src/pages/settings/email-templates.js:69
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:359
-#: admin/src/pages/subscriptions/SubscriptionList.js:213
-#: admin/src/pages/transactions/AddDonationDrawer.js:664
-#: admin/src/pages/transactions/TransactionDetailsCard.js:304
-#: admin/src/pages/transactions/TransactionList.js:270
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:287
+#: admin/src/pages/subscriptions/SubscriptionList.js:203
+#: admin/src/pages/transactions/AddDonationDrawer.js:665
+#: admin/src/pages/transactions/TransactionDetailsCard.js:275
+#: admin/src/pages/transactions/TransactionList.js:272
 #: blocks/build/campaign-image/index.js:1
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/campaign-statistics/index.js:1
@@ -1303,12 +1291,12 @@ msgstr "Campaña"
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:197
-#: admin/src/pages/donors/DonationHistoryTable.js:37
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:199
+#: admin/src/pages/donors/DonationHistoryTable.js:38
 #: admin/src/pages/tools/ConfirmationModal.js:43
 #: admin/src/pages/transactions/DedicationSection.js:320
-#: admin/src/pages/transactions/TransactionDetailsCard.js:335
-#: admin/src/pages/transactions/TransactionList.js:298
+#: admin/src/pages/transactions/TransactionDetailsCard.js:306
+#: admin/src/pages/transactions/TransactionList.js:300
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/tabs/CustomFieldsTab.js:198
 msgid "Type"
@@ -1329,17 +1317,17 @@ msgstr "Tipo"
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/campaigns/CampaignList.js:155
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:208
-#: admin/src/pages/donors/DonationHistoryTable.js:38
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:37
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:216
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:402
-#: admin/src/pages/subscriptions/SubscriptionList.js:254
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:210
+#: admin/src/pages/donors/DonationHistoryTable.js:39
+#: admin/src/pages/donors/DonorSubscriptionsCard.js:23
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:144
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:330
+#: admin/src/pages/subscriptions/SubscriptionList.js:244
 #: admin/src/pages/Tools.js:138
 #: admin/src/pages/tools/WebhookDeliveryLog.js:268
 #: admin/src/pages/tools/WebhooksPanel.js:142
-#: admin/src/pages/transactions/TransactionDetailsCard.js:339
-#: admin/src/pages/transactions/TransactionList.js:309
+#: admin/src/pages/transactions/TransactionDetailsCard.js:310
+#: admin/src/pages/transactions/TransactionList.js:311
 msgid "Status"
 msgstr "Estado"
 
@@ -1442,7 +1430,7 @@ msgstr "Verificación enviada a"
 #: blocks/src/donor-dashboard/parts/recurring.php:107
 #: blocks/src/donor-dashboard/parts/recurring.php:224
 #: blocks/src/donor-dashboard/parts/recurring.php:250
-#: src/Admin/DeactivationSurvey.php:127
+#: src/Admin/DeactivationSurvey.php:141
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
@@ -1463,14 +1451,14 @@ msgstr "Verificación enviada a"
 #: admin/src/pages/Settings.js:537
 #: admin/src/pages/tools/ComingSoonPanel.js:316
 #: admin/src/pages/tools/ConfirmationModal.js:60
-#: admin/src/pages/tools/ImportPanel.js:1164
+#: admin/src/pages/tools/ImportPanel.js:1145
 #: admin/src/pages/tools/WebhookModal.js:438
-#: admin/src/pages/transactions/AddDonationDrawer.js:432
+#: admin/src/pages/transactions/AddDonationDrawer.js:433
 #: admin/src/pages/transactions/DedicationSection.js:589
 #: admin/src/pages/transactions/DedicationSection.js:643
-#: admin/src/pages/transactions/TransactionDetail.js:613
-#: admin/src/pages/transactions/TransactionDetail.js:717
-#: admin/src/pages/transactions/TransactionDetail.js:762
+#: admin/src/pages/transactions/TransactionDetail.js:614
+#: admin/src/pages/transactions/TransactionDetail.js:718
+#: admin/src/pages/transactions/TransactionDetail.js:763
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/FormSettingsModal.js:548
 msgid "Cancel"
@@ -1609,7 +1597,7 @@ msgstr "Descargar el PDF del recibo anual"
 #: blocks/build/donor-dashboard/parts/receipts.php:51
 #: blocks/src/donor-dashboard/parts/receipts.php:51
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:173
+#: admin/src/pages/transactions/TransactionDetail.js:174
 msgid "Download PDF"
 msgstr "Descargar PDF"
 
@@ -1628,15 +1616,12 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
+#: admin/src/constants.js:125
 #: admin/src/pages/campaigns/CampaignList.js:47
 #: admin/src/pages/campaigns/CampaignList.js:164
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:7
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:33
-#: admin/src/pages/subscriptions/SubscriptionList.js:37
-#: admin/src/pages/subscriptions/SubscriptionList.js:267
+#: admin/src/pages/subscriptions/SubscriptionList.js:257
 #: admin/src/pages/tools/StatusPanel.js:307
 msgid "Active"
 msgstr "Activa"
@@ -1645,12 +1630,10 @@ msgstr "Activa"
 #: blocks/build/donor-dashboard/parts/recurring.php:51
 #: blocks/src/donor-dashboard/parts/recurring.php:31
 #: blocks/src/donor-dashboard/parts/recurring.php:51
-#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:10
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:51
-#: admin/src/pages/subscriptions/SubscriptionList.js:39
-#: admin/src/pages/subscriptions/SubscriptionList.js:275
+#: admin/src/constants.js:143
+#: admin/src/pages/subscriptions/SubscriptionList.js:265
 msgid "Paused"
 msgstr "En pausa"
 
@@ -1666,20 +1649,20 @@ msgstr "En pausa"
 #: src/Export/ExportService.php:953
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:36
+#: admin/src/pages/donors/DonorSubscriptionsCard.js:22
 #: admin/src/pages/settings/email-templates.js:61
 #: admin/src/pages/settings/email-templates.js:92
 #: admin/src/pages/settings/email-templates.js:112
 #: admin/src/pages/settings/email-templates.js:134
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:369
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:297
 msgid "Frequency"
 msgstr "Frecuencia"
 
 #: blocks/build/donor-dashboard/parts/recurring.php:45
 #: blocks/src/donor-dashboard/parts/recurring.php:45
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:377
-#: admin/src/pages/subscriptions/SubscriptionList.js:226
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:305
+#: admin/src/pages/subscriptions/SubscriptionList.js:216
 msgid "Started"
 msgstr "Iniciada"
 
@@ -1746,21 +1729,17 @@ msgstr "Anteriores"
 #: blocks/src/donor-dashboard/parts/recurring.php:302
 #: src/Email/templates/admin-subscription-cancelled.php:75
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:238
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:47
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:231
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:9
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:57
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:90
-#: admin/src/pages/subscriptions/SubscriptionList.js:40
-#: admin/src/pages/subscriptions/SubscriptionList.js:279
+#: admin/src/constants.js:110
+#: admin/src/constants.js:149
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:48
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:233
+#: admin/src/pages/subscriptions/SubscriptionList.js:269
 #: admin/src/pages/tools/migration/ProgressTimeline.js:33
-#: admin/src/pages/transactions/TransactionDetailsCard.js:35
-#: admin/src/pages/transactions/TransactionList.js:58
-#: admin/src/pages/transactions/TransactionList.js:332
+#: admin/src/pages/transactions/TransactionList.js:59
+#: admin/src/pages/transactions/TransactionList.js:334
 msgid "Cancelled"
 msgstr "Cancelada"
 
@@ -1821,22 +1800,22 @@ msgstr "hace %s"
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
 #: blocks/src/top-donors/index.php:126
-#: src/Email/AdminNotificationListener.php:424
+#: src/Email/AdminNotificationListener.php:425
 #: src/Export/ExportService.php:739
 #: src/Reporting/ReportingService.php:626
 #: src/Reporting/ReportingService.php:760
-#: src/Rest/Endpoints/DonorWallEndpoint.php:130
-#: src/Rest/Endpoints/DonorWallEndpoint.php:148
+#: src/Rest/Endpoints/DonorWallEndpoint.php:110
+#: src/Rest/Endpoints/DonorWallEndpoint.php:128
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:157
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:159
 #: admin/src/pages/donors/DonorDetail.js:117
 #: admin/src/pages/donors/DonorList.js:113
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:350
-#: admin/src/pages/transactions/TransactionDetailsCard.js:295
-#: admin/src/pages/transactions/TransactionDetailsCard.js:352
-#: admin/src/pages/transactions/TransactionDetailsCard.js:360
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:278
+#: admin/src/pages/transactions/TransactionDetailsCard.js:266
+#: admin/src/pages/transactions/TransactionDetailsCard.js:323
+#: admin/src/pages/transactions/TransactionDetailsCard.js:331
 #: admin/src/pages/transactions/TransactionDonorCard.js:23
 msgid "Anonymous"
 msgstr "Anónimo"
@@ -1870,7 +1849,7 @@ msgstr "Más antiguas"
 #: blocks/build/donor-wall/index.php:269
 #: blocks/src/donor-wall/index.php:269
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:417
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:422
 #: admin/src/pages/dashboard/DonationsChart.js:334
 msgid "No donations yet"
 msgstr "Todavía no hay donaciones"
@@ -1965,13 +1944,13 @@ msgstr "Mission Donation Platform requiere WordPress 6.7 o superior."
 msgid "Mission Donor"
 msgstr "Donante de Mission"
 
-#: src/Admin/AdminModule.php:312
-#: src/Admin/AdminModule.php:313
+#: src/Admin/AdminModule.php:320
+#: src/Admin/AdminModule.php:321
 msgid "Dashboard"
 msgstr "Panel"
 
-#: src/Admin/AdminModule.php:321
-#: src/Admin/AdminModule.php:322
+#: src/Admin/AdminModule.php:329
+#: src/Admin/AdminModule.php:330
 #: src/Campaigns/CampaignPostType.php:115
 #: src/Campaigns/CampaignPostType.php:232
 #: src/Campaigns/CampaignPostType.php:242
@@ -1983,15 +1962,15 @@ msgstr "Panel"
 #: admin/src/pages/campaigns/CampaignList.js:527
 #: admin/src/pages/campaigns/CampaignList.js:583
 #: admin/src/pages/tools/ExportPanel.js:13
-#: admin/src/pages/tools/ImportPanel.js:13
+#: admin/src/pages/tools/ImportPanel.js:24
 #: admin/src/pages/tools/migration/MigrationReport.js:6
 #: admin/src/pages/tools/migration/ProgressTimeline.js:6
 #: admin/src/pages/tools/migration/ScanResults.js:11
 msgid "Campaigns"
 msgstr "Campañas"
 
-#: src/Admin/AdminModule.php:330
-#: src/Admin/AdminModule.php:331
+#: src/Admin/AdminModule.php:338
+#: src/Admin/AdminModule.php:339
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:236
@@ -2000,17 +1979,17 @@ msgstr "Campañas"
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/campaigns/CampaignList.js:246
 #: admin/src/pages/tools/ExportPanel.js:9
-#: admin/src/pages/tools/ImportPanel.js:9
+#: admin/src/pages/tools/ImportPanel.js:20
 #: admin/src/pages/tools/migration/MigrationReport.js:9
 #: admin/src/pages/tools/migration/ProgressTimeline.js:9
 #: admin/src/pages/tools/migration/ScanResults.js:9
-#: admin/src/pages/transactions/TransactionList.js:535
-#: admin/src/pages/transactions/TransactionList.js:591
+#: admin/src/pages/transactions/TransactionList.js:537
+#: admin/src/pages/transactions/TransactionList.js:593
 msgid "Transactions"
 msgstr "Transacciones"
 
-#: src/Admin/AdminModule.php:339
-#: src/Admin/AdminModule.php:340
+#: src/Admin/AdminModule.php:347
+#: src/Admin/AdminModule.php:348
 #: src/Export/ExportService.php:171
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:204
@@ -2020,35 +1999,35 @@ msgstr "Transacciones"
 #: admin/src/pages/donors/DonorList.js:280
 #: admin/src/pages/donors/DonorList.js:354
 #: admin/src/pages/tools/ExportPanel.js:6
-#: admin/src/pages/tools/ImportPanel.js:6
+#: admin/src/pages/tools/ImportPanel.js:17
 #: admin/src/pages/tools/migration/MigrationReport.js:7
 #: admin/src/pages/tools/migration/ProgressTimeline.js:7
 #: admin/src/pages/tools/migration/ScanResults.js:6
 msgid "Donors"
 msgstr "Donantes"
 
-#: src/Admin/AdminModule.php:348
-#: src/Admin/AdminModule.php:349
+#: src/Admin/AdminModule.php:356
+#: src/Admin/AdminModule.php:357
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:236
 #: admin/build/mission-admin.js:238
 #: admin/build/mission-admin.js:240
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:27
-#: admin/src/pages/subscriptions/SubscriptionList.js:401
-#: admin/src/pages/subscriptions/SubscriptionList.js:458
+#: admin/src/pages/donors/DonorSubscriptionsCard.js:13
+#: admin/src/pages/subscriptions/SubscriptionList.js:391
+#: admin/src/pages/subscriptions/SubscriptionList.js:448
 #: admin/src/pages/tools/ExportPanel.js:17
-#: admin/src/pages/tools/ImportPanel.js:17
+#: admin/src/pages/tools/ImportPanel.js:28
 #: admin/src/pages/tools/migration/MigrationReport.js:8
 #: admin/src/pages/tools/migration/ProgressTimeline.js:8
 #: admin/src/pages/tools/migration/ScanResults.js:14
 msgid "Subscriptions"
 msgstr "Suscripciones"
 
-#: src/Admin/AdminModule.php:357
-#: src/Admin/AdminModule.php:358
-#: src/Admin/AdminModule.php:385
+#: src/Admin/AdminModule.php:365
+#: src/Admin/AdminModule.php:366
+#: src/Admin/AdminModule.php:393
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/campaigns/CampaignTabNav.js:6
@@ -2074,14 +2053,14 @@ msgstr "Suscripciones"
 msgid "Settings"
 msgstr "Ajustes"
 
-#: src/Admin/AdminModule.php:366
-#: src/Admin/AdminModule.php:367
+#: src/Admin/AdminModule.php:374
+#: src/Admin/AdminModule.php:375
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Tools.js:206
 msgid "Tools"
 msgstr "Herramientas"
 
-#: src/Admin/AdminModule.php:454
+#: src/Admin/AdminModule.php:462
 msgid "Mission Test Mode Active"
 msgstr "Modo de pruebas de Mission activo"
 
@@ -2157,56 +2136,56 @@ msgstr "Hacer una donación"
 msgid "Choose an amount to support our mission."
 msgstr "Elige un importe para apoyar nuestra misión."
 
-#: src/DonorDashboard/DashboardContextBuilder.php:69
+#: src/DonorDashboard/DashboardContextBuilder.php:70
 msgid "/ week"
 msgstr " / semana"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:70
+#: src/DonorDashboard/DashboardContextBuilder.php:71
 msgid "/ month"
 msgstr " / mes"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:71
+#: src/DonorDashboard/DashboardContextBuilder.php:72
 msgid "/ quarter"
 msgstr " / trimestre"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:72
+#: src/DonorDashboard/DashboardContextBuilder.php:73
 msgid "/ year"
 msgstr " / año"
 
 #. translators: 1: current page, 2: total pages
-#: src/DonorDashboard/DashboardContextBuilder.php:232
+#: src/DonorDashboard/DashboardContextBuilder.php:233
 #, php-format
 msgid "Page %1$d of %2$d"
 msgstr "Página %1$d de %2$d"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:348
-#: src/DonorDashboard/DashboardContextBuilder.php:362
-#: src/DonorDashboard/DashboardContextBuilder.php:382
-#: src/DonorDashboard/DashboardContextBuilder.php:431
-#: src/DonorDashboard/DashboardContextBuilder.php:451
+#: src/DonorDashboard/DashboardContextBuilder.php:349
+#: src/DonorDashboard/DashboardContextBuilder.php:363
+#: src/DonorDashboard/DashboardContextBuilder.php:383
+#: src/DonorDashboard/DashboardContextBuilder.php:432
+#: src/DonorDashboard/DashboardContextBuilder.php:452
 #: src/Reporting/ReportingService.php:1480
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:82
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:109
 msgid "Deleted Campaign"
 msgstr "Campaña eliminada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:391
+#: src/DonorDashboard/DashboardContextBuilder.php:392
 msgid "Card on file"
 msgstr "Tarjeta guardada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:544
+#: src/DonorDashboard/DashboardContextBuilder.php:545
 msgid "Donation Made"
 msgid_plural "Donations Made"
 msgstr[0] "Donación realizada"
 msgstr[1] "Donaciones realizadas"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:548
+#: src/DonorDashboard/DashboardContextBuilder.php:549
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:69
 msgid "Lifetime Given"
 msgstr "Total donado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:552
+#: src/DonorDashboard/DashboardContextBuilder.php:553
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Dashboard.js:190
 #: blocks/build/donor-dashboard/index.js:1
@@ -2214,27 +2193,27 @@ msgstr "Total donado"
 msgid "Avg. Donation"
 msgstr "Donación media"
 
-#: src/DonorDashboard/DonorAuthService.php:49
+#: src/DonorDashboard/DonorAuthService.php:58
 msgid "We couldn't find any donations with this email address."
 msgstr "No hemos encontrado ninguna donación con esta dirección de correo electrónico."
 
-#: src/DonorDashboard/DonorAuthService.php:53
+#: src/DonorDashboard/DonorAuthService.php:62
 msgid "An account already exists for this email. Please log in instead."
 msgstr "Ya existe una cuenta para este correo electrónico. Inicia sesión en su lugar."
 
-#: src/DonorDashboard/DonorAuthService.php:89
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:58
-#: src/Rest/Endpoints/EmailTestEndpoint.php:43
+#: src/DonorDashboard/DonorAuthService.php:97
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:72
+#: src/Rest/Endpoints/EmailTestEndpoint.php:47
 msgid "Verify your email to activate your donor account"
 msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 
-#: src/DonorDashboard/DonorAuthService.php:96
-#: src/DonorDashboard/DonorAuthService.php:320
-#: src/Email/DonationEmailListener.php:101
-#: src/Email/DonationEmailListener.php:157
+#: src/DonorDashboard/DonorAuthService.php:104
+#: src/DonorDashboard/DonorAuthService.php:327
+#: src/Email/DonationEmailListener.php:102
+#: src/Email/DonationEmailListener.php:158
 #: src/Email/EmailModule.php:180
 #: src/Email/EmailModule.php:286
-#: src/Email/SubscriptionEmailListener.php:194
+#: src/Email/SubscriptionEmailListener.php:195
 #: src/Email/templates/account-activation.php:12
 #: src/Email/templates/donation-receipt.php:12
 #: src/Email/templates/email-change-verification.php:12
@@ -2243,42 +2222,42 @@ msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 #: src/Email/templates/renewal-receipt.php:12
 #: src/Email/templates/subscription-activated.php:12
 #: src/Email/templates/subscription-cancelled.php:12
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:177
-#: src/Rest/Endpoints/TransactionsEndpoint.php:962
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:185
+#: src/Rest/Endpoints/TransactionsEndpoint.php:821
 msgid "Friend"
 msgstr "Amigo"
 
-#: src/DonorDashboard/DonorAuthService.php:220
-#: src/DonorDashboard/DonorAuthService.php:225
-#: src/DonorDashboard/DonorAuthService.php:232
+#: src/DonorDashboard/DonorAuthService.php:228
+#: src/DonorDashboard/DonorAuthService.php:233
+#: src/DonorDashboard/DonorAuthService.php:240
 msgid "Invalid email or password."
 msgstr "Correo electrónico o contraseña no válidos."
 
-#: src/DonorDashboard/DonorAuthService.php:278
+#: src/DonorDashboard/DonorAuthService.php:286
 msgid "We couldn't find a donor account with this email address."
 msgstr "No hemos encontrado ninguna cuenta de donante con esta dirección de correo electrónico."
 
-#: src/DonorDashboard/DonorAuthService.php:282
+#: src/DonorDashboard/DonorAuthService.php:290
 msgid "No account has been activated for this email. Please activate your account first."
 msgstr "No se ha activado ninguna cuenta para este correo electrónico. Activa primero tu cuenta."
 
-#: src/DonorDashboard/DonorAuthService.php:288
+#: src/DonorDashboard/DonorAuthService.php:296
 msgid "Unable to process this request."
 msgstr "No se ha podido procesar esta solicitud."
 
-#: src/DonorDashboard/DonorAuthService.php:294
+#: src/DonorDashboard/DonorAuthService.php:302
 msgid "Unable to generate a password reset link. Please try again later."
 msgstr "No se ha podido generar un enlace para restablecer la contraseña. Inténtalo de nuevo más tarde."
 
-#: src/DonorDashboard/DonorAuthService.php:313
+#: src/DonorDashboard/DonorAuthService.php:320
 #: src/Email/templates/password-reset.php:15
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:59
-#: src/Rest/Endpoints/EmailTestEndpoint.php:44
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:73
+#: src/Rest/Endpoints/EmailTestEndpoint.php:48
 msgid "Reset your password"
 msgstr "Restablecer tu contraseña"
 
 #. translators: %d: minimum password length
-#: src/DonorDashboard/DonorAuthService.php:457
+#: src/DonorDashboard/DonorAuthService.php:464
 #, php-format
 msgid "Password must be at least %d characters."
 msgstr "La contraseña debe tener al menos %d caracteres."
@@ -2292,96 +2271,96 @@ msgid "Donor Dashboard Page"
 msgstr "Página del panel del donante"
 
 #. translators: 1: formatted amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:133
+#: src/Email/AdminNotificationListener.php:134
 #, php-format
 msgid "New donation: %1$s from %2$s"
 msgstr "Nueva donación: %1$s de %2$s"
 
 #. translators: 1: formatted amount, 2: frequency (e.g. "Monthly"), 3: donor name
-#: src/Email/AdminNotificationListener.php:172
+#: src/Email/AdminNotificationListener.php:173
 #, php-format
 msgid "New recurring donation: %1$s/%2$s from %3$s"
 msgstr "Nueva donación recurrente: %1$s/%2$s de %3$s"
 
 #. translators: 1: formatted amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:213
+#: src/Email/AdminNotificationListener.php:214
 #, php-format
 msgid "Recurring renewal: %1$s from %2$s"
 msgstr "Renovación recurrente: %1$s de %2$s"
 
 #. translators: 1: formatted refund amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:255
+#: src/Email/AdminNotificationListener.php:256
 #, php-format
 msgid "Full refund: %1$s to %2$s"
 msgstr "Reembolso total: %1$s a %2$s"
 
 #. translators: 1: formatted refund amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:261
+#: src/Email/AdminNotificationListener.php:262
 #, php-format
 msgid "Partial refund: %1$s to %2$s"
 msgstr "Reembolso parcial: %1$s a %2$s"
 
 #. translators: 1: formatted amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:299
+#: src/Email/AdminNotificationListener.php:300
 #, php-format
 msgid "Failed payment: %1$s from %2$s"
 msgstr "Pago fallido: %1$s de %2$s"
 
 #. translators: 1: formatted amount, 2: frequency (e.g. "monthly"), 3: donor name
-#: src/Email/AdminNotificationListener.php:339
+#: src/Email/AdminNotificationListener.php:340
 #, php-format
 msgid "Subscription cancelled: %1$s/%2$s from %3$s"
 msgstr "Suscripción cancelada: %1$s/%2$s de %3$s"
 
-#: src/Email/AdminNotificationListener.php:357
+#: src/Email/AdminNotificationListener.php:358
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/DonorDetailsCard.js:88
 msgid "First donation"
 msgstr "Primera donación"
 
 #. translators: 1: campaign name, 2: milestone label (e.g. "50%", "First donation")
-#: src/Email/AdminNotificationListener.php:398
+#: src/Email/AdminNotificationListener.php:399
 #, php-format
 msgid "Campaign milestone: %1$s reached %2$s"
 msgstr "Hito de campaña: %1$s alcanzó %2$s"
 
-#: src/Email/AdminNotificationListener.php:427
-#: src/Email/DonationEmailListener.php:196
+#: src/Email/AdminNotificationListener.php:428
+#: src/Email/DonationEmailListener.php:197
 msgid "in memory of"
 msgstr "en memoria de"
 
-#: src/Email/AdminNotificationListener.php:428
-#: src/Email/DonationEmailListener.php:197
+#: src/Email/AdminNotificationListener.php:429
+#: src/Email/DonationEmailListener.php:198
 #: src/Email/templates/tribute-notification.php:16
 msgid "in honor of"
 msgstr "en honor a"
 
 #. translators: 1: honoree name, 2: donor name
-#: src/Email/AdminNotificationListener.php:453
+#: src/Email/AdminNotificationListener.php:454
 #, php-format
 msgid "Mail dedication pending: %1$s (from %2$s)"
 msgstr "Dedicatoria por correo pendiente: %1$s (de %2$s)"
 
 #. translators: %s: formatted donation amount
-#: src/Email/DonationEmailListener.php:92
-#: src/Rest/Endpoints/EmailTestEndpoint.php:36
-#: src/Rest/Endpoints/TransactionsEndpoint.php:953
+#: src/Email/DonationEmailListener.php:93
+#: src/Rest/Endpoints/EmailTestEndpoint.php:40
+#: src/Rest/Endpoints/TransactionsEndpoint.php:812
 #, php-format
 msgid "Thank you for your %s donation"
 msgstr "Gracias por tu donación de %s"
 
-#: src/Email/DonationEmailListener.php:150
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:61
+#: src/Email/DonationEmailListener.php:151
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:75
 msgid "A note about your donation"
 msgstr "Una nota sobre tu donación"
 
 #. translators: 1: tribute type label (e.g. "in honor of"), 2: honoree name
-#: src/Email/DonationEmailListener.php:211
+#: src/Email/DonationEmailListener.php:212
 #, php-format
 msgid "A donation has been made %1$s %2$s"
 msgstr "Se ha realizado una donación %1$s %2$s"
 
-#: src/Email/DonationEmailListener.php:221
+#: src/Email/DonationEmailListener.php:222
 #: src/Email/templates/tribute-notification.php:15
 msgid "Someone"
 msgstr "Alguien"
@@ -2401,32 +2380,32 @@ msgid "Hi %s,"
 msgstr "Hola %s:"
 
 #. translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly")
-#: src/Email/SubscriptionEmailListener.php:74
-#: src/Rest/Endpoints/EmailTestEndpoint.php:38
+#: src/Email/SubscriptionEmailListener.php:75
+#: src/Rest/Endpoints/EmailTestEndpoint.php:42
 #, php-format
 msgid "Thank you for your %1$s %2$s donation"
 msgstr "Gracias por tu donación %2$s de %1$s"
 
 #. translators: 1: frequency label (e.g. "monthly"), 2: formatted donation amount
-#: src/Email/SubscriptionEmailListener.php:110
-#: src/Rest/Endpoints/EmailTestEndpoint.php:40
+#: src/Email/SubscriptionEmailListener.php:111
+#: src/Rest/Endpoints/EmailTestEndpoint.php:44
 #, php-format
 msgid "Thank you for your %1$s gift of %2$s"
 msgstr "Gracias por tu donativo %1$s de %2$s"
 
-#: src/Email/SubscriptionEmailListener.php:145
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:56
-#: src/Rest/Endpoints/EmailTestEndpoint.php:41
+#: src/Email/SubscriptionEmailListener.php:146
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:70
+#: src/Rest/Endpoints/EmailTestEndpoint.php:45
 msgid "Action needed: Update your payment for your recurring donation"
 msgstr "Acción necesaria: actualiza el pago de tu donación recurrente"
 
-#: src/Email/SubscriptionEmailListener.php:174
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:57
-#: src/Rest/Endpoints/EmailTestEndpoint.php:42
+#: src/Email/SubscriptionEmailListener.php:175
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:71
+#: src/Rest/Endpoints/EmailTestEndpoint.php:46
 msgid "Your recurring donation has ended"
 msgstr "Tu donación recurrente ha finalizado"
 
-#: src/Email/SubscriptionEmailListener.php:212
+#: src/Email/SubscriptionEmailListener.php:213
 msgid "N/A"
 msgstr "N/D"
 
@@ -2471,8 +2450,8 @@ msgstr "Enviar a"
 #: src/Email/templates/admin-mail-dedication.php:51
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:123
-#: admin/src/pages/transactions/TransactionList.js:210
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:125
+#: admin/src/pages/transactions/TransactionList.js:212
 msgid "Donation"
 msgstr "Donación"
 
@@ -2547,10 +2526,10 @@ msgstr "<strong>%1$s</strong> donó <strong>%2$s</strong>."
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/DonorList.js:86
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:340
-#: admin/src/pages/transactions/AddDonationDrawer.js:481
-#: admin/src/pages/transactions/AddDonationDrawer.js:547
-#: admin/src/pages/transactions/TransactionDetailsCard.js:285
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:268
+#: admin/src/pages/transactions/AddDonationDrawer.js:482
+#: admin/src/pages/transactions/AddDonationDrawer.js:548
+#: admin/src/pages/transactions/TransactionDetailsCard.js:256
 #: admin/src/pages/transactions/TransactionDonorCard.js:12
 #: admin/src/pages/transactions/TransactionDonorCard.js:37
 msgid "Donor"
@@ -2612,7 +2591,7 @@ msgstr "Se ha emitido un reembolso parcial de <strong>%1$s</strong> (de %2$s) a 
 
 #: src/Email/templates/admin-refund.php:63
 #: admin/build/mission-admin.js:247
-#: admin/src/pages/transactions/TransactionDetail.js:583
+#: admin/src/pages/transactions/TransactionDetail.js:584
 msgid "Refund amount"
 msgstr "Importe del reembolso"
 
@@ -2657,9 +2636,9 @@ msgid "Thank you for your generosity!"
 msgstr "¡Gracias por tu generosidad!"
 
 #: src/Email/templates/email-change-verification.php:15
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:170
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:60
-#: src/Rest/Endpoints/EmailTestEndpoint.php:45
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:178
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:74
+#: src/Rest/Endpoints/EmailTestEndpoint.php:49
 msgid "Verify your new email address"
 msgstr "Verifica tu nueva dirección de correo electrónico"
 
@@ -2694,7 +2673,7 @@ msgstr "Este enlace caduca en %s horas. Si no has solicitado restablecer la cont
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/settings/email-templates.js:102
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:35
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:29
 #: admin/src/pages/transactions/TransactionActivityCard.js:11
 msgid "Payment failed"
 msgstr "Pago fallido"
@@ -2724,7 +2703,7 @@ msgstr "Tu donación recurrente se ha procesado correctamente."
 #: src/Email/templates/renewal-receipt.php:51
 #: src/Email/templates/subscription-activated.php:51
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:382
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:310
 msgid "Next payment"
 msgstr "Próximo pago"
 
@@ -2751,8 +2730,8 @@ msgstr "Recibirás un recibo cada vez que se procese tu donación."
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/settings/email-templates.js:122
 #: admin/src/pages/settings/email-templates.js:227
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:20
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:110
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:14
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:104
 msgid "Subscription cancelled"
 msgstr "Suscripción cancelada"
 
@@ -2798,7 +2777,7 @@ msgstr "Total donado"
 #: src/Export/ExportService.php:112
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:413
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:418
 #: admin/src/pages/donors/DonorDetail.js:190
 #: admin/src/pages/donors/DonorList.js:147
 #: blocks/build/donor-dashboard/index.js:1
@@ -2818,8 +2797,8 @@ msgstr "Primera donación"
 #: src/Export/ExportService.php:898
 #: src/Export/ExportService.php:1018
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/donors/DonationHistoryTable.js:33
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:34
+#: admin/src/pages/donors/DonationHistoryTable.js:34
+#: admin/src/pages/donors/DonorSubscriptionsCard.js:20
 msgid "ID"
 msgstr "ID"
 
@@ -2831,7 +2810,7 @@ msgstr "Recaudado"
 
 #: src/Export/ExportService.php:210
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:215
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:143
 msgid "Transaction"
 msgstr "Transacción"
 
@@ -2986,8 +2965,8 @@ msgstr "ID de cliente de la pasarela"
 #: src/Export/ExportService.php:744
 #: src/Export/ExportService.php:983
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:599
-#: admin/src/pages/transactions/TransactionDetailsCard.js:654
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:527
+#: admin/src/pages/transactions/TransactionDetailsCard.js:625
 msgid "Test"
 msgstr "Prueba"
 
@@ -3116,7 +3095,7 @@ msgstr "Notificación enviada"
 #: admin/src/pages/tools/StatusPanel.js:384
 #: admin/src/pages/tools/StatusPanel.js:536
 #: admin/src/pages/tools/StatusPanel.js:543
-#: admin/src/pages/transactions/TransactionDetailsCard.js:535
+#: admin/src/pages/transactions/TransactionDetailsCard.js:506
 msgid "Yes"
 msgstr "Sí"
 
@@ -3126,11 +3105,11 @@ msgstr "Sí"
 #: admin/src/pages/tools/StatusPanel.js:385
 #: admin/src/pages/tools/StatusPanel.js:537
 #: admin/src/pages/tools/StatusPanel.js:546
-#: admin/src/pages/transactions/TransactionDetailsCard.js:536
+#: admin/src/pages/transactions/TransactionDetailsCard.js:507
 msgid "No"
 msgstr "No"
 
-#: src/Models/Donor.php:119
+#: src/Models/Donor.php:133
 msgid "This donor already has an account."
 msgstr "Este donante ya tiene una cuenta."
 
@@ -3208,299 +3187,248 @@ msgid "Untitled"
 msgstr "Sin título"
 
 #: src/Reporting/ReportingService.php:1389
-#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:275
-#: src/Rest/Endpoints/EmailTestEndpoint.php:201
-#: src/Rest/Endpoints/TransactionsEndpoint.php:891
+#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:271
+#: src/Rest/Endpoints/EmailTestEndpoint.php:195
+#: src/Rest/Endpoints/TransactionsEndpoint.php:754
 msgid "General Fund"
 msgstr "Fondo general"
 
-#: src/Rest/Endpoints/ActivityFeedEndpoint.php:67
+#: src/Rest/Endpoints/ActivityFeedEndpoint.php:68
 msgid "You do not have permission to view the activity feed."
 msgstr "No tienes permiso para ver el feed de actividad."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:174
+#: src/Rest/Endpoints/CampaignsEndpoint.php:169
 msgid "You do not have permission to view campaigns."
 msgstr "No tienes permiso para ver las campañas."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:223
+#: src/Rest/Endpoints/CampaignsEndpoint.php:213
 msgid "The campaign could not be created."
 msgstr "No se ha podido crear la campaña."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:258
-#: src/Rest/Endpoints/CampaignsEndpoint.php:430
-#: src/Rest/Endpoints/CampaignsEndpoint.php:503
+#: src/Rest/RestErrors.php:63
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignDetail.js:297
 msgid "Campaign not found."
 msgstr "Campaña no encontrada."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:440
+#: src/Rest/Endpoints/CampaignsEndpoint.php:422
 msgid "The campaign could not be deleted."
 msgstr "No se ha podido eliminar la campaña."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:525
+#: src/Rest/Endpoints/CampaignsEndpoint.php:503
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignDetail.js:178
 msgid "Goal amount cannot be negative."
 msgstr "El importe de la meta no puede ser negativo."
 
-#: src/Rest/Endpoints/CleanupEndpoint.php:100
+#: src/Rest/Endpoints/CleanupEndpoint.php:98
 msgid "You do not have permission to perform cleanup operations."
 msgstr "No tienes permiso para realizar operaciones de limpieza."
 
-#: src/Rest/Endpoints/CleanupEndpoint.php:144
+#: src/Rest/Endpoints/CleanupEndpoint.php:137
 msgid "You must type DELETE to confirm this action."
 msgstr "Debes escribir DELETE para confirmar esta acción."
 
-#: src/Rest/Endpoints/CleanupEndpoint.php:170
+#: src/Rest/Endpoints/CleanupEndpoint.php:163
 msgid "Invalid cleanup action."
 msgstr "Acción de limpieza no válida."
 
-#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:91
-#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:98
-#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:248
-#: src/Rest/Endpoints/TransactionHistoryEndpoint.php:88
-#: src/Rest/Endpoints/TransactionsEndpoint.php:259
-#: src/Rest/Endpoints/TransactionsEndpoint.php:290
-#: src/Rest/Endpoints/TransactionsEndpoint.php:325
-#: src/Rest/Endpoints/TransactionsEndpoint.php:741
-#: src/Rest/Endpoints/TransactionsEndpoint.php:871
-#: src/Rest/Endpoints/TransactionsEndpoint.php:925
-#: src/Rest/Endpoints/TributeEndpoint.php:86
-#: src/Rest/Endpoints/TributeEndpoint.php:141
+#: src/Rest/RestErrors.php:45
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:402
+#: admin/src/pages/transactions/TransactionDetail.js:403
 msgid "Transaction not found."
 msgstr "Transacción no encontrada."
 
-#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:101
-#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:109
+#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:91
+#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:95
 msgid "Payment intent does not match this transaction."
 msgstr "El intento de pago no coincide con esta transacción."
 
-#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:139
-#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:184
-#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:157
-#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:201
+#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:129
+#: src/Rest/Endpoints/ConfirmDonationEndpoint.php:174
+#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:143
+#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:187
 msgid "The payment was not successful."
 msgstr "El pago no se ha realizado correctamente."
 
-#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:117
+#: src/Rest/Endpoints/ConfirmSubscriptionEndpoint.php:103
 msgid "Subscription does not match this transaction."
 msgstr "La suscripción no coincide con esta transacción."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:247
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:253
-#: src/Rest/Endpoints/DonorsEndpoint.php:218
-#: src/Rest/Endpoints/DonorsEndpoint.php:264
-#: src/Rest/Endpoints/TransactionsEndpoint.php:347
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:248
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:254
+#: src/Rest/Endpoints/DonorsEndpoint.php:204
+#: src/Rest/Endpoints/DonorsEndpoint.php:250
+#: src/Rest/Endpoints/TransactionsEndpoint.php:306
 msgid "A valid email address is required."
 msgstr "Se requiere una dirección de correo electrónico válida."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:264
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:265
 msgid "Fee amount cannot exceed the donation amount."
 msgstr "El importe de la comisión no puede superar el importe de la donación."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:296
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:306
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:308
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:297
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:307
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:309
 msgid "Stripe is not connected. Please connect Stripe in the plugin settings."
 msgstr "Stripe no está conectado. Conecta Stripe en los ajustes del plugin."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:347
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:353
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:148
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:348
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:354
+#: src/Rest/Endpoints/StripeConnectEndpoint.php:133
 msgid "Could not reach the Mission API."
 msgstr "No se ha podido conectar con la API de Mission."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:358
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:359
 msgid "Failed to create payment intent."
 msgstr "No se ha podido crear el intento de pago."
 
 #. translators: %s: formatted donation amount (e.g. "$50.00")
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:545
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:546
 #, php-format
 msgid "%s donation."
 msgstr "Donación de %s."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:548
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:590
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:549
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:591
 msgid "Donor covered processing fees."
 msgstr "El donante ha cubierto las comisiones de procesamiento."
 
 #. translators: %s: formatted tip amount (e.g. "$1.23")
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:556
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:598
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:557
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:599
 #, php-format
 msgid "The %s application fee is a tip from the donor to Mission, not a charge to your organization."
 msgstr "La comisión de aplicación de %s es una propina del donante para Mission, no un cargo a tu organización."
 
-#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:562
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:604
+#: src/Rest/Endpoints/CreatePaymentIntentEndpoint.php:563
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:605
 msgid "Includes 3% platform fee."
 msgstr "Incluye un 3 % de comisión de la plataforma."
 
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:263
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:264
 msgid "Invalid recurring frequency. Must be weekly, monthly, quarterly, or annually."
 msgstr "Frecuencia recurrente no válida. Debe ser semanal, mensual, trimestral o anual."
 
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:364
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:365
 msgid "Failed to create subscription."
 msgstr "No se ha podido crear la suscripción."
 
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:578
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:579
 msgid "weekly"
 msgstr "semanal"
 
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:579
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:580
 msgid "monthly"
 msgstr "mensual"
 
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:580
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:581
 msgid "quarterly"
 msgstr "trimestral"
 
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:581
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:582
 msgid "annual"
 msgstr "anual"
 
 #. translators: 1: formatted donation amount, 2: frequency label
-#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:587
+#: src/Rest/Endpoints/CreateSubscriptionEndpoint.php:588
 #, php-format
 msgid "%1$s %2$s recurring donation."
 msgstr "Donación recurrente %2$s de %1$s."
 
-#: src/Rest/Endpoints/DashboardEndpoint.php:73
+#: src/Rest/Endpoints/DashboardEndpoint.php:68
 msgid "You do not have permission to view the dashboard."
 msgstr "No tienes permiso para ver el panel."
 
-#: src/Rest/Endpoints/DonorAuthEndpoint.php:234
+#: src/Rest/Endpoints/DonorAuthEndpoint.php:231
 msgid "If a donor account exists for that email, a verification link has been sent."
 msgstr "Si existe una cuenta de donante para ese correo electrónico, se ha enviado un enlace de verificación."
 
-#: src/Rest/Endpoints/DonorAuthEndpoint.php:295
+#: src/Rest/Endpoints/DonorAuthEndpoint.php:290
 msgid "If an account exists for that email, a password reset link has been sent."
 msgstr "Si existe una cuenta para ese correo electrónico, se ha enviado un enlace para restablecer la contraseña."
 
-#: src/Rest/Endpoints/DonorAuthEndpoint.php:370
+#: src/Rest/Endpoints/DonorAuthEndpoint.php:365
 #: src/Rest/Traits/ResolveDonorTrait.php:31
 msgid "Donor record not found."
 msgstr "Registro de donante no encontrado."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:116
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:125
 msgid "That is already your email address."
 msgstr "Esa ya es tu dirección de correo electrónico."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:126
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:298
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:135
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:306
 msgid "This email is already associated with another account."
 msgstr "Este correo electrónico ya está asociado a otra cuenta."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:136
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:308
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:145
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:316
 msgid "This email is already in use."
 msgstr "Este correo electrónico ya está en uso."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:167
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:175
 msgid "Email change verification is disabled."
 msgstr "La verificación de cambio de correo electrónico está desactivada."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:206
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:214
 msgid "Verification email sent. Check your inbox."
 msgstr "Correo electrónico de verificación enviado. Revisa tu bandeja de entrada."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:231
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:242
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:259
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:239
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:250
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:267
 msgid "This verification link is invalid or has expired."
 msgstr "Este enlace de verificación no es válido o ha caducado."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:251
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:259
 msgid "This verification link has expired. Please request a new one."
 msgstr "Este enlace de verificación ha caducado. Solicita uno nuevo."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:287
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:295
 msgid "No pending email change found."
 msgstr "No se ha encontrado ningún cambio de correo electrónico pendiente."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:335
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:343
 msgid "Email address updated. Please sign in with your new email."
 msgstr "Dirección de correo electrónico actualizada. Inicia sesión con tu nuevo correo electrónico."
 
-#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:354
+#: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:362
 msgid "Email change cancelled."
 msgstr "Cambio de correo electrónico cancelado."
 
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:202
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:247
-msgid "This subscription cannot be cancelled."
-msgstr "Esta suscripción no se puede cancelar."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:210
-msgid "Failed to cancel subscription. Please try again."
-msgstr "No se ha podido cancelar la suscripción. Inténtalo de nuevo."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:240
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:292
+#: src/Models/Subscription.php:555
 msgid "Only active subscriptions can be paused."
 msgstr "Solo se pueden pausar las suscripciones activas."
 
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:248
-msgid "Failed to pause subscription. Please try again."
-msgstr "No se ha podido pausar la suscripción. Inténtalo de nuevo."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:278
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:335
+#: src/Models/Subscription.php:556
 msgid "Only paused subscriptions can be resumed."
 msgstr "Solo se pueden reanudar las suscripciones pausadas."
 
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:286
-msgid "Failed to resume subscription. Please try again."
-msgstr "No se ha podido reanudar la suscripción. Inténtalo de nuevo."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:316
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:387
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:426
+#: src/Models/Subscription.php:557
 msgid "Only active or paused subscriptions can be updated."
 msgstr "Solo se pueden actualizar las suscripciones activas o pausadas."
 
 #. translators: %s: formatted minimum amount (e.g. "$1.00")
 #. translators: %s: formatted minimum amount
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:333
-#: src/Rest/Traits/MinimumAmountTrait.php:48
-#: src/Rest/Traits/MinimumAmountTrait.php:79
+#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:285
+#: src/Rest/Traits/MinimumAmountTrait.php:52
+#: src/Rest/Traits/MinimumAmountTrait.php:83
 #, php-format
 msgid "Donation amount must be at least %s."
 msgstr "El importe de la donación debe ser de al menos %s."
 
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:355
+#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:307
 msgid "Tip amount cannot be negative."
 msgstr "El importe de la propina no puede ser negativo."
 
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:363
-msgid "Failed to update subscription amount. Please try again."
-msgstr "No se ha podido actualizar el importe de la suscripción. Inténtalo de nuevo."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:397
-msgid "Failed to initialize payment update. Please try again."
-msgstr "No se ha podido inicializar la actualización del pago. Inténtalo de nuevo."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:436
-msgid "Failed to update payment method. Please try again."
-msgstr "No se ha podido actualizar el método de pago. Inténtalo de nuevo."
-
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:469
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:219
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:239
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:284
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:327
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:370
+#: src/Rest/RestErrors.php:54
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:356
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:357
 msgid "Subscription not found."
 msgstr "Suscripción no encontrada."
 
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:477
+#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:399
 msgid "You do not have permission to manage this subscription."
 msgstr "No tienes permiso para gestionar esta suscripción."
 
@@ -3508,208 +3436,193 @@ msgstr "No tienes permiso para gestionar esta suscripción."
 msgid "No completed transactions found for this year."
 msgstr "No se han encontrado transacciones completadas para este año."
 
-#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:256
+#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:252
 msgid "You do not have permission to access this transaction."
 msgstr "No tienes permiso para acceder a esta transacción."
 
-#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:264
+#: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:260
 msgid "Receipts are only available for completed transactions."
 msgstr "Los recibos solo están disponibles para transacciones completadas."
 
-#: src/Rest/Endpoints/DonorsEndpoint.php:109
+#: src/Rest/Endpoints/DonorsEndpoint.php:108
 msgid "You do not have permission to view donors."
 msgstr "No tienes permiso para ver los donantes."
 
-#: src/Rest/Endpoints/DonorsEndpoint.php:185
-#: src/Rest/Endpoints/DonorsEndpoint.php:205
+#: src/Rest/RestErrors.php:36
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/DonorDetail.js:108
 msgid "Donor not found."
 msgstr "Donante no encontrado."
 
-#: src/Rest/Endpoints/DonorsEndpoint.php:229
-#: src/Rest/Endpoints/DonorsEndpoint.php:274
+#: src/Rest/Endpoints/DonorsEndpoint.php:215
+#: src/Rest/Endpoints/DonorsEndpoint.php:260
 msgid "A donor with this email address already exists."
 msgstr "Ya existe un donante con esta dirección de correo electrónico."
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:53
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:67
 msgid "Thank you for your {amount} donation"
 msgstr "Gracias por tu donación de {amount}"
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:54
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:68
 msgid "Thank you for your {amount} {frequency} donation"
 msgstr "Gracias por tu donación {frequency} de {amount}"
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:55
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:69
 msgid "Thank you for your {frequency} gift of {amount}"
 msgstr "Gracias por tu donativo {frequency} de {amount}"
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:62
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:76
 msgid "A donation has been made {tribute_type_label} {honoree_name}"
 msgstr "Se ha realizado una donación {tribute_type_label} {honoree_name}"
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:99
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:106
 msgid "You do not have permission to view email templates."
 msgstr "No tienes permiso para ver las plantillas de correo electrónico."
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:119
-#: src/Rest/Endpoints/EmailTestEndpoint.php:133
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:121
+#: src/Rest/Endpoints/EmailTestEndpoint.php:127
 msgid "Unknown email type."
 msgstr "Tipo de correo electrónico desconocido."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:112
+#: src/Rest/Endpoints/EmailTestEndpoint.php:111
 msgid "You do not have permission to send test emails."
 msgstr "No tienes permiso para enviar correos electrónicos de prueba."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:160
+#: src/Rest/Endpoints/EmailTestEndpoint.php:154
 msgid "Failed to render email template."
 msgstr "No se ha podido generar la plantilla de correo electrónico."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:170
+#: src/Rest/Endpoints/EmailTestEndpoint.php:164
 msgid "Failed to send test email. Check your mail configuration."
 msgstr "No se ha podido enviar el correo electrónico de prueba. Comprueba la configuración de tu correo."
 
-#: src/Rest/Endpoints/ExportEndpoint.php:109
+#: src/Rest/Endpoints/ExportEndpoint.php:101
 msgid "You do not have permission to export data."
 msgstr "No tienes permiso para exportar datos."
 
-#: src/Rest/Endpoints/ExportEndpoint.php:175
-#: src/Rest/Endpoints/ExportEndpoint.php:206
+#: src/Rest/Endpoints/ExportEndpoint.php:162
+#: src/Rest/Endpoints/ExportEndpoint.php:201
 msgid "Invalid export format."
 msgstr "Formato de exportación no válido."
 
-#: src/Rest/Endpoints/ExportEndpoint.php:214
+#: src/Rest/Endpoints/ExportEndpoint.php:209
 msgid "ZIP support is not available on this server."
 msgstr "La compatibilidad con ZIP no está disponible en este servidor."
 
-#: src/Rest/Endpoints/ExportEndpoint.php:229
+#: src/Rest/Endpoints/ExportEndpoint.php:224
 msgid "Failed to create ZIP file."
 msgstr "No se ha podido crear el archivo ZIP."
 
-#: src/Rest/Endpoints/ExportEndpoint.php:370
+#: src/Rest/Endpoints/ExportEndpoint.php:322
 msgid "Invalid export type. Must be one of: donors, transactions, campaigns, subscriptions, tributes."
 msgstr "Tipo de exportación no válido. Debe ser uno de: donantes, transacciones, campañas, suscripciones, dedicatorias."
 
-#: src/Rest/Endpoints/NotesEndpoint.php:110
+#: src/Rest/Endpoints/NotesEndpoint.php:104
 msgid "You do not have permission to manage notes."
 msgstr "No tienes permiso para gestionar las notas."
 
-#: src/Rest/Endpoints/NotesEndpoint.php:171
+#: src/Rest/Endpoints/NotesEndpoint.php:160
 msgid "Note content cannot be empty."
 msgstr "El contenido de la nota no puede estar vacío."
 
-#: src/Rest/Endpoints/NotesEndpoint.php:207
+#: src/Rest/RestErrors.php:81
 msgid "Note not found."
 msgstr "Nota no encontrada."
 
-#: src/Rest/Endpoints/NotesEndpoint.php:230
+#: src/Rest/Endpoints/NotesEndpoint.php:215
 msgid "Invalid object type."
 msgstr "Tipo de objeto no válido."
 
 #. translators: %s: object type (e.g. "transaction", "donor")
-#: src/Rest/Endpoints/NotesEndpoint.php:241
+#: src/Rest/Endpoints/NotesEndpoint.php:226
 #, php-format
 msgid "%s not found."
 msgstr "%s no encontrado."
 
 #: src/Rest/Endpoints/DeactivationSurveyEndpoint.php:86
-#: src/Rest/Endpoints/ReviewBannerEndpoint.php:69
-#: src/Rest/Endpoints/SystemStatusEndpoint.php:66
+#: src/Rest/Traits/AdminPermissionTrait.php:42
 msgid "You do not have permission to perform this action."
 msgstr "No tienes permiso para realizar esta acción."
 
 #: src/Rest/Endpoints/SettingsEndpoint.php:76
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:112
+#: src/Rest/Endpoints/StripeConnectEndpoint.php:102
 msgid "You do not have permission to manage settings."
 msgstr "No tienes permiso para gestionar los ajustes."
 
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:159
+#: src/Rest/Endpoints/StripeConnectEndpoint.php:144
 msgid "Stripe connection failed."
 msgstr "Error en la conexión con Stripe."
 
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:222
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:232
+#: src/Rest/Endpoints/StripeConnectEndpoint.php:207
+#: src/Rest/Endpoints/StripeConnectEndpoint.php:217
 msgid "Stripe connected but webhook registration failed. Please try reconnecting."
 msgstr "Stripe se ha conectado, pero el registro del webhook ha fallado. Inténtalo de nuevo volviendo a conectar."
 
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:266
-#: src/Rest/Endpoints/StripeConnectEndpoint.php:289
+#: src/Rest/RestErrors.php:90
 msgid "Stripe account not found."
 msgstr "Cuenta de Stripe no encontrada."
 
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:168
+#: src/Rest/Endpoints/SubscriptionsEndpoint.php:147
 msgid "You do not have permission to manage subscriptions."
 msgstr "No tienes permiso para gestionar las suscripciones."
 
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:257
-msgid "Failed to cancel subscription on Stripe."
-msgstr "No se ha podido cancelar la suscripción en Stripe."
-
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:300
-msgid "Failed to pause subscription on Stripe."
-msgstr "No se ha podido pausar la suscripción en Stripe."
-
-#: src/Rest/Endpoints/SubscriptionsEndpoint.php:343
-msgid "Failed to resume subscription on Stripe."
-msgstr "No se ha podido reanudar la suscripción en Stripe."
-
-#: src/Rest/Endpoints/SystemStatusEndpoint.php:137
-#: src/Rest/Endpoints/SystemStatusEndpoint.php:157
+#: src/Rest/Endpoints/SystemStatusEndpoint.php:122
+#: src/Rest/Endpoints/SystemStatusEndpoint.php:142
 msgid "Unknown"
 msgstr "Desconocido"
 
-#: src/Rest/Endpoints/SystemStatusEndpoint.php:164
+#: src/Rest/Endpoints/SystemStatusEndpoint.php:149
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/tools/StatusPanel.js:435
 msgid "Not available"
 msgstr "No disponible"
 
-#: src/Rest/Endpoints/TransactionHistoryEndpoint.php:67
+#: src/Rest/Endpoints/TransactionHistoryEndpoint.php:57
 msgid "You do not have permission to view transaction history."
 msgstr "No tienes permiso para ver el historial de transacciones."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:207
+#: src/Rest/Endpoints/TransactionsEndpoint.php:183
 msgid "You do not have permission to view transactions."
 msgstr "No tienes permiso para ver las transacciones."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:749
+#: src/Rest/Endpoints/TransactionsEndpoint.php:620
 msgid "Only completed transactions can be refunded."
 msgstr "Solo se pueden reembolsar las transacciones completadas."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:757
+#: src/Rest/Endpoints/TransactionsEndpoint.php:628
 msgid "This transaction has no payment gateway ID and cannot be refunded."
 msgstr "Esta transacción no tiene un ID de pasarela de pago y no se puede reembolsar."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:768
+#: src/Rest/Endpoints/TransactionsEndpoint.php:639
 msgid "Refund amount exceeds the refundable balance."
 msgstr "El importe del reembolso supera el saldo reembolsable."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:778
+#: src/Rest/Endpoints/TransactionsEndpoint.php:649
 msgid "Stripe is not connected. Please connect Stripe before issuing refunds."
 msgstr "Stripe no está conectado. Conecta Stripe antes de emitir reembolsos."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:818
-#: src/Rest/Endpoints/TransactionsEndpoint.php:827
+#: src/Rest/Endpoints/TransactionsEndpoint.php:688
+#: src/Rest/Endpoints/TransactionsEndpoint.php:697
 msgid "Failed to process refund. Please try again."
 msgstr "No se ha podido procesar el reembolso. Inténtalo de nuevo."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:881
+#: src/Rest/Endpoints/TransactionsEndpoint.php:744
 msgid "No donor associated with this transaction."
 msgstr "No hay ningún donante asociado a esta transacción."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:935
+#: src/Rest/Endpoints/TransactionsEndpoint.php:794
 msgid "This donor has no email address on file."
 msgstr "Este donante no tiene ninguna dirección de correo electrónico registrada."
 
-#: src/Rest/Endpoints/TransactionsEndpoint.php:978
+#: src/Rest/Endpoints/TransactionsEndpoint.php:837
 msgid "Failed to send receipt email. Please try again."
 msgstr "No se ha podido enviar el correo electrónico con el recibo. Inténtalo de nuevo."
 
-#: src/Rest/Endpoints/TributeEndpoint.php:65
+#: src/Rest/Endpoints/TributeEndpoint.php:63
 msgid "You do not have permission to manage tributes."
 msgstr "No tienes permiso para gestionar las dedicatorias."
 
-#: src/Rest/Endpoints/TributeEndpoint.php:151
+#: src/Rest/Endpoints/TributeEndpoint.php:136
 msgid "No tribute found on this transaction."
 msgstr "No se ha encontrado ninguna dedicatoria en esta transacción."
 
@@ -3922,7 +3835,7 @@ msgstr "Reemplazar"
 #: admin/src/components/onboarding/StepCampaign.js:237
 #: admin/src/pages/campaigns/CampaignCreateStepImage.js:66
 #: admin/src/pages/campaigns/tabs/EditPageTab.js:203
-#: admin/src/pages/tools/ImportPanel.js:807
+#: admin/src/pages/tools/ImportPanel.js:788
 #: admin/src/pages/transactions/DedicationSection.js:266
 msgid "Remove"
 msgstr "Eliminar"
@@ -4032,7 +3945,7 @@ msgstr "Ver"
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:98
 #: admin/src/pages/tools/WebhooksPanel.js:183
 #: admin/src/pages/tools/WebhooksPanel.js:461
-#: admin/src/pages/transactions/TransactionDetail.js:727
+#: admin/src/pages/transactions/TransactionDetail.js:728
 msgid "Delete"
 msgstr "Eliminar"
 
@@ -4047,7 +3960,7 @@ msgstr "¿Seguro que quieres eliminar esta campaña?"
 #: admin/src/pages/campaigns/CampaignList.js:437
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:77
 #: admin/src/pages/tools/WebhooksPanel.js:181
-#: admin/src/pages/transactions/TransactionDetail.js:706
+#: admin/src/pages/transactions/TransactionDetail.js:707
 msgid "This action cannot be undone."
 msgstr "Esta acción no se puede deshacer."
 
@@ -4136,126 +4049,116 @@ msgid "Edit Page"
 msgstr "Editar página"
 
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:32
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:223
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:66
-#: admin/src/pages/transactions/TransactionDetailsCard.js:17
-#: admin/src/pages/transactions/TransactionList.js:43
-#: admin/src/pages/transactions/TransactionList.js:324
+#: admin/src/constants.js:92
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:33
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:225
+#: admin/src/pages/transactions/TransactionList.js:44
+#: admin/src/pages/transactions/TransactionList.js:326
 msgid "Completed"
 msgstr "Completada"
 
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:37
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:219
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:8
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:30
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:39
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:72
-#: admin/src/pages/subscriptions/SubscriptionList.js:38
-#: admin/src/pages/subscriptions/SubscriptionList.js:271
+#: admin/src/constants.js:98
+#: admin/src/constants.js:131
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:38
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:221
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:28
+#: admin/src/pages/subscriptions/SubscriptionList.js:261
 #: admin/src/pages/tools/ExportPanel.js:275
-#: admin/src/pages/transactions/TransactionDetail.js:57
-#: admin/src/pages/transactions/TransactionDetailsCard.js:23
-#: admin/src/pages/transactions/TransactionList.js:48
-#: admin/src/pages/transactions/TransactionList.js:320
+#: admin/src/pages/transactions/TransactionDetail.js:58
+#: admin/src/pages/transactions/TransactionList.js:49
+#: admin/src/pages/transactions/TransactionList.js:322
 msgid "Pending"
 msgstr "Pendiente"
 
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:42
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:227
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:78
-#: admin/src/pages/transactions/TransactionDetailsCard.js:29
-#: admin/src/pages/transactions/TransactionList.js:53
-#: admin/src/pages/transactions/TransactionList.js:328
+#: admin/src/constants.js:104
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:43
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:229
+#: admin/src/pages/transactions/TransactionList.js:54
+#: admin/src/pages/transactions/TransactionList.js:330
 msgid "Refunded"
 msgstr "Reembolsada"
 
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:238
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:52
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:233
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:84
+#: admin/src/constants.js:116
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:53
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:237
 #: admin/src/pages/tools/migration/ProgressTimeline.js:32
-#: admin/src/pages/transactions/TransactionDetailsCard.js:41
-#: admin/src/pages/transactions/TransactionList.js:63
-#: admin/src/pages/transactions/TransactionList.js:336
+#: admin/src/pages/transactions/TransactionList.js:64
+#: admin/src/pages/transactions/TransactionList.js:338
 msgid "Failed"
 msgstr "Fallida"
 
 #: src/OutgoingWebhooks/WebhookEvents.php:65
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:255
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:256
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:260
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:261
 msgid "Campaign created"
 msgstr "Campaña creada"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:259
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:260
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:264
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:265
 msgid "First donation received"
 msgstr "Primera donación recibida"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:263
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:268
 msgid "25% milestone reached"
 msgstr "Hito del 25 % alcanzado"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:264
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:269
 msgid "25% milestone"
 msgstr "Hito del 25 %"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:267
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:272
 msgid "50% milestone reached"
 msgstr "Hito del 50 % alcanzado"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:268
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:273
 msgid "50% milestone"
 msgstr "Hito del 50 %"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:271
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:276
 msgid "75% milestone reached"
 msgstr "Hito del 75 % alcanzado"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:272
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:277
 msgid "75% milestone"
 msgstr "Hito del 75 %"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:275
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:276
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:280
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:281
 msgid "100% — Goal reached!"
 msgstr "100 % — ¡Meta alcanzada!"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:330
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:335
 msgid "more needed"
 msgstr "más por recaudar"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:418
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:423
 msgid "Donations to this campaign will appear here as they come in"
 msgstr "Las donaciones a esta campaña aparecerán aquí a medida que se reciban"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:445
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:450
 msgid "Milestones"
 msgstr "Hitos"
 
@@ -4522,209 +4425,209 @@ msgid "View all campaigns"
 msgstr "Ver todas las campañas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/dashboard/ActivityFeed.js:891
+#: admin/src/pages/dashboard/ActivityFeed.js:885
 msgid "Recent Activity"
 msgstr "Actividad reciente"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/dashboard/ActivityFeed.js:376
+#: admin/src/pages/dashboard/ActivityFeed.js:370
 msgid "<donor /> donated <amount /> to <campaign />"
 msgstr "<donor /> donó <amount /> a <campaign />"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/dashboard/ActivityFeed.js:389
+#: admin/src/pages/dashboard/ActivityFeed.js:383
 msgid "<donor /> donated <amount />"
 msgstr "<donor /> donó <amount />"
 
 #. translators: %s: formatted donation amount.
 #: admin/build/mission-admin.js:155
-#: admin/src/pages/dashboard/ActivityFeed.js:399
+#: admin/src/pages/dashboard/ActivityFeed.js:393
 #, js-format
 msgid "%s donation received"
 msgstr "Donación de %s recibida"
 
 #: admin/build/mission-admin.js:155
-#: admin/src/pages/dashboard/ActivityFeed.js:403
+#: admin/src/pages/dashboard/ActivityFeed.js:397
 msgid "Donation received"
 msgstr "Donación recibida"
 
 #: admin/build/mission-admin.js:155
-#: admin/src/pages/dashboard/ActivityFeed.js:413
+#: admin/src/pages/dashboard/ActivityFeed.js:407
 msgid "<donor />'s <amount /><suffix /> recurring donation was processed"
 msgstr "Se ha procesado la donación recurrente de <amount /><suffix /> de <donor />"
 
 #: admin/build/mission-admin.js:155
-#: admin/src/pages/dashboard/ActivityFeed.js:424
+#: admin/src/pages/dashboard/ActivityFeed.js:418
 msgid "Recurring donation processed"
 msgstr "Donación recurrente procesada"
 
 #: admin/build/mission-admin.js:155
-#: admin/src/pages/dashboard/ActivityFeed.js:436
+#: admin/src/pages/dashboard/ActivityFeed.js:430
 msgid "<amount /> refund processed for <donor />"
 msgstr "Se ha procesado un reembolso de <amount /> para <donor />"
 
 #. translators: %s: formatted refund amount.
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:449
+#: admin/src/pages/dashboard/ActivityFeed.js:443
 #, js-format
 msgid "%s refund processed"
 msgstr "Reembolso de %s procesado"
 
 #: admin/build/mission-admin.js:158
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:453
+#: admin/src/pages/dashboard/ActivityFeed.js:447
 #: admin/src/pages/settings/email-templates.js:209
 msgid "Refund processed"
 msgstr "Reembolso procesado"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:467
+#: admin/src/pages/dashboard/ActivityFeed.js:461
 msgid "<donor /> started a <amount /><suffix /> recurring donation to <campaign />"
 msgstr "<donor /> inició una donación recurrente de <amount /><suffix /> a <campaign />"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:481
+#: admin/src/pages/dashboard/ActivityFeed.js:475
 msgid "<donor /> started a <amount /><suffix /> recurring donation"
 msgstr "<donor /> inició una donación recurrente de <amount /><suffix />"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:492
+#: admin/src/pages/dashboard/ActivityFeed.js:486
 msgid "New recurring donation started"
 msgstr "Nueva donación recurrente iniciada"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:502
+#: admin/src/pages/dashboard/ActivityFeed.js:496
 msgid "<donor /> increased recurring donation to <amount /><suffix />"
 msgstr "<donor /> aumentó su donación recurrente a <amount /><suffix />"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:513
+#: admin/src/pages/dashboard/ActivityFeed.js:507
 msgid "Recurring donation amount increased"
 msgstr "Importe de la donación recurrente aumentado"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:526
+#: admin/src/pages/dashboard/ActivityFeed.js:520
 msgid "<donor /> decreased recurring donation to <amount /><suffix />"
 msgstr "<donor /> redujo su donación recurrente a <amount /><suffix />"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:537
+#: admin/src/pages/dashboard/ActivityFeed.js:531
 msgid "Recurring donation amount decreased"
 msgstr "Importe de la donación recurrente reducido"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:548
+#: admin/src/pages/dashboard/ActivityFeed.js:542
 msgid "<donor /> cancelled their recurring donation"
 msgstr "<donor /> canceló su donación recurrente"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:555
+#: admin/src/pages/dashboard/ActivityFeed.js:549
 msgid "Recurring donation cancelled"
 msgstr "Donación recurrente cancelada"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:563
+#: admin/src/pages/dashboard/ActivityFeed.js:557
 msgid "Recurring donation failed for <donor />"
 msgstr "La donación recurrente de <donor /> ha fallado"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:570
+#: admin/src/pages/dashboard/ActivityFeed.js:564
 msgid "Recurring donation failed"
 msgstr "Donación recurrente fallida"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:580
+#: admin/src/pages/dashboard/ActivityFeed.js:574
 msgid "New campaign <campaign /> was created"
 msgstr "Se ha creado la nueva campaña <campaign />"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:587
+#: admin/src/pages/dashboard/ActivityFeed.js:581
 msgid "New campaign created"
 msgstr "Nueva campaña creada"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:597
+#: admin/src/pages/dashboard/ActivityFeed.js:591
 msgid "<campaign /> campaign has ended"
 msgstr "La campaña <campaign /> ha finalizado"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:601
+#: admin/src/pages/dashboard/ActivityFeed.js:595
 msgid "Campaign has ended"
 msgstr "La campaña ha finalizado"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:612
+#: admin/src/pages/dashboard/ActivityFeed.js:606
 msgid "<campaign /> is <pct />% toward its goal"
 msgstr "<campaign /> ha alcanzado el <pct /> % de su meta"
 
 #: admin/build/mission-admin.js:158
-#: admin/src/pages/dashboard/ActivityFeed.js:622
+#: admin/src/pages/dashboard/ActivityFeed.js:616
 msgid "Campaign milestone reached"
 msgstr "Hito de campaña alcanzado"
 
 #. translators: %s: donor count toward goal.
 #: admin/build/mission-admin.js:161
-#: admin/src/pages/dashboard/ActivityFeed.js:640
+#: admin/src/pages/dashboard/ActivityFeed.js:634
 #, js-format
 msgid "%s donor"
 msgstr "%s donante"
 
 #. translators: %s: donation count toward goal.
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:646
+#: admin/src/pages/dashboard/ActivityFeed.js:640
 #, js-format
 msgid "%s donation"
 msgstr "%s donación"
 
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:655
+#: admin/src/pages/dashboard/ActivityFeed.js:649
 msgid "<campaign /> reached its <goal /> goal"
 msgstr "<campaign /> alcanzó su meta de <goal />"
 
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:667
+#: admin/src/pages/dashboard/ActivityFeed.js:661
 msgid "<campaign /> reached its goal"
 msgstr "<campaign /> alcanzó su meta"
 
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:671
+#: admin/src/pages/dashboard/ActivityFeed.js:665
 msgid "Campaign reached its goal"
 msgstr "La campaña alcanzó su meta"
 
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:675
+#: admin/src/pages/dashboard/ActivityFeed.js:669
 msgid "Mission plugin installed"
 msgstr "Plugin Mission instalado"
 
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:679
+#: admin/src/pages/dashboard/ActivityFeed.js:673
 msgid "Mission plugin activated"
 msgstr "Plugin Mission activado"
 
 #: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:683
+#: admin/src/pages/dashboard/ActivityFeed.js:677
 msgid "Mission plugin deactivated"
 msgstr "Plugin Mission desactivado"
 
 #. translators: %s: new plugin version (e.g. "1.2.0").
 #: admin/build/mission-admin.js:167
-#: admin/src/pages/dashboard/ActivityFeed.js:691
+#: admin/src/pages/dashboard/ActivityFeed.js:685
 #, js-format
 msgid "Mission plugin updated to %s"
 msgstr "Plugin Mission actualizado a %s"
 
 #: admin/build/mission-admin.js:167
-#: admin/src/pages/dashboard/ActivityFeed.js:695
+#: admin/src/pages/dashboard/ActivityFeed.js:689
 msgid "Mission plugin updated"
 msgstr "Plugin Mission actualizado"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:897
+#: admin/src/pages/dashboard/ActivityFeed.js:891
 msgid "No activity yet"
 msgstr "Aún no hay actividad"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:898
+#: admin/src/pages/dashboard/ActivityFeed.js:892
 msgid "Activity will appear here as donations come in."
 msgstr "La actividad aparecerá aquí a medida que lleguen las donaciones."
 
@@ -5075,9 +4978,9 @@ msgstr "frente a la semana pasada"
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/Dashboard.js:19
-#: admin/src/pages/subscriptions/SubscriptionList.js:387
-#: admin/src/pages/transactions/TransactionList.js:393
-#: admin/src/pages/transactions/TransactionList.js:400
+#: admin/src/pages/subscriptions/SubscriptionList.js:377
+#: admin/src/pages/transactions/TransactionList.js:395
+#: admin/src/pages/transactions/TransactionList.js:402
 msgid "vs last month"
 msgstr "frente al mes pasado"
 
@@ -5095,7 +4998,7 @@ msgstr "Últimos 30 días"
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:96
 #: admin/src/pages/donors/EditDonorDrawer.js:130
-#: admin/src/pages/transactions/AddDonationDrawer.js:312
+#: admin/src/pages/transactions/AddDonationDrawer.js:313
 msgid "Please enter a valid email address."
 msgstr "Introduce una dirección de correo electrónico válida."
 
@@ -5103,7 +5006,7 @@ msgstr "Introduce una dirección de correo electrónico válida."
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:120
 #: admin/src/pages/donors/EditDonorDrawer.js:152
-#: admin/src/pages/transactions/AddDonationDrawer.js:355
+#: admin/src/pages/transactions/AddDonationDrawer.js:356
 msgid "Please fix the errors below and try again."
 msgstr "Corrige los errores de abajo e inténtalo de nuevo."
 
@@ -5113,7 +5016,7 @@ msgstr "Corrige los errores de abajo e inténtalo de nuevo."
 #: admin/src/pages/donors/AddDonorDrawer.js:156
 #: admin/src/pages/donors/EditDonorDrawer.js:186
 #: admin/src/pages/tools/CleanupPanel.js:409
-#: admin/src/pages/transactions/AddDonationDrawer.js:395
+#: admin/src/pages/transactions/AddDonationDrawer.js:396
 msgid "Something went wrong."
 msgstr "Algo ha ido mal."
 
@@ -5133,7 +5036,7 @@ msgstr "Añadir donante"
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:268
 #: admin/src/pages/donors/EditDonorDrawer.js:303
-#: admin/src/pages/transactions/AddDonationDrawer.js:718
+#: admin/src/pages/transactions/AddDonationDrawer.js:719
 msgid "Address Line 1"
 msgstr "Dirección, línea 1"
 
@@ -5141,7 +5044,7 @@ msgstr "Dirección, línea 1"
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:275
 #: admin/src/pages/donors/EditDonorDrawer.js:311
-#: admin/src/pages/transactions/AddDonationDrawer.js:725
+#: admin/src/pages/transactions/AddDonationDrawer.js:726
 msgid "Address Line 2"
 msgstr "Dirección, línea 2"
 
@@ -5149,7 +5052,7 @@ msgstr "Dirección, línea 2"
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:299
 #: admin/src/pages/donors/EditDonorDrawer.js:337
-#: admin/src/pages/transactions/AddDonationDrawer.js:749
+#: admin/src/pages/transactions/AddDonationDrawer.js:750
 msgid "Select…"
 msgstr "Seleccionar…"
 
@@ -5224,21 +5127,19 @@ msgid "Donors will appear here once people start giving."
 msgstr "Los donantes aparecerán aquí cuando la gente empiece a donar."
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/donors/DonationHistoryTable.js:24
+#: admin/src/pages/donors/DonationHistoryTable.js:25
 msgid "No donations yet."
 msgstr "Aún no hay donaciones."
 
-#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:11
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:45
-#: admin/src/pages/subscriptions/SubscriptionList.js:41
-#: admin/src/pages/subscriptions/SubscriptionList.js:283
+#: admin/src/constants.js:137
+#: admin/src/pages/subscriptions/SubscriptionList.js:273
 msgid "Past Due"
 msgstr "Vencida"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/donors/DonorSubscriptionsCard.js:38
+#: admin/src/pages/donors/DonorSubscriptionsCard.js:24
 msgid "Created"
 msgstr "Creada"
 
@@ -5337,8 +5238,8 @@ msgstr "Donación media"
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:245
 #: admin/src/pages/donors/DonorDetail.js:223
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:436
-#: admin/src/pages/transactions/TransactionDetail.js:539
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:440
+#: admin/src/pages/transactions/TransactionDetail.js:540
 msgid "Internal Notes"
 msgstr "Notas internas"
 
@@ -5998,69 +5899,69 @@ msgstr "Correos electrónicos"
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:226
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/subscriptions/SubscriptionList.js:150
-#: admin/src/pages/tools/logs-utils.js:18
-#: admin/src/pages/transactions/TransactionDetail.js:30
+#: admin/src/pages/subscriptions/SubscriptionList.js:140
+#: admin/src/pages/tools/logs-utils.js:19
+#: admin/src/pages/transactions/TransactionDetail.js:31
 msgid "Subscription"
 msgstr "Suscripción"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:239
+#: admin/src/pages/subscriptions/SubscriptionList.js:229
 msgid "Next Renewal"
 msgstr "Próxima renovación"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:404
-#: admin/src/pages/subscriptions/SubscriptionList.js:461
+#: admin/src/pages/subscriptions/SubscriptionList.js:394
+#: admin/src/pages/subscriptions/SubscriptionList.js:451
 msgid "Manage recurring donations."
 msgstr "Gestiona las donaciones recurrentes."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:413
-#: admin/src/pages/subscriptions/SubscriptionList.js:467
+#: admin/src/pages/subscriptions/SubscriptionList.js:403
+#: admin/src/pages/subscriptions/SubscriptionList.js:457
 msgid "Monthly Recurring"
 msgstr "Recurrente mensual"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:417
-#: admin/src/pages/subscriptions/SubscriptionList.js:473
+#: admin/src/pages/subscriptions/SubscriptionList.js:407
+#: admin/src/pages/subscriptions/SubscriptionList.js:463
 msgid "Active Subscriptions"
 msgstr "Suscripciones activas"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:477
+#: admin/src/pages/subscriptions/SubscriptionList.js:467
 msgid "new this month"
 msgstr "nuevas este mes"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:424
-#: admin/src/pages/subscriptions/SubscriptionList.js:486
+#: admin/src/pages/subscriptions/SubscriptionList.js:414
+#: admin/src/pages/subscriptions/SubscriptionList.js:476
 msgid "Avg. Subscription"
 msgstr "Suscripción media"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:488
+#: admin/src/pages/subscriptions/SubscriptionList.js:478
 msgid "Per month"
 msgstr "Al mes"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:428
-#: admin/src/pages/subscriptions/SubscriptionList.js:492
+#: admin/src/pages/subscriptions/SubscriptionList.js:418
+#: admin/src/pages/subscriptions/SubscriptionList.js:482
 msgid "Churned"
 msgstr "Canceladas"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:496
+#: admin/src/pages/subscriptions/SubscriptionList.js:486
 msgid "/mo lost"
 msgstr "/mes perdidos"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:437
+#: admin/src/pages/subscriptions/SubscriptionList.js:427
 msgid "No subscriptions yet"
 msgstr "Todavía no hay suscripciones"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionList.js:441
+#: admin/src/pages/subscriptions/SubscriptionList.js:431
 msgid "Recurring donations will appear here once donors subscribe."
 msgstr "Las donaciones recurrentes aparecerán aquí cuando los donantes se suscriban."
 
@@ -6107,7 +6008,7 @@ msgstr "Marcar como enviada"
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/transactions/DedicationSection.js:244
-#: admin/src/pages/transactions/TransactionList.js:345
+#: admin/src/pages/transactions/TransactionList.js:347
 msgid "Dedication"
 msgstr "Dedicatoria"
 
@@ -6164,252 +6065,244 @@ msgid "No dedication on this donation"
 msgstr "No hay dedicatoria en esta donación"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:155
-#: admin/src/pages/transactions/TransactionDetailsCard.js:192
+#: admin/src/pages/transactions/TransactionDetailsCard.js:126
+#: admin/src/pages/transactions/TransactionDetailsCard.js:163
 msgid "No campaign"
 msgstr "Sin campaña"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:173
+#: admin/src/pages/transactions/TransactionDetailsCard.js:144
 msgid "Search campaigns…"
 msgstr "Buscar campañas…"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:216
+#: admin/src/pages/transactions/TransactionDetailsCard.js:187
 msgid "No results"
 msgstr "Sin resultados"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:279
+#: admin/src/pages/transactions/TransactionDetailsCard.js:250
 msgid "Transaction Details"
 msgstr "Detalles de la transacción"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:387
-#: admin/src/pages/transactions/TransactionDetailsCard.js:318
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:315
+#: admin/src/pages/transactions/TransactionDetailsCard.js:289
 msgid "Payment method"
 msgstr "Método de pago"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:392
-#: admin/src/pages/transactions/TransactionDetailsCard.js:322
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:320
+#: admin/src/pages/transactions/TransactionDetailsCard.js:293
 msgid "Billing address"
 msgstr "Dirección de facturación"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:382
+#: admin/src/pages/transactions/TransactionDetailsCard.js:353
 msgid "Payment Breakdown"
 msgstr "Desglose del pago"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:434
-#: admin/src/pages/transactions/TransactionDetailsCard.js:388
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:362
+#: admin/src/pages/transactions/TransactionDetailsCard.js:359
 msgid "Donation amount"
 msgstr "Importe de la donación"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:395
+#: admin/src/pages/transactions/TransactionDetailsCard.js:366
 msgid "Processing fee"
 msgstr "Comisión de procesamiento"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:397
+#: admin/src/pages/transactions/TransactionDetailsCard.js:368
 msgid "Stripe fees deducted from this payment"
 msgstr "Comisiones de Stripe deducidas de este pago"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:419
+#: admin/src/pages/transactions/TransactionDetailsCard.js:390
 msgid "Fee recovered"
 msgstr "Comisión recuperada"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:463
-#: admin/src/pages/transactions/TransactionDetailsCard.js:421
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:391
+#: admin/src/pages/transactions/TransactionDetailsCard.js:392
 msgid "The donor covered processing fees so you receive the full donation."
 msgstr "El donante cubrió las comisiones de procesamiento para que recibas la donación íntegra."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:443
+#: admin/src/pages/transactions/TransactionDetailsCard.js:414
 msgid "Mission tip"
 msgstr "Propina para Mission"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:445
+#: admin/src/pages/transactions/TransactionDetailsCard.js:416
 msgid "Optional tip from the donor to support the Mission platform. Doesn't affect your payout."
 msgstr "Propina opcional del donante para apoyar la plataforma Mission. No afecta a tu pago."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:509
-#: admin/src/pages/transactions/TransactionDetailsCard.js:474
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:437
+#: admin/src/pages/transactions/TransactionDetailsCard.js:445
 msgid "Net amount"
 msgstr "Importe neto"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:498
+#: admin/src/pages/transactions/TransactionDetailsCard.js:469
 msgid "Additional Info"
 msgstr "Información adicional"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:522
+#: admin/src/pages/transactions/TransactionDetailsCard.js:493
 msgid "No additional info"
 msgstr "Sin información adicional"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:526
-#: admin/src/pages/transactions/TransactionDetailsCard.js:563
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:454
+#: admin/src/pages/transactions/TransactionDetailsCard.js:534
 msgid "Payment Data"
 msgstr "Datos del pago"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:569
+#: admin/src/pages/transactions/TransactionDetailsCard.js:540
 msgid "Payment gateway"
 msgstr "Pasarela de pago"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:574
+#: admin/src/pages/transactions/TransactionDetailsCard.js:545
 msgid "Stripe payment"
 msgstr "Pago con Stripe"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:549
-#: admin/src/pages/transactions/TransactionDetailsCard.js:592
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:477
+#: admin/src/pages/transactions/TransactionDetailsCard.js:563
 msgid "Stripe customer"
 msgstr "Cliente de Stripe"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:565
-#: admin/src/pages/transactions/TransactionDetailsCard.js:610
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:493
+#: admin/src/pages/transactions/TransactionDetailsCard.js:581
 msgid "Source"
 msgstr "Origen"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:575
-#: admin/src/pages/transactions/TransactionDetailsCard.js:620
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:503
+#: admin/src/pages/transactions/TransactionDetailsCard.js:591
 msgid "View page"
 msgstr "Ver página"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/transactions/TransactionDetailsCard.js:631
+#: admin/src/pages/transactions/TransactionDetailsCard.js:602
 msgid "IP address"
 msgstr "Dirección IP"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:586
-#: admin/src/pages/transactions/TransactionDetailsCard.js:641
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:514
+#: admin/src/pages/transactions/TransactionDetailsCard.js:612
 msgid "Mode"
 msgstr "Modo"
 
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:21
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:24
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:83
 msgid "/wk"
 msgstr "/sem"
 
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:22
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:25
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:84
 msgid "/mo"
 msgstr "/mes"
 
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:23
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:26
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:85
 msgid "/qtr"
 msgstr "/trim"
 
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:24
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:27
+#: admin/build/mission-admin.js:152
+#: admin/src/constants.js:86
 msgid "/yr"
 msgstr "/año"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:200
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:128
 msgid "Payment History"
 msgstr "Historial de pagos"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:203
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:131
 msgid "total"
 msgstr "total"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:334
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:262
 msgid "Subscription Details"
 msgstr "Detalles de la suscripción"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:428
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:356
 msgid "Fee Summary"
 msgstr "Resumen de comisiones"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:441
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:369
 msgid "Processing fees"
 msgstr "Comisiones de procesamiento"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:443
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:371
 msgid "Stripe fees deducted from payments"
 msgstr "Comisiones de Stripe deducidas de los pagos"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:461
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:389
 msgid "Fees recovered"
 msgstr "Comisiones recuperadas"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:481
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:409
 msgid "Mission tips"
 msgstr "Propinas de Mission"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:483
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:411
 msgid "Optional tips from the donor to support the Mission platform. Doesn't affect your payout."
 msgstr "Propinas opcionales del donante para apoyar la plataforma Mission. No afectan a tu pago."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:533
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:461
 msgid "Stripe subscription"
 msgstr "Suscripción de Stripe"
 
 #: src/OutgoingWebhooks/WebhookEvents.php:35
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:16
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:129
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:10
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:123
 msgid "Subscription created"
 msgstr "Suscripción creada"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:24
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:18
 msgid "Subscription paused"
 msgstr "Suscripción pausada"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:25
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:19
 msgid "Subscription resumed"
 msgstr "Suscripción reanudada"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:29
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:23
 msgid "Payment received"
 msgstr "Pago recibido"
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:30
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:24
 msgid "Payment method updated"
 msgstr "Método de pago actualizado"
 
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:34
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:121
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:28
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:115
 #: admin/src/pages/transactions/TransactionActivityCard.js:10
 #: admin/src/pages/transactions/TransactionActivityCard.js:146
 msgid "Payment completed"
@@ -6417,147 +6310,147 @@ msgstr "Pago completado"
 
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:36
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:30
 #: admin/src/pages/transactions/TransactionActivityCard.js:16
 msgid "Status changed"
 msgstr "Estado cambiado"
 
 #. translators: 1: old amount with frequency, 2: new amount with frequency
 #: admin/build/mission-admin.js:194
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:74
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:68
 #, js-format
 msgid "Amount increased from %1$s to %2$s"
 msgstr "Importe aumentado de %1$s a %2$s"
 
 #. translators: 1: old amount with frequency, 2: new amount with frequency
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:86
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:80
 #, js-format
 msgid "Amount decreased from %1$s to %2$s"
 msgstr "Importe reducido de %1$s a %2$s"
 
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:169
+#: admin/src/pages/subscriptions/SubscriptionActivityCard.js:163
 #: admin/src/pages/transactions/TransactionActivityCard.js:205
 msgid "Activity"
 msgstr "Actividad"
 
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:63
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:61
 #: admin/src/pages/tools/WebhooksPanel.js:147
 #: admin/src/pages/tools/WebhooksPanel.js:341
-#: admin/src/pages/transactions/TransactionDetail.js:94
+#: admin/src/pages/transactions/TransactionDetail.js:95
 msgid "Actions"
 msgstr "Acciones"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:99
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:97
 msgid "Resume Subscription"
 msgstr "Reanudar suscripción"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:122
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:448
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:478
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:120
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:452
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:482
 msgid "Pause Subscription"
 msgstr "Pausar suscripción"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:146
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:487
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:514
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:144
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:491
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:518
 msgid "Cancel Subscription"
 msgstr "Cancelar suscripción"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:187
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:185
 msgid "Failed to load subscription."
 msgstr "No se pudo cargar la suscripción."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:352
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:380
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:353
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:384
 msgid "Back to Subscriptions"
 msgstr "Volver a suscripciones"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:264
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:265
 msgid "Subscription resumed."
 msgstr "Suscripción reanudada."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:272
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:273
 msgid "Failed to resume subscription."
 msgstr "No se pudo reanudar la suscripción."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:417
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:421
 msgid "payment"
 msgstr "pago"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:418
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:422
 msgid "payments"
 msgstr "pagos"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:288
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:318
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:289
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:319
 msgid "Subscription updated."
 msgstr "Suscripción actualizada."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:297
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:327
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:298
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:328
 msgid "Failed to update subscription."
 msgstr "No se pudo actualizar la suscripción."
 
 #: admin/build/mission-admin.js:195
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:437
-#: admin/src/pages/transactions/TransactionDetail.js:540
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:441
+#: admin/src/pages/transactions/TransactionDetail.js:541
 msgid "Only visible to your team."
 msgstr "Solo visible para tu equipo."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:454
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:458
 msgid "Pausing will stop future renewal charges until the subscription is resumed. The donor will not be charged during this time."
 msgstr "Al pausar se detendrán los cargos de renovación futuros hasta que se reanude la suscripción. Al donante no se le cobrará durante este tiempo."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:465
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:469
 msgid "Keep Active"
 msgstr "Mantener activa"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:236
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:237
 msgid "Subscription paused."
 msgstr "Suscripción pausada."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:244
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:245
 msgid "Failed to pause subscription."
 msgstr "No se pudo pausar la suscripción."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:493
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:497
 msgid "Are you sure you want to cancel this subscription? This will also cancel the subscription on Stripe."
 msgstr "¿Seguro que quieres cancelar esta suscripción? Esto también cancelará la suscripción en Stripe."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:504
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:508
 msgid "Keep Subscription"
 msgstr "Mantener suscripción"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:209
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:207
 msgid "Subscription cancelled."
 msgstr "Suscripción cancelada."
 
 #: admin/build/mission-admin.js:195
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:217
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:215
 msgid "Failed to cancel subscription."
 msgstr "No se pudo cancelar la suscripción."
 
@@ -6952,7 +6845,7 @@ msgstr "Recibe un aviso cuando se publique"
 
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/tools/ExportPanel.js:21
-#: admin/src/pages/tools/ImportPanel.js:21
+#: admin/src/pages/tools/ImportPanel.js:32
 msgid "Dedications"
 msgstr "Dedicatorias"
 
@@ -6968,7 +6861,7 @@ msgstr "Descarga tus datos de Mission como un archivo."
 
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/tools/ExportPanel.js:157
-#: admin/src/pages/tools/ImportPanel.js:518
+#: admin/src/pages/tools/ImportPanel.js:499
 msgid "Data type"
 msgstr "Tipo de datos"
 
@@ -7040,44 +6933,44 @@ msgid "Download ZIP"
 msgstr "Descargar ZIP"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:5
+#: admin/src/pages/tools/logs-utils.js:6
 msgid "All levels"
 msgstr "Todos los niveles"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:6
+#: admin/src/pages/tools/logs-utils.js:7
 msgid "Info"
 msgstr "Información"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:7
+#: admin/src/pages/tools/logs-utils.js:8
 msgid "Warnings"
 msgstr "Avisos"
 
 #: admin/build/mission-admin.js:226
 #: admin/build/mission-admin.js:241
-#: admin/src/pages/tools/logs-utils.js:8
+#: admin/src/pages/tools/logs-utils.js:9
 #: admin/src/pages/tools/migration/MigrationReport.js:133
 msgid "Errors"
 msgstr "Errores"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:12
+#: admin/src/pages/tools/logs-utils.js:13
 msgid "All categories"
 msgstr "Todas las categorías"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:13
+#: admin/src/pages/tools/logs-utils.js:14
 msgid "Payment"
 msgstr "Pago"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:14
+#: admin/src/pages/tools/logs-utils.js:15
 msgid "Webhook"
 msgstr "Webhook"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/logs-utils.js:20
+#: admin/src/pages/tools/logs-utils.js:21
 msgid "System"
 msgstr "Sistema"
 
@@ -7494,128 +7387,128 @@ msgid "Cleanup"
 msgstr "Limpieza"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:143
+#: admin/src/pages/transactions/AddDonationDrawer.js:144
 msgid "Remove donor"
 msgstr "Quitar donante"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:299
+#: admin/src/pages/transactions/AddDonationDrawer.js:300
 msgid "Please select a donor."
 msgstr "Selecciona un donante."
 
 #: admin/build/mission-admin.js:244
 #: admin/build/mission-admin.js:247
-#: admin/src/pages/transactions/AddDonationDrawer.js:337
-#: admin/src/pages/transactions/TransactionDetail.js:631
+#: admin/src/pages/transactions/AddDonationDrawer.js:338
+#: admin/src/pages/transactions/TransactionDetail.js:632
 msgid "Please enter a valid amount."
 msgstr "Introduce un importe válido."
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:445
+#: admin/src/pages/transactions/AddDonationDrawer.js:446
 msgid "Save Donation"
 msgstr "Guardar donación"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:452
-#: admin/src/pages/transactions/TransactionList.js:609
+#: admin/src/pages/transactions/AddDonationDrawer.js:453
+#: admin/src/pages/transactions/TransactionList.js:611
 msgid "Add Donation"
 msgstr "Añadir donación"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:461
+#: admin/src/pages/transactions/AddDonationDrawer.js:462
 msgid "Test mode is active. This donation will be recorded as a test transaction."
 msgstr "El modo de pruebas está activo. Esta donación se registrará como una transacción de prueba."
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:491
+#: admin/src/pages/transactions/AddDonationDrawer.js:492
 msgid "Search by name or email…"
 msgstr "Buscar por nombre o correo electrónico…"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:510
+#: admin/src/pages/transactions/AddDonationDrawer.js:511
 msgid "No donors found."
 msgstr "No se han encontrado donantes."
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:530
+#: admin/src/pages/transactions/AddDonationDrawer.js:531
 msgid "Add a new donor"
 msgstr "Añadir un nuevo donante"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:619
+#: admin/src/pages/transactions/AddDonationDrawer.js:620
 msgid "Select an existing donor instead"
 msgstr "Seleccionar un donante existente en su lugar"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:687
+#: admin/src/pages/transactions/AddDonationDrawer.js:688
 msgid "Notes"
 msgstr "Notas"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:706
+#: admin/src/pages/transactions/AddDonationDrawer.js:707
 msgid "Billing Address"
 msgstr "Dirección de facturación"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/AddDonationDrawer.js:805
+#: admin/src/pages/transactions/AddDonationDrawer.js:806
 msgid "Send donation receipt email to donor"
 msgstr "Enviar el correo de recibo de donación al donante"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:352
+#: admin/src/pages/transactions/TransactionList.js:354
 msgid "Mail — pending"
 msgstr "Correo postal — pendiente"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:356
+#: admin/src/pages/transactions/TransactionList.js:358
 msgid "Mail — sent"
 msgstr "Correo postal — enviado"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:360
+#: admin/src/pages/transactions/TransactionList.js:362
 msgid "Email — sent"
 msgstr "Correo electrónico — enviado"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:364
+#: admin/src/pages/transactions/TransactionList.js:366
 msgid "Has dedication"
 msgstr "Tiene dedicatoria"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:414
+#: admin/src/pages/transactions/TransactionList.js:416
 msgid "refund"
 msgstr "reembolso"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:415
+#: admin/src/pages/transactions/TransactionList.js:417
 msgid "refunds"
 msgstr "reembolsos"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:538
-#: admin/src/pages/transactions/TransactionList.js:594
+#: admin/src/pages/transactions/TransactionList.js:540
+#: admin/src/pages/transactions/TransactionList.js:596
 msgid "View and manage all donations."
 msgstr "Consulta y gestiona todas las donaciones."
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:548
-#: admin/src/pages/transactions/TransactionList.js:615
+#: admin/src/pages/transactions/TransactionList.js:550
+#: admin/src/pages/transactions/TransactionList.js:617
 msgid "Total Revenue"
 msgstr "Ingresos totales"
 
 #: admin/build/mission-admin.js:244
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Dashboard.js:174
-#: admin/src/pages/transactions/TransactionList.js:552
-#: admin/src/pages/transactions/TransactionList.js:621
+#: admin/src/pages/transactions/TransactionList.js:554
+#: admin/src/pages/transactions/TransactionList.js:623
 msgid "Total Donations"
 msgstr "Total de donaciones"
 
 #: blocks/build/campaign-statistics/index.php:72
 #: blocks/src/campaign-statistics/index.php:72
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:556
-#: admin/src/pages/transactions/TransactionList.js:627
+#: admin/src/pages/transactions/TransactionList.js:558
+#: admin/src/pages/transactions/TransactionList.js:629
 #: blocks/build/campaign-statistics/index.js:1
 #: blocks/src/campaign-statistics/edit/Edit.js:58
 #: blocks/src/campaign-statistics/edit/Edit.js:83
@@ -7623,23 +7516,23 @@ msgid "Average Donation"
 msgstr "Donación media"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:629
+#: admin/src/pages/transactions/TransactionList.js:631
 msgid "Across all campaigns"
 msgstr "En todas las campañas"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:560
-#: admin/src/pages/transactions/TransactionList.js:636
+#: admin/src/pages/transactions/TransactionList.js:562
+#: admin/src/pages/transactions/TransactionList.js:638
 msgid "Refunds"
 msgstr "Reembolsos"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:569
+#: admin/src/pages/transactions/TransactionList.js:571
 msgid "No transactions yet"
 msgstr "Aún no hay transacciones"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionList.js:573
+#: admin/src/pages/transactions/TransactionList.js:575
 msgid "Transactions will appear here once donors start giving."
 msgstr "Las transacciones aparecerán aquí cuando los donantes empiecen a donar."
 
@@ -7693,164 +7586,164 @@ msgid "returned"
 msgstr "devuelto"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:35
+#: admin/src/pages/transactions/TransactionDetail.js:36
 msgid "This transaction is part of a recurring subscription."
 msgstr "Esta transacción forma parte de una suscripción recurrente."
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:45
+#: admin/src/pages/transactions/TransactionDetail.js:46
 msgid "View Subscription"
 msgstr "Ver suscripción"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:130
+#: admin/src/pages/transactions/TransactionDetail.js:131
 msgid "Resend Receipt"
 msgstr "Reenviar recibo"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:151
+#: admin/src/pages/transactions/TransactionDetail.js:152
 msgid "Refund"
 msgstr "Reembolsar"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:195
+#: admin/src/pages/transactions/TransactionDetail.js:196
 msgid "Export CSV"
 msgstr "Exportar CSV"
 
 #: admin/build/mission-admin.js:244
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:217
-#: admin/src/pages/transactions/TransactionDetail.js:695
+#: admin/src/pages/transactions/TransactionDetail.js:218
+#: admin/src/pages/transactions/TransactionDetail.js:696
 msgid "Delete Transaction"
 msgstr "Eliminar transacción"
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:261
+#: admin/src/pages/transactions/TransactionDetail.js:262
 msgid "Failed to load transaction."
 msgstr "No se ha podido cargar la transacción."
 
 #: admin/build/mission-admin.js:244
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:278
-#: admin/src/pages/transactions/TransactionDetail.js:317
-#: admin/src/pages/transactions/TransactionDetail.js:351
+#: admin/src/pages/transactions/TransactionDetail.js:279
+#: admin/src/pages/transactions/TransactionDetail.js:318
+#: admin/src/pages/transactions/TransactionDetail.js:352
 msgid "Transaction updated."
 msgstr "Transacción actualizada."
 
 #: admin/build/mission-admin.js:244
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:287
-#: admin/src/pages/transactions/TransactionDetail.js:330
-#: admin/src/pages/transactions/TransactionDetail.js:360
+#: admin/src/pages/transactions/TransactionDetail.js:288
+#: admin/src/pages/transactions/TransactionDetail.js:331
+#: admin/src/pages/transactions/TransactionDetail.js:361
 msgid "Failed to update transaction."
 msgstr "No se ha podido actualizar la transacción."
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/transactions/TransactionDetail.js:398
-#: admin/src/pages/transactions/TransactionDetail.js:416
+#: admin/src/pages/transactions/TransactionDetail.js:399
+#: admin/src/pages/transactions/TransactionDetail.js:417
 msgid "Back to Transactions"
 msgstr "Volver a transacciones"
 
 #. translators: %s: recipient email address
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:430
+#: admin/src/pages/transactions/TransactionDetail.js:431
 #, js-format
 msgid "Receipt sent to %s"
 msgstr "Recibo enviado a %s"
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:440
+#: admin/src/pages/transactions/TransactionDetail.js:441
 msgid "Failed to send receipt."
 msgstr "No se ha podido enviar el recibo."
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:521
+#: admin/src/pages/transactions/TransactionDetail.js:522
 msgid "Donor Notes"
 msgstr "Notas del donante"
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:522
+#: admin/src/pages/transactions/TransactionDetail.js:523
 msgid "Visible to the donor. Sent via email when added."
 msgstr "Visible para el donante. Se envía por correo electrónico al añadirla."
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:527
+#: admin/src/pages/transactions/TransactionDetail.js:528
 msgid "Send Note to Donor?"
 msgstr "¿Enviar la nota al donante?"
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:528
+#: admin/src/pages/transactions/TransactionDetail.js:529
 msgid "This note will be emailed to the donor. Are you sure you want to send it?"
 msgstr "Esta nota se enviará por correo electrónico al donante. ¿Seguro que quieres enviarla?"
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:532
+#: admin/src/pages/transactions/TransactionDetail.js:533
 msgid "Send Note"
 msgstr "Enviar nota"
 
 #: admin/build/mission-admin.js:245
-#: admin/src/pages/transactions/TransactionDetail.js:551
+#: admin/src/pages/transactions/TransactionDetail.js:552
 msgid "Refund Transaction"
 msgstr "Reembolsar transacción"
 
 #. translators: %s: formatted total amount
 #: admin/build/mission-admin.js:246
-#: admin/src/pages/transactions/TransactionDetail.js:559
+#: admin/src/pages/transactions/TransactionDetail.js:560
 #, js-format
 msgid "Original amount: %s"
 msgstr "Importe original: %s"
 
 #. translators: %s: already refunded amount
 #: admin/build/mission-admin.js:247
-#: admin/src/pages/transactions/TransactionDetail.js:566
+#: admin/src/pages/transactions/TransactionDetail.js:567
 #, js-format
 msgid "%s already refunded"
 msgstr "%s ya reembolsado"
 
 #: admin/build/mission-admin.js:247
-#: admin/src/pages/transactions/TransactionDetail.js:641
+#: admin/src/pages/transactions/TransactionDetail.js:642
 msgid "Amount exceeds refundable balance."
 msgstr "El importe supera el saldo reembolsable."
 
 #. translators: %s: refunded amount
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:665
+#: admin/src/pages/transactions/TransactionDetail.js:666
 #, js-format
 msgid "%s refunded successfully"
 msgstr "%s reembolsado correctamente"
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:675
+#: admin/src/pages/transactions/TransactionDetail.js:676
 msgid "Failed to process refund."
 msgstr "No se ha podido procesar el reembolso."
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:686
+#: admin/src/pages/transactions/TransactionDetail.js:687
 msgid "Process Refund"
 msgstr "Procesar reembolso"
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:701
+#: admin/src/pages/transactions/TransactionDetail.js:702
 msgid "Are you sure you want to delete transaction"
 msgstr "¿Seguro que quieres eliminar la transacción"
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:736
+#: admin/src/pages/transactions/TransactionDetail.js:737
 msgid "Change Status to Refunded?"
 msgstr "¿Cambiar el estado a reembolsado?"
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:745
+#: admin/src/pages/transactions/TransactionDetail.js:746
 msgid "This will only update the status on this record — it will not issue a refund through Stripe. The donor will not receive any money back."
 msgstr "Esto solo actualizará el estado de este registro: no se emitirá un reembolso a través de Stripe. El donante no recibirá ningún reembolso."
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:751
+#: admin/src/pages/transactions/TransactionDetail.js:752
 msgid "To process an actual refund, use the Refund action from the Actions menu or refund directly in your Stripe dashboard."
 msgstr "Para procesar un reembolso real, usa la acción Reembolsar del menú de acciones o reembolsa directamente desde tu panel de Stripe."
 
 #: admin/build/mission-admin.js:248
-#: admin/src/pages/transactions/TransactionDetail.js:772
+#: admin/src/pages/transactions/TransactionDetail.js:773
 msgid "Update Status Only"
 msgstr "Actualizar solo el estado"
 
@@ -9157,407 +9050,407 @@ msgstr "p. ej. 12-3456789"
 msgid "Charge ID"
 msgstr "ID de cargo"
 
-#: src/Import/ImportService.php:134
-#: src/Rest/Endpoints/ImportEndpoint.php:186
-#: src/Rest/Endpoints/ImportEndpoint.php:208
-#: src/Rest/Endpoints/ImportEndpoint.php:320
+#: src/Import/ImportService.php:151
+#: src/Rest/Endpoints/ImportEndpoint.php:152
+#: src/Rest/Endpoints/ImportEndpoint.php:174
+#: src/Rest/Endpoints/ImportEndpoint.php:286
 msgid "Unsupported import type."
 msgstr "Tipo de importación no compatible."
 
-#: src/Import/ImportService.php:138
+#: src/Import/ImportService.php:155
 msgid "File upload failed."
 msgstr "Error al subir el archivo."
 
-#: src/Import/ImportService.php:142
+#: src/Import/ImportService.php:159
 msgid "Uploaded file is not readable."
 msgstr "El archivo subido no se puede leer."
 
-#: src/Import/ImportService.php:146
+#: src/Import/ImportService.php:163
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:426
+#: admin/src/pages/tools/ImportPanel.js:407
 msgid "File exceeds the 10 MB limit."
 msgstr "El archivo supera el límite de 10 MB."
 
-#: src/Import/ImportService.php:154
-#: src/Import/ImportService.php:1833
+#: src/Import/ImportFileReader.php:242
+#: src/Import/ImportService.php:171
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:416
+#: admin/src/pages/tools/ImportPanel.js:397
 msgid "Only .csv and .json files are supported."
 msgstr "Solo se admiten archivos .csv y .json."
 
-#: src/Import/ImportService.php:165
+#: src/Import/ImportService.php:182
 msgid "No header row was detected in the file."
 msgstr "No se ha detectado ninguna fila de cabeceras en el archivo."
 
-#: src/Import/ImportService.php:238
+#: src/Import/ImportService.php:255
 msgid "Invalid duplicate strategy."
 msgstr "Estrategia de duplicados no válida."
 
-#: src/Import/ImportService.php:242
+#: src/Import/ImportService.php:259
 msgid "You must be signed in to start an import."
 msgstr "Debes acceder para iniciar una importación."
 
-#: src/Import/ImportService.php:248
+#: src/Import/ImportService.php:265
 msgid "The uploaded file has expired. Please upload it again."
 msgstr "El archivo subido ha caducado. Por favor, súbelo de nuevo."
 
-#: src/Import/ImportService.php:256
+#: src/Import/ImportService.php:273
 msgid "The uploaded file could not be read."
 msgstr "El archivo subido no se ha podido leer."
 
-#: src/Import/ImportService.php:260
+#: src/Import/ImportService.php:277
 msgid "This import type is not yet supported."
 msgstr "Este tipo de importación aún no es compatible."
 
-#: src/Import/ImportService.php:269
+#: src/Import/ImportService.php:286
 msgid "An import is already running for this data type. Resume or cancel it before starting another."
 msgstr "Ya hay una importación en curso para este tipo de datos. Reanúdala o cancélala antes de iniciar otra."
 
-#: src/Import/ImportService.php:428
 #: src/Import/ImportService.php:444
+#: src/Import/ImportService.php:460
 msgid "Import job not found."
 msgstr "No se ha encontrado la tarea de importación."
 
-#: src/Import/ImportService.php:570
+#: src/Import/ImportService.php:522
 msgid "Import file is no longer available."
 msgstr "El archivo de importación ya no está disponible."
 
-#: src/Import/ImportService.php:578
+#: src/Import/ImportService.php:530
 msgid "Unknown file format."
 msgstr "Formato de archivo desconocido."
 
 #. translators: %d: donor ID
-#: src/Import/ImportService.php:891
+#: src/Import/EntityResolver.php:70
 #, php-format
 msgid "No donor with ID %d."
 msgstr "No hay ningún donante con el ID %d."
 
-#: src/Import/ImportService.php:915
+#: src/Import/EntityResolver.php:94
 msgid "Row has no donor_email or donor_id."
 msgstr "La fila no tiene donor_email ni donor_id."
 
 #. translators: %s: donor email
-#: src/Import/ImportService.php:919
+#: src/Import/EntityResolver.php:98
 #, php-format
 msgid "No donor found for email \"%s\". Import donors first."
 msgstr "No se ha encontrado ningún donante con el correo electrónico «%s». Importa primero los donantes."
 
 #. translators: %d: campaign ID
-#: src/Import/ImportService.php:952
+#: src/Import/EntityResolver.php:131
 #, php-format
 msgid "No campaign with ID %d."
 msgstr "No hay ninguna campaña con el ID %d."
 
 #. translators: %s: campaign title
-#: src/Import/ImportService.php:980
+#: src/Import/EntityResolver.php:159
 #, php-format
 msgid "No campaign found with title \"%s\"."
 msgstr "No se ha encontrado ninguna campaña con el título «%s»."
 
 #. translators: %s: Charge ID (gateway transaction id)
-#: src/Import/ImportService.php:1650
+#: src/Import/EntityResolver.php:191
 #, php-format
 msgid "No transaction found for Charge ID \"%s\". Import transactions first."
 msgstr "No se ha encontrado ninguna transacción para el ID de cargo «%s». Importa primero las transacciones."
 
-#: src/Import/ImportService.php:1673
+#: src/Import/EntityResolver.php:214
 msgid "Row has no transaction_id or Charge ID."
 msgstr "La fila no tiene transaction_id ni ID de cargo."
 
 #. translators: %d: transaction ID
-#: src/Import/ImportService.php:1677
+#: src/Import/EntityResolver.php:218
 #, php-format
 msgid "No transaction with ID %d."
 msgstr "No hay ninguna transacción con el ID %d."
 
-#: src/Import/ImportService.php:1715
-#: src/Import/ImportService.php:1804
-#: src/Import/ImportService.php:1869
+#: src/Import/ImportFileReader.php:35
+#: src/Import/ImportFileReader.php:124
+#: src/Import/ImportFileReader.php:213
 msgid "Could not open the uploaded file."
 msgstr "No se ha podido abrir el archivo subido."
 
-#: src/Import/ImportService.php:1722
-#: src/Import/ImportService.php:1876
+#: src/Import/ImportFileReader.php:42
+#: src/Import/ImportFileReader.php:131
 msgid "The file appears to be empty."
 msgstr "El archivo parece estar vacío."
 
-#: src/Import/ImportService.php:1911
+#: src/Import/ImportFileReader.php:77
 msgid "Could not read the uploaded file."
 msgstr "No se ha podido leer el archivo subido."
 
-#: src/Import/ImportService.php:1917
+#: src/Import/ImportFileReader.php:83
 msgid "The JSON file is empty or malformed."
 msgstr "El archivo JSON está vacío o tiene un formato incorrecto."
 
-#: src/Import/ImportService.php:2332
+#: src/Import/ImportFileStorage.php:79
 msgid "Could not store the import file."
 msgstr "No se ha podido guardar el archivo de importación."
 
-#: src/Import/ImportService.php:2348
+#: src/Import/ImportFileStorage.php:123
 msgid "Uploads directory is not writable."
 msgstr "No se puede escribir en el directorio de subidas."
 
-#: src/Import/ImportService.php:2356
+#: src/Import/ImportFileStorage.php:131
 msgid "Could not create the import storage directory."
 msgstr "No se ha podido crear el directorio de almacenamiento de la importación."
 
 #. translators: %s: column name
-#: src/Import/Validators/RowValidator.php:57
+#: src/Import/Validators/RowValidator.php:62
 #, php-format
 msgid "Missing required value for \"%s\". Row will be skipped."
 msgstr "Falta el valor obligatorio de «%s». La fila se omitirá."
 
 #. translators: 1: column name, 2: invalid email value
-#: src/Import/Validators/RowValidator.php:82
+#: src/Import/Validators/RowValidator.php:87
 #, php-format
 msgid "Column \"%1$s\" has invalid email '%2$s'. Row will be skipped."
 msgstr "La columna «%1$s» tiene el correo electrónico no válido '%2$s'. La fila se omitirá."
 
 #. translators: %s: invalid status value
-#: src/Import/Validators/RowValidator.php:103
+#: src/Import/Validators/RowValidator.php:108
 #, php-format
 msgid "Status '%s' is not one of pending/completed/refunded/cancelled/failed. Row will be skipped."
 msgstr "El estado '%s' no es uno de pending/completed/refunded/cancelled/failed. La fila se omitirá."
 
 #. translators: %s: invalid status value
-#: src/Import/Validators/RowValidator.php:122
+#: src/Import/Validators/RowValidator.php:127
 #, php-format
 msgid "Status '%s' is not one of active/scheduled/ended. It will be set from the campaign dates."
 msgstr "El estado '%s' no es uno de active/scheduled/ended. Se establecerá a partir de las fechas de la campaña."
 
 #. translators: %s: invalid status value
-#: src/Import/Validators/RowValidator.php:144
+#: src/Import/Validators/RowValidator.php:156
 #, php-format
 msgid "Status '%s' is not one of pending/active/paused/cancelled. Row will be skipped."
 msgstr "El estado '%s' no es uno de pending/active/paused/cancelled. La fila se omitirá."
 
 #. translators: %s: invalid frequency value
-#: src/Import/Validators/RowValidator.php:161
+#: src/Import/Validators/RowValidator.php:173
 #, php-format
 msgid "Frequency '%s' is not one of weekly/monthly/quarterly/annually. Will default to monthly."
 msgstr "La frecuencia '%s' no es una de weekly/monthly/quarterly/annually. Se usará monthly por defecto."
 
-#: src/Import/Validators/RowValidator.php:176
+#: src/Import/Validators/RowValidator.php:188
 msgid "Active subscription has no Subscription ID, so it cannot renew automatically. It will be imported as a record only."
 msgstr "La suscripción activa no tiene ID de suscripción, por lo que no puede renovarse automáticamente. Se importará solo como un registro."
 
 #. translators: %s: invalid tribute type value
-#: src/Import/Validators/RowValidator.php:193
+#: src/Import/Validators/RowValidator.php:205
 #, php-format
 msgid "Type '%s' is not one of in_honor/in_memory. Will default to in_honor."
 msgstr "El tipo '%s' no es uno de in_honor/in_memory. Se usará in_honor por defecto."
 
 #. translators: %s: invalid email value
-#: src/Import/Validators/RowValidator.php:209
+#: src/Import/Validators/RowValidator.php:221
 #, php-format
 msgid "Notify email '%s' is not a valid email. It will be imported as-is; no notification is sent on import."
 msgstr "El correo electrónico de notificación '%s' no es válido. Se importará tal cual; no se envía ninguna notificación al importar."
 
 #. translators: 1: column name, 2: invalid value, 3: trailing sentence
-#: src/Import/Validators/RowValidator.php:239
+#: src/Import/Validators/RowValidator.php:251
 #, php-format
 msgid "Column \"%1$s\" has non-numeric value '%2$s'. %3$s"
 msgstr "La columna «%1$s» tiene el valor no numérico '%2$s'. %3$s"
 
-#: src/Import/Validators/RowValidator.php:243
-#: src/Import/Validators/RowValidator.php:317
+#: src/Import/Validators/RowValidator.php:255
+#: src/Import/Validators/RowValidator.php:329
 msgid "Row will be skipped."
 msgstr "La fila se omitirá."
 
-#: src/Import/Validators/RowValidator.php:244
+#: src/Import/Validators/RowValidator.php:256
 msgid "Will be imported as zero."
 msgstr "Se importará como cero."
 
 #. translators: 1: column name, 2: negative value, 3: trailing sentence
-#: src/Import/Validators/RowValidator.php:264
+#: src/Import/Validators/RowValidator.php:276
 #, php-format
 msgid "Column \"%1$s\" has negative value '%2$s'. %3$s"
 msgstr "La columna «%1$s» tiene el valor negativo '%2$s'. %3$s"
 
-#: src/Import/Validators/RowValidator.php:268
+#: src/Import/Validators/RowValidator.php:280
 msgid "Import refunds with the refunded status instead. Row will be skipped."
 msgstr "Importa los reembolsos con el estado refunded en su lugar. La fila se omitirá."
 
-#: src/Import/Validators/RowValidator.php:269
+#: src/Import/Validators/RowValidator.php:281
 msgid "It will be imported as a negative value."
 msgstr "Se importará como un valor negativo."
 
 #. translators: 1: column name, 2: ambiguous value
-#: src/Import/Validators/RowValidator.php:284
+#: src/Import/Validators/RowValidator.php:296
 #, php-format
 msgid "Column \"%1$s\" value '%2$s' may use a decimal comma. It will be read with the comma as a thousands separator; use a decimal point if that is wrong."
 msgstr "El valor '%2$s' de la columna «%1$s» puede usar una coma decimal. Se leerá con la coma como separador de miles; usa un punto decimal si no es correcto."
 
 #. translators: 1: column name, 2: invalid value, 3: trailing sentence
-#: src/Import/Validators/RowValidator.php:313
+#: src/Import/Validators/RowValidator.php:325
 #, php-format
 msgid "Column \"%1$s\" has unparseable date '%2$s'. %3$s"
 msgstr "La columna «%1$s» tiene la fecha no interpretable '%2$s'. %3$s"
 
-#: src/Import/Validators/RowValidator.php:318
+#: src/Import/Validators/RowValidator.php:330
 msgid "Will be left blank."
 msgstr "Se dejará en blanco."
 
 #. translators: %s: ISO currency code (e.g. "ISK")
-#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:345
-#: src/Rest/Traits/MinimumAmountTrait.php:60
+#: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:297
+#: src/Rest/Traits/MinimumAmountTrait.php:64
 #, php-format
 msgid "Donations in %s must be a whole number."
 msgstr "Las donaciones en %s deben ser un número entero."
 
-#: src/Rest/Endpoints/ImportEndpoint.php:169
+#: src/Rest/Endpoints/ImportEndpoint.php:140
 msgid "You do not have permission to import data."
 msgstr "No tienes permiso para importar datos."
 
-#: src/Rest/Endpoints/ImportEndpoint.php:236
+#: src/Rest/Endpoints/ImportEndpoint.php:202
 msgid "No file was uploaded."
 msgstr "No se ha subido ningún archivo."
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:28
+#: admin/src/pages/tools/ImportPanel.js:39
 msgid "Skip duplicates"
 msgstr "Omitir duplicados"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:29
+#: admin/src/pages/tools/ImportPanel.js:40
 msgid "If a matching record already exists, skip the imported row."
 msgstr "Si ya existe un registro coincidente, se omite la fila importada."
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:36
+#: admin/src/pages/tools/ImportPanel.js:47
 msgid "Update existing"
 msgstr "Actualizar existentes"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:37
+#: admin/src/pages/tools/ImportPanel.js:48
 msgid "If a match is found, update the existing record with the imported data."
 msgstr "Si se encuentra una coincidencia, se actualiza el registro existente con los datos importados."
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:372
+#: admin/src/pages/tools/ImportPanel.js:353
 msgid "The import could not be started."
 msgstr "No se ha podido iniciar la importación."
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:449
+#: admin/src/pages/tools/ImportPanel.js:430
 msgid "Could not validate the file."
 msgstr "No se ha podido validar el archivo."
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:493
+#: admin/src/pages/tools/ImportPanel.js:474
 msgid "Import Data"
 msgstr "Importar datos"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:496
+#: admin/src/pages/tools/ImportPanel.js:477
 msgid "Upload a CSV or JSON file to import data into Mission."
 msgstr "Sube un archivo CSV o JSON para importar datos a Mission."
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:540
+#: admin/src/pages/tools/ImportPanel.js:521
 msgid "Supported columns:"
 msgstr "Columnas compatibles:"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:550
+#: admin/src/pages/tools/ImportPanel.js:531
 msgid "Required:"
 msgstr "Obligatorias:"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:560
+#: admin/src/pages/tools/ImportPanel.js:541
 msgid "(donor_id may be used instead of donor_email)"
 msgstr "(donor_id puede usarse en lugar de donor_email)"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:569
+#: admin/src/pages/tools/ImportPanel.js:550
 msgid "(gateway_transaction_id / Charge ID may be used instead of transaction_id)"
 msgstr "(gateway_transaction_id / ID de cargo puede usarse en lugar de transaction_id)"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:618
+#: admin/src/pages/tools/ImportPanel.js:599
 msgid "Reading file…"
 msgstr "Leyendo el archivo…"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:619
+#: admin/src/pages/tools/ImportPanel.js:600
 msgid "Drag and drop your file here"
 msgstr "Arrastra y suelta tu archivo aquí"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:627
+#: admin/src/pages/tools/ImportPanel.js:608
 msgid "or"
 msgstr "o"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:637
+#: admin/src/pages/tools/ImportPanel.js:618
 msgid "Browse files"
 msgstr "Buscar archivos"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:642
+#: admin/src/pages/tools/ImportPanel.js:623
 msgid "Supports .csv and .json files up to 10MB"
 msgstr "Admite archivos .csv y .json de hasta 10 MB"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:660
+#: admin/src/pages/tools/ImportPanel.js:641
 msgid "Download Templates"
 msgstr "Descargar plantillas"
 
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/tools/ImportPanel.js:663
+#: admin/src/pages/tools/ImportPanel.js:644
 msgid "Need a template? Download a blank CSV with the correct column headers."
 msgstr "¿Necesitas una plantilla? Descarga un CSV en blanco con las cabeceras de columna correctas."
 
 #. translators: 1: new row count, 2: duplicate count, 3: data type
 #: admin/build/mission-admin.js:205
-#: admin/src/pages/tools/ImportPanel.js:723
+#: admin/src/pages/tools/ImportPanel.js:704
 #, js-format
 msgid "This will import %1$d new %3$s and skip %2$d duplicates. This action cannot be undone."
 msgstr "Esto importará %1$d %3$s y omitirá %2$d duplicados. Esta acción no se puede deshacer."
 
 #. translators: 1: new row count, 2: duplicate count, 3: data type
 #: admin/build/mission-admin.js:206
-#: admin/src/pages/tools/ImportPanel.js:734
+#: admin/src/pages/tools/ImportPanel.js:715
 #, js-format
 msgid "This will import %1$d new %3$s and update %2$d existing records. This action cannot be undone."
 msgstr "Esto importará %1$d %3$s y actualizará %2$d registros existentes. Esta acción no se puede deshacer."
 
 #. translators: %d: number of rows being skipped due to errors
 #: admin/build/mission-admin.js:207
-#: admin/src/pages/tools/ImportPanel.js:749
+#: admin/src/pages/tools/ImportPanel.js:730
 #, js-format
 msgid "%d row(s) with errors will be skipped."
 msgstr "Se omitirán %d fila(s) con errores."
 
 #: admin/build/mission-admin.js:207
-#: admin/src/pages/tools/ImportPanel.js:768
+#: admin/src/pages/tools/ImportPanel.js:749
 msgid "File Summary"
 msgstr "Resumen del archivo"
 
 #: admin/build/mission-admin.js:207
-#: admin/src/pages/tools/ImportPanel.js:771
+#: admin/src/pages/tools/ImportPanel.js:752
 msgid "Review the data before importing."
 msgstr "Revisa los datos antes de importar."
 
 #: admin/build/mission-admin.js:207
-#: admin/src/pages/tools/ImportPanel.js:819
+#: admin/src/pages/tools/ImportPanel.js:800
 msgid "rows detected"
 msgstr "filas detectadas"
 
 #: admin/build/mission-admin.js:207
-#: admin/src/pages/tools/ImportPanel.js:832
+#: admin/src/pages/tools/ImportPanel.js:813
 msgid "columns matched"
 msgstr "columnas coincidentes"
 
 #. translators: 1: error count, 2: warning count
 #: admin/build/mission-admin.js:208
-#: admin/src/pages/tools/ImportPanel.js:854
+#: admin/src/pages/tools/ImportPanel.js:835
 #, js-format
 msgid "%1$d error(s), %2$d warning(s)"
 msgstr "%1$d error(es), %2$d aviso(s)"
 
 #: admin/build/mission-admin.js:208
-#: admin/src/pages/tools/ImportPanel.js:861
+#: admin/src/pages/tools/ImportPanel.js:842
 msgid "warnings"
 msgstr "avisos"
 
@@ -9565,128 +9458,128 @@ msgstr "avisos"
 #: admin/build/mission-admin.js:209
 #: admin/build/mission-admin.js:211
 #: admin/build/mission-admin.js:225
-#: admin/src/pages/tools/ImportPanel.js:882
-#: admin/src/pages/tools/ImportPanel.js:912
-#: admin/src/pages/tools/ImportPanel.js:1513
+#: admin/src/pages/tools/ImportPanel.js:863
+#: admin/src/pages/tools/ImportPanel.js:893
+#: admin/src/pages/tools/ImportPanel.js:1486
 #, js-format
 msgid "Row %d:"
 msgstr "Fila %d:"
 
 #. translators: %d: number of additional errors
 #: admin/build/mission-admin.js:210
-#: admin/src/pages/tools/ImportPanel.js:896
+#: admin/src/pages/tools/ImportPanel.js:877
 #, js-format
 msgid "And %d more errors."
 msgstr "Y %d errores más."
 
 #. translators: %d: number of additional warnings
 #: admin/build/mission-admin.js:212
-#: admin/src/pages/tools/ImportPanel.js:926
+#: admin/src/pages/tools/ImportPanel.js:907
 #, js-format
 msgid "And %d more warnings."
 msgstr "Y %d avisos más."
 
 #. translators: 1: count, 2: type label
 #: admin/build/mission-admin.js:213
-#: admin/src/pages/tools/ImportPanel.js:942
+#: admin/src/pages/tools/ImportPanel.js:923
 #, js-format
 msgid "%1$d %2$s"
 msgstr "%1$d %2$s"
 
 #: admin/build/mission-admin.js:213
-#: admin/src/pages/tools/ImportPanel.js:948
+#: admin/src/pages/tools/ImportPanel.js:929
 msgid "already exist in your database (matched by Charge ID)"
 msgstr "ya existen en tu base de datos (coincidencia por ID de cargo)"
 
 #: admin/build/mission-admin.js:213
-#: admin/src/pages/tools/ImportPanel.js:953
+#: admin/src/pages/tools/ImportPanel.js:934
 msgid "already exist in your database (matched by title)"
 msgstr "ya existen en tu base de datos (coincidencia por título)"
 
 #: admin/build/mission-admin.js:213
-#: admin/src/pages/tools/ImportPanel.js:958
+#: admin/src/pages/tools/ImportPanel.js:939
 msgid "already exist in your database (matched by Subscription ID)"
 msgstr "ya existen en tu base de datos (coincidencia por ID de suscripción)"
 
 #: admin/build/mission-admin.js:213
-#: admin/src/pages/tools/ImportPanel.js:963
+#: admin/src/pages/tools/ImportPanel.js:944
 msgid "already exist in your database (matched by transaction)"
 msgstr "ya existen en tu base de datos (coincidencia por transacción)"
 
 #: admin/build/mission-admin.js:213
-#: admin/src/pages/tools/ImportPanel.js:968
+#: admin/src/pages/tools/ImportPanel.js:949
 msgid "already exist in your database (matched by email)"
 msgstr "ya existen en tu base de datos (coincidencia por correo electrónico)"
 
 #. translators: %d: number of rows
 #: admin/build/mission-admin.js:214
-#: admin/src/pages/tools/ImportPanel.js:982
+#: admin/src/pages/tools/ImportPanel.js:963
 #, js-format
 msgid "%d rows have no Charge ID"
 msgstr "%d filas no tienen ID de cargo"
 
 #: admin/build/mission-admin.js:214
-#: admin/src/pages/tools/ImportPanel.js:989
+#: admin/src/pages/tools/ImportPanel.js:970
 msgid "and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates."
 msgstr "y se importarán como transacciones nuevas cada vez. Elimina estas filas de tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
 
 #. translators: %d: number of rows
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1003
+#: admin/src/pages/tools/ImportPanel.js:984
 #, js-format
 msgid "%d rows have no Subscription ID"
 msgstr "%d filas no tienen ID de suscripción"
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1010
+#: admin/src/pages/tools/ImportPanel.js:991
 msgid "and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates."
 msgstr "y se importarán como suscripciones nuevas cada vez. Elimina estas filas de tu CSV antes de volver a ejecutar la importación si no quieres duplicados."
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1027
+#: admin/src/pages/tools/ImportPanel.js:1008
 msgid "Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions."
 msgstr "Cada campaña crea su propia página de campaña. Los totales recaudados, los recuentos de donantes y los recuentos de transacciones empiezan en cero y se actualizan automáticamente a medida que importas o registras transacciones."
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1041
+#: admin/src/pages/tools/ImportPanel.js:1022
 msgid "Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway."
 msgstr "Las suscripciones importadas son solo registros. No se cobra ningún pago y los recuentos de renovaciones empiezan en cero. Una suscripción solo se renueva automáticamente si su ID de suscripción coincide con una suscripción activa en tu pasarela de pago."
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1055
+#: admin/src/pages/tools/ImportPanel.js:1036
 msgid "Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported."
 msgstr "Cada dedicatoria se asocia a una transacción existente, con coincidencia por ID de cargo o ID de transacción. Importa primero las transacciones; las filas cuya transacción no se encuentre se omiten. No se envían correos electrónicos de notificación cuando se importan dedicatorias."
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1067
+#: admin/src/pages/tools/ImportPanel.js:1048
 msgid "Import Options"
 msgstr "Opciones de importación"
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1070
+#: admin/src/pages/tools/ImportPanel.js:1051
 msgid "Choose how to handle records that already exist."
 msgstr "Elige cómo gestionar los registros que ya existen."
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1104
+#: admin/src/pages/tools/ImportPanel.js:1085
 msgid "Data Preview"
 msgstr "Vista previa de los datos"
 
 #: admin/build/mission-admin.js:215
-#: admin/src/pages/tools/ImportPanel.js:1107
+#: admin/src/pages/tools/ImportPanel.js:1088
 msgid "First 5 rows from your uploaded file."
 msgstr "Las primeras 5 filas de tu archivo subido."
 
 #. translators: 1: number, 2: type label
 #: admin/build/mission-admin.js:216
-#: admin/src/pages/tools/ImportPanel.js:1189
+#: admin/src/pages/tools/ImportPanel.js:1170
 #, js-format
 msgid "Update %1$d %2$s"
 msgstr "Actualizar %1$d %2$s"
 
 #. translators: 1: number, 2: type label
 #: admin/build/mission-admin.js:217
-#: admin/src/pages/tools/ImportPanel.js:1195
+#: admin/src/pages/tools/ImportPanel.js:1176
 #, js-format
 msgid "Import %1$d %2$s"
 msgstr "Importar %1$d %2$s"
@@ -9694,130 +9587,130 @@ msgstr "Importar %1$d %2$s"
 #: admin/build/mission-admin.js:217
 #: admin/build/mission-admin.js:219
 #: admin/build/mission-admin.js:240
-#: admin/src/pages/tools/ImportPanel.js:1277
-#: admin/src/pages/tools/ImportPanel.js:1351
+#: admin/src/pages/tools/ImportPanel.js:1250
+#: admin/src/pages/tools/ImportPanel.js:1324
 #: admin/src/pages/tools/migration/ProgressTimeline.js:120
 msgid "Cancelling…"
 msgstr "Cancelando…"
 
 #. translators: %s: data type label
 #: admin/build/mission-admin.js:218
-#: admin/src/pages/tools/ImportPanel.js:1280
+#: admin/src/pages/tools/ImportPanel.js:1253
 #, js-format
 msgid "Importing your %s"
 msgstr "Importando tus %s"
 
 #. translators: 1: processed rows, 2: total rows
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1288
+#: admin/src/pages/tools/ImportPanel.js:1261
 #, js-format
 msgid "%1$d of %2$d rows processed"
 msgstr "%1$d de %2$d filas procesadas"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1295
+#: admin/src/pages/tools/ImportPanel.js:1268
 msgid "Starting up…"
 msgstr "Iniciando…"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1303
+#: admin/src/pages/tools/ImportPanel.js:1276
 msgid "imported"
 msgstr "importadas"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1311
+#: admin/src/pages/tools/ImportPanel.js:1284
 msgid "updated"
 msgstr "actualizadas"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1319
+#: admin/src/pages/tools/ImportPanel.js:1292
 msgid "skipped"
 msgstr "omitidas"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1328
+#: admin/src/pages/tools/ImportPanel.js:1301
 msgid "errors"
 msgstr "errores"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1334
+#: admin/src/pages/tools/ImportPanel.js:1307
 msgid "You can safely leave this page — the import keeps running in the background. Come back any time to check progress."
 msgstr "Puedes salir de esta página con total tranquilidad; la importación sigue ejecutándose en segundo plano. Vuelve en cualquier momento para comprobar el progreso."
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1352
+#: admin/src/pages/tools/ImportPanel.js:1325
 msgid "Cancel import"
 msgstr "Cancelar la importación"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1373
+#: admin/src/pages/tools/ImportPanel.js:1346
 msgid "Import failed"
 msgstr "La importación ha fallado"
 
 #: admin/build/mission-admin.js:219
-#: admin/src/pages/tools/ImportPanel.js:1377
+#: admin/src/pages/tools/ImportPanel.js:1350
 msgid "Something went wrong while running the import."
 msgstr "Algo ha ido mal al ejecutar la importación."
 
 #. translators: 1: imported, 2: updated, 3: skipped
 #: admin/build/mission-admin.js:220
-#: admin/src/pages/tools/ImportPanel.js:1388
+#: admin/src/pages/tools/ImportPanel.js:1361
 #, js-format
 msgid "%1$d imported, %2$d updated, %3$d skipped before the failure."
 msgstr "%1$d importadas, %2$d actualizadas, %3$d omitidas antes del fallo."
 
 #: admin/build/mission-admin.js:220
-#: admin/src/pages/tools/ImportPanel.js:1404
+#: admin/src/pages/tools/ImportPanel.js:1377
 msgid "Try again"
 msgstr "Inténtalo de nuevo"
 
 #. translators: 1: count, 2: data type
 #: admin/build/mission-admin.js:221
-#: admin/src/pages/tools/ImportPanel.js:1425
+#: admin/src/pages/tools/ImportPanel.js:1398
 #, js-format
 msgid "%1$d %2$s were successfully imported."
 msgstr "%1$d %2$s se han importado correctamente."
 
 #. translators: %d: count
 #: admin/build/mission-admin.js:222
-#: admin/src/pages/tools/ImportPanel.js:1438
+#: admin/src/pages/tools/ImportPanel.js:1411
 #, js-format
 msgid "%d existing records were updated."
 msgstr "Se han actualizado %d registros existentes."
 
 #. translators: %d: count
 #: admin/build/mission-admin.js:223
-#: admin/src/pages/tools/ImportPanel.js:1450
+#: admin/src/pages/tools/ImportPanel.js:1423
 #, js-format
 msgid "%d duplicates were skipped."
 msgstr "Se han omitido %d duplicados."
 
 #. translators: %d: count
 #: admin/build/mission-admin.js:224
-#: admin/src/pages/tools/ImportPanel.js:1459
+#: admin/src/pages/tools/ImportPanel.js:1432
 #, js-format
 msgid "%d rows failed to import."
 msgstr "%d filas no se han podido importar."
 
 #: admin/build/mission-admin.js:224
-#: admin/src/pages/tools/ImportPanel.js:1497
+#: admin/src/pages/tools/ImportPanel.js:1470
 msgid "Import complete"
 msgstr "Importación completada"
 
 #: admin/build/mission-admin.js:224
-#: admin/src/pages/tools/ImportPanel.js:1505
+#: admin/src/pages/tools/ImportPanel.js:1478
 msgid "Show error details"
 msgstr "Mostrar los detalles de los errores"
 
 #. translators: %s: data type label
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/ImportPanel.js:1528
+#: admin/src/pages/tools/ImportPanel.js:1501
 #, js-format
 msgid "View %s"
 msgstr "Ver %s"
 
 #: admin/build/mission-admin.js:226
-#: admin/src/pages/tools/ImportPanel.js:1538
+#: admin/src/pages/tools/ImportPanel.js:1511
 msgid "Import more data"
 msgstr "Importar más datos"
 
@@ -9905,32 +9798,28 @@ msgstr "Eventos de donante"
 msgid "Campaign Events"
 msgstr "Eventos de campaña"
 
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:120
+#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:122
 msgid "You do not have permission to manage webhooks."
 msgstr "No tienes permiso para gestionar los webhooks."
 
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:208
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:229
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:294
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:331
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:373
+#: src/Rest/RestErrors.php:72
 msgid "Webhook not found."
 msgstr "Webhook no encontrado."
 
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:423
+#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:400
 msgid "A webhook URL is required."
 msgstr "Se requiere una URL de webhook."
 
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:431
+#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:408
 msgid "The URL provided is not valid."
 msgstr "La URL proporcionada no es válida."
 
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:441
+#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:418
 msgid "Only HTTP and HTTPS URLs are supported."
 msgstr "Solo se admiten URL HTTP y HTTPS."
 
 #. translators: %s: event name
-#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:462
+#: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:439
 #, php-format
 msgid "Invalid event: %s"
 msgstr "Evento no válido: %s"
@@ -10219,45 +10108,45 @@ msgstr "Webhooks"
 
 #. translators: %s: admin display name.
 #: admin/build/mission-admin.js:188
-#: admin/src/pages/dashboard/ActivityFeed.js:840
+#: admin/src/pages/dashboard/ActivityFeed.js:834
 #, js-format
 msgid "%s created <name /> webhook"
 msgstr "%s creó el webhook <name />"
 
 #. translators: %s: admin display name.
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:845
+#: admin/src/pages/dashboard/ActivityFeed.js:839
 #, js-format
 msgid "%s deleted <name /> webhook"
 msgstr "%s eliminó el webhook <name />"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:855
+#: admin/src/pages/dashboard/ActivityFeed.js:849
 msgid "Created <name /> webhook"
 msgstr "Webhook <name /> creado"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:856
+#: admin/src/pages/dashboard/ActivityFeed.js:850
 msgid "Deleted <name /> webhook"
 msgstr "Webhook <name /> eliminado"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:861
+#: admin/src/pages/dashboard/ActivityFeed.js:855
 msgid "Webhook created"
 msgstr "Webhook creado"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:862
+#: admin/src/pages/dashboard/ActivityFeed.js:856
 msgid "Webhook deleted"
 msgstr "Webhook eliminado"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:868
+#: admin/src/pages/dashboard/ActivityFeed.js:862
 msgid "<name /> webhook was paused automatically after repeated failures"
 msgstr "El webhook <name /> se pausó automáticamente tras fallos repetidos"
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/dashboard/ActivityFeed.js:875
+#: admin/src/pages/dashboard/ActivityFeed.js:869
 msgid "A webhook was paused automatically after repeated failures"
 msgstr "Un webhook se pausó automáticamente tras fallos repetidos"
 
@@ -10343,66 +10232,66 @@ msgid "This GiveWP version has no campaigns. Each donation form will become a Mi
 msgstr "Esta versión de GiveWP no tiene campañas. En su lugar, cada formulario de donación se convertirá en una campaña de Mission."
 
 #. translators: 1: GiveWP billing period, 2: billing frequency multiplier.
-#: src/Migration/Migrators/GiveWP/Readers/SubscriptionReader.php:184
+#: src/Migration/Migrators/GiveWP/Readers/SubscriptionReader.php:185
 #, php-format
 msgid "Billing cadence \"%1$s x%2$d\" is not supported and was migrated as monthly."
 msgstr "La frecuencia de cobro «%1$s x%2$d» no es compatible y se migró como mensual."
 
-#: src/Migration/Writers/SubscriptionWriter.php:76
+#: src/Migration/Writers/SubscriptionWriter.php:74
 msgid "The subscription donor was not migrated, so the subscription was skipped."
 msgstr "El donante de la suscripción no se migró, así que la suscripción se omitió."
 
-#: src/Migration/Writers/TransactionWriter.php:85
+#: src/Migration/Writers/TransactionWriter.php:83
 msgid "The donation donor was not migrated, so the donation was skipped."
 msgstr "El donante de la donación no se migró, así que la donación se omitió."
 
-#: src/Rest/Endpoints/MigrationEndpoint.php:146
+#: src/Rest/Endpoints/MigrationEndpoint.php:131
 msgid "You do not have permission to manage migrations."
 msgstr "No tienes permiso para gestionar migraciones."
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/dashboard/ActivityFeed.js:348
+#: admin/src/pages/dashboard/ActivityFeed.js:342
 msgid "another plugin"
 msgstr "otro plugin"
 
 #. translators: %s: source plugin name (e.g. "GiveWP").
 #: admin/build/mission-admin.js:170
-#: admin/src/pages/dashboard/ActivityFeed.js:764
+#: admin/src/pages/dashboard/ActivityFeed.js:758
 #, js-format
 msgid "Migration from %s finished with no new records"
 msgstr "La migración desde %s terminó sin registros nuevos"
 
 #. translators: 1: admin display name, 2: source plugin name.
 #: admin/build/mission-admin.js:173
-#: admin/src/pages/dashboard/ActivityFeed.js:775
+#: admin/src/pages/dashboard/ActivityFeed.js:769
 #, js-format
 msgid "%1$s migrated <count /> records from %2$s"
 msgstr "%1$s migró <count /> registros desde %2$s"
 
 #. translators: %s: source plugin name.
 #: admin/build/mission-admin.js:176
-#: admin/src/pages/dashboard/ActivityFeed.js:784
+#: admin/src/pages/dashboard/ActivityFeed.js:778
 #, js-format
 msgid "Migrated <count /> records from %s"
 msgstr "Se migraron <count /> registros desde %s"
 
 #. translators: 1: admin display name, 2: source plugin name.
 #: admin/build/mission-admin.js:179
-#: admin/src/pages/dashboard/ActivityFeed.js:803
+#: admin/src/pages/dashboard/ActivityFeed.js:797
 #, js-format
 msgid "%1$s removed the data migrated from %2$s"
 msgstr "%1$s eliminó los datos migrados desde %2$s"
 
 #. translators: %s: source plugin name.
 #: admin/build/mission-admin.js:182
-#: admin/src/pages/dashboard/ActivityFeed.js:812
+#: admin/src/pages/dashboard/ActivityFeed.js:806
 #, js-format
 msgid "Removed the data migrated from %s"
 msgstr "Se eliminaron los datos migrados desde %s"
 
 #. translators: %s: source plugin name.
 #: admin/build/mission-admin.js:185
-#: admin/src/pages/dashboard/ActivityFeed.js:823
+#: admin/src/pages/dashboard/ActivityFeed.js:817
 #, js-format
 msgid "Migration from %s failed"
 msgstr "La migración desde %s falló"
@@ -10689,18 +10578,18 @@ msgstr "Esto elimina de forma permanente todos los donantes, transacciones, camp
 msgid "Delete migrated data"
 msgstr "Eliminar los datos migrados"
 
-#: src/Rest/Endpoints/SettingsEndpoint.php:176
+#: src/Rest/Endpoints/SettingsEndpoint.php:171
 msgid "The campaign URL slug cannot be empty."
 msgstr "El slug de URL de las campañas no puede estar vacío."
 
 #. translators: %s: the slug the user entered.
-#: src/Rest/Endpoints/SettingsEndpoint.php:186
+#: src/Rest/Endpoints/SettingsEndpoint.php:181
 #, php-format
 msgid "\"%s\" is reserved by WordPress and can't be used as the campaign URL slug."
 msgstr "«%s» está reservado por WordPress y no puede usarse como slug de URL de las campañas."
 
 #. translators: 1: the slug the user entered, 2: the title of the existing page using it.
-#: src/Rest/Endpoints/SettingsEndpoint.php:205
+#: src/Rest/Endpoints/SettingsEndpoint.php:200
 #, php-format
 msgid "The URL slug \"%1$s\" is already used by \"%2$s\". Choose a different slug."
 msgstr "El slug de URL «%1$s» ya lo usa «%2$s». Elige un slug diferente."
@@ -10732,78 +10621,94 @@ msgstr "Si tienes un momento, cuéntanos por qué estás desactivando Mission. L
 msgid "Reason for deactivating"
 msgstr "Motivo de la desactivación"
 
-#: src/Admin/DeactivationSurvey.php:120
+#: src/Admin/DeactivationSurvey.php:134
 msgid "Additional feedback"
 msgstr "Comentarios adicionales"
 
-#: src/Admin/DeactivationSurvey.php:125
+#: src/Admin/DeactivationSurvey.php:139
 msgid "Skip & Deactivate"
 msgstr "Omitir y desactivar"
 
-#: src/Admin/DeactivationSurvey.php:128
+#: src/Admin/DeactivationSurvey.php:142
 msgid "Submitting…"
 msgstr "Enviando…"
 
-#: src/Admin/DeactivationSurvey.php:128
+#: src/Admin/DeactivationSurvey.php:142
 msgid "Submit & Deactivate"
 msgstr "Enviar y desactivar"
 
-#: src/Admin/DeactivationSurvey.php:147
+#: src/Admin/DeactivationSurvey.php:164
 msgid "It's a temporary deactivation, I'm troubleshooting"
 msgstr "Es una desactivación temporal, estoy solucionando un problema"
 
-#: src/Admin/DeactivationSurvey.php:151
+#: src/Admin/DeactivationSurvey.php:169
 msgid "I no longer need the plugin"
 msgstr "Ya no necesito el plugin"
 
-#: src/Admin/DeactivationSurvey.php:155
+#: src/Admin/DeactivationSurvey.php:173
 msgid "I found a better plugin"
 msgstr "Encontré un plugin mejor"
 
-#: src/Admin/DeactivationSurvey.php:156
+#: src/Admin/DeactivationSurvey.php:174
 msgid "Which plugin did you switch to?"
 msgstr "¿A qué plugin te cambiaste?"
 
-#: src/Admin/DeactivationSurvey.php:159
+#: src/Admin/DeactivationSurvey.php:177
 msgid "It's missing a feature I need"
 msgstr "Le falta una función que necesito"
 
-#: src/Admin/DeactivationSurvey.php:160
+#: src/Admin/DeactivationSurvey.php:178
 msgid "What feature is missing?"
 msgstr "¿Qué función falta?"
 
-#: src/Admin/DeactivationSurvey.php:163
+#: src/Admin/DeactivationSurvey.php:181
 msgid "Something isn't working"
 msgstr "Algo no funciona"
 
-#: src/Admin/DeactivationSurvey.php:164
+#: src/Admin/DeactivationSurvey.php:182
 msgid "What went wrong? Any detail helps."
 msgstr "¿Qué falló? Cualquier detalle ayuda."
 
-#: src/Admin/DeactivationSurvey.php:172
+#: src/Admin/DeactivationSurvey.php:190
 msgid "It's too complicated to set up"
 msgstr "Es demasiado complicado de configurar"
 
-#: src/Admin/DeactivationSurvey.php:173
+#: src/Admin/DeactivationSurvey.php:191
 msgid "What was confusing or hard?"
 msgstr "¿Qué te resultó confuso o difícil?"
 
-#: src/Admin/DeactivationSurvey.php:182
+#: src/Admin/DeactivationSurvey.php:200
 msgid "Tell us more (optional)"
 msgstr "Cuéntanos más (opcional)"
 
 #. translators: %s: link to the support forum.
-#: src/Admin/DeactivationSurvey.php:167
+#: src/Admin/DeactivationSurvey.php:185
 #, php-format
 msgid "Sorry about that! Most issues can be fixed quickly. %s and we'll take a look right away."
 msgstr "¡Lo sentimos! La mayoría de los problemas se pueden solucionar rápidamente. %s y lo revisaremos de inmediato."
 
-#: src/Admin/DeactivationSurvey.php:168
+#: src/Admin/DeactivationSurvey.php:186
 msgid "Open a support topic"
 msgstr "Abre un tema de soporte"
 
 #. translators: %s: hello@missionwp.com mailto link.
-#: src/Admin/DeactivationSurvey.php:176
+#: src/Admin/DeactivationSurvey.php:194
 #, php-format
 msgid "Email us at %s and we'll personally help you set it up."
 msgstr "Escríbenos a %s y te ayudaremos personalmente a configurarlo."
+
+#: src/Models/Subscription.php:558
+msgid "This subscription has no saved payment method to update."
+msgstr "Esta suscripción no tiene un método de pago guardado que actualizar."
+
+#: src/Models/Subscription.php:577
+msgid "Could not reach the payment service. Please try again."
+msgstr "No se pudo conectar con el servicio de pago. Inténtalo de nuevo."
+
+#: src/Models/Subscription.php:578
+msgid "The payment service returned an error. Please try again."
+msgstr "El servicio de pago devolvió un error. Inténtalo de nuevo."
+
+#: src/Models/Subscription.php:579
+msgid "The payment service returned an unexpected response."
+msgstr "El servicio de pago devolvió una respuesta inesperada."

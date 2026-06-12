@@ -74,7 +74,7 @@ class SubscriptionReconciler {
 
 		$stale_subscriptions = Subscription::query(
 			[
-				'status'                   => 'active',
+				'status'                   => Subscription::STATUS_ACTIVE,
 				'date_next_renewal_before' => $threshold,
 				'per_page'                 => 50,
 			]
@@ -132,10 +132,10 @@ class SubscriptionReconciler {
 
 		$stripe_status = $body['status'];
 		$status_map    = [
-			'canceled' => 'cancelled',
-			'past_due' => 'past_due',
-			'unpaid'   => 'past_due',
-			'paused'   => 'paused',
+			'canceled' => Subscription::STATUS_CANCELLED,
+			'past_due' => Subscription::STATUS_PAST_DUE,
+			'unpaid'   => Subscription::STATUS_PAST_DUE,
+			'paused'   => Subscription::STATUS_PAUSED,
 		];
 
 		$new_status = $status_map[ $stripe_status ] ?? null;
@@ -146,7 +146,7 @@ class SubscriptionReconciler {
 
 		$subscription->status = $new_status;
 
-		if ( 'cancelled' === $new_status ) {
+		if ( Subscription::STATUS_CANCELLED === $new_status ) {
 			$subscription->date_cancelled = current_time( 'mysql', true );
 		}
 

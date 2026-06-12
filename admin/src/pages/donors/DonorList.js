@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard from '@shared/components/StatCard';
+import { BRAND_COLOR } from '@shared/color';
 import {
   Button,
   Card,
@@ -15,6 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import DonorAvatar from '../../components/DonorAvatar';
 import EmptyState from '../../components/EmptyState';
 import AddDonorDrawer from './AddDonorDrawer';
@@ -36,44 +40,6 @@ const PeopleIcon = () => (
     <path d="M32 28c4.418 0 8 3.582 8 8" />
   </svg>
 );
-
-const BRAND_COLOR = '#2FA36B';
-
-function SkeletonBar( { width = '60%', height = '24px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#eee9e3',
-      } }
-    />
-  );
-}
-
-function StatCard( { label, value, subtitle, isLoading: loading } ) {
-  return (
-    <Card className="mission-stat-card">
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { subtitle && ! loading && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-        { loading && (
-          <div className="mission-stat-card__subtitle">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-      </CardBody>
-    </Card>
-  );
-}
 
 const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
   id: `skeleton-${ i }`,
@@ -203,14 +169,15 @@ const DEFAULT_VIEW = {
 };
 
 export default function DonorList() {
-  const [ data, setData ] = useState( [] );
   const { view, setView, isModified, resetToDefault } = usePersistedView(
     'donors',
     DEFAULT_VIEW
   );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
+  const { data, totalItems, totalPages, isLoading, refresh } =
+    usePaginatedFetch( {
+      path: '/mission-donation-platform/v1/donors',
+      view,
+    } );
   const [ summary, setSummary ] = useState( null );
   const [ showDrawer, setShowDrawer ] = useState( false );
 
@@ -223,48 +190,6 @@ export default function DonorList() {
   useEffect( () => {
     fetchSummary();
   }, [ fetchSummary ] );
-
-  const fetchDonors = useCallback( async () => {
-    setIsLoading( true );
-
-    const params = new URLSearchParams( {
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/donors?${ params.toString() }`,
-        parse: false,
-      } );
-
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [ view.page, view.perPage, view.sort, view.search ] );
-
-  useEffect( () => {
-    fetchDonors();
-  }, [ fetchDonors ] );
 
   const hasNoFilters = ! view.filters || view.filters.length === 0;
   const showEmptyState =
@@ -337,7 +262,7 @@ export default function DonorList() {
           onClose={ () => setShowDrawer( false ) }
           onCreated={ () => {
             setShowDrawer( false );
-            fetchDonors();
+            refresh();
             fetchSummary();
           } }
         />
@@ -436,7 +361,7 @@ export default function DonorList() {
         onClose={ () => setShowDrawer( false ) }
         onCreated={ () => {
           setShowDrawer( false );
-          fetchDonors();
+          refresh();
           fetchSummary();
         } }
       />

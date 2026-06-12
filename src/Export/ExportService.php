@@ -37,7 +37,7 @@ class ExportService {
 	 * @param SettingsService $settings Settings service instance.
 	 */
 	public function __construct(
-		private readonly SettingsService $settings,
+		private SettingsService $settings,
 	) {}
 
 	/**

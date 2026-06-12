@@ -7,6 +7,9 @@
 
 namespace MissionDP\Migration\Migrators\GiveWP\Maps;
 
+use MissionDP\Models\Subscription;
+use MissionDP\Models\Transaction;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -37,11 +40,11 @@ class StatusMap {
 	 */
 	public static function payment_status( string $status ): string {
 		return match ( strtolower( $status ) ) {
-			'publish', 'complete', 'completed', 'give_subscription' => 'completed',
-			'pending', 'processing', 'preapproval' => 'pending',
-			'refunded'  => 'refunded',
-			'cancelled' => 'cancelled',
-			default     => 'failed', // failed, abandoned, revoked, unknown.
+			'publish', 'complete', 'completed', 'give_subscription' => Transaction::STATUS_COMPLETED,
+			'pending', 'processing', 'preapproval' => Transaction::STATUS_PENDING,
+			'refunded'  => Transaction::STATUS_REFUNDED,
+			'cancelled' => Transaction::STATUS_CANCELLED,
+			default     => Transaction::STATUS_FAILED, // failed, abandoned, revoked, unknown.
 		};
 	}
 
@@ -56,11 +59,11 @@ class StatusMap {
 	 */
 	public static function subscription_status( string $status ): string {
 		return match ( strtolower( $status ) ) {
-			'active'  => 'active',
-			'pending' => 'pending',
-			'failing' => 'past_due',
-			'paused', 'suspended' => 'paused',
-			default   => 'cancelled', // cancelled, completed, expired, unknown.
+			'active'  => Subscription::STATUS_ACTIVE,
+			'pending' => Subscription::STATUS_PENDING,
+			'failing' => Subscription::STATUS_PAST_DUE,
+			'paused', 'suspended' => Subscription::STATUS_PAUSED,
+			default   => Subscription::STATUS_CANCELLED, // cancelled, completed, expired, unknown.
 		};
 	}
 

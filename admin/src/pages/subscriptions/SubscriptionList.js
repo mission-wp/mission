@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard, { getDelta } from '@shared/components/StatCard';
 import {
   Card,
   CardBody,
@@ -13,7 +15,13 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../components/EmptyState';
+import {
+  SUBSCRIPTION_STATUS,
+  SUBSCRIPTION_STATUS_LABELS,
+  FREQUENCY_SUFFIXES,
+} from '../../constants';
 
 const RecurringIcon = () => (
   <svg
@@ -32,111 +40,6 @@ const RecurringIcon = () => (
     <path d="M12 38v-8h8" />
   </svg>
 );
-
-const STATUS_LABELS = {
-  active: __( 'Active', 'mission-donation-platform' ),
-  pending: __( 'Pending', 'mission-donation-platform' ),
-  paused: __( 'Paused', 'mission-donation-platform' ),
-  cancelled: __( 'Cancelled', 'mission-donation-platform' ),
-  past_due: __( 'Past Due', 'mission-donation-platform' ),
-};
-
-const FREQUENCY_SUFFIXES = {
-  weekly: '/wk',
-  monthly: '/mo',
-  quarterly: '/qrt',
-  annually: '/yr',
-};
-
-function getDelta( current, previous ) {
-  if ( ! previous ) {
-    return { value: 0, direction: 'neutral' };
-  }
-  const pct = ( ( current - previous ) / previous ) * 100;
-  const rounded = Math.abs( Math.round( pct * 10 ) / 10 );
-  if ( pct > 0 ) {
-    return { value: rounded, direction: 'positive' };
-  }
-  if ( pct < 0 ) {
-    return { value: rounded, direction: 'negative' };
-  }
-  return { value: 0, direction: 'neutral' };
-}
-
-const ArrowUp = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="2,8 6,3 10,8" />
-  </svg>
-);
-
-const ArrowDown = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="2,4 6,9 10,4" />
-  </svg>
-);
-
-function SkeletonBar( { width = '60%', height = '24px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
-  );
-}
-
-function StatCard( { label, value, delta, subtitle, isLoading: loading } ) {
-  return (
-    <Card className="mission-stat-card">
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { loading && (
-          <div className="mission-stat-card__delta">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-        { ! loading && delta && (
-          <div className={ `mission-stat-card__delta is-${ delta.direction }` }>
-            { delta.direction === 'positive' && <ArrowUp /> }
-            { delta.direction === 'negative' && <ArrowDown /> }
-            <span>
-              { delta.value }% { delta.label }
-            </span>
-          </div>
-        ) }
-        { ! loading && ! delta && subtitle && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-      </CardBody>
-    </Card>
-  );
-}
 
 const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
   id: `skeleton-${ i }`,
@@ -258,28 +161,28 @@ function buildFields() {
           <SkeletonBar width="70px" height="22px" />
         ) : (
           <span className={ `mission-status-badge is-${ item.status }` }>
-            { STATUS_LABELS[ item.status ] || item.status }
+            { SUBSCRIPTION_STATUS_LABELS[ item.status ] || item.status }
           </span>
         ),
       elements: [
         {
-          value: 'active',
+          value: SUBSCRIPTION_STATUS.ACTIVE,
           label: __( 'Active', 'mission-donation-platform' ),
         },
         {
-          value: 'pending',
+          value: SUBSCRIPTION_STATUS.PENDING,
           label: __( 'Pending', 'mission-donation-platform' ),
         },
         {
-          value: 'paused',
+          value: SUBSCRIPTION_STATUS.PAUSED,
           label: __( 'Paused', 'mission-donation-platform' ),
         },
         {
-          value: 'cancelled',
+          value: SUBSCRIPTION_STATUS.CANCELLED,
           label: __( 'Cancelled', 'mission-donation-platform' ),
         },
         {
-          value: 'past_due',
+          value: SUBSCRIPTION_STATUS.PAST_DUE,
           label: __( 'Past Due', 'mission-donation-platform' ),
         },
       ],
@@ -312,14 +215,15 @@ const DEFAULT_VIEW = {
 };
 
 export default function SubscriptionList() {
-  const [ data, setData ] = useState( [] );
   const { view, setView, isModified, resetToDefault } = usePersistedView(
     'subscriptions',
     DEFAULT_VIEW
   );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
+  const { data, totalItems, totalPages, isLoading } = usePaginatedFetch( {
+    path: '/mission-donation-platform/v1/subscriptions',
+    view,
+    filterFields: [ 'status' ],
+  } );
   const [ summary, setSummary ] = useState( null );
 
   const fetchSummary = useCallback( () => {
@@ -331,53 +235,6 @@ export default function SubscriptionList() {
   useEffect( () => {
     fetchSummary();
   }, [ fetchSummary ] );
-
-  const fetchSubscriptions = useCallback( async () => {
-    setIsLoading( true );
-
-    const params = new URLSearchParams( {
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    const statusFilter = view.filters?.find( ( f ) => f.field === 'status' );
-    if ( statusFilter?.value ) {
-      params.set( 'status', statusFilter.value );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/subscriptions?${ params.toString() }`,
-        parse: false,
-      } );
-
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [ view.page, view.perPage, view.sort, view.filters, view.search ] );
-
-  useEffect( () => {
-    fetchSubscriptions();
-  }, [ fetchSubscriptions ] );
 
   const fields = buildFields();
 

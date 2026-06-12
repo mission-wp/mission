@@ -67,6 +67,8 @@ class SubscriptionDataStore implements DataStoreInterface {
 	 * Used by the data importer: listeners (activity feed, notifications) should
 	 * not fire for historical rows being backfilled.
 	 *
+	 * Internal — consumer code should use Subscription::save_silent().
+	 *
 	 * @param Subscription $model Subscription model.
 	 * @return int New subscription ID.
 	 */
@@ -221,6 +223,8 @@ class SubscriptionDataStore implements DataStoreInterface {
 	/**
 	 * Update a subscription without firing status-transition hooks. Used by the
 	 * data importer (see create_silent).
+	 *
+	 * Internal — consumer code should use Subscription::save_silent().
 	 *
 	 * @param Subscription $model Subscription model with updated values.
 	 * @return bool

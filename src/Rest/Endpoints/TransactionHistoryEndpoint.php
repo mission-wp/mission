@@ -9,7 +9,10 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Transaction;
 use MissionDP\Models\TransactionHistory;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -20,6 +23,8 @@ defined( 'ABSPATH' ) || exit;
  * Transaction history endpoint class.
  */
 class TransactionHistoryEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Register REST routes.
@@ -33,43 +38,23 @@ class TransactionHistoryEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_history' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'transaction_id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'per_page'       => [
-						'type'              => 'integer',
-						'default'           => 20,
-						'sanitize_callback' => 'absint',
-					],
-					'page'           => [
-						'type'              => 'integer',
-						'default'           => 1,
-						'sanitize_callback' => 'absint',
-					],
+					'transaction_id' => Args::integer( [ 'required' => true ] ),
+					'per_page'       => Args::integer( [ 'default' => 20 ] ),
+					'page'           => Args::integer( [ 'default' => 1 ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view transaction history.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view transaction history.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -83,11 +68,7 @@ class TransactionHistoryEndpoint {
 		$transaction    = Transaction::find( $transaction_id );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$per_page = $request->get_param( 'per_page' );

@@ -9,6 +9,7 @@ namespace MissionDP\Tests\Models;
 
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
 /**
@@ -31,6 +32,7 @@ class DonorTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		// phpcs:enable
@@ -563,5 +565,50 @@ class DonorTest extends WP_UnitTestCase {
 		$donor->save();
 
 		$this->assertTrue( $fired );
+	}
+
+	// -------------------------------------------------------------------------
+	// recompute_aggregates() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test recompute_aggregates rebuilds totals from completed transactions.
+	 */
+	public function test_recompute_aggregates_rebuilds_totals_from_transactions(): void {
+		$donor = $this->create_donor();
+
+		// Silent writes don't touch aggregates, so the donor row stays at zero
+		// until the recompute runs.
+		$rows = [
+			[ 'amount' => 5000, 'tip_amount' => 500, 'date_completed' => '2026-01-01 00:00:00' ],
+			[ 'amount' => 2500, 'tip_amount' => 0, 'date_completed' => '2026-02-01 00:00:00' ],
+			[ 'amount' => 9999, 'tip_amount' => 0, 'date_completed' => '2026-03-01 00:00:00', 'is_test' => true ],
+			[ 'amount' => 1234, 'tip_amount' => 0, 'date_completed' => '2026-04-01 00:00:00', 'status' => 'pending' ],
+		];
+
+		foreach ( $rows as $row ) {
+			$transaction = new Transaction( array_merge(
+				[
+					'status'       => 'completed',
+					'donor_id'     => $donor->id,
+					'total_amount' => $row['amount'],
+				],
+				$row
+			) );
+			$transaction->save_silent();
+		}
+
+		$this->assertSame( 0, $donor->fresh()->transaction_count );
+
+		Donor::recompute_aggregates( $donor->id );
+
+		$fresh = $donor->fresh();
+		$this->assertSame( 7500, $fresh->total_donated );
+		$this->assertSame( 500, $fresh->total_tip );
+		$this->assertSame( 2, $fresh->transaction_count );
+		$this->assertSame( '2026-01-01 00:00:00', $fresh->first_transaction );
+		$this->assertSame( '2026-02-01 00:00:00', $fresh->last_transaction );
+		$this->assertSame( 9999, $fresh->test_total_donated );
+		$this->assertSame( 1, $fresh->test_transaction_count );
 	}
 }

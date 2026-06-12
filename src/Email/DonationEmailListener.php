@@ -7,6 +7,7 @@
 
 namespace MissionDP\Email;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Models\Note;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
@@ -48,7 +49,7 @@ class DonationEmailListener {
 	 * @return void
 	 */
 	public function on_transaction_created( Transaction $transaction ): void {
-		if ( 'completed' === $transaction->status ) {
+		if ( Transaction::STATUS_COMPLETED === $transaction->status ) {
 			$this->on_donation_completed( $transaction );
 		}
 	}
@@ -60,7 +61,7 @@ class DonationEmailListener {
 	 * @return void
 	 */
 	public function on_donation_completed( Transaction $transaction ): void {
-		if ( 'one_time' !== $transaction->type ) {
+		if ( Frequency::ONE_TIME !== $transaction->type ) {
 			return;
 		}
 
@@ -77,39 +78,7 @@ class DonationEmailListener {
 			return;
 		}
 
-		$campaign = $transaction->campaign();
-
-		$data = [
-			'transaction'      => $transaction,
-			'donor'            => $donor,
-			'amount_formatted' => $this->email->format_amount( $transaction->amount, $transaction->currency ),
-			'date_formatted'   => wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ) ),
-			'campaign_name'    => $campaign?->title,
-		];
-
-		$subject = sprintf(
-			/* translators: %s: formatted donation amount */
-			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
-			$data['amount_formatted'],
-		);
-
-		$custom_subject = $this->email->get_custom_subject( 'donation_receipt' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{amount}'       => $data['amount_formatted'],
-					'{campaign}'     => $data['campaign_name'] ?? '',
-					'{date}'         => $data['date_formatted'],
-					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
-					'{receipt_id}'   => (string) $transaction->id,
-				]
-			);
-		}
-
-		$html = $this->email->render_template( 'donation-receipt', array_merge( $data, [ 'subject' => $subject ] ) );
-		$this->email->send( $donor->email, $subject, $html );
+		$this->email->send_donation_receipt( $transaction, $donor );
 	}
 
 	/**

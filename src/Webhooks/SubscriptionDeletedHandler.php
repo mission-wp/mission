@@ -43,11 +43,11 @@ class SubscriptionDeletedHandler {
 		$subscription = $subscriptions[0];
 
 		// Idempotency: skip if already cancelled.
-		if ( 'cancelled' === $subscription->status ) {
+		if ( Subscription::STATUS_CANCELLED === $subscription->status ) {
 			return;
 		}
 
-		$subscription->status         = 'cancelled';
+		$subscription->status         = Subscription::STATUS_CANCELLED;
 		$subscription->date_cancelled = current_time( 'mysql', true );
 		$subscription->save();
 	}

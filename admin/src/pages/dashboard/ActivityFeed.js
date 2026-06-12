@@ -3,6 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { timeAgo } from '@shared/time';
 import { formatAmount } from '@shared/currency';
 import EmptyState from '../../components/EmptyState';
+import { FREQUENCY_SUFFIXES } from '../../constants';
 
 const HeartIcon = () => (
   <svg
@@ -303,13 +304,6 @@ function campaignLink( title, id ) {
   );
 }
 
-const freqLabels = {
-  monthly: '/mo',
-  weekly: '/wk',
-  quarterly: '/qtr',
-  annually: '/yr',
-};
-
 // [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
 const importTypeLabels = {
   donors: [ 'donor', 'donors' ],
@@ -406,7 +400,7 @@ function getEventText( event ) {
   if ( eventType === 'recurring_donation_processed' ) {
     const donor = donorLink( data.donor_name, data.donor_id );
     const amount = data.amount ? formatAmount( data.amount ) : '';
-    const suffix = freqLabels[ data.frequency ] || '';
+    const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
 
     if ( donor && amount ) {
       return createInterpolateElement(
@@ -459,7 +453,7 @@ function getEventText( event ) {
       data.donor_id
     );
     const amount = data.amount ? formatAmount( data.amount ) : '';
-    const suffix = freqLabels[ data.frequency ] || '';
+    const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
     const campaign = campaignLink( data.campaign_title, data.campaign_id );
 
     if ( donor && amount && campaign ) {
@@ -495,7 +489,7 @@ function getEventText( event ) {
   if ( eventType === 'subscription_amount_increased' ) {
     const donor = donorLink( data.donor_name, data.donor_id );
     const amount = data.new_amount ? formatAmount( data.new_amount ) : '';
-    const suffix = freqLabels[ data.frequency ] || '';
+    const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
 
     if ( donor && amount ) {
       return createInterpolateElement(
@@ -519,7 +513,7 @@ function getEventText( event ) {
   if ( eventType === 'subscription_amount_decreased' ) {
     const donor = donorLink( data.donor_name, data.donor_id );
     const amount = data.new_amount ? formatAmount( data.new_amount ) : '';
-    const suffix = freqLabels[ data.frequency ] || '';
+    const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
 
     if ( donor && amount ) {
       return createInterpolateElement(

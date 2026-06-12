@@ -31,7 +31,7 @@ class ImportJobHandler {
 	 * @param ImportService $import Import service.
 	 */
 	public function __construct(
-		private readonly ImportService $import,
+		private ImportService $import,
 	) {}
 
 	/**
@@ -125,7 +125,14 @@ class ImportJobHandler {
 		if ( $done ) {
 			$this->import->run_post_import_recompute( $fresh );
 			$fresh->mark_completed();
-			$this->import->log_completed_activity( $fresh );
+
+			/**
+			 * Fires when an import run completes.
+			 *
+			 * @param ImportJob $job Completed job.
+			 */
+			do_action( 'mission_import_completed', $fresh );
+
 			$this->import->delete_job_file( $fresh );
 
 			/**

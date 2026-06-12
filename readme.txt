@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.3.0
+Stable Tag: 1.3.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -187,6 +187,19 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.3.1 =
+* Enhancement: Faster dashboard and reports on sites with many donations
+* Enhancement: New developer hooks fire when imports, exports, and cleanup operations complete, and clearing the activity log now leaves an audit entry
+* Enhancement: Clearer error messages when cancelling, pausing, resuming, or updating subscriptions
+* Fix: Ending a campaign now cancels or redirects all of its active recurring donations, no matter how many there are
+* Fix: Restored the donate button's filled/outline styles and the campaign image block's border, shadow, and duotone settings
+* Fix: Restored donor card rendering on the donor wall
+* Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
+* Fix: Weekly recurring donations now show as recurring in admin donation lists and are accepted by the REST API frequency filter
+* Tweak: Added save_silent() and recompute_aggregates() model methods for developers
+* Tweak: REST API not-found errors now use entity-specific error codes (e.g. campaign_not_found)
+* Tweak: The subscriptions and donor wall list endpoints now validate page and per_page ranges like all other endpoints
+
 = 1.3.0 =
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
 * New: Outgoing webhooks. Notify external services when donations, subscriptions, donors, or campaigns change, with signed payloads, automatic retries, and a delivery log (Tools > Webhooks)
@@ -219,13 +232,5 @@ This plugin connects to the following third-party services:
 = 1.1.6 =
 * Enhancement: Expanded the country dropdown to the full ISO 3166-1 list so any country is selectable
 * Fix: Fixed the plugin update entry in the activity log to show the correct new version
-
-= 1.1.5 =
-* New: Added a data export tool for transactions, donors, subscriptions, and campaigns
-* New: Shows an admin notice when the site is running PHP below 8.0
-* Enhancement: Auto-scrolls to the first newly loaded entry when expanding the logs list
-* Fix: Donors can now sign in with their new email address after changing it on the donor dashboard
-* Fix: Fixed donor dashboard form fields losing their class and id attributes
-* Fix: Restored the database size display in System Status
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

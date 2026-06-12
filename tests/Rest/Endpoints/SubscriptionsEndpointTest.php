@@ -735,7 +735,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	// =========================================================================
-	// POST /subscriptions/{id}/cancel — 2 tests
+	// POST /subscriptions/{id}/cancel, /pause, /resume — 8 tests
 	// =========================================================================
 
 	/**
@@ -758,15 +758,116 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test POST cancel rejects already cancelled subscription.
+	 * Test POST cancel is idempotent for already cancelled subscriptions.
 	 */
-	public function test_cancel_rejects_already_cancelled(): void {
+	public function test_cancel_already_cancelled_is_idempotent(): void {
 		$subscription = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
 		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/cancel" );
 
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertTrue( $response->get_data()['success'] );
+		$this->assertSame( 'cancelled', $response->get_data()['status'] );
+	}
+
+	/**
+	 * Test POST cancel works on a paused subscription.
+	 */
+	public function test_cancel_transitions_paused_to_cancelled(): void {
+		$subscription = $this->create_subscription( [ 'status' => 'paused' ] );
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/cancel" );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'cancelled', Subscription::find( $subscription->id )->status );
+	}
+
+	/**
+	 * Test POST cancel returns 502 when the Mission API is unreachable.
+	 */
+	public function test_cancel_returns_502_when_api_unreachable(): void {
+		$subscription = $this->create_subscription( [ 'status' => 'active' ] );
+
+		$this->add_tracked_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) {
+				if ( str_contains( $url, 'api.missionwp.com' ) ) {
+					return new \WP_Error( 'http_request_failed', 'Connection timed out' );
+				}
+				return $preempt;
+			},
+			// After the default 200 mock so the failure wins.
+			20,
+		);
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/cancel" );
+
+		$this->assertSame( 502, $response->get_status() );
+		$this->assertSame( 'mission_api_unreachable', $response->as_error()->get_error_code() );
+		$this->assertSame( 'active', Subscription::find( $subscription->id )->status );
+	}
+
+	/**
+	 * Test POST cancel returns 502 when the Mission API returns an error status.
+	 */
+	public function test_cancel_returns_502_on_upstream_error(): void {
+		$subscription = $this->create_subscription( [ 'status' => 'active' ] );
+
+		$this->add_tracked_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) {
+				if ( str_contains( $url, 'api.missionwp.com' ) ) {
+					return [
+						'response' => [ 'code' => 500 ],
+						'body'     => '',
+					];
+				}
+				return $preempt;
+			},
+			// After the default 200 mock so the failure wins.
+			20,
+		);
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/cancel" );
+
+		$this->assertSame( 502, $response->get_status() );
+		$this->assertSame( 'mission_api_error', $response->as_error()->get_error_code() );
+	}
+
+	/**
+	 * Test POST pause rejects a cancelled subscription via the model's state check.
+	 */
+	public function test_pause_rejects_cancelled_subscription(): void {
+		$subscription = $this->create_subscription( [ 'status' => 'cancelled' ] );
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/pause" );
+
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'subscription_not_cancellable', $response->as_error()->get_error_code() );
+		$this->assertSame( 'subscription_not_pausable', $response->as_error()->get_error_code() );
+	}
+
+	/**
+	 * Test POST pause transitions an active subscription to paused.
+	 */
+	public function test_pause_transitions_active_to_paused(): void {
+		$subscription = $this->create_subscription( [ 'status' => 'active', 'gateway_subscription_id' => null ] );
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/pause" );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'paused', Subscription::find( $subscription->id )->status );
+	}
+
+	/**
+	 * Test POST resume rejects an active subscription as idempotent success.
+	 */
+	public function test_resume_active_subscription_is_idempotent(): void {
+		$subscription = $this->create_subscription( [ 'status' => 'active' ] );
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/subscriptions/{$subscription->id}/resume" );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'active', $response->get_data()['status'] );
 	}
 
 	// =========================================================================

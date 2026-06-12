@@ -14,6 +14,9 @@ use MissionDP\Admin\Pages\SettingsPage;
 use MissionDP\Admin\Pages\SubscriptionsPage;
 use MissionDP\Admin\Pages\ToolsPage;
 use MissionDP\Admin\Pages\TransactionsPage;
+use MissionDP\Constants\Frequency;
+use MissionDP\Import\ImportService;
+use MissionDP\Models\ImportJob;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -196,6 +199,11 @@ class AdminModule {
 				'orgCountry'                => $settings['org_country'] ?? 'US',
 				'adminEmail'                => get_option( 'admin_email' ),
 				'featureSignups'            => self::get_feature_signups(),
+				'constants'                 => [
+					'recurringFrequencies'   => Frequency::RECURRING,
+					'importTerminalStatuses' => ImportJob::TERMINAL_STATUSES,
+					'importMaxBytes'         => ImportService::MAX_BYTES,
+				],
 			]
 		);
 	}

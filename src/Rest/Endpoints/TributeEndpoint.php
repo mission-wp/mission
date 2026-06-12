@@ -9,7 +9,10 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -20,6 +23,8 @@ defined( 'ABSPATH' ) || exit;
  * Tribute endpoint class.
  */
 class TributeEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Register REST routes.
@@ -34,19 +39,15 @@ class TributeEndpoint {
 				[
 					'methods'             => 'PUT',
 					'callback'            => [ $this, 'upsert_tribute' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_upsert_args(),
 				],
 				[
 					'methods'             => 'DELETE',
 					'callback'            => [ $this, 'delete_tribute' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => [
-						'transaction_id' => [
-							'type'              => 'integer',
-							'required'          => true,
-							'sanitize_callback' => 'absint',
-						],
+						'transaction_id' => Args::integer( [ 'required' => true ] ),
 					],
 				],
 			]
@@ -54,20 +55,12 @@ class TributeEndpoint {
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to manage tributes.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage tributes.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -81,11 +74,7 @@ class TributeEndpoint {
 		$transaction    = Transaction::find( $transaction_id );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$tribute = Tribute::find_by_transaction_id( $transaction_id );
@@ -136,20 +125,15 @@ class TributeEndpoint {
 		$transaction    = Transaction::find( $transaction_id );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$tribute = Tribute::find_by_transaction_id( $transaction_id );
 
 		if ( ! $tribute ) {
-			return new WP_Error(
+			return RestErrors::not_found(
 				'tribute_not_found',
-				__( 'No tribute found on this transaction.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
+				__( 'No tribute found on this transaction.', 'mission-donation-platform' )
 			);
 		}
 
@@ -189,63 +173,25 @@ class TributeEndpoint {
 	 */
 	private function get_upsert_args(): array {
 		return [
-			'transaction_id'       => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
-			'tribute_type'         => [
-				'type'              => 'string',
-				'enum'              => [ 'in_honor', 'in_memory' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'honoree_name'         => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'transaction_id'       => Args::integer( [ 'required' => true ] ),
+			'tribute_type'         => Args::enum( [ 'in_honor', 'in_memory' ] ),
+			'honoree_name'         => Args::string(),
 			'message'              => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_textarea_field',
 			],
-			'notify_name'          => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'notify_name'          => Args::string(),
 			'notify_email'         => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_email',
 			],
-			'notify_method'        => [
-				'type'              => 'string',
-				'enum'              => [ '', 'email', 'mail' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'notify_address_1'     => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notify_city'          => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notify_state'         => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notify_zip'           => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notify_country'       => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notification_sent_at' => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'notify_method'        => Args::enum( [ '', 'email', 'mail' ] ),
+			'notify_address_1'     => Args::string(),
+			'notify_city'          => Args::string(),
+			'notify_state'         => Args::string(),
+			'notify_zip'           => Args::string(),
+			'notify_country'       => Args::string(),
+			'notification_sent_at' => Args::string(),
 		];
 	}
 }

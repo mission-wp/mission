@@ -11,7 +11,10 @@ use MissionDP\Models\OutgoingWebhook;
 use MissionDP\Models\WebhookDelivery;
 use MissionDP\OutgoingWebhooks\DeliveryHandler;
 use MissionDP\OutgoingWebhooks\WebhookEvents;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -22,6 +25,8 @@ defined( 'ABSPATH' ) || exit;
  * Outgoing webhooks endpoint class.
  */
 class OutgoingWebhooksEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Register REST routes.
@@ -37,13 +42,13 @@ class OutgoingWebhooksEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_items' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_collection_params(),
 				],
 				[
 					'methods'             => 'POST',
 					'callback'            => [ $this, 'create_item' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_create_params(),
 				],
 			]
@@ -57,18 +62,18 @@ class OutgoingWebhooksEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_item' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 				],
 				[
 					'methods'             => 'PATCH',
 					'callback'            => [ $this, 'update_item' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_update_params(),
 				],
 				[
 					'methods'             => 'DELETE',
 					'callback'            => [ $this, 'delete_item' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 				],
 			]
 		);
@@ -80,7 +85,7 @@ class OutgoingWebhooksEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_events' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 
@@ -91,7 +96,7 @@ class OutgoingWebhooksEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_deliveries' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_delivery_params(),
 			]
 		);
@@ -103,26 +108,18 @@ class OutgoingWebhooksEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'ping' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 	}
 
 	/**
-	 * Permission check: requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to manage webhooks.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage webhooks.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -203,11 +200,7 @@ class OutgoingWebhooksEndpoint {
 		$webhook = OutgoingWebhook::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $webhook ) {
-			return new WP_Error(
-				'webhook_not_found',
-				__( 'Webhook not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::webhook_not_found();
 		}
 
 		return new WP_REST_Response( $this->prepare_webhook( $webhook ), 200 );
@@ -224,11 +217,7 @@ class OutgoingWebhooksEndpoint {
 		$webhook = OutgoingWebhook::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $webhook ) {
-			return new WP_Error(
-				'webhook_not_found',
-				__( 'Webhook not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::webhook_not_found();
 		}
 
 		$params = $request->get_json_params();
@@ -289,11 +278,7 @@ class OutgoingWebhooksEndpoint {
 		$webhook = OutgoingWebhook::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $webhook ) {
-			return new WP_Error(
-				'webhook_not_found',
-				__( 'Webhook not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::webhook_not_found();
 		}
 
 		// Cancel any pending Action Scheduler actions for this webhook.
@@ -326,11 +311,7 @@ class OutgoingWebhooksEndpoint {
 		$webhook = OutgoingWebhook::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $webhook ) {
-			return new WP_Error(
-				'webhook_not_found',
-				__( 'Webhook not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::webhook_not_found();
 		}
 
 		$per_page = $request->get_param( 'per_page' ) ?? 25;
@@ -368,11 +349,7 @@ class OutgoingWebhooksEndpoint {
 		$webhook = OutgoingWebhook::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $webhook ) {
-			return new WP_Error(
-				'webhook_not_found',
-				__( 'Webhook not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::webhook_not_found();
 		}
 
 		$event_id = 'evt_' . bin2hex( random_bytes( 12 ) );
@@ -526,21 +503,19 @@ class OutgoingWebhooksEndpoint {
 	 */
 	private function get_collection_params(): array {
 		return [
-			'page'     => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page' => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'page'     => Args::integer(
+				[
+					'default' => 1,
+					'minimum' => 1,
+				]
+			),
+			'per_page' => Args::integer(
+				[
+					'default' => 25,
+					'minimum' => 1,
+					'maximum' => 100,
+				]
+			),
 		];
 	}
 
@@ -551,11 +526,7 @@ class OutgoingWebhooksEndpoint {
 	 */
 	private function get_create_params(): array {
 		return [
-			'name'   => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'name'   => Args::string( [ 'required' => true ] ),
 			'url'    => [
 				'type'     => 'string',
 				'required' => true,
@@ -567,13 +538,7 @@ class OutgoingWebhooksEndpoint {
 					'type' => 'string',
 				],
 			],
-			'status' => [
-				'type'              => 'string',
-				'default'           => 'active',
-				'enum'              => [ 'active', 'paused' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'status' => Args::enum( [ 'active', 'paused' ], [ 'default' => 'active' ] ),
 		];
 	}
 
@@ -584,11 +549,7 @@ class OutgoingWebhooksEndpoint {
 	 */
 	private function get_update_params(): array {
 		return [
-			'id' => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
+			'id' => Args::id(),
 		];
 	}
 
@@ -599,26 +560,20 @@ class OutgoingWebhooksEndpoint {
 	 */
 	private function get_delivery_params(): array {
 		return [
-			'id'       => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
-			'page'     => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page' => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'id'       => Args::id(),
+			'page'     => Args::integer(
+				[
+					'default' => 1,
+					'minimum' => 1,
+				]
+			),
+			'per_page' => Args::integer(
+				[
+					'default' => 25,
+					'minimum' => 1,
+					'maximum' => 100,
+				]
+			),
 		];
 	}
 }

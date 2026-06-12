@@ -8,6 +8,8 @@
 namespace MissionDP\Tests\Models;
 
 use MissionDP\Models\Subscription;
+use MissionDP\Settings\SettingsService;
+use WP_Error;
 use WP_UnitTestCase;
 
 /**
@@ -102,26 +104,29 @@ class SubscriptionTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test pause() returns false for non-active subscriptions.
+	 * Test pause() returns a 400 WP_Error for non-active subscriptions.
 	 */
 	public function test_pause_fails_when_cancelled(): void {
 		$sub = new Subscription( [ 'status' => 'cancelled' ] );
 
 		$result = $sub->pause();
 
-		$this->assertFalse( $result );
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_pausable', $result->get_error_code() );
+		$this->assertSame( 400, $result->get_error_data()['status'] );
 		$this->assertSame( 'cancelled', $sub->status );
 	}
 
 	/**
-	 * Test pause() returns false for pending subscriptions.
+	 * Test pause() returns a 400 WP_Error for pending subscriptions.
 	 */
 	public function test_pause_fails_when_pending(): void {
 		$sub = new Subscription( [ 'status' => 'pending' ] );
 
 		$result = $sub->pause();
 
-		$this->assertFalse( $result );
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_pausable', $result->get_error_code() );
 		$this->assertSame( 'pending', $sub->status );
 	}
 
@@ -155,14 +160,16 @@ class SubscriptionTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test resume() returns false for non-paused subscriptions.
+	 * Test resume() returns a 400 WP_Error for non-paused subscriptions.
 	 */
 	public function test_resume_fails_when_cancelled(): void {
 		$sub = new Subscription( [ 'status' => 'cancelled' ] );
 
 		$result = $sub->resume();
 
-		$this->assertFalse( $result );
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_resumable', $result->get_error_code() );
+		$this->assertSame( 400, $result->get_error_data()['status'] );
 		$this->assertSame( 'cancelled', $sub->status );
 	}
 
@@ -234,7 +241,7 @@ class SubscriptionTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test update_amount() fails when cancelled.
+	 * Test update_amount() returns a 400 WP_Error when cancelled.
 	 */
 	public function test_update_amount_fails_when_cancelled(): void {
 		$sub = new Subscription( [
@@ -245,12 +252,14 @@ class SubscriptionTest extends WP_UnitTestCase {
 
 		$result = $sub->update_amount( 5000, 0 );
 
-		$this->assertFalse( $result );
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_updatable', $result->get_error_code() );
+		$this->assertSame( 400, $result->get_error_data()['status'] );
 		$this->assertSame( 2500, $sub->amount );
 	}
 
 	/**
-	 * Test update_amount() fails when pending.
+	 * Test update_amount() returns a 400 WP_Error when pending.
 	 */
 	public function test_update_amount_fails_when_pending(): void {
 		$sub = new Subscription( [
@@ -261,12 +270,13 @@ class SubscriptionTest extends WP_UnitTestCase {
 
 		$result = $sub->update_amount( 5000, 0 );
 
-		$this->assertFalse( $result );
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_updatable', $result->get_error_code() );
 		$this->assertSame( 2500, $sub->amount );
 	}
 
 	/**
-	 * Test create_setup_intent() returns false without gateway_customer_id.
+	 * Test create_setup_intent() returns a 400 WP_Error without gateway_customer_id.
 	 */
 	public function test_create_setup_intent_fails_without_customer_id(): void {
 		$sub = new Subscription( [
@@ -274,11 +284,30 @@ class SubscriptionTest extends WP_UnitTestCase {
 			'gateway_customer_id' => null,
 		] );
 
-		$this->assertFalse( $sub->create_setup_intent() );
+		$result = $sub->create_setup_intent();
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_missing_gateway_data', $result->get_error_code() );
+		$this->assertSame( 400, $result->get_error_data()['status'] );
 	}
 
 	/**
-	 * Test update_payment_method() fails when cancelled.
+	 * Test create_setup_intent() returns a 400 WP_Error when cancelled.
+	 */
+	public function test_create_setup_intent_fails_when_cancelled(): void {
+		$sub = new Subscription( [
+			'status'              => 'cancelled',
+			'gateway_customer_id' => 'cus_xyz',
+		] );
+
+		$result = $sub->create_setup_intent();
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_updatable', $result->get_error_code() );
+	}
+
+	/**
+	 * Test update_payment_method() returns a 400 WP_Error when cancelled.
 	 */
 	public function test_update_payment_method_fails_when_cancelled(): void {
 		$sub = new Subscription( [
@@ -286,11 +315,15 @@ class SubscriptionTest extends WP_UnitTestCase {
 			'gateway_subscription_id' => 'sub_abc',
 		] );
 
-		$this->assertFalse( $sub->update_payment_method( 'pm_test' ) );
+		$result = $sub->update_payment_method( 'pm_test' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_updatable', $result->get_error_code() );
+		$this->assertSame( 400, $result->get_error_data()['status'] );
 	}
 
 	/**
-	 * Test update_payment_method() fails when pending.
+	 * Test update_payment_method() returns a 400 WP_Error when pending.
 	 */
 	public function test_update_payment_method_fails_when_pending(): void {
 		$sub = new Subscription( [
@@ -298,11 +331,14 @@ class SubscriptionTest extends WP_UnitTestCase {
 			'gateway_subscription_id' => 'sub_abc',
 		] );
 
-		$this->assertFalse( $sub->update_payment_method( 'pm_test' ) );
+		$result = $sub->update_payment_method( 'pm_test' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_not_updatable', $result->get_error_code() );
 	}
 
 	/**
-	 * Test update_payment_method() fails without gateway_subscription_id.
+	 * Test update_payment_method() returns a 400 WP_Error without gateway_subscription_id.
 	 */
 	public function test_update_payment_method_fails_without_gateway_id(): void {
 		$sub = new Subscription( [
@@ -310,7 +346,197 @@ class SubscriptionTest extends WP_UnitTestCase {
 			'gateway_subscription_id' => null,
 		] );
 
-		$this->assertFalse( $sub->update_payment_method( 'pm_test' ) );
+		$result = $sub->update_payment_method( 'pm_test' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'subscription_missing_gateway_data', $result->get_error_code() );
+		$this->assertSame( 400, $result->get_error_data()['status'] );
+	}
+
+	/**
+	 * Test cancel() succeeds from paused (cancellable from any non-cancelled state).
+	 */
+	public function test_cancel_succeeds_when_paused(): void {
+		$sub = new Subscription( [
+			'status'                  => 'paused',
+			'gateway_subscription_id' => null,
+		] );
+
+		$this->assertTrue( $sub->cancel() );
+		$this->assertSame( 'cancelled', $sub->status );
+	}
+
+	/**
+	 * Test cancel() succeeds from pending (cancellable from any non-cancelled state).
+	 */
+	public function test_cancel_succeeds_when_pending(): void {
+		$sub = new Subscription( [
+			'status'                  => 'pending',
+			'gateway_subscription_id' => null,
+		] );
+
+		$this->assertTrue( $sub->cancel() );
+		$this->assertSame( 'cancelled', $sub->status );
+	}
+
+	/**
+	 * Test cancel() returns mission_api_unreachable when the API request errors.
+	 */
+	public function test_cancel_returns_api_unreachable_on_network_failure(): void {
+		$sub = $this->create_gateway_subscription( 'active' );
+		$this->mock_api_network_failure();
+
+		$result = $sub->cancel();
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'mission_api_unreachable', $result->get_error_code() );
+		$this->assertSame( 502, $result->get_error_data()['status'] );
+		$this->assertSame( 'active', $sub->status );
+		$this->assertSame( 'active', Subscription::find( $sub->id )->status );
+	}
+
+	/**
+	 * Test cancel() returns mission_api_error with the upstream status on non-200.
+	 */
+	public function test_cancel_returns_api_error_on_upstream_500(): void {
+		$sub = $this->create_gateway_subscription( 'active' );
+		$this->mock_api_response( 500 );
+
+		$result = $sub->cancel();
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'mission_api_error', $result->get_error_code() );
+		$this->assertSame( 502, $result->get_error_data()['status'] );
+		$this->assertSame( 500, $result->get_error_data()['upstream_status'] );
+		$this->assertSame( 'active', $sub->status );
+	}
+
+	/**
+	 * Test pause() leaves the subscription active when the API is unreachable.
+	 */
+	public function test_pause_returns_api_unreachable_on_network_failure(): void {
+		$sub = $this->create_gateway_subscription( 'active' );
+		$this->mock_api_network_failure();
+
+		$result = $sub->pause();
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'mission_api_unreachable', $result->get_error_code() );
+		$this->assertSame( 'active', $sub->status );
+	}
+
+	/**
+	 * Test resume() leaves the subscription paused when the API is unreachable.
+	 */
+	public function test_resume_returns_api_unreachable_on_network_failure(): void {
+		$sub = $this->create_gateway_subscription( 'paused' );
+		$this->mock_api_network_failure();
+
+		$result = $sub->resume();
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'mission_api_unreachable', $result->get_error_code() );
+		$this->assertSame( 'paused', $sub->status );
+	}
+
+	/**
+	 * Test update_amount() leaves amounts unchanged and fires no hook on API failure.
+	 */
+	public function test_update_amount_returns_api_error_and_keeps_amounts(): void {
+		$fired = false;
+		add_action( 'mission_subscription_amount_changed', function () use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$sub = $this->create_gateway_subscription( 'active', [
+			'amount'       => 2500,
+			'tip_amount'   => 0,
+			'total_amount' => 2500,
+		] );
+		$this->mock_api_response( 503 );
+
+		$result = $sub->update_amount( 5000, 0 );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'mission_api_error', $result->get_error_code() );
+		$this->assertSame( 503, $result->get_error_data()['upstream_status'] );
+		$this->assertSame( 2500, $sub->amount );
+		$this->assertFalse( $fired, 'Hook should not fire when the API call fails.' );
+	}
+
+	/**
+	 * Test update_payment_method() returns mission_api_invalid_response when card data is missing.
+	 */
+	public function test_update_payment_method_rejects_response_without_card(): void {
+		$sub = $this->create_gateway_subscription( 'active' );
+		$this->mock_api_response( 200, [ 'success' => true ] );
+
+		$result = $sub->update_payment_method( 'pm_test' );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'mission_api_invalid_response', $result->get_error_code() );
+		$this->assertSame( 502, $result->get_error_data()['status'] );
+	}
+
+	/**
+	 * Create a saved subscription with a gateway ID and a configured site token,
+	 * so lifecycle methods reach the Mission API call.
+	 *
+	 * @param string               $status Subscription status.
+	 * @param array<string, mixed> $extra  Additional subscription fields.
+	 * @return Subscription
+	 */
+	private function create_gateway_subscription( string $status, array $extra = [] ): Subscription {
+		update_option( SettingsService::OPTION_NAME, [ 'stripe_site_token' => 'test_site_token_123' ] );
+
+		$sub = new Subscription( array_merge( [
+			'status'                  => $status,
+			'gateway_subscription_id' => 'sub_abc',
+			'gateway_customer_id'     => 'cus_xyz',
+		], $extra ) );
+		$sub->save();
+
+		return $sub;
+	}
+
+	/**
+	 * Mock all Mission API requests to fail at the transport level.
+	 */
+	private function mock_api_network_failure(): void {
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) {
+				if ( str_contains( $url, 'api.missionwp.com' ) ) {
+					return new WP_Error( 'http_request_failed', 'Connection timed out' );
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
+	}
+
+	/**
+	 * Mock all Mission API requests to return the given HTTP response.
+	 *
+	 * @param int                  $code HTTP status code.
+	 * @param array<string, mixed> $body Response body to JSON-encode.
+	 */
+	private function mock_api_response( int $code, array $body = [] ): void {
+		add_filter(
+			'pre_http_request',
+			function ( $preempt, $args, $url ) use ( $code, $body ) {
+				if ( str_contains( $url, 'api.missionwp.com' ) ) {
+					return [
+						'response' => [ 'code' => $code ],
+						'body'     => wp_json_encode( $body ),
+					];
+				}
+				return $preempt;
+			},
+			10,
+			3
+		);
 	}
 
 	/**

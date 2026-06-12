@@ -14,9 +14,9 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Response;
-use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,13 +28,15 @@ defined( 'ABSPATH' ) || exit;
  */
 class SystemStatusEndpoint {
 
+	use AdminPermissionTrait;
+
 	/**
 	 * Constructor.
 	 *
 	 * @param SettingsService $settings Settings service.
 	 */
 	public function __construct(
-		private readonly SettingsService $settings,
+		private SettingsService $settings,
 	) {}
 
 	/**
@@ -49,26 +51,9 @@ class SystemStatusEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_status' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
-	}
-
-	/**
-	 * Permission check — requires manage_options.
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to perform this action.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
 	}
 
 	/**
@@ -112,7 +97,7 @@ class SystemStatusEndpoint {
 			'test_mode'                 => $test_mode,
 			'currency'                  => $currency,
 			'currency_symbol'           => $symbol,
-			'active_campaigns'          => Campaign::count( [ 'status' => 'active' ] ),
+			'active_campaigns'          => Campaign::count( [ 'status' => Campaign::STATUS_ACTIVE ] ),
 			'total_donors'              => Donor::count(),
 			'total_transactions'        => Transaction::count(),
 		];

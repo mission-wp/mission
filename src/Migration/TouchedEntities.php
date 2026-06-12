@@ -7,8 +7,8 @@
 
 namespace MissionDP\Migration;
 
-use MissionDP\Database\DataStore\CampaignDataStore;
-use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -24,7 +24,7 @@ class TouchedEntities {
 	 *
 	 * @param string $job_id Public job token.
 	 */
-	public function __construct( private readonly string $job_id ) {}
+	public function __construct( private string $job_id ) {}
 
 	/**
 	 * Accumulate distinct touched IDs for a bucket.
@@ -66,15 +66,12 @@ class TouchedEntities {
 			return;
 		}
 
-		$donor_store    = new DonorDataStore();
-		$campaign_store = new CampaignDataStore();
-
 		foreach ( $touched['donors'] ?? [] as $donor_id ) {
-			$donor_store->recompute_aggregates( (int) $donor_id );
+			Donor::recompute_aggregates( (int) $donor_id );
 		}
 
 		foreach ( $touched['campaigns'] ?? [] as $campaign_id ) {
-			$campaign_store->recompute_aggregates( (int) $campaign_id );
+			Campaign::recompute_aggregates( (int) $campaign_id );
 		}
 
 		$this->clear();

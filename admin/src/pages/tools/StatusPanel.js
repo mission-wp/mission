@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, Fragment } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import SkeletonBar from '@shared/components/SkeletonBar';
 
 /**
  * Colored status dot indicator.
@@ -36,21 +37,6 @@ function StatusSection( { title, rows } ) {
         </tbody>
       </table>
     </div>
-  );
-}
-
-function SkeletonBar( { width = '60%', height = '13px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
   );
 }
 
@@ -200,6 +186,7 @@ function StatusSkeleton() {
                           width={ `${
                             80 + ( ( i * 7 + j * 13 ) % 6 ) * 15
                           }px` }
+                          height="13px"
                         />
                       ) }
                     </td>
@@ -210,6 +197,7 @@ function StatusSkeleton() {
                             ( i + j ) % SKELETON_VALUE_WIDTHS.length
                           ]
                         }
+                        height="13px"
                       />
                     </td>
                   </tr>

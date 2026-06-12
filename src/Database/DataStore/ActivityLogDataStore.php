@@ -114,7 +114,8 @@ class ActivityLogDataStore implements DataStoreInterface {
 	/**
 	 * Query activity log entries.
 	 *
-	 * @param array<string, mixed> $args Query arguments.
+	 * @param array<string, mixed> $args Query arguments. Results are paginated;
+	 *                                   per_page defaults to 100.
 	 *
 	 * @return ActivityLog[]
 	 */
@@ -149,7 +150,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
 
-		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		$per_page = max( 1, (int) ( $args['per_page'] ?? 100 ) );
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 

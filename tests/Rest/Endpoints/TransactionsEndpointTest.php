@@ -820,6 +820,94 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	// =========================================================================
+	// POST /transactions/{id}/resend-receipt — 4 tests
+	// =========================================================================
+
+	/**
+	 * Test resend receipt sends the email and reports the recipient.
+	 */
+	public function test_resend_receipt_sends_email(): void {
+		$transaction = $this->create_transaction();
+		reset_phpmailer_instance();
+
+		$response = $this->dispatch_post(
+			"/mission-donation-platform/v1/transactions/{$transaction->id}/resend-receipt"
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'jane@example.com', $response->get_data()['sent_to'] );
+
+		$sent = tests_retrieve_phpmailer_instance()->mock_sent;
+		$this->assertCount( 1, $sent );
+		$this->assertStringContainsString( '$50.00', $sent[0]['subject'] );
+
+		reset_phpmailer_instance();
+	}
+
+	/**
+	 * Test resend receipt replaces all six custom subject tags.
+	 */
+	public function test_resend_receipt_replaces_custom_subject_tags(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			[
+				'org_name' => 'Test Org',
+				'emails'   => [
+					'donation_receipt' => [
+						'subject' => '{donor_name}|{amount}|{campaign}|{date}|{organization}|{receipt_id}',
+					],
+				],
+			]
+		);
+
+		$transaction = $this->create_transaction( [ 'date_completed' => '2026-06-12 10:00:00' ] );
+		reset_phpmailer_instance();
+
+		$response = $this->dispatch_post(
+			"/mission-donation-platform/v1/transactions/{$transaction->id}/resend-receipt"
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+
+		$expected_date = wp_date( get_option( 'date_format' ), strtotime( '2026-06-12 10:00:00' ) );
+		$sent          = tests_retrieve_phpmailer_instance()->mock_sent;
+		$this->assertCount( 1, $sent );
+		$this->assertSame(
+			"Jane|\$50.00|General Fund|{$expected_date}|Test Org|{$transaction->id}",
+			$sent[0]['subject']
+		);
+
+		reset_phpmailer_instance();
+	}
+
+	/**
+	 * Test resend receipt returns 404 for a nonexistent transaction.
+	 */
+	public function test_resend_receipt_404_for_nonexistent(): void {
+		$response = $this->dispatch_post(
+			'/mission-donation-platform/v1/transactions/99999/resend-receipt'
+		);
+
+		$this->assertSame( 404, $response->get_status() );
+	}
+
+	/**
+	 * Test resend receipt returns 400 when the donor has no email.
+	 */
+	public function test_resend_receipt_400_without_donor_email(): void {
+		$no_email_donor = new Donor( [ 'email' => '', 'first_name' => 'Nameless' ] );
+		$no_email_donor->save();
+		$transaction = $this->create_transaction( [ 'donor_id' => $no_email_donor->id ] );
+
+		$response = $this->dispatch_post(
+			"/mission-donation-platform/v1/transactions/{$transaction->id}/resend-receipt"
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'no_email', $response->as_error()->get_error_code() );
+	}
+
+	// =========================================================================
 	// Permissions — 2 tests
 	// =========================================================================
 

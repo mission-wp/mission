@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard, { getDelta } from '@shared/components/StatCard';
+import { BRAND_COLOR } from '@shared/color';
 import {
   Button,
   Card,
@@ -15,8 +18,10 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../components/EmptyState';
 import AddDonationDrawer from './AddDonationDrawer';
+import { TRANSACTION_STATUS, isRecurringType } from '../../constants';
 
 const ReceiptIcon = () => (
   <svg
@@ -34,30 +39,28 @@ const ReceiptIcon = () => (
   </svg>
 );
 
-const BRAND_COLOR = '#2FA36B';
-
 const STATUS_STYLES = {
-  completed: {
+  [ TRANSACTION_STATUS.COMPLETED ]: {
     backgroundColor: '#eafaf0',
     color: '#1a7338',
     label: __( 'Completed', 'mission-donation-platform' ),
   },
-  pending: {
+  [ TRANSACTION_STATUS.PENDING ]: {
     backgroundColor: '#fef3c7',
     color: '#92400e',
     label: __( 'Pending', 'mission-donation-platform' ),
   },
-  refunded: {
+  [ TRANSACTION_STATUS.REFUNDED ]: {
     backgroundColor: '#fef2f2',
     color: '#dc2626',
     label: __( 'Refunded', 'mission-donation-platform' ),
   },
-  cancelled: {
+  [ TRANSACTION_STATUS.CANCELLED ]: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
     label: __( 'Cancelled', 'mission-donation-platform' ),
   },
-  failed: {
+  [ TRANSACTION_STATUS.FAILED ]: {
     backgroundColor: '#f0f0f0',
     color: '#757575',
     label: __( 'Failed', 'mission-donation-platform' ),
@@ -65,7 +68,8 @@ const STATUS_STYLES = {
 };
 
 function StatusBadge( { status } ) {
-  const style = STATUS_STYLES[ status ] || STATUS_STYLES.pending;
+  const style =
+    STATUS_STYLES[ status ] || STATUS_STYLES[ TRANSACTION_STATUS.PENDING ];
   return (
     <span
       style={ {
@@ -84,7 +88,7 @@ function StatusBadge( { status } ) {
 }
 
 function TypeBadge( { type } ) {
-  const isRecurring = [ 'monthly', 'quarterly', 'annually' ].includes( type );
+  const isRecurring = isRecurringType( type );
   const bg = isRecurring ? '#eafaf0' : '#f0f0f5';
   const color = isRecurring ? '#1a7338' : '#6b6b7b';
   const label = isRecurring
@@ -105,96 +109,6 @@ function TypeBadge( { type } ) {
     >
       { label }
     </span>
-  );
-}
-
-function SkeletonBar( { width = '60%', height = '24px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
-  );
-}
-
-function getDelta( current, previous ) {
-  if ( ! previous ) {
-    return { value: 0, direction: 'neutral' };
-  }
-  const pct = ( ( current - previous ) / previous ) * 100;
-  const rounded = Math.abs( Math.round( pct * 10 ) / 10 );
-  if ( pct > 0 ) {
-    return { value: rounded, direction: 'positive' };
-  }
-  if ( pct < 0 ) {
-    return { value: rounded, direction: 'negative' };
-  }
-  return { value: 0, direction: 'neutral' };
-}
-
-const ArrowUp = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="2,8 6,3 10,8" />
-  </svg>
-);
-
-const ArrowDown = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="2,4 6,9 10,4" />
-  </svg>
-);
-
-function StatCard( { label, value, delta, subtitle, isLoading: loading } ) {
-  return (
-    <Card className="mission-stat-card">
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { loading && (
-          <div className="mission-stat-card__delta">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-        { ! loading && delta && (
-          <div className={ `mission-stat-card__delta is-${ delta.direction }` }>
-            { delta.direction === 'positive' && <ArrowUp /> }
-            { delta.direction === 'negative' && <ArrowDown /> }
-            <span>
-              { delta.value }% { delta.label }
-            </span>
-          </div>
-        ) }
-        { ! loading && ! delta && subtitle && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-      </CardBody>
-    </Card>
   );
 }
 
@@ -316,23 +230,23 @@ function buildFields( campaignElements ) {
         ),
       elements: [
         {
-          value: 'pending',
+          value: TRANSACTION_STATUS.PENDING,
           label: __( 'Pending', 'mission-donation-platform' ),
         },
         {
-          value: 'completed',
+          value: TRANSACTION_STATUS.COMPLETED,
           label: __( 'Completed', 'mission-donation-platform' ),
         },
         {
-          value: 'refunded',
+          value: TRANSACTION_STATUS.REFUNDED,
           label: __( 'Refunded', 'mission-donation-platform' ),
         },
         {
-          value: 'cancelled',
+          value: TRANSACTION_STATUS.CANCELLED,
           label: __( 'Cancelled', 'mission-donation-platform' ),
         },
         {
-          value: 'failed',
+          value: TRANSACTION_STATUS.FAILED,
           label: __( 'Failed', 'mission-donation-platform' ),
         },
       ],
@@ -420,14 +334,16 @@ function buildSummaryCards( summary ) {
 }
 
 export default function TransactionList() {
-  const [ data, setData ] = useState( [] );
   const { view, setView, isModified, resetToDefault } = usePersistedView(
     'transactions',
     DEFAULT_VIEW
   );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
+  const { data, totalItems, totalPages, isLoading, refresh } =
+    usePaginatedFetch( {
+      path: '/mission-donation-platform/v1/transactions',
+      view,
+      filterFields: [ 'status', 'campaign_id', 'dedication' ],
+    } );
   const [ summary, setSummary ] = useState( null );
   const [ campaignElements, setCampaignElements ] = useState( [] );
   const [ showDrawer, setShowDrawer ] = useState( false );
@@ -455,67 +371,6 @@ export default function TransactionList() {
       } )
       .catch( () => {} );
   }, [] );
-
-  const fetchTransactions = useCallback( async () => {
-    setIsLoading( true );
-
-    const params = new URLSearchParams( {
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date_created',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    const statusFilter = view.filters?.find( ( f ) => f.field === 'status' );
-    if ( statusFilter?.value ) {
-      params.set( 'status', statusFilter.value );
-    }
-
-    const campaignFilter = view.filters?.find(
-      ( f ) => f.field === 'campaign_id'
-    );
-    if ( campaignFilter?.value ) {
-      params.set( 'campaign_id', campaignFilter.value );
-    }
-
-    const dedicationFilter = view.filters?.find(
-      ( f ) => f.field === 'dedication'
-    );
-    if ( dedicationFilter?.value ) {
-      params.set( 'dedication', dedicationFilter.value );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/transactions?${ params.toString() }`,
-        parse: false,
-      } );
-
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [ view.page, view.perPage, view.sort, view.filters, view.search ] );
-
-  useEffect( () => {
-    fetchTransactions();
-  }, [ fetchTransactions ] );
 
   const fields = buildFields( campaignElements );
   const { revenueDelta, donationsDelta, refundSubtitle } =
@@ -663,7 +518,7 @@ export default function TransactionList() {
         onClose={ () => setShowDrawer( false ) }
         onCreated={ () => {
           setShowDrawer( false );
-          fetchTransactions();
+          refresh();
           fetchSummary();
         } }
         campaigns={ campaignElements }

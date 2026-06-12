@@ -58,7 +58,7 @@ export const COUNTRIES = [
   { value: 'KM', label: 'Comoros' },
   { value: 'CK', label: 'Cook Islands' },
   { value: 'CR', label: 'Costa Rica' },
-  { value: 'CI', label: 'Côte d\'Ivoire' },
+  { value: 'CI', label: "Côte d'Ivoire" },
   { value: 'HR', label: 'Croatia' },
   { value: 'CU', label: 'Cuba' },
   { value: 'CW', label: 'Curaçao' },
@@ -335,7 +335,7 @@ export const CA_PROVINCES = [
  * Get region field configuration for a given country code.
  *
  * @param {string} countryCode ISO 3166-1 alpha-2 country code.
- * @return {{ label: string, postalLabel: string, options: Array|null }}
+ * @return {{ label: string, postalLabel: string, options: Array|null }} Region and postal field labels plus region options for the country.
  */
 export function getRegionConfig( countryCode ) {
   switch ( countryCode ) {

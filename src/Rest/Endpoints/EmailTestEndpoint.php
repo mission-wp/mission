@@ -10,7 +10,9 @@ namespace MissionDP\Rest\Endpoints;
 use MissionDP\Currency\Currency;
 use MissionDP\Email\EmailModule;
 use MissionDP\Models\Donor;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -22,6 +24,8 @@ defined( 'ABSPATH' ) || exit;
  * Email test endpoint class.
  */
 class EmailTestEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Default subjects per email type (mirrors listener hardcoded defaults).
@@ -66,9 +70,11 @@ class EmailTestEndpoint {
 	 * Constructor.
 	 *
 	 * @param SettingsService $settings Settings service.
+	 * @param EmailModule     $email    Email module.
 	 */
 	public function __construct(
-		private readonly SettingsService $settings,
+		private SettingsService $settings,
+		private EmailModule $email,
 	) {}
 
 	/**
@@ -83,13 +89,9 @@ class EmailTestEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'send_test' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'email_type' => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'email_type' => Args::string( [ 'required' => true ] ),
 					'to'         => [
 						'required'          => false,
 						'type'              => 'string',
@@ -101,20 +103,12 @@ class EmailTestEndpoint {
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to send test emails.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to send test emails.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -139,7 +133,7 @@ class EmailTestEndpoint {
 			$to = wp_get_current_user()->user_email;
 		}
 
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 		$data         = $this->build_sample_data( $email_type, $to );
 		$template     = self::TEMPLATE_MAP[ $email_type ];
 

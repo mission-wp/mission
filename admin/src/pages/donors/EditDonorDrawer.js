@@ -10,34 +10,14 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import Drawer from '../../components/Drawer';
+import {
+  errorStyle,
+  errorHintStyle,
+  isValidEmail,
+  RequiredLabel,
+} from '../../components/form-validation';
 import { COUNTRIES, getRegionConfig } from '@shared/address';
-
-const BRAND_COLOR = '#2FA36B';
-const ERROR_COLOR = '#dc2626';
-
-const errorStyle = {
-  borderColor: ERROR_COLOR,
-  boxShadow: '0 0 0 1px ' + ERROR_COLOR,
-};
-
-const errorHintStyle = {
-  margin: '4px 0 0',
-  fontSize: '13px',
-  color: ERROR_COLOR,
-};
-
-function RequiredLabel( { text } ) {
-  return (
-    <>
-      { text }
-      <span style={ { color: ERROR_COLOR, marginLeft: '4px' } }>*</span>
-    </>
-  );
-}
-
-function isValidEmail( email ) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test( email );
-}
+import { BRAND_COLOR } from '@shared/color';
 
 function donorToForm( donor ) {
   return {

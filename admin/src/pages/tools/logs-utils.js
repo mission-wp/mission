@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
+import { FREQUENCY_SUFFIXES } from '../../constants';
 
 export const LEVEL_OPTIONS = [
   { value: '', label: __( 'All levels', 'mission-donation-platform' ) },
@@ -19,13 +20,6 @@ export const CATEGORY_OPTIONS = [
   },
   { value: 'system', label: __( 'System', 'mission-donation-platform' ) },
 ];
-
-const freqLabels = {
-  monthly: '/mo',
-  weekly: '/wk',
-  quarterly: '/qtr',
-  annually: '/yr',
-};
 
 // [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
 const importTypeLabels = {
@@ -88,7 +82,7 @@ export function buildLogMessage( entry ) {
 
     case 'recurring_donation_processed': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
-      const suffix = freqLabels[ data.frequency ] || '';
+      const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
       const name = data.donor_name || 'a donor';
       return amt
         ? `Recurring donation of <strong>${ amt }${ suffix }</strong> renewed for ${ name }`
@@ -113,7 +107,7 @@ export function buildLogMessage( entry ) {
 
     case 'subscription_created': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
-      const suffix = freqLabels[ data.frequency ] || '';
+      const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
       const name = data.donor_name || 'a donor';
       return amt
         ? `New <strong>${ amt }${ suffix }</strong> recurring donation started by ${ name }`
@@ -132,7 +126,7 @@ export function buildLogMessage( entry ) {
 
     case 'subscription_amount_increased': {
       const amt = data.new_amount ? formatAmount( data.new_amount ) : '';
-      const suffix = freqLabels[ data.frequency ] || '';
+      const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
       const name = data.donor_name || 'A donor';
       return amt
         ? `${ name } increased recurring donation to <strong>${ amt }${ suffix }</strong>`
@@ -141,7 +135,7 @@ export function buildLogMessage( entry ) {
 
     case 'subscription_amount_decreased': {
       const amt = data.new_amount ? formatAmount( data.new_amount ) : '';
-      const suffix = freqLabels[ data.frequency ] || '';
+      const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
       const name = data.donor_name || 'A donor';
       return amt
         ? `${ name } decreased recurring donation to <strong>${ amt }${ suffix }</strong>`

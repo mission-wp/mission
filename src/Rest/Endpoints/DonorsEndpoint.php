@@ -9,7 +9,11 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Donor;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -22,6 +26,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class DonorsEndpoint {
 
+	use AdminPermissionTrait;
+
 	/**
 	 * Constructor.
 	 *
@@ -29,8 +35,8 @@ class DonorsEndpoint {
 	 * @param SettingsService  $settings  Settings service.
 	 */
 	public function __construct(
-		private readonly ReportingService $reporting,
-		private readonly SettingsService $settings,
+		private ReportingService $reporting,
+		private SettingsService $settings,
 	) {}
 
 	/**
@@ -45,7 +51,7 @@ class DonorsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_donors' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_collection_params(),
 			]
 		);
@@ -56,7 +62,7 @@ class DonorsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'create_donor' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_create_params(),
 			]
 		);
@@ -68,19 +74,15 @@ class DonorsEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_donor' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => [
-						'id' => [
-							'type'              => 'integer',
-							'required'          => true,
-							'sanitize_callback' => 'absint',
-						],
+						'id' => Args::id(),
 					],
 				],
 				[
 					'methods'             => 'PUT',
 					'callback'            => [ $this, 'update_donor' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_update_params(),
 				],
 			]
@@ -92,26 +94,18 @@ class DonorsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_summary' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view donors.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view donors.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -180,11 +174,7 @@ class DonorsEndpoint {
 		$donor = Donor::find( $request->get_param( 'id' ) );
 
 		if ( ! $donor ) {
-			return new WP_Error(
-				'donor_not_found',
-				__( 'Donor not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::donor_not_found();
 		}
 
 		return new WP_REST_Response( $this->prepare_donor_detail( $donor ), 200 );
@@ -200,11 +190,7 @@ class DonorsEndpoint {
 		$donor = Donor::find( $request->get_param( 'id' ) );
 
 		if ( ! $donor ) {
-			return new WP_Error(
-				'donor_not_found',
-				__( 'Donor not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::donor_not_found();
 		}
 
 		$email = $request->get_param( 'email' );
@@ -403,41 +389,10 @@ class DonorsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'     => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page' => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'orderby'  => [
-				'type'              => 'string',
-				'default'           => 'date_created',
-				'enum'              => [ 'date_created', 'total_donated', 'transaction_count', 'last_transaction' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'order'    => [
-				'type'              => 'string',
-				'default'           => 'DESC',
-				'enum'              => [ 'ASC', 'DESC' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'search'   => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-		];
+		return CollectionParams::base(
+			orderby: [ 'date_created', 'total_donated', 'transaction_count', 'last_transaction' ],
+			default_orderby: 'date_created'
+		);
 	}
 
 	/**
@@ -447,51 +402,20 @@ class DonorsEndpoint {
 	 */
 	private function get_update_params(): array {
 		return [
-			'id'         => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
+			'id'         => Args::id(),
 			'email'      => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_email',
 			],
-			'first_name' => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'last_name'  => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'phone'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'address_1'  => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'address_2'  => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'city'       => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'state'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'zip'        => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'country'    => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'first_name' => Args::string(),
+			'last_name'  => Args::string(),
+			'phone'      => Args::string(),
+			'address_1'  => Args::string(),
+			'address_2'  => Args::string(),
+			'city'       => Args::string(),
+			'state'      => Args::string(),
+			'zip'        => Args::string(),
+			'country'    => Args::string(),
 		];
 	}
 
@@ -507,51 +431,15 @@ class DonorsEndpoint {
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_email',
 			],
-			'first_name' => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'last_name'  => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'phone'      => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'address_1'  => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'address_2'  => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'city'       => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'state'      => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'zip'        => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'country'    => [
-				'type'              => 'string',
-				'default'           => 'US',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'first_name' => Args::string( [ 'required' => true ] ),
+			'last_name'  => Args::string( [ 'default' => '' ] ),
+			'phone'      => Args::string( [ 'default' => '' ] ),
+			'address_1'  => Args::string( [ 'default' => '' ] ),
+			'address_2'  => Args::string( [ 'default' => '' ] ),
+			'city'       => Args::string( [ 'default' => '' ] ),
+			'state'      => Args::string( [ 'default' => '' ] ),
+			'zip'        => Args::string( [ 'default' => '' ] ),
+			'country'    => Args::string( [ 'default' => 'US' ] ),
 			'note'       => [
 				'type'              => 'string',
 				'default'           => '',

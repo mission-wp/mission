@@ -37,7 +37,7 @@ class DonorReader {
 	 *
 	 * @param GiveWPSource $source Source DB access.
 	 */
-	public function __construct( private readonly GiveWPSource $source ) {}
+	public function __construct( private GiveWPSource $source ) {}
 
 	/**
 	 * Count migratable donors.

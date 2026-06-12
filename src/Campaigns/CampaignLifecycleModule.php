@@ -15,7 +15,6 @@ namespace MissionDP\Campaigns;
 
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Subscription;
-use MissionDP\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -101,11 +100,9 @@ class CampaignLifecycleModule {
 		 */
 		do_action( 'mission_campaign_status_changed', $campaign, $old_status, $new_status, $reason );
 
-		if ( 'ended' === $new_status ) {
+		if ( Campaign::STATUS_ENDED === $new_status ) {
 			$this->execute_end_actions( $campaign );
 		}
-
-		$this->log_transition( $campaign, $new_status );
 
 		return true;
 	}
@@ -121,14 +118,14 @@ class CampaignLifecycleModule {
 		foreach ( Campaign::find_ids_to_activate( $today ) as $id ) {
 			$campaign = Campaign::find( $id );
 			if ( $campaign ) {
-				$this->transition_status( $campaign, 'active', 'cron' );
+				$this->transition_status( $campaign, Campaign::STATUS_ACTIVE, 'cron' );
 			}
 		}
 
 		foreach ( Campaign::find_ids_to_end( $today ) as $id ) {
 			$campaign = Campaign::find( $id );
 			if ( $campaign ) {
-				$this->transition_status( $campaign, 'ended', 'cron' );
+				$this->transition_status( $campaign, Campaign::STATUS_ENDED, 'cron' );
 			}
 		}
 	}
@@ -145,7 +142,7 @@ class CampaignLifecycleModule {
 	public function check_close_on_goal( int $campaign_id ): void {
 		$campaign = Campaign::find( $campaign_id );
 
-		if ( ! $campaign || 'active' !== $campaign->status ) {
+		if ( ! $campaign || Campaign::STATUS_ACTIVE !== $campaign->status ) {
 			return;
 		}
 
@@ -159,7 +156,7 @@ class CampaignLifecycleModule {
 
 		// Only check live progress — test donations should not end a campaign.
 		if ( $campaign->get_goal_progress( false ) >= $campaign->goal_amount ) {
-			$this->transition_status( $campaign, 'ended', 'goal_reached' );
+			$this->transition_status( $campaign, Campaign::STATUS_ENDED, 'goal_reached' );
 		}
 	}
 
@@ -178,24 +175,24 @@ class CampaignLifecycleModule {
 		$new_status = null;
 
 		switch ( $campaign->status ) {
-			case 'active':
+			case Campaign::STATUS_ACTIVE:
 				if ( $start && $start > $today ) {
-					$new_status = 'scheduled';
+					$new_status = Campaign::STATUS_SCHEDULED;
 				} elseif ( $end && $end < $today ) {
-					$new_status = 'ended';
+					$new_status = Campaign::STATUS_ENDED;
 				}
 				break;
 
-			case 'scheduled':
+			case Campaign::STATUS_SCHEDULED:
 				if ( ! $start || $start <= $today ) {
-					$new_status = 'active';
+					$new_status = Campaign::STATUS_ACTIVE;
 				}
 				break;
 
-			case 'ended':
+			case Campaign::STATUS_ENDED:
 				// Allow reopening: if end date is cleared or moved to the future.
 				if ( ! $end || $end >= $today ) {
-					$new_status = ( $start && $start > $today ) ? 'scheduled' : 'active';
+					$new_status = ( $start && $start > $today ) ? Campaign::STATUS_SCHEDULED : Campaign::STATUS_ACTIVE;
 				}
 				break;
 		}
@@ -217,7 +214,7 @@ class CampaignLifecycleModule {
 		$start = $campaign->date_start ? substr( $campaign->date_start, 0, 10 ) : null;
 
 		if ( $start && $start > $today ) {
-			$campaign->status = 'scheduled';
+			$campaign->status = Campaign::STATUS_SCHEDULED;
 			$campaign->save();
 		}
 	}
@@ -253,7 +250,7 @@ class CampaignLifecycleModule {
 			$redirect_campaign_id = (int) $campaign->get_meta( 'recurring_redirect_campaign' );
 			if ( $redirect_campaign_id ) {
 				$target = Campaign::find( $redirect_campaign_id );
-				if ( ! $target || 'active' !== $target->status ) {
+				if ( ! $target || Campaign::STATUS_ACTIVE !== $target->status ) {
 					$redirect_campaign_id = null;
 				}
 			}
@@ -265,6 +262,12 @@ class CampaignLifecycleModule {
 	/**
 	 * Process subscriptions for an ended campaign.
 	 *
+	 * Each successful cancel or redirect removes the subscription from the
+	 * filtered query, so every batch re-queries page 1. Failed cancels stay
+	 * active (the API failure surfaces via mission_subscription_api_call_failed),
+	 * and a batch with zero successes stops the loop so a down Mission API
+	 * can't spin it forever.
+	 *
 	 * @param Campaign $campaign              The ended campaign.
 	 * @param string   $behavior              'cancel' or 'redirect'.
 	 * @param int|null $redirect_campaign_id  Target campaign ID for redirects.
@@ -272,15 +275,13 @@ class CampaignLifecycleModule {
 	 * @return void
 	 */
 	private function process_subscriptions( Campaign $campaign, string $behavior, ?int $redirect_campaign_id ): void {
-		$page = 1;
-
 		while ( true ) {
 			$subscriptions = Subscription::query(
 				[
 					'campaign_id' => $campaign->id,
-					'status'      => 'active',
+					'status'      => Subscription::STATUS_ACTIVE,
 					'per_page'    => self::SUBSCRIPTION_BATCH_SIZE,
-					'page'        => $page,
+					'page'        => 1,
 				]
 			);
 
@@ -288,53 +289,23 @@ class CampaignLifecycleModule {
 				break;
 			}
 
+			$succeeded = 0;
+
 			foreach ( $subscriptions as $subscription ) {
 				if ( 'cancel' === $behavior ) {
-					$subscription->cancel();
+					if ( ! is_wp_error( $subscription->cancel() ) ) {
+						++$succeeded;
+					}
 				} elseif ( 'redirect' === $behavior && $redirect_campaign_id ) {
 					$subscription->campaign_id = $redirect_campaign_id;
 					$subscription->save();
+					++$succeeded;
 				}
 			}
 
-			// If we got fewer than a full batch, we're done.
-			if ( count( $subscriptions ) < self::SUBSCRIPTION_BATCH_SIZE ) {
+			if ( 0 === $succeeded ) {
 				break;
 			}
-
-			++$page;
 		}
-	}
-
-	/**
-	 * Log a campaign_ended event to the activity feed.
-	 *
-	 * Only logs when the campaign transitions to 'ended'.
-	 *
-	 * @param Campaign $campaign   The campaign.
-	 * @param string   $new_status New status.
-	 *
-	 * @return void
-	 */
-	private function log_transition( Campaign $campaign, string $new_status ): void {
-		if ( 'ended' !== $new_status ) {
-			return;
-		}
-
-		$activity_feed = Plugin::instance()->get_activity_feed_module();
-
-		if ( ! $activity_feed ) {
-			return;
-		}
-
-		$activity_feed->log(
-			'campaign_ended',
-			'campaign',
-			$campaign->id,
-			[
-				'title'       => $campaign->title,
-				'campaign_id' => $campaign->id,
-			]
-		);
 	}
 }

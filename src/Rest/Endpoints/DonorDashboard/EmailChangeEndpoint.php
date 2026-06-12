@@ -35,6 +35,15 @@ class EmailChangeEndpoint {
 	private const TOKEN_EXPIRY_HOURS = 24;
 
 	/**
+	 * Constructor.
+	 *
+	 * @param EmailModule $email Email module.
+	 */
+	public function __construct(
+		private EmailModule $email,
+	) {}
+
+	/**
 	 * Register REST routes.
 	 */
 	public function register(): void {
@@ -160,8 +169,7 @@ class EmailChangeEndpoint {
 		);
 
 		// Send verification email to the new address.
-		/** @var EmailModule $email_module */
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 
 		if ( ! $email_module->is_email_enabled( 'email_change_verification' ) ) {
 			return new \WP_REST_Response( [ 'message' => __( 'Email change verification is disabled.', 'mission-donation-platform' ) ], 200 );

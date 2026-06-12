@@ -10,11 +10,11 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { majorToMinor } from '@shared/currencies';
 import { getCurrencyCode } from '@shared/currency';
+import { BRAND_COLOR } from '@shared/color';
 import CampaignCreateStepBasics from './CampaignCreateStepBasics';
 import CampaignCreateStepGoal from './CampaignCreateStepGoal';
 import CampaignCreateStepImage from './CampaignCreateStepImage';
 
-const BRAND_COLOR = '#2FA36B';
 const TOTAL_STEPS = 3;
 
 const STEPS = [

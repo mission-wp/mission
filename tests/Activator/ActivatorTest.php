@@ -9,6 +9,7 @@ namespace MissionDP\Tests\Activator;
 
 use MissionDP\Activator;
 use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
 use WP_UnitTestCase;
 
 /**
@@ -17,9 +18,24 @@ use WP_UnitTestCase;
 class ActivatorTest extends WP_UnitTestCase {
 
 	/**
+	 * Create tables once for all tests in this class.
+	 */
+	public static function set_up_before_class(): void {
+		parent::set_up_before_class();
+		DatabaseModule::create_tables();
+	}
+
+	/**
 	 * Clean up after each test.
 	 */
 	public function tear_down(): void {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
+		// phpcs:enable
+
 		delete_option( 'missiondp_version' );
 		delete_option( 'missiondp_settings' );
 		delete_option( DatabaseModule::DB_VERSION_OPTION );
@@ -171,6 +187,34 @@ class ActivatorTest extends WP_UnitTestCase {
 		$settings = get_option( 'missiondp_settings' );
 		$this->assertSame( 'EUR', $settings['currency'] );
 		$this->assertFalse( $settings['tip_enabled'] );
+	}
+
+	/**
+	 * Test that activation backfills milestones only for campaigns missing them.
+	 */
+	public function test_backfills_milestones_only_for_campaigns_missing_them(): void {
+		$missing = new Campaign( [ 'title' => 'Needs Backfill' ] );
+		$missing->save();
+		$missing->delete_meta( 'milestones' );
+
+		$sentinel = [
+			[
+				'id'      => 'created',
+				'reached' => true,
+			],
+		];
+		$existing = new Campaign( [ 'title' => 'Already Has Milestones' ] );
+		$existing->save();
+		$existing->update_meta( 'milestones', $sentinel );
+
+		Activator::activate();
+
+		$backfilled = $missing->get_meta( 'milestones' );
+		$this->assertNotEmpty( $backfilled );
+		$this->assertSame( 'created', $backfilled[0]['id'] );
+
+		// Untouched: a recompile would have replaced the sentinel.
+		$this->assertSame( $sentinel, $existing->get_meta( 'milestones' ) );
 	}
 
 	/**

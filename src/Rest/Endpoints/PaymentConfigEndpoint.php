@@ -24,7 +24,7 @@ class PaymentConfigEndpoint {
 	 * @param SettingsService $settings Settings service.
 	 */
 	public function __construct(
-		private readonly SettingsService $settings,
+		private SettingsService $settings,
 	) {}
 
 	/**

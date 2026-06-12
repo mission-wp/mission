@@ -10,14 +10,13 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { minorToMajor, majorToMinor } from '@shared/currencies';
 import { getCurrencyCode } from '@shared/currency';
+import { BRAND_COLOR } from '@shared/color';
 import Toast, { TOAST_DURATION } from '../../components/Toast';
 import CampaignHero from './CampaignHero';
 import CampaignTabNav from './CampaignTabNav';
 import OverviewTab from './tabs/OverviewTab';
 import EditPageTab from './tabs/EditPageTab';
 import SettingsTab from './tabs/SettingsTab';
-
-const BRAND_COLOR = '#2FA36B';
 
 function buildFormState( campaign ) {
   const meta = campaign.meta || {};

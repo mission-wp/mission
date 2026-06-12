@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import ClickableRows from '@shared/components/ClickableRows';
+import SkeletonBar from '@shared/components/SkeletonBar';
+import StatCard from '@shared/components/StatCard';
+import { BRAND_COLOR } from '@shared/color';
 import {
   Button,
   Card,
@@ -17,6 +20,7 @@ import CampaignCreateModal from './CampaignCreateModal';
 import { formatAmount } from '@shared/currency';
 import { formatDateOnly } from '@shared/date';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
+import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../components/EmptyState';
 
 const MegaphoneIcon = () => (
@@ -37,8 +41,6 @@ const MegaphoneIcon = () => (
 );
 
 export { formatAmount };
-
-const BRAND_COLOR = '#2FA36B';
 
 const STATUS_STYLES = {
   active: {
@@ -81,45 +83,6 @@ export function StatusBadge( { status } ) {
     >
       { style.label }
     </span>
-  );
-}
-
-function StatCard( { label, value, subtitle, isLoading: loading, className } ) {
-  const classes = [ 'mission-stat-card', className ]
-    .filter( Boolean )
-    .join( ' ' );
-  return (
-    <Card className={ classes }>
-      <CardBody size="none">
-        <div className="mission-stat-card__label">{ label }</div>
-        <div className="mission-stat-card__value">
-          { loading ? <span className="mission-skeleton">&nbsp;</span> : value }
-        </div>
-        { subtitle && ! loading && (
-          <div className="mission-stat-card__subtitle">{ subtitle }</div>
-        ) }
-        { loading && (
-          <div className="mission-stat-card__subtitle">
-            <span className="mission-skeleton">&nbsp;</span>
-          </div>
-        ) }
-      </CardBody>
-    </Card>
-  );
-}
-
-function SkeletonBar( { width = '60%', height = '24px' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'block',
-        width,
-        height,
-        borderRadius: '4px',
-        background: '#e2e4e9',
-      } }
-    />
   );
 }
 
@@ -332,14 +295,17 @@ function campaignStatusSubtitle( summary ) {
 }
 
 export default function CampaignList() {
-  const [ data, setData ] = useState( [] );
   const { view, setView, isModified, resetToDefault } = usePersistedView(
     'campaigns',
     DEFAULT_VIEW
   );
-  const [ totalItems, setTotalItems ] = useState( 0 );
-  const [ totalPages, setTotalPages ] = useState( 0 );
-  const [ isLoading, setIsLoading ] = useState( true );
+  const { data, totalItems, totalPages, isLoading, refresh } =
+    usePaginatedFetch( {
+      path: '/mission-donation-platform/v1/campaigns',
+      view,
+      defaultOrderby: 'date',
+      filterFields: [ 'status' ],
+    } );
   const [ showCreateModal, setShowCreateModal ] = useState( false );
   const [ summary, setSummary ] = useState( null );
 
@@ -352,53 +318,6 @@ export default function CampaignList() {
   useEffect( () => {
     fetchSummary();
   }, [ fetchSummary ] );
-
-  const fetchCampaigns = useCallback( async () => {
-    setIsLoading( true );
-
-    const params = new URLSearchParams( {
-      page: String( view.page ),
-      per_page: String( view.perPage ),
-      order: view.sort?.direction?.toUpperCase() || 'DESC',
-      orderby: view.sort?.field || 'date',
-    } );
-
-    if ( view.search ) {
-      params.set( 'search', view.search );
-    }
-
-    const statusFilter = view.filters?.find( ( f ) => f.field === 'status' );
-    if ( statusFilter?.value ) {
-      params.set( 'status', statusFilter.value );
-    }
-
-    try {
-      const response = await apiFetch( {
-        path: `/mission-donation-platform/v1/campaigns?${ params.toString() }`,
-        parse: false,
-      } );
-
-      setTotalItems(
-        parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
-      );
-      setTotalPages(
-        parseInt( response.headers.get( 'X-WP-TotalPages' ) || '0', 10 )
-      );
-
-      const items = await response.json();
-      setData( items );
-    } catch {
-      setData( [] );
-      setTotalItems( 0 );
-      setTotalPages( 0 );
-    } finally {
-      setIsLoading( false );
-    }
-  }, [ view.page, view.perPage, view.sort, view.search, view.filters ] );
-
-  useEffect( () => {
-    fetchCampaigns();
-  }, [ fetchCampaigns ] );
 
   const actions = [
     {
@@ -457,7 +376,7 @@ export default function CampaignList() {
                     method: 'DELETE',
                   } );
                   closeModal();
-                  fetchCampaigns();
+                  refresh();
                 } }
               >
                 { __( 'Delete', 'mission-donation-platform' ) }

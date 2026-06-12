@@ -10,7 +10,11 @@ namespace MissionDP\Rest\Endpoints;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
@@ -24,6 +28,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class SubscriptionsEndpoint {
 
+	use AdminPermissionTrait;
+
 	/**
 	 * Constructor.
 	 *
@@ -31,8 +37,8 @@ class SubscriptionsEndpoint {
 	 * @param SettingsService  $settings  Settings service.
 	 */
 	public function __construct(
-		private readonly ReportingService $reporting,
-		private readonly SettingsService $settings,
+		private ReportingService $reporting,
+		private SettingsService $settings,
 	) {}
 
 	/**
@@ -47,7 +53,7 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_subscriptions' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_collection_params(),
 			]
 		);
@@ -58,13 +64,9 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_subscription' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -75,13 +77,9 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'cancel_subscription' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -92,13 +90,9 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'pause_subscription' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -109,13 +103,9 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'resume_subscription' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -126,19 +116,10 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'PATCH',
 				'callback'            => [ $this, 'update_subscription' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id'          => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'status'      => [
-						'type'              => 'string',
-						'enum'              => [ 'active', 'pending', 'past_due', 'paused', 'cancelled' ],
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'id'          => Args::id(),
+					'status'      => Args::enum( Subscription::STATUSES ),
 					'campaign_id' => [
 						'type' => [ 'integer', 'null' ],
 					],
@@ -152,26 +133,18 @@ class SubscriptionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_summary' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to manage subscriptions.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage subscriptions.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -215,11 +188,7 @@ class SubscriptionsEndpoint {
 		$subscription = Subscription::find( $request->get_param( 'id' ) );
 
 		if ( ! $subscription ) {
-			return new WP_Error(
-				'subscription_not_found',
-				__( 'Subscription not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::subscription_not_found();
 		}
 
 		return new WP_REST_Response( $this->prepare_subscription_detail( $subscription ), 200 );
@@ -235,29 +204,13 @@ class SubscriptionsEndpoint {
 		$subscription = Subscription::find( $request->get_param( 'id' ) );
 
 		if ( ! $subscription ) {
-			return new WP_Error(
-				'subscription_not_found',
-				__( 'Subscription not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::subscription_not_found();
 		}
 
-		if ( ! in_array( $subscription->status, [ 'active', 'past_due', 'pending' ], true ) ) {
-			return new WP_Error(
-				'subscription_not_cancellable',
-				__( 'This subscription cannot be cancelled.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$result = $subscription->cancel();
 
-		$cancelled = $subscription->cancel();
-
-		if ( ! $cancelled ) {
-			return new WP_Error(
-				'cancellation_failed',
-				__( 'Failed to cancel subscription on Stripe.', 'mission-donation-platform' ),
-				[ 'status' => 500 ]
-			);
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return new WP_REST_Response(
@@ -280,27 +233,13 @@ class SubscriptionsEndpoint {
 		$subscription = Subscription::find( $request->get_param( 'id' ) );
 
 		if ( ! $subscription ) {
-			return new WP_Error(
-				'subscription_not_found',
-				__( 'Subscription not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::subscription_not_found();
 		}
 
-		if ( 'active' !== $subscription->status ) {
-			return new WP_Error(
-				'subscription_not_pausable',
-				__( 'Only active subscriptions can be paused.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$result = $subscription->pause();
 
-		if ( ! $subscription->pause() ) {
-			return new WP_Error(
-				'pause_failed',
-				__( 'Failed to pause subscription on Stripe.', 'mission-donation-platform' ),
-				[ 'status' => 500 ]
-			);
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return new WP_REST_Response(
@@ -323,27 +262,13 @@ class SubscriptionsEndpoint {
 		$subscription = Subscription::find( $request->get_param( 'id' ) );
 
 		if ( ! $subscription ) {
-			return new WP_Error(
-				'subscription_not_found',
-				__( 'Subscription not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::subscription_not_found();
 		}
 
-		if ( 'paused' !== $subscription->status ) {
-			return new WP_Error(
-				'subscription_not_resumable',
-				__( 'Only paused subscriptions can be resumed.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$result = $subscription->resume();
 
-		if ( ! $subscription->resume() ) {
-			return new WP_Error(
-				'resume_failed',
-				__( 'Failed to resume subscription on Stripe.', 'mission-donation-platform' ),
-				[ 'status' => 500 ]
-			);
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return new WP_REST_Response(
@@ -366,11 +291,7 @@ class SubscriptionsEndpoint {
 		$subscription = Subscription::find( $request->get_param( 'id' ) );
 
 		if ( ! $subscription ) {
-			return new WP_Error(
-				'subscription_not_found',
-				__( 'Subscription not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::subscription_not_found();
 		}
 
 		if ( $request->has_param( 'status' ) ) {
@@ -505,47 +426,16 @@ class SubscriptionsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'        => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'sanitize_callback' => 'absint',
-			],
-			'per_page'    => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'sanitize_callback' => static fn( $val ) => min( absint( $val ), 100 ),
-			],
-			'orderby'     => [
-				'type'              => 'string',
-				'default'           => 'date_created',
-				'enum'              => [ 'date_created', 'date_next_renewal', 'amount', 'status' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'order'       => [
-				'type'              => 'string',
-				'default'           => 'DESC',
-				'enum'              => [ 'ASC', 'DESC' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'status'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'donor_id'    => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'campaign_id' => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'search'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-		];
+		return array_merge(
+			CollectionParams::base(
+				orderby: [ 'date_created', 'date_next_renewal', 'amount', 'status' ],
+				default_orderby: 'date_created'
+			),
+			[
+				'status'      => Args::string(),
+				'donor_id'    => Args::integer(),
+				'campaign_id' => Args::integer(),
+			]
+		);
 	}
 }

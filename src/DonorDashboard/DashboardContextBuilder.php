@@ -10,6 +10,7 @@
 
 namespace MissionDP\DonorDashboard;
 
+use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
@@ -58,25 +59,25 @@ class DashboardContextBuilder {
 	 * @param array $settings Plugin settings (missiondp_settings option).
 	 */
 	public function __construct(
-		private readonly Donor $donor,
-		private readonly array $settings,
+		private Donor $donor,
+		private array $settings,
 	) {
 		$this->currency  = strtoupper( $this->settings['currency'] ?? 'USD' );
 		$this->is_test   = ! empty( $this->settings['test_mode'] );
 		$this->reporting = new ReportingService();
 
 		$this->frequency_suffix = [
-			'weekly'    => __( '/ week', 'mission-donation-platform' ),
-			'monthly'   => __( '/ month', 'mission-donation-platform' ),
-			'quarterly' => __( '/ quarter', 'mission-donation-platform' ),
-			'annually'  => __( '/ year', 'mission-donation-platform' ),
+			Frequency::WEEKLY    => __( '/ week', 'mission-donation-platform' ),
+			Frequency::MONTHLY   => __( '/ month', 'mission-donation-platform' ),
+			Frequency::QUARTERLY => __( '/ quarter', 'mission-donation-platform' ),
+			Frequency::ANNUALLY  => __( '/ year', 'mission-donation-platform' ),
 		];
 
 		$this->frequency_labels = [
-			'weekly'    => __( 'Weekly', 'mission-donation-platform' ),
-			'monthly'   => __( 'Monthly', 'mission-donation-platform' ),
-			'quarterly' => __( 'Quarterly', 'mission-donation-platform' ),
-			'annually'  => __( 'Annually', 'mission-donation-platform' ),
+			Frequency::WEEKLY    => __( 'Weekly', 'mission-donation-platform' ),
+			Frequency::MONTHLY   => __( 'Monthly', 'mission-donation-platform' ),
+			Frequency::QUARTERLY => __( 'Quarterly', 'mission-donation-platform' ),
+			Frequency::ANNUALLY  => __( 'Annually', 'mission-donation-platform' ),
 		];
 	}
 
@@ -247,7 +248,7 @@ class DashboardContextBuilder {
 		return $this->donor->transactions(
 			[
 				'per_page' => 5,
-				'status'   => 'completed',
+				'status'   => Transaction::STATUS_COMPLETED,
 				'is_test'  => $this->is_test,
 				'orderby'  => 'date_completed',
 				'order'    => 'DESC',
@@ -261,7 +262,7 @@ class DashboardContextBuilder {
 	private function query_active_subscriptions(): array {
 		return $this->donor->subscriptions(
 			[
-				'status__in' => [ 'active', 'paused' ],
+				'status__in' => [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ],
 				'is_test'    => $this->is_test,
 			]
 		);
@@ -273,7 +274,7 @@ class DashboardContextBuilder {
 	private function query_cancelled_subscriptions(): array {
 		return $this->donor->subscriptions(
 			[
-				'status'  => 'cancelled',
+				'status'  => Subscription::STATUS_CANCELLED,
 				'is_test' => $this->is_test,
 				'orderby' => 'date_cancelled',
 				'order'   => 'DESC',
@@ -337,7 +338,7 @@ class DashboardContextBuilder {
 
 	private function prepare_overview_transaction( Transaction $txn ): array {
 		$campaign     = $this->resolve_campaign( $txn->campaign_id );
-		$is_recurring = 'one_time' !== $txn->type;
+		$is_recurring = Frequency::ONE_TIME !== $txn->type;
 
 		return [
 			'id'              => $txn->id,
@@ -440,7 +441,7 @@ class DashboardContextBuilder {
 
 	private function prepare_history_transaction( Transaction $txn ): array {
 		$campaign     = $this->resolve_campaign( $txn->campaign_id );
-		$is_recurring = 'one_time' !== $txn->type;
+		$is_recurring = Frequency::ONE_TIME !== $txn->type;
 
 		return [
 			'id'              => $txn->id,

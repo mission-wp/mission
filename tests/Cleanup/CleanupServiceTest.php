@@ -10,6 +10,7 @@ namespace MissionDP\Tests\Cleanup;
 use MissionDP\Cleanup\CleanupService;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
@@ -252,5 +253,35 @@ class CleanupServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( [ 'deleted' => 3 ], $result );
 		$this->assertSame( 0, WebhookDelivery::count() );
+	}
+
+	/**
+	 * Test clear_activity_log truncates the table and the audit entry recording
+	 * the wipe survives it (it is logged after the truncate).
+	 */
+	public function test_clear_activity_log_audit_entry_survives(): void {
+		global $wpdb;
+
+		// Earlier tests can leak committed rows into this table: TRUNCATE is DDL,
+		// so it commits any audit row inserted in the same test before the
+		// framework's rollback. Start from a known-empty state.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+
+		$existing = new ActivityLog( [
+			'event'       => 'donation_completed',
+			'object_type' => 'transaction',
+			'object_id'   => 1,
+		] );
+		$existing->save();
+
+		$result = $this->cleanup->clear_activity_log();
+
+		$this->assertSame( [ 'deleted' => 1 ], $result );
+		$this->assertCount( 0, ActivityLog::query( [ 'event' => 'donation_completed' ] ) );
+
+		$audit = ActivityLog::query( [ 'event' => 'activity_log_cleared' ] );
+		$this->assertCount( 1, $audit );
+		$this->assertSame( 1, json_decode( $audit[0]->data, true )['entries_deleted'] );
 	}
 }

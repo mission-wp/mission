@@ -41,7 +41,7 @@ class MinimumAmountTraitTest extends WP_UnitTestCase {
 			 * @param string $currency       ISO 4217 currency code.
 			 * @return \WP_Error|true
 			 */
-			public function validate( int $amount, int $source_post_id, string $form_id, string $currency ): \WP_Error|true {
+			public function validate( int $amount, int $source_post_id, string $form_id, string $currency ): \WP_Error|bool {
 				return $this->validate_minimum_amount( $amount, $source_post_id, $form_id, $currency );
 			}
 		};

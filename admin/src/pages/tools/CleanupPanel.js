@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
+import SkeletonBar from '@shared/components/SkeletonBar';
 import Toast from '../../components/Toast';
 import ConfirmationModal from './ConfirmationModal';
 
@@ -294,22 +295,6 @@ const SECTIONS = [
   },
 ];
 
-function SkeletonBar( { width = '60%' } ) {
-  return (
-    <span
-      className="mission-skeleton"
-      style={ {
-        display: 'inline-block',
-        width,
-        height: '12px',
-        borderRadius: '4px',
-        background: '#e2e4e9',
-        verticalAlign: 'middle',
-      } }
-    />
-  );
-}
-
 function ActionRow( {
   action,
   stats,
@@ -337,7 +322,11 @@ function ActionRow( {
         <div className="mission-cleanup-action__name">{ action.label }</div>
         { showDescSkeleton ? (
           <div className="mission-cleanup-action__desc">
-            <SkeletonBar width="75%" />
+            <SkeletonBar
+              width="75%"
+              height="12px"
+              style={ { display: 'inline-block', verticalAlign: 'middle' } }
+            />
           </div>
         ) : (
           <div
