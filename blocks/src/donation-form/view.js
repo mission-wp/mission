@@ -2,8 +2,8 @@
  * Donation form frontend — Interactivity API store.
  */
 import { store, getContext, getElement } from '@wordpress/interactivity';
+import { formatAmount } from '@shared/currency';
 import {
-  formatCurrency,
   getEffectiveAmount,
   getAmountsForFrequency,
   resetAmountForFrequency,
@@ -945,7 +945,7 @@ store( 'mission-donation-platform/donation-form', {
     },
     formattedPresetAmount() {
       const ctx = getContext();
-      return formatCurrency( ctx.amount, ctx.settings.currency );
+      return formatAmount( ctx.amount, ctx.settings.currency );
     },
     amountDescription() {
       const ctx = getContext();
@@ -954,22 +954,20 @@ store( 'mission-donation-platform/donation-form', {
     },
     formattedMinimumAmount() {
       const ctx = getContext();
-      return formatCurrency(
+      return formatAmount(
         ctx.settings.minimumAmount || 0,
         ctx.settings.currency
       );
     },
     formattedDonationAmount() {
       const ctx = getContext();
-      return formatCurrency( getEffectiveAmount( ctx ), ctx.settings.currency );
+      return formatAmount( getEffectiveAmount( ctx ), ctx.settings.currency );
     },
     formattedAmountWithFrequency() {
       const ctx = getContext();
-      return formatCurrency(
-        getEffectiveAmount( ctx ),
-        ctx.settings.currency,
-        true
-      );
+      return formatAmount( getEffectiveAmount( ctx ), ctx.settings.currency, {
+        stripZeroCents: true,
+      } );
     },
     frequencySuffix() {
       const ctx = getContext();
@@ -985,7 +983,7 @@ store( 'mission-donation-platform/donation-form', {
       const ctx = getContext();
       const amount = getEffectiveAmount( ctx );
       const { rate, fixed } = getFeeParams( ctx );
-      return formatCurrency(
+      return formatAmount(
         calculateFee(
           amount,
           rate,
@@ -999,10 +997,7 @@ store( 'mission-donation-platform/donation-form', {
     formattedTipAmount() {
       const ctx = getContext();
       const amount = getEffectiveAmount( ctx );
-      return formatCurrency(
-        getTipAmount( ctx, amount ),
-        ctx.settings.currency
-      );
+      return formatAmount( getTipAmount( ctx, amount ), ctx.settings.currency );
     },
     formattedTotalAmount() {
       const ctx = getContext();
@@ -1019,7 +1014,7 @@ store( 'mission-donation-platform/donation-form', {
         );
       }
       total += getTipAmount( ctx, amount );
-      return formatCurrency( total, ctx.settings.currency );
+      return formatAmount( total, ctx.settings.currency );
     },
     focusComment() {
       const ctx = getContext();

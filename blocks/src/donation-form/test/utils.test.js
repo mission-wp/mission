@@ -4,7 +4,6 @@
  * Tests for the donation form pure utility functions.
  */
 import {
-  formatCurrency,
   getEffectiveAmount,
   getAmountsForFrequency,
   resetAmountForFrequency,
@@ -14,58 +13,6 @@ import {
   getPaymentStep,
   validateCustomFields,
 } from '../utils';
-
-// ── formatCurrency ──
-
-describe( 'formatCurrency', () => {
-  it( 'formats USD minor units correctly', () => {
-    expect( formatCurrency( 1050, 'USD' ) ).toContain( '10.50' );
-  } );
-
-  it( 'formats whole dollar amounts with .00', () => {
-    const result = formatCurrency( 5000, 'USD' );
-    expect( result ).toContain( '50' );
-    expect( result ).toContain( '.00' );
-  } );
-
-  it( 'formats zero-decimal currencies without decimals', () => {
-    const result = formatCurrency( 500, 'JPY' );
-    expect( result ).toContain( '500' );
-    expect( result ).not.toContain( '.' );
-  } );
-
-  it( 'formats three-decimal currencies', () => {
-    const result = formatCurrency( 1500, 'BHD' );
-    // 1500 minor → 1.500 BHD
-    expect( result ).toContain( '1.500' );
-  } );
-
-  it( 'strips .00 when stripZeroCents is true and amount is whole', () => {
-    const result = formatCurrency( 5000, 'USD', true );
-    expect( result ).toContain( '50' );
-    expect( result ).not.toContain( '.00' );
-  } );
-
-  it( 'keeps decimals when stripZeroCents is true but amount has cents', () => {
-    const result = formatCurrency( 1050, 'USD', true );
-    expect( result ).toContain( '10.50' );
-  } );
-
-  it( 'falls back for invalid currency code', () => {
-    const result = formatCurrency( 5000, 'INVALID' );
-    expect( result ).toBe( '$50.00' );
-  } );
-
-  it( 'defaults to USD when no currency code provided', () => {
-    const result = formatCurrency( 2500 );
-    expect( result ).toContain( '25.00' );
-  } );
-
-  it( 'formats zero amount', () => {
-    const result = formatCurrency( 0, 'USD' );
-    expect( result ).toContain( '0.00' );
-  } );
-} );
 
 // ── getEffectiveAmount ──
 

@@ -3,41 +3,8 @@
  *
  * Extracted from view.js so they can be tested in isolation and reused.
  */
-import {
-  getCurrencyDecimals,
-  majorToMinor,
-  roundToCurrency,
-} from '@shared/currencies';
+import { majorToMinor, roundToCurrency } from '@shared/currencies';
 import { calculateTip, defaultFixedFee } from '@shared/fees';
-
-/**
- * Format minor units (cents) as a currency string.
- *
- * @param {number}  minorUnits     Amount in minor units (e.g. 1000 = $10.00).
- * @param {string}  currencyCode   ISO 4217 currency code.
- * @param {boolean} stripZeroCents Drop ".00" when the amount is a whole number.
- * @return {string}                  Formatted currency string.
- */
-export function formatCurrency(
-  minorUnits,
-  currencyCode = 'USD',
-  stripZeroCents = false
-) {
-  const decimals = getCurrencyDecimals( currencyCode );
-  const major = decimals === 0 ? minorUnits : minorUnits / 10 ** decimals;
-  const fractionDigits =
-    stripZeroCents && Number.isInteger( major ) ? 0 : decimals;
-  try {
-    return new Intl.NumberFormat( undefined, {
-      style: 'currency',
-      currency: currencyCode,
-      minimumFractionDigits: fractionDigits,
-      maximumFractionDigits: fractionDigits,
-    } ).format( major );
-  } catch {
-    return `$${ fractionDigits ? major.toFixed( decimals ) : major }`;
-  }
-}
 
 /**
  * Get the effective donation amount in minor units.
