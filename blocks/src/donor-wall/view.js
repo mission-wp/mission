@@ -62,6 +62,18 @@ function formatDate( dateStr ) {
 }
 
 /**
+ * Recompute whether the footer (load more + count) should be hidden.
+ *
+ * Mirrors the server-side calculation in index.php; context rather than
+ * derived state so the server can evaluate it when rendering.
+ *
+ * @param {Object} ctx Store context.
+ */
+function updateFooterHidden( ctx ) {
+  ctx.footerHidden = ctx.total <= ctx.items.length && ctx.total <= ctx.perPage;
+}
+
+/**
  * Build the API URL with query parameters.
  *
  * @param {Object} ctx  Store context.
@@ -165,6 +177,7 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
         ctx.items = enrichItems( data.items, currency, 0, ctx.commentLength );
         ctx.total = data.total;
         ctx.page = 1;
+        updateFooterHidden( ctx );
       } catch {
         // Silently fail — keep existing data.
       } finally {
@@ -199,6 +212,7 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
         ctx.items = [ ...ctx.items, ...newItems ];
         ctx.total = data.total;
         ctx.page = nextPage;
+        updateFooterHidden( ctx );
       } catch {
         // Silently fail — keep existing data.
       } finally {

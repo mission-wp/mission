@@ -10,6 +10,8 @@ namespace MissionDP\Tests\Shortcodes;
 use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
 use WP_Block_Type_Registry;
 use WP_UnitTestCase;
 
@@ -48,6 +50,9 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
@@ -109,6 +114,79 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 	 */
 	public function test_donor_wall_without_campaign_is_empty(): void {
 		$this->assertSame( '', trim( do_shortcode( '[mission_donor_wall]' ) ) );
+	}
+
+	/**
+	 * Create a completed donation attached to a campaign.
+	 *
+	 * @param Campaign $campaign The campaign.
+	 * @param int      $amount   Donation amount in minor units.
+	 * @return Transaction
+	 */
+	private function create_completed_donation( Campaign $campaign, int $amount = 2500 ): Transaction {
+		static $counter = 0;
+		++$counter;
+
+		$donor = new Donor( [
+			'email'      => "wall{$counter}@example.com",
+			'first_name' => 'Wall',
+			'last_name'  => 'Donor',
+		] );
+		$donor->save();
+
+		$transaction = new Transaction( [
+			'status'         => Transaction::STATUS_COMPLETED,
+			'type'           => 'one_time',
+			'donor_id'       => $donor->id,
+			'campaign_id'    => $campaign->id,
+			'amount'         => $amount,
+			'total_amount'   => $amount,
+			'currency'       => 'usd',
+			'date_completed' => current_time( 'mysql', true ),
+		] );
+		$transaction->save_silent();
+
+		return $transaction;
+	}
+
+	/**
+	 * The donor wall output survives kses intact when donations exist.
+	 *
+	 * Regression test: kses stripped the data-wp-each template element (so no
+	 * donor cards ever rendered) and escaped the footer tag into visible text
+	 * because its directive held a "<" comparison instead of a state reference.
+	 */
+	public function test_donor_wall_with_donations_keeps_template_and_footer(): void {
+		update_option( 'missiondp_settings', [ 'test_mode' => false ] );
+		$campaign = $this->create_campaign();
+		$this->create_completed_donation( $campaign );
+
+		$output = do_shortcode( '[mission_donor_wall campaign_id="' . $campaign->id . '"]' );
+
+		$this->assertStringContainsString( '<template data-wp-each--donor="context.items">', $output );
+		$this->assertStringContainsString( 'data-wp-class--is-hidden="context.footerHidden"', $output );
+		$this->assertStringNotContainsString( '&lt;div', $output );
+		$this->assertStringNotContainsString( '&#8211;', $output );
+
+		// One donation fits on a single page, so the footer starts hidden.
+		$this->assertStringContainsString( 'mission-dw-footer is-hidden', $output );
+	}
+
+	/**
+	 * The footer is visible when more donors exist than fit on one page.
+	 */
+	public function test_donor_wall_footer_visible_when_paginated(): void {
+		update_option( 'missiondp_settings', [ 'test_mode' => false ] );
+		$campaign = $this->create_campaign();
+		$this->create_completed_donation( $campaign, 1000 );
+		$this->create_completed_donation( $campaign, 2000 );
+
+		$output = do_shortcode(
+			'[mission_donor_wall campaign_id="' . $campaign->id . '" donors_per_page="1"]'
+		);
+
+		$this->assertStringContainsString( 'class="mission-dw-footer"', $output );
+		$this->assertStringNotContainsString( 'mission-dw-footer is-hidden', $output );
 	}
 
 	/**

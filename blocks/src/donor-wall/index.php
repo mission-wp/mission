@@ -210,7 +210,9 @@ foreach ( $items as &$entry ) {
 }
 unset( $entry );
 
-// Interactivity API context.
+// Interactivity API context. footerHidden lives in context (not derived
+// state) so the server-side directive processor can evaluate it; view.js
+// recomputes it after sort changes and load-more fetches.
 $context = [
 	'campaignId'    => $campaign_id,
 	'items'         => $items,
@@ -224,6 +226,7 @@ $context = [
 	'readMoreText'  => $read_more_text,
 	'restUrl'       => rest_url( 'mission-donation-platform/v1/donor-wall' ),
 	'nonce'         => wp_create_nonce( 'wp_rest' ),
+	'footerHidden'  => $total <= count( $items ) && $total <= $donors_per_page,
 ];
 
 // Wrapper attributes.
@@ -344,7 +347,12 @@ ob_start();
 			</template>
 		</div>
 
-		<div class="mission-dw-footer" data-wp-class--is-hidden="context.total <= context.items.length && context.total <= context.perPage">
+		<?php
+		// Directive values must be context/state references, not expressions:
+		// an inline comparison never evaluated, and its "<" also broke
+		// wp_kses, which escaped the tag into visible text.
+		?>
+		<div class="mission-dw-footer" data-wp-class--is-hidden="context.footerHidden">
 			<button
 				type="button"
 				class="mission-dw-load-more"
