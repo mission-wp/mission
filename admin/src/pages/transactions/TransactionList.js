@@ -3,6 +3,7 @@ import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
 import StatCard, { getDelta } from '@shared/components/StatCard';
+import { BRAND_COLOR } from '@shared/color';
 import {
   Button,
   Card,
@@ -36,8 +37,6 @@ const ReceiptIcon = () => (
     <path d="M18 16h12M18 22h12M18 28h8" />
   </svg>
 );
-
-const BRAND_COLOR = '#2FA36B';
 
 const STATUS_STYLES = {
   [ TRANSACTION_STATUS.COMPLETED ]: {

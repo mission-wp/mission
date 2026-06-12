@@ -3,6 +3,7 @@ import { formatDate } from '@shared/date';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
 import StatCard from '@shared/components/StatCard';
+import { BRAND_COLOR } from '@shared/color';
 import {
   Button,
   Card,
@@ -38,8 +39,6 @@ const PeopleIcon = () => (
     <path d="M32 28c4.418 0 8 3.582 8 8" />
   </svg>
 );
-
-const BRAND_COLOR = '#2FA36B';
 
 const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
   id: `skeleton-${ i }`,

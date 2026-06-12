@@ -24,10 +24,10 @@ import { __ } from '@wordpress/i18n';
 import { getCurrencySymbol, getCurrencyCode } from '@shared/currency';
 import { majorToMinor } from '@shared/currencies';
 import { COUNTRIES, getRegionConfig } from '@shared/address';
+import { BRAND_COLOR } from '@shared/color';
 import Drawer from '../../components/Drawer';
 import { FREQUENCY } from '../../constants';
 
-const BRAND_COLOR = '#2FA36B';
 const ERROR_COLOR = '#dc2626';
 const isTestMode = !! window.missiondpAdmin?.testMode;
 

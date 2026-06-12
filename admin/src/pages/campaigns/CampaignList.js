@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from '@wordpress/element';
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
 import StatCard from '@shared/components/StatCard';
+import { BRAND_COLOR } from '@shared/color';
 import {
   Button,
   Card,
@@ -39,8 +40,6 @@ const MegaphoneIcon = () => (
 );
 
 export { formatAmount };
-
-const BRAND_COLOR = '#2FA36B';
 
 const STATUS_STYLES = {
   active: {

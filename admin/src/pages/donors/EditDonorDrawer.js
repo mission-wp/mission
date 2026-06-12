@@ -11,8 +11,8 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import Drawer from '../../components/Drawer';
 import { COUNTRIES, getRegionConfig } from '@shared/address';
+import { BRAND_COLOR } from '@shared/color';
 
-const BRAND_COLOR = '#2FA36B';
 const ERROR_COLOR = '#dc2626';
 
 const errorStyle = {

@@ -46,3 +46,8 @@ export function computePrimaryColorVars( color ) {
       luminance > 0.5 ? darkenColor( color, 45 ) : color,
   };
 }
+
+/**
+ * Mission's brand green, used for primary admin action buttons.
+ */
+export const BRAND_COLOR = '#2FA36B';
