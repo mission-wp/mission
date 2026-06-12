@@ -12,6 +12,8 @@ use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Subscription;
+use MissionDP\Settings\SettingsService;
 use WP_UnitTestCase;
 
 /**
@@ -49,6 +51,7 @@ class CampaignLifecycleModuleTest extends WP_UnitTestCase {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_activity_log" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
@@ -446,5 +449,132 @@ class CampaignLifecycleModuleTest extends WP_UnitTestCase {
 
 		$fresh = Campaign::find( $campaign->id );
 		$this->assertTrue( $fresh->show_in_listings );
+	}
+
+	// -------------------------------------------------------------------------
+	// process_subscriptions() tests (via transition to ended).
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test ending a campaign cancels every active subscription, even past one batch.
+	 *
+	 * Regression test: the loop used to advance pages while the status filter
+	 * was shrinking the result set, skipping half the rows beyond batch size.
+	 */
+	public function test_end_actions_cancels_all_subscriptions_past_batch_size(): void {
+		$campaign = $this->create_campaign();
+		$campaign->update_meta( 'recurring_end_behavior', 'cancel' );
+
+		// One more than a full batch (batch size is 50).
+		$count = 55;
+		for ( $i = 0; $i < $count; $i++ ) {
+			$this->create_campaign_subscription( $campaign->id );
+		}
+
+		$this->lifecycle->transition_status( $campaign, 'ended', 'test' );
+
+		$remaining = Subscription::query( [
+			'campaign_id' => $campaign->id,
+			'status'      => Subscription::STATUS_ACTIVE,
+			'per_page'    => $count,
+		] );
+		$this->assertCount( 0, $remaining, 'Every active subscription should be cancelled.' );
+
+		$cancelled = Subscription::query( [
+			'campaign_id' => $campaign->id,
+			'status'      => Subscription::STATUS_CANCELLED,
+			'per_page'    => $count + 10,
+		] );
+		$this->assertCount( $count, $cancelled );
+	}
+
+	/**
+	 * Test ending a campaign leaves subscriptions active and terminates when the API fails.
+	 */
+	public function test_end_actions_stops_when_all_cancels_fail(): void {
+		update_option( SettingsService::OPTION_NAME, [ 'stripe_site_token' => 'tok_test' ] );
+
+		$failures = 0;
+		add_action( 'mission_subscription_api_call_failed', function () use ( &$failures ) {
+			++$failures;
+		} );
+
+		$mock = function ( $preempt, $args, $url ) {
+			if ( str_contains( $url, 'api.missionwp.com' ) ) {
+				return new \WP_Error( 'http_request_failed', 'Connection timed out' );
+			}
+			return $preempt;
+		};
+		add_filter( 'pre_http_request', $mock, 10, 3 );
+
+		$campaign = $this->create_campaign();
+		$campaign->update_meta( 'recurring_end_behavior', 'cancel' );
+
+		for ( $i = 0; $i < 3; $i++ ) {
+			$this->create_campaign_subscription( $campaign->id, [ 'gateway_subscription_id' => "sub_test_{$i}" ] );
+		}
+
+		$this->lifecycle->transition_status( $campaign, 'ended', 'test' );
+
+		remove_filter( 'pre_http_request', $mock, 10 );
+
+		$active = Subscription::query( [
+			'campaign_id' => $campaign->id,
+			'status'      => Subscription::STATUS_ACTIVE,
+			'per_page'    => 10,
+		] );
+		$this->assertCount( 3, $active, 'Failed cancels should leave subscriptions active.' );
+		$this->assertSame( 3, $failures, 'Each failed cancel should announce an API failure.' );
+	}
+
+	/**
+	 * Test ending a campaign redirects every active subscription, even past one batch.
+	 */
+	public function test_end_actions_redirects_all_subscriptions_past_batch_size(): void {
+		$campaign = $this->create_campaign();
+		$target   = $this->create_campaign( [ 'title' => 'Redirect Target' ] );
+		$campaign->update_meta( 'recurring_end_behavior', 'redirect' );
+		$campaign->update_meta( 'recurring_redirect_campaign', $target->id );
+
+		$count = 55;
+		for ( $i = 0; $i < $count; $i++ ) {
+			$this->create_campaign_subscription( $campaign->id );
+		}
+
+		$this->lifecycle->transition_status( $campaign, 'ended', 'test' );
+
+		$redirected = Subscription::query( [
+			'campaign_id' => $target->id,
+			'status'      => Subscription::STATUS_ACTIVE,
+			'per_page'    => $count + 10,
+		] );
+		$this->assertCount( $count, $redirected, 'Every subscription should move to the target campaign.' );
+	}
+
+	/**
+	 * Create an active subscription attached to a campaign.
+	 *
+	 * Defaults to no gateway ID so cancel() succeeds without a Mission API call.
+	 *
+	 * @param int                  $campaign_id Campaign ID.
+	 * @param array<string, mixed> $overrides   Field overrides.
+	 * @return Subscription
+	 */
+	private function create_campaign_subscription( int $campaign_id, array $overrides = [] ): Subscription {
+		$subscription = new Subscription( array_merge( [
+			'status'                  => Subscription::STATUS_ACTIVE,
+			'donor_id'                => 1,
+			'campaign_id'             => $campaign_id,
+			'amount'                  => 2500,
+			'total_amount'            => 2500,
+			'currency'                => 'usd',
+			'frequency'               => 'monthly',
+			'payment_gateway'         => 'stripe',
+			'gateway_subscription_id' => null,
+			'is_test'                 => false,
+		], $overrides ) );
+		$subscription->save();
+
+		return $subscription;
 	}
 }

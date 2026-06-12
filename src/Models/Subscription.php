@@ -13,6 +13,7 @@ use MissionDP\Constants\Frequency;
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\SubscriptionDataStore;
 use MissionDP\Settings\SettingsService;
+use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -218,15 +219,19 @@ class Subscription extends Model {
 	/**
 	 * Cancel the subscription locally and on Stripe via the Mission API.
 	 *
-	 * @return bool True if cancellation succeeded.
+	 * Idempotent: cancelling an already-cancelled subscription succeeds.
+	 *
+	 * @return true|WP_Error True on success, WP_Error if the Mission API call failed.
 	 */
-	public function cancel(): bool {
+	public function cancel(): bool|WP_Error {
 		if ( self::STATUS_CANCELLED === $this->status ) {
 			return true;
 		}
 
-		if ( ! $this->call_mission_api( 'cancel-subscription' ) ) {
-			return false;
+		$result = $this->call_mission_api( 'cancel-subscription' );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		$this->status         = self::STATUS_CANCELLED;
@@ -239,21 +244,23 @@ class Subscription extends Model {
 	/**
 	 * Pause the subscription locally and on Stripe via the Mission API.
 	 *
-	 * Only active subscriptions can be paused.
+	 * Only active subscriptions can be paused. Idempotent if already paused.
 	 *
-	 * @return bool True if pausing succeeded.
+	 * @return true|WP_Error True on success, WP_Error on invalid state or API failure.
 	 */
-	public function pause(): bool {
+	public function pause(): bool|WP_Error {
 		if ( self::STATUS_PAUSED === $this->status ) {
 			return true;
 		}
 
 		if ( self::STATUS_ACTIVE !== $this->status ) {
-			return false;
+			return $this->state_error( 'subscription_not_pausable' );
 		}
 
-		if ( ! $this->call_mission_api( 'pause-subscription' ) ) {
-			return false;
+		$result = $this->call_mission_api( 'pause-subscription' );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		$this->status = self::STATUS_PAUSED;
@@ -265,21 +272,23 @@ class Subscription extends Model {
 	/**
 	 * Resume a paused subscription locally and on Stripe via the Mission API.
 	 *
-	 * Only paused subscriptions can be resumed.
+	 * Only paused subscriptions can be resumed. Idempotent if already active.
 	 *
-	 * @return bool True if resuming succeeded.
+	 * @return true|WP_Error True on success, WP_Error on invalid state or API failure.
 	 */
-	public function resume(): bool {
+	public function resume(): bool|WP_Error {
 		if ( self::STATUS_ACTIVE === $this->status ) {
 			return true;
 		}
 
 		if ( self::STATUS_PAUSED !== $this->status ) {
-			return false;
+			return $this->state_error( 'subscription_not_resumable' );
 		}
 
-		if ( ! $this->call_mission_api( 'resume-subscription' ) ) {
-			return false;
+		$result = $this->call_mission_api( 'resume-subscription' );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		$this->status            = self::STATUS_ACTIVE;
@@ -296,16 +305,16 @@ class Subscription extends Model {
 	 *
 	 * @param int $donation_amount New donation amount in minor units.
 	 * @param int $tip_amount      New tip amount in minor units.
-	 * @return bool True if the update succeeded.
+	 * @return true|WP_Error True on success, WP_Error on invalid state or API failure.
 	 */
-	public function update_amount( int $donation_amount, int $tip_amount, int $fee_amount = 0 ): bool {
+	public function update_amount( int $donation_amount, int $tip_amount, int $fee_amount = 0 ): bool|WP_Error {
 		if ( ! in_array( $this->status, [ self::STATUS_ACTIVE, self::STATUS_PAUSED ], true ) ) {
-			return false;
+			return $this->state_error( 'subscription_not_updatable' );
 		}
 
 		$old_amount = $this->amount;
 
-		$success = $this->call_mission_api(
+		$result = $this->call_mission_api(
 			'update-subscription-amount',
 			[
 				'donation_amount' => $donation_amount,
@@ -313,8 +322,8 @@ class Subscription extends Model {
 			]
 		);
 
-		if ( ! $success ) {
-			return false;
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		$this->amount       = $donation_amount;
@@ -342,11 +351,15 @@ class Subscription extends Model {
 	 *
 	 * Calls the Mission API to create a SetupIntent on the connected account.
 	 *
-	 * @return array{client_secret: string, connected_account_id: string}|false
+	 * @return array{client_secret: string, connected_account_id: string}|WP_Error
 	 */
-	public function create_setup_intent(): array|false {
+	public function create_setup_intent(): array|WP_Error {
+		if ( ! in_array( $this->status, [ self::STATUS_ACTIVE, self::STATUS_PAUSED ], true ) ) {
+			return $this->state_error( 'subscription_not_updatable' );
+		}
+
 		if ( ! $this->gateway_customer_id ) {
-			return false;
+			return $this->state_error( 'subscription_missing_gateway_data' );
 		}
 
 		return $this->call_mission_api_with_response(
@@ -362,15 +375,15 @@ class Subscription extends Model {
 	 * Update the subscription's payment method on Stripe and save card details locally.
 	 *
 	 * @param string $payment_method_id Stripe PaymentMethod ID from confirmSetup.
-	 * @return array{brand: string, last4: string, exp_month: int, exp_year: int}|false
+	 * @return array{brand: string, last4: string, exp_month: int, exp_year: int}|WP_Error
 	 */
-	public function update_payment_method( string $payment_method_id ): array|false {
+	public function update_payment_method( string $payment_method_id ): array|WP_Error {
 		if ( ! in_array( $this->status, [ self::STATUS_ACTIVE, self::STATUS_PAUSED ], true ) ) {
-			return false;
+			return $this->state_error( 'subscription_not_updatable' );
 		}
 
 		if ( ! $this->gateway_subscription_id ) {
-			return false;
+			return $this->state_error( 'subscription_missing_gateway_data' );
 		}
 
 		$data = $this->call_mission_api_with_response(
@@ -382,8 +395,12 @@ class Subscription extends Model {
 			]
 		);
 
-		if ( ! $data || empty( $data['card'] ) ) {
-			return false;
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+
+		if ( empty( $data['card'] ) ) {
+			return $this->api_error( 'mission_api_invalid_response', 'update-subscription-payment-method' );
 		}
 
 		$card = $data['card'];
@@ -412,15 +429,15 @@ class Subscription extends Model {
 	 *
 	 * @param string              $endpoint The API endpoint path.
 	 * @param array<string,mixed> $body     Request body parameters.
-	 * @return array<string,mixed>|false Decoded response on success, false on failure.
+	 * @return array<string,mixed>|WP_Error Decoded response on success, WP_Error on failure.
 	 */
-	private function call_mission_api_with_response( string $endpoint, array $body ): array|false {
+	private function call_mission_api_with_response( string $endpoint, array $body ): array|WP_Error {
 		$settings   = new SettingsService();
 		$site_token = $settings->resolve_site_token( (string) $this->get_meta( 'stripe_account_id' ) );
 
 		if ( ! $site_token ) {
 			$this->log_api_failure( $endpoint, 'no_site_token' );
-			return false;
+			return $this->api_error( 'mission_api_unreachable', $endpoint );
 		}
 
 		$response = wp_remote_post(
@@ -437,7 +454,7 @@ class Subscription extends Model {
 
 		if ( is_wp_error( $response ) ) {
 			$this->log_api_failure( $endpoint, 'wp_error', [ 'error' => $response->get_error_message() ] );
-			return false;
+			return $this->api_error( 'mission_api_unreachable', $endpoint );
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
@@ -451,12 +468,16 @@ class Subscription extends Model {
 					'body'   => wp_remote_retrieve_body( $response ),
 				]
 			);
-			return false;
+			return $this->api_error( 'mission_api_error', $endpoint, [ 'upstream_status' => $status_code ] );
 		}
 
 		$data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		return is_array( $data ) ? $data : false;
+		if ( ! is_array( $data ) ) {
+			return $this->api_error( 'mission_api_invalid_response', $endpoint );
+		}
+
+		return $data;
 	}
 
 	/**
@@ -464,9 +485,9 @@ class Subscription extends Model {
 	 *
 	 * @param string              $endpoint   The API endpoint path (e.g. 'cancel-subscription').
 	 * @param array<string,mixed> $extra_data Additional body parameters.
-	 * @return bool True if the API call succeeded or was skipped.
+	 * @return true|WP_Error True if the API call succeeded or was skipped, WP_Error on failure.
 	 */
-	private function call_mission_api( string $endpoint, array $extra_data = [] ): bool {
+	private function call_mission_api( string $endpoint, array $extra_data = [] ): bool|WP_Error {
 		if ( ! $this->gateway_subscription_id ) {
 			return true;
 		}
@@ -500,7 +521,7 @@ class Subscription extends Model {
 
 		if ( is_wp_error( $response ) ) {
 			$this->log_api_failure( $endpoint, 'wp_error', [ 'error' => $response->get_error_message() ] );
-			return false;
+			return $this->api_error( 'mission_api_unreachable', $endpoint );
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
@@ -514,10 +535,61 @@ class Subscription extends Model {
 					'body'   => wp_remote_retrieve_body( $response ),
 				]
 			);
-			return false;
+			return $this->api_error( 'mission_api_error', $endpoint, [ 'upstream_status' => $status_code ] );
 		}
 
 		return true;
+	}
+
+	/**
+	 * Build the WP_Error for a lifecycle action attempted from the wrong state.
+	 *
+	 * State errors map to a 400: the caller asked for a transition this
+	 * subscription cannot make.
+	 *
+	 * @param string $code One of subscription_not_pausable, subscription_not_resumable, subscription_not_updatable, subscription_missing_gateway_data.
+	 * @return WP_Error
+	 */
+	private function state_error( string $code ): WP_Error {
+		$messages = [
+			'subscription_not_pausable'         => __( 'Only active subscriptions can be paused.', 'mission-donation-platform' ),
+			'subscription_not_resumable'        => __( 'Only paused subscriptions can be resumed.', 'mission-donation-platform' ),
+			'subscription_not_updatable'        => __( 'Only active or paused subscriptions can be updated.', 'mission-donation-platform' ),
+			'subscription_missing_gateway_data' => __( 'This subscription has no saved payment method to update.', 'mission-donation-platform' ),
+		];
+
+		return new WP_Error( $code, $messages[ $code ], [ 'status' => 400 ] );
+	}
+
+	/**
+	 * Build the WP_Error for a failed Mission API call.
+	 *
+	 * All Mission API failures map to a 502: the upstream service, not the
+	 * caller's request, is at fault.
+	 *
+	 * @param string              $code     One of mission_api_unreachable, mission_api_error, mission_api_invalid_response.
+	 * @param string              $endpoint The API endpoint that failed.
+	 * @param array<string,mixed> $extra    Additional error data (e.g. upstream_status).
+	 * @return WP_Error
+	 */
+	private function api_error( string $code, string $endpoint, array $extra = [] ): WP_Error {
+		$messages = [
+			'mission_api_unreachable'      => __( 'Could not reach the payment service. Please try again.', 'mission-donation-platform' ),
+			'mission_api_error'            => __( 'The payment service returned an error. Please try again.', 'mission-donation-platform' ),
+			'mission_api_invalid_response' => __( 'The payment service returned an unexpected response.', 'mission-donation-platform' ),
+		];
+
+		return new WP_Error(
+			$code,
+			$messages[ $code ],
+			array_merge(
+				[
+					'status'   => 502,
+					'endpoint' => $endpoint,
+				],
+				$extra
+			)
+		);
 	}
 
 	/**

@@ -262,6 +262,12 @@ class CampaignLifecycleModule {
 	/**
 	 * Process subscriptions for an ended campaign.
 	 *
+	 * Each successful cancel or redirect removes the subscription from the
+	 * filtered query, so every batch re-queries page 1. Failed cancels stay
+	 * active (the API failure surfaces via mission_subscription_api_call_failed),
+	 * and a batch with zero successes stops the loop so a down Mission API
+	 * can't spin it forever.
+	 *
 	 * @param Campaign $campaign              The ended campaign.
 	 * @param string   $behavior              'cancel' or 'redirect'.
 	 * @param int|null $redirect_campaign_id  Target campaign ID for redirects.
@@ -269,15 +275,13 @@ class CampaignLifecycleModule {
 	 * @return void
 	 */
 	private function process_subscriptions( Campaign $campaign, string $behavior, ?int $redirect_campaign_id ): void {
-		$page = 1;
-
 		while ( true ) {
 			$subscriptions = Subscription::query(
 				[
 					'campaign_id' => $campaign->id,
 					'status'      => Subscription::STATUS_ACTIVE,
 					'per_page'    => self::SUBSCRIPTION_BATCH_SIZE,
-					'page'        => $page,
+					'page'        => 1,
 				]
 			);
 
@@ -285,21 +289,23 @@ class CampaignLifecycleModule {
 				break;
 			}
 
+			$succeeded = 0;
+
 			foreach ( $subscriptions as $subscription ) {
 				if ( 'cancel' === $behavior ) {
-					$subscription->cancel();
+					if ( ! is_wp_error( $subscription->cancel() ) ) {
+						++$succeeded;
+					}
 				} elseif ( 'redirect' === $behavior && $redirect_campaign_id ) {
 					$subscription->campaign_id = $redirect_campaign_id;
 					$subscription->save();
+					++$succeeded;
 				}
 			}
 
-			// If we got fewer than a full batch, we're done.
-			if ( count( $subscriptions ) < self::SUBSCRIPTION_BATCH_SIZE ) {
+			if ( 0 === $succeeded ) {
 				break;
 			}
-
-			++$page;
 		}
 	}
 }

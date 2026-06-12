@@ -228,6 +228,20 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Mock all Mission API requests to fail at the transport level.
+	 */
+	private function mock_api_network_failure(): void {
+		$mock = function ( $preempt, $args, $url ) {
+			if ( str_contains( $url, 'api.missionwp.com' ) ) {
+				return new \WP_Error( 'http_request_failed', 'Connection timed out' );
+			}
+			return $preempt;
+		};
+		add_filter( 'pre_http_request', $mock, 10, 3 );
+		$this->hooks_to_remove[] = [ 'pre_http_request', $mock, 10 ];
+	}
+
+	/**
 	 * Dispatch a GET request.
 	 *
 	 * @param string $route  Route path.
@@ -680,14 +694,30 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test cancel already cancelled subscription returns 400.
+	 * Test cancel already cancelled subscription is idempotent.
 	 */
 	public function test_cancel_subscription_already_cancelled(): void {
 		$sub = $this->create_subscription( [ 'status' => 'cancelled' ] );
 
 		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
 
-		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'cancelled', $response->get_data()['status'] );
+	}
+
+	/**
+	 * Test cancel returns 502 when the Mission API is unreachable.
+	 */
+	public function test_cancel_subscription_returns_502_when_api_unreachable(): void {
+		update_option( SettingsService::OPTION_NAME, [ 'stripe_site_token' => 'tok_test' ] );
+		$sub = $this->create_subscription( [ 'status' => 'active' ] );
+		$this->mock_api_network_failure();
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/cancel" );
+
+		$this->assertSame( 502, $response->get_status() );
+		$this->assertSame( 'mission_api_unreachable', $response->as_error()->get_error_code() );
+		$this->assertSame( 'active', Subscription::find( $sub->id )->status );
 	}
 
 	/**
@@ -735,14 +765,29 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test pause already paused subscription returns 400.
+	 * Test pause already paused subscription is idempotent.
 	 */
 	public function test_pause_subscription_already_paused(): void {
 		$sub = $this->create_subscription( [ 'status' => 'paused' ] );
 
 		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
 
-		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'paused', $response->get_data()['status'] );
+	}
+
+	/**
+	 * Test pause returns 502 when the Mission API is unreachable.
+	 */
+	public function test_pause_subscription_returns_502_when_api_unreachable(): void {
+		update_option( SettingsService::OPTION_NAME, [ 'stripe_site_token' => 'tok_test' ] );
+		$sub = $this->create_subscription( [ 'status' => 'active' ] );
+		$this->mock_api_network_failure();
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/pause" );
+
+		$this->assertSame( 502, $response->get_status() );
+		$this->assertSame( 'mission_api_unreachable', $response->as_error()->get_error_code() );
 	}
 
 	// -------------------------------------------------------------------------
@@ -771,14 +816,15 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test resume non-paused subscription returns 400.
+	 * Test resume already active subscription is idempotent.
 	 */
 	public function test_resume_subscription_not_paused(): void {
 		$sub = $this->create_subscription( [ 'status' => 'active' ] );
 
 		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
 
-		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'active', $response->get_data()['status'] );
 	}
 
 	/**
@@ -790,6 +836,22 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
 
 		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'subscription_not_resumable', $response->as_error()->get_error_code() );
+	}
+
+	/**
+	 * Test resume returns 502 when the Mission API is unreachable.
+	 */
+	public function test_resume_subscription_returns_502_when_api_unreachable(): void {
+		update_option( SettingsService::OPTION_NAME, [ 'stripe_site_token' => 'tok_test' ] );
+		$sub = $this->create_subscription( [ 'status' => 'paused' ] );
+		$this->mock_api_network_failure();
+
+		$response = $this->dispatch_post( "/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/resume" );
+
+		$this->assertSame( 502, $response->get_status() );
+		$this->assertSame( 'mission_api_unreachable', $response->as_error()->get_error_code() );
+		$this->assertSame( 'paused', Subscription::find( $sub->id )->status );
 	}
 
 	// -------------------------------------------------------------------------
@@ -867,6 +929,28 @@ class DonorDashboardEndpointTest extends WP_UnitTestCase {
 		);
 
 		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'subscription_not_updatable', $response->as_error()->get_error_code() );
+	}
+
+	/**
+	 * Test update amount returns 502 when the Mission API is unreachable.
+	 */
+	public function test_update_amount_returns_502_when_api_unreachable(): void {
+		update_option( SettingsService::OPTION_NAME, [ 'stripe_site_token' => 'tok_test' ] );
+		$sub = $this->create_subscription( [ 'status' => 'active' ] );
+		$this->mock_api_network_failure();
+
+		$response = $this->dispatch_put(
+			"/mission-donation-platform/v1/donor-dashboard/subscriptions/{$sub->id}/amount",
+			[
+				'donation_amount' => 5000,
+				'tip_amount'      => 0,
+			]
+		);
+
+		$this->assertSame( 502, $response->get_status() );
+		$this->assertSame( 'mission_api_unreachable', $response->as_error()->get_error_code() );
+		$this->assertSame( 2500, Subscription::find( $sub->id )->amount );
 	}
 
 	/**

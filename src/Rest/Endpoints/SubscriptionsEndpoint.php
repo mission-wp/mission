@@ -207,22 +207,10 @@ class SubscriptionsEndpoint {
 			return RestErrors::subscription_not_found();
 		}
 
-		if ( ! in_array( $subscription->status, [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAST_DUE, Subscription::STATUS_PENDING ], true ) ) {
-			return new WP_Error(
-				'subscription_not_cancellable',
-				__( 'This subscription cannot be cancelled.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$result = $subscription->cancel();
 
-		$cancelled = $subscription->cancel();
-
-		if ( ! $cancelled ) {
-			return new WP_Error(
-				'cancellation_failed',
-				__( 'Failed to cancel subscription on Stripe.', 'mission-donation-platform' ),
-				[ 'status' => 500 ]
-			);
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return new WP_REST_Response(
@@ -248,20 +236,10 @@ class SubscriptionsEndpoint {
 			return RestErrors::subscription_not_found();
 		}
 
-		if ( Subscription::STATUS_ACTIVE !== $subscription->status ) {
-			return new WP_Error(
-				'subscription_not_pausable',
-				__( 'Only active subscriptions can be paused.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$result = $subscription->pause();
 
-		if ( ! $subscription->pause() ) {
-			return new WP_Error(
-				'pause_failed',
-				__( 'Failed to pause subscription on Stripe.', 'mission-donation-platform' ),
-				[ 'status' => 500 ]
-			);
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return new WP_REST_Response(
@@ -287,20 +265,10 @@ class SubscriptionsEndpoint {
 			return RestErrors::subscription_not_found();
 		}
 
-		if ( Subscription::STATUS_PAUSED !== $subscription->status ) {
-			return new WP_Error(
-				'subscription_not_resumable',
-				__( 'Only paused subscriptions can be resumed.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
+		$result = $subscription->resume();
 
-		if ( ! $subscription->resume() ) {
-			return new WP_Error(
-				'resume_failed',
-				__( 'Failed to resume subscription on Stripe.', 'mission-donation-platform' ),
-				[ 'status' => 500 ]
-			);
+		if ( is_wp_error( $result ) ) {
+			return $result;
 		}
 
 		return new WP_REST_Response(
