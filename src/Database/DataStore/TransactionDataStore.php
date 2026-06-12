@@ -78,6 +78,8 @@ class TransactionDataStore implements DataStoreInterface {
 	 * job, and we don't want listeners (Slack pings, thank-you emails, webhook
 	 * posts) firing for historical rows being backfilled.
 	 *
+	 * Internal — consumer code should use Transaction::save_silent().
+	 *
 	 * @param Transaction $model Transaction model.
 	 * @return int New transaction ID.
 	 */
@@ -255,6 +257,8 @@ class TransactionDataStore implements DataStoreInterface {
 	/**
 	 * Update a transaction without firing status-transition hooks or touching
 	 * donor / campaign aggregates. Used by the data importer (see create_silent).
+	 *
+	 * Internal — consumer code should use Transaction::save_silent().
 	 *
 	 * @param Transaction $model Transaction model with updated values.
 	 * @return bool

@@ -7,14 +7,13 @@
 
 namespace MissionDP\Migration\Writers;
 
-use MissionDP\Database\DataStore\SubscriptionDataStore;
 use MissionDP\Models\Subscription;
 use Throwable;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Creates Mission subscriptions via the silent datastore path so no listener
+ * Creates Mission subscriptions via Subscription::save_silent() so no listener
  * (emails, webhooks, activity feed) fires for historical rows. Renewal counts
  * and the initial transaction link are filled in by the finalize phase, after
  * transactions exist.
@@ -30,7 +29,6 @@ class SubscriptionWriter extends AbstractWriter {
 	 */
 	public function write_batch( array $records ): array {
 		$result = $this->empty_result();
-		$store  = new SubscriptionDataStore();
 
 		$source_map    = Subscription::find_ids_by_meta(
 			$this->source_key( 'subscription_id' ),
@@ -95,7 +93,7 @@ class SubscriptionWriter extends AbstractWriter {
 						'date_next_renewal'       => $record['date_next_renewal'],
 					]
 				);
-				$store->create_silent( $subscription );
+				$subscription->save_silent();
 
 				// Dedupe source rows sharing a gateway ID within the batch.
 				if ( '' !== (string) $subscription->gateway_subscription_id ) {

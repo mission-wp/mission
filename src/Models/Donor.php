@@ -107,6 +107,20 @@ class Donor extends Model {
 	}
 
 	/**
+	 * Recompute a donor's lifetime aggregates from the transactions table.
+	 *
+	 * Used by bulk backfill paths (import, migration) that write rows silently
+	 * and rebuild aggregates once at the end of the job.
+	 *
+	 * @param int $donor_id Donor ID.
+	 */
+	public static function recompute_aggregates( int $donor_id ): void {
+		/** @var DonorDataStore $store */
+		$store = static::store();
+		$store->recompute_aggregates( $donor_id );
+	}
+
+	/**
 	 * Create a WordPress user account for this donor and link it.
 	 *
 	 * @param string $password Plain-text password.

@@ -7,7 +7,6 @@
 
 namespace MissionDP\Migration\Writers;
 
-use MissionDP\Database\DataStore\SubscriptionDataStore;
 use MissionDP\Migration\TouchedEntities;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
@@ -47,7 +46,6 @@ class FinalizeWriter extends AbstractWriter {
 			];
 		}
 
-		$store         = new SubscriptionDataStore();
 		$errors        = 0;
 		$error_details = [];
 
@@ -59,7 +57,7 @@ class FinalizeWriter extends AbstractWriter {
 					continue;
 				}
 
-				$this->link_subscription( $subscription, $store );
+				$this->link_subscription( $subscription );
 			} catch ( Throwable $e ) {
 				++$errors;
 				$error_details[] = $this->error_entry( $subscription_id, $e->getMessage() );
@@ -78,10 +76,9 @@ class FinalizeWriter extends AbstractWriter {
 	/**
 	 * Fill in a subscription's transaction links and renewal totals.
 	 *
-	 * @param Subscription          $subscription Subscription to update.
-	 * @param SubscriptionDataStore $store        Store for the silent update.
+	 * @param Subscription $subscription Subscription to update.
 	 */
-	private function link_subscription( Subscription $subscription, SubscriptionDataStore $store ): void {
+	private function link_subscription( Subscription $subscription ): void {
 		$parent_payment_id = (int) $subscription->get_meta( $this->source_key( 'parent_payment_id' ) );
 
 		$initial_id = null;
@@ -117,6 +114,6 @@ class FinalizeWriter extends AbstractWriter {
 		$subscription->renewal_count          = $renewal_count;
 		$subscription->total_renewed          = $total_renewed;
 
-		$store->update_silent( $subscription );
+		$subscription->save_silent();
 	}
 }

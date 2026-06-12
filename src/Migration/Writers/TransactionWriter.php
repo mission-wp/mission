@@ -7,7 +7,6 @@
 
 namespace MissionDP\Migration\Writers;
 
-use MissionDP\Database\DataStore\TransactionDataStore;
 use MissionDP\Migration\TouchedEntities;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
@@ -16,7 +15,7 @@ use Throwable;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Creates Mission transactions via the silent datastore path so no listener
+ * Creates Mission transactions via Transaction::save_silent() so no listener
  * fires and no per-row aggregate updates run. Touched donors and campaigns
  * accumulate for one recompute in the finalize phase. Renewal parents resolve
  * within the batch too, since source cursor order migrates parents first.
@@ -32,7 +31,6 @@ class TransactionWriter extends AbstractWriter {
 	 */
 	public function write_batch( array $records ): array {
 		$result  = $this->empty_result();
-		$store   = new TransactionDataStore();
 		$touched = new TouchedEntities( $this->job_id );
 
 		$payment_key = $this->source_key( 'payment_id' );
@@ -111,7 +109,7 @@ class TransactionWriter extends AbstractWriter {
 						'date_completed'         => $record['date_completed'],
 					]
 				);
-				$store->create_silent( $transaction );
+				$transaction->save_silent();
 
 				// Make renewals later in this batch resolve their parent without a
 				// re-query, and dedupe source rows sharing a gateway ID in-batch.

@@ -103,6 +103,27 @@ class Subscription extends Model {
 	}
 
 	/**
+	 * Save without firing side-effect hooks (activity feed, status emails).
+	 *
+	 * For bulk backfill paths (import, migration) that must not trigger
+	 * listeners for historical rows.
+	 *
+	 * @return int|bool New ID on insert, true on update, false on failure.
+	 */
+	public function save_silent(): int|bool {
+		/** @var SubscriptionDataStore $store */
+		$store = static::store();
+
+		if ( $this->id ) {
+			return $store->update_silent( $this );
+		}
+
+		$this->id = $store->create_silent( $this );
+
+		return $this->id;
+	}
+
+	/**
 	 * Find a subscription by its gateway subscription ID.
 	 *
 	 * @param string $gateway_subscription_id Gateway subscription identifier.

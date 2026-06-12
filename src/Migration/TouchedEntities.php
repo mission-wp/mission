@@ -7,8 +7,8 @@
 
 namespace MissionDP\Migration;
 
-use MissionDP\Database\DataStore\CampaignDataStore;
-use MissionDP\Database\DataStore\DonorDataStore;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -66,15 +66,12 @@ class TouchedEntities {
 			return;
 		}
 
-		$donor_store    = new DonorDataStore();
-		$campaign_store = new CampaignDataStore();
-
 		foreach ( $touched['donors'] ?? [] as $donor_id ) {
-			$donor_store->recompute_aggregates( (int) $donor_id );
+			Donor::recompute_aggregates( (int) $donor_id );
 		}
 
 		foreach ( $touched['campaigns'] ?? [] as $campaign_id ) {
-			$campaign_store->recompute_aggregates( (int) $campaign_id );
+			Campaign::recompute_aggregates( (int) $campaign_id );
 		}
 
 		$this->clear();

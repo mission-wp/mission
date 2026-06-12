@@ -150,6 +150,20 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Recompute a campaign's aggregate totals from the transactions table.
+	 *
+	 * Used by bulk backfill paths (import, migration) that write rows silently
+	 * and rebuild aggregates once at the end of the job.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 */
+	public static function recompute_aggregates( int $campaign_id ): void {
+		/** @var CampaignDataStore $store */
+		$store = static::store();
+		$store->recompute_aggregates( $campaign_id );
+	}
+
+	/**
 	 * Get IDs of scheduled campaigns whose start date has arrived.
 	 *
 	 * @param string $today Today's date (Y-m-d).

@@ -9,6 +9,7 @@ namespace MissionDP\Tests\Models;
 
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
 /**
@@ -31,6 +32,7 @@ class CampaignTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
@@ -618,4 +620,48 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertSame( [], $campaign->get_donation_form_attributes() );
 	}
 
+	// -------------------------------------------------------------------------
+	// recompute_aggregates() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test recompute_aggregates rebuilds totals from completed transactions.
+	 */
+	public function test_recompute_aggregates_rebuilds_totals_from_transactions(): void {
+		$campaign = $this->create_campaign();
+
+		// Silent writes don't touch aggregates, so the campaign row stays at
+		// zero until the recompute runs. Two donors, one with two donations.
+		$rows = [
+			[ 'donor_id' => 1, 'amount' => 5000 ],
+			[ 'donor_id' => 1, 'amount' => 2500 ],
+			[ 'donor_id' => 2, 'amount' => 1000 ],
+			[ 'donor_id' => 3, 'amount' => 9999, 'is_test' => true ],
+			[ 'donor_id' => 2, 'amount' => 1234, 'status' => 'pending' ],
+		];
+
+		foreach ( $rows as $row ) {
+			$transaction = new Transaction( array_merge(
+				[
+					'status'       => 'completed',
+					'campaign_id'  => $campaign->id,
+					'total_amount' => $row['amount'],
+				],
+				$row
+			) );
+			$transaction->save_silent();
+		}
+
+		$this->assertSame( 0, $campaign->fresh()->transaction_count );
+
+		Campaign::recompute_aggregates( $campaign->id );
+
+		$fresh = $campaign->fresh();
+		$this->assertSame( 8500, $fresh->total_raised );
+		$this->assertSame( 3, $fresh->transaction_count );
+		$this->assertSame( 2, $fresh->donor_count );
+		$this->assertSame( 9999, $fresh->test_total_raised );
+		$this->assertSame( 1, $fresh->test_transaction_count );
+		$this->assertSame( 1, $fresh->test_donor_count );
+	}
 }

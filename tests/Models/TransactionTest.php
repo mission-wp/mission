@@ -429,4 +429,69 @@ class TransactionTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $fired );
 	}
+
+	// -------------------------------------------------------------------------
+	// save_silent() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test save_silent inserts a row, assigns the ID, and returns it.
+	 */
+	public function test_save_silent_inserts_and_assigns_id(): void {
+		$donor = $this->create_donor();
+
+		$transaction = new Transaction( [
+			'status'       => 'completed',
+			'donor_id'     => $donor->id,
+			'amount'       => 5000,
+			'total_amount' => 5000,
+		] );
+
+		$result = $transaction->save_silent();
+
+		$this->assertIsInt( $result );
+		$this->assertSame( $transaction->id, $result );
+		$this->assertNotNull( Transaction::find( $transaction->id ) );
+	}
+
+	/**
+	 * Test save_silent does not fire the created hook or touch donor aggregates.
+	 */
+	public function test_save_silent_skips_hooks_and_aggregates(): void {
+		$fired = false;
+
+		add_action( 'mission_transaction_created', function () use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$donor = $this->create_donor();
+
+		$transaction = new Transaction( [
+			'status'       => 'completed',
+			'donor_id'     => $donor->id,
+			'amount'       => 5000,
+			'total_amount' => 5000,
+		] );
+		$transaction->save_silent();
+
+		$this->assertFalse( $fired );
+
+		$fresh = $donor->fresh();
+		$this->assertSame( 0, $fresh->transaction_count );
+		$this->assertSame( 0, $fresh->total_donated );
+	}
+
+	/**
+	 * Test save_silent updates an existing row and returns true.
+	 */
+	public function test_save_silent_updates_existing_transaction(): void {
+		$donor       = $this->create_donor();
+		$transaction = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+
+		$transaction->amount = 7500;
+		$result              = $transaction->save_silent();
+
+		$this->assertTrue( $result );
+		$this->assertSame( 7500, $transaction->fresh()->amount );
+	}
 }

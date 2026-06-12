@@ -107,6 +107,27 @@ class Transaction extends Model {
 	}
 
 	/**
+	 * Save without firing side-effect hooks or per-row aggregate updates.
+	 *
+	 * For bulk backfill paths (import, migration) that recompute aggregates once
+	 * at job end and must not trigger emails/webhooks for historical rows.
+	 *
+	 * @return int|bool New ID on insert, true on update, false on failure.
+	 */
+	public function save_silent(): int|bool {
+		/** @var TransactionDataStore $store */
+		$store = static::store();
+
+		if ( $this->id ) {
+			return $store->update_silent( $this );
+		}
+
+		$this->id = $store->create_silent( $this );
+
+		return $this->id;
+	}
+
+	/**
 	 * Find a transaction by its gateway transaction ID.
 	 *
 	 * Empty strings are treated as no match (we don't want to find every manual
