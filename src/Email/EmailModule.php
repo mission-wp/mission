@@ -9,6 +9,7 @@ namespace MissionDP\Email;
 
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Transaction;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -274,6 +275,53 @@ class EmailModule {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Build and send the donation receipt email for a transaction.
+	 *
+	 * Callers own the gating (email enabled, skip_receipt, donation type);
+	 * this builds the subject and body and sends to the donor's email.
+	 *
+	 * @param Transaction $transaction The transaction.
+	 * @param Donor       $donor       The donor (must have an email).
+	 * @return bool Whether the email was sent.
+	 */
+	public function send_donation_receipt( Transaction $transaction, Donor $donor ): bool {
+		$campaign = $transaction->campaign();
+
+		$data = [
+			'transaction'      => $transaction,
+			'donor'            => $donor,
+			'amount_formatted' => $this->format_amount( $transaction->amount, $transaction->currency ),
+			'date_formatted'   => wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ?: $transaction->date_created ) ),
+			'campaign_name'    => $campaign?->title,
+		];
+
+		$subject = sprintf(
+			/* translators: %s: formatted donation amount */
+			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
+			$data['amount_formatted'],
+		);
+
+		$custom_subject = $this->get_custom_subject( 'donation_receipt' );
+		if ( $custom_subject ) {
+			$subject = $this->replace_subject_tags(
+				$custom_subject,
+				[
+					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+					'{amount}'       => $data['amount_formatted'],
+					'{campaign}'     => $data['campaign_name'] ?? '',
+					'{date}'         => $data['date_formatted'],
+					'{organization}' => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
+					'{receipt_id}'   => (string) $transaction->id,
+				]
+			);
+		}
+
+		$html = $this->render_template( 'donation-receipt', array_merge( $data, [ 'subject' => $subject ] ) );
+
+		return $this->send( $donor->email, $subject, $html );
 	}
 
 	/**

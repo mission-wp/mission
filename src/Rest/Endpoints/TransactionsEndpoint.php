@@ -796,40 +796,7 @@ class TransactionsEndpoint {
 			);
 		}
 
-		$email_module = $this->email;
-		$campaign     = $transaction->campaign();
-
-		$data = [
-			'transaction'      => $transaction,
-			'donor'            => $donor,
-			'amount_formatted' => $email_module->format_amount( $transaction->amount, $transaction->currency ),
-			'date_formatted'   => wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ?: $transaction->date_created ) ),
-			'campaign_name'    => $campaign?->title,
-		];
-
-		$subject = sprintf(
-			/* translators: %s: formatted donation amount */
-			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
-			$data['amount_formatted'],
-		);
-
-		$custom_subject = $email_module->get_custom_subject( 'donation_receipt' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{amount}'       => $data['amount_formatted'],
-					'{campaign}'     => $data['campaign_name'] ?? '',
-					'{date}'         => $data['date_formatted'],
-					'{organization}' => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
-					'{receipt_id}'   => (string) $transaction->id,
-				]
-			);
-		}
-
-		$html = $email_module->render_template( 'donation-receipt', array_merge( $data, [ 'subject' => $subject ] ) );
-		$sent = $email_module->send( $donor->email, $subject, $html );
+		$sent = $this->email->send_donation_receipt( $transaction, $donor );
 
 		if ( ! $sent ) {
 			return new WP_Error(
