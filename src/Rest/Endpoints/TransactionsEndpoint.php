@@ -416,6 +416,7 @@ class TransactionsEndpoint {
 		$donor    = $txn->donor();
 		$campaign = $txn->campaign();
 		$is_test  = (bool) $this->settings->get( 'test_mode' );
+		$meta     = $txn->get_all_meta();
 
 		return [
 			'id'                      => $txn->id,
@@ -466,14 +467,14 @@ class TransactionsEndpoint {
 			] : null,
 			'tribute'                 => $this->prepare_tribute( $txn ),
 			'billing_address'         => [
-				'address_1' => $txn->get_meta( 'address_1' ),
-				'address_2' => $txn->get_meta( 'address_2' ),
-				'city'      => $txn->get_meta( 'city' ),
-				'state'     => $txn->get_meta( 'state' ),
-				'zip'       => $txn->get_meta( 'zip' ),
-				'country'   => $txn->get_meta( 'country' ),
+				'address_1' => $meta['address_1'] ?? '',
+				'address_2' => $meta['address_2'] ?? '',
+				'city'      => $meta['city'] ?? '',
+				'state'     => $meta['state'] ?? '',
+				'zip'       => $meta['zip'] ?? '',
+				'country'   => $meta['country'] ?? '',
 			],
-			'meta'                    => $txn->get_all_meta(),
+			'meta'                    => $meta,
 		];
 	}
 

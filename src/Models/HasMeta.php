@@ -84,6 +84,16 @@ trait HasMeta {
 	}
 
 	/**
+	 * Get every object's value for one meta key in a single query.
+	 *
+	 * @param string $key Meta key to fetch.
+	 * @return array<int, mixed> Map of object ID => unserialized value.
+	 */
+	public static function get_meta_for_all( string $key ): array {
+		return static::store()->get_meta_for_all_objects( $key );
+	}
+
+	/**
 	 * Get object IDs carrying a meta key/value pair, cursor-paginated.
 	 *
 	 * @param string $key      Meta key to match.

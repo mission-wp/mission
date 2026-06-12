@@ -166,6 +166,38 @@ trait MetaTrait {
 	}
 
 	/**
+	 * Get every object's value for one meta key in a single query.
+	 *
+	 * Used by batch consumers to avoid one get_meta() per object. For objects
+	 * with duplicate keys, keeps the first value (matches single=true behavior).
+	 *
+	 * @param string $meta_key Meta key to fetch.
+	 *
+	 * @return array<int, mixed> Map of object ID => unserialized value.
+	 */
+	public function get_meta_for_all_objects( string $meta_key ): array {
+		global $wpdb;
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT %i AS object_id, meta_value FROM %i WHERE meta_key = %s ORDER BY meta_id ASC',
+				$this->get_meta_type() . '_id',
+				$this->get_meta_table_name(),
+				$meta_key
+			),
+			ARRAY_A
+		);
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$object_id           = (int) $row['object_id'];
+			$map[ $object_id ] ??= maybe_unserialize( $row['meta_value'] );
+		}
+
+		return $map;
+	}
+
+	/**
 	 * Get object IDs carrying a specific meta key/value pair, cursor-paginated.
 	 *
 	 * Used to walk large sets (e.g. migration rollback) in batches.

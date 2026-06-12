@@ -170,11 +170,11 @@ class Activator {
 	 * @return void
 	 */
 	private static function backfill_milestones(): void {
-		$tracker = new MilestoneTracker();
+		$tracker  = new MilestoneTracker();
+		$existing = Campaign::get_meta_for_all( 'milestones' );
 
 		foreach ( Campaign::query() as $campaign ) {
-			$existing = $campaign->get_meta( 'milestones' );
-			if ( empty( $existing ) ) {
+			if ( empty( $existing[ $campaign->id ] ) ) {
 				$tracker->recompile( $campaign->id );
 			}
 		}
