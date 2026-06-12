@@ -190,6 +190,7 @@ This plugin connects to the following third-party services:
 = 1.3.1 =
 * Enhancement: Faster dashboard and reports on sites with many donations, thanks to new compound database indexes on the transactions and subscriptions tables
 * Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
+* Fix: Weekly recurring donations now show as recurring instead of one-time in admin donation lists, and weekly is accepted by the REST API frequency filter
 
 = 1.3.0 =
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
