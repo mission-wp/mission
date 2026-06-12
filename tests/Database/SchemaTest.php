@@ -80,6 +80,57 @@ class SchemaTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test that dbDelta adds the compound indexes to pre-existing tables (the
+	 * upgrade path for sites created before the indexes were introduced).
+	 */
+	public function test_dbdelta_adds_compound_indexes_to_existing_tables(): void {
+		global $wpdb;
+
+		DatabaseModule::create_tables();
+
+		$expected = [
+			$wpdb->prefix . 'missiondp_transactions'  => [
+				'status_test_currency_date' => [ 'status', 'is_test', 'currency', 'date_created' ],
+				'status_test_completed'     => [ 'status', 'is_test', 'date_completed' ],
+			],
+			$wpdb->prefix . 'missiondp_subscriptions' => [
+				'donor_status_test' => [ 'donor_id', 'status', 'is_test' ],
+			],
+		];
+
+		// Simulate a site created before the compound indexes existed.
+		foreach ( $expected as $table => $indexes ) {
+			foreach ( array_keys( $indexes ) as $index_name ) {
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP INDEX %i', $table, $index_name ) );
+			}
+		}
+
+		// Run twice: the first pass must add the indexes, the second must not duplicate them.
+		DatabaseModule::create_tables();
+		DatabaseModule::create_tables();
+
+		foreach ( $expected as $table => $indexes ) {
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SHOW INDEX FROM %i', $table ), ARRAY_A );
+
+			foreach ( $indexes as $index_name => $columns ) {
+				$index_columns = [];
+				foreach ( $rows as $row ) {
+					if ( $row['Key_name'] === $index_name ) {
+						$index_columns[ (int) $row['Seq_in_index'] ] = $row['Column_name'];
+					}
+				}
+				ksort( $index_columns );
+
+				$this->assertSame( $columns, array_values( $index_columns ), "Index {$index_name} on {$table} has wrong columns or is missing." );
+				$this->assertEmpty(
+					array_filter( $rows, static fn( $row ) => $row['Key_name'] === $index_name . '_2' ),
+					"dbDelta duplicated index {$index_name} on {$table}."
+				);
+			}
+		}
+	}
+
+	/**
 	 * Test that get_table_names matches schema keys.
 	 */
 	public function test_get_table_names_matches_schema_keys(): void {

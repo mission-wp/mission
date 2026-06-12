@@ -69,7 +69,9 @@ class Schema {
   KEY gateway_transaction_id (gateway_transaction_id),
   KEY date_created (date_created),
   KEY is_test (is_test),
-  KEY import_job_id (import_job_id)
+  KEY import_job_id (import_job_id),
+  KEY status_test_currency_date (status, is_test, currency, date_created),
+  KEY status_test_completed (status, is_test, date_completed)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
@@ -164,7 +166,8 @@ class Schema {
   KEY gateway_subscription_id (gateway_subscription_id),
   KEY date_created (date_created),
   KEY date_next_renewal (date_next_renewal),
-  KEY is_test (is_test)
+  KEY is_test (is_test),
+  KEY donor_status_test (donor_id, status, is_test)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
