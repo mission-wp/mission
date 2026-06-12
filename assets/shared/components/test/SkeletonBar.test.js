@@ -17,9 +17,7 @@ describe( 'SkeletonBar', () => {
   } );
 
   it( 'applies width and height overrides', () => {
-    const { container } = render(
-      <SkeletonBar width="120px" height="13px" />
-    );
+    const { container } = render( <SkeletonBar width="120px" height="13px" /> );
     const bar = container.querySelector( '.mission-skeleton' );
 
     expect( bar.style.width ).toBe( '120px' );

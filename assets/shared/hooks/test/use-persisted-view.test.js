@@ -18,7 +18,7 @@ const DEFAULT_VIEW = {
 
 describe( 'usePersistedView', () => {
   beforeEach( () => {
-    localStorage.clear();
+    window.localStorage.clear();
     jest.useFakeTimers();
   } );
 
@@ -26,15 +26,15 @@ describe( 'usePersistedView', () => {
     jest.useRealTimers();
   } );
 
-  it( 'returns defaultView when localStorage is empty', () => {
+  it( 'returns defaultView when window.localStorage is empty', () => {
     const { result } = renderHook( () =>
       usePersistedView( STORAGE_KEY, DEFAULT_VIEW )
     );
     expect( result.current.view ).toEqual( DEFAULT_VIEW );
   } );
 
-  it( 'restores persisted fields from localStorage on init', () => {
-    localStorage.setItem(
+  it( 'restores persisted fields from window.localStorage on init', () => {
+    window.localStorage.setItem(
       FULL_KEY,
       JSON.stringify( {
         perPage: 50,
@@ -55,7 +55,7 @@ describe( 'usePersistedView', () => {
     expect( result.current.view.search ).toBe( '' );
   } );
 
-  it( 'persists to localStorage after 300ms debounce', () => {
+  it( 'persists to window.localStorage after 300ms debounce', () => {
     const { result } = renderHook( () =>
       usePersistedView( STORAGE_KEY, DEFAULT_VIEW )
     );
@@ -65,13 +65,13 @@ describe( 'usePersistedView', () => {
     } );
 
     // Not yet persisted.
-    expect( localStorage.getItem( FULL_KEY ) ).toBeNull();
+    expect( window.localStorage.getItem( FULL_KEY ) ).toBeNull();
 
     act( () => {
       jest.advanceTimersByTime( 300 );
     } );
 
-    const stored = JSON.parse( localStorage.getItem( FULL_KEY ) );
+    const stored = JSON.parse( window.localStorage.getItem( FULL_KEY ) );
     expect( stored.perPage ).toBe( 50 );
   } );
 
@@ -95,8 +95,8 @@ describe( 'usePersistedView', () => {
     expect( result.current.isModified ).toBe( false );
   } );
 
-  it( 'resetToDefault clears localStorage and resets persisted fields', () => {
-    localStorage.setItem( FULL_KEY, JSON.stringify( { perPage: 50 } ) );
+  it( 'resetToDefault clears window.localStorage and resets persisted fields', () => {
+    window.localStorage.setItem( FULL_KEY, JSON.stringify( { perPage: 50 } ) );
 
     const { result } = renderHook( () =>
       usePersistedView( STORAGE_KEY, DEFAULT_VIEW )
@@ -106,12 +106,12 @@ describe( 'usePersistedView', () => {
       result.current.resetToDefault();
     } );
 
-    expect( localStorage.getItem( FULL_KEY ) ).toBeNull();
+    expect( window.localStorage.getItem( FULL_KEY ) ).toBeNull();
     expect( result.current.view.perPage ).toBe( DEFAULT_VIEW.perPage );
   } );
 
-  it( 'falls back to defaultView when localStorage contains invalid JSON', () => {
-    localStorage.setItem( FULL_KEY, '{invalid' );
+  it( 'falls back to defaultView when window.localStorage contains invalid JSON', () => {
+    window.localStorage.setItem( FULL_KEY, '{invalid' );
 
     const { result } = renderHook( () =>
       usePersistedView( STORAGE_KEY, DEFAULT_VIEW )
@@ -120,7 +120,7 @@ describe( 'usePersistedView', () => {
     expect( result.current.view ).toEqual( DEFAULT_VIEW );
   } );
 
-  it( 'persists layout density to localStorage', () => {
+  it( 'persists layout density to window.localStorage', () => {
     const viewWithLayout = {
       ...DEFAULT_VIEW,
       layout: { density: 'compact' },
@@ -138,7 +138,7 @@ describe( 'usePersistedView', () => {
       jest.advanceTimersByTime( 300 );
     } );
 
-    const stored = JSON.parse( localStorage.getItem( FULL_KEY ) );
+    const stored = JSON.parse( window.localStorage.getItem( FULL_KEY ) );
     expect( stored.density ).toBe( 'compact' );
   } );
 

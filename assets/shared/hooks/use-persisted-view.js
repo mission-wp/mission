@@ -18,7 +18,7 @@ function getPersistedFields( view ) {
 
 function loadFromStorage( storageKey ) {
   try {
-    const raw = localStorage.getItem( STORAGE_PREFIX + storageKey );
+    const raw = window.localStorage.getItem( STORAGE_PREFIX + storageKey );
     if ( raw ) {
       return JSON.parse( raw );
     }
@@ -64,7 +64,7 @@ export function usePersistedView( storageKey, defaultView ) {
       timerRef.current = setTimeout( () => {
         const persisted = getPersistedFields( resolved );
         try {
-          localStorage.setItem(
+          window.localStorage.setItem(
             STORAGE_PREFIX + storageKey,
             JSON.stringify( persisted )
           );
@@ -85,7 +85,7 @@ export function usePersistedView( storageKey, defaultView ) {
   }, [ view, defaultView ] );
 
   const resetToDefault = useCallback( () => {
-    localStorage.removeItem( STORAGE_PREFIX + storageKey );
+    window.localStorage.removeItem( STORAGE_PREFIX + storageKey );
     setViewState( {
       ...defaultView,
       search: view.search,

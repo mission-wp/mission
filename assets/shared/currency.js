@@ -40,8 +40,8 @@ export function getCurrencySymbol( currencyCode ) {
 /**
  * Format a value in minor units (cents) as a currency string.
  *
- * @param {number}  minorUnits             Amount in minor units (e.g. 4500 = $45.00).
- * @param {string=} currencyCode           Optional ISO 4217 code override (e.g. "EUR").
+ * @param {number}  minorUnits               Amount in minor units (e.g. 4500 = $45.00).
+ * @param {string=} currencyCode             Optional ISO 4217 code override (e.g. "EUR").
  * @param {Object}  [options]
  * @param {boolean} [options.stripZeroCents] Drop ".00" when the amount is a whole number.
  * @return {string} Formatted string like "$45.00" or "¥4500".

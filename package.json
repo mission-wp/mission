@@ -17,7 +17,7 @@
 		"wp": "wp-env run cli wp",
 		"test:unit:js": "wp-scripts test-unit-js",
 		"test:e2e": "wp-scripts test-playwright",
-		"lint:js": "wp-scripts lint-js blocks/src admin/src",
+		"lint:js": "wp-scripts lint-js blocks/src admin/src assets/shared",
 		"lint:css": "wp-scripts lint-style 'blocks/src/**/*.scss' 'admin/src/**/*.scss'",
 		"test:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/mission-donation-platform vendor/bin/phpunit",
 		"lint:php": "vendor/bin/phpcs",

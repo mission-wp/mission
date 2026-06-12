@@ -10,11 +10,11 @@ import apiFetch from '@wordpress/api-fetch';
  * error the data resets to an empty list with zero totals.
  *
  * @param {Object}   options
- * @param {string}   options.path           REST path without a query string.
- * @param {Object}   options.view           DataViews view (from usePersistedView).
+ * @param {string}   options.path             REST path without a query string.
+ * @param {Object}   options.view             DataViews view (from usePersistedView).
  * @param {string}   [options.defaultOrderby] Orderby used when the view has no sort field.
- * @param {string[]} [options.filterFields] view.filters fields to copy to query params.
- * @param {Object}   [options.extraParams]  Fixed query params (e.g. { campaign_id }).
+ * @param {string[]} [options.filterFields]   view.filters fields to copy to query params.
+ * @param {Object}   [options.extraParams]    Fixed query params (e.g. { campaign_id }).
  * @return {Object} { data, totalItems, totalPages, isLoading, refresh }.
  */
 export function usePaginatedFetch( {

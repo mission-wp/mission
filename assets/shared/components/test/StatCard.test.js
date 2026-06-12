@@ -17,7 +17,10 @@ describe( 'getDelta', () => {
       value: 50,
       direction: 'positive',
     } );
-    expect( getDelta( 101, 99 ) ).toEqual( { value: 2, direction: 'positive' } );
+    expect( getDelta( 101, 99 ) ).toEqual( {
+      value: 2,
+      direction: 'positive',
+    } );
   } );
 
   it( 'returns a negative delta as an absolute value', () => {
@@ -127,8 +130,8 @@ describe( 'StatCard', () => {
     );
 
     const card = container.querySelector( '.mission-stat-card' );
-    expect(
-      card.classList.contains( 'mission-stat-card--text-value' )
-    ).toBe( true );
+    expect( card.classList.contains( 'mission-stat-card--text-value' ) ).toBe(
+      true
+    );
   } );
 } );
