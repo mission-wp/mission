@@ -1,5 +1,6 @@
 {
 	"core": "WordPress/WordPress#7.0-branch",
+	"phpVersion": "8.0",
 	"plugins": [
 		"."
 	],
