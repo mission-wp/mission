@@ -8,11 +8,13 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\ActivityLog;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,6 +22,8 @@ defined( 'ABSPATH' ) || exit;
  * Activity feed endpoint class.
  */
 class ActivityFeedEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Constructor.
@@ -43,33 +47,25 @@ class ActivityFeedEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_items' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_collection_params(),
 				],
 				[
 					'methods'             => 'DELETE',
 					'callback'            => [ $this, 'delete_items' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view the activity feed.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view the activity feed.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -157,54 +153,16 @@ class ActivityFeedEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'        => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page'    => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'object_type' => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'object_id'   => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'event'       => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'date_after'  => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'level'       => [
-				'type'              => 'string',
-				'enum'              => [ 'info', 'warning', 'error' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'category'    => [
-				'type'              => 'string',
-				'enum'              => [ 'payment', 'webhook', 'email', 'subscription', 'system' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'search'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-		];
+		return array_merge(
+			CollectionParams::base(),
+			[
+				'object_type' => Args::string(),
+				'object_id'   => Args::integer(),
+				'event'       => Args::string(),
+				'date_after'  => Args::string(),
+				'level'       => Args::enum( [ 'info', 'warning', 'error' ] ),
+				'category'    => Args::enum( [ 'payment', 'webhook', 'email', 'subscription', 'system' ] ),
+			]
+		);
 	}
 }

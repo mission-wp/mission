@@ -10,6 +10,8 @@ namespace MissionDP\Rest\Endpoints\DonorDashboard;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Subscription;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
@@ -52,11 +54,7 @@ class SubscriptionsEndpoint {
 		);
 
 		$action_args = [
-			'id' => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
+			'id' => Args::id(),
 		];
 
 		register_rest_route(
@@ -100,33 +98,26 @@ class SubscriptionsEndpoint {
 				'callback'            => [ $this, 'update_subscription_amount' ],
 				'permission_callback' => [ $this, 'check_donor_permission' ],
 				'args'                => [
-					'id'              => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'donation_amount' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'minimum'           => 100,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
-					'tip_amount'      => [
-						'type'              => 'integer',
-						'required'          => true,
-						'minimum'           => 0,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
-					'fee_amount'      => [
-						'type'              => 'integer',
-						'required'          => false,
-						'default'           => 0,
-						'minimum'           => 0,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'id'              => Args::id(),
+					'donation_amount' => Args::integer(
+						[
+							'required' => true,
+							'minimum'  => 100,
+						]
+					),
+					'tip_amount'      => Args::integer(
+						[
+							'required' => true,
+							'minimum'  => 0,
+						]
+					),
+					'fee_amount'      => Args::integer(
+						[
+							'required' => false,
+							'default'  => 0,
+							'minimum'  => 0,
+						]
+					),
 				],
 			]
 		);
@@ -150,11 +141,7 @@ class SubscriptionsEndpoint {
 				'callback'            => [ $this, 'update_subscription_payment_method' ],
 				'permission_callback' => [ $this, 'check_donor_permission' ],
 				'args'                => [
-					'id'                => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id'                => Args::id(),
 					'payment_method_id' => [
 						'type'     => 'string',
 						'required' => true,
@@ -467,11 +454,7 @@ class SubscriptionsEndpoint {
 		$subscription = Subscription::find( $id );
 
 		if ( ! $subscription ) {
-			return new WP_Error(
-				'subscription_not_found',
-				__( 'Subscription not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::subscription_not_found();
 		}
 
 		if ( $subscription->donor_id !== $donor->id ) {

@@ -16,6 +16,8 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Transaction;
 use MissionDP\Payments\PaymentIntentVerifier;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\RateLimitTrait;
 use WP_REST_Request;
@@ -54,16 +56,8 @@ class ConfirmDonationEndpoint {
 				'callback'            => [ $this, 'handle' ],
 				'permission_callback' => [ $this, 'check_permission' ],
 				'args'                => [
-					'transaction_id'    => [
-						'required'          => true,
-						'type'              => 'integer',
-						'sanitize_callback' => 'absint',
-					],
-					'payment_intent_id' => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'transaction_id'    => Args::integer( [ 'required' => true ] ),
+					'payment_intent_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -86,11 +80,7 @@ class ConfirmDonationEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'transaction_id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$payment_intent_id = (string) $request->get_param( 'payment_intent_id' );

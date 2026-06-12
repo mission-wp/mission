@@ -12,6 +12,9 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Receipts\ReceiptPdfGenerator;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
@@ -64,11 +67,7 @@ class TransactionsEndpoint {
 				'callback'            => [ $this, 'get_transaction_receipt_pdf' ],
 				'permission_callback' => [ $this, 'check_donor_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -91,14 +90,13 @@ class TransactionsEndpoint {
 				'callback'            => [ $this, 'get_receipt_pdf' ],
 				'permission_callback' => [ $this, 'check_donor_permission' ],
 				'args'                => [
-					'year' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'minimum'           => 2000,
-						'maximum'           => 9999,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'year' => Args::integer(
+						[
+							'required' => true,
+							'minimum'  => 2000,
+							'maximum'  => 9999,
+						]
+					),
 				],
 			]
 		);
@@ -245,11 +243,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( (int) $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		if ( $transaction->donor_id !== $donor->id ) {
@@ -318,37 +312,13 @@ class TransactionsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_transaction_params(): array {
-		return [
-			'page'        => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page'    => [
-				'type'              => 'integer',
-				'default'           => 20,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'year'        => [
-				'type'              => 'integer',
-				'minimum'           => 2000,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'campaign_id' => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'type'        => [
-				'type'              => 'string',
-				'enum'              => [ Frequency::ONE_TIME, 'recurring', Frequency::WEEKLY, Frequency::MONTHLY, Frequency::QUARTERLY, Frequency::ANNUALLY ],
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-		];
+		return array_merge(
+			CollectionParams::base( per_page: 20, search: false ),
+			[
+				'year'        => Args::integer( [ 'minimum' => 2000 ] ),
+				'campaign_id' => Args::integer(),
+				'type'        => Args::enum( [ Frequency::ONE_TIME, 'recurring', Frequency::WEEKLY, Frequency::MONTHLY, Frequency::QUARTERLY, Frequency::ANNUALLY ] ),
+			]
+		);
 	}
 }

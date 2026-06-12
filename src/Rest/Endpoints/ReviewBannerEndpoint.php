@@ -7,10 +7,11 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_REST_Request;
 use WP_REST_Response;
-use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,6 +21,8 @@ defined( 'ABSPATH' ) || exit;
  * Handles dismissal and rating submission for the dashboard review banner.
  */
 class ReviewBannerEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Register REST routes.
@@ -33,7 +36,7 @@ class ReviewBannerEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'dismiss' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 
@@ -43,36 +46,18 @@ class ReviewBannerEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'rate' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'rating' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'minimum'           => 1,
-						'maximum'           => 5,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'rating' => Args::integer(
+						[
+							'required' => true,
+							'minimum'  => 1,
+							'maximum'  => 5,
+						]
+					),
 				],
 			]
 		);
-	}
-
-	/**
-	 * Permission check — requires manage_options.
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to perform this action.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
 	}
 
 	/**

@@ -14,9 +14,9 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Response;
-use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -27,6 +27,8 @@ defined( 'ABSPATH' ) || exit;
  * for the Tools > Status admin panel and support reports.
  */
 class SystemStatusEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Constructor.
@@ -49,26 +51,9 @@ class SystemStatusEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_status' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
-	}
-
-	/**
-	 * Permission check — requires manage_options.
-	 *
-	 * @return bool|WP_Error
-	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to perform this action.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
 	}
 
 	/**

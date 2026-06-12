@@ -12,7 +12,9 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Email\EmailModule;
 use MissionDP\Models\Donor;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -23,6 +25,8 @@ defined( 'ABSPATH' ) || exit;
  * Email template endpoint class.
  */
 class EmailTemplateEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Template file name per email type (hyphenated).
@@ -85,33 +89,21 @@ class EmailTemplateEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_template' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'type' => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'type' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view email templates.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view email templates.', 'mission-donation-platform' );
 	}
 
 	/**

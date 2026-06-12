@@ -7,7 +7,10 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Rest\Args;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -19,6 +22,8 @@ defined( 'ABSPATH' ) || exit;
  * Stripe Connect endpoint class.
  */
 class StripeConnectEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * API base URL.
@@ -48,18 +53,10 @@ class StripeConnectEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'connect' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'setup_code' => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
-					'site_id'    => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'setup_code' => Args::string( [ 'required' => true ] ),
+					'site_id'    => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -70,14 +67,14 @@ class StripeConnectEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'disconnect' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'account_id' => [
-						'required'          => false,
-						'type'              => 'string',
-						'default'           => '',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'account_id' => Args::string(
+						[
+							'required' => false,
+							'default'  => '',
+						]
+					),
 				],
 			]
 		);
@@ -88,33 +85,21 @@ class StripeConnectEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'make_default' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'account_id' => [
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'account_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to manage settings.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage settings.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -261,11 +246,7 @@ class StripeConnectEndpoint {
 		$account = $this->settings->get_stripe_account_by_id( $account_id );
 
 		if ( ! $account ) {
-			return new WP_Error(
-				'account_not_found',
-				__( 'Stripe account not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::account_not_found();
 		}
 
 		$this->notify_api_disconnect( (string) ( $account['site_token'] ?? '' ) );
@@ -284,11 +265,7 @@ class StripeConnectEndpoint {
 		$account_id = (string) $request->get_param( 'account_id' );
 
 		if ( ! $this->settings->set_default_stripe_account( $account_id ) ) {
-			return new WP_Error(
-				'account_not_found',
-				__( 'Stripe account not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::account_not_found();
 		}
 
 		return new WP_REST_Response( $this->build_response_payload(), 200 );

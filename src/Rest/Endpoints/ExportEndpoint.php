@@ -8,7 +8,9 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Export\ExportService;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -20,6 +22,8 @@ defined( 'ABSPATH' ) || exit;
  * Export endpoint class.
  */
 class ExportEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Constructor.
@@ -42,7 +46,7 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_count' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_filter_params(),
 			]
 		);
@@ -53,7 +57,7 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_preview' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_filter_params(),
 			]
 		);
@@ -64,15 +68,11 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => array_merge(
 					$this->get_filter_params(),
 					[
-						'format' => [
-							'type'              => 'string',
-							'default'           => 'csv',
-							'sanitize_callback' => 'sanitize_text_field',
-						],
+						'format' => Args::string( [ 'default' => 'csv' ] ),
 					]
 				),
 			]
@@ -84,33 +84,21 @@ class ExportEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download_all' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'format' => [
-						'type'              => 'string',
-						'default'           => 'csv',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'format' => Args::string( [ 'default' => 'csv' ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Check if the current user has permission.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to export data.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to export data.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -314,35 +302,12 @@ class ExportEndpoint {
 	 */
 	private function get_filter_params(): array {
 		return [
-			'type'                => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'id'                  => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'date_from'           => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'date_to'             => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'notify_method'       => [
-				'type'              => 'string',
-				'enum'              => [ 'email', 'mail' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'notification_status' => [
-				'type'              => 'string',
-				'enum'              => [ 'pending', 'sent' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'type'                => Args::string( [ 'required' => true ] ),
+			'id'                  => Args::integer(),
+			'date_from'           => Args::string(),
+			'date_to'             => Args::string(),
+			'notify_method'       => Args::enum( [ 'email', 'mail' ] ),
+			'notification_status' => Args::enum( [ 'pending', 'sent' ] ),
 		];
 	}
 

@@ -9,7 +9,11 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Campaign;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -20,6 +24,8 @@ defined( 'ABSPATH' ) || exit;
  * Campaigns endpoint class.
  */
 class CampaignsEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Constructor.
@@ -80,13 +86,13 @@ class CampaignsEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_campaigns' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_collection_params(),
 				],
 				[
 					'methods'             => 'POST',
 					'callback'            => [ $this, 'create_campaign' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_create_params(),
 				],
 			]
@@ -98,7 +104,7 @@ class CampaignsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_summary' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 
@@ -109,31 +115,23 @@ class CampaignsEndpoint {
 				[
 					'methods'             => 'GET',
 					'callback'            => [ $this, 'get_campaign' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => [
-						'id' => [
-							'type'              => 'integer',
-							'required'          => true,
-							'sanitize_callback' => 'absint',
-						],
+						'id' => Args::id(),
 					],
 				],
 				[
 					'methods'             => 'PUT',
 					'callback'            => [ $this, 'update_campaign' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => $this->get_update_params(),
 				],
 				[
 					'methods'             => 'DELETE',
 					'callback'            => [ $this, 'delete_campaign' ],
-					'permission_callback' => [ $this, 'check_permission' ],
+					'permission_callback' => [ $this, 'check_admin_permission' ],
 					'args'                => [
-						'id' => [
-							'type'              => 'integer',
-							'required'          => true,
-							'sanitize_callback' => 'absint',
-						],
+						'id' => Args::id(),
 					],
 				],
 			]
@@ -145,7 +143,7 @@ class CampaignsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'batch_delete_campaigns' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
 					'ids' => [
 						'type'              => 'array',
@@ -163,20 +161,12 @@ class CampaignsEndpoint {
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view campaigns.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view campaigns.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -253,11 +243,7 @@ class CampaignsEndpoint {
 		$campaign    = Campaign::find( $campaign_id );
 
 		if ( ! $campaign ) {
-			return new WP_Error(
-				'rest_not_found',
-				__( 'Campaign not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::campaign_not_found();
 		}
 
 		return new WP_REST_Response( $this->prepare_single_campaign( $campaign ), 200 );
@@ -425,11 +411,7 @@ class CampaignsEndpoint {
 		$campaign    = Campaign::find( $campaign_id );
 
 		if ( ! $campaign ) {
-			return new WP_Error(
-				'rest_not_found',
-				__( 'Campaign not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::campaign_not_found();
 		}
 
 		$result = $campaign->trash();
@@ -498,11 +480,7 @@ class CampaignsEndpoint {
 		$campaign = Campaign::find( $request->get_param( 'id' ) );
 
 		if ( ! $campaign ) {
-			return new WP_Error(
-				'rest_not_found',
-				__( 'Campaign not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::campaign_not_found();
 		}
 
 		$goal_changed = false;
@@ -613,37 +591,21 @@ class CampaignsEndpoint {
 	 */
 	private function get_create_params(): array {
 		return [
-			'title'       => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'title'       => Args::string( [ 'required' => true ] ),
 			'excerpt'     => [
 				'type'              => 'string',
 				'default'           => '',
 				'sanitize_callback' => 'sanitize_textarea_field',
 			],
-			'goal_amount' => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'goal_type'   => [
-				'type'              => 'string',
-				'default'           => 'amount',
-				'enum'              => [ 'amount', 'donations', 'donors' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'goal_amount' => Args::integer(),
+			'goal_type'   => Args::enum( [ 'amount', 'donations', 'donors' ], [ 'default' => 'amount' ] ),
 			'date_start'  => [
 				'type' => [ 'string', 'null' ],
 			],
 			'date_end'    => [
 				'type' => [ 'string', 'null' ],
 			],
-			'image'       => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
+			'image'       => Args::integer(),
 		];
 	}
 
@@ -654,15 +616,8 @@ class CampaignsEndpoint {
 	 */
 	private function get_update_params(): array {
 		return [
-			'id'                          => [
-				'type'              => 'integer',
-				'required'          => true,
-				'sanitize_callback' => 'absint',
-			],
-			'title'                       => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'id'                          => Args::id(),
+			'title'                       => Args::string(),
 			'excerpt'                     => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_textarea_field',
@@ -670,51 +625,25 @@ class CampaignsEndpoint {
 			'goal_amount'                 => [
 				'type' => 'integer',
 			],
-			'goal_type'                   => [
-				'type'              => 'string',
-				'enum'              => [ 'amount', 'donations', 'donors' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
+			'goal_type'                   => Args::enum( [ 'amount', 'donations', 'donors' ] ),
 			'date_start'                  => [
 				'type' => [ 'string', 'null' ],
 			],
 			'date_end'                    => [
 				'type' => [ 'string', 'null' ],
 			],
-			'slug'                        => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'slug'                        => Args::string(),
 			'image'                       => [
 				'type' => [ 'integer', 'null' ],
 			],
-			'has_campaign_page'           => [
-				'type' => 'boolean',
-			],
-			'show_in_listings'            => [
-				'type' => 'boolean',
-			],
-			'close_on_goal'               => [
-				'type' => 'boolean',
-			],
-			'stop_donations_on_end'       => [
-				'type' => 'boolean',
-			],
-			'show_ended_message'          => [
-				'type' => 'boolean',
-			],
-			'remove_from_listings_on_end' => [
-				'type' => 'boolean',
-			],
-			'recurring_end_behavior'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'recurring_redirect_campaign' => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'has_campaign_page'           => Args::boolean(),
+			'show_in_listings'            => Args::boolean(),
+			'close_on_goal'               => Args::boolean(),
+			'stop_donations_on_end'       => Args::boolean(),
+			'show_ended_message'          => Args::boolean(),
+			'remove_from_listings_on_end' => Args::boolean(),
+			'recurring_end_behavior'      => Args::string(),
+			'recurring_redirect_campaign' => Args::string(),
 		];
 	}
 
@@ -724,46 +653,14 @@ class CampaignsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'     => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page' => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'orderby'  => [
-				'type'              => 'string',
-				'default'           => 'date',
-				'enum'              => [ 'date', 'title', 'date_start', 'date_end', 'goal_amount', 'total_raised', 'transaction_count' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'order'    => [
-				'type'              => 'string',
-				'default'           => 'DESC',
-				'enum'              => [ 'ASC', 'DESC' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'search'   => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'status'   => [
-				'type'              => 'string',
-				'enum'              => Campaign::STATUSES,
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-		];
+		return array_merge(
+			CollectionParams::base(
+				orderby: [ 'date', 'title', 'date_start', 'date_end', 'goal_amount', 'total_raised', 'transaction_count' ],
+				default_orderby: 'date'
+			),
+			[
+				'status' => Args::enum( Campaign::STATUSES ),
+			]
+		);
 	}
 }

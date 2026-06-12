@@ -13,7 +13,11 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Receipts\ReceiptPdfGenerator;
 use MissionDP\Reporting\ReportingService;
+use MissionDP\Rest\Args;
+use MissionDP\Rest\CollectionParams;
+use MissionDP\Rest\RestErrors;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
@@ -26,6 +30,8 @@ defined( 'ABSPATH' ) || exit;
  * Transactions endpoint class.
  */
 class TransactionsEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Constructor.
@@ -52,7 +58,7 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_transactions' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_collection_params(),
 			]
 		);
@@ -63,7 +69,7 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'create_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => $this->get_create_params(),
 			]
 		);
@@ -74,13 +80,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -91,22 +93,11 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'PATCH',
 				'callback'            => [ $this, 'update_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id'           => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'is_anonymous' => [
-						'type' => 'boolean',
-					],
-					'status'       => [
-						'type'              => 'string',
-						'enum'              => Transaction::STATUSES,
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'id'           => Args::id(),
+					'is_anonymous' => Args::boolean(),
+					'status'       => Args::enum( Transaction::STATUSES ),
 					'campaign_id'  => [
 						'type' => [ 'integer', 'null' ],
 					],
@@ -120,13 +111,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'DELETE',
 				'callback'            => [ $this, 'delete_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -137,20 +124,15 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'refund_transaction' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id'     => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
-					'amount' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'minimum'           => 1,
-						'sanitize_callback' => 'absint',
-						'validate_callback' => 'rest_validate_request_arg',
-					],
+					'id'     => Args::id(),
+					'amount' => Args::integer(
+						[
+							'required' => true,
+							'minimum'  => 1,
+						]
+					),
 				],
 			]
 		);
@@ -161,13 +143,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'download_receipt_pdf' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -178,13 +156,9 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'resend_receipt' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'id' => [
-						'type'              => 'integer',
-						'required'          => true,
-						'sanitize_callback' => 'absint',
-					],
+					'id' => Args::id(),
 				],
 			]
 		);
@@ -195,26 +169,18 @@ class TransactionsEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_summary' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 	}
 
 	/**
-	 * Permission check — requires manage_options.
+	 * Message returned when the capability check fails.
 	 *
-	 * @return bool|WP_Error
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return new WP_Error(
-				'rest_forbidden',
-				__( 'You do not have permission to view transactions.', 'mission-donation-platform' ),
-				[ 'status' => 403 ]
-			);
-		}
-
-		return true;
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to view transactions.', 'mission-donation-platform' );
 	}
 
 	/**
@@ -259,11 +225,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		return new WP_REST_Response( $this->prepare_transaction_detail( $transaction ), 200 );
@@ -290,11 +252,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		if ( $request->has_param( 'is_anonymous' ) ) {
@@ -325,11 +283,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'transaction_not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$transaction->delete();
@@ -598,61 +552,15 @@ class TransactionsEndpoint {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private function get_collection_params(): array {
-		return [
-			'page'        => [
-				'type'              => 'integer',
-				'default'           => 1,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'per_page'    => [
-				'type'              => 'integer',
-				'default'           => 25,
-				'minimum'           => 1,
-				'maximum'           => 100,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'orderby'     => [
-				'type'              => 'string',
-				'default'           => 'date_created',
-				'enum'              => [ 'date_created', 'amount' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'order'       => [
-				'type'              => 'string',
-				'default'           => 'DESC',
-				'enum'              => [ 'ASC', 'DESC' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'status'      => [
-				'type'              => 'string',
-				'enum'              => Transaction::STATUSES,
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'campaign_id' => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'donor_id'    => [
-				'type'              => 'integer',
-				'sanitize_callback' => 'absint',
-			],
-			'search'      => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'dedication'  => [
-				'type'              => 'string',
-				'enum'              => [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ],
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-		];
+		return array_merge(
+			CollectionParams::base( orderby: [ 'date_created', 'amount' ], default_orderby: 'date_created' ),
+			[
+				'status'      => Args::enum( Transaction::STATUSES ),
+				'campaign_id' => Args::integer(),
+				'donor_id'    => Args::integer(),
+				'dedication'  => Args::enum( [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ] ),
+			]
+		);
 	}
 
 	/**
@@ -667,75 +575,29 @@ class TransactionsEndpoint {
 				'required'          => true,
 				'sanitize_callback' => 'sanitize_email',
 			],
-			'donor_first_name' => [
-				'type'              => 'string',
-				'required'          => true,
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'donor_last_name'  => [
-				'type'              => 'string',
-				'default'           => '',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'donation_amount'  => [
-				'type'              => 'integer',
-				'required'          => true,
-				'minimum'           => 1,
-				'sanitize_callback' => 'absint',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'campaign_id'      => [
-				'type'              => 'integer',
-				'default'           => 0,
-				'sanitize_callback' => 'absint',
-			],
-			'frequency'        => [
-				'type'              => 'string',
-				'default'           => Frequency::ONE_TIME,
-				'enum'              => Frequency::ALL,
-				'sanitize_callback' => 'sanitize_text_field',
-				'validate_callback' => 'rest_validate_request_arg',
-			],
-			'date_created'     => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'donor_first_name' => Args::string( [ 'required' => true ] ),
+			'donor_last_name'  => Args::string( [ 'default' => '' ] ),
+			'donation_amount'  => Args::integer(
+				[
+					'required' => true,
+					'minimum'  => 1,
+				]
+			),
+			'campaign_id'      => Args::integer( [ 'default' => 0 ] ),
+			'frequency'        => Args::enum( Frequency::ALL, [ 'default' => Frequency::ONE_TIME ] ),
+			'date_created'     => Args::string(),
 			'notes'            => [
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_textarea_field',
 			],
-			'is_test'          => [
-				'type'    => 'boolean',
-				'default' => false,
-			],
-			'send_receipt'     => [
-				'type'    => 'boolean',
-				'default' => true,
-			],
-			'address_1'        => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'address_2'        => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'city'             => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'state'            => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'zip'              => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
-			'country'          => [
-				'type'              => 'string',
-				'sanitize_callback' => 'sanitize_text_field',
-			],
+			'is_test'          => Args::boolean( [ 'default' => false ] ),
+			'send_receipt'     => Args::boolean( [ 'default' => true ] ),
+			'address_1'        => Args::string(),
+			'address_2'        => Args::string(),
+			'city'             => Args::string(),
+			'state'            => Args::string(),
+			'zip'              => Args::string(),
+			'country'          => Args::string(),
 		];
 	}
 
@@ -749,11 +611,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		if ( Transaction::STATUS_COMPLETED !== $transaction->status ) {
@@ -875,11 +733,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$donor = $transaction->donor();
@@ -929,11 +783,7 @@ class TransactionsEndpoint {
 		$transaction = Transaction::find( $request->get_param( 'id' ) );
 
 		if ( ! $transaction ) {
-			return new WP_Error(
-				'not_found',
-				__( 'Transaction not found.', 'mission-donation-platform' ),
-				[ 'status' => 404 ]
-			);
+			return RestErrors::transaction_not_found();
 		}
 
 		$donor = $transaction->donor();

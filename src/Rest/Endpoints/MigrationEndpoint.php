@@ -8,7 +8,9 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Migration\MigrationService;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\AdminPermissionTrait;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -19,6 +21,8 @@ defined( 'ABSPATH' ) || exit;
  * Migration REST routes.
  */
 class MigrationEndpoint {
+
+	use AdminPermissionTrait;
 
 	/**
 	 * Constructor.
@@ -39,7 +43,7 @@ class MigrationEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_sources' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 			]
 		);
 
@@ -49,7 +53,7 @@ class MigrationEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'scan' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
 					'source' => [
 						'type'              => 'string',
@@ -66,17 +70,14 @@ class MigrationEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'start' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
 					'source'       => [
 						'type'              => 'string',
 						'required'          => true,
 						'sanitize_callback' => 'sanitize_key',
 					],
-					'include_test' => [
-						'type'    => 'boolean',
-						'default' => false,
-					],
+					'include_test' => Args::boolean( [ 'default' => false ] ),
 				],
 			]
 		);
@@ -87,13 +88,9 @@ class MigrationEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_status' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'job_id' => [
-						'type'              => 'string',
-						'required'          => false,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'job_id' => Args::string( [ 'required' => false ] ),
 				],
 			]
 		);
@@ -104,13 +101,9 @@ class MigrationEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'cancel' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'job_id' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'job_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
@@ -121,31 +114,21 @@ class MigrationEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'rollback' ],
-				'permission_callback' => [ $this, 'check_permission' ],
+				'permission_callback' => [ $this, 'check_admin_permission' ],
 				'args'                => [
-					'job_id' => [
-						'type'              => 'string',
-						'required'          => true,
-						'sanitize_callback' => 'sanitize_text_field',
-					],
+					'job_id' => Args::string( [ 'required' => true ] ),
 				],
 			]
 		);
 	}
 
 	/**
-	 * Permission check: admins only.
+	 * Message returned when the capability check fails.
+	 *
+	 * @return string
 	 */
-	public function check_permission(): bool|WP_Error {
-		if ( current_user_can( 'manage_options' ) ) {
-			return true;
-		}
-
-		return new WP_Error(
-			'rest_forbidden',
-			__( 'You do not have permission to manage migrations.', 'mission-donation-platform' ),
-			[ 'status' => 403 ]
-		);
+	protected function permission_denied_message(): string {
+		return __( 'You do not have permission to manage migrations.', 'mission-donation-platform' );
 	}
 
 	/**
