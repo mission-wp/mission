@@ -193,6 +193,8 @@ This plugin connects to the following third-party services:
 * Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
 * Fix: Weekly recurring donations now show as recurring instead of one-time in admin donation lists, and weekly is accepted by the REST API frequency filter
 * Tweak: Refactored the data importer into focused components and added model-level save_silent() and recompute_aggregates() methods for developers, so all data access flows through the model layer
+* Tweak: REST API not-found errors now use consistent entity-specific error codes (e.g. campaign_not_found instead of the generic rest_not_found)
+* Tweak: The subscriptions and donor wall list endpoints now validate page and per_page ranges like all other endpoints, rejecting out-of-range values with a 400 error instead of silently clamping them
 
 = 1.3.0 =
 * New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
