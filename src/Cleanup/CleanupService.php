@@ -8,7 +8,6 @@
 namespace MissionDP\Cleanup;
 
 use MissionDP\Database\Schema;
-use MissionDP\Plugin;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -154,9 +153,10 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table )
 		);
 
-		$this->log_activity( 'activity_log_cleared', 'settings', 0, [ 'entries_deleted' => $count ] );
-
 		$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
+
+		// Announce after the truncate so the audit entry survives the wipe.
+		$this->announce_cleanup( 'activity_log_cleared', [ 'entries_deleted' => $count ] );
 
 		return [ 'deleted' => $count ];
 	}
@@ -175,7 +175,7 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table )
 		);
 
-		$this->log_activity( 'webhook_deliveries_cleared', 'settings', 0, [ 'entries_deleted' => $count ] );
+		$this->announce_cleanup( 'webhook_deliveries_cleared', [ 'entries_deleted' => $count ] );
 
 		$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 
@@ -205,10 +205,8 @@ class CleanupService {
 			}
 		}
 
-		$this->log_activity(
+		$this->announce_cleanup(
 			'log_files_deleted',
-			'settings',
-			0,
 			[
 				'files_deleted' => $deleted,
 				'bytes_freed'   => $freed_bytes,
@@ -288,7 +286,7 @@ class CleanupService {
 			);
 		}
 
-		$this->log_activity( 'test_transactions_deleted', 'settings', 0, [ 'count' => $count ] );
+		$this->announce_cleanup( 'test_transactions_deleted', [ 'count' => $count ] );
 
 		return [ 'deleted' => $count ];
 	}
@@ -330,7 +328,7 @@ class CleanupService {
 			$wpdb->query( $wpdb->prepare( $donors_sql, array_merge( [ $prefix . 'donors' ], $ids ) ) );
 		}
 
-		$this->log_activity( 'test_donors_deleted', 'settings', 0, [ 'count' => $count ] );
+		$this->announce_cleanup( 'test_donors_deleted', [ 'count' => $count ] );
 
 		return [ 'deleted' => $count ];
 	}
@@ -363,7 +361,7 @@ class CleanupService {
 			);
 		}
 
-		$this->log_activity( 'test_subscriptions_deleted', 'settings', 0, [ 'count' => $count ] );
+		$this->announce_cleanup( 'test_subscriptions_deleted', [ 'count' => $count ] );
 
 		return [ 'deleted' => $count ];
 	}
@@ -397,7 +395,7 @@ class CleanupService {
 	public function reset_onboarding(): array {
 		$this->settings->update( [ 'onboarding_completed' => false ] );
 
-		$this->log_activity( 'onboarding_reset', 'settings', 0 );
+		$this->announce_cleanup( 'onboarding_reset' );
 
 		return [ 'reset' => true ];
 	}
@@ -408,7 +406,7 @@ class CleanupService {
 	 * @return array{reset: true}
 	 */
 	public function reset_all_settings(): array {
-		$this->log_activity( 'settings_reset', 'settings', 0 );
+		$this->announce_cleanup( 'settings_reset' );
 
 		update_option( 'missiondp_settings', $this->settings->get_defaults() );
 		delete_option( 'missiondp_default_campaign' );
@@ -521,18 +519,18 @@ class CleanupService {
 	}
 
 	/**
-	 * Log a cleanup event to the activity feed.
+	 * Announce a completed cleanup operation so listeners (activity feed) can record it.
 	 *
-	 * @param string              $event       Event name.
-	 * @param string              $object_type Object type.
-	 * @param int                 $object_id   Object ID.
-	 * @param array<string,mixed> $data        Optional context data.
+	 * @param string              $operation Cleanup event name (e.g. 'test_transactions_deleted').
+	 * @param array<string,mixed> $stats     Operation stats (counts, bytes freed, etc.).
 	 */
-	private function log_activity( string $event, string $object_type, int $object_id, array $data = [] ): void {
-		$activity = Plugin::instance()->get_activity_feed_module();
-
-		if ( $activity ) {
-			$activity->log( $event, $object_type, $object_id, $data );
-		}
+	private function announce_cleanup( string $operation, array $stats = [] ): void {
+		/**
+		 * Fires when a cleanup operation completes.
+		 *
+		 * @param string              $operation Cleanup event name.
+		 * @param array<string,mixed> $stats     Operation stats.
+		 */
+		do_action( 'mission_cleanup_performed', $operation, $stats );
 	}
 }

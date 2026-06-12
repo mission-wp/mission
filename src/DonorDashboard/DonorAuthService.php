@@ -31,6 +31,15 @@ class DonorAuthService {
 	private const MIN_PASSWORD_LENGTH = 8;
 
 	/**
+	 * Constructor.
+	 *
+	 * @param EmailModule $email Email module for activation and reset emails.
+	 */
+	public function __construct(
+		private EmailModule $email,
+	) {}
+
+	/**
 	 * Send an activation email with a verification link.
 	 *
 	 * Generates a secure token, stores its hash in donor meta, and
@@ -73,8 +82,7 @@ class DonorAuthService {
 			$dashboard_url
 		);
 
-		/** @var EmailModule $email_module */
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 
 		if ( ! $email_module->is_email_enabled( 'account_activation' ) ) {
 			return;
@@ -303,8 +311,7 @@ class DonorAuthService {
 			$this->get_dashboard_url()
 		);
 
-		/** @var EmailModule $email_module */
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 
 		if ( ! $email_module->is_email_enabled( 'password_reset' ) ) {
 			return;

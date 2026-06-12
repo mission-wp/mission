@@ -8,7 +8,6 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Export\ExportService;
-use MissionDP\Plugin;
 use MissionDP\Rest\RestModule;
 use WP_Error;
 use WP_REST_Request;
@@ -185,7 +184,15 @@ class ExportEndpoint {
 			sprintf( 'mission-%s-export-%s.%s', $type, gmdate( 'Y-m-d' ), $formatter->get_extension() )
 		);
 
-		$this->log_export( $type, $format, count( $result['rows'] ) );
+		/**
+		 * Fires when a data export is downloaded.
+		 *
+		 * @param string $type   Data type exported.
+		 * @param string $format File format.
+		 * @param int    $count  Number of records exported.
+		 */
+		do_action( 'mission_data_exported', $type, $format, count( $result['rows'] ) );
+
 		$this->stream_download( $content, $filename, $formatter->get_content_type() );
 	}
 
@@ -255,7 +262,9 @@ class ExportEndpoint {
 			sprintf( 'mission-export-%s.zip', gmdate( 'Y-m-d' ) )
 		);
 
-		$this->log_export( 'all', $format, $total_count );
+		/** This action is documented in src/Rest/Endpoints/ExportEndpoint.php */
+		do_action( 'mission_data_exported', 'all', $format, $total_count );
+
 		$this->stream_download( $zip_content, $filename, 'application/zip' );
 	}
 
@@ -277,30 +286,6 @@ class ExportEndpoint {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary/text export content.
 		echo $content;
 		exit;
-	}
-
-	/**
-	 * Log an export event to the activity feed.
-	 *
-	 * @param string $type   Data type exported.
-	 * @param string $format File format.
-	 * @param int    $count  Number of records exported.
-	 */
-	private function log_export( string $type, string $format, int $count ): void {
-		$activity = Plugin::instance()->get_activity_feed_module();
-
-		if ( $activity ) {
-			$activity->log(
-				'data_exported',
-				'settings',
-				0,
-				[
-					'type'   => $type,
-					'format' => $format,
-					'count'  => $count,
-				]
-			);
-		}
 	}
 
 	/**

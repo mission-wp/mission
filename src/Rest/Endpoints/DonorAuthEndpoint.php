@@ -11,7 +11,6 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\DonorDashboard\DonorAuthService;
-use MissionDP\Plugin;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\DonorPermissionTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
@@ -217,16 +216,14 @@ class DonorAuthEndpoint {
 		try {
 			$this->auth->send_activation_email( $request->get_param( 'email' ) );
 		} catch ( \RuntimeException $e ) {
-			// Swallow the failure so the response never reveals whether the email exists.
-			Plugin::instance()->get_activity_feed_module()?->log(
-				'donor_send_activation_suppressed',
-				'donor',
-				0,
-				[ 'error' => $e->getMessage() ],
-				false,
-				'warning',
-				'email'
-			);
+			/**
+			 * Fires when an activation email fails and the error is swallowed
+			 * so the response never reveals whether the email exists.
+			 *
+			 * @param string $email Attempted email address.
+			 * @param string $error Suppressed error message.
+			 */
+			do_action( 'mission_donor_activation_email_suppressed', $request->get_param( 'email' ), $e->getMessage() );
 		}
 
 		return new WP_REST_Response(
@@ -278,16 +275,14 @@ class DonorAuthEndpoint {
 		try {
 			$this->auth->forgot_password( $request->get_param( 'email' ) );
 		} catch ( \RuntimeException $e ) {
-			// Swallow the failure so the response never reveals whether the email exists.
-			Plugin::instance()->get_activity_feed_module()?->log(
-				'donor_forgot_password_suppressed',
-				'donor',
-				0,
-				[ 'error' => $e->getMessage() ],
-				false,
-				'warning',
-				'email'
-			);
+			/**
+			 * Fires when a password reset email fails and the error is swallowed
+			 * so the response never reveals whether the email exists.
+			 *
+			 * @param string $email Attempted email address.
+			 * @param string $error Suppressed error message.
+			 */
+			do_action( 'mission_donor_password_reset_email_suppressed', $request->get_param( 'email' ), $e->getMessage() );
 		}
 
 		return new WP_REST_Response(

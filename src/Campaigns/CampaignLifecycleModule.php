@@ -15,7 +15,6 @@ namespace MissionDP\Campaigns;
 
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Subscription;
-use MissionDP\Plugin;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -104,8 +103,6 @@ class CampaignLifecycleModule {
 		if ( Campaign::STATUS_ENDED === $new_status ) {
 			$this->execute_end_actions( $campaign );
 		}
-
-		$this->log_transition( $campaign, $new_status );
 
 		return true;
 	}
@@ -304,37 +301,5 @@ class CampaignLifecycleModule {
 
 			++$page;
 		}
-	}
-
-	/**
-	 * Log a campaign_ended event to the activity feed.
-	 *
-	 * Only logs when the campaign transitions to 'ended'.
-	 *
-	 * @param Campaign $campaign   The campaign.
-	 * @param string   $new_status New status.
-	 *
-	 * @return void
-	 */
-	private function log_transition( Campaign $campaign, string $new_status ): void {
-		if ( Campaign::STATUS_ENDED !== $new_status ) {
-			return;
-		}
-
-		$activity_feed = Plugin::instance()->get_activity_feed_module();
-
-		if ( ! $activity_feed ) {
-			return;
-		}
-
-		$activity_feed->log(
-			'campaign_ended',
-			'campaign',
-			$campaign->id,
-			[
-				'title'       => $campaign->title,
-				'campaign_id' => $campaign->id,
-			]
-		);
 	}
 }

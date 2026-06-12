@@ -12,7 +12,6 @@ use DateTimeZone;
 use MissionDP\Constants\Frequency;
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\SubscriptionDataStore;
-use MissionDP\Plugin;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -522,28 +521,22 @@ class Subscription extends Model {
 	}
 
 	/**
-	 * Record a Mission API call failure in the activity log.
+	 * Announce a Mission API call failure so listeners (activity feed) can record it.
 	 *
 	 * @param string              $endpoint The API endpoint that failed.
 	 * @param string              $reason   Short reason code (no_site_token, wp_error, http_error).
 	 * @param array<string,mixed> $extra    Additional context (error message, status, body).
 	 */
 	private function log_api_failure( string $endpoint, string $reason, array $extra = [] ): void {
-		Plugin::instance()->get_activity_feed_module()?->log(
-			'subscription_api_call_failed',
-			'subscription',
-			$this->id,
-			array_merge(
-				[
-					'endpoint' => $endpoint,
-					'reason'   => $reason,
-				],
-				$extra
-			),
-			(bool) $this->is_test,
-			'error',
-			'subscription'
-		);
+		/**
+		 * Fires when a Mission API call made for a subscription fails.
+		 *
+		 * @param Subscription         $subscription The subscription.
+		 * @param string               $endpoint     The API endpoint that failed.
+		 * @param string               $reason       Short reason code (no_site_token, wp_error, http_error).
+		 * @param array<string,mixed>  $extra        Additional context (error message, status, body).
+		 */
+		do_action( 'mission_subscription_api_call_failed', $this, $endpoint, $reason, $extra );
 	}
 
 	/**

@@ -8,9 +8,9 @@
 namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Constants\Frequency;
+use MissionDP\Email\EmailModule;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
-use MissionDP\Plugin;
 use MissionDP\Receipts\ReceiptPdfGenerator;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\RestModule;
@@ -32,10 +32,12 @@ class TransactionsEndpoint {
 	 *
 	 * @param ReportingService $reporting Reporting service.
 	 * @param SettingsService  $settings  Settings service.
+	 * @param EmailModule      $email     Email module.
 	 */
 	public function __construct(
 		private ReportingService $reporting,
 		private SettingsService $settings,
+		private EmailModule $email,
 	) {}
 
 	/**
@@ -809,20 +811,19 @@ class TransactionsEndpoint {
 			]
 		);
 
-		$activity = Plugin::instance()->get_activity_feed_module();
-
 		if ( is_wp_error( $response ) ) {
-			$activity?->log(
-				'refund_api_call_failed',
-				'transaction',
-				$transaction->id,
-				[
-					'reason' => 'wp_error',
-					'error'  => $response->get_error_message(),
-				],
-				(bool) $transaction->is_test,
-				'error',
-				'payment'
+			/**
+			 * Fires when a Mission refund API call fails.
+			 *
+			 * @param Transaction         $transaction The transaction being refunded.
+			 * @param string              $reason      Short reason code (wp_error, http_error).
+			 * @param array<string,mixed> $context     Additional context (error message, status, body).
+			 */
+			do_action(
+				'mission_refund_api_call_failed',
+				$transaction,
+				'wp_error',
+				[ 'error' => $response->get_error_message() ]
 			);
 			return new WP_Error(
 				'refund_failed',
@@ -837,18 +838,15 @@ class TransactionsEndpoint {
 			$body    = json_decode( wp_remote_retrieve_body( $response ), true );
 			$message = $body['error'] ?? __( 'Failed to process refund. Please try again.', 'mission-donation-platform' );
 
-			$activity?->log(
-				'refund_api_call_failed',
-				'transaction',
-				$transaction->id,
+			/** This action is documented in src/Rest/Endpoints/TransactionsEndpoint.php */
+			do_action(
+				'mission_refund_api_call_failed',
+				$transaction,
+				'http_error',
 				[
-					'reason' => 'http_error',
 					'status' => $status_code,
 					'body'   => wp_remote_retrieve_body( $response ),
-				],
-				(bool) $transaction->is_test,
-				'error',
-				'payment'
+				]
 			);
 			return new WP_Error( 'refund_failed', $message, [ 'status' => $status_code ] );
 		}
@@ -948,7 +946,7 @@ class TransactionsEndpoint {
 			);
 		}
 
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 		$campaign     = $transaction->campaign();
 
 		$data = [

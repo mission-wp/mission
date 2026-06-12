@@ -10,6 +10,7 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Email\EmailModule;
 use MissionDP\Models\Donor;
 use MissionDP\Rest\RestModule;
 use WP_REST_Request;
@@ -40,6 +41,15 @@ class EmailTemplateEndpoint {
 		'donor_note'                => 'donor-note',
 		'tribute_notification'      => 'tribute-notification',
 	];
+
+	/**
+	 * Constructor.
+	 *
+	 * @param EmailModule $email Email module.
+	 */
+	public function __construct(
+		private EmailModule $email,
+	) {}
 
 	/**
 	 * Default subjects per email type, with merge tags as literal placeholders.
@@ -121,7 +131,7 @@ class EmailTemplateEndpoint {
 			);
 		}
 
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 		$template     = self::TEMPLATE_MAP[ $type ];
 		$subject      = $this->default_subjects()[ $type ] ?? '';
 

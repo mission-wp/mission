@@ -66,9 +66,11 @@ class EmailTestEndpoint {
 	 * Constructor.
 	 *
 	 * @param SettingsService $settings Settings service.
+	 * @param EmailModule     $email    Email module.
 	 */
 	public function __construct(
 		private SettingsService $settings,
+		private EmailModule $email,
 	) {}
 
 	/**
@@ -139,7 +141,7 @@ class EmailTestEndpoint {
 			$to = wp_get_current_user()->user_email;
 		}
 
-		$email_module = \MissionDP\Plugin::instance()->get_email_module();
+		$email_module = $this->email;
 		$data         = $this->build_sample_data( $email_type, $to );
 		$template     = self::TEMPLATE_MAP[ $email_type ];
 

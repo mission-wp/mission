@@ -8,6 +8,7 @@
 namespace MissionDP\ActivityFeed;
 
 use MissionDP\Models\ActivityLog;
+use MissionDP\Models\Campaign;
 use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
@@ -135,6 +136,24 @@ class ActivityFeedModule {
 		add_action( 'mission_migration_completed', [ $this, 'on_migration_completed' ], 10, 2 );
 		add_action( 'mission_migration_rolled_back', [ $this, 'on_migration_rolled_back' ], 10, 2 );
 		add_action( 'mission_migration_failed', [ $this, 'on_migration_failed' ], 10, 3 );
+
+		// Mission API call failures.
+		add_action( 'mission_subscription_api_call_failed', [ $this, 'on_subscription_api_failed' ], 10, 4 );
+		add_action( 'mission_refund_api_call_failed', [ $this, 'on_refund_api_failed' ], 10, 3 );
+
+		// Campaign status transitions.
+		add_action( 'mission_campaign_status_changed', [ $this, 'on_campaign_status_changed' ], 10, 3 );
+
+		// Data import / export.
+		add_action( 'mission_import_completed', [ $this, 'on_import_completed' ] );
+		add_action( 'mission_data_exported', [ $this, 'on_data_exported' ], 10, 3 );
+
+		// Cleanup operations.
+		add_action( 'mission_cleanup_performed', [ $this, 'on_cleanup_performed' ], 10, 2 );
+
+		// Donor auth email failures (suppressed to prevent email enumeration).
+		add_action( 'mission_donor_activation_email_suppressed', [ $this, 'on_donor_activation_suppressed' ], 10, 2 );
+		add_action( 'mission_donor_password_reset_email_suppressed', [ $this, 'on_donor_password_reset_suppressed' ], 10, 2 );
 	}
 
 	/**
@@ -845,6 +864,193 @@ class ActivityFeedModule {
 				'changed_keys' => array_keys( $changes ),
 				'changes'      => $changes,
 			],
+		);
+	}
+
+	/**
+	 * Log a failed Mission API call made for a subscription.
+	 *
+	 * @param object               $subscription Subscription model.
+	 * @param string               $endpoint     API endpoint that failed.
+	 * @param string               $reason       Short reason code (no_site_token, wp_error, http_error).
+	 * @param array<string, mixed> $context      Additional context (error message, status, body).
+	 *
+	 * @return void
+	 */
+	public function on_subscription_api_failed( object $subscription, string $endpoint, string $reason, array $context = [] ): void {
+		$this->log(
+			'subscription_api_call_failed',
+			'subscription',
+			$subscription->id,
+			array_merge(
+				[
+					'endpoint' => $endpoint,
+					'reason'   => $reason,
+				],
+				$context
+			),
+			(bool) $subscription->is_test,
+			'error',
+			'subscription'
+		);
+	}
+
+	/**
+	 * Log a failed Mission refund API call.
+	 *
+	 * @param object               $transaction Transaction model.
+	 * @param string               $reason      Short reason code (wp_error, http_error).
+	 * @param array<string, mixed> $context     Additional context (error message, status, body).
+	 *
+	 * @return void
+	 */
+	public function on_refund_api_failed( object $transaction, string $reason, array $context = [] ): void {
+		$this->log(
+			'refund_api_call_failed',
+			'transaction',
+			$transaction->id,
+			array_merge( [ 'reason' => $reason ], $context ),
+			(bool) $transaction->is_test,
+			'error',
+			'payment'
+		);
+	}
+
+	/**
+	 * Log when a campaign transitions to 'ended'.
+	 *
+	 * @param object $campaign   Campaign model.
+	 * @param string $old_status Previous status.
+	 * @param string $new_status New status.
+	 *
+	 * @return void
+	 */
+	public function on_campaign_status_changed( object $campaign, string $old_status, string $new_status ): void {
+		if ( Campaign::STATUS_ENDED !== $new_status ) {
+			return;
+		}
+
+		$this->log(
+			'campaign_ended',
+			'campaign',
+			$campaign->id,
+			[
+				'title'       => $campaign->title,
+				'campaign_id' => $campaign->id,
+			]
+		);
+	}
+
+	/**
+	 * Log a completed import run.
+	 *
+	 * @param object $job Completed ImportJob.
+	 *
+	 * @return void
+	 */
+	public function on_import_completed( object $job ): void {
+		// Nothing was written (e.g. an update run where every row was unchanged
+		// or skipped), so there is nothing worth recording.
+		if ( 0 === $job->imported && 0 === $job->updated ) {
+			return;
+		}
+
+		// The import runs in a background job, so there's no current user to
+		// attribute it to. Resolve the importer from the job and store the name.
+		$this->log(
+			'data_imported',
+			$job->type,
+			0,
+			[
+				'type'       => $job->type,
+				'strategy'   => $job->duplicate_strategy,
+				'imported'   => $job->imported,
+				'skipped'    => $job->skipped,
+				'updated'    => $job->updated,
+				'errors'     => $job->errors,
+				'job_id'     => $job->job_id,
+				'actor_name' => $this->get_user_name( $job->user_id ),
+			],
+			false,
+			$job->errors > 0 ? 'warning' : 'info',
+		);
+	}
+
+	/**
+	 * Log a completed data export.
+	 *
+	 * @param string $type   Data type exported.
+	 * @param string $format File format.
+	 * @param int    $count  Number of records exported.
+	 *
+	 * @return void
+	 */
+	public function on_data_exported( string $type, string $format, int $count ): void {
+		$this->log(
+			'data_exported',
+			'settings',
+			0,
+			[
+				'type'   => $type,
+				'format' => $format,
+				'count'  => $count,
+			]
+		);
+	}
+
+	/**
+	 * Log a completed cleanup operation.
+	 *
+	 * @param string               $operation Cleanup event name (e.g. 'test_transactions_deleted').
+	 * @param array<string, mixed> $stats     Operation stats (counts, etc.).
+	 *
+	 * @return void
+	 */
+	public function on_cleanup_performed( string $operation, array $stats = [] ): void {
+		$this->log( $operation, 'settings', 0, $stats );
+	}
+
+	/**
+	 * Log a suppressed donor activation email failure.
+	 *
+	 * The attempted address is deliberately not logged; only the error.
+	 *
+	 * @param string $email Attempted email address (not logged).
+	 * @param string $error Suppressed error message.
+	 *
+	 * @return void
+	 */
+	public function on_donor_activation_suppressed( string $email, string $error ): void {
+		$this->log(
+			'donor_send_activation_suppressed',
+			'donor',
+			0,
+			[ 'error' => $error ],
+			false,
+			'warning',
+			'email'
+		);
+	}
+
+	/**
+	 * Log a suppressed donor password reset email failure.
+	 *
+	 * The attempted address is deliberately not logged; only the error.
+	 *
+	 * @param string $email Attempted email address (not logged).
+	 * @param string $error Suppressed error message.
+	 *
+	 * @return void
+	 */
+	public function on_donor_password_reset_suppressed( string $email, string $error ): void {
+		$this->log(
+			'donor_forgot_password_suppressed',
+			'donor',
+			0,
+			[ 'error' => $error ],
+			false,
+			'warning',
+			'email'
 		);
 	}
 }
