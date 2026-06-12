@@ -6,6 +6,12 @@ import {
   IMPORT_MAX_BYTES as MAX_BYTES,
   IMPORT_TERMINAL_STATUSES as TERMINAL_STATUSES,
 } from '../../constants';
+import {
+  POLL_INTERVAL_MS,
+  computeMinDuration,
+  formatBytes,
+  scaleCounter,
+} from './import-utils';
 
 const DATA_TYPES = [
   { value: 'donors', label: __( 'Donors', 'mission-donation-platform' ) },
@@ -45,16 +51,6 @@ const DUPLICATE_STRATEGIES = [
     ),
   },
 ];
-
-function formatBytes( bytes ) {
-  if ( bytes < 1024 ) {
-    return `${ bytes } B`;
-  }
-  if ( bytes < 1024 * 1024 ) {
-    return `${ ( bytes / 1024 ).toFixed( 1 ) } KB`;
-  }
-  return `${ ( bytes / ( 1024 * 1024 ) ).toFixed( 1 ) } MB`;
-}
 
 function InfoIcon() {
   return (
@@ -125,23 +121,6 @@ function DownloadIcon() {
       <polyline points="5 7 8 10 11 7" />
       <line x1="8" y1="10" x2="8" y2="2" />
     </svg>
-  );
-}
-
-// Pace the displayed progress so tiny imports don't jump 0→100% before the
-// first poll lands. Capped so huge imports aren't artificially stalled.
-const MIN_MS_PER_ROW = 250;
-const MIN_PROGRESS_FLOOR_MS = 2500;
-const MIN_PROGRESS_CEIL_MS = 8000;
-const POLL_INTERVAL_MS = 2000;
-
-function computeMinDuration( totalRows ) {
-  if ( ! totalRows || totalRows <= 0 ) {
-    return MIN_PROGRESS_FLOOR_MS;
-  }
-  return Math.max(
-    MIN_PROGRESS_FLOOR_MS,
-    Math.min( MIN_PROGRESS_CEIL_MS, totalRows * MIN_MS_PER_ROW )
   );
 }
 
@@ -1224,15 +1203,7 @@ export default function ImportPanel() {
       realProcessed,
       Math.floor( total * displayedFraction )
     );
-    const scale = ( value ) => {
-      if ( ! realProcessed ) {
-        return 0;
-      }
-      return Math.min(
-        value,
-        Math.floor( ( value * processed ) / realProcessed )
-      );
-    };
+    const scale = ( value ) => scaleCounter( value, processed, realProcessed );
     const imported = scale( realImported );
     const updated = scale( realUpdated );
     const skipped = scale( realSkipped );
