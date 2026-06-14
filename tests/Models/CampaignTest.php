@@ -9,6 +9,8 @@ namespace MissionDP\Tests\Models;
 
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
@@ -33,6 +35,8 @@ class CampaignTest extends WP_UnitTestCase {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
@@ -663,5 +667,66 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertSame( 9999, $fresh->test_total_raised );
 		$this->assertSame( 1, $fresh->test_transaction_count );
 		$this->assertSame( 1, $fresh->test_donor_count );
+	}
+
+	// -------------------------------------------------------------------------
+	// Campaign type tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test type defaults to "standard".
+	 */
+	public function test_type_defaults_to_standard(): void {
+		$campaign = new Campaign();
+
+		$this->assertSame( 'standard', $campaign->type );
+		$this->assertFalse( $campaign->is_p2p() );
+		$this->assertFalse( $campaign->is_event() );
+	}
+
+	/**
+	 * Test type persists through save and find.
+	 */
+	public function test_type_persists_through_save_and_find(): void {
+		$campaign = $this->create_campaign( [ 'type' => 'p2p' ] );
+
+		$found = Campaign::find( $campaign->id );
+		$this->assertSame( 'p2p', $found->type );
+		$this->assertTrue( $found->is_p2p() );
+		$this->assertFalse( $found->is_event() );
+	}
+
+	/**
+	 * Test query() filters by type.
+	 */
+	public function test_query_filters_by_type(): void {
+		$this->create_campaign( [ 'title' => 'Standard' ] );
+		$this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		$p2p = Campaign::query( [ 'type' => 'p2p' ] );
+
+		$this->assertCount( 1, $p2p );
+		$this->assertSame( 'p2p', $p2p[0]->type );
+	}
+
+	/**
+	 * Test fundraisers() and teams() return records scoped to the campaign.
+	 */
+	public function test_fundraisers_and_teams_relationships(): void {
+		$campaign = $this->create_campaign( [ 'type' => 'p2p' ] );
+		$other    = $this->create_campaign( [ 'title' => 'Other', 'type' => 'p2p' ] );
+
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1 ] );
+		$fundraiser->save();
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A' ] );
+		$team->save();
+
+		// Records on another campaign must not leak in.
+		$other_fundraiser = new Fundraiser( [ 'campaign_id' => $other->id, 'donor_id' => 1 ] );
+		$other_fundraiser->save();
+
+		$this->assertCount( 1, $campaign->fundraisers() );
+		$this->assertCount( 1, $campaign->teams() );
+		$this->assertSame( $fundraiser->id, $campaign->fundraisers()[0]->id );
 	}
 }

@@ -494,4 +494,48 @@ class TransactionTest extends WP_UnitTestCase {
 		$this->assertTrue( $result );
 		$this->assertSame( 7500, $transaction->fresh()->amount );
 	}
+
+	// -------------------------------------------------------------------------
+	// fundraiser_id attribution tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test fundraiser_id defaults to null and persists when set.
+	 */
+	public function test_fundraiser_id_defaults_null_and_persists(): void {
+		$direct = new Transaction();
+		$this->assertNull( $direct->fundraiser_id );
+
+		$attributed = $this->create_transaction( [ 'fundraiser_id' => 42 ] );
+		$this->assertSame( 42, $attributed->fresh()->fundraiser_id );
+	}
+
+	/**
+	 * Test query() filters by fundraiser_id.
+	 */
+	public function test_query_filters_by_fundraiser_id(): void {
+		$this->create_transaction( [ 'fundraiser_id' => 7 ] );
+		$this->create_transaction();
+
+		$this->assertCount( 1, Transaction::query( [ 'fundraiser_id' => 7 ] ) );
+		$this->assertSame( 1, Transaction::count( [ 'fundraiser_id' => 7 ] ) );
+	}
+
+	/**
+	 * Test fundraiser() returns the attributed Fundraiser, or null when unattributed.
+	 */
+	public function test_fundraiser_relationship(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$attributed = $this->create_transaction( [ 'fundraiser_id' => $fundraiser->id ] );
+		$this->assertSame( $fundraiser->id, $attributed->fundraiser()->id );
+
+		$direct = $this->create_transaction();
+		$this->assertNull( $direct->fundraiser() );
+
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+	}
 }
