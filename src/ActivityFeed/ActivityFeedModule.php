@@ -99,6 +99,12 @@ class ActivityFeedModule {
 		// Campaign created.
 		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
 
+		// Peer-to-peer fundraisers and teams.
+		add_action( 'mission_fundraiser_created', [ $this, 'on_fundraiser_registered' ] );
+		add_action( 'mission_fundraiser_approved', [ $this, 'on_fundraiser_approved' ] );
+		add_action( 'mission_team_created', [ $this, 'on_team_created' ] );
+		add_action( 'mission_team_approved', [ $this, 'on_team_approved' ] );
+
 		// Campaign milestone reached.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
 
@@ -602,6 +608,106 @@ class ActivityFeedModule {
 				'title'   => $campaign->title ?? '',
 			]
 		);
+	}
+
+	/**
+	 * Handle a fundraiser registering for a peer-to-peer campaign.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_registered( object $fundraiser ): void {
+		$this->log(
+			'fundraiser_registered',
+			'fundraiser',
+			(int) $fundraiser->id,
+			$this->fundraiser_log_data( $fundraiser )
+		);
+	}
+
+	/**
+	 * Handle a fundraiser being approved.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_approved( object $fundraiser ): void {
+		$this->log(
+			'fundraiser_approved',
+			'fundraiser',
+			(int) $fundraiser->id,
+			$this->fundraiser_log_data( $fundraiser )
+		);
+	}
+
+	/**
+	 * Handle a team being created.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_created( object $team ): void {
+		$this->log(
+			'team_created',
+			'team',
+			(int) $team->id,
+			$this->team_log_data( $team )
+		);
+	}
+
+	/**
+	 * Handle a team being approved.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_approved( object $team ): void {
+		$this->log(
+			'team_approved',
+			'team',
+			(int) $team->id,
+			$this->team_log_data( $team )
+		);
+	}
+
+	/**
+	 * Build the log data payload for a fundraiser event.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function fundraiser_log_data( object $fundraiser ): array {
+		$donor    = $fundraiser->donor();
+		$campaign = $fundraiser->campaign();
+
+		return [
+			'donor_id'       => $fundraiser->donor_id,
+			'donor_name'     => $donor?->full_name() ?: '',
+			'campaign_id'    => $fundraiser->campaign_id,
+			'campaign_title' => $campaign?->title ?: '',
+		];
+	}
+
+	/**
+	 * Build the log data payload for a team event.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function team_log_data( object $team ): array {
+		$campaign = $team->campaign();
+
+		return [
+			'name'           => $team->name,
+			'campaign_id'    => $team->campaign_id,
+			'campaign_title' => $campaign?->title ?: '',
+		];
 	}
 
 	/**

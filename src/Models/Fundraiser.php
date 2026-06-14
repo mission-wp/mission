@@ -193,4 +193,59 @@ class Fundraiser extends Model {
 	public function is_captain(): bool {
 		return $this->is_team_captain;
 	}
+
+	/**
+	 * Approve this fundraiser, moving them to the active status.
+	 *
+	 * Idempotent: a fundraiser that is already active is left untouched and no
+	 * event fires. Approval is the admin sign-off that makes a pending page live.
+	 *
+	 * @return bool True on success (or when already active).
+	 */
+	public function approve(): bool {
+		if ( self::STATUS_ACTIVE === $this->status ) {
+			return true;
+		}
+
+		$this->status = self::STATUS_ACTIVE;
+
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a fundraiser is approved.
+		 *
+		 * @param Fundraiser $fundraiser The approved fundraiser.
+		 */
+		do_action( 'mission_fundraiser_approved', $this );
+
+		return true;
+	}
+
+	/**
+	 * Deactivate this fundraiser, hiding their page without deleting the record.
+	 *
+	 * @return bool True on success (or when already inactive).
+	 */
+	public function deactivate(): bool {
+		if ( self::STATUS_INACTIVE === $this->status ) {
+			return true;
+		}
+
+		$this->status = self::STATUS_INACTIVE;
+
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a fundraiser is deactivated.
+		 *
+		 * @param Fundraiser $fundraiser The deactivated fundraiser.
+		 */
+		do_action( 'mission_fundraiser_deactivated', $this );
+
+		return true;
+	}
 }

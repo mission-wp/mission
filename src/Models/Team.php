@@ -161,4 +161,58 @@ class Team extends Model {
 
 		return min( 100.0, round( $this->amount_raised( $is_test ) / $this->goal * 100, 2 ) );
 	}
+
+	/**
+	 * Approve this team, moving it to the active status.
+	 *
+	 * Idempotent: an already-active team is left untouched and no event fires.
+	 *
+	 * @return bool True on success (or when already active).
+	 */
+	public function approve(): bool {
+		if ( self::STATUS_ACTIVE === $this->status ) {
+			return true;
+		}
+
+		$this->status = self::STATUS_ACTIVE;
+
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a team is approved.
+		 *
+		 * @param Team $team The approved team.
+		 */
+		do_action( 'mission_team_approved', $this );
+
+		return true;
+	}
+
+	/**
+	 * Deactivate this team, hiding its page without deleting the record.
+	 *
+	 * @return bool True on success (or when already inactive).
+	 */
+	public function deactivate(): bool {
+		if ( self::STATUS_INACTIVE === $this->status ) {
+			return true;
+		}
+
+		$this->status = self::STATUS_INACTIVE;
+
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a team is deactivated.
+		 *
+		 * @param Team $team The deactivated team.
+		 */
+		do_action( 'mission_team_deactivated', $this );
+
+		return true;
+	}
 }
