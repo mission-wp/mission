@@ -1,0 +1,490 @@
+<?php
+/**
+ * Tests for the FundraisersEndpoint class.
+ *
+ * @package MissionDP
+ */
+
+namespace MissionDP\Tests\Rest\Endpoints;
+
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
+use WP_REST_Request;
+use WP_UnitTestCase;
+
+/**
+ * FundraisersEndpoint test class.
+ */
+class FundraisersEndpointTest extends WP_UnitTestCase {
+
+	/**
+	 * REST server instance.
+	 *
+	 * @var \WP_REST_Server
+	 */
+	private \WP_REST_Server $server;
+
+	/**
+	 * Admin user ID.
+	 *
+	 * @var int
+	 */
+	private int $admin_id;
+
+	/**
+	 * Subscriber user ID.
+	 *
+	 * @var int
+	 */
+	private int $subscriber_id;
+
+	/**
+	 * Hooks added during tests that need cleanup.
+	 *
+	 * @var array<array{string, callable, int}>
+	 */
+	private array $hooks_to_remove = [];
+
+	/**
+	 * Set up each test.
+	 */
+	public function set_up(): void {
+		parent::set_up();
+
+		global $wp_rest_server;
+		$this->server = $wp_rest_server = new \WP_REST_Server();
+		do_action( 'rest_api_init' );
+
+		$this->admin_id      = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		$this->subscriber_id = self::factory()->user->create( [ 'role' => 'subscriber' ] );
+
+		wp_set_current_user( $this->admin_id );
+	}
+
+	/**
+	 * Clean up after each test.
+	 */
+	public function tear_down(): void {
+		global $wp_rest_server;
+		$wp_rest_server = null;
+
+		foreach ( $this->hooks_to_remove as [ $hook, $callback, $priority ] ) {
+			remove_action( $hook, $callback, $priority );
+		}
+		$this->hooks_to_remove = [];
+
+		wp_set_current_user( 0 );
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Add an action hook and track it for cleanup.
+	 *
+	 * @param string   $hook     Hook name.
+	 * @param callable $callback Callback.
+	 * @param int      $priority Priority.
+	 */
+	private function add_tracked_action( string $hook, callable $callback, int $priority = 10 ): void {
+		add_action( $hook, $callback, $priority );
+		$this->hooks_to_remove[] = [ $hook, $callback, $priority ];
+	}
+
+	/**
+	 * Create a P2P campaign.
+	 *
+	 * @param array $overrides Data overrides.
+	 * @return Campaign
+	 */
+	private function create_p2p_campaign( array $overrides = [] ): Campaign {
+		$campaign = new Campaign( array_merge(
+			[
+				'title' => 'P2P Campaign',
+				'type'  => Campaign::TYPE_P2P,
+			],
+			$overrides
+		) );
+		$campaign->save();
+
+		return $campaign;
+	}
+
+	/**
+	 * Create a donor.
+	 *
+	 * @param string $email Email address.
+	 * @param array  $overrides Data overrides.
+	 * @return Donor
+	 */
+	private function create_donor( string $email, array $overrides = [] ): Donor {
+		$donor = new Donor( array_merge(
+			[
+				'email'      => $email,
+				'first_name' => 'Jane',
+				'last_name'  => 'Doe',
+			],
+			$overrides
+		) );
+		$donor->save();
+
+		return $donor;
+	}
+
+	/**
+	 * Create a fundraiser.
+	 *
+	 * @param int   $campaign_id Campaign ID.
+	 * @param int   $donor_id    Donor ID.
+	 * @param array $overrides   Data overrides.
+	 * @return Fundraiser
+	 */
+	private function create_fundraiser( int $campaign_id, int $donor_id, array $overrides = [] ): Fundraiser {
+		$fundraiser = new Fundraiser( array_merge(
+			[
+				'campaign_id' => $campaign_id,
+				'donor_id'    => $donor_id,
+				'status'      => Fundraiser::STATUS_ACTIVE,
+				'goal'        => 50000,
+			],
+			$overrides
+		) );
+		$fundraiser->save();
+
+		return $fundraiser;
+	}
+
+	/**
+	 * Test list requires manage_options capability.
+	 */
+	public function test_list_requires_manage_options(): void {
+		wp_set_current_user( $this->subscriber_id );
+
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * Test list returns fundraisers with related names.
+	 */
+	public function test_list_returns_fundraisers_with_relations(): void {
+		$campaign = $this->create_p2p_campaign( [ 'title' => 'Marathon' ] );
+		$donor    = $this->create_donor( 'jane@example.com' );
+		$this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 1, $data );
+		$this->assertSame( 'Jane Doe', $data[0]['donor_name'] );
+		$this->assertSame( 'Marathon', $data[0]['campaign_title'] );
+		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
+	}
+
+	/**
+	 * Test list filters by campaign.
+	 */
+	public function test_list_filters_by_campaign(): void {
+		$campaign_a = $this->create_p2p_campaign( [ 'title' => 'A' ] );
+		$campaign_b = $this->create_p2p_campaign( [ 'title' => 'B' ] );
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$donor_b    = $this->create_donor( 'jane2@example.com' );
+		$this->create_fundraiser( $campaign_a->id, $donor->id );
+		$this->create_fundraiser( $campaign_b->id, $donor_b->id );
+
+		$request = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_param( 'campaign_id', $campaign_a->id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertCount( 1, $response->get_data() );
+		$this->assertSame( $campaign_a->id, $response->get_data()[0]['campaign_id'] );
+	}
+
+	/**
+	 * Test list filters by status.
+	 */
+	public function test_list_filters_by_status(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor_a  = $this->create_donor( 'a@example.com' );
+		$donor_b  = $this->create_donor( 'b@example.com' );
+		$this->create_fundraiser( $campaign->id, $donor_a->id, [ 'status' => Fundraiser::STATUS_ACTIVE ] );
+		$this->create_fundraiser( $campaign->id, $donor_b->id, [ 'status' => Fundraiser::STATUS_PENDING ] );
+
+		$request = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_param( 'status', Fundraiser::STATUS_PENDING );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertCount( 1, $response->get_data() );
+		$this->assertSame( 'pending', $response->get_data()[0]['status'] );
+	}
+
+	/**
+	 * Test GET single returns detail and 404 for missing.
+	 */
+	public function test_get_single_and_404(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'jane@example.com', $response->get_data()['donor_email'] );
+
+		$missing = $this->server->dispatch( new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers/999999' ) );
+		$this->assertSame( 404, $missing->get_status() );
+	}
+
+	/**
+	 * Test POST creates a fundraiser.
+	 */
+	public function test_create_fundraiser(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => $donor->id,
+			'goal'        => 120000,
+			'headline'    => 'Running for clean water',
+		] );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( 120000, $data['goal'] );
+		$this->assertSame( 'Running for clean water', $data['headline'] );
+		$this->assertSame( 'active', $data['status'] );
+	}
+
+	/**
+	 * Test POST defaults the goal to the campaign's configured default.
+	 */
+	public function test_create_uses_default_goal(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => $donor->id,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( 50000, $response->get_data()['goal'] );
+	}
+
+	/**
+	 * Test POST rejects a non-P2P campaign.
+	 */
+	public function test_create_rejects_non_p2p_campaign(): void {
+		$campaign = new Campaign( [ 'title' => 'Standard' ] );
+		$campaign->save();
+		$donor = $this->create_donor( 'jane@example.com' );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => $donor->id,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'invalid_campaign_type', $response->get_data()['code'] );
+	}
+
+	/**
+	 * Test POST rejects a missing donor.
+	 */
+	public function test_create_rejects_missing_donor(): void {
+		$campaign = $this->create_p2p_campaign();
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => 999999,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 404, $response->get_status() );
+	}
+
+	/**
+	 * Test POST rejects a duplicate fundraiser for the same person/campaign.
+	 */
+	public function test_create_rejects_duplicate(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+		$this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => $donor->id,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 409, $response->get_status() );
+		$this->assertSame( 'duplicate_fundraiser', $response->get_data()['code'] );
+	}
+
+	/**
+	 * Test POST fires the fundraiser_created action.
+	 */
+	public function test_create_fires_created_action(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+		$fired    = false;
+
+		$this->add_tracked_action( 'mission_fundraiser_created', function () use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => $donor->id,
+		] );
+		$this->server->dispatch( $request );
+
+		$this->assertTrue( $fired );
+	}
+
+	/**
+	 * Test PUT updates editable fields.
+	 */
+	public function test_update_fundraiser(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id, [ 'headline' => 'Old' ] );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [
+			'headline' => 'New headline',
+			'goal'     => 90000,
+		] );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'New headline', $data['headline'] );
+		$this->assertSame( 90000, $data['goal'] );
+	}
+
+	/**
+	 * Test DELETE removes the fundraiser and 404s for missing.
+	 */
+	public function test_delete_fundraiser(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request  = new WP_REST_Request( 'DELETE', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertNull( Fundraiser::find( $fundraiser->id ) );
+
+		$missing = $this->server->dispatch( new WP_REST_Request( 'DELETE', '/mission-donation-platform/v1/fundraisers/999999' ) );
+		$this->assertSame( 404, $missing->get_status() );
+	}
+
+	/**
+	 * Test approve transitions a pending fundraiser and fires the action.
+	 */
+	public function test_approve_fundraiser(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id, [ 'status' => Fundraiser::STATUS_PENDING ] );
+		$fired      = false;
+
+		$this->add_tracked_action( 'mission_fundraiser_approved', function () use ( &$fired ) {
+			$fired = true;
+		} );
+
+		$request  = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id . '/approve' );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'active', $response->get_data()['status'] );
+		$this->assertTrue( $fired );
+		$this->assertSame( 'active', Fundraiser::find( $fundraiser->id )->status );
+	}
+
+	/**
+	 * Test bulk approve activates multiple pending fundraisers.
+	 */
+	public function test_bulk_approve(): void {
+		$campaign = $this->create_p2p_campaign();
+		$ids      = [];
+		foreach ( [ 'a', 'b', 'c' ] as $i => $letter ) {
+			$donor = $this->create_donor( "$letter@example.com" );
+			$ids[] = $this->create_fundraiser( $campaign->id, $donor->id, [ 'status' => Fundraiser::STATUS_PENDING ] )->id;
+		}
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers/bulk' );
+		$request->set_body_params( [ 'action' => 'approve', 'ids' => $ids ] );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 3, $data['updated'] );
+		$this->assertEmpty( $data['errors'] );
+
+		foreach ( $ids as $id ) {
+			$this->assertSame( 'active', Fundraiser::find( $id )->status );
+		}
+	}
+
+	/**
+	 * Test bulk deactivate sets fundraisers inactive and reports missing IDs.
+	 */
+	public function test_bulk_deactivate_reports_missing(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers/bulk' );
+		$request->set_body_params( [ 'action' => 'deactivate', 'ids' => [ $fundraiser->id, 999999 ] ] );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertContains( $fundraiser->id, $data['updated'] );
+		$this->assertContains( 999999, $data['errors'] );
+		$this->assertSame( 'inactive', Fundraiser::find( $fundraiser->id )->status );
+	}
+
+	/**
+	 * Test summary returns aggregate stats.
+	 */
+	public function test_summary(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor_a  = $this->create_donor( 'a@example.com' );
+		$donor_b  = $this->create_donor( 'b@example.com' );
+		$this->create_fundraiser( $campaign->id, $donor_a->id, [ 'status' => Fundraiser::STATUS_ACTIVE ] );
+		$this->create_fundraiser( $campaign->id, $donor_b->id, [ 'status' => Fundraiser::STATUS_PENDING ] );
+
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers/summary' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 2, $data['total_fundraisers'] );
+		$this->assertSame( 1, $data['active_count'] );
+		$this->assertSame( 1, $data['pending_count'] );
+	}
+}

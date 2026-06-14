@@ -24,6 +24,8 @@ use MissionDP\Rest\Endpoints\DonationFormSettingsEndpoint;
 use MissionDP\Rest\Endpoints\NotesEndpoint;
 use MissionDP\Export\ExportService;
 use MissionDP\Rest\Endpoints\DonorsEndpoint;
+use MissionDP\Rest\Endpoints\FundraisersEndpoint;
+use MissionDP\Rest\Endpoints\TeamsEndpoint;
 use MissionDP\Rest\Endpoints\ExportEndpoint;
 use MissionDP\Rest\Endpoints\ImportEndpoint;
 use MissionDP\Import\ColumnMapper;
@@ -107,6 +109,8 @@ class RestModule {
 		( new ConfirmSubscriptionEndpoint( $verifier ) )->register();
 		( new PaymentConfigEndpoint( $settings ) )->register();
 		( new DonorsEndpoint( $reporting, $settings ) )->register();
+		( new FundraisersEndpoint( $reporting, $settings ) )->register();
+		( new TeamsEndpoint( $reporting, $settings ) )->register();
 		( new NotesEndpoint() )->register();
 		( new TransactionsEndpoint( $reporting, $settings, $this->email ) )->register();
 		( new SubscriptionsEndpoint( $reporting, $settings ) )->register();

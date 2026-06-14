@@ -64,6 +64,24 @@ class RestErrors {
 	}
 
 	/**
+	 * Fundraiser lookup failed.
+	 *
+	 * @return WP_Error
+	 */
+	public static function fundraiser_not_found(): WP_Error {
+		return self::not_found( 'fundraiser_not_found', __( 'Fundraiser not found.', 'mission-donation-platform' ) );
+	}
+
+	/**
+	 * Team lookup failed.
+	 *
+	 * @return WP_Error
+	 */
+	public static function team_not_found(): WP_Error {
+		return self::not_found( 'team_not_found', __( 'Team not found.', 'mission-donation-platform' ) );
+	}
+
+	/**
 	 * Outgoing webhook lookup failed.
 	 *
 	 * @return WP_Error
