@@ -226,6 +226,9 @@
 			"Total Donated": [
 				"Total donado"
 			],
+			"Date Created": [
+				"Fecha de creación"
+			],
 			"Currency": [
 				"Moneda"
 			],
@@ -2522,6 +2525,9 @@
 			"Options": [
 				"Opciones"
 			],
+			"Donation Form": [
+				"Formulario de donación"
+			],
 			"e.g. 12-3456789": [
 				"p. ej. 12-3456789"
 			],
@@ -3121,6 +3127,126 @@
 			],
 			"URL slug": [
 				"Slug de URL"
+			],
+			"Fundraisers": [
+				"Recaudadores"
+			],
+			"Teams": [
+				"Equipos"
+			],
+			"A standard campaign with a donation form.": [
+				"Una campaña estándar con un formulario de donación."
+			],
+			"Peer-to-Peer": [
+				"Entre pares"
+			],
+			"Supporters create personal fundraising pages that roll up into this campaign.": [
+				"Los colaboradores crean páginas de recaudación personales que se suman a esta campaña."
+			],
+			"Ticketed Event": [
+				"Evento con entradas"
+			],
+			"Sell tickets to an event.": [
+				"Vende entradas para un evento."
+			],
+			"What kind of campaign is this? This can’t be changed later.": [
+				"¿Qué tipo de campaña es esta? No se puede cambiar más adelante."
+			],
+			"Registration open": [
+				"Registro abierto"
+			],
+			"Allow new supporters to sign up as fundraisers": [
+				"Permitir que nuevos colaboradores se registren como recaudadores"
+			],
+			"Require approval for fundraisers": [
+				"Requerir aprobación para los recaudadores"
+			],
+			"New fundraiser pages stay pending until you approve them": [
+				"Las nuevas páginas de recaudadores quedan pendientes hasta que las apruebes"
+			],
+			"Default fundraiser goal": [
+				"Meta predeterminada del recaudador"
+			],
+			"Suggested goal for a new fundraiser": [
+				"Meta sugerida para un nuevo recaudador"
+			],
+			"Story placeholder": [
+				"Texto de ejemplo de la historia"
+			],
+			"Suggested text shown in the fundraiser story field": [
+				"Texto sugerido que se muestra en el campo de la historia del recaudador"
+			],
+			"Enable teams": [
+				"Activar equipos"
+			],
+			"Let fundraisers group together into teams": [
+				"Permitir que los recaudadores se agrupen en equipos"
+			],
+			"Let supporters create teams": [
+				"Permitir que los colaboradores creen equipos"
+			],
+			"Otherwise only admins create teams": [
+				"De lo contrario, solo los administradores crean equipos"
+			],
+			"Require approval for teams": [
+				"Requerir aprobación para los equipos"
+			],
+			"New teams stay pending until you approve them": [
+				"Los nuevos equipos quedan pendientes hasta que los apruebes"
+			],
+			"Default team goal": [
+				"Meta predeterminada del equipo"
+			],
+			"Team story placeholder": [
+				"Texto de ejemplo de la historia del equipo"
+			],
+			"Approve": [
+				"Aprobar"
+			],
+			"Deactivate": [
+				"Desactivar"
+			],
+			"Inactive": [
+				"Inactivo"
+			],
+			"Fundraiser": [
+				"Recaudador"
+			],
+			"Team": [
+				"Equipo"
+			],
+			"Total Fundraisers": [
+				"Total de recaudadores"
+			],
+			"Pending Approval": [
+				"Pendiente de aprobación"
+			],
+			"Captain": [
+				"Capitán"
+			],
+			"Members": [
+				"Miembros"
+			],
+			"Total Teams": [
+				"Total de equipos"
+			],
+			"People raising money for your peer-to-peer campaigns.": [
+				"Personas que recaudan dinero para tus campañas entre pares."
+			],
+			"No fundraisers yet.": [
+				"Aún no hay recaudadores."
+			],
+			"Fundraisers appear here once supporters sign up for a peer-to-peer campaign.": [
+				"Los recaudadores aparecen aquí cuando los colaboradores se registran en una campaña entre pares."
+			],
+			"Groups of fundraisers working together on your campaigns.": [
+				"Grupos de recaudadores que colaboran en tus campañas."
+			],
+			"No teams yet.": [
+				"Aún no hay equipos."
+			],
+			"Teams appear here once supporters create or are added to one.": [
+				"Los equipos aparecen aquí cuando los colaboradores crean uno o se añaden a uno."
 			]
 		}
 	}
