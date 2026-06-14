@@ -19,7 +19,10 @@ require_once '/wordpress/wp-load.php';
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Subscription;
+use MissionDP\Models\Team;
+use MissionDP\Models\TeamInvitation;
 use MissionDP\Models\Transaction;
 use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Database\DataStore\DonorDataStore;
@@ -174,6 +177,99 @@ foreach ( $sub_seeds as $s ) {
 	}
 }
 
+// Peer-to-peer campaign: a few fundraisers, a team, and attributed donations.
+$p2p_campaign = new Campaign( [
+	'title'       => 'Paws on the Pavement 5K',
+	'description' => 'Lace up and fundraise for the animals. Start your own page or join a team.',
+	'goal_amount' => 2000000,
+	'type'        => 'p2p',
+	'date_start'  => $fmt( $now - 30 * $day ),
+] );
+$p2p_campaign->save();
+
+$p2p_campaign->update_meta( 'registration_open', true );
+$p2p_campaign->update_meta( 'approval_required', false );
+$p2p_campaign->update_meta( 'teams_enabled', true );
+$p2p_campaign->update_meta( 'team_creation_enabled', true );
+$p2p_campaign->update_meta( 'default_fundraiser_goal', 50000 );
+$p2p_campaign->update_meta( 'default_team_goal', 250000 );
+
+$team = new Team( [
+	'campaign_id' => $p2p_campaign->id,
+	'name'        => 'The Tail Waggers',
+	'description' => 'Walking, running, and raising for the shelter.',
+	'goal'        => 250000,
+	'status'      => 'active',
+	'access'      => 'public',
+	'date_created' => $fmt( $now - 28 * $day ),
+] );
+$team->save();
+
+// [donor index, goal, headline, on team?, captain?].
+$fundraiser_seeds = [
+	[ 0, 75000, 'Running for rescues', true, true ],
+	[ 4, 50000, 'Every mile matters', true, false ],
+	[ 7, 50000, 'For the pups', true, false ],
+	[ 2, 60000, 'Going solo for a cause', false, false ],
+];
+$fundraisers = [];
+foreach ( $fundraiser_seeds as $f ) {
+	$fundraiser = new Fundraiser( [
+		'campaign_id'     => $p2p_campaign->id,
+		'donor_id'        => $donors[ $f[0] ]->id,
+		'team_id'         => $f[3] ? $team->id : null,
+		'is_team_captain' => $f[4],
+		'status'          => 'active',
+		'goal'            => $f[1],
+		'headline'        => $f[2],
+		'date_created'    => $fmt( $now - mt_rand( 20, 27 ) * $day ),
+	] );
+	$fundraiser->save();
+	$fundraisers[] = $fundraiser;
+
+	if ( $f[4] ) {
+		$team->captain_id = $fundraiser->id;
+		$team->save();
+	}
+}
+
+// A pending invitation to the (public) team, for dashboard realism.
+( new TeamInvitation( [
+	'team_id'      => $team->id,
+	'email'        => 'kepler.nash@example.com',
+	'status'       => 'pending',
+	'date_created' => $fmt( $now - 10 * $day ),
+] ) )->save();
+
+// Donations attributed to fundraisers (donors give to a participant's page).
+foreach ( $fundraisers as $idx => $fundraiser ) {
+	$gift_count = mt_rand( 2, 5 );
+	for ( $g = 0; $g < $gift_count; $g++ ) {
+		$donor  = $donors[ mt_rand( 0, count( $donors ) - 1 ) ];
+		$amount = $amounts[ mt_rand( 0, count( $amounts ) - 1 ) ];
+		$tip    = mt_rand( 0, 2 ) ? (int) round( $amount * 0.1 ) : 0;
+		$date   = $fmt( $now - mt_rand( 2, 18 * 24 ) * 3600 );
+
+		$transaction = new Transaction( [
+			'status'          => 'completed',
+			'type'            => 'one_time',
+			'donor_id'        => $donor->id,
+			'campaign_id'     => $p2p_campaign->id,
+			'fundraiser_id'   => $fundraiser->id,
+			'source_post_id'  => $p2p_campaign->post_id,
+			'amount'          => $amount,
+			'tip_amount'      => $tip,
+			'total_amount'    => $amount + $tip,
+			'payment_gateway' => 'stripe',
+			'is_test'         => true,
+			'date_created'    => $date,
+			'date_completed'  => $date,
+		] );
+		$transaction->save();
+		$transactions[] = $transaction;
+	}
+}
+
 // Rebuild aggregate columns the same way the importer does.
 $donor_store = new DonorDataStore();
 foreach ( $donors as $donor ) {
@@ -182,6 +278,10 @@ foreach ( $donors as $donor ) {
 $campaign_store = new CampaignDataStore();
 foreach ( $campaigns as $campaign ) {
 	$campaign_store->recompute_aggregates( $campaign->id );
+}
+$campaign_store->recompute_aggregates( $p2p_campaign->id );
+foreach ( $fundraisers as $fundraiser ) {
+	Fundraiser::recompute_aggregates( $fundraiser->id );
 }
 
 // The seeding above auto-logged every insert at "now" via the activity feed
