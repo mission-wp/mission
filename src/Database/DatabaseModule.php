@@ -19,7 +19,7 @@ class DatabaseModule {
 	 *
 	 * @var string
 	 */
-	public const DB_VERSION = '1.3.1';
+	public const DB_VERSION = '1.4.0';
 
 	/**
 	 * Option name for storing database version.
@@ -50,6 +50,8 @@ class DatabaseModule {
 		$wpdb->missiondp_transactionmeta  = $wpdb->prefix . 'missiondp_transactionmeta';
 		$wpdb->missiondp_donormeta        = $wpdb->prefix . 'missiondp_donormeta';
 		$wpdb->missiondp_subscriptionmeta = $wpdb->prefix . 'missiondp_subscriptionmeta';
+		$wpdb->missiondp_fundraisermeta   = $wpdb->prefix . 'missiondp_fundraisermeta';
+		$wpdb->missiondp_teammeta         = $wpdb->prefix . 'missiondp_teammeta';
 	}
 
 	/**

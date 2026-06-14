@@ -35,7 +35,7 @@ class SchemaTest extends WP_UnitTestCase {
 	public function test_get_table_schemas_returns_all_tables(): void {
 		$schemas = $this->schema->get_table_schemas();
 
-		$this->assertCount( 16, $schemas );
+		$this->assertCount( 21, $schemas );
 
 		global $wpdb;
 		$prefix = $wpdb->prefix . 'missiondp_';
@@ -49,6 +49,11 @@ class SchemaTest extends WP_UnitTestCase {
 			"{$prefix}subscriptionmeta",
 			"{$prefix}campaignmeta",
 			"{$prefix}campaigns",
+			"{$prefix}fundraisers",
+			"{$prefix}fundraisermeta",
+			"{$prefix}teams",
+			"{$prefix}teammeta",
+			"{$prefix}team_invitations",
 			"{$prefix}notes",
 			"{$prefix}transaction_history",
 			"{$prefix}tributes",
