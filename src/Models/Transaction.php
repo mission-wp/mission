@@ -46,6 +46,7 @@ class Transaction extends Model {
 	public ?int $parent_id;
 	public int $source_post_id;
 	public ?int $campaign_id;
+	public ?int $fundraiser_id;
 	public int $amount;
 	public int $fee_amount;
 	public int $tip_amount;
@@ -79,6 +80,7 @@ class Transaction extends Model {
 		$this->parent_id               = isset( $data['parent_id'] ) ? (int) $data['parent_id'] : null;
 		$this->source_post_id          = (int) ( $data['source_post_id'] ?? 0 );
 		$this->campaign_id             = isset( $data['campaign_id'] ) ? (int) $data['campaign_id'] : null;
+		$this->fundraiser_id           = isset( $data['fundraiser_id'] ) ? (int) $data['fundraiser_id'] : null;
 		$this->amount                  = (int) ( $data['amount'] ?? 0 );
 		$this->fee_amount              = (int) ( $data['fee_amount'] ?? 0 );
 		$this->tip_amount              = (int) ( $data['tip_amount'] ?? 0 );
@@ -192,6 +194,15 @@ class Transaction extends Model {
 	 */
 	public function campaign(): ?Campaign {
 		return $this->campaign_id ? Campaign::find( $this->campaign_id ) : null;
+	}
+
+	/**
+	 * Get the fundraiser this transaction is attributed to, if any.
+	 *
+	 * @return Fundraiser|null
+	 */
+	public function fundraiser(): ?Fundraiser {
+		return $this->fundraiser_id ? Fundraiser::find( $this->fundraiser_id ) : null;
 	}
 
 	/**

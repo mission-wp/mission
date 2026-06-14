@@ -336,6 +336,17 @@ class CampaignDataStore implements DataStoreInterface {
 			$values       = array_merge( $values, array_map( 'strval', $args['status__in'] ) );
 		}
 
+		if ( ! empty( $args['type'] ) ) {
+			$clauses[] = 'type = %s';
+			$values[]  = (string) $args['type'];
+		}
+
+		if ( ! empty( $args['type__in'] ) && is_array( $args['type__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['type__in'] ), '%s' ) );
+			$clauses[]    = "type IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'strval', $args['type__in'] ) );
+		}
+
 		if ( isset( $args['show_in_listings'] ) ) {
 			$clauses[] = 'show_in_listings = %d';
 			$values[]  = (int) $args['show_in_listings'];
@@ -429,6 +440,7 @@ class CampaignDataStore implements DataStoreInterface {
 			'description'            => $model->description,
 			'goal_amount'            => $model->goal_amount,
 			'goal_type'              => $model->goal_type,
+			'type'                   => $model->type,
 			'total_raised'           => $model->total_raised,
 			'transaction_count'      => $model->transaction_count,
 			'donor_count'            => $model->donor_count,

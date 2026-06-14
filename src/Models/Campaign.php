@@ -42,11 +42,27 @@ class Campaign extends Model {
 		self::STATUS_ENDED,
 	];
 
+	public const TYPE_STANDARD = 'standard';
+	public const TYPE_P2P      = 'p2p';
+	public const TYPE_EVENT    = 'event';
+
+	/**
+	 * Every campaign type. Immutable after creation.
+	 *
+	 * @var string[]
+	 */
+	public const TYPES = [
+		self::TYPE_STANDARD,
+		self::TYPE_P2P,
+		self::TYPE_EVENT,
+	];
+
 	public int $post_id;
 	public string $title;
 	public string $description;
 	public int $goal_amount;
 	public string $goal_type;
+	public string $type;
 	public int $total_raised;
 	public int $transaction_count;
 	public int $donor_count;
@@ -91,6 +107,7 @@ class Campaign extends Model {
 		$this->description            = $data['description'] ?? '';
 		$this->goal_amount            = (int) ( $data['goal_amount'] ?? 0 );
 		$this->goal_type              = $data['goal_type'] ?? 'amount';
+		$this->type                   = $data['type'] ?? self::TYPE_STANDARD;
 		$this->total_raised           = (int) ( $data['total_raised'] ?? 0 );
 		$this->transaction_count      = (int) ( $data['transaction_count'] ?? 0 );
 		$this->donor_count            = (int) ( $data['donor_count'] ?? 0 );
@@ -328,6 +345,44 @@ class Campaign extends Model {
 	 */
 	public function transactions( array $args = [] ): array {
 		return Transaction::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
+	}
+
+	/**
+	 * Whether this is a peer-to-peer fundraising campaign.
+	 *
+	 * @return bool
+	 */
+	public function is_p2p(): bool {
+		return self::TYPE_P2P === $this->type;
+	}
+
+	/**
+	 * Whether this is a ticketed event campaign.
+	 *
+	 * @return bool
+	 */
+	public function is_event(): bool {
+		return self::TYPE_EVENT === $this->type;
+	}
+
+	/**
+	 * Get the fundraisers for this campaign (peer-to-peer only).
+	 *
+	 * @param array<string, mixed> $args Additional query args.
+	 * @return Fundraiser[]
+	 */
+	public function fundraisers( array $args = [] ): array {
+		return Fundraiser::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
+	}
+
+	/**
+	 * Get the teams for this campaign (peer-to-peer only).
+	 *
+	 * @param array<string, mixed> $args Additional query args.
+	 * @return Team[]
+	 */
+	public function teams( array $args = [] ): array {
+		return Team::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
 	}
 
 	/**
