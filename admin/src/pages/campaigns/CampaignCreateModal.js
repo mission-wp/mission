@@ -11,19 +11,22 @@ import { __ } from '@wordpress/i18n';
 import { majorToMinor } from '@shared/currencies';
 import { getCurrencyCode } from '@shared/currency';
 import { BRAND_COLOR } from '@shared/color';
+import CampaignCreateStepType from './CampaignCreateStepType';
 import CampaignCreateStepBasics from './CampaignCreateStepBasics';
 import CampaignCreateStepGoal from './CampaignCreateStepGoal';
 import CampaignCreateStepImage from './CampaignCreateStepImage';
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 
 const STEPS = [
-  { number: 1, label: __( 'Details', 'mission-donation-platform' ) },
-  { number: 2, label: __( 'Goal & Timeline', 'mission-donation-platform' ) },
-  { number: 3, label: __( 'Image', 'mission-donation-platform' ) },
+  { number: 1, label: __( 'Type', 'mission-donation-platform' ) },
+  { number: 2, label: __( 'Details', 'mission-donation-platform' ) },
+  { number: 3, label: __( 'Goal & Timeline', 'mission-donation-platform' ) },
+  { number: 4, label: __( 'Image', 'mission-donation-platform' ) },
 ];
 
 const DEFAULT_DATA = {
+  type: 'standard',
   title: '',
   excerpt: '',
   goal_amount: '',
@@ -79,10 +82,10 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
   };
 
   const canAdvance = () => {
-    if ( step === 1 ) {
+    if ( step === 2 ) {
       return formData.title.trim().length > 0;
     }
-    if ( step === 2 ) {
+    if ( step === 3 ) {
       return Number( formData.goal_amount ) > 0;
     }
     return true;
@@ -93,6 +96,7 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
     setError( null );
 
     const body = {
+      type: formData.type || 'standard',
       title: formData.title,
       excerpt: formData.excerpt,
     };
@@ -141,13 +145,17 @@ export default function CampaignCreateModal( { onClose, onCreated } ) {
     switch ( step ) {
       case 1:
         return (
-          <CampaignCreateStepBasics data={ formData } onChange={ updateData } />
+          <CampaignCreateStepType data={ formData } onChange={ updateData } />
         );
       case 2:
         return (
-          <CampaignCreateStepGoal data={ formData } onChange={ updateData } />
+          <CampaignCreateStepBasics data={ formData } onChange={ updateData } />
         );
       case 3:
+        return (
+          <CampaignCreateStepGoal data={ formData } onChange={ updateData } />
+        );
+      case 4:
         return (
           <CampaignCreateStepImage data={ formData } onChange={ updateData } />
         );

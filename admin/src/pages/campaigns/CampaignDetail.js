@@ -33,6 +33,8 @@ function buildFormState( campaign ) {
         : String( campaign.goal_amount );
   }
 
+  const p2p = campaign.p2p_settings || {};
+
   return {
     // Edit Page.
     has_campaign_page: campaign.has_campaign_page ?? true,
@@ -57,6 +59,21 @@ function buildFormState( campaign ) {
     remove_from_listings_on_end: meta.remove_from_listings_on_end || false,
     recurring_end_behavior: meta.recurring_end_behavior || 'keep',
     recurring_redirect_campaign: meta.recurring_redirect_campaign || '',
+
+    // Settings — Peer-to-Peer (only meaningful when type === 'p2p').
+    registration_open: p2p.registration_open ?? true,
+    approval_required: p2p.approval_required ?? false,
+    teams_enabled: p2p.teams_enabled ?? false,
+    team_creation_enabled: p2p.team_creation_enabled ?? false,
+    team_approval_required: p2p.team_approval_required ?? false,
+    default_fundraiser_goal: p2p.default_fundraiser_goal
+      ? String( minorToMajor( p2p.default_fundraiser_goal, code ) )
+      : '',
+    default_team_goal: p2p.default_team_goal
+      ? String( minorToMajor( p2p.default_team_goal, code ) )
+      : '',
+    story_placeholder: p2p.story_placeholder || '',
+    team_story_placeholder: p2p.team_story_placeholder || '',
   };
 }
 
@@ -210,6 +227,28 @@ export default function CampaignDetail( { id } ) {
       recurring_end_behavior: formState.recurring_end_behavior,
       recurring_redirect_campaign: formState.recurring_redirect_campaign,
     };
+
+    // P2P settings are only persisted for peer-to-peer campaigns.
+    if ( campaign?.type === 'p2p' ) {
+      const fundraiserGoal = Number(
+        String( formState.default_fundraiser_goal ).replace( /,/g, '' )
+      );
+      const teamGoal = Number(
+        String( formState.default_team_goal ).replace( /,/g, '' )
+      );
+
+      body.registration_open = formState.registration_open;
+      body.approval_required = formState.approval_required;
+      body.teams_enabled = formState.teams_enabled;
+      body.team_creation_enabled = formState.team_creation_enabled;
+      body.team_approval_required = formState.team_approval_required;
+      body.default_fundraiser_goal =
+        fundraiserGoal > 0 ? majorToMinor( fundraiserGoal, code ) : 0;
+      body.default_team_goal =
+        teamGoal > 0 ? majorToMinor( teamGoal, code ) : 0;
+      body.story_placeholder = formState.story_placeholder;
+      body.team_story_placeholder = formState.team_story_placeholder;
+    }
 
     try {
       // Save block editor content via the WP entity system.

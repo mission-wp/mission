@@ -10,12 +10,15 @@ namespace MissionDP\Admin;
 use MissionDP\Admin\Pages\CampaignsPage;
 use MissionDP\Admin\Pages\DashboardPage;
 use MissionDP\Admin\Pages\DonorsPage;
+use MissionDP\Admin\Pages\FundraisersPage;
 use MissionDP\Admin\Pages\SettingsPage;
 use MissionDP\Admin\Pages\SubscriptionsPage;
+use MissionDP\Admin\Pages\TeamsPage;
 use MissionDP\Admin\Pages\ToolsPage;
 use MissionDP\Admin\Pages\TransactionsPage;
 use MissionDP\Constants\Frequency;
 use MissionDP\Import\ImportService;
+use MissionDP\Models\Campaign;
 use MissionDP\Models\ImportJob;
 
 defined( 'ABSPATH' ) || exit;
@@ -44,6 +47,16 @@ class AdminModule {
 	 * Submenu slug for Donors.
 	 */
 	public const DONORS_SLUG = 'mission-donation-platform-donors';
+
+	/**
+	 * Submenu slug for Fundraisers (peer-to-peer).
+	 */
+	public const FUNDRAISERS_SLUG = 'mission-donation-platform-fundraisers';
+
+	/**
+	 * Submenu slug for Teams (peer-to-peer).
+	 */
+	public const TEAMS_SLUG = 'mission-donation-platform-teams';
 
 	/**
 	 * Submenu slug for Subscriptions.
@@ -78,6 +91,8 @@ class AdminModule {
 			'campaigns'     => new CampaignsPage(),
 			'transactions'  => new TransactionsPage(),
 			'donors'        => new DonorsPage(),
+			'fundraisers'   => new FundraisersPage(),
+			'teams'         => new TeamsPage(),
 			'subscriptions' => new SubscriptionsPage(),
 			'settings'      => new SettingsPage(),
 			'tools'         => new ToolsPage(),
@@ -288,6 +303,8 @@ class AdminModule {
 			'mission_page_mission-donation-platform-campaigns',
 			'mission_page_mission-donation-platform-transactions',
 			'mission_page_mission-donation-platform-donors',
+			'mission_page_mission-donation-platform-fundraisers',
+			'mission_page_mission-donation-platform-teams',
 			'mission_page_mission-donation-platform-subscriptions',
 			'mission_page_mission-donation-platform-settings',
 			'mission_page_mission-donation-platform-tools',
@@ -295,6 +312,18 @@ class AdminModule {
 		];
 
 		return in_array( $screen_id, $mission_screens, true );
+	}
+
+	/**
+	 * Whether at least one peer-to-peer campaign exists.
+	 *
+	 * Gates the Fundraisers and Teams menu items so they stay hidden on sites
+	 * that only run standard donation forms.
+	 *
+	 * @return bool
+	 */
+	private function has_p2p_campaigns(): bool {
+		return Campaign::count( [ 'type' => Campaign::TYPE_P2P ] ) > 0;
 	}
 
 	/**
@@ -350,6 +379,27 @@ class AdminModule {
 			self::DONORS_SLUG,
 			[ $this->pages['donors'], 'render' ]
 		);
+
+		// Fundraisers and Teams appear only once a peer-to-peer campaign exists.
+		if ( $this->has_p2p_campaigns() ) {
+			add_submenu_page(
+				self::MENU_SLUG,
+				__( 'Fundraisers', 'mission-donation-platform' ),
+				__( 'Fundraisers', 'mission-donation-platform' ),
+				'manage_options',
+				self::FUNDRAISERS_SLUG,
+				[ $this->pages['fundraisers'], 'render' ]
+			);
+
+			add_submenu_page(
+				self::MENU_SLUG,
+				__( 'Teams', 'mission-donation-platform' ),
+				__( 'Teams', 'mission-donation-platform' ),
+				'manage_options',
+				self::TEAMS_SLUG,
+				[ $this->pages['teams'], 'render' ]
+			);
+		}
 
 		add_submenu_page(
 			self::MENU_SLUG,
