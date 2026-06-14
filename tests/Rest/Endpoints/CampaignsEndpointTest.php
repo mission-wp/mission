@@ -670,4 +670,126 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 
 		$this->assertFalse( $get_response->get_data()['show_in_listings'] );
 	}
+
+	/**
+	 * Test POST defaults the campaign type to standard.
+	 */
+	public function test_create_defaults_to_standard_type(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns' );
+		$request->set_body_params( [ 'title' => 'Standard Campaign' ] );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( 'standard', $data['type'] );
+		$this->assertNull( $data['p2p_settings'] );
+	}
+
+	/**
+	 * Test POST creates a P2P campaign and seeds default settings.
+	 */
+	public function test_create_p2p_campaign_seeds_settings(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns' );
+		$request->set_body_params( [
+			'title' => 'P2P Campaign',
+			'type'  => 'p2p',
+		] );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( 'p2p', $data['type'] );
+		$this->assertIsArray( $data['p2p_settings'] );
+		$this->assertTrue( $data['p2p_settings']['registration_open'] );
+		$this->assertFalse( $data['p2p_settings']['approval_required'] );
+		$this->assertSame( 50000, $data['p2p_settings']['default_fundraiser_goal'] );
+		$this->assertSame( 200000, $data['p2p_settings']['default_team_goal'] );
+	}
+
+	/**
+	 * Test POST rejects a non-creatable campaign type (event is reserved).
+	 */
+	public function test_create_rejects_event_type(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/campaigns' );
+		$request->set_body_params( [
+			'title' => 'Event Campaign',
+			'type'  => 'event',
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 400, $response->get_status() );
+	}
+
+	/**
+	 * Test campaign type is immutable: a type sent on update is ignored.
+	 */
+	public function test_type_is_immutable_on_update(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
+		$request->set_body_params( [ 'type' => 'standard' ] );
+		$this->server->dispatch( $request );
+
+		$get_request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
+		$get_response = $this->server->dispatch( $get_request );
+
+		$this->assertSame( 'p2p', $get_response->get_data()['type'] );
+	}
+
+	/**
+	 * Test P2P settings round-trip through update and read back typed.
+	 */
+	public function test_p2p_settings_round_trip(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+		$campaign->apply_p2p_default_settings();
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
+		$request->set_body_params( [
+			'registration_open'       => false,
+			'approval_required'       => true,
+			'teams_enabled'           => true,
+			'default_fundraiser_goal' => 75000,
+			'story_placeholder'       => 'Tell your story',
+		] );
+
+		$response = $this->server->dispatch( $request );
+		$settings = $response->get_data()['p2p_settings'];
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertFalse( $settings['registration_open'] );
+		$this->assertTrue( $settings['approval_required'] );
+		$this->assertTrue( $settings['teams_enabled'] );
+		$this->assertSame( 75000, $settings['default_fundraiser_goal'] );
+		$this->assertSame( 'Tell your story', $settings['story_placeholder'] );
+	}
+
+	/**
+	 * Test P2P settings are not written for standard campaigns.
+	 */
+	public function test_p2p_settings_ignored_for_standard_campaign(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$campaign = $this->create_campaign( [ 'title' => 'Standard' ] );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
+		$request->set_body_params( [ 'registration_open' => true ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertNull( $response->get_data()['p2p_settings'] );
+		$this->assertSame( '', $campaign->get_meta( 'registration_open' ) );
+	}
 }

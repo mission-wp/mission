@@ -57,6 +57,25 @@ class Campaign extends Model {
 		self::TYPE_EVENT,
 	];
 
+	/**
+	 * Default peer-to-peer settings, applied as meta when a P2P campaign is
+	 * created. Booleans seed the moderation toggles; the two goals are minor
+	 * units; the placeholders suggest copy for the fundraiser/team story fields.
+	 *
+	 * @var array<string, bool|int|string>
+	 */
+	public const P2P_DEFAULT_SETTINGS = [
+		'registration_open'       => true,
+		'approval_required'       => false,
+		'teams_enabled'           => false,
+		'team_creation_enabled'   => false,
+		'team_approval_required'  => false,
+		'default_fundraiser_goal' => 50000,
+		'default_team_goal'       => 200000,
+		'story_placeholder'       => '',
+		'team_story_placeholder'  => '',
+	];
+
 	public int $post_id;
 	public string $title;
 	public string $description;
@@ -383,6 +402,45 @@ class Campaign extends Model {
 	 */
 	public function teams( array $args = [] ): array {
 		return Team::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
+	}
+
+	/**
+	 * Get this campaign's peer-to-peer settings with defaults applied.
+	 *
+	 * Reads the settings meta, falling back to P2P_DEFAULT_SETTINGS for any key
+	 * never saved, and casts each value to its native type (booleans, the two
+	 * goal amounts as minor-unit ints, placeholders as strings).
+	 *
+	 * @return array<string, bool|int|string>
+	 */
+	public function p2p_settings(): array {
+		$all      = $this->get_all_meta();
+		$settings = [];
+
+		foreach ( self::P2P_DEFAULT_SETTINGS as $key => $default ) {
+			if ( ! array_key_exists( $key, $all ) ) {
+				$settings[ $key ] = $default;
+				continue;
+			}
+
+			$settings[ $key ] = match ( true ) {
+				is_bool( $default ) => (bool) (int) $all[ $key ],
+				is_int( $default )  => (int) $all[ $key ],
+				default             => (string) $all[ $key ],
+			};
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Seed the default peer-to-peer settings as meta. Called once when a P2P
+	 * campaign is created so the settings panel opens with sensible values.
+	 */
+	public function apply_p2p_default_settings(): void {
+		foreach ( self::P2P_DEFAULT_SETTINGS as $key => $default ) {
+			$this->update_meta( $key, $default );
+		}
 	}
 
 	/**

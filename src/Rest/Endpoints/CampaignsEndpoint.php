@@ -74,6 +74,24 @@ class CampaignsEndpoint {
 	];
 
 	/**
+	 * P2P settings meta and their value types, persisted only for P2P campaigns.
+	 * Read back as a typed object via Campaign::p2p_settings().
+	 *
+	 * @var array<string, string>
+	 */
+	private const P2P_META = [
+		'registration_open'       => 'bool',
+		'approval_required'       => 'bool',
+		'teams_enabled'           => 'bool',
+		'team_creation_enabled'   => 'bool',
+		'team_approval_required'  => 'bool',
+		'default_fundraiser_goal' => 'int',
+		'default_team_goal'       => 'int',
+		'story_placeholder'       => 'text',
+		'team_story_placeholder'  => 'text',
+	];
+
+	/**
 	 * Register REST routes.
 	 *
 	 * @return void
@@ -200,6 +218,7 @@ class CampaignsEndpoint {
 				'description' => $request->get_param( 'excerpt' ) ?? '',
 				'goal_amount' => $request->get_param( 'goal_amount' ),
 				'goal_type'   => $request->get_param( 'goal_type' ) ?? 'amount',
+				'type'        => $request->get_param( 'type' ) ?? Campaign::TYPE_STANDARD,
 				'date_start'  => $request->get_param( 'date_start' ) ?? wp_date( 'Y-m-d' ),
 				'date_end'    => $request->get_param( 'date_end' ),
 			]
@@ -213,6 +232,11 @@ class CampaignsEndpoint {
 				__( 'The campaign could not be created.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
+		}
+
+		// Seed the moderation/goal defaults so the P2P settings panel opens populated.
+		if ( $campaign->is_p2p() ) {
+			$campaign->apply_p2p_default_settings();
 		}
 
 		// Save campaign image to campaign meta.
@@ -271,6 +295,8 @@ class CampaignsEndpoint {
 			'title'             => $campaign->title,
 			'excerpt'           => $campaign->description,
 			'status'            => $campaign->status,
+			'type'              => $campaign->type,
+			'p2p_settings'      => $campaign->is_p2p() ? $campaign->p2p_settings() : null,
 			'has_campaign_page' => $campaign->has_campaign_page(),
 			'show_in_listings'  => $campaign->show_in_listings,
 			'slug'              => $campaign->slug,
@@ -333,6 +359,11 @@ class CampaignsEndpoint {
 			$query_args['status'] = $status;
 		}
 
+		$type = $request->get_param( 'type' );
+		if ( ! empty( $type ) ) {
+			$query_args['type'] = $type;
+		}
+
 		$campaigns = Campaign::query( $query_args );
 		$total     = Campaign::count( $query_args );
 
@@ -345,6 +376,7 @@ class CampaignsEndpoint {
 				'title'             => $campaign->title,
 				'description'       => $campaign->description,
 				'status'            => $campaign->status,
+				'type'              => $campaign->type,
 				'goal_amount'       => $campaign->goal_amount,
 				'goal_type'         => $campaign->goal_type,
 				'goal_progress'     => $campaign->get_goal_progress( $is_test ),
@@ -564,6 +596,25 @@ class CampaignsEndpoint {
 			}
 		}
 
+		// Persist P2P settings only for P2P campaigns, casting to native types.
+		if ( $campaign->is_p2p() ) {
+			foreach ( self::P2P_META as $key => $cast ) {
+				$value = $request->get_param( $key );
+				if ( null === $value ) {
+					continue;
+				}
+
+				$campaign->update_meta(
+					$key,
+					match ( $cast ) {
+						'bool'  => (bool) $value,
+						'int'   => max( 0, (int) $value ),
+						default => (string) $value,
+					}
+				);
+			}
+		}
+
 		if ( $goal_changed ) {
 			/**
 			 * Fires when a campaign's goal amount is changed.
@@ -599,6 +650,8 @@ class CampaignsEndpoint {
 			],
 			'goal_amount' => Args::integer(),
 			'goal_type'   => Args::enum( [ 'amount', 'donations', 'donors' ], [ 'default' => 'amount' ] ),
+			// Type is immutable after creation; 'event' is reserved for a future release and not yet creatable.
+			'type'        => Args::enum( [ Campaign::TYPE_STANDARD, Campaign::TYPE_P2P ], [ 'default' => Campaign::TYPE_STANDARD ] ),
 			'date_start'  => [
 				'type' => [ 'string', 'null' ],
 			],
@@ -644,6 +697,23 @@ class CampaignsEndpoint {
 			'remove_from_listings_on_end' => Args::boolean(),
 			'recurring_end_behavior'      => Args::string(),
 			'recurring_redirect_campaign' => Args::string(),
+			// P2P settings (persisted only when the campaign is a P2P type). Note:
+			// 'type' is intentionally absent — campaign type is immutable after creation.
+			'registration_open'           => Args::boolean(),
+			'approval_required'           => Args::boolean(),
+			'teams_enabled'               => Args::boolean(),
+			'team_creation_enabled'       => Args::boolean(),
+			'team_approval_required'      => Args::boolean(),
+			'default_fundraiser_goal'     => Args::integer(),
+			'default_team_goal'           => Args::integer(),
+			'story_placeholder'           => [
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_textarea_field',
+			],
+			'team_story_placeholder'      => [
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_textarea_field',
+			],
 		];
 	}
 
@@ -660,6 +730,7 @@ class CampaignsEndpoint {
 			),
 			[
 				'status' => Args::enum( Campaign::STATUSES ),
+				'type'   => Args::enum( Campaign::TYPES ),
 			]
 		);
 	}
