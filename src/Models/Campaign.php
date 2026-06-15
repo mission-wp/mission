@@ -276,7 +276,11 @@ class Campaign extends Model {
 		$description = $this->description ?? '';
 
 		ob_start();
-		include __DIR__ . '/../Campaigns/templates/campaign-page.php';
+		if ( $this->is_p2p() ) {
+			include __DIR__ . '/../Campaigns/templates/campaign-page-p2p.php';
+		} else {
+			include __DIR__ . '/../Campaigns/templates/campaign-page.php';
+		}
 		$content = ob_get_clean();
 
 		/**

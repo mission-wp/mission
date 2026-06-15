@@ -1,10 +1,10 @@
 /**
- * Campaign Progress frontend — Interactivity API store.
+ * Fundraiser Progress frontend — Interactivity API store.
  */
-/* global IntersectionObserver */
+/* global IntersectionObserver, navigator */
 import { store, getElement } from '@wordpress/interactivity';
 
-store( 'mission-donation-platform/campaign-progress', {
+store( 'mission-donation-platform/fundraiser-progress', {
   actions: {
     scrollToForm() {
       const form = document.querySelector( '.mission-donation-form' );
@@ -12,8 +12,19 @@ store( 'mission-donation-platform/campaign-progress', {
         form.scrollIntoView( { behavior: 'smooth', block: 'start' } );
       }
     },
-    // The peer-to-peer sign-up modal wires this action in a later step.
-    openSignup() {},
+    share() {
+      const { ref } = getElement();
+      const url = ref?.getAttribute( 'data-share-url' ) || window.location.href;
+
+      if ( navigator.share ) {
+        navigator.share( { url } ).catch( () => {} );
+        return;
+      }
+
+      if ( navigator.clipboard ) {
+        navigator.clipboard.writeText( url ).catch( () => {} );
+      }
+    },
   },
   callbacks: {
     animateBar() {

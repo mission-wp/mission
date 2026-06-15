@@ -1,0 +1,28 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/fundraiser-profile",
+	"version": "0.1.0",
+	"title": "Fundraiser Profile",
+	"category": "mission-donation-platform",
+	"icon": "id",
+	"description": "A fundraiser's cover image, name, headline, tribute, and story.",
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"fundraiserId": {
+			"type": "number",
+			"default": 0
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

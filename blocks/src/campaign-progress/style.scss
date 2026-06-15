@@ -82,6 +82,12 @@
   margin-right: 4px;
 }
 
+.mission-cp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .mission-cp-donate-btn {
   display: inline-flex;
   align-items: center;
@@ -101,6 +107,17 @@
   &:hover {
     background: var(--mission-primary-hover);
     text-decoration: none;
+  }
+}
+
+.mission-cp-donate-btn--secondary {
+  color: var(--mission-primary);
+  background: transparent;
+  border: 1.5px solid var(--mission-border, #e5e7eb);
+
+  &:hover {
+    background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+    border-color: var(--mission-primary);
   }
 }
 

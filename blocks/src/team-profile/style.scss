@@ -1,0 +1,77 @@
+// Team Profile — frontend styles.
+
+.mission-tp-profile {
+  --mission-text: #1a1a1a;
+  --mission-text-secondary: #666;
+  --mission-radius: 12px;
+
+  line-height: 1.6;
+}
+
+.mission-tp-profile__header {
+  margin-bottom: 24px;
+}
+
+.mission-tp-profile__title {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--mission-text);
+  margin: 0 0 8px;
+}
+
+.mission-tp-profile__subtitle {
+  font-size: 17px;
+  color: var(--mission-text-secondary);
+  margin: 0;
+
+  a {
+    font-weight: 600;
+    color: var(--mission-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.mission-tp-profile__cover {
+  margin: 0 0 24px;
+  border-radius: var(--mission-radius);
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.mission-tp-profile__about-heading {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--mission-text);
+  margin: 0 0 12px;
+}
+
+.mission-tp-profile__about {
+  color: var(--mission-text);
+
+  p {
+    margin: 0 0 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+
+  .mission-tp-profile__title {
+    font-size: 27px;
+  }
+}

@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/fundraiser-progress",
+	"version": "0.1.0",
+	"title": "Fundraiser Progress",
+	"category": "mission-donation-platform",
+	"icon": "chart-bar",
+	"description": "Display a fundraiser's progress with a thermometer, stats, and donate/share buttons.",
+	"supports": {
+		"html": false,
+		"interactivity": true,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"fundraiserId": {
+			"type": "number",
+			"default": 0
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./index.php"
+}

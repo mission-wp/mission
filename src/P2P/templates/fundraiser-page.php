@@ -2,13 +2,17 @@
 /**
  * Default fundraiser page block template.
  *
- * Blocks resolve the current fundraiser from the queried post. The fundraiser-
- * aware display blocks (profile, progress, donor wall) are added in a later
- * step; for now the page renders the donation form bound to the fundraiser.
+ * Each block resolves the current fundraiser from the queried shell post, so the
+ * markup is the same for every fundraiser. Site owners can re-theme via the
+ * `--mission-*` variables or filter `mission_fundraiser_page_template`.
  *
  * @package MissionDP
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
+<!-- wp:mission-donation-platform/fundraiser-profile /-->
+
+<!-- wp:mission-donation-platform/fundraiser-progress /-->
+
 <!-- wp:mission-donation-platform/donation-form /-->

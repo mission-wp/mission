@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/p2p-leaderboard",
+	"version": "0.1.0",
+	"title": "P2P Leaderboard",
+	"category": "mission-donation-platform",
+	"icon": "awards",
+	"description": "Display the campaign leaderboard: top teams and top fundraisers side by side.",
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"limit": {
+			"type": "number",
+			"default": 5
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

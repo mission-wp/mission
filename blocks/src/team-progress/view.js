@@ -1,10 +1,10 @@
 /**
- * Campaign Progress frontend — Interactivity API store.
+ * Team Progress frontend — Interactivity API store.
  */
 /* global IntersectionObserver */
 import { store, getElement } from '@wordpress/interactivity';
 
-store( 'mission-donation-platform/campaign-progress', {
+store( 'mission-donation-platform/team-progress', {
   actions: {
     scrollToForm() {
       const form = document.querySelector( '.mission-donation-form' );
@@ -12,7 +12,7 @@ store( 'mission-donation-platform/campaign-progress', {
         form.scrollIntoView( { behavior: 'smooth', block: 'start' } );
       }
     },
-    // The peer-to-peer sign-up modal wires this action in a later step.
+    // Stub: the team sign-up modal wires this action in a later step.
     openSignup() {},
   },
   callbacks: {

@@ -13,6 +13,8 @@
 use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,6 +51,13 @@ $real_percent  = $has_goal ? (int) round( $goal_progress / $goal_amount * 100 ) 
 
 // Donor count.
 $donor_count = $is_test ? $campaign->test_donor_count : $campaign->donor_count;
+
+// Peer-to-peer campaigns add fundraiser/team counts and a sign-up CTA.
+$is_p2p           = $campaign->is_p2p();
+$fundraiser_count = $is_p2p ? Fundraiser::count( [ 'campaign_id' => $campaign->id, 'status' => Fundraiser::STATUS_ACTIVE ] ) : 0;
+$team_count       = $is_p2p ? Team::count( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : 0;
+$registration_open = (bool) $campaign->get_meta( 'registration_open' );
+$show_become       = $is_p2p && $registration_open;
 
 // Days remaining.
 $date_end       = $campaign->date_end;
@@ -139,12 +148,22 @@ ob_start();
 		</div>
 	<?php endif; ?>
 
-	<?php if ( $show_donors || $show_days_remaining ) : ?>
+	<?php if ( $show_donors || $show_days_remaining || $is_p2p ) : ?>
 		<div class="mission-cp-stats">
 			<?php if ( $show_donors ) : ?>
 				<div class="mission-cp-stat">
 					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
 					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
+				</div>
+			<?php endif; ?>
+			<?php if ( $is_p2p ) : ?>
+				<div class="mission-cp-stat">
+					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
+					<span class="mission-cp-stat__label"><?php esc_html_e( 'fundraisers', 'mission-donation-platform' ); ?></span>
+				</div>
+				<div class="mission-cp-stat">
+					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
+					<span class="mission-cp-stat__label"><?php esc_html_e( 'teams', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
@@ -156,20 +175,30 @@ ob_start();
 		</div>
 	<?php endif; ?>
 
-	<?php if ( $show_button ) : ?>
-		<?php if ( 'scroll' === $donate_action ) : ?>
-			<button
-				type="button"
-				class="mission-cp-donate-btn"
-				data-wp-on--click="actions.scrollToForm"
-			>
-				<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
-			</button>
-		<?php else : ?>
-			<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-cp-donate-btn">
-				<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
-			</a>
-		<?php endif; ?>
+	<?php if ( $show_become || $show_button ) : ?>
+		<div class="mission-cp-actions">
+			<?php if ( $show_become ) : ?>
+				<button type="button" class="mission-cp-donate-btn" data-wp-on--click="actions.openSignup">
+					<?php esc_html_e( 'Become a Fundraiser', 'mission-donation-platform' ); ?>
+				</button>
+			<?php endif; ?>
+			<?php if ( $show_button ) : ?>
+				<?php $donate_btn_class = $show_become ? 'mission-cp-donate-btn mission-cp-donate-btn--secondary' : 'mission-cp-donate-btn'; ?>
+				<?php if ( 'scroll' === $donate_action ) : ?>
+					<button
+						type="button"
+						class="<?php echo esc_attr( $donate_btn_class ); ?>"
+						data-wp-on--click="actions.scrollToForm"
+					>
+						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+					</button>
+				<?php else : ?>
+					<a href="<?php echo esc_url( $donate_url ); ?>" class="<?php echo esc_attr( $donate_btn_class ); ?>">
+						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+					</a>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
 	<?php endif; ?>
 </div>
 <?php

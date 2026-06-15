@@ -1,0 +1,89 @@
+// Fundraiser Profile — frontend styles.
+
+.mission-fp-profile {
+  --mission-text: #1a1a1a;
+  --mission-text-secondary: #666;
+  --mission-radius: 12px;
+
+  line-height: 1.6;
+}
+
+.mission-fp-profile__header {
+  margin-bottom: 24px;
+}
+
+.mission-fp-profile__title {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--mission-text);
+  margin: 0 0 10px;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--mission-primary);
+    }
+  }
+}
+
+.mission-fp-profile__headline {
+  font-size: 19px;
+  color: var(--mission-text-secondary);
+  margin: 0;
+}
+
+.mission-fp-profile__tribute {
+  display: inline-flex;
+  align-items: center;
+  margin: 14px 0 0;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--mission-primary) 70%, #1a1a1a);
+  background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mission-primary) 20%, transparent);
+  border-radius: 9999px;
+}
+
+.mission-fp-profile__cover {
+  margin: 0 0 24px;
+  border-radius: var(--mission-radius);
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.mission-fp-profile__story-heading {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--mission-text);
+  margin: 0 0 12px;
+}
+
+.mission-fp-profile__story {
+  color: var(--mission-text);
+
+  p {
+    margin: 0 0 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+
+  .mission-fp-profile__title {
+    font-size: 27px;
+  }
+}

@@ -1,0 +1,18 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/team-members\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "The team's members appear here on the live page.": [
+                "Los miembros del equipo aparecen aqu\u00ed en la p\u00e1gina publicada."
+            ]
+        }
+    }
+}
