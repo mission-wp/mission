@@ -30,11 +30,27 @@ class P2PModule {
 	private TeamPostType $team_post_type;
 
 	/**
+	 * Nested-URL rewrites instance.
+	 *
+	 * @var P2PRewrites
+	 */
+	private P2PRewrites $rewrites;
+
+	/**
+	 * Page renderer instance.
+	 *
+	 * @var P2PPageRenderer
+	 */
+	private P2PPageRenderer $page_renderer;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
 		$this->fundraiser_post_type = new FundraiserPostType();
 		$this->team_post_type       = new TeamPostType();
+		$this->rewrites             = new P2PRewrites();
+		$this->page_renderer        = new P2PPageRenderer();
 	}
 
 	/**
@@ -43,5 +59,7 @@ class P2PModule {
 	public function init(): void {
 		$this->fundraiser_post_type->init();
 		$this->team_post_type->init();
+		$this->rewrites->init();
+		$this->page_renderer->init();
 	}
 }

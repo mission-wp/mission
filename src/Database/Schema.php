@@ -260,7 +260,7 @@ class Schema {
   KEY donor_id (donor_id),
   KEY team_id (team_id),
   KEY status (status),
-  KEY post_id (post_id)
+  UNIQUE KEY post_id (post_id)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------
@@ -295,7 +295,7 @@ class Schema {
   PRIMARY KEY  (id),
   KEY campaign_id (campaign_id),
   KEY status (status),
-  KEY post_id (post_id)
+  UNIQUE KEY post_id (post_id)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------

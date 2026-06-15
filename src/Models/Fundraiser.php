@@ -138,6 +138,8 @@ class Fundraiser extends Model {
 	 * Save without firing the created hook.
 	 *
 	 * For bulk backfill/seed paths that recompute aggregates once at the end.
+	 * Still creates the shell post so post_id stays unique (the silent part is
+	 * only about skipping the created hook, not the page).
 	 *
 	 * @return int|bool New ID on insert, true on update, false on failure.
 	 */
@@ -148,6 +150,8 @@ class Fundraiser extends Model {
 		if ( $this->id ) {
 			return $store->update( $this );
 		}
+
+		$this->sync_shell_post();
 
 		$this->id = $store->create_silent( $this );
 

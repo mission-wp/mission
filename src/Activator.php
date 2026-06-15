@@ -48,8 +48,11 @@ class Activator {
 		// Set a transient to trigger a welcome/activation notice.
 		set_transient( 'missiondp_activated', true, 30 );
 
-		// Register the post type so its rewrite rules are included in the flush.
+		// Register post types and rules so they're included in the flush.
 		( new Campaigns\CampaignPostType() )->register();
+		( new P2P\FundraiserPostType() )->register();
+		( new P2P\TeamPostType() )->register();
+		( new P2P\P2PRewrites() )->add_rewrite_rules();
 		flush_rewrite_rules();
 	}
 

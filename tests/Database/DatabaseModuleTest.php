@@ -73,6 +73,10 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 		$module = new DatabaseModule();
 		$module->init();
 
+		// Migrations are registered on admin_init; invoke directly to avoid
+		// firing unrelated core admin_init hooks in the CLI test context.
+		$module->maybe_run_migrations();
+
 		$this->assertSame(
 			DatabaseModule::DB_VERSION,
 			get_option( DatabaseModule::DB_VERSION_OPTION )
