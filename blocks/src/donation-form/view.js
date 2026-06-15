@@ -651,6 +651,8 @@ store( 'mission-donation-platform/donation-form', {
               donor_last_name: ctx.lastName,
               frequency: ctx.selectedFrequency,
               campaign_id: ctx.campaignId || 0,
+              fundraiser_id: ctx.fundraiserId || 0,
+              team_id: ctx.teamId || 0,
               source_post_id: ctx.sourcePostId || 0,
               form_id: ctx.formId || '',
               stripe_account_id: ctx.stripeAccountId || '',

@@ -192,11 +192,14 @@ class FundraiserDataStore implements DataStoreInterface {
 
 		$stats = $wpdb->get_row(
 			$wpdb->prepare(
+				// total_raised nets the donation portion of partial refunds
+				// (LEAST(amount_refunded, amount)) so it matches the campaign's
+				// live total; counts still include partially-refunded donations.
 				"SELECT
-					COALESCE(SUM(CASE WHEN is_test = 0 THEN amount END), 0)                                  AS total_raised,
+					COALESCE(SUM(CASE WHEN is_test = 0 THEN amount - LEAST(amount_refunded, amount) END), 0) AS total_raised,
 					COALESCE(SUM(CASE WHEN is_test = 0 THEN 1 END), 0)                                       AS transaction_count,
 					COALESCE(COUNT(DISTINCT CASE WHEN is_test = 0 THEN donor_id END), 0)                     AS donor_count,
-					COALESCE(SUM(CASE WHEN is_test = 1 THEN amount END), 0)                                  AS test_total_raised,
+					COALESCE(SUM(CASE WHEN is_test = 1 THEN amount - LEAST(amount_refunded, amount) END), 0) AS test_total_raised,
 					COALESCE(SUM(CASE WHEN is_test = 1 THEN 1 END), 0)                                       AS test_transaction_count,
 					COALESCE(COUNT(DISTINCT CASE WHEN is_test = 1 THEN donor_id END), 0)                     AS test_donor_count
 				FROM %i

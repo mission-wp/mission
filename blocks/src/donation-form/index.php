@@ -10,6 +10,8 @@
 
 use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Currency\Currency;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -17,6 +19,38 @@ defined( 'ABSPATH' ) || exit;
 
 ( static function ( $attributes, $content, $block ): void {
 $settings = DonationFormSettings::resolve( $attributes );
+
+// Bind the form to a fundraiser or team — explicitly via a block attribute, or
+// implicitly when the form is rendered on a fundraiser/team shell page. The
+// bound record is authoritative for its campaign, so align the form's campaign.
+$fundraiser_id = isset( $attributes['fundraiserId'] ) ? (int) $attributes['fundraiserId'] : 0;
+$team_id       = isset( $attributes['teamId'] ) ? (int) $attributes['teamId'] : 0;
+
+if ( ! $fundraiser_id && ! $team_id ) {
+	$queried = get_queried_object();
+
+	if ( $queried instanceof \WP_Post && Fundraiser::POST_TYPE === $queried->post_type ) {
+		$fundraiser_id = Fundraiser::find_by_post_id( $queried->ID )?->id ?? 0;
+	} elseif ( $queried instanceof \WP_Post && Team::POST_TYPE === $queried->post_type ) {
+		$team_id = Team::find_by_post_id( $queried->ID )?->id ?? 0;
+	}
+}
+
+if ( $fundraiser_id ) {
+	$bound_fundraiser = Fundraiser::find( $fundraiser_id );
+	$fundraiser_id    = $bound_fundraiser?->id ?? 0;
+
+	if ( $bound_fundraiser ) {
+		$settings['campaignId'] = $bound_fundraiser->campaign_id;
+	}
+} elseif ( $team_id ) {
+	$bound_team = Team::find( $team_id );
+	$team_id    = $bound_team?->id ?? 0;
+
+	if ( $bound_team ) {
+		$settings['campaignId'] = $bound_team->campaign_id;
+	}
+}
 
 $block_classes = [ 'mission-donation-form' ];
 if ( ! empty( $attributes['align'] ) ) {
@@ -150,6 +184,8 @@ $context = [
 	'restNonce'            => wp_create_nonce( 'wp_rest' ),
 	'formId'               => $attributes['formId'] ?? '',
 	'campaignId'           => $settings['campaignId'] ?? 0,
+	'fundraiserId'         => $fundraiser_id,
+	'teamId'               => $team_id,
 	'stripeAccountId'      => $attributes['stripeAccountId'] ?? '',
 	'sourcePostId'         => get_the_ID() ?: 0,
 	'isSubmitting'         => false,

@@ -19,6 +19,14 @@
 			"type": "number",
 			"default": 0
 		},
+		"fundraiserId": {
+			"type": "number",
+			"default": 0
+		},
+		"teamId": {
+			"type": "number",
+			"default": 0
+		},
 		"amountsByFrequency": {
 			"type": "object"
 		},

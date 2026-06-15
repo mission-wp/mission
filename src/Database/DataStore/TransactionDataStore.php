@@ -65,6 +65,7 @@ class TransactionDataStore implements DataStoreInterface {
 		// Update donor/campaign aggregates if created with a completed status.
 		if ( Transaction::STATUS_COMPLETED === $model->status ) {
 			$this->increment_aggregates( $model );
+			$this->recompute_fundraiser_aggregates( $model->fundraiser_id );
 		}
 
 		return $model->id;
@@ -251,6 +252,12 @@ class TransactionDataStore implements DataStoreInterface {
 			$this->handle_status_transition( $model, $old->status, $model->status );
 		}
 
+		// Rebuild the fundraiser's stored totals once the row reflects its final
+		// state (a refund or status change can move what counts toward "raised").
+		if ( $model->amount_refunded > $old->amount_refunded || $old->status !== $model->status ) {
+			$this->recompute_fundraiser_aggregates( $model->fundraiser_id );
+		}
+
 		return true;
 	}
 
@@ -326,7 +333,27 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
+		// Recompute after the row is gone so the deleted transaction is excluded.
+		if ( $transaction && Transaction::STATUS_COMPLETED === $transaction->status ) {
+			$this->recompute_fundraiser_aggregates( $transaction->fundraiser_id );
+		}
+
 		return false !== $result;
+	}
+
+	/**
+	 * Rebuild a fundraiser's stored aggregates from attributed transactions.
+	 *
+	 * Teams carry no stored aggregates (their totals are summed live), so only
+	 * fundraisers need this. No-op when the transaction has no fundraiser.
+	 *
+	 * @param int|null $fundraiser_id The attributed fundraiser ID, if any.
+	 * @return void
+	 */
+	private function recompute_fundraiser_aggregates( ?int $fundraiser_id ): void {
+		if ( $fundraiser_id ) {
+			( new FundraiserDataStore() )->recompute_aggregates( $fundraiser_id );
+		}
 	}
 
 	/**

@@ -9,10 +9,10 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
-use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
+use MissionDP\Rest\DonationAttribution;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\MinimumAmountTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
@@ -105,6 +105,18 @@ class CreatePaymentIntentEndpoint {
 						'sanitize_callback' => 'sanitize_text_field',
 					],
 					'campaign_id'          => [
+						'required'          => false,
+						'type'              => 'integer',
+						'default'           => 0,
+						'sanitize_callback' => 'absint',
+					],
+					'fundraiser_id'        => [
+						'required'          => false,
+						'type'              => 'integer',
+						'default'           => 0,
+						'sanitize_callback' => 'absint',
+					],
+					'team_id'              => [
 						'required'          => false,
 						'type'              => 'integer',
 						'default'           => 0,
@@ -398,10 +410,13 @@ class CreatePaymentIntentEndpoint {
 		// Extract the PaymentIntent ID from the client secret.
 		$payment_intent_id = explode( '_secret_', $body['client_secret'] )[0];
 
-		// Resolve campaign from the provided campaign table ID.
-		$campaign_id = $request->get_param( 'campaign_id' );
-		$campaign    = $campaign_id ? Campaign::find( $campaign_id ) : null;
-		$campaign_id = $campaign?->id;
+		// Resolve campaign/fundraiser/team attribution (campaign is derived from
+		// the fundraiser/team when one is given).
+		$attribution = DonationAttribution::resolve(
+			(int) $request->get_param( 'campaign_id' ),
+			(int) $request->get_param( 'fundraiser_id' ),
+			(int) $request->get_param( 'team_id' )
+		);
 
 		// Use the original request amounts for the transaction record (before fee absorption math).
 		$req_donation_amount = $request->get_param( 'donation_amount' );
@@ -415,7 +430,9 @@ class CreatePaymentIntentEndpoint {
 				'type'                   => $request->get_param( 'frequency' ),
 				'donor_id'               => $donor->id,
 				'source_post_id'         => $request->get_param( 'source_post_id' ),
-				'campaign_id'            => $campaign_id,
+				'campaign_id'            => $attribution['campaign_id'],
+				'fundraiser_id'          => $attribution['fundraiser_id'],
+				'team_id'                => $attribution['team_id'],
 				'amount'                 => $req_donation_amount - $req_fee_amount,
 				'fee_amount'             => $req_fee_amount,
 				'tip_amount'             => $req_tip_amount,
