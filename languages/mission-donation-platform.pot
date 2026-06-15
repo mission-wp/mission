@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-15T20:19:46+00:00\n"
+"POT-Creation-Date: 2026-06-15T20:47:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -449,8 +449,10 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:418
 #: blocks/build/donor-dashboard/parts/profile.php:56
+#: blocks/build/signup-modal/index.php:103
 #: blocks/src/donation-form/index.php:418
 #: blocks/src/donor-dashboard/parts/profile.php:56
+#: blocks/src/signup-modal/index.php:103
 #: src/Export/ExportService.php:102
 #: src/Export/ExportService.php:522
 #: admin/build/mission-admin.js:191
@@ -626,8 +628,10 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:565
 #: blocks/build/donation-form/index.php:717
+#: blocks/build/signup-modal/index.php:106
 #: blocks/src/donation-form/index.php:565
 #: blocks/src/donation-form/index.php:717
+#: blocks/src/signup-modal/index.php:106
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:591
@@ -641,8 +645,10 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:580
 #: blocks/build/donation-form/index.php:732
+#: blocks/build/signup-modal/index.php:155
 #: blocks/src/donation-form/index.php:580
 #: blocks/src/donation-form/index.php:732
+#: blocks/src/signup-modal/index.php:155
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:238
@@ -952,8 +958,10 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
+#: blocks/build/signup-modal/index.php:104
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
+#: blocks/src/signup-modal/index.php:104
 msgid "Password"
 msgstr ""
 
@@ -1997,7 +2005,9 @@ msgid "Donors"
 msgstr ""
 
 #: blocks/build/fundraiser-progress/index.php:99
+#: blocks/build/signup-modal/index.php:164
 #: blocks/src/fundraiser-progress/index.php:99
+#: blocks/src/signup-modal/index.php:164
 msgid "Share"
 msgstr ""
 
@@ -2046,6 +2056,111 @@ msgstr ""
 #: blocks/build/recent-donors/index.php:93
 #: blocks/src/recent-donors/index.php:93
 msgid "Your name could be the first one on this list."
+msgstr ""
+
+#. translators: %s: team name
+#: blocks/build/signup-modal/index.php:63
+#: blocks/src/signup-modal/index.php:63
+msgid "Join %s"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:82
+#: blocks/src/signup-modal/index.php:82
+#: admin/build/mission-admin.js:191
+#: admin/src/components/Drawer.js:26
+#: admin/src/components/OnboardingModal.js:486
+#: admin/src/pages/settings/EmailEditor.js:120
+msgid "Close"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:96
+#: blocks/src/signup-modal/index.php:96
+msgid "Create your account"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:97
+#: blocks/src/signup-modal/index.php:97
+msgid "Let's set up your fundraising page. First, the basics."
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:100
+#: blocks/src/signup-modal/index.php:100
+msgid "First name"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:101
+#: blocks/src/signup-modal/index.php:101
+msgid "Last name"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:111
+#: blocks/src/signup-modal/index.php:111
+msgid "Set up your fundraiser"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:116
+#: blocks/src/signup-modal/index.php:116
+msgid "Joining as a team member"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:120
+#: blocks/src/signup-modal/index.php:120
+msgid "Join a team"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:122
+#: blocks/src/signup-modal/index.php:122
+msgid "Create a team"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:127
+#: blocks/src/signup-modal/index.php:127
+msgid "Select a team"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:129
+#: blocks/src/signup-modal/index.php:129
+msgid "No team — fundraise on your own"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:138
+#: blocks/src/signup-modal/index.php:138
+msgid "Team name"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:143
+#: blocks/src/signup-modal/index.php:143
+msgid "Your fundraising goal"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:144
+#: blocks/src/signup-modal/index.php:144
+msgid "Tell your story"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:148
+#: blocks/src/signup-modal/index.php:148
+msgid "Dedicate this fundraiser in honor or memory of someone"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:151
+#: blocks/src/signup-modal/index.php:151
+msgid "Their name"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:154
+#: blocks/src/signup-modal/index.php:154
+msgid "Create fundraiser"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:161
+#: blocks/src/signup-modal/index.php:161
+msgid "You're a fundraiser!"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:162
+#: blocks/src/signup-modal/index.php:162
+msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr ""
 
 #: blocks/build/team-members/index.php:51
@@ -5974,13 +6089,6 @@ msgstr ""
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:479
 msgid "Setup"
-msgstr ""
-
-#: admin/build/mission-admin.js:191
-#: admin/src/components/Drawer.js:26
-#: admin/src/components/OnboardingModal.js:486
-#: admin/src/pages/settings/EmailEditor.js:120
-msgid "Close"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
@@ -10862,6 +10970,11 @@ msgstr ""
 msgid "Show dedications"
 msgstr ""
 
+#: blocks/build/signup-modal/index.js:1
+#: blocks/src/signup-modal/index.js:18
+msgid "The fundraiser sign-up modal opens here when a visitor chooses to become a fundraiser."
+msgstr ""
+
 #: blocks/build/team-members/index.js:1
 #: blocks/src/team-members/index.js:18
 msgid "The team's members appear here on the live page."
@@ -11065,6 +11178,18 @@ msgstr ""
 #: blocks/src/recent-donors/block.json
 msgctxt "block description"
 msgid "Display a list of recent donors for a campaign."
+msgstr ""
+
+#: blocks/build/signup-modal/block.json
+#: blocks/src/signup-modal/block.json
+msgctxt "block title"
+msgid "Fundraiser Sign-up Modal"
+msgstr ""
+
+#: blocks/build/signup-modal/block.json
+#: blocks/src/signup-modal/block.json
+msgctxt "block description"
+msgid "The multi-step modal for becoming a fundraiser or joining a team."
 msgstr ""
 
 #: blocks/build/team-members/block.json

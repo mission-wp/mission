@@ -12,8 +12,10 @@ store( 'mission-donation-platform/campaign-progress', {
         form.scrollIntoView( { behavior: 'smooth', block: 'start' } );
       }
     },
-    // The peer-to-peer sign-up modal wires this action in a later step.
-    openSignup() {},
+    // Open the shared peer-to-peer sign-up modal (registered by the signup-modal block).
+    openSignup() {
+      store( 'mission-donation-platform/p2p-signup' )?.actions?.open?.();
+    },
   },
   callbacks: {
     animateBar() {

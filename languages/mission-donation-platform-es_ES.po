@@ -399,8 +399,10 @@ msgstr "Indica el nombre del homenajeado."
 
 #: blocks/build/donation-form/index.php:418
 #: blocks/build/donor-dashboard/parts/profile.php:56
+#: blocks/build/signup-modal/index.php:103
 #: blocks/src/donation-form/index.php:418
 #: blocks/src/donor-dashboard/parts/profile.php:56
+#: blocks/src/signup-modal/index.php:103
 #: src/Export/ExportService.php:102
 #: src/Export/ExportService.php:522
 #: admin/build/mission-admin.js:191
@@ -576,8 +578,10 @@ msgstr "Deja un mensaje (opcional)"
 
 #: blocks/build/donation-form/index.php:565
 #: blocks/build/donation-form/index.php:717
+#: blocks/build/signup-modal/index.php:106
 #: blocks/src/donation-form/index.php:565
 #: blocks/src/donation-form/index.php:717
+#: blocks/src/signup-modal/index.php:106
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:591
@@ -591,8 +595,10 @@ msgstr "Continuar"
 
 #: blocks/build/donation-form/index.php:580
 #: blocks/build/donation-form/index.php:732
+#: blocks/build/signup-modal/index.php:155
 #: blocks/src/donation-form/index.php:580
 #: blocks/src/donation-form/index.php:732
+#: blocks/src/signup-modal/index.php:155
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:238
@@ -903,8 +909,10 @@ msgstr "Dirección de correo electrónico"
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
+#: blocks/build/signup-modal/index.php:104
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
+#: blocks/src/signup-modal/index.php:104
 msgid "Password"
 msgstr "Contraseña"
 
@@ -4990,6 +4998,8 @@ msgstr "Stripe se conectó, pero tu cuenta aún no está lista para aceptar pago
 msgid "Setup"
 msgstr "Configuración"
 
+#: blocks/build/signup-modal/index.php:82
+#: blocks/src/signup-modal/index.php:82
 #: admin/build/mission-admin.js:191
 #: admin/src/components/Drawer.js:26
 #: admin/src/components/OnboardingModal.js:486
@@ -11087,7 +11097,9 @@ msgid "My Story"
 msgstr "Mi historia"
 
 #: blocks/build/fundraiser-progress/index.php:99
+#: blocks/build/signup-modal/index.php:164
 #: blocks/src/fundraiser-progress/index.php:99
+#: blocks/src/signup-modal/index.php:164
 msgid "Share"
 msgstr "Compartir"
 
@@ -11273,3 +11285,116 @@ msgstr "Progreso del equipo"
 msgctxt "block description"
 msgid "Display a team's progress with a thermometer, stats, and donate/join buttons."
 msgstr "Muestra el progreso de un equipo con un termómetro, estadísticas y botones de donar/unirse."
+
+#. translators: %s: team name
+#: blocks/build/signup-modal/index.php:63
+#: blocks/src/signup-modal/index.php:63
+msgid "Join %s"
+msgstr "Únete a %s"
+
+#: blocks/build/signup-modal/index.php:96
+#: blocks/src/signup-modal/index.php:96
+msgid "Create your account"
+msgstr "Crea tu cuenta"
+
+#: blocks/build/signup-modal/index.php:97
+#: blocks/src/signup-modal/index.php:97
+msgid "Let's set up your fundraising page. First, the basics."
+msgstr "Vamos a crear tu página de recaudación. Primero, lo básico."
+
+#: blocks/build/signup-modal/index.php:100
+#: blocks/src/signup-modal/index.php:100
+msgid "First name"
+msgstr "Nombre"
+
+#: blocks/build/signup-modal/index.php:101
+#: blocks/src/signup-modal/index.php:101
+msgid "Last name"
+msgstr "Apellidos"
+
+#: blocks/build/signup-modal/index.php:111
+#: blocks/src/signup-modal/index.php:111
+msgid "Set up your fundraiser"
+msgstr "Configura tu recaudación"
+
+#: blocks/build/signup-modal/index.php:116
+#: blocks/src/signup-modal/index.php:116
+msgid "Joining as a team member"
+msgstr "Te unes como miembro del equipo"
+
+#: blocks/build/signup-modal/index.php:120
+#: blocks/src/signup-modal/index.php:120
+msgid "Join a team"
+msgstr "Unirse a un equipo"
+
+#: blocks/build/signup-modal/index.php:122
+#: blocks/src/signup-modal/index.php:122
+msgid "Create a team"
+msgstr "Crear un equipo"
+
+#: blocks/build/signup-modal/index.php:127
+#: blocks/src/signup-modal/index.php:127
+msgid "Select a team"
+msgstr "Selecciona un equipo"
+
+#: blocks/build/signup-modal/index.php:129
+#: blocks/src/signup-modal/index.php:129
+msgid "No team — fundraise on your own"
+msgstr "Sin equipo — recauda por tu cuenta"
+
+#: blocks/build/signup-modal/index.php:138
+#: blocks/src/signup-modal/index.php:138
+msgid "Team name"
+msgstr "Nombre del equipo"
+
+#: blocks/build/signup-modal/index.php:143
+#: blocks/src/signup-modal/index.php:143
+msgid "Your fundraising goal"
+msgstr "Tu meta de recaudación"
+
+#: blocks/build/signup-modal/index.php:144
+#: blocks/src/signup-modal/index.php:144
+msgid "Tell your story"
+msgstr "Cuenta tu historia"
+
+#: blocks/build/signup-modal/index.php:148
+#: blocks/src/signup-modal/index.php:148
+msgid "Dedicate this fundraiser in honor or memory of someone"
+msgstr "Dedica esta recaudación en honor o memoria de alguien"
+
+#: blocks/build/signup-modal/index.php:151
+#: blocks/src/signup-modal/index.php:151
+msgid "Their name"
+msgstr "Su nombre"
+
+#: blocks/build/signup-modal/index.php:154
+#: blocks/src/signup-modal/index.php:154
+msgid "Create fundraiser"
+msgstr "Crear recaudación"
+
+#: blocks/build/signup-modal/index.php:161
+#: blocks/src/signup-modal/index.php:161
+msgid "You're a fundraiser!"
+msgstr "¡Ya eres recaudador!"
+
+#: blocks/build/signup-modal/index.php:162
+#: blocks/src/signup-modal/index.php:162
+msgid "Your page is live. Share it with friends and family to start raising funds."
+msgstr ""
+
+#: blocks/build/signup-modal/index.js:1
+#: blocks/src/signup-modal/index.js:18
+msgid "The fundraiser sign-up modal opens here when a visitor chooses to become a fundraiser."
+msgstr "La ventana de registro de recaudador se abre aquí cuando un visitante decide convertirse en recaudador."
+
+#: blocks/build/signup-modal/block.json
+#: blocks/src/signup-modal/block.json
+msgctxt "block title"
+msgid "Fundraiser Sign-up Modal"
+msgstr "Ventana de registro de recaudador"
+
+#: blocks/build/signup-modal/block.json
+#: blocks/src/signup-modal/block.json
+msgctxt "block description"
+msgid "The multi-step modal for becoming a fundraiser or joining a team."
+msgstr "La ventana de varios pasos para convertirse en recaudador o unirse a un equipo."

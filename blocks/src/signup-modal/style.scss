@@ -1,0 +1,321 @@
+// Fundraiser sign-up modal — frontend styles.
+
+.mission-su {
+  --mission-text: #1a1a1a;
+  --mission-text-secondary: #666;
+  --mission-border: #ddd;
+  --mission-bg: #fff;
+  --mission-bg-light: #f7f7f7;
+  --mission-radius: 10px;
+}
+
+// In the editor the block is just a hint, not a fixed overlay.
+.mission-su-editor {
+  padding: 16px;
+  border: 1px dashed var(--mission-border, #ddd);
+  border-radius: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.mission-su__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  background: rgba(20, 30, 25, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s 0.25s;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease;
+  }
+}
+
+.mission-su__dialog {
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  background: var(--mission-bg);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.25s ease;
+
+  .is-open & {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mission-su__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px 0;
+}
+
+.mission-su__brand {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mission-primary);
+}
+
+.mission-su__close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--mission-text-secondary);
+  cursor: pointer;
+}
+
+.mission-su__progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 6px;
+}
+
+.mission-su__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mission-border);
+
+  &.is-active {
+    background: var(--mission-primary);
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.mission-su__line {
+  width: 28px;
+  height: 1.5px;
+  background: var(--mission-border);
+}
+
+.mission-su__body {
+  padding: 12px 28px 28px;
+}
+
+.mission-su__step {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+.mission-su__title {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.01em;
+  color: var(--mission-text);
+  margin: 0 0 4px;
+}
+
+.mission-su__subtitle {
+  font-size: 14px;
+  text-align: center;
+  color: var(--mission-text-secondary);
+  margin: 0 0 22px;
+}
+
+.mission-su__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mission-su__field {
+  display: block;
+  margin-bottom: 16px;
+
+  span {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--mission-text);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--mission-text);
+    background: var(--mission-bg);
+    border: 1.5px solid var(--mission-border);
+    border-radius: var(--mission-radius);
+
+    &:focus {
+      outline: none;
+      border-color: var(--mission-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+    }
+  }
+
+  // stylelint-disable-next-line no-descending-specificity
+  textarea {
+    resize: vertical;
+    min-height: 88px;
+  }
+}
+
+.mission-su__toggle {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  margin-bottom: 18px;
+  background: var(--mission-bg-light);
+  border-radius: 9999px;
+}
+
+.mission-su__toggle-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--mission-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+
+  &.is-active {
+    color: var(--mission-text);
+    font-weight: 600;
+    background: var(--mission-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.mission-su__panel {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+.mission-su__locked {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mission-primary) 18%, transparent);
+  border-radius: var(--mission-radius);
+
+  strong {
+    font-size: 14px;
+    color: var(--mission-text);
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--mission-text-secondary);
+  }
+}
+
+.mission-su__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--mission-text);
+  cursor: pointer;
+  margin-bottom: 16px;
+
+  // stylelint-disable-next-line no-descending-specificity
+  input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--mission-primary);
+    flex-shrink: 0;
+  }
+}
+
+.mission-su__btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-primary-text, #fff);
+  background: var(--mission-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 200ms ease;
+
+  &:hover {
+    background: var(--mission-primary-hover);
+  }
+}
+
+.mission-su__btn--ghost {
+  margin-top: 10px;
+  color: var(--mission-primary);
+  background: transparent;
+  border: 1.5px solid var(--mission-border);
+
+  &:hover {
+    background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+    border-color: var(--mission-primary);
+  }
+}
+
+.mission-su__success {
+  text-align: center;
+  padding: 12px 0;
+}
+
+.mission-su__share {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.mission-su__share-btn {
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-primary-text, #fff);
+  background: var(--mission-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mission-primary-hover);
+  }
+}
+
+@media (max-width: 600px) {
+
+  .mission-su__row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

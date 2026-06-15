@@ -18,3 +18,5 @@ defined( 'ABSPATH' ) || exit;
 <!-- wp:mission-donation-platform/team-members /-->
 
 <!-- wp:mission-donation-platform/donation-form /-->
+
+<!-- wp:mission-donation-platform/signup-modal /-->

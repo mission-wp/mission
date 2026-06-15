@@ -12,8 +12,10 @@ store( 'mission-donation-platform/team-progress', {
         form.scrollIntoView( { behavior: 'smooth', block: 'start' } );
       }
     },
-    // Stub: the team sign-up modal wires this action in a later step.
-    openSignup() {},
+    // Open the shared peer-to-peer sign-up modal (registered by the signup-modal block).
+    openSignup() {
+      store( 'mission-donation-platform/p2p-signup' )?.actions?.open?.();
+    },
   },
   callbacks: {
     animateBar() {

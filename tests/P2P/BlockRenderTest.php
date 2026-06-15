@@ -117,4 +117,39 @@ class BlockRenderTest extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( 'mission-tm', $html );
 	}
+
+	/**
+	 * Test the sign-up modal renders for an open p2p campaign.
+	 */
+	public function test_signup_modal_renders_when_registration_open(): void {
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/signup-modal' ) ) {
+			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
+		}
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$campaign->update_meta( 'registration_open', true );
+
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/signup-modal {"campaignId":%d} /-->', $campaign->id ) );
+
+		$this->assertStringContainsString( 'mission-su__overlay', $html );
+		$this->assertStringContainsString( 'mission-su__step', $html );
+	}
+
+	/**
+	 * Test the sign-up modal renders nothing when registration is closed.
+	 */
+	public function test_signup_modal_hidden_when_registration_closed(): void {
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/signup-modal' ) ) {
+			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
+		}
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$campaign->update_meta( 'registration_open', false );
+
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/signup-modal {"campaignId":%d} /-->', $campaign->id ) );
+
+		$this->assertStringNotContainsString( 'mission-su__overlay', $html );
+	}
 }

@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/signup-modal",
+	"version": "0.1.0",
+	"title": "Fundraiser Sign-up Modal",
+	"category": "mission-donation-platform",
+	"icon": "id-alt",
+	"description": "The multi-step modal for becoming a fundraiser or joining a team.",
+	"supports": {
+		"html": false,
+		"interactivity": true,
+		"inserter": false
+	},
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./index.php"
+}
