@@ -64,6 +64,13 @@ class Plugin {
 	private ?Campaigns\CampaignPostType $campaign_post_type = null;
 
 	/**
+	 * Peer-to-peer module instance.
+	 *
+	 * @var P2P\P2PModule|null
+	 */
+	private ?P2P\P2PModule $p2p_module = null;
+
+	/**
 	 * Campaign lifecycle module instance.
 	 *
 	 * @var Campaigns\CampaignLifecycleModule|null
@@ -131,6 +138,10 @@ class Plugin {
 		// Initialize campaign post type (must be before blocks module).
 		$this->campaign_post_type = new Campaigns\CampaignPostType();
 		$this->campaign_post_type->init();
+
+		// Initialize peer-to-peer module (fundraiser/team shell post types).
+		$this->p2p_module = new P2P\P2PModule();
+		$this->p2p_module->init();
 
 		// Initialize milestone tracker for campaigns.
 		$milestone_tracker = new Campaigns\MilestoneTracker();

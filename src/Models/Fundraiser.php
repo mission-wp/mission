@@ -22,6 +22,15 @@ defined( 'ABSPATH' ) || exit;
 class Fundraiser extends Model {
 
 	use HasMeta;
+	use HasShellPost;
+
+	/**
+	 * Post type slug for fundraiser shell posts.
+	 *
+	 * Registered by FundraiserPostType; defined here so the model owns the
+	 * single source of truth the post type and trait both reference.
+	 */
+	public const POST_TYPE = 'missiondp_fundraiser';
 
 	public const STATUS_ACTIVE   = 'active';
 	public const STATUS_PENDING  = 'pending';
@@ -91,6 +100,38 @@ class Fundraiser extends Model {
 	 */
 	protected static function new_store(): DataStoreInterface {
 		return new FundraiserDataStore();
+	}
+
+	/**
+	 * Find a fundraiser by its linked shell post ID.
+	 *
+	 * @param int $post_id The WP post ID.
+	 * @return self|null
+	 */
+	public static function find_by_post_id( int $post_id ): ?self {
+		/** @var FundraiserDataStore $store */
+		$store = static::store();
+		return $store->find_by_post_id( $post_id );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function shell_post_type(): string {
+		return self::POST_TYPE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Titles the shell post with the participant's name so the page URL and SEO
+	 * title read as the person, not the record.
+	 */
+	protected function shell_post_title(): string {
+		$donor = $this->donor();
+		$name  = $donor ? trim( $donor->first_name . ' ' . $donor->last_name ) : '';
+
+		return '' !== $name ? $name : __( 'Fundraiser', 'mission-donation-platform' );
 	}
 
 	/**

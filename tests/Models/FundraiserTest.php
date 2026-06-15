@@ -397,4 +397,120 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertTrue( $captain->is_captain() );
 		$this->assertFalse( $member->is_captain() );
 	}
+
+	// -------------------------------------------------------------------------
+	// Shell post (HasShellPost) tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test save() creates a shell post and maps a pending fundraiser to a pending post.
+	 */
+	public function test_save_creates_shell_post(): void {
+		$fundraiser = $this->create_fundraiser( [ 'status' => 'pending' ] );
+
+		$this->assertGreaterThan( 0, $fundraiser->post_id );
+
+		$post = get_post( $fundraiser->post_id );
+		$this->assertSame( 'missiondp_fundraiser', $post->post_type );
+		$this->assertSame( 'pending', $post->post_status );
+	}
+
+	/**
+	 * Test the shell post title comes from the participant's donor name.
+	 */
+	public function test_shell_post_title_uses_donor_name(): void {
+		$donor = new Donor( [ 'email' => 'jane@example.com', 'first_name' => 'Jane', 'last_name' => 'Doe' ] );
+		$donor->save();
+
+		$fundraiser = $this->create_fundraiser( [ 'donor_id' => $donor->id ] );
+
+		$this->assertSame( 'Jane Doe', get_post( $fundraiser->post_id )->post_title );
+	}
+
+	/**
+	 * Test approving publishes the shell post and deactivating drafts it.
+	 */
+	public function test_status_changes_sync_post_status(): void {
+		$fundraiser = $this->create_fundraiser( [ 'status' => 'pending' ] );
+		$post_id    = $fundraiser->post_id;
+
+		$fundraiser->approve();
+		$this->assertSame( 'publish', get_post_status( $post_id ) );
+
+		$fundraiser->deactivate();
+		$this->assertSame( 'draft', get_post_status( $post_id ) );
+	}
+
+	/**
+	 * Test find_by_post_id() resolves the fundraiser from its shell post.
+	 */
+	public function test_find_by_post_id(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$found = Fundraiser::find_by_post_id( $fundraiser->post_id );
+		$this->assertNotNull( $found );
+		$this->assertSame( $fundraiser->id, $found->id );
+
+		$this->assertNull( Fundraiser::find_by_post_id( 0 ) );
+	}
+
+	/**
+	 * Test the slug proxy reads post_name from the shell post.
+	 */
+	public function test_slug_proxy_reads_post_name(): void {
+		$donor = new Donor( [ 'email' => 'jane@example.com', 'first_name' => 'Jane', 'last_name' => 'Doe' ] );
+		$donor->save();
+
+		// An active fundraiser publishes its shell post, so WP generates the slug from the title.
+		$fundraiser = $this->create_fundraiser( [ 'donor_id' => $donor->id, 'status' => 'active' ] );
+
+		$this->assertSame( 'jane-doe', Fundraiser::find( $fundraiser->id )->slug );
+	}
+
+	/**
+	 * Test trash() trashes the post and removes the row.
+	 */
+	public function test_trash_trashes_post_and_deletes_row(): void {
+		$fundraiser = $this->create_fundraiser();
+		$post_id    = $fundraiser->post_id;
+		$id         = $fundraiser->id;
+
+		$this->assertTrue( $fundraiser->trash() );
+		$this->assertSame( 'trash', get_post_status( $post_id ) );
+		$this->assertNull( Fundraiser::find( $id ) );
+	}
+
+	/**
+	 * Test delete() permanently removes the shell post and the row.
+	 */
+	public function test_delete_removes_shell_post(): void {
+		$fundraiser = $this->create_fundraiser();
+		$post_id    = $fundraiser->post_id;
+		$id         = $fundraiser->id;
+
+		$this->assertTrue( $fundraiser->delete() );
+		$this->assertNull( get_post( $post_id ) );
+		$this->assertNull( Fundraiser::find( $id ) );
+	}
+
+	/**
+	 * Test a failed duplicate insert does not orphan a shell post.
+	 */
+	public function test_duplicate_save_does_not_orphan_post(): void {
+		global $wpdb;
+
+		$this->create_fundraiser( [ 'campaign_id' => 5, 'donor_id' => 9 ] );
+
+		$suppress = $wpdb->suppress_errors( true );
+		$dup      = new Fundraiser( [ 'campaign_id' => 5, 'donor_id' => 9 ] );
+		$dup->save();
+		$wpdb->suppress_errors( $suppress );
+
+		$this->assertSame( 0, $dup->post_id );
+
+		// Only the first fundraiser's shell post should exist; the duplicate's was cleaned up.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = %s", 'missiondp_fundraiser' ) );
+		$this->assertSame( 1, $count );
+	}
 }

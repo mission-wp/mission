@@ -261,4 +261,85 @@ class TeamTest extends WP_UnitTestCase {
 		$team->update_meta( 'rally_cry', 'Go team' );
 		$this->assertSame( 'Go team', $team->get_meta( 'rally_cry' ) );
 	}
+
+	// -------------------------------------------------------------------------
+	// Shell post (HasShellPost) tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test save() creates a shell post titled with the team name, status mapped.
+	 */
+	public function test_save_creates_shell_post(): void {
+		$team = $this->create_team( [ 'name' => 'Trail Blazers', 'status' => 'pending' ] );
+
+		$this->assertGreaterThan( 0, $team->post_id );
+
+		$post = get_post( $team->post_id );
+		$this->assertSame( 'missiondp_team', $post->post_type );
+		$this->assertSame( 'Trail Blazers', $post->post_title );
+		$this->assertSame( 'pending', $post->post_status );
+	}
+
+	/**
+	 * Test approving publishes the shell post and deactivating drafts it.
+	 */
+	public function test_status_changes_sync_post_status(): void {
+		$team    = $this->create_team( [ 'status' => 'pending' ] );
+		$post_id = $team->post_id;
+
+		$team->approve();
+		$this->assertSame( 'publish', get_post_status( $post_id ) );
+
+		$team->deactivate();
+		$this->assertSame( 'draft', get_post_status( $post_id ) );
+	}
+
+	/**
+	 * Test find_by_post_id() resolves the team from its shell post.
+	 */
+	public function test_find_by_post_id(): void {
+		$team = $this->create_team();
+
+		$found = Team::find_by_post_id( $team->post_id );
+		$this->assertNotNull( $found );
+		$this->assertSame( $team->id, $found->id );
+
+		$this->assertNull( Team::find_by_post_id( 0 ) );
+	}
+
+	/**
+	 * Test the slug proxy reads post_name from the shell post.
+	 */
+	public function test_slug_proxy_reads_post_name(): void {
+		// An active team publishes its shell post, so WP generates the slug from the name.
+		$team = $this->create_team( [ 'name' => 'Trail Blazers', 'status' => 'active' ] );
+
+		$this->assertSame( 'trail-blazers', Team::find( $team->id )->slug );
+	}
+
+	/**
+	 * Test trash() trashes the post and removes the row.
+	 */
+	public function test_trash_trashes_post_and_deletes_row(): void {
+		$team    = $this->create_team();
+		$post_id = $team->post_id;
+		$id      = $team->id;
+
+		$this->assertTrue( $team->trash() );
+		$this->assertSame( 'trash', get_post_status( $post_id ) );
+		$this->assertNull( Team::find( $id ) );
+	}
+
+	/**
+	 * Test delete() permanently removes the shell post and the row.
+	 */
+	public function test_delete_removes_shell_post(): void {
+		$team    = $this->create_team();
+		$post_id = $team->post_id;
+		$id      = $team->id;
+
+		$this->assertTrue( $team->delete() );
+		$this->assertNull( get_post( $post_id ) );
+		$this->assertNull( Team::find( $id ) );
+	}
 }

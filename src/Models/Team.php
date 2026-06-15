@@ -21,6 +21,15 @@ defined( 'ABSPATH' ) || exit;
 class Team extends Model {
 
 	use HasMeta;
+	use HasShellPost;
+
+	/**
+	 * Post type slug for team shell posts.
+	 *
+	 * Registered by TeamPostType; defined here so the model owns the single
+	 * source of truth the post type and trait both reference.
+	 */
+	public const POST_TYPE = 'missiondp_team';
 
 	public const STATUS_ACTIVE   = 'active';
 	public const STATUS_PENDING  = 'pending';
@@ -87,6 +96,32 @@ class Team extends Model {
 	 */
 	protected static function new_store(): DataStoreInterface {
 		return new TeamDataStore();
+	}
+
+	/**
+	 * Find a team by its linked shell post ID.
+	 *
+	 * @param int $post_id The WP post ID.
+	 * @return self|null
+	 */
+	public static function find_by_post_id( int $post_id ): ?self {
+		/** @var TeamDataStore $store */
+		$store = static::store();
+		return $store->find_by_post_id( $post_id );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function shell_post_type(): string {
+		return self::POST_TYPE;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function shell_post_title(): string {
+		return '' !== $this->name ? $this->name : __( 'Team', 'mission-donation-platform' );
 	}
 
 	/**
