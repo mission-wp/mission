@@ -333,7 +333,7 @@ class TransactionDataStore implements DataStoreInterface {
 	 * Query transactions.
 	 *
 	 * Supported filters: status, type, type__not, donor_id, campaign_id,
-	 * fundraiser_id, subscription_id, gateway_transaction_id, is_test,
+	 * fundraiser_id, team_id, subscription_id, gateway_transaction_id, is_test,
 	 * date_after, date_before.
 	 * Pagination/order: orderby, order, per_page, page.
 	 *
@@ -361,6 +361,9 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$fundraiser_id  = (int) ( $args['fundraiser_id'] ?? 0 );
 		$has_fundraiser = $fundraiser_id > 0 ? 1 : 0;
+
+		$team_id  = (int) ( $args['team_id'] ?? 0 );
+		$has_team = $team_id > 0 ? 1 : 0;
 
 		$subscription_id  = (int) ( $args['subscription_id'] ?? 0 );
 		$has_subscription = $subscription_id > 0 ? 1 : 0;
@@ -395,6 +398,7 @@ class TransactionDataStore implements DataStoreInterface {
 					   AND ( %d = 0 OR donor_id = %d )
 					   AND ( %d = 0 OR campaign_id = %d )
 					   AND ( %d = 0 OR fundraiser_id = %d )
+					   AND ( %d = 0 OR team_id = %d )
 					   AND ( %d = 0 OR subscription_id = %d )
 					   AND ( %d = 0 OR gateway_transaction_id = %s )
 					   AND ( %d = 0 OR is_test = %d )
@@ -415,6 +419,8 @@ class TransactionDataStore implements DataStoreInterface {
 					$campaign_id,
 					$has_fundraiser,
 					$fundraiser_id,
+					$has_team,
+					$team_id,
 					$has_subscription,
 					$subscription_id,
 					$has_gateway_txn_id,
@@ -441,6 +447,7 @@ class TransactionDataStore implements DataStoreInterface {
 					   AND ( %d = 0 OR donor_id = %d )
 					   AND ( %d = 0 OR campaign_id = %d )
 					   AND ( %d = 0 OR fundraiser_id = %d )
+					   AND ( %d = 0 OR team_id = %d )
 					   AND ( %d = 0 OR subscription_id = %d )
 					   AND ( %d = 0 OR gateway_transaction_id = %s )
 					   AND ( %d = 0 OR is_test = %d )
@@ -461,6 +468,8 @@ class TransactionDataStore implements DataStoreInterface {
 					$campaign_id,
 					$has_fundraiser,
 					$fundraiser_id,
+					$has_team,
+					$team_id,
 					$has_subscription,
 					$subscription_id,
 					$has_gateway_txn_id,
@@ -512,6 +521,9 @@ class TransactionDataStore implements DataStoreInterface {
 		$fundraiser_id  = (int) ( $args['fundraiser_id'] ?? 0 );
 		$has_fundraiser = $fundraiser_id > 0 ? 1 : 0;
 
+		$team_id  = (int) ( $args['team_id'] ?? 0 );
+		$has_team = $team_id > 0 ? 1 : 0;
+
 		$subscription_id  = (int) ( $args['subscription_id'] ?? 0 );
 		$has_subscription = $subscription_id > 0 ? 1 : 0;
 
@@ -536,6 +548,7 @@ class TransactionDataStore implements DataStoreInterface {
 				   AND ( %d = 0 OR donor_id = %d )
 				   AND ( %d = 0 OR campaign_id = %d )
 				   AND ( %d = 0 OR fundraiser_id = %d )
+				   AND ( %d = 0 OR team_id = %d )
 				   AND ( %d = 0 OR subscription_id = %d )
 				   AND ( %d = 0 OR gateway_transaction_id = %s )
 				   AND ( %d = 0 OR is_test = %d )
@@ -554,6 +567,8 @@ class TransactionDataStore implements DataStoreInterface {
 				$campaign_id,
 				$has_fundraiser,
 				$fundraiser_id,
+				$has_team,
+				$team_id,
 				$has_subscription,
 				$subscription_id,
 				$has_gateway_txn_id,
@@ -1028,6 +1043,7 @@ class TransactionDataStore implements DataStoreInterface {
 			'source_post_id'          => $model->source_post_id,
 			'campaign_id'             => $model->campaign_id,
 			'fundraiser_id'           => $model->fundraiser_id,
+			'team_id'                 => $model->team_id,
 			'amount'                  => $model->amount,
 			'fee_amount'              => $model->fee_amount,
 			'tip_amount'              => $model->tip_amount,

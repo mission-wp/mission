@@ -19,7 +19,7 @@ class DatabaseModule {
 	 *
 	 * @var string
 	 */
-	public const DB_VERSION = '1.4.0';
+	public const DB_VERSION = '1.4.1';
 
 	/**
 	 * Option name for storing database version.

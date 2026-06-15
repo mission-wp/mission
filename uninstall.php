@@ -60,10 +60,13 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	);
 
 	// -------------------------------------------------------------------------
-	// Campaign CPT posts and meta
+	// Plugin CPT posts and meta (campaigns + P2P fundraiser/team shell posts)
 	// -------------------------------------------------------------------------
-	$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'missiondp_campaign'" );
-	$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'missiondp_campaign'" );
+	$post_types = [ 'missiondp_campaign', 'missiondp_fundraiser', 'missiondp_team' ];
+	foreach ( $post_types as $post_type ) {
+		$wpdb->query( $wpdb->prepare( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = %s", $post_type ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->posts} WHERE post_type = %s", $post_type ) );
+	}
 
 	// -------------------------------------------------------------------------
 	// Custom tables

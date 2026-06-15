@@ -538,4 +538,48 @@ class TransactionTest extends WP_UnitTestCase {
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
 	}
+
+	// -------------------------------------------------------------------------
+	// team_id attribution tests (direct-to-team donations).
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test team_id defaults to null and persists when set.
+	 */
+	public function test_team_id_defaults_null_and_persists(): void {
+		$direct = new Transaction();
+		$this->assertNull( $direct->team_id );
+
+		$attributed = $this->create_transaction( [ 'team_id' => 9 ] );
+		$this->assertSame( 9, $attributed->fresh()->team_id );
+	}
+
+	/**
+	 * Test query() filters by team_id.
+	 */
+	public function test_query_filters_by_team_id(): void {
+		$this->create_transaction( [ 'team_id' => 3 ] );
+		$this->create_transaction();
+
+		$this->assertCount( 1, Transaction::query( [ 'team_id' => 3 ] ) );
+		$this->assertSame( 1, Transaction::count( [ 'team_id' => 3 ] ) );
+	}
+
+	/**
+	 * Test team() returns the attributed Team, or null when unattributed.
+	 */
+	public function test_team_relationship(): void {
+		$team = new \MissionDP\Models\Team( [ 'campaign_id' => 1, 'name' => 'Team Test' ] );
+		$team->save();
+
+		$attributed = $this->create_transaction( [ 'team_id' => $team->id ] );
+		$this->assertSame( $team->id, $attributed->team()->id );
+
+		$direct = $this->create_transaction();
+		$this->assertNull( $direct->team() );
+
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
+	}
 }
