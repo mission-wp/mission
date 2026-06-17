@@ -244,6 +244,70 @@ class DonorAuthService {
 	}
 
 	/**
+	 * Establish a session for an already-resolved donor user.
+	 *
+	 * Used after email ownership has been proven by a one-time code (signup or
+	 * reset), where there is no password to sign in with.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return Donor The logged-in donor.
+	 *
+	 * @throws \RuntimeException If the user is missing or is not a donor.
+	 */
+	public function login_user( int $user_id ): Donor {
+		$user = get_userdata( $user_id );
+
+		if ( ! $user || ! in_array( 'missiondp_donor', $user->roles, true ) ) {
+			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
+		}
+
+		$donor = Donor::find_by_user_id( $user_id );
+
+		if ( ! $donor ) {
+			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
+		}
+
+		wp_set_current_user( $user_id );
+		wp_set_auth_cookie( $user_id, true, is_ssl() );
+		do_action( 'wp_login', $user->user_login, $user );
+
+		return $donor;
+	}
+
+	/**
+	 * Create a WordPress account for a donor without logging them in.
+	 *
+	 * The donor record must already exist (new or matched by email) and have no
+	 * linked user. Validates the password, then delegates user creation to the
+	 * Donor model (role `missiondp_donor`, email as login).
+	 *
+	 * @param Donor  $donor    Donor to attach the account to.
+	 * @param string $password Plain-text password.
+	 * @return Donor The donor, now linked to a user.
+	 */
+	public function create_account( Donor $donor, string $password ): Donor {
+		$this->validate_password_length( $password );
+
+		$donor->create_user_account( $password );
+
+		return $donor;
+	}
+
+	/**
+	 * Set a new password on an existing user (after a verified reset grant).
+	 *
+	 * @param int    $user_id  WordPress user ID.
+	 * @param string $password New plain-text password.
+	 * @return void
+	 */
+	public function set_password( int $user_id, string $password ): void {
+		$this->validate_password_length( $password );
+
+		// Destroys other sessions for the user, which is the intended behavior.
+		wp_set_password( $password, $user_id );
+	}
+
+	/**
 	 * Log the current donor out.
 	 *
 	 * @return void
