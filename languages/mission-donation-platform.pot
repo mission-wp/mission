@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-15T20:47:50+00:00\n"
+"POT-Creation-Date: 2026-06-17T18:23:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -413,9 +413,11 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:391
 #: blocks/build/recent-donors/index.php:134
+#: blocks/build/signup-modal/index.php:235
 #: blocks/build/top-donors/index.php:138
 #: blocks/src/donation-form/index.php:391
 #: blocks/src/recent-donors/index.php:134
+#: blocks/src/signup-modal/index.php:235
 #: blocks/src/top-donors/index.php:138
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/transactions/DedicationSection.js:48
@@ -425,9 +427,11 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:392
 #: blocks/build/recent-donors/index.php:133
+#: blocks/build/signup-modal/index.php:236
 #: blocks/build/top-donors/index.php:137
 #: blocks/src/donation-form/index.php:392
 #: blocks/src/recent-donors/index.php:133
+#: blocks/src/signup-modal/index.php:236
 #: blocks/src/top-donors/index.php:137
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/transactions/DedicationSection.js:47
@@ -449,10 +453,10 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:418
 #: blocks/build/donor-dashboard/parts/profile.php:56
-#: blocks/build/signup-modal/index.php:103
+#: blocks/build/signup-modal/index.php:145
 #: blocks/src/donation-form/index.php:418
 #: blocks/src/donor-dashboard/parts/profile.php:56
-#: blocks/src/signup-modal/index.php:103
+#: blocks/src/signup-modal/index.php:145
 #: src/Export/ExportService.php:102
 #: src/Export/ExportService.php:522
 #: admin/build/mission-admin.js:191
@@ -488,7 +492,11 @@ msgid "Personal Message"
 msgstr ""
 
 #: blocks/build/donation-form/index.php:434
+#: blocks/build/signup-modal/index.php:146
+#: blocks/build/signup-modal/index.php:208
 #: blocks/src/donation-form/index.php:434
+#: blocks/src/signup-modal/index.php:146
+#: blocks/src/signup-modal/index.php:208
 msgid "(optional)"
 msgstr ""
 
@@ -628,10 +636,12 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:565
 #: blocks/build/donation-form/index.php:717
-#: blocks/build/signup-modal/index.php:106
+#: blocks/build/signup-modal/index.php:129
+#: blocks/build/signup-modal/index.php:155
 #: blocks/src/donation-form/index.php:565
 #: blocks/src/donation-form/index.php:717
-#: blocks/src/signup-modal/index.php:106
+#: blocks/src/signup-modal/index.php:129
+#: blocks/src/signup-modal/index.php:155
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:591
@@ -645,10 +655,10 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:580
 #: blocks/build/donation-form/index.php:732
-#: blocks/build/signup-modal/index.php:155
+#: blocks/build/signup-modal/index.php:243
 #: blocks/src/donation-form/index.php:580
 #: blocks/src/donation-form/index.php:732
-#: blocks/src/signup-modal/index.php:155
+#: blocks/src/signup-modal/index.php:243
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:238
@@ -707,7 +717,7 @@ msgstr ""
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/campaigns/CampaignList.js:325
-#: admin/src/pages/settings/EmailsPanel.js:33
+#: admin/src/pages/settings/EmailsPanel.js:34
 #: admin/src/pages/tools/WebhooksPanel.js:377
 #: admin/src/pages/transactions/DedicationSection.js:256
 msgid "Edit"
@@ -873,9 +883,9 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/index.php:63
 #: blocks/src/donor-dashboard/index.php:63
-#: src/DonorDashboard/DonorAuthService.php:369
-#: src/DonorDashboard/DonorAuthService.php:373
-#: src/DonorDashboard/DonorAuthService.php:379
+#: src/DonorDashboard/DonorAuthService.php:433
+#: src/DonorDashboard/DonorAuthService.php:437
+#: src/DonorDashboard/DonorAuthService.php:443
 msgid "This password reset link is invalid or has expired. Please request a new one."
 msgstr ""
 
@@ -958,10 +968,10 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
-#: blocks/build/signup-modal/index.php:104
+#: blocks/build/signup-modal/index.php:147
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
-#: blocks/src/signup-modal/index.php:104
+#: blocks/src/signup-modal/index.php:147
 msgid "Password"
 msgstr ""
 
@@ -1137,7 +1147,9 @@ msgid "Enter a new password for your donor account."
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/auth.php:405
+#: blocks/build/signup-modal/index.php:184
 #: blocks/src/donor-dashboard/parts/auth.php:405
+#: blocks/src/signup-modal/index.php:184
 msgid "New password"
 msgstr ""
 
@@ -1293,6 +1305,7 @@ msgstr ""
 #: admin/src/pages/settings/email-templates.js:109
 #: admin/src/pages/settings/email-templates.js:131
 #: admin/src/pages/settings/email-templates.js:153
+#: admin/src/pages/settings/email-templates.js:290
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:142
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:301
 #: admin/src/pages/subscriptions/SubscriptionList.js:100
@@ -1541,7 +1554,9 @@ msgid "Cancel"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/profile.php:83
+#: blocks/build/signup-modal/index.php:160
 #: blocks/src/donor-dashboard/parts/profile.php:83
+#: blocks/src/signup-modal/index.php:160
 msgid "Change email"
 msgstr ""
 
@@ -1551,7 +1566,9 @@ msgid "Enter new email address"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/profile.php:121
+#: blocks/build/signup-modal/index.php:146
 #: blocks/src/donor-dashboard/parts/profile.php:121
+#: blocks/src/signup-modal/index.php:146
 #: src/Export/ExportService.php:537
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/AddDonorDrawer.js:240
@@ -1880,7 +1897,7 @@ msgstr ""
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
 #: blocks/src/top-donors/index.php:126
-#: src/Email/AdminNotificationListener.php:425
+#: src/Email/AdminNotificationListener.php:458
 #: src/Export/ExportService.php:739
 #: src/Reporting/ReportingService.php:626
 #: src/Reporting/ReportingService.php:760
@@ -2005,9 +2022,7 @@ msgid "Donors"
 msgstr ""
 
 #: blocks/build/fundraiser-progress/index.php:99
-#: blocks/build/signup-modal/index.php:164
 #: blocks/src/fundraiser-progress/index.php:99
-#: blocks/src/signup-modal/index.php:164
 msgid "Share"
 msgstr ""
 
@@ -2059,13 +2074,13 @@ msgid "Your name could be the first one on this list."
 msgstr ""
 
 #. translators: %s: team name
-#: blocks/build/signup-modal/index.php:63
-#: blocks/src/signup-modal/index.php:63
+#: blocks/build/signup-modal/index.php:72
+#: blocks/src/signup-modal/index.php:72
 msgid "Join %s"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:82
-#: blocks/src/signup-modal/index.php:82
+#: blocks/build/signup-modal/index.php:106
+#: blocks/src/signup-modal/index.php:106
 #: admin/build/mission-admin.js:191
 #: admin/src/components/Drawer.js:26
 #: admin/src/components/OnboardingModal.js:486
@@ -2073,94 +2088,218 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:96
-#: blocks/src/signup-modal/index.php:96
-msgid "Create your account"
+#: blocks/build/signup-modal/index.php:123
+#: blocks/src/signup-modal/index.php:123
+msgid "Welcome back"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:97
-#: blocks/src/signup-modal/index.php:97
-msgid "Let's set up your fundraising page. First, the basics."
+#: blocks/build/signup-modal/index.php:124
+#: blocks/src/signup-modal/index.php:124
+msgid "Continue setting up your fundraiser."
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:100
-#: blocks/src/signup-modal/index.php:100
-msgid "First name"
+#: blocks/build/signup-modal/index.php:131
+#: blocks/src/signup-modal/index.php:131
+msgid "Not you?"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:101
-#: blocks/src/signup-modal/index.php:101
-msgid "Last name"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:111
-#: blocks/src/signup-modal/index.php:111
-msgid "Set up your fundraiser"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:116
-#: blocks/src/signup-modal/index.php:116
-msgid "Joining as a team member"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:120
-#: blocks/src/signup-modal/index.php:120
-msgid "Join a team"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:122
-#: blocks/src/signup-modal/index.php:122
-msgid "Create a team"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:127
-#: blocks/src/signup-modal/index.php:127
-msgid "Select a team"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:129
-#: blocks/src/signup-modal/index.php:129
-msgid "No team — fundraise on your own"
+#: blocks/build/signup-modal/index.php:132
+#: blocks/src/signup-modal/index.php:132
+msgid "Log out"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:138
 #: blocks/src/signup-modal/index.php:138
-msgid "Team name"
+msgid "Create your account"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:139
+#: blocks/src/signup-modal/index.php:139
+msgid "Let's set up your fundraising page. First, the basics."
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:142
+#: blocks/src/signup-modal/index.php:142
+msgid "First name"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:143
 #: blocks/src/signup-modal/index.php:143
-msgid "Your fundraising goal"
+msgid "Last name"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:144
-#: blocks/src/signup-modal/index.php:144
-msgid "Tell your story"
+#: blocks/build/signup-modal/index.php:147
+#: blocks/build/signup-modal/index.php:184
+#: blocks/src/signup-modal/index.php:147
+#: blocks/src/signup-modal/index.php:184
+msgid "At least 8 characters"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:148
-#: blocks/src/signup-modal/index.php:148
-msgid "Dedicate this fundraiser in honor or memory of someone"
+#: blocks/build/signup-modal/index.php:150
+#: blocks/src/signup-modal/index.php:150
+msgid "An account with this email already exists. Enter the correct password or"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:151
 #: blocks/src/signup-modal/index.php:151
-msgid "Their name"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:154
-#: blocks/src/signup-modal/index.php:154
-msgid "Create fundraiser"
+msgid "reset it"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:161
 #: blocks/src/signup-modal/index.php:161
+#: src/Email/templates/account-activation.php:15
+#: src/Email/templates/p2p-otp-code.php:18
+msgid "Verify your email"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:163
+#: blocks/src/signup-modal/index.php:163
+msgid "We sent a 6-digit code to"
+msgstr ""
+
+#. translators: %d: digit position
+#: blocks/build/signup-modal/index.php:168
+#: blocks/src/signup-modal/index.php:168
+msgid "Digit %d"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:172
+#: blocks/src/signup-modal/index.php:172
+msgid "Verify"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:174
+#: blocks/src/signup-modal/index.php:174
+msgid "Didn't get a code?"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:175
+#: blocks/src/signup-modal/index.php:175
+msgid "Resend"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:182
+#: blocks/src/signup-modal/index.php:182
+msgid "Set a new password"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:183
+#: blocks/src/signup-modal/index.php:183
+msgid "Choose a new password for your account."
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:186
+#: blocks/src/signup-modal/index.php:186
+msgid "Save and continue"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:192
+#: blocks/src/signup-modal/index.php:192
+msgid "Set up your fundraiser"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:197
+#: blocks/src/signup-modal/index.php:197
+msgid "Joining as a team member"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:201
+#: blocks/src/signup-modal/index.php:201
+msgid "Join a team"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:203
+#: blocks/src/signup-modal/index.php:203
+msgid "Create a team"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:208
+#: blocks/src/signup-modal/index.php:208
+msgid "Select a team"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:210
+#: blocks/src/signup-modal/index.php:210
+msgid "No team — fundraise on your own"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:215
+#: blocks/src/signup-modal/index.php:215
+msgid "Leave blank to fundraise on your own."
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:220
+#: blocks/src/signup-modal/index.php:220
+msgid "Team name"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:221
+#: blocks/src/signup-modal/index.php:221
+msgid "You can add a team logo later from your dashboard."
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:226
+#: blocks/src/signup-modal/index.php:226
+msgid "Your fundraising goal"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:227
+#: blocks/src/signup-modal/index.php:227
+msgid "Tell your story"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:231
+#: blocks/src/signup-modal/index.php:231
+msgid "Dedicate this fundraiser in honor or memory of someone"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:238
+#: blocks/src/signup-modal/index.php:238
+msgid "Their name"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:242
+#: blocks/src/signup-modal/index.php:242
+msgid "Create fundraiser"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:249
+#: blocks/src/signup-modal/index.php:249
 msgid "You're a fundraiser!"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:162
-#: blocks/src/signup-modal/index.php:162
+#: blocks/build/signup-modal/index.php:250
+#: blocks/src/signup-modal/index.php:250
 msgid "Your page is live. Share it with friends and family to start raising funds."
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:252
+#: blocks/src/signup-modal/index.php:252
+msgid "Share on Facebook"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:253
+#: blocks/src/signup-modal/index.php:253
+msgid "Share on X"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:254
+#: blocks/src/signup-modal/index.php:254
+msgid "Copy link"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:255
+#: blocks/src/signup-modal/index.php:255
+msgid "Share by email"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:257
+#: blocks/src/signup-modal/index.php:257
+msgid "View my page"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:258
+msgid "Check your inbox to confirm your email — that's how you'll edit your page later."
 msgstr ""
 
 #: blocks/build/team-members/index.php:51
@@ -2261,6 +2400,10 @@ msgstr ""
 #: blocks/src/top-donors/index.php:102
 #: blocks/src/top-donors/index.php:106
 msgid "Be the First Donor"
+msgstr ""
+
+#: blocks/src/signup-modal/index.php:258
+msgid "Check your inbox to confirm your email. That's how you'll edit your page later."
 msgstr ""
 
 #: mission-donation-platform.php:31
@@ -2656,21 +2799,25 @@ msgid "An account already exists for this email. Please log in instead."
 msgstr ""
 
 #: src/DonorDashboard/DonorAuthService.php:97
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:72
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:74
 #: src/Rest/Endpoints/EmailTestEndpoint.php:47
 msgid "Verify your email to activate your donor account"
 msgstr ""
 
 #: src/DonorDashboard/DonorAuthService.php:104
-#: src/DonorDashboard/DonorAuthService.php:327
+#: src/DonorDashboard/DonorAuthService.php:391
 #: src/Email/DonationEmailListener.php:126
 #: src/Email/EmailModule.php:181
 #: src/Email/EmailModule.php:312
 #: src/Email/EmailModule.php:334
+#: src/Email/FundraiserEmailListener.php:80
+#: src/Email/FundraiserEmailListener.php:151
 #: src/Email/SubscriptionEmailListener.php:195
 #: src/Email/templates/account-activation.php:12
 #: src/Email/templates/donation-receipt.php:12
 #: src/Email/templates/email-change-verification.php:12
+#: src/Email/templates/p2p-fundraiser-approved.php:14
+#: src/Email/templates/p2p-fundraiser-received-donation.php:14
 #: src/Email/templates/password-reset.php:12
 #: src/Email/templates/payment-failed.php:13
 #: src/Email/templates/renewal-receipt.php:12
@@ -2686,31 +2833,36 @@ msgstr ""
 msgid "Invalid email or password."
 msgstr ""
 
-#: src/DonorDashboard/DonorAuthService.php:286
+#: src/DonorDashboard/DonorAuthService.php:261
+#: src/DonorDashboard/DonorAuthService.php:267
+msgid "This account cannot be used here."
+msgstr ""
+
+#: src/DonorDashboard/DonorAuthService.php:350
 msgid "We couldn't find a donor account with this email address."
 msgstr ""
 
-#: src/DonorDashboard/DonorAuthService.php:290
+#: src/DonorDashboard/DonorAuthService.php:354
 msgid "No account has been activated for this email. Please activate your account first."
 msgstr ""
 
-#: src/DonorDashboard/DonorAuthService.php:296
+#: src/DonorDashboard/DonorAuthService.php:360
 msgid "Unable to process this request."
 msgstr ""
 
-#: src/DonorDashboard/DonorAuthService.php:302
+#: src/DonorDashboard/DonorAuthService.php:366
 msgid "Unable to generate a password reset link. Please try again later."
 msgstr ""
 
-#: src/DonorDashboard/DonorAuthService.php:320
+#: src/DonorDashboard/DonorAuthService.php:384
 #: src/Email/templates/password-reset.php:15
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:73
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:75
 #: src/Rest/Endpoints/EmailTestEndpoint.php:48
 msgid "Reset your password"
 msgstr ""
 
 #. translators: %d: minimum password length
-#: src/DonorDashboard/DonorAuthService.php:464
+#: src/DonorDashboard/DonorAuthService.php:543
 msgid "Password must be at least %d characters."
 msgstr ""
 
@@ -2722,70 +2874,103 @@ msgstr ""
 msgid "Donor Dashboard Page"
 msgstr ""
 
+#: src/DonorDashboard/OtpException.php:52
+msgid "Please wait before requesting another code."
+msgstr ""
+
+#: src/DonorDashboard/OtpException.php:62
+msgid "Too many codes requested. Please try again later."
+msgstr ""
+
+#: src/DonorDashboard/OtpException.php:71
+msgid "That code has expired. Request a new one."
+msgstr ""
+
+#: src/DonorDashboard/OtpException.php:80
+msgid "Too many attempts. Request a new code."
+msgstr ""
+
+#: src/DonorDashboard/OtpException.php:89
+msgid "That code didn't match. Please try again."
+msgstr ""
+
+#: src/DonorDashboard/OtpService.php:211
+msgid "Your verification code"
+msgstr ""
+
+#: src/Email/AdminNotificationListener.php:103
+msgid "A participant"
+msgstr ""
+
+#. translators: %s: participant name
+#: src/Email/AdminNotificationListener.php:115
+msgid "New fundraiser registered: %s"
+msgstr ""
+
 #. translators: 1: formatted amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:134
+#: src/Email/AdminNotificationListener.php:167
 msgid "New donation: %1$s from %2$s"
 msgstr ""
 
 #. translators: 1: formatted amount, 2: frequency (e.g. "Monthly"), 3: donor name
-#: src/Email/AdminNotificationListener.php:173
+#: src/Email/AdminNotificationListener.php:206
 msgid "New recurring donation: %1$s/%2$s from %3$s"
 msgstr ""
 
 #. translators: 1: formatted amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:214
+#: src/Email/AdminNotificationListener.php:247
 msgid "Recurring renewal: %1$s from %2$s"
 msgstr ""
 
 #. translators: 1: formatted refund amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:256
+#: src/Email/AdminNotificationListener.php:289
 msgid "Full refund: %1$s to %2$s"
 msgstr ""
 
 #. translators: 1: formatted refund amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:262
+#: src/Email/AdminNotificationListener.php:295
 msgid "Partial refund: %1$s to %2$s"
 msgstr ""
 
 #. translators: 1: formatted amount, 2: donor name
-#: src/Email/AdminNotificationListener.php:300
+#: src/Email/AdminNotificationListener.php:333
 msgid "Failed payment: %1$s from %2$s"
 msgstr ""
 
 #. translators: 1: formatted amount, 2: frequency (e.g. "monthly"), 3: donor name
-#: src/Email/AdminNotificationListener.php:340
+#: src/Email/AdminNotificationListener.php:373
 msgid "Subscription cancelled: %1$s/%2$s from %3$s"
 msgstr ""
 
-#: src/Email/AdminNotificationListener.php:358
+#: src/Email/AdminNotificationListener.php:391
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/DonorDetailsCard.js:88
 msgid "First donation"
 msgstr ""
 
 #. translators: 1: campaign name, 2: milestone label (e.g. "50%", "First donation")
-#: src/Email/AdminNotificationListener.php:399
+#: src/Email/AdminNotificationListener.php:432
 msgid "Campaign milestone: %1$s reached %2$s"
 msgstr ""
 
-#: src/Email/AdminNotificationListener.php:428
+#: src/Email/AdminNotificationListener.php:461
 #: src/Email/DonationEmailListener.php:165
 msgid "in memory of"
 msgstr ""
 
-#: src/Email/AdminNotificationListener.php:429
+#: src/Email/AdminNotificationListener.php:462
 #: src/Email/DonationEmailListener.php:166
 #: src/Email/templates/tribute-notification.php:16
 msgid "in honor of"
 msgstr ""
 
 #. translators: 1: honoree name, 2: donor name
-#: src/Email/AdminNotificationListener.php:454
+#: src/Email/AdminNotificationListener.php:487
 msgid "Mail dedication pending: %1$s (from %2$s)"
 msgstr ""
 
 #: src/Email/DonationEmailListener.php:119
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:75
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:77
 msgid "A note about your donation"
 msgstr ""
 
@@ -2795,6 +2980,8 @@ msgid "A donation has been made %1$s %2$s"
 msgstr ""
 
 #: src/Email/DonationEmailListener.php:190
+#: src/Email/FundraiserEmailListener.php:125
+#: src/Email/FundraiserEmailListener.php:126
 #: src/Email/templates/tribute-notification.php:15
 msgid "Someone"
 msgstr ""
@@ -2806,16 +2993,29 @@ msgid "Thank you for your %s donation"
 msgstr ""
 
 #. translators: %s: donor first name
+#. translators: %s: participant first name
 #: src/Email/EmailModule.php:338
 #: src/Email/templates/account-activation.php:22
 #: src/Email/templates/donation-receipt.php:22
 #: src/Email/templates/email-change-verification.php:22
+#: src/Email/templates/p2p-fundraiser-approved.php:24
+#: src/Email/templates/p2p-fundraiser-received-donation.php:24
 #: src/Email/templates/password-reset.php:22
 #: src/Email/templates/payment-failed.php:25
 #: src/Email/templates/renewal-receipt.php:22
 #: src/Email/templates/subscription-activated.php:22
 #: src/Email/templates/subscription-cancelled.php:23
 msgid "Hi %s,"
+msgstr ""
+
+#: src/Email/FundraiserEmailListener.php:73
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:79
+msgid "Your fundraising page is live"
+msgstr ""
+
+#. translators: %s: formatted amount
+#: src/Email/FundraiserEmailListener.php:142
+msgid "You received a %s donation!"
 msgstr ""
 
 #. translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly")
@@ -2831,23 +3031,19 @@ msgid "Thank you for your %1$s gift of %2$s"
 msgstr ""
 
 #: src/Email/SubscriptionEmailListener.php:146
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:70
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:72
 #: src/Rest/Endpoints/EmailTestEndpoint.php:45
 msgid "Action needed: Update your payment for your recurring donation"
 msgstr ""
 
 #: src/Email/SubscriptionEmailListener.php:175
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:71
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:73
 #: src/Rest/Endpoints/EmailTestEndpoint.php:46
 msgid "Your recurring donation has ended"
 msgstr ""
 
 #: src/Email/SubscriptionEmailListener.php:213
 msgid "N/A"
-msgstr ""
-
-#: src/Email/templates/account-activation.php:15
-msgid "Verify your email"
 msgstr ""
 
 #: src/Email/templates/account-activation.php:29
@@ -2983,6 +3179,28 @@ msgstr ""
 msgid "View in Dashboard"
 msgstr ""
 
+#: src/Email/templates/admin-new-fundraiser.php:15
+msgid "New Fundraiser Registered"
+msgstr ""
+
+#. translators: 1: participant name (bold), 2: campaign name
+#: src/Email/templates/admin-new-fundraiser.php:24
+msgid "<strong>%1$s</strong> signed up to fundraise for %2$s."
+msgstr ""
+
+#. translators: %s: participant name (bold)
+#: src/Email/templates/admin-new-fundraiser.php:34
+msgid "<strong>%s</strong> signed up as a fundraiser."
+msgstr ""
+
+#: src/Email/templates/admin-new-fundraiser.php:45
+msgid "This fundraiser is pending your approval before their page goes live."
+msgstr ""
+
+#: src/Email/templates/admin-new-fundraiser.php:52
+msgid "View Fundraisers"
+msgstr ""
+
 #: src/Email/templates/admin-payment-failed.php:12
 msgid "Recurring Payment Failed"
 msgstr ""
@@ -3065,7 +3283,7 @@ msgstr ""
 
 #: src/Email/templates/email-change-verification.php:15
 #: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:178
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:74
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:76
 #: src/Rest/Endpoints/EmailTestEndpoint.php:49
 msgid "Verify your new email address"
 msgstr ""
@@ -3082,6 +3300,37 @@ msgstr ""
 #. translators: %s: number of hours before the link expires
 #: src/Email/templates/email-change-verification.php:52
 msgid "This link expires in %s hours. If you didn't request this change, you can safely ignore this email."
+msgstr ""
+
+#: src/Email/templates/p2p-fundraiser-approved.php:17
+msgid "Your fundraising page is live!"
+msgstr ""
+
+#: src/Email/templates/p2p-fundraiser-approved.php:31
+msgid "Your fundraising page has been approved and is now live. Share your link with friends and family to start raising funds."
+msgstr ""
+
+#: src/Email/templates/p2p-fundraiser-approved.php:39
+#: src/Email/templates/p2p-fundraiser-received-donation.php:49
+msgid "View your page"
+msgstr ""
+
+#: src/Email/templates/p2p-fundraiser-received-donation.php:17
+msgid "You received a donation!"
+msgstr ""
+
+#. translators: 1: giver name (bold), 2: formatted amount (bold)
+#: src/Email/templates/p2p-fundraiser-received-donation.php:35
+msgid "<strong>%1$s</strong> just donated <strong>%2$s</strong> to your fundraiser. Every share helps you raise more."
+msgstr ""
+
+#: src/Email/templates/p2p-otp-code.php:22
+msgid "Enter this code to continue setting up your fundraising page:"
+msgstr ""
+
+#. translators: %d: number of minutes before the code expires
+#: src/Email/templates/p2p-otp-code.php:33
+msgid "This code expires in %d minutes. If you didn't request it, you can safely ignore this email."
 msgstr ""
 
 #: src/Email/templates/password-reset.php:29
@@ -3836,7 +4085,7 @@ msgstr ""
 msgid "This donor already has an account."
 msgstr ""
 
-#: src/Models/Fundraiser.php:134
+#: src/Models/Fundraiser.php:192
 #: src/P2P/FundraiserPostType.php:39
 #: src/Reporting/ReportingService.php:1815
 #: src/Reporting/ReportingService.php:1973
@@ -3873,7 +4122,7 @@ msgstr ""
 msgid "The payment service returned an unexpected response."
 msgstr ""
 
-#: src/Models/Team.php:124
+#: src/Models/Team.php:153
 #: src/P2P/TeamPostType.php:38
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:195
@@ -3979,6 +4228,11 @@ msgstr ""
 
 #: src/OutgoingWebhooks/WebhookEvents.php:94
 msgid "Campaign Events"
+msgstr ""
+
+#: src/P2P/FundraiserRegistrationService.php:173
+#: src/P2P/FundraiserRegistrationService.php:179
+msgid "This reset session is invalid or has expired. Please start over."
 msgstr ""
 
 #. translators: %d: calendar year
@@ -4292,27 +4546,31 @@ msgstr ""
 msgid "A donor with this email address already exists."
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:67
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:69
 msgid "Thank you for your {amount} donation"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:68
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:70
 msgid "Thank you for your {amount} {frequency} donation"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:69
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:71
 msgid "Thank you for your {frequency} gift of {amount}"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:76
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:78
 msgid "A donation has been made {tribute_type_label} {honoree_name}"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:106
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:80
+msgid "You received a {amount} donation!"
+msgstr ""
+
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:110
 msgid "You do not have permission to view email templates."
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:121
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:125
 #: src/Rest/Endpoints/EmailTestEndpoint.php:127
 msgid "Unknown email type."
 msgstr ""
@@ -4418,6 +4676,18 @@ msgstr ""
 #. translators: %s: event name
 #: src/Rest/Endpoints/OutgoingWebhooksEndpoint.php:439
 msgid "Invalid event: %s"
+msgstr ""
+
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:346
+msgid "Please verify your email to continue."
+msgstr ""
+
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:383
+msgid "This campaign is not accepting fundraisers."
+msgstr ""
+
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:388
+msgid "Registration for this campaign is closed."
 msgstr ""
 
 #: src/Rest/Endpoints/SettingsEndpoint.php:76
@@ -6814,37 +7084,72 @@ msgid "Sent when a donation includes a dedication that needs to be mailed"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:257
+#: admin/src/pages/settings/email-templates.js:254
+msgid "New fundraiser"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:255
+msgid "Sent when someone registers as a peer-to-peer fundraiser"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:266
+msgid "Fundraiser approved"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:267
+msgid "Sent to a participant when their fundraising page goes live"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:277
+msgid "Fundraiser received a donation"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:278
+msgid "Sent to a participant when a gift is credited to their page"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:288
+msgid "Giver name"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:298
 msgid "Account activation"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:258
+#: admin/src/pages/settings/email-templates.js:299
 msgid "Email verification for the donor dashboard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:268
+#: admin/src/pages/settings/email-templates.js:309
 msgid "Password reset"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:269
+#: admin/src/pages/settings/email-templates.js:310
 msgid "Sent when a donor requests a new password"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:279
+#: admin/src/pages/settings/email-templates.js:320
 msgid "Email change verification"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:280
+#: admin/src/pages/settings/email-templates.js:321
 msgid "Sent to the new address for confirmation"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:290
+#: admin/src/pages/settings/email-templates.js:331
 msgid "New email"
 msgstr ""
 
@@ -6909,13 +7214,13 @@ msgstr ""
 
 #. translators: %d: number of additional recipients
 #: admin/build/mission-admin.js:192
-#: admin/src/pages/settings/EmailsPanel.js:152
+#: admin/src/pages/settings/EmailsPanel.js:153
 msgid "and %d others"
 msgstr ""
 
 #: admin/build/mission-admin.js:192
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/settings/EmailsPanel.js:203
+#: admin/src/pages/settings/EmailsPanel.js:204
 #: admin/src/pages/tools/StatusPanel.js:270
 #: blocks/build/donation-form/index.js:2
 #: blocks/src/donation-form/edit/tabs/PaymentsTab.js:105
@@ -6924,62 +7229,67 @@ msgstr ""
 
 #. translators: %s: email address
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:215
+#: admin/src/pages/settings/EmailsPanel.js:216
 msgid "Remove %s"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:237
+#: admin/src/pages/settings/EmailsPanel.js:238
 msgid "Add email…"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:245
+#: admin/src/pages/settings/EmailsPanel.js:246
 msgid "Press Enter to add. Default is your WordPress admin email."
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:312
+#: admin/src/pages/settings/EmailsPanel.js:313
 msgid "Sender Details"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:315
+#: admin/src/pages/settings/EmailsPanel.js:316
 msgid "Used as the “from” address on all outgoing emails."
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:326
+#: admin/src/pages/settings/EmailsPanel.js:327
 msgid "From name"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:343
+#: admin/src/pages/settings/EmailsPanel.js:344
 msgid "From email"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:360
+#: admin/src/pages/settings/EmailsPanel.js:361
 msgid "Reply-to email"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:372
+#: admin/src/pages/settings/EmailsPanel.js:373
 msgid "Leave blank to use the from email address."
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:382
+#: admin/src/pages/settings/EmailsPanel.js:383
 msgid "Donation Emails"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:400
+#: admin/src/pages/settings/EmailsPanel.js:401
 msgid "Account Emails"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:418
+#: admin/src/pages/settings/EmailsPanel.js:419
+msgid "Fundraiser Emails"
+msgstr ""
+
+#: admin/build/mission-admin.js:193
+#: admin/src/pages/settings/EmailsPanel.js:437
 msgid "Admin Notifications"
 msgstr ""
 

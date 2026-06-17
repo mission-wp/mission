@@ -3247,6 +3247,30 @@
 			],
 			"Teams appear here once supporters create or are added to one.": [
 				"Los equipos aparecen aquí cuando los colaboradores crean uno o se añaden a uno."
+			],
+			"New fundraiser": [
+				"Nuevo recaudador"
+			],
+			"Sent when someone registers as a peer-to-peer fundraiser": [
+				"Se envía cuando alguien se registra como recaudador entre pares."
+			],
+			"Fundraiser approved": [
+				"Recaudador aprobado"
+			],
+			"Sent to a participant when their fundraising page goes live": [
+				"Se envía a un participante cuando su página de recaudación se publica."
+			],
+			"Fundraiser received a donation": [
+				"El recaudador recibió una donación"
+			],
+			"Sent to a participant when a gift is credited to their page": [
+				"Se envía a un participante cuando se acredita una donación en su página."
+			],
+			"Giver name": [
+				"Nombre del donante"
+			],
+			"Fundraiser Emails": [
+				"Correos de recaudadores"
 			]
 		}
 	}

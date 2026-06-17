@@ -255,7 +255,7 @@ defined( 'ABSPATH' ) || exit;
 							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareEmail" aria-label="<?php esc_attr_e( 'Share by email', 'mission-donation-platform' ); ?>">@</button>
 						</div>
 						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
-						<p class="mission-su__note"><?php esc_html_e( 'Check your inbox to confirm your email — that\'s how you\'ll edit your page later.', 'mission-donation-platform' ); ?></p>
+						<p class="mission-su__note"><?php esc_html_e( 'Check your inbox to confirm your email. That\'s how you\'ll edit your page later.', 'mission-donation-platform' ); ?></p>
 					</div>
 				</div>
 			</div>
