@@ -97,7 +97,6 @@ defined( 'ABSPATH' ) || exit;
 	<div
 		class="mission-su__overlay"
 		data-wp-class--is-open="state.isOpen"
-		data-wp-on--click="actions.onOverlayClick"
 		data-wp-on--keydown="actions.onKeydown"
 	>
 		<div class="mission-su__dialog" role="dialog" aria-modal="true">
@@ -152,7 +151,10 @@ defined( 'ABSPATH' ) || exit;
 						</p>
 						<p class="mission-su__error" data-wp-bind--hidden="!state.formError" data-wp-text="state.formError"></p>
 
-						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.continueAccount"><?php esc_html_e( 'Continue', 'mission-donation-platform' ); ?></button>
+						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-bind--aria-busy="state.loading" data-wp-class--is-loading="state.loading" data-wp-on--click="actions.continueAccount">
+							<span data-wp-bind--hidden="state.loading"><?php esc_html_e( 'Continue', 'mission-donation-platform' ); ?></span>
+							<span class="mission-su__spinner" data-wp-bind--hidden="!state.loading" aria-hidden="true"></span>
+						</button>
 					</div>
 
 					<!-- 6-digit code (signup verify or password reset) -->
@@ -169,7 +171,10 @@ defined( 'ABSPATH' ) || exit;
 							<?php endfor; ?>
 						</div>
 						<p class="mission-su__error" data-wp-bind--hidden="!state.otpError" data-wp-text="state.otpError"></p>
-						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.verifyCode"><?php esc_html_e( 'Verify', 'mission-donation-platform' ); ?></button>
+						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-bind--aria-busy="state.loading" data-wp-class--is-loading="state.loading" data-wp-on--click="actions.verifyCode">
+							<span data-wp-bind--hidden="state.loading"><?php esc_html_e( 'Verify', 'mission-donation-platform' ); ?></span>
+							<span class="mission-su__spinner" data-wp-bind--hidden="!state.loading" aria-hidden="true"></span>
+						</button>
 						<p class="mission-su__resend">
 							<?php esc_html_e( "Didn't get a code?", 'mission-donation-platform' ); ?>
 							<button type="button" class="mission-su__link" data-wp-bind--disabled="state.resendIn" data-wp-on--click="actions.resendCode"><?php esc_html_e( 'Resend', 'mission-donation-platform' ); ?></button>
@@ -183,7 +188,10 @@ defined( 'ABSPATH' ) || exit;
 						<p class="mission-su__subtitle"><?php esc_html_e( 'Choose a new password for your account.', 'mission-donation-platform' ); ?></p>
 						<label class="mission-su__field"><span><?php esc_html_e( 'New password', 'mission-donation-platform' ); ?></span><input type="password" autocomplete="new-password" placeholder="<?php esc_attr_e( 'At least 8 characters', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.newPassword" data-wp-on--input="actions.updateNewPassword" /></label>
 						<p class="mission-su__error" data-wp-bind--hidden="!state.formError" data-wp-text="state.formError"></p>
-						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.savePassword"><?php esc_html_e( 'Save and continue', 'mission-donation-platform' ); ?></button>
+						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-bind--aria-busy="state.loading" data-wp-class--is-loading="state.loading" data-wp-on--click="actions.savePassword">
+							<span data-wp-bind--hidden="state.loading"><?php esc_html_e( 'Save and continue', 'mission-donation-platform' ); ?></span>
+							<span class="mission-su__spinner" data-wp-bind--hidden="!state.loading" aria-hidden="true"></span>
+						</button>
 					</div>
 				</div>
 
@@ -239,7 +247,10 @@ defined( 'ABSPATH' ) || exit;
 					</div>
 
 					<p class="mission-su__error" data-wp-bind--hidden="!state.formError" data-wp-text="state.formError"></p>
-					<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.submit"><?php esc_html_e( 'Create fundraiser', 'mission-donation-platform' ); ?></button>
+					<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-bind--aria-busy="state.loading" data-wp-class--is-loading="state.loading" data-wp-on--click="actions.submit">
+						<span data-wp-bind--hidden="state.loading"><?php esc_html_e( 'Create fundraiser', 'mission-donation-platform' ); ?></span>
+						<span class="mission-su__spinner" data-wp-bind--hidden="!state.loading" aria-hidden="true"></span>
+					</button>
 					<button type="button" class="mission-su__btn mission-su__btn--ghost" data-wp-bind--hidden="state.signedIn" data-wp-on--click="actions.back"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></button>
 				</div>
 

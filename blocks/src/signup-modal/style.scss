@@ -7,6 +7,16 @@
   --mission-bg: #fff;
   --mission-bg-light: #f7f7f7;
   --mission-radius: 10px;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none;
+  }
 }
 
 // In the editor the block is just a hint, not a fixed overlay.
@@ -285,6 +295,23 @@
   }
 }
 
+.mission-su__spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid color-mix(in srgb, var(--mission-primary-text, #fff) 35%, transparent);
+  border-top-color: var(--mission-primary-text, #fff);
+  border-radius: 50%;
+  animation: mission-su-spin 0.6s linear infinite;
+}
+
+@keyframes mission-su-spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .mission-su__optional {
   font-weight: 400;
   color: var(--mission-text-secondary);
@@ -343,7 +370,10 @@
   align-items: center;
   margin-bottom: 14px;
   padding: 0;
-  font: inherit;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
   color: var(--mission-text-secondary);
   background: none;
   border: none;

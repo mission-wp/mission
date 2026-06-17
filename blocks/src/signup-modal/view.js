@@ -158,12 +158,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.isOpen = false;
       document.body.style.overflow = '';
     },
-    onOverlayClick( event ) {
-      if ( event.target === event.currentTarget ) {
-        state.isOpen = false;
-        document.body.style.overflow = '';
-      }
-    },
     onKeydown( event ) {
       if ( event.key === 'Escape' ) {
         state.isOpen = false;
@@ -265,7 +259,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         }
 
         if ( data.branch === 'authenticated' ) {
-          // Logged in mid-flow: adopt the fresh nonce for the register call.
           if ( data.nonce ) {
             ctx.nonce = data.nonce;
           }
