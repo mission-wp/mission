@@ -56,8 +56,8 @@ $donor_count = $is_test ? $campaign->test_donor_count : $campaign->donor_count;
 $is_p2p           = $campaign->is_p2p();
 $fundraiser_count = $is_p2p ? Fundraiser::count( [ 'campaign_id' => $campaign->id, 'status' => Fundraiser::STATUS_ACTIVE ] ) : 0;
 $team_count       = $is_p2p ? Team::count( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : 0;
-$registration_open = (bool) $campaign->get_meta( 'registration_open' );
-$show_become       = $is_p2p && $registration_open;
+$registration_open = $is_p2p && ! empty( $campaign->p2p_settings()['registration_open'] );
+$show_become       = $registration_open;
 
 // Days remaining.
 $date_end       = $campaign->date_end;
