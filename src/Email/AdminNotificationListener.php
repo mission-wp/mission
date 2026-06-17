@@ -7,8 +7,10 @@
 
 namespace MissionDP\Email;
 
+use MissionDP\Admin\AdminModule;
 use MissionDP\Constants\Frequency;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
@@ -84,6 +86,37 @@ class AdminNotificationListener {
 
 		// Mail dedication pending.
 		add_action( 'mission_tribute_created', [ $this, 'on_mail_dedication' ] );
+
+		// New peer-to-peer fundraiser registered.
+		add_action( 'mission_fundraiser_created', [ $this, 'on_fundraiser_registered' ] );
+	}
+
+	/**
+	 * Send admin notification when a new fundraiser registers.
+	 *
+	 * @param Fundraiser $fundraiser The new fundraiser.
+	 * @return void
+	 */
+	public function on_fundraiser_registered( Fundraiser $fundraiser ): void {
+		$donor      = $fundraiser->donor();
+		$campaign   = $fundraiser->campaign();
+		$donor_name = $donor ? ( trim( $donor->first_name . ' ' . $donor->last_name ) ?: $donor->email ) : __( 'A participant', 'mission-donation-platform' );
+
+		$data = [
+			'fundraiser'        => $fundraiser,
+			'donor_name'        => $donor_name,
+			'campaign_name'     => $campaign?->title ?: '',
+			'approval_required' => Fundraiser::STATUS_PENDING === $fundraiser->status,
+			'admin_url'         => admin_url( 'admin.php?page=' . AdminModule::FUNDRAISERS_SLUG ),
+		];
+
+		$subject = sprintf(
+			/* translators: %s: participant name */
+			__( 'New fundraiser registered: %s', 'mission-donation-platform' ),
+			$donor_name,
+		);
+
+		$this->notifier->notify( 'admin_new_fundraiser', $subject, $data );
 	}
 
 	/**

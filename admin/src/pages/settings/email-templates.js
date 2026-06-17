@@ -249,6 +249,47 @@ export const ADMIN_EMAILS = [
     ),
     iconType: 'admin',
   },
+  {
+    id: 'admin_new_fundraiser',
+    name: __( 'New fundraiser', 'mission-donation-platform' ),
+    desc: __(
+      'Sent when someone registers as a peer-to-peer fundraiser',
+      'mission-donation-platform'
+    ),
+    iconType: 'admin',
+  },
+];
+
+export const FUNDRAISER_EMAILS = [
+  {
+    id: 'p2p_fundraiser_approved',
+    name: __( 'Fundraiser approved', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a participant when their fundraising page goes live',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: 'Your fundraising page is live',
+    mergeTags: [ ...GLOBAL_TAGS ],
+  },
+  {
+    id: 'p2p_fundraiser_received_donation',
+    name: __( 'Fundraiser received a donation', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a participant when a gift is credited to their page',
+      'mission-donation-platform'
+    ),
+    iconType: 'donation',
+    defaultSubject: 'You received a {amount} donation!',
+    mergeTags: [
+      ...GLOBAL_TAGS,
+      {
+        tag: '{giver_name}',
+        label: __( 'Giver name', 'mission-donation-platform' ),
+      },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
+    ],
+  },
 ];
 
 export const ACCOUNT_EMAILS = [
@@ -299,6 +340,7 @@ export const ACCOUNT_EMAILS = [
 export const ALL_EMAILS = [
   ...DONATION_EMAILS,
   ...ACCOUNT_EMAILS,
+  ...FUNDRAISER_EMAILS,
   ...ADMIN_EMAILS,
 ];
 

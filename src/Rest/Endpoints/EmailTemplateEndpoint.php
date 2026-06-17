@@ -34,16 +34,18 @@ class EmailTemplateEndpoint {
 	 * @var array<string, string>
 	 */
 	private const TEMPLATE_MAP = [
-		'donation_receipt'          => 'donation-receipt',
-		'subscription_activated'    => 'subscription-activated',
-		'renewal_receipt'           => 'renewal-receipt',
-		'payment_failed'            => 'payment-failed',
-		'subscription_cancelled'    => 'subscription-cancelled',
-		'account_activation'        => 'account-activation',
-		'password_reset'            => 'password-reset',
-		'email_change_verification' => 'email-change-verification',
-		'donor_note'                => 'donor-note',
-		'tribute_notification'      => 'tribute-notification',
+		'donation_receipt'                 => 'donation-receipt',
+		'subscription_activated'           => 'subscription-activated',
+		'renewal_receipt'                  => 'renewal-receipt',
+		'payment_failed'                   => 'payment-failed',
+		'subscription_cancelled'           => 'subscription-cancelled',
+		'account_activation'               => 'account-activation',
+		'password_reset'                   => 'password-reset',
+		'email_change_verification'        => 'email-change-verification',
+		'donor_note'                       => 'donor-note',
+		'tribute_notification'             => 'tribute-notification',
+		'p2p_fundraiser_approved'          => 'p2p-fundraiser-approved',
+		'p2p_fundraiser_received_donation' => 'p2p-fundraiser-received-donation',
 	];
 
 	/**
@@ -64,16 +66,18 @@ class EmailTemplateEndpoint {
 	 */
 	private function default_subjects(): array {
 		return [
-			'donation_receipt'          => __( 'Thank you for your {amount} donation', 'mission-donation-platform' ),
-			'subscription_activated'    => __( 'Thank you for your {amount} {frequency} donation', 'mission-donation-platform' ),
-			'renewal_receipt'           => __( 'Thank you for your {frequency} gift of {amount}', 'mission-donation-platform' ),
-			'payment_failed'            => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
-			'subscription_cancelled'    => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
-			'account_activation'        => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
-			'password_reset'            => __( 'Reset your password', 'mission-donation-platform' ),
-			'email_change_verification' => __( 'Verify your new email address', 'mission-donation-platform' ),
-			'donor_note'                => __( 'A note about your donation', 'mission-donation-platform' ),
-			'tribute_notification'      => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
+			'donation_receipt'                 => __( 'Thank you for your {amount} donation', 'mission-donation-platform' ),
+			'subscription_activated'           => __( 'Thank you for your {amount} {frequency} donation', 'mission-donation-platform' ),
+			'renewal_receipt'                  => __( 'Thank you for your {frequency} gift of {amount}', 'mission-donation-platform' ),
+			'payment_failed'                   => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
+			'subscription_cancelled'           => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
+			'account_activation'               => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
+			'password_reset'                   => __( 'Reset your password', 'mission-donation-platform' ),
+			'email_change_verification'        => __( 'Verify your new email address', 'mission-donation-platform' ),
+			'donor_note'                       => __( 'A note about your donation', 'mission-donation-platform' ),
+			'tribute_notification'             => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
+			'p2p_fundraiser_approved'          => __( 'Your fundraising page is live', 'mission-donation-platform' ),
+			'p2p_fundraiser_received_donation' => __( 'You received a {amount} donation!', 'mission-donation-platform' ),
 		];
 	}
 
@@ -210,6 +214,15 @@ class EmailTemplateEndpoint {
 				$data['honoree_name']       = '{honoree_name}';
 				$data['message']            = '{message}';
 				$data['organization']       = '{organization}';
+				break;
+
+			case 'p2p_fundraiser_approved':
+				$data['page_url'] = '{page_url}';
+				break;
+
+			case 'p2p_fundraiser_received_donation':
+				$data['page_url']   = '{page_url}';
+				$data['giver_name'] = '{giver_name}';
 				break;
 		}
 

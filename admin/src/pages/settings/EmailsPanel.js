@@ -6,6 +6,7 @@ import EmailEditor from './EmailEditor';
 import {
   DONATION_EMAILS,
   ACCOUNT_EMAILS,
+  FUNDRAISER_EMAILS,
   ADMIN_EMAILS,
   EMAIL_ICONS,
 } from './email-templates';
@@ -299,7 +300,7 @@ export default function EmailsPanel( {
 
   const editingEmail =
     editingEmailId &&
-    [ ...DONATION_EMAILS, ...ACCOUNT_EMAILS ].find(
+    [ ...DONATION_EMAILS, ...ACCOUNT_EMAILS, ...FUNDRAISER_EMAILS ].find(
       ( e ) => e.id === editingEmailId
     );
 
@@ -401,6 +402,24 @@ export default function EmailsPanel( {
       </h3>
       <div className="mission-settings-email-list">
         { ACCOUNT_EMAILS.map( ( email ) => (
+          <EmailRow
+            key={ email.id }
+            email={ email }
+            enabled={ getEmailEnabled( email.id ) }
+            onToggle={ ( val ) =>
+              updateEmailSetting( email.id, 'enabled', val )
+            }
+            onEdit={ () => setEditingEmailId( email.id ) }
+          />
+        ) ) }
+      </div>
+
+      { /* Fundraiser Emails */ }
+      <h3 className="mission-settings-email-group-title">
+        { __( 'Fundraiser Emails', 'mission-donation-platform' ) }
+      </h3>
+      <div className="mission-settings-email-list">
+        { FUNDRAISER_EMAILS.map( ( email ) => (
           <EmailRow
             key={ email.id }
             email={ email }

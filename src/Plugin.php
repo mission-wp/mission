@@ -191,6 +191,10 @@ class Plugin {
 		$donation_email_listener = new Email\DonationEmailListener();
 		$donation_email_listener->init( $this->email_module );
 
+		// Initialize fundraiser email listener (P2P approved + received-donation).
+		$fundraiser_email_listener = new Email\FundraiserEmailListener();
+		$fundraiser_email_listener->init( $this->email_module );
+
 		// Initialize admin notification listener.
 		$admin_notifier                    = new Email\AdminNotifier( $this->email_module, new Settings\SettingsService() );
 		$this->admin_notification_listener = new Email\AdminNotificationListener();
