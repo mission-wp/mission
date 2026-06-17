@@ -115,6 +115,64 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Create a new fundraiser (and its shell post) during registration.
+	 *
+	 * Always created without a team; attaching to a team (including as the
+	 * captain of a just-created team) goes through join_team() so the
+	 * mission_team_joined event fires uniformly for every join path.
+	 *
+	 * @param int    $campaign_id Parent campaign ID.
+	 * @param int    $donor_id    Participant donor ID.
+	 * @param int    $goal        Personal goal in minor units.
+	 * @param string $story       Personal fundraising story.
+	 * @param string $headline    Short tagline.
+	 * @param string $status      Initial status (active/pending).
+	 * @return self The saved fundraiser.
+	 */
+	public static function register( int $campaign_id, int $donor_id, int $goal, string $story = '', string $headline = '', string $status = self::STATUS_ACTIVE ): self {
+		$fundraiser = new self(
+			[
+				'campaign_id' => $campaign_id,
+				'donor_id'    => $donor_id,
+				'goal'        => $goal,
+				'story'       => $story,
+				'headline'    => $headline,
+				'status'      => $status,
+			]
+		);
+
+		$fundraiser->save();
+
+		return $fundraiser;
+	}
+
+	/**
+	 * Attach this fundraiser to a team and fire the joined event.
+	 *
+	 * @param Team $team       The team to join.
+	 * @param bool $as_captain Whether this fundraiser leads the team.
+	 * @return bool True on success.
+	 */
+	public function join_team( Team $team, bool $as_captain = false ): bool {
+		$this->team_id         = $team->id;
+		$this->is_team_captain = $as_captain;
+
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a fundraiser joins a team.
+		 *
+		 * @param Fundraiser $fundraiser The fundraiser that joined.
+		 * @param Team       $team       The team they joined.
+		 */
+		do_action( 'mission_team_joined', $this, $team );
+
+		return true;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected function shell_post_type(): string {

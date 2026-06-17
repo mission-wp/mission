@@ -104,6 +104,7 @@ class ActivityFeedModule {
 		add_action( 'mission_fundraiser_approved', [ $this, 'on_fundraiser_approved' ] );
 		add_action( 'mission_team_created', [ $this, 'on_team_created' ] );
 		add_action( 'mission_team_approved', [ $this, 'on_team_approved' ] );
+		add_action( 'mission_team_joined', [ $this, 'on_team_joined' ], 10, 2 );
 
 		// Campaign milestone reached.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
@@ -671,6 +672,31 @@ class ActivityFeedModule {
 			'team',
 			(int) $team->id,
 			$this->team_log_data( $team )
+		);
+	}
+
+	/**
+	 * Handle a fundraiser joining a team.
+	 *
+	 * @param object $fundraiser Fundraiser model (the member who joined).
+	 * @param object $team       Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_joined( object $fundraiser, object $team ): void {
+		$donor = $fundraiser->donor();
+
+		$this->log(
+			'team_joined',
+			'team',
+			(int) $team->id,
+			[
+				'team_name'       => $team->name,
+				'fundraiser_id'   => (int) $fundraiser->id,
+				'donor_id'        => $fundraiser->donor_id,
+				'donor_name'      => $donor?->full_name() ?: '',
+				'is_team_captain' => $fundraiser->is_team_captain,
+			]
 		);
 	}
 

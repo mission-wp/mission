@@ -111,6 +111,35 @@ class Team extends Model {
 	}
 
 	/**
+	 * Create a new team (and its shell post) during registration.
+	 *
+	 * The captain is set separately via set_captain() once the captain
+	 * fundraiser exists, because the two rows reference each other.
+	 *
+	 * @param int    $campaign_id Parent campaign ID.
+	 * @param string $name        Team name.
+	 * @param int    $goal        Team goal in minor units.
+	 * @param string $access      Access level (public/private).
+	 * @param string $status      Initial status (active/pending).
+	 * @return self The saved team.
+	 */
+	public static function register( int $campaign_id, string $name, int $goal, string $access = self::ACCESS_PUBLIC, string $status = self::STATUS_ACTIVE ): self {
+		$team = new self(
+			[
+				'campaign_id' => $campaign_id,
+				'name'        => $name,
+				'goal'        => $goal,
+				'access'      => $access,
+				'status'      => $status,
+			]
+		);
+
+		$team->save();
+
+		return $team;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected function shell_post_type(): string {
@@ -140,6 +169,21 @@ class Team extends Model {
 	 */
 	public function captain(): ?Fundraiser {
 		return $this->captain_id ? Fundraiser::find( $this->captain_id ) : null;
+	}
+
+	/**
+	 * Set the team captain, completing the circular foreign key.
+	 *
+	 * Called after the captain's fundraiser row exists (a team is created
+	 * before its captain, so captain_id is backfilled here).
+	 *
+	 * @param Fundraiser $captain The captain fundraiser.
+	 * @return bool True on success.
+	 */
+	public function set_captain( Fundraiser $captain ): bool {
+		$this->captain_id = $captain->id;
+
+		return (bool) $this->save();
 	}
 
 	/**

@@ -133,6 +133,36 @@ class TeamTest extends WP_UnitTestCase {
 	}
 
 	// -------------------------------------------------------------------------
+	// Registration tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test register() creates an active team with no captain yet.
+	 */
+	public function test_register_creates_team_without_captain(): void {
+		$team = Team::register( 1, 'New Team', 50000 );
+
+		$this->assertNotNull( $team->id );
+		$this->assertNull( $team->captain_id );
+		$this->assertSame( 'active', $team->status );
+		$this->assertSame( 'public', $team->access );
+		$this->assertSame( 50000, $team->goal );
+		$this->assertGreaterThan( 0, $team->post_id );
+	}
+
+	/**
+	 * Test set_captain() backfills captain_id and persists.
+	 */
+	public function test_set_captain_backfills_captain_id(): void {
+		$team    = Team::register( 1, 'Captained', 50000 );
+		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+
+		$this->assertTrue( $team->set_captain( $captain ) );
+		$this->assertSame( $captain->id, $team->captain_id );
+		$this->assertSame( $captain->id, Team::find( $team->id )->captain_id );
+	}
+
+	// -------------------------------------------------------------------------
 	// query() / count() tests.
 	// -------------------------------------------------------------------------
 

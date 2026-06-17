@@ -11,9 +11,11 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\ImportJob;
 use MissionDP\Models\OutgoingWebhook;
 use MissionDP\Models\Subscription;
+use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
 use MissionDP\Plugin;
 use MissionDP\Settings\SettingsService;
@@ -291,6 +293,29 @@ class ActivityFeedModuleTest extends WP_UnitTestCase {
 		$data = json_decode( $created_entries[0]->data, true );
 		$this->assertSame( $campaign->post_id, $data['post_id'] );
 		$this->assertSame( 'Fundraiser', $data['title'] );
+	}
+
+	/**
+	 * Test that team_joined is logged when a fundraiser joins a team.
+	 */
+	public function test_logs_event_on_team_joined(): void {
+		$campaign = new Campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+		$campaign->save();
+		$donor = $this->create_donor();
+
+		$team       = Team::register( $campaign->id, 'Joiners', 50000 );
+		$fundraiser = Fundraiser::register( $campaign->id, $donor->id, 25000 );
+		$fundraiser->join_team( $team );
+
+		$entries = ActivityLog::query( [ 'event' => 'team_joined' ] );
+		$this->assertCount( 1, $entries );
+		$this->assertSame( 'team', $entries[0]->object_type );
+		$this->assertSame( $team->id, $entries[0]->object_id );
+
+		$data = json_decode( $entries[0]->data, true );
+		$this->assertSame( 'Joiners', $data['team_name'] );
+		$this->assertSame( $fundraiser->id, $data['fundraiser_id'] );
+		$this->assertSame( $donor->id, $data['donor_id'] );
 	}
 
 	/**

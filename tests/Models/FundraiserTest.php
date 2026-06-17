@@ -187,6 +187,51 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	// -------------------------------------------------------------------------
+	// Registration tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test register() creates a solo, active fundraiser.
+	 */
+	public function test_register_creates_solo_fundraiser(): void {
+		$fundraiser = Fundraiser::register( 1, 1, 25000, 'My story', 'My headline' );
+
+		$this->assertNotNull( $fundraiser->id );
+		$this->assertNull( $fundraiser->team_id );
+		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertSame( 'active', $fundraiser->status );
+		$this->assertSame( 25000, $fundraiser->goal );
+		$this->assertSame( 'My story', $fundraiser->story );
+		$this->assertSame( 'My headline', $fundraiser->headline );
+	}
+
+	/**
+	 * Test join_team() sets the team, captain flag, and fires mission_team_joined.
+	 */
+	public function test_join_team_sets_team_and_fires_event(): void {
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
+		$team->save();
+
+		$fired = [];
+		add_action(
+			'mission_team_joined',
+			function ( $fundraiser, $joined ) use ( &$fired ) {
+				$fired = [ $fundraiser->id, $joined->id ];
+			},
+			10,
+			2
+		);
+
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+		$this->assertTrue( $fundraiser->join_team( $team, true ) );
+
+		$this->assertSame( $team->id, $fundraiser->team_id );
+		$this->assertTrue( $fundraiser->is_team_captain );
+		$this->assertSame( $team->id, Fundraiser::find( $fundraiser->id )->team_id );
+		$this->assertSame( [ $fundraiser->id, $team->id ], $fired );
+	}
+
+	// -------------------------------------------------------------------------
 	// query() / count() tests.
 	// -------------------------------------------------------------------------
 
