@@ -508,6 +508,21 @@ class DonorAuthService {
 	}
 
 	/**
+	 * Validate a password meets the requirements.
+	 *
+	 * Exposed so the signup flow can reject a weak password before sending a
+	 * verification code (rather than after the donor has entered it).
+	 *
+	 * @param string $password Password to validate.
+	 * @return void
+	 *
+	 * @throws \RuntimeException If the password is too short.
+	 */
+	public function validate_password( string $password ): void {
+		$this->validate_password_length( $password );
+	}
+
+	/**
 	 * Validate a password meets the minimum length.
 	 *
 	 * @param string $password Password to validate.
