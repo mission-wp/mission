@@ -3,9 +3,11 @@
  * Block Name: Fundraiser Sign-up Modal
  * Description: Multi-step modal for becoming a fundraiser or joining a team.
  *
- * The visual shell + step navigation only; account/fundraiser/team creation is
- * wired in the registration phase. Rendered once per peer-to-peer page and
- * opened by the "Become a Fundraiser" / "Join this Team" buttons.
+ * Rendered once per peer-to-peer page and opened by the "Become a Fundraiser" /
+ * "Join this Team" buttons. Step 1 branches on the email (login, inline OTP
+ * verification, or inline password reset); steps 2-3 are the fundraiser setup
+ * and the share-focused success screen. Submission is wired in view.js against
+ * the /p2p REST routes.
  *
  * @package MissionDP
  *
@@ -16,6 +18,7 @@
 
 use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
@@ -24,50 +27,71 @@ defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes, $content, $block ): void {
-// Resolve the campaign (and a preselected team on a team page) from the page.
-$campaign         = null;
-$preselected_team = null;
-$current_post     = get_post();
+	// Resolve the campaign (and a preselected team on a team page) from the page.
+	$campaign         = null;
+	$preselected_team = null;
+	$current_post     = get_post();
 
-if ( ! empty( $attributes['campaignId'] ) ) {
-	$campaign = Campaign::find( (int) $attributes['campaignId'] );
-} elseif ( $current_post ) {
-	if ( CampaignPostType::POST_TYPE === $current_post->post_type ) {
-		$campaign = Campaign::find_by_post_id( $current_post->ID );
-	} elseif ( Fundraiser::POST_TYPE === $current_post->post_type ) {
-		$campaign = Fundraiser::find_by_post_id( $current_post->ID )?->campaign();
-	} elseif ( Team::POST_TYPE === $current_post->post_type ) {
-		$preselected_team = Team::find_by_post_id( $current_post->ID );
-		$campaign         = $preselected_team?->campaign();
+	if ( ! empty( $attributes['campaignId'] ) ) {
+		$campaign = Campaign::find( (int) $attributes['campaignId'] );
+	} elseif ( $current_post ) {
+		if ( CampaignPostType::POST_TYPE === $current_post->post_type ) {
+			$campaign = Campaign::find_by_post_id( $current_post->ID );
+		} elseif ( Fundraiser::POST_TYPE === $current_post->post_type ) {
+			$campaign = Fundraiser::find_by_post_id( $current_post->ID )?->campaign();
+		} elseif ( Team::POST_TYPE === $current_post->post_type ) {
+			$preselected_team = Team::find_by_post_id( $current_post->ID );
+			$campaign         = $preselected_team?->campaign();
+		}
 	}
-}
 
-if ( ! $campaign || ! $campaign->is_p2p() ) {
-	return;
-}
+	if ( ! $campaign || ! $campaign->is_p2p() ) {
+		return;
+	}
 
-$settings = $campaign->p2p_settings();
+	$settings = $campaign->p2p_settings();
 
-if ( empty( $settings['registration_open'] ) ) {
-	return;
-}
+	if ( empty( $settings['registration_open'] ) ) {
+		return;
+	}
 
-$teams_enabled    = ! empty( $settings['teams_enabled'] );
-$creation_enabled = $teams_enabled && ! empty( $settings['team_creation_enabled'] );
-$default_goal     = (int) round( ( $settings['default_fundraiser_goal'] ?? 0 ) / 100 );
-$story_placeholder = (string) ( $settings['story_placeholder'] ?? '' );
-$teams            = $teams_enabled ? Team::query( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : [];
+	$teams_enabled     = ! empty( $settings['teams_enabled'] );
+	$creation_enabled  = $teams_enabled && ! empty( $settings['team_creation_enabled'] );
+	$default_goal      = (int) round( ( $settings['default_fundraiser_goal'] ?? 0 ) / 100 );
+	$story_placeholder = (string) ( $settings['story_placeholder'] ?? '' );
+	$teams             = $teams_enabled ? Team::query( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : [];
 
-$brandline = $preselected_team
-	/* translators: %s: team name */
-	? sprintf( __( 'Join %s', 'mission-donation-platform' ), $preselected_team->name )
-	: $campaign->title;
+	// Resolve a signed-in donor inline (cheap; avoids booting the auth service).
+	$current_user  = wp_get_current_user();
+	$current_donor = ( $current_user->ID && in_array( 'missiondp_donor', (array) $current_user->roles, true ) )
+		? Donor::find_by_user_id( $current_user->ID )
+		: null;
 
-ob_start();
-?>
+	$brandline = $preselected_team
+		/* translators: %s: team name */
+		? sprintf( __( 'Join %s', 'mission-donation-platform' ), $preselected_team->name )
+		: $campaign->title;
+
+	$context = [
+		'restUrl'             => trailingslashit( get_rest_url( null, 'mission-donation-platform/v1' ) ),
+		'nonce'               => wp_create_nonce( 'wp_rest' ),
+		'campaignId'          => (int) $campaign->id,
+		'defaultGoal'         => $default_goal,
+		'teamsEnabled'        => $teams_enabled,
+		'teamCreationEnabled' => $creation_enabled,
+		'preselectedTeamId'   => $preselected_team ? (int) $preselected_team->id : 0,
+		'signedIn'            => (bool) $current_donor,
+		'donorName'           => $current_donor ? trim( $current_donor->first_name . ' ' . $current_donor->last_name ) : '',
+		'donorEmail'          => $current_donor ? $current_donor->email : '',
+	];
+
+	ob_start();
+	?>
 <div
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-su' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/p2p-signup"
+	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
+	data-wp-init="callbacks.init"
 	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
 	<div
@@ -93,17 +117,74 @@ ob_start();
 			<div class="mission-su__body">
 				<!-- Step 1: account -->
 				<div class="mission-su__step" data-wp-class--is-active="state.isStep1">
-					<h2 class="mission-su__title"><?php esc_html_e( 'Create your account', 'mission-donation-platform' ); ?></h2>
-					<p class="mission-su__subtitle"><?php esc_html_e( "Let's set up your fundraising page. First, the basics.", 'mission-donation-platform' ); ?></p>
 
-					<div class="mission-su__row">
-						<label class="mission-su__field"><span><?php esc_html_e( 'First name', 'mission-donation-platform' ); ?></span><input type="text" autocomplete="given-name" /></label>
-						<label class="mission-su__field"><span><?php esc_html_e( 'Last name', 'mission-donation-platform' ); ?></span><input type="text" autocomplete="family-name" /></label>
+					<!-- Signed-in shortcut -->
+					<div data-wp-bind--hidden="!state.isSignedInView">
+						<h2 class="mission-su__title"><?php esc_html_e( 'Welcome back', 'mission-donation-platform' ); ?></h2>
+						<p class="mission-su__subtitle"><?php esc_html_e( 'Continue setting up your fundraiser.', 'mission-donation-platform' ); ?></p>
+						<div class="mission-su__identity">
+							<strong data-wp-text="state.donorName"></strong>
+							<span data-wp-text="state.donorEmail"></span>
+						</div>
+						<button type="button" class="mission-su__btn" data-wp-on--click="actions.continueSignedIn"><?php esc_html_e( 'Continue', 'mission-donation-platform' ); ?></button>
+						<p class="mission-su__note">
+							<?php esc_html_e( 'Not you?', 'mission-donation-platform' ); ?>
+							<button type="button" class="mission-su__link" data-wp-on--click="actions.logout"><?php esc_html_e( 'Log out', 'mission-donation-platform' ); ?></button>
+						</p>
 					</div>
-					<label class="mission-su__field"><span><?php esc_html_e( 'Email', 'mission-donation-platform' ); ?></span><input type="email" autocomplete="email" /></label>
-					<label class="mission-su__field"><span><?php esc_html_e( 'Password', 'mission-donation-platform' ); ?></span><input type="password" autocomplete="new-password" /></label>
 
-					<button type="button" class="mission-su__btn" data-wp-on--click="actions.next"><?php esc_html_e( 'Continue', 'mission-donation-platform' ); ?></button>
+					<!-- Account form -->
+					<div data-wp-bind--hidden="!state.isFormView">
+						<h2 class="mission-su__title"><?php esc_html_e( 'Create your account', 'mission-donation-platform' ); ?></h2>
+						<p class="mission-su__subtitle"><?php esc_html_e( "Let's set up your fundraising page. First, the basics.", 'mission-donation-platform' ); ?></p>
+
+						<div class="mission-su__row">
+							<label class="mission-su__field"><span><?php esc_html_e( 'First name', 'mission-donation-platform' ); ?></span><input type="text" autocomplete="given-name" data-wp-bind--value="state.firstName" data-wp-on--input="actions.updateFirstName" data-wp-class--mission-su__input--error="state.firstNameError" /></label>
+							<label class="mission-su__field"><span><?php esc_html_e( 'Last name', 'mission-donation-platform' ); ?></span><input type="text" autocomplete="family-name" data-wp-bind--value="state.lastName" data-wp-on--input="actions.updateLastName" data-wp-class--mission-su__input--error="state.lastNameError" /></label>
+						</div>
+						<label class="mission-su__field"><span><?php esc_html_e( 'Email', 'mission-donation-platform' ); ?></span><input type="email" autocomplete="email" data-wp-bind--value="state.email" data-wp-on--input="actions.updateEmail" data-wp-class--mission-su__input--error="state.emailError" /></label>
+						<label class="mission-su__field"><span><?php esc_html_e( 'Phone', 'mission-donation-platform' ); ?> <span class="mission-su__optional"><?php esc_html_e( '(optional)', 'mission-donation-platform' ); ?></span></span><input type="tel" autocomplete="tel" data-wp-bind--value="state.phone" data-wp-on--input="actions.updatePhone" /></label>
+						<label class="mission-su__field"><span><?php esc_html_e( 'Password', 'mission-donation-platform' ); ?></span><input type="password" autocomplete="new-password" placeholder="<?php esc_attr_e( 'At least 8 characters', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.password" data-wp-on--input="actions.updatePassword" data-wp-class--mission-su__input--error="state.passwordError" /></label>
+
+						<p class="mission-su__warning" data-wp-bind--hidden="!state.showPasswordWarning">
+							<?php esc_html_e( 'An account with this email already exists. Enter the correct password or', 'mission-donation-platform' ); ?>
+							<button type="button" class="mission-su__link" data-wp-on--click="actions.startReset"><?php esc_html_e( 'reset it', 'mission-donation-platform' ); ?></button>.
+						</p>
+						<p class="mission-su__error" data-wp-bind--hidden="!state.formError" data-wp-text="state.formError"></p>
+
+						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.continueAccount"><?php esc_html_e( 'Continue', 'mission-donation-platform' ); ?></button>
+					</div>
+
+					<!-- 6-digit code (signup verify or password reset) -->
+					<div data-wp-bind--hidden="!state.isOtpView">
+						<button type="button" class="mission-su__back" data-wp-on--click="actions.showForm"><?php esc_html_e( 'Change email', 'mission-donation-platform' ); ?></button>
+						<h2 class="mission-su__title"><?php esc_html_e( 'Verify your email', 'mission-donation-platform' ); ?></h2>
+						<p class="mission-su__subtitle">
+							<?php esc_html_e( 'We sent a 6-digit code to', 'mission-donation-platform' ); ?>
+							<strong data-wp-text="state.email"></strong>.
+						</p>
+						<div class="mission-su__otp">
+							<?php for ( $i = 0; $i < 6; $i++ ) : ?>
+								<input class="mission-su__otp-input" inputmode="numeric" maxlength="1" autocomplete="one-time-code" data-otp-index="<?php echo (int) $i; ?>" data-wp-on--input="actions.onOtpInput" data-wp-on--keydown="actions.onOtpKeydown" data-wp-on--paste="actions.onOtpPaste" aria-label="<?php echo esc_attr( sprintf( /* translators: %d: digit position */ __( 'Digit %d', 'mission-donation-platform' ), $i + 1 ) ); ?>" />
+							<?php endfor; ?>
+						</div>
+						<p class="mission-su__error" data-wp-bind--hidden="!state.otpError" data-wp-text="state.otpError"></p>
+						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.verifyCode"><?php esc_html_e( 'Verify', 'mission-donation-platform' ); ?></button>
+						<p class="mission-su__resend">
+							<?php esc_html_e( "Didn't get a code?", 'mission-donation-platform' ); ?>
+							<button type="button" class="mission-su__link" data-wp-bind--disabled="state.resendIn" data-wp-on--click="actions.resendCode"><?php esc_html_e( 'Resend', 'mission-donation-platform' ); ?></button>
+							<span data-wp-text="state.resendLabel"></span>
+						</p>
+					</div>
+
+					<!-- New password (after a verified reset code) -->
+					<div data-wp-bind--hidden="!state.isNewpassView">
+						<h2 class="mission-su__title"><?php esc_html_e( 'Set a new password', 'mission-donation-platform' ); ?></h2>
+						<p class="mission-su__subtitle"><?php esc_html_e( 'Choose a new password for your account.', 'mission-donation-platform' ); ?></p>
+						<label class="mission-su__field"><span><?php esc_html_e( 'New password', 'mission-donation-platform' ); ?></span><input type="password" autocomplete="new-password" placeholder="<?php esc_attr_e( 'At least 8 characters', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.newPassword" data-wp-on--input="actions.updateNewPassword" /></label>
+						<p class="mission-su__error" data-wp-bind--hidden="!state.formError" data-wp-text="state.formError"></p>
+						<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.savePassword"><?php esc_html_e( 'Save and continue', 'mission-donation-platform' ); ?></button>
+					</div>
 				</div>
 
 				<!-- Step 2: fundraiser setup -->
@@ -124,35 +205,42 @@ ob_start();
 						</div>
 						<div class="mission-su__panel" data-wp-class--is-active="state.isJoinMode">
 							<label class="mission-su__field">
-								<span><?php esc_html_e( 'Select a team', 'mission-donation-platform' ); ?></span>
-								<select>
+								<span><?php esc_html_e( 'Select a team', 'mission-donation-platform' ); ?> <span class="mission-su__optional"><?php esc_html_e( '(optional)', 'mission-donation-platform' ); ?></span></span>
+								<select data-wp-on--change="actions.updateTeamId">
 									<option value=""><?php esc_html_e( 'No team — fundraise on your own', 'mission-donation-platform' ); ?></option>
 									<?php foreach ( $teams as $team ) : ?>
 										<option value="<?php echo esc_attr( (string) $team->id ); ?>"><?php echo esc_html( $team->name ); ?></option>
 									<?php endforeach; ?>
 								</select>
+								<span class="mission-su__hint"><?php esc_html_e( 'Leave blank to fundraise on your own.', 'mission-donation-platform' ); ?></span>
 							</label>
 						</div>
 						<?php if ( $creation_enabled ) : ?>
 							<div class="mission-su__panel" data-wp-class--is-active="state.isCreateMode">
-								<label class="mission-su__field"><span><?php esc_html_e( 'Team name', 'mission-donation-platform' ); ?></span><input type="text" /></label>
+								<label class="mission-su__field"><span><?php esc_html_e( 'Team name', 'mission-donation-platform' ); ?></span><input type="text" data-wp-bind--value="state.teamName" data-wp-on--input="actions.updateTeamName" /></label>
+								<p class="mission-su__hint"><?php esc_html_e( 'You can add a team logo later from your dashboard.', 'mission-donation-platform' ); ?></p>
 							</div>
 						<?php endif; ?>
 					<?php endif; ?>
 
-					<label class="mission-su__field"><span><?php esc_html_e( 'Your fundraising goal', 'mission-donation-platform' ); ?></span><input type="number" min="1" value="<?php echo esc_attr( (string) $default_goal ); ?>" /></label>
-					<label class="mission-su__field"><span><?php esc_html_e( 'Tell your story', 'mission-donation-platform' ); ?></span><textarea rows="4" placeholder="<?php echo esc_attr( $story_placeholder ); ?>"></textarea></label>
+					<label class="mission-su__field"><span><?php esc_html_e( 'Your fundraising goal', 'mission-donation-platform' ); ?></span><input type="number" min="1" data-wp-bind--value="state.goal" data-wp-on--input="actions.updateGoal" /></label>
+					<label class="mission-su__field"><span><?php esc_html_e( 'Tell your story', 'mission-donation-platform' ); ?></span><textarea rows="4" placeholder="<?php echo esc_attr( $story_placeholder ); ?>" data-wp-bind--value="state.story" data-wp-on--input="actions.updateStory"></textarea></label>
 
 					<label class="mission-su__check">
 						<input type="checkbox" data-wp-on--change="actions.toggleTribute" />
 						<?php esc_html_e( 'Dedicate this fundraiser in honor or memory of someone', 'mission-donation-platform' ); ?>
 					</label>
 					<div class="mission-su__panel" data-wp-class--is-active="state.tributeChecked">
-						<label class="mission-su__field"><span><?php esc_html_e( 'Their name', 'mission-donation-platform' ); ?></span><input type="text" /></label>
+						<div class="mission-su__toggle">
+							<button type="button" class="mission-su__toggle-btn" data-wp-class--is-active="state.isHonor" data-wp-on--click="actions.setHonor"><?php esc_html_e( 'In honor of', 'mission-donation-platform' ); ?></button>
+							<button type="button" class="mission-su__toggle-btn" data-wp-class--is-active="state.isMemory" data-wp-on--click="actions.setMemory"><?php esc_html_e( 'In memory of', 'mission-donation-platform' ); ?></button>
+						</div>
+						<label class="mission-su__field"><span><?php esc_html_e( 'Their name', 'mission-donation-platform' ); ?></span><input type="text" data-wp-bind--value="state.honoreeName" data-wp-on--input="actions.updateHonoreeName" /></label>
 					</div>
 
-					<button type="button" class="mission-su__btn" data-wp-on--click="actions.submit"><?php esc_html_e( 'Create fundraiser', 'mission-donation-platform' ); ?></button>
-					<button type="button" class="mission-su__btn mission-su__btn--ghost" data-wp-on--click="actions.back"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></button>
+					<p class="mission-su__error" data-wp-bind--hidden="!state.formError" data-wp-text="state.formError"></p>
+					<button type="button" class="mission-su__btn" data-wp-bind--disabled="state.loading" data-wp-on--click="actions.submit"><?php esc_html_e( 'Create fundraiser', 'mission-donation-platform' ); ?></button>
+					<button type="button" class="mission-su__btn mission-su__btn--ghost" data-wp-bind--hidden="state.signedIn" data-wp-on--click="actions.back"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></button>
 				</div>
 
 				<!-- Step 3: success -->
@@ -161,16 +249,21 @@ ob_start();
 						<h2 class="mission-su__title"><?php esc_html_e( "You're a fundraiser!", 'mission-donation-platform' ); ?></h2>
 						<p class="mission-su__subtitle"><?php esc_html_e( 'Your page is live. Share it with friends and family to start raising funds.', 'mission-donation-platform' ); ?></p>
 						<div class="mission-su__share">
-							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.share"><?php esc_html_e( 'Share', 'mission-donation-platform' ); ?></button>
+							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareFacebook" aria-label="<?php esc_attr_e( 'Share on Facebook', 'mission-donation-platform' ); ?>">f</button>
+							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareX" aria-label="<?php esc_attr_e( 'Share on X', 'mission-donation-platform' ); ?>">X</button>
+							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.copyLink" aria-label="<?php esc_attr_e( 'Copy link', 'mission-donation-platform' ); ?>"><span data-wp-text="state.copyLabel"></span></button>
+							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareEmail" aria-label="<?php esc_attr_e( 'Share by email', 'mission-donation-platform' ); ?>">@</button>
 						</div>
+						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
+						<p class="mission-su__note"><?php esc_html_e( 'Check your inbox to confirm your email — that\'s how you\'ll edit your page later.', 'mission-donation-platform' ); ?></p>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-<?php
-$output = ob_get_clean();
+	<?php
+	$output = ob_get_clean();
 
-echo wp_kses( apply_filters( 'mission_signup_modal_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+	echo wp_kses( apply_filters( 'mission_signup_modal_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
 } )( $attributes, $content, $block );

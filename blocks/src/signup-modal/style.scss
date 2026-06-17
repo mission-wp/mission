@@ -285,6 +285,134 @@
   }
 }
 
+.mission-su__optional {
+  font-weight: 400;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__hint {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__note {
+  margin: 14px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__link {
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--mission-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    color: var(--mission-text-secondary);
+    cursor: default;
+  }
+}
+
+.mission-su__warning,
+.mission-su__error {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--mission-error, #9c3b3b);
+  background: color-mix(in srgb, var(--mission-error, #b85c5c) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mission-error, #b85c5c) 22%, transparent);
+  border-radius: 8px;
+}
+
+.mission-su__input--error {
+  border-color: var(--mission-error, #b85c5c);
+}
+
+.mission-su__back {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 0;
+  font: inherit;
+  color: var(--mission-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &::before {
+    content: "\2190";
+    margin-right: 4px;
+  }
+
+  &:hover {
+    color: var(--mission-text);
+  }
+}
+
+.mission-su__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: var(--mission-bg-light);
+  border: 1px solid var(--mission-border);
+  border-radius: var(--mission-radius);
+
+  strong {
+    font-size: 15px;
+    color: var(--mission-text);
+  }
+
+  span {
+    font-size: 13px;
+    color: var(--mission-text-secondary);
+  }
+}
+
+.mission-su__otp {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 6px 0 16px;
+}
+
+.mission-su__otp-input {
+  width: 46px;
+  height: 54px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--mission-text);
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: 10px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--mission-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+  }
+}
+
+.mission-su__resend {
+  margin: 16px 0 0;
+  font-size: 13px;
+  text-align: center;
+  color: var(--mission-text-secondary);
+}
+
 .mission-su__success {
   text-align: center;
   padding: 12px 0;
@@ -292,24 +420,36 @@
 
 .mission-su__share {
   display: flex;
+  gap: 10px;
   justify-content: center;
-  margin-top: 18px;
+  margin: 18px 0;
 }
 
 .mission-su__share-btn {
-  padding: 12px 28px;
-  font-size: 15px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+  font-weight: 700;
   font-family: inherit;
-  color: var(--mission-primary-text, #fff);
-  background: var(--mission-primary);
-  border: none;
-  border-radius: 8px;
+  color: var(--mission-text-secondary);
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: 50%;
   cursor: pointer;
 
   &:hover {
-    background: var(--mission-primary-hover);
+    color: var(--mission-primary);
+    border-color: var(--mission-primary);
   }
+}
+
+// The "View my page" button is an anchor; keep it looking like a button.
+a.mission-su__btn {
+  text-align: center;
+  text-decoration: none;
 }
 
 @media (max-width: 600px) {
