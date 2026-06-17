@@ -265,6 +265,10 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         }
 
         if ( data.branch === 'authenticated' ) {
+          // Logged in mid-flow: adopt the fresh nonce for the register call.
+          if ( data.nonce ) {
+            ctx.nonce = data.nonce;
+          }
           state.currentStep = 2;
         } else if ( data.branch === 'password_mismatch' ) {
           state.showPasswordWarning = true;
@@ -373,6 +377,9 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           state.resetGrant = data.grant;
           state.step1View = 'newpass';
         } else {
+          if ( data.nonce ) {
+            ctx.nonce = data.nonce;
+          }
           state.currentStep = 2;
         }
       } catch ( e ) {
@@ -404,6 +411,9 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           return;
         }
 
+        if ( data.nonce ) {
+          ctx.nonce = data.nonce;
+        }
         state.currentStep = 2;
       } catch ( e ) {
         state.formError = GENERIC_ERROR;

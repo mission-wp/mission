@@ -218,6 +218,26 @@ class DonorAuthServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test login() sets the current user, so a nonce minted right after is valid.
+	 *
+	 * Regression guard: the signup modal logs in mid-flow and immediately mints a
+	 * REST nonce for the register call; if login() leaves the current user as 0,
+	 * that nonce is rejected as an invalid cookie nonce.
+	 */
+	public function test_login_sets_current_user(): void {
+		$donor = new Donor( [ 'email' => 'loginnow@example.com', 'first_name' => 'L', 'last_name' => 'N' ] );
+		$donor->save();
+
+		$service = new DonorAuthService( $this->stub_email_module() );
+		$service->create_account( $donor, 'longenough1' );
+		wp_set_current_user( 0 );
+
+		$service->login( 'loginnow@example.com', 'longenough1' );
+
+		$this->assertSame( $donor->user_id, get_current_user_id() );
+	}
+
+	/**
 	 * Test login_user() establishes a session for a donor.
 	 */
 	public function test_login_user_establishes_session(): void {

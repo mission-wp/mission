@@ -236,6 +236,9 @@ class RegisterFundraiserEndpoint {
 		if ( FundraiserRegistrationService::BRANCH_VERIFY_REQUIRED === $branch ) {
 			$response['cooldown'] = $this->registration->resend_cooldown();
 		}
+		if ( FundraiserRegistrationService::BRANCH_AUTHENTICATED === $branch ) {
+			$response['nonce'] = $this->auth->rest_nonce();
+		}
 
 		return new WP_REST_Response( $response );
 	}
@@ -296,7 +299,12 @@ class RegisterFundraiserEndpoint {
 				(string) $request->get_param( 'password' ),
 			);
 
-			return new WP_REST_Response( [ 'authenticated' => true ] );
+			return new WP_REST_Response(
+				[
+					'authenticated' => true,
+					'nonce'         => $this->auth->rest_nonce(),
+				]
+			);
 		} catch ( OtpException $e ) {
 			return $this->otp_error( $e );
 		} catch ( \RuntimeException $e ) {
@@ -323,7 +331,12 @@ class RegisterFundraiserEndpoint {
 				$request->get_param( 'password' ),
 			);
 
-			return new WP_REST_Response( [ 'authenticated' => true ] );
+			return new WP_REST_Response(
+				[
+					'authenticated' => true,
+					'nonce'         => $this->auth->rest_nonce(),
+				]
+			);
 		} catch ( \RuntimeException $e ) {
 			return new WP_Error( 'reset_failed', $e->getMessage(), [ 'status' => 400 ] );
 		}

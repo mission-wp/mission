@@ -215,6 +215,8 @@ class DonorAuthService {
 	 * @throws \RuntimeException If credentials are invalid or the user is not a donor.
 	 */
 	public function login( string $email, string $password, bool $remember = false ): Donor {
+		$this->persist_cookie_for_nonce();
+
 		$user = wp_signon(
 			[
 				'user_login'    => $email,
@@ -239,6 +241,10 @@ class DonorAuthService {
 			wp_logout();
 			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
+
+		// wp_signon() doesn't set the current user for the rest of the request;
+		// do it so a nonce minted now is valid for this user's next request.
+		wp_set_current_user( $user->ID );
 
 		return $donor;
 	}
@@ -267,11 +273,44 @@ class DonorAuthService {
 			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
 		}
 
+		$this->persist_cookie_for_nonce();
 		wp_set_current_user( $user_id );
 		wp_set_auth_cookie( $user_id, true, is_ssl() );
 		do_action( 'wp_login', $user->user_login, $user );
 
 		return $donor;
+	}
+
+	/**
+	 * Issue a fresh REST nonce for the current (just-logged-in) user.
+	 *
+	 * The signup modal logs the participant in mid-flow without a page reload,
+	 * so it must replace the page's anonymous nonce before the authenticated
+	 * register request, or WordPress rejects it as an invalid cookie nonce.
+	 *
+	 * @return string
+	 */
+	public function rest_nonce(): string {
+		return wp_create_nonce( 'wp_rest' );
+	}
+
+	/**
+	 * Make the just-issued auth cookie readable within this request.
+	 *
+	 * wp_set_auth_cookie() only sends the cookie to the browser; it does not
+	 * populate $_COOKIE. Capturing it here lets wp_get_session_token() (and thus
+	 * a nonce minted later in the same request) match the cookie the next
+	 * request will send.
+	 *
+	 * @return void
+	 */
+	private function persist_cookie_for_nonce(): void {
+		add_action(
+			'set_logged_in_cookie',
+			static function ( $logged_in_cookie ) {
+				$_COOKIE[ LOGGED_IN_COOKIE ] = $logged_in_cookie;
+			}
+		);
 	}
 
 	/**
