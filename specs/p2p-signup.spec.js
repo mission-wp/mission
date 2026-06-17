@@ -263,4 +263,48 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
     // Regression: the apostrophe must not be a raw HTML entity.
     await expect( error ).not.toContainText( '&#039;' );
   } );
+
+  test( 'Enter submits each step, but not from the story textarea', async ( {
+    page,
+  } ) => {
+    const modal = await openModal( page, url );
+    await fillAccount( modal, {
+      first: 'Enter',
+      last: 'Key',
+      email: `e2e-enter-${ Date.now() }@example.com`,
+      password: 'longenough1',
+    } );
+
+    // Enter from the password field advances (Continue).
+    await modal
+      .locator( '.mission-su__field input[autocomplete="new-password"]' )
+      .first()
+      .press( 'Enter' );
+    await expect(
+      modal.getByRole( 'heading', { name: 'Verify your email' } )
+    ).toBeVisible();
+
+    // Enter from an OTP box verifies.
+    await fillOtp( modal, readOtpCode() );
+    await modal.locator( '.mission-su__otp-input' ).last().press( 'Enter' );
+    await expect(
+      modal.getByRole( 'heading', { name: 'Set up your fundraiser' } )
+    ).toBeVisible();
+
+    // Enter inside the story textarea must NOT submit.
+    const story = modal.locator( '.mission-su__field textarea' );
+    await story.click();
+    await story.press( 'Enter' );
+    await expect(
+      modal.getByRole( 'heading', { name: 'Set up your fundraiser' } )
+    ).toBeVisible();
+
+    // Enter from the goal field submits (Create fundraiser).
+    await modal
+      .locator( '.mission-su__field input[type="number"]' )
+      .press( 'Enter' );
+    await expect(
+      modal.getByRole( 'heading', { name: "You're a fundraiser!" } )
+    ).toBeVisible();
+  } );
 } );

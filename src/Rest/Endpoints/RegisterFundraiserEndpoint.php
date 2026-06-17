@@ -371,8 +371,8 @@ class RegisterFundraiserEndpoint {
 				'team_mode'    => $request->get_param( 'team_mode' ),
 				'team_id'      => (int) $request->get_param( 'team_id' ),
 				'team_name'    => (string) $request->get_param( 'team_name' ),
-				// The form collects dollars; the model stores minor units.
-				'goal'         => (int) $request->get_param( 'goal' ) * 100,
+				// Goal arrives in minor units (the modal converts via majorToMinor).
+				'goal'         => (int) $request->get_param( 'goal' ),
 				'story'        => (string) $request->get_param( 'story' ),
 				'dedicate'     => (bool) $request->get_param( 'dedicate' ),
 				'tribute_type' => $request->get_param( 'tribute_type' ),

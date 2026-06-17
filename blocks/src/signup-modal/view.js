@@ -12,6 +12,7 @@
 // as donation-form/view.js). User-facing copy lives in the translated PHP
 // template; only these error fallbacks are inline English.
 import { store, getContext, getElement } from '@wordpress/interactivity';
+import { majorToMinor, minorToMajor } from '@shared/currencies';
 
 let cooldownTimer = null;
 
@@ -162,6 +163,25 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       if ( event.key === 'Escape' ) {
         state.isOpen = false;
         document.body.style.overflow = '';
+        return;
+      }
+
+      // Enter submits the active step, except from the story textarea.
+      if ( event.key !== 'Enter' || event.target.tagName === 'TEXTAREA' ) {
+        return;
+      }
+      const root = event.target.closest( '.mission-su' );
+      if ( ! root ) {
+        return;
+      }
+      event.preventDefault();
+      const primary = Array.from(
+        root.querySelectorAll(
+          'button.mission-su__btn:not(.mission-su__btn--ghost)'
+        )
+      ).find( ( el ) => el.offsetParent !== null && ! el.disabled );
+      if ( primary ) {
+        primary.click();
       }
     },
 
@@ -427,7 +447,10 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
             ctx.preselectedTeamId ||
             ( state.teamId ? Number( state.teamId ) : 0 ),
           team_name: state.teamName,
-          goal: Number( state.goal ) || 0,
+          goal: majorToMinor(
+            Number( state.goal ) || 0,
+            ctx.currency || 'USD'
+          ),
           story: state.story,
           dedicate: state.tributeChecked,
           tribute_type: state.tributeType,
@@ -530,7 +553,10 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.donorEmail = ctx.donorEmail || '';
       state.step1View = ctx.signedIn ? 'signedin' : 'form';
       if ( ! state.goal ) {
-        state.goal = ctx.defaultGoal || 0;
+        state.goal = minorToMajor(
+          ctx.defaultGoalMinor || 0,
+          ctx.currency || 'USD'
+        );
       }
       if ( ctx.preselectedTeamId ) {
         state.teamMode = 'join';

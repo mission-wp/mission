@@ -17,6 +17,7 @@
  */
 
 use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
@@ -57,7 +58,8 @@ defined( 'ABSPATH' ) || exit;
 
 	$teams_enabled     = ! empty( $settings['teams_enabled'] );
 	$creation_enabled  = $teams_enabled && ! empty( $settings['team_creation_enabled'] );
-	$default_goal      = (int) round( ( $settings['default_fundraiser_goal'] ?? 0 ) / 100 );
+	$currency          = $campaign->currency ?: 'USD';
+	$default_goal      = (int) ( $settings['default_fundraiser_goal'] ?? 0 );
 	$story_placeholder = (string) ( $settings['story_placeholder'] ?? '' );
 	$teams             = $teams_enabled ? Team::query( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : [];
 
@@ -76,7 +78,8 @@ defined( 'ABSPATH' ) || exit;
 		'restUrl'             => trailingslashit( get_rest_url( null, 'mission-donation-platform/v1' ) ),
 		'nonce'               => wp_create_nonce( 'wp_rest' ),
 		'campaignId'          => (int) $campaign->id,
-		'defaultGoal'         => $default_goal,
+		'currency'            => $currency,
+		'defaultGoalMinor'    => $default_goal,
 		'teamsEnabled'        => $teams_enabled,
 		'teamCreationEnabled' => $creation_enabled,
 		'preselectedTeamId'   => $preselected_team ? (int) $preselected_team->id : 0,
@@ -84,6 +87,22 @@ defined( 'ABSPATH' ) || exit;
 		'donorName'           => $current_donor ? trim( $current_donor->first_name . ' ' . $current_donor->last_name ) : '',
 		'donorEmail'          => $current_donor ? $current_donor->email : '',
 	];
+
+	/**
+	 * Filters the heading on the sign-up success screen.
+	 *
+	 * @param string   $title    Default heading.
+	 * @param Campaign $campaign The campaign being fundraised for.
+	 */
+	$success_title = apply_filters( 'mission_signup_success_title', __( "You're a fundraiser!", 'mission-donation-platform' ), $campaign );
+
+	/**
+	 * Filters the message on the sign-up success screen.
+	 *
+	 * @param string   $message  Default message.
+	 * @param Campaign $campaign The campaign being fundraised for.
+	 */
+	$success_message = apply_filters( 'mission_signup_success_message', __( 'Your page is live. Share it with friends and family to start raising funds.', 'mission-donation-platform' ), $campaign );
 
 	ob_start();
 	?>
@@ -231,7 +250,13 @@ defined( 'ABSPATH' ) || exit;
 						<?php endif; ?>
 					<?php endif; ?>
 
-					<label class="mission-su__field"><span><?php esc_html_e( 'Your fundraising goal', 'mission-donation-platform' ); ?></span><input type="number" min="1" data-wp-bind--value="state.goal" data-wp-on--input="actions.updateGoal" /></label>
+					<label class="mission-su__field">
+						<span><?php esc_html_e( 'Your fundraising goal', 'mission-donation-platform' ); ?></span>
+						<span class="mission-su__prefix-wrap">
+							<span class="mission-su__prefix"><?php echo esc_html( Currency::get_symbol( $currency ) ); ?></span>
+							<input type="number" min="1" data-wp-bind--value="state.goal" data-wp-on--input="actions.updateGoal" />
+						</span>
+					</label>
 					<label class="mission-su__field"><span><?php esc_html_e( 'Tell your story', 'mission-donation-platform' ); ?></span><textarea rows="4" placeholder="<?php echo esc_attr( $story_placeholder ); ?>" data-wp-bind--value="state.story" data-wp-on--input="actions.updateStory"></textarea></label>
 
 					<label class="mission-su__check">
@@ -257,8 +282,8 @@ defined( 'ABSPATH' ) || exit;
 				<!-- Step 3: success -->
 				<div class="mission-su__step" data-wp-class--is-active="state.isStep3">
 					<div class="mission-su__success">
-						<h2 class="mission-su__title"><?php esc_html_e( "You're a fundraiser!", 'mission-donation-platform' ); ?></h2>
-						<p class="mission-su__subtitle"><?php esc_html_e( 'Your page is live. Share it with friends and family to start raising funds.', 'mission-donation-platform' ); ?></p>
+						<h2 class="mission-su__title mission-su__title--success"><?php echo esc_html( $success_title ); ?></h2>
+						<p class="mission-su__subtitle"><?php echo esc_html( $success_message ); ?></p>
 						<div class="mission-su__share">
 							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareFacebook" aria-label="<?php esc_attr_e( 'Share on Facebook', 'mission-donation-platform' ); ?>">f</button>
 							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareX" aria-label="<?php esc_attr_e( 'Share on X', 'mission-donation-platform' ); ?>">X</button>
@@ -266,7 +291,6 @@ defined( 'ABSPATH' ) || exit;
 							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareEmail" aria-label="<?php esc_attr_e( 'Share by email', 'mission-donation-platform' ); ?>">@</button>
 						</div>
 						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
-						<p class="mission-su__note"><?php esc_html_e( 'Check your inbox to confirm your email. That\'s how you\'ll edit your page later.', 'mission-donation-platform' ); ?></p>
 					</div>
 				</div>
 			</div>

@@ -136,6 +136,10 @@
   margin: 0 0 4px;
 }
 
+.mission-su__title--success {
+  margin-bottom: 12px;
+}
+
 .mission-su__subtitle {
   font-size: 14px;
   text-align: center;
@@ -185,6 +189,28 @@
     resize: vertical;
     min-height: 88px;
   }
+}
+
+.mission-su__prefix-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  // stylelint-disable-next-line no-descending-specificity
+  input {
+    padding-left: 28px;
+  }
+}
+
+.mission-su__prefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mission-text-secondary);
+  pointer-events: none;
 }
 
 .mission-su__toggle {
