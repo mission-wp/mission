@@ -49,7 +49,7 @@ class OtpException extends \RuntimeException {
 	 * @return self
 	 */
 	public static function cooldown( int $retry_after ): self {
-		return new self( esc_html__( 'Please wait before requesting another code.', 'mission-donation-platform' ), self::COOLDOWN, $retry_after );
+		return new self( __( 'Please wait before requesting another code.', 'mission-donation-platform' ), self::COOLDOWN, $retry_after );
 	}
 
 	/**
@@ -59,7 +59,7 @@ class OtpException extends \RuntimeException {
 	 * @return self
 	 */
 	public static function throttled( int $retry_after ): self {
-		return new self( esc_html__( 'Too many codes requested. Please try again later.', 'mission-donation-platform' ), self::THROTTLED, $retry_after );
+		return new self( __( 'Too many codes requested. Please try again later.', 'mission-donation-platform' ), self::THROTTLED, $retry_after );
 	}
 
 	/**
@@ -68,7 +68,7 @@ class OtpException extends \RuntimeException {
 	 * @return self
 	 */
 	public static function expired(): self {
-		return new self( esc_html__( 'That code has expired. Request a new one.', 'mission-donation-platform' ), self::EXPIRED );
+		return new self( __( 'That code has expired. Request a new one.', 'mission-donation-platform' ), self::EXPIRED );
 	}
 
 	/**
@@ -77,7 +77,7 @@ class OtpException extends \RuntimeException {
 	 * @return self
 	 */
 	public static function exhausted(): self {
-		return new self( esc_html__( 'Too many attempts. Request a new code.', 'mission-donation-platform' ), self::EXHAUSTED );
+		return new self( __( 'Too many attempts. Request a new code.', 'mission-donation-platform' ), self::EXHAUSTED );
 	}
 
 	/**
@@ -86,6 +86,6 @@ class OtpException extends \RuntimeException {
 	 * @return self
 	 */
 	public static function invalid(): self {
-		return new self( esc_html__( 'That code didn\'t match. Please try again.', 'mission-donation-platform' ), self::INVALID );
+		return new self( __( 'That code didn\'t match. Please try again.', 'mission-donation-platform' ), self::INVALID );
 	}
 }
