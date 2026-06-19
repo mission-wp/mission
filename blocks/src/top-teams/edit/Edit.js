@@ -1,5 +1,5 @@
 /**
- * Edit component for the Top Donors block.
+ * Edit component for the Top Teams block.
  */
 import {
   useBlockProps,
@@ -14,7 +14,7 @@ import {
   TextControl,
   ToggleControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf, _n } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
 import { computePrimaryColorVars } from '@shared/color';
@@ -22,28 +22,36 @@ import apiFetch from '@wordpress/api-fetch';
 import { formatAmount } from '@shared/currency';
 import { MEDAL_SVGS } from '@shared/components/medals';
 
-const DONATE_BUTTON_OPTIONS = [
+const CTA_OPTIONS = [
   {
-    label: __( 'Scroll to donation form', 'mission-donation-platform' ),
-    value: 'scroll',
+    label: __( 'Open the sign-up modal', 'mission-donation-platform' ),
+    value: 'signup',
   },
   { label: __( 'Custom URL', 'mission-donation-platform' ), value: 'url' },
   { label: __( 'Hide', 'mission-donation-platform' ), value: 'hide' },
 ];
 
-const SAMPLE_DONORS = [
+const SAMPLE_TEAMS = [
   {
-    initials: 'MR',
-    name: 'Margaret R.',
-    amount: 250000,
-    dedication: 'In honor of Mom',
+    initials: 'TS',
+    name: 'Team Sunrise',
+    amount: 540000,
+    members: 8,
+    percent: 72,
   },
-  { initials: 'JD', name: 'James D.', amount: 150000, dedication: null },
   {
-    initials: 'SK',
-    name: 'Sarah K.',
-    amount: 100000,
-    dedication: 'In memory of Dad',
+    initials: 'TB',
+    name: 'Trailblazers',
+    amount: 310000,
+    members: 5,
+    percent: 41,
+  },
+  {
+    initials: 'RR',
+    name: 'Road Runners',
+    amount: 150000,
+    members: 3,
+    percent: 20,
   },
 ];
 
@@ -52,11 +60,12 @@ export default function Edit( { attributes, setAttributes } ) {
     campaignId,
     heading,
     showAvatars,
-    showDedication,
     showRibbons,
-    donateButtonAction,
-    donateButtonUrl,
-    numberOfDonors,
+    showMembers,
+    showProgress,
+    ctaAction,
+    ctaUrl,
+    numberOfTeams,
   } = attributes;
 
   const [ campaigns, setCampaigns ] = useState( [] );
@@ -123,25 +132,25 @@ export default function Edit( { attributes, setAttributes } ) {
   function renderPreview() {
     if ( isLoadingList ) {
       return (
-        <div className="mission-top-donors mission-td-skeleton">
+        <div className="mission-top-teams mission-tt-skeleton">
           <div
-            className="mission-td-skeleton-bar"
+            className="mission-tt-skeleton-bar"
             style={ { width: '40%', height: 14 } }
           />
           { [ 1, 2, 3 ].map( ( i ) => (
-            <div key={ i } className="mission-td-skeleton-row">
+            <div key={ i } className="mission-tt-skeleton-row">
               <div
-                className="mission-td-skeleton-bar"
-                style={ { width: 36, height: 36, borderRadius: '50%' } }
+                className="mission-tt-skeleton-bar"
+                style={ { width: 36, height: 36, borderRadius: 8 } }
               />
               <div style={ { flex: 1 } }>
                 <div
-                  className="mission-td-skeleton-bar"
+                  className="mission-tt-skeleton-bar"
                   style={ { width: '60%', height: 14 } }
                 />
               </div>
               <div
-                className="mission-td-skeleton-bar"
+                className="mission-tt-skeleton-bar"
                 style={ { width: 60, height: 14 } }
               />
             </div>
@@ -152,7 +161,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
     if ( ! campaign ) {
       return (
-        <div className="mission-top-donors mission-td-empty-editor">
+        <div className="mission-top-teams mission-tt-empty-editor">
           <svg
             width="28"
             height="28"
@@ -163,7 +172,9 @@ export default function Edit( { attributes, setAttributes } ) {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            <circle cx="9" cy="8" r="3" />
+            <circle cx="17" cy="9" r="2.5" />
+            <path d="M3.5 19a5.5 5.5 0 0 1 11 0M15 19a4.5 4.5 0 0 1 6 0" />
           </svg>
           <p>
             { __(
@@ -176,42 +187,57 @@ export default function Edit( { attributes, setAttributes } ) {
     }
 
     return (
-      <div className="mission-top-donors" style={ primaryColorVars }>
+      <div className="mission-top-teams" style={ primaryColorVars }>
         <RichText
           tagName="h3"
           className="mission-donor-heading"
           value={ heading }
           onChange={ ( val ) => setAttributes( { heading: val } ) }
-          placeholder={ __( 'Top Donors', 'mission-donation-platform' ) }
+          placeholder={ __( 'Top Teams', 'mission-donation-platform' ) }
           allowedFormats={ [] }
         />
         <ol className="mission-donor-list">
-          { SAMPLE_DONORS.map( ( donor, index ) => (
+          { SAMPLE_TEAMS.map( ( team, index ) => (
             <li key={ index } className="mission-donor-item">
               <div className="mission-donor-item-left">
                 { showRibbons && index < 3 ? (
-                  <span className="mission-td-medal">
+                  <span className="mission-tt-medal">
                     { MEDAL_SVGS[ index ] }
                   </span>
                 ) : (
-                  <span className="mission-td-rank">{ index + 1 }.</span>
+                  <span className="mission-tt-rank">{ index + 1 }.</span>
                 ) }
                 { showAvatars && (
-                  <span className="mission-donor-avatar">
-                    { donor.initials }
-                  </span>
+                  <span className="mission-tt-logo">{ team.initials }</span>
                 ) }
                 <div className="mission-donor-info">
-                  <span className="mission-donor-name">{ donor.name }</span>
-                  { showDedication && donor.dedication && (
+                  <span className="mission-donor-name">{ team.name }</span>
+                  { showMembers && (
                     <span className="mission-donor-dedication">
-                      { donor.dedication }
+                      { sprintf(
+                        /* translators: %s: number of team members */
+                        _n(
+                          '%s member',
+                          '%s members',
+                          team.members,
+                          'mission-donation-platform'
+                        ),
+                        team.members
+                      ) }
                     </span>
+                  ) }
+                  { showProgress && (
+                    <div className="mission-tt-bar">
+                      <div
+                        className="mission-tt-bar-fill"
+                        style={ { width: `${ team.percent }%` } }
+                      />
+                    </div>
                   ) }
                 </div>
               </div>
               <span className="mission-donor-amount">
-                { formatAmount( donor.amount ) }
+                { formatAmount( team.amount ) }
               </span>
             </li>
           ) ) }
@@ -240,47 +266,49 @@ export default function Edit( { attributes, setAttributes } ) {
             }
           />
           <RangeControl
-            label={ __( 'Number of donors', 'mission-donation-platform' ) }
-            value={ numberOfDonors }
-            onChange={ ( val ) => setAttributes( { numberOfDonors: val } ) }
+            label={ __( 'Number of teams', 'mission-donation-platform' ) }
+            value={ numberOfTeams }
+            onChange={ ( val ) => setAttributes( { numberOfTeams: val } ) }
             min={ 1 }
             max={ 25 }
             step={ 1 }
           />
           <SelectControl
-            label={ __(
-              'Donate button (empty state)',
-              'mission-donation-platform'
-            ) }
-            value={ donateButtonAction }
-            options={ DONATE_BUTTON_OPTIONS }
-            onChange={ ( val ) => setAttributes( { donateButtonAction: val } ) }
+            label={ __( 'Button (empty state)', 'mission-donation-platform' ) }
+            value={ ctaAction }
+            options={ CTA_OPTIONS }
+            onChange={ ( val ) => setAttributes( { ctaAction: val } ) }
           />
-          { donateButtonAction === 'url' && (
+          { ctaAction === 'url' && (
             <TextControl
-              label={ __( 'Donate URL', 'mission-donation-platform' ) }
-              value={ donateButtonUrl }
-              onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
+              label={ __( 'Button URL', 'mission-donation-platform' ) }
+              value={ ctaUrl }
+              onChange={ ( val ) => setAttributes( { ctaUrl: val } ) }
               type="url"
               placeholder="https://..."
             />
           ) }
           <ToggleControl
-            label={ __( 'Show avatars', 'mission-donation-platform' ) }
+            label={ __( 'Show logos', 'mission-donation-platform' ) }
             checked={ showAvatars }
             onChange={ ( val ) => setAttributes( { showAvatars: val } ) }
           />
           <ToggleControl
-            label={ __( 'Show dedications', 'mission-donation-platform' ) }
-            checked={ showDedication }
-            onChange={ ( val ) => setAttributes( { showDedication: val } ) }
+            label={ __( 'Show member count', 'mission-donation-platform' ) }
+            checked={ showMembers }
+            onChange={ ( val ) => setAttributes( { showMembers: val } ) }
+          />
+          <ToggleControl
+            label={ __( 'Show progress bar', 'mission-donation-platform' ) }
+            checked={ showProgress }
+            onChange={ ( val ) => setAttributes( { showProgress: val } ) }
           />
           <ToggleControl
             label={ __( 'Show ribbons', 'mission-donation-platform' ) }
             checked={ showRibbons }
             onChange={ ( val ) => setAttributes( { showRibbons: val } ) }
             help={ __(
-              'Gold, silver, and bronze badges for the top 3 donors.',
+              'Gold, silver, and bronze badges for the top 3 teams.',
               'mission-donation-platform'
             ) }
           />

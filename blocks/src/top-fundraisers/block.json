@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/top-fundraisers",
+	"version": "0.1.0",
+	"title": "Top Fundraisers",
+	"category": "mission-donation-platform",
+	"icon": "awards",
+	"description": "Display a ranked list of top fundraisers for a peer-to-peer campaign.",
+	"supports": {
+		"html": false,
+		"interactivity": true,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"campaignId": {
+			"type": "number",
+			"default": 0
+		},
+		"heading": {
+			"type": "string"
+		},
+		"numberOfFundraisers": {
+			"type": "number",
+			"default": 5
+		},
+		"showAvatars": {
+			"type": "boolean",
+			"default": true
+		},
+		"showRibbons": {
+			"type": "boolean",
+			"default": true
+		},
+		"showTeam": {
+			"type": "boolean",
+			"default": true
+		},
+		"ctaAction": {
+			"type": "string",
+			"default": "signup"
+		},
+		"ctaUrl": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScriptModule": "file:./view.js",
+	"render": "file:./index.php"
+}

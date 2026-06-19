@@ -1,0 +1,52 @@
+.wp-block-mission-donation-platform-top-fundraisers {
+
+  .mission-donor-empty__btn {
+    pointer-events: none;
+  }
+
+  .mission-tf-empty-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: #949494;
+    text-align: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .mission-tf-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mission-tf-skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mission-tf-skeleton-bar {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: mission-tf-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mission-tf-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+}

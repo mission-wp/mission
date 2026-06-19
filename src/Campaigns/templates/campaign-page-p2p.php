@@ -35,7 +35,21 @@ defined( 'ABSPATH' ) || exit;
 <h2 class="wp-block-heading"><?php echo esc_html__( 'Leaderboard', 'mission-donation-platform' ); ?></h2>
 <!-- /wp:heading -->
 
-<!-- wp:mission-donation-platform/p2p-leaderboard {"campaignId":<?php echo (int) $campaign_id; ?>} /-->
+<!-- wp:columns -->
+<div class="wp-block-columns">
+<!-- wp:column -->
+<div class="wp-block-column">
+<!-- wp:mission-donation-platform/top-teams {"campaignId":<?php echo (int) $campaign_id; ?>} /-->
+</div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column">
+<!-- wp:mission-donation-platform/top-fundraisers {"campaignId":<?php echo (int) $campaign_id; ?>} /-->
+</div>
+<!-- /wp:column -->
+</div>
+<!-- /wp:columns -->
 
 <!-- wp:separator {"className":"is-style-wide","style":{"spacing":{"margin":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|30"}},"color":{"background":"#dadada"}}} -->
 <hr class="wp-block-separator has-text-color has-alpha-channel-opacity has-background is-style-wide" style="margin-top:var(--wp--preset--spacing--30);margin-bottom:var(--wp--preset--spacing--30);background-color:#dadada;color:#dadada"/>

@@ -9,6 +9,7 @@ namespace MissionDP\Tests\P2P;
 
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
@@ -80,22 +81,50 @@ class BlockRenderTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the p2p-leaderboard block renders both columns.
+	 * Test the top-fundraisers block ranks a campaign's fundraisers.
 	 */
-	public function test_leaderboard_renders(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/p2p-leaderboard' ) ) {
+	public function test_top_fundraisers_renders(): void {
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/top-fundraisers' ) ) {
 			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
 		}
 
-		$campaign   = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
-		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1, 'status' => 'active' ] );
+		$donor = new Donor( [ 'email' => 'tf@example.com', 'first_name' => 'Tina', 'last_name' => 'Fund' ] );
+		$donor->save();
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => $donor->id, 'status' => 'active' ] );
 		$fundraiser->save();
-		( new Transaction( [ 'status' => 'completed', 'donor_id' => 1, 'fundraiser_id' => $fundraiser->id, 'amount' => 5000 ] ) )->save();
+		( new Transaction( [ 'status' => 'completed', 'donor_id' => $donor->id, 'fundraiser_id' => $fundraiser->id, 'amount' => 5000 ] ) )->save();
 
-		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/p2p-leaderboard {"campaignId":%d} /-->', $campaign->id ) );
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/top-fundraisers {"campaignId":%d} /-->', $campaign->id ) );
 
-		$this->assertStringContainsString( 'mission-lb', $html );
+		$this->assertStringContainsString( 'mission-top-fundraisers', $html );
+		$this->assertStringContainsString( 'Tina Fund', $html );
+		$this->assertStringContainsString( '$50', $html );
+	}
+
+	/**
+	 * Test the top-teams block ranks a campaign's teams with member counts.
+	 */
+	public function test_top_teams_renders(): void {
+		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/top-teams' ) ) {
+			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
+		}
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Marathoners', 'status' => 'active' ] );
+		$team->save();
+		$donor = new Donor( [ 'email' => 'tt@example.com', 'first_name' => 'Tom', 'last_name' => 'Team' ] );
+		$donor->save();
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => $donor->id, 'team_id' => $team->id, 'status' => 'active' ] );
+		$fundraiser->save();
+
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/top-teams {"campaignId":%d} /-->', $campaign->id ) );
+
+		$this->assertStringContainsString( 'mission-top-teams', $html );
+		$this->assertStringContainsString( 'Marathoners', $html );
+		$this->assertStringContainsString( '1 member', $html );
 	}
 
 	/**
