@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T17:06:51+00:00\n"
+"POT-Creation-Date: 2026-06-19T17:27:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -97,13 +97,13 @@ msgstr[1] ""
 #: blocks/build/campaign/index.php:108
 #: blocks/build/campaign/index.php:114
 #: blocks/build/campaign/index.php:120
-#: blocks/build/team-members/index.php:111
+#: blocks/build/team-members/index.php:108
 #: blocks/src/campaign-grid/index.php:159
 #: blocks/src/campaign-grid/index.php:165
 #: blocks/src/campaign/index.php:108
 #: blocks/src/campaign/index.php:114
 #: blocks/src/campaign/index.php:120
-#: blocks/src/team-members/index.php:111
+#: blocks/src/team-members/index.php:108
 msgid "of %s"
 msgstr ""
 
@@ -174,13 +174,17 @@ msgstr ""
 
 #: blocks/build/campaign-progress/index.php:88
 #: blocks/build/fundraiser-progress/index.php:63
-#: blocks/build/team-progress/index.php:68
+#: blocks/build/team-progress/index.php:53
+#: blocks/build/team-progress/index.php:87
 #: blocks/src/campaign-progress/index.php:88
 #: blocks/src/fundraiser-progress/index.php:63
-#: blocks/src/team-progress/index.php:68
+#: blocks/src/team-progress/index.php:53
+#: blocks/src/team-progress/index.php:87
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:428
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:291
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:76
 msgid "raised"
 msgstr ""
 
@@ -192,8 +196,10 @@ msgstr ""
 
 #: blocks/build/campaign-progress/index.php:94
 #: blocks/build/fundraiser-progress/index.php:91
+#: blocks/build/team-progress/index.php:83
 #: blocks/src/campaign-progress/index.php:94
 #: blocks/src/fundraiser-progress/index.php:91
+#: blocks/src/team-progress/index.php:83
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/campaigns/CampaignHero.js:104
@@ -201,7 +207,9 @@ msgstr ""
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:289
 #: admin/src/pages/transactions/TransactionDonorCard.js:91
 #: blocks/build/fundraiser-progress/index.js:2
+#: blocks/build/team-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:122
+#: blocks/src/team-progress/edit/Edit.js:68
 msgid "donations"
 msgstr ""
 
@@ -1202,9 +1210,7 @@ msgid "Your page is awaiting approval. You can edit it now and it will go live o
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
-#: blocks/build/team-progress/index.php:89
 #: blocks/src/donor-dashboard/parts/fundraising.php:37
-#: blocks/src/team-progress/index.php:89
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -2455,81 +2461,64 @@ msgstr ""
 msgid "View my page"
 msgstr ""
 
-#: blocks/build/team-members/index.php:51
-#: blocks/src/team-members/index.php:51
-msgid "Team Members"
-msgstr ""
-
 #. translators: %s: number of fundraisers on the team
-#: blocks/build/team-members/index.php:57
-#: blocks/src/team-members/index.php:57
+#: blocks/build/team-members/index.php:55
+#: blocks/src/team-members/index.php:55
 msgid "%s fundraiser"
 msgid_plural "%s fundraisers"
 msgstr[0] ""
 msgstr[1] ""
 
-#: blocks/build/team-members/index.php:99
-#: blocks/src/team-members/index.php:99
+#: blocks/build/team-members/index.php:96
+#: blocks/src/team-members/index.php:96
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/Teams.js:62
 msgid "Captain"
 msgstr ""
 
-#: blocks/build/team-members/index.php:119
-#: blocks/src/team-members/index.php:119
+#: blocks/build/team-members/index.php:116
+#: blocks/src/team-members/index.php:116
 msgid "No members have joined this team yet."
 msgstr ""
 
-#. translators: %s: linked campaign title
-#: blocks/build/team-profile/index.php:53
-#: blocks/src/team-profile/index.php:53
-msgid "Team fundraising for %s"
-msgstr ""
-
-#: blocks/build/team-profile/index.php:57
-#: blocks/src/team-profile/index.php:57
-msgid "Team fundraising"
-msgstr ""
-
-#: blocks/build/team-profile/index.php:69
-#: blocks/src/team-profile/index.php:69
-msgid "About Our Team"
-msgstr ""
-
 #. translators: %s: formatted goal amount
-#: blocks/build/team-progress/index.php:63
-#: blocks/src/team-progress/index.php:63
+#: blocks/build/team-progress/index.php:52
+#: blocks/src/team-progress/index.php:52
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:40
 msgid "raised of %s team goal"
 msgstr ""
 
-#: blocks/build/team-progress/index.php:81
-#: blocks/src/team-progress/index.php:81
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/Teams.js:75
-msgid "Members"
+#: blocks/build/team-progress/index.php:79
+#: blocks/src/team-progress/index.php:79
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:60
+msgid "members"
 msgstr ""
 
-#: blocks/build/team-progress/index.php:85
-#: blocks/src/team-progress/index.php:85
-#: src/Export/ExportService.php:112
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:354
-#: admin/src/pages/donors/DonorDetail.js:189
-#: admin/src/pages/donors/DonorList.js:113
-#: blocks/build/donor-dashboard/index.js:1
-#: blocks/src/donor-dashboard/edit/Edit.js:63
-msgid "Donations"
-msgstr ""
-
-#: blocks/build/team-progress/index.php:95
-#: blocks/src/team-progress/index.php:95
+#: blocks/build/team-progress/index.php:93
+#: blocks/src/team-progress/index.php:93
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:82
 msgid "Donate to the Team"
 msgstr ""
 
-#: blocks/build/team-progress/index.php:102
-#: blocks/src/team-progress/index.php:102
+#: blocks/build/team-progress/index.php:100
+#: blocks/src/team-progress/index.php:100
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:85
 msgid "Join this Team"
+msgstr ""
+
+#. translators: %s: linked campaign title
+#: blocks/build/team-title/index.php:50
+#: blocks/src/team-title/index.php:50
+msgid "Team fundraising for %s"
+msgstr ""
+
+#: blocks/build/team-title/index.php:54
+#: blocks/src/team-title/index.php:54
+msgid "Team fundraising"
 msgstr ""
 
 #: blocks/build/top-donors/index.php:43
@@ -3737,6 +3726,17 @@ msgstr ""
 msgid "Total Given"
 msgstr ""
 
+#: src/Export/ExportService.php:112
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:354
+#: admin/src/pages/donors/DonorDetail.js:189
+#: admin/src/pages/donors/DonorList.js:113
+#: blocks/build/donor-dashboard/index.js:1
+#: blocks/src/donor-dashboard/edit/Edit.js:63
+msgid "Donations"
+msgstr ""
+
 #: src/Export/ExportService.php:117
 msgid "First Donation"
 msgstr ""
@@ -4576,6 +4576,18 @@ msgstr ""
 
 #: src/P2P/templates/fundraiser-page.php:36
 msgid "Supporters"
+msgstr ""
+
+#: src/P2P/templates/team-page.php:24
+msgid "About Our Team"
+msgstr ""
+
+#: src/P2P/templates/team-page.php:30
+msgid "Team Members"
+msgstr ""
+
+#: src/P2P/templates/team-page.php:36
+msgid "Support this team"
 msgstr ""
 
 #. translators: %d: calendar year
@@ -8245,6 +8257,11 @@ msgid "Failed to cancel subscription."
 msgstr ""
 
 #: admin/build/mission-admin.js:195
+#: admin/src/pages/Teams.js:75
+msgid "Members"
+msgstr ""
+
+#: admin/build/mission-admin.js:195
 #: admin/src/pages/Teams.js:161
 msgid "Total Teams"
 msgstr ""
@@ -11657,19 +11674,24 @@ msgstr ""
 msgid "The fundraiser sign-up modal opens here when a visitor chooses to become a fundraiser."
 msgstr ""
 
+#: blocks/build/team-image/index.js:1
+#: blocks/src/team-image/index.js:18
+msgid "This team's cover photo appears here on the live page."
+msgstr ""
+
 #: blocks/build/team-members/index.js:1
 #: blocks/src/team-members/index.js:18
 msgid "The team's members appear here on the live page."
 msgstr ""
 
-#: blocks/build/team-profile/index.js:1
-#: blocks/src/team-profile/index.js:18
-msgid "This team's name, image, and description appear here on the live page."
+#: blocks/build/team-story/index.js:1
+#: blocks/src/team-story/index.js:18
+msgid "This team's description appears here on the live page."
 msgstr ""
 
-#: blocks/build/team-progress/index.js:1
-#: blocks/src/team-progress/index.js:18
-msgid "This team's progress bar and stats appear here on the live page."
+#: blocks/build/team-title/index.js:1
+#: blocks/src/team-title/index.js:18
+msgid "This team's heading appears here on the live page."
 msgstr ""
 
 #: blocks/build/top-donors/index.js:1
@@ -11970,6 +11992,18 @@ msgctxt "block description"
 msgid "The multi-step modal for becoming a fundraiser or joining a team."
 msgstr ""
 
+#: blocks/build/team-image/block.json
+#: blocks/src/team-image/block.json
+msgctxt "block title"
+msgid "Team Image"
+msgstr ""
+
+#: blocks/build/team-image/block.json
+#: blocks/src/team-image/block.json
+msgctxt "block description"
+msgid "A team's cover photo."
+msgstr ""
+
 #: blocks/build/team-members/block.json
 #: blocks/src/team-members/block.json
 msgctxt "block title"
@@ -11982,18 +12016,6 @@ msgctxt "block description"
 msgid "Display a team's ranked member list with per-member progress."
 msgstr ""
 
-#: blocks/build/team-profile/block.json
-#: blocks/src/team-profile/block.json
-msgctxt "block title"
-msgid "Team Profile"
-msgstr ""
-
-#: blocks/build/team-profile/block.json
-#: blocks/src/team-profile/block.json
-msgctxt "block description"
-msgid "A team's cover image, name, and description."
-msgstr ""
-
 #: blocks/build/team-progress/block.json
 #: blocks/src/team-progress/block.json
 msgctxt "block title"
@@ -12003,7 +12025,31 @@ msgstr ""
 #: blocks/build/team-progress/block.json
 #: blocks/src/team-progress/block.json
 msgctxt "block description"
-msgid "Display a team's progress with a thermometer, stats, and donate/join buttons."
+msgid "Display a team's progress with a progress bar, stats, and donate/join buttons."
+msgstr ""
+
+#: blocks/build/team-story/block.json
+#: blocks/src/team-story/block.json
+msgctxt "block title"
+msgid "Team Story"
+msgstr ""
+
+#: blocks/build/team-story/block.json
+#: blocks/src/team-story/block.json
+msgctxt "block description"
+msgid "A team's description of who they are and why they are fundraising."
+msgstr ""
+
+#: blocks/build/team-title/block.json
+#: blocks/src/team-title/block.json
+msgctxt "block title"
+msgid "Team Title"
+msgstr ""
+
+#: blocks/build/team-title/block.json
+#: blocks/src/team-title/block.json
+msgctxt "block description"
+msgid "A team's name and the campaign it is fundraising for."
 msgstr ""
 
 #: blocks/build/top-donors/block.json

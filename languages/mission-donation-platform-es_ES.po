@@ -81,11 +81,11 @@ msgstr[1] "Quedan %d días"
 #: blocks/build/campaign-grid/index.php:159
 #: blocks/build/campaign-grid/index.php:165
 #: blocks/build/campaign/index.php:108 blocks/build/campaign/index.php:114
-#: blocks/build/campaign/index.php:120 blocks/build/team-members/index.php:111
+#: blocks/build/campaign/index.php:120 blocks/build/team-members/index.php:108
 #: blocks/src/campaign-grid/index.php:159
 #: blocks/src/campaign-grid/index.php:165 blocks/src/campaign/index.php:108
 #: blocks/src/campaign/index.php:114 blocks/src/campaign/index.php:120
-#: blocks/src/team-members/index.php:111
+#: blocks/src/team-members/index.php:108
 #, php-format
 msgid "of %s"
 msgstr "de %s"
@@ -155,12 +155,16 @@ msgstr "recaudado de la meta de %s"
 
 #: blocks/build/campaign-progress/index.php:88
 #: blocks/build/fundraiser-progress/index.php:63
-#: blocks/build/team-progress/index.php:68
+#: blocks/build/team-progress/index.php:53
+#: blocks/build/team-progress/index.php:87
 #: blocks/src/campaign-progress/index.php:88
 #: blocks/src/fundraiser-progress/index.php:63
-#: blocks/src/team-progress/index.php:68 admin/build/mission-admin.js:152
+#: blocks/src/team-progress/index.php:53 blocks/src/team-progress/index.php:87
+#: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:428
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:291
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:76
 msgid "raised"
 msgstr "recaudado"
 
@@ -173,15 +177,19 @@ msgstr "donaciones de la meta de %s"
 
 #: blocks/build/campaign-progress/index.php:94
 #: blocks/build/fundraiser-progress/index.php:91
+#: blocks/build/team-progress/index.php:83
 #: blocks/src/campaign-progress/index.php:94
 #: blocks/src/fundraiser-progress/index.php:91
-#: admin/build/mission-admin.js:152 admin/build/mission-admin.js:193
+#: blocks/src/team-progress/index.php:83 admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:193
 #: admin/src/pages/campaigns/CampaignHero.js:104
 #: admin/src/pages/campaigns/CampaignProgressBar.js:23
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:289
 #: admin/src/pages/transactions/TransactionDonorCard.js:91
 #: blocks/build/fundraiser-progress/index.js:2
+#: blocks/build/team-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:122
+#: blocks/src/team-progress/edit/Edit.js:68
 msgid "donations"
 msgstr "donaciones"
 
@@ -2904,9 +2912,8 @@ msgstr "Nombre"
 msgid "Total Given"
 msgstr "Total donado"
 
-#: blocks/build/team-progress/index.php:85
-#: blocks/src/team-progress/index.php:85 src/Export/ExportService.php:112
-#: admin/build/mission-admin.js:152 admin/build/mission-admin.js:191
+#: src/Export/ExportService.php:112 admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:354
 #: admin/src/pages/donors/DonorDetail.js:189
 #: admin/src/pages/donors/DonorList.js:113
@@ -2929,11 +2936,9 @@ msgid "ID"
 msgstr "ID"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
-#: blocks/build/team-progress/index.php:89
 #: blocks/src/donor-dashboard/parts/fundraising.php:37
-#: blocks/src/team-progress/index.php:89 src/Export/ExportService.php:166
-#: admin/build/mission-admin.js:152 admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:195
+#: src/Export/ExportService.php:166 admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191 admin/build/mission-admin.js:195
 #: admin/src/pages/campaigns/CampaignList.js:140
 #: admin/src/pages/Fundraisers.js:84 admin/src/pages/Teams.js:97
 msgid "Raised"
@@ -11135,14 +11140,12 @@ msgstr "Total de recaudadores"
 msgid "Pending Approval"
 msgstr "Pendiente de aprobación"
 
-#: blocks/build/team-members/index.php:99 blocks/src/team-members/index.php:99
+#: blocks/build/team-members/index.php:96 blocks/src/team-members/index.php:96
 #: admin/build/mission-admin.js:195 admin/src/pages/Teams.js:62
 msgid "Captain"
 msgstr "Capitán"
 
-#: blocks/build/team-progress/index.php:81
-#: blocks/src/team-progress/index.php:81 admin/build/mission-admin.js:195
-#: admin/src/pages/Teams.js:75
+#: admin/build/mission-admin.js:195 admin/src/pages/Teams.js:75
 msgid "Members"
 msgstr "Miembros"
 
@@ -11262,48 +11265,52 @@ msgstr "Mejores recaudadores"
 msgid "Individual fundraiser"
 msgstr "Recaudador individual"
 
-#: blocks/build/team-members/index.php:51 blocks/src/team-members/index.php:51
+#: src/P2P/templates/team-page.php:30
 msgid "Team Members"
 msgstr "Miembros del equipo"
 
 #. translators: %s: number of fundraisers on the team
-#: blocks/build/team-members/index.php:57 blocks/src/team-members/index.php:57
+#: blocks/build/team-members/index.php:55 blocks/src/team-members/index.php:55
 msgid "%s fundraiser"
 msgid_plural "%s fundraisers"
 msgstr[0] "%s recaudador"
 msgstr[1] "%s recaudadores"
 
-#: blocks/build/team-members/index.php:119
-#: blocks/src/team-members/index.php:119
+#: blocks/build/team-members/index.php:116
+#: blocks/src/team-members/index.php:116
 msgid "No members have joined this team yet."
 msgstr "Aún no se ha unido ningún miembro a este equipo."
 
 #. translators: %s: linked campaign title
-#: blocks/build/team-profile/index.php:53 blocks/src/team-profile/index.php:53
+#: blocks/build/team-title/index.php:50 blocks/src/team-title/index.php:50
 msgid "Team fundraising for %s"
 msgstr "Equipo recaudando fondos para %s"
 
-#: blocks/build/team-profile/index.php:57 blocks/src/team-profile/index.php:57
+#: blocks/build/team-title/index.php:54 blocks/src/team-title/index.php:54
 msgid "Team fundraising"
 msgstr "Recaudación en equipo"
 
-#: blocks/build/team-profile/index.php:69 blocks/src/team-profile/index.php:69
+#: src/P2P/templates/team-page.php:24
 msgid "About Our Team"
 msgstr "Sobre nuestro equipo"
 
 #. translators: %s: formatted goal amount
-#: blocks/build/team-progress/index.php:63
-#: blocks/src/team-progress/index.php:63
+#: blocks/build/team-progress/index.php:52
+#: blocks/src/team-progress/index.php:52 blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:40
 msgid "raised of %s team goal"
 msgstr "recaudado de la meta de equipo de %s"
 
-#: blocks/build/team-progress/index.php:95
-#: blocks/src/team-progress/index.php:95
+#: blocks/build/team-progress/index.php:93
+#: blocks/src/team-progress/index.php:93 blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:82
 msgid "Donate to the Team"
 msgstr "Donar al equipo"
 
-#: blocks/build/team-progress/index.php:102
-#: blocks/src/team-progress/index.php:102
+#: blocks/build/team-progress/index.php:100
+#: blocks/src/team-progress/index.php:100
+#: blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:85
 msgid "Join this Team"
 msgstr "Unirse a este equipo"
 
@@ -11320,18 +11327,6 @@ msgstr ""
 #: blocks/build/team-members/index.js:1 blocks/src/team-members/index.js:18
 msgid "The team's members appear here on the live page."
 msgstr "Los miembros del equipo aparecen aquí en la página publicada."
-
-#: blocks/build/team-profile/index.js:1 blocks/src/team-profile/index.js:18
-msgid "This team's name, image, and description appear here on the live page."
-msgstr ""
-"El nombre, la imagen y la descripción de este equipo aparecen aquí en la "
-"página publicada."
-
-#: blocks/build/team-progress/index.js:1 blocks/src/team-progress/index.js:18
-msgid "This team's progress bar and stats appear here on the live page."
-msgstr ""
-"La barra de progreso y las estadísticas de este equipo aparecen aquí en la "
-"página publicada."
 
 #: blocks/build/fundraiser-progress/block.json
 #: blocks/src/fundraiser-progress/block.json
@@ -11351,29 +11346,10 @@ msgstr ""
 "Muestra la lista clasificada de miembros del equipo con el progreso de cada "
 "uno."
 
-#: blocks/build/team-profile/block.json blocks/src/team-profile/block.json
-msgctxt "block title"
-msgid "Team Profile"
-msgstr "Perfil del equipo"
-
-#: blocks/build/team-profile/block.json blocks/src/team-profile/block.json
-msgctxt "block description"
-msgid "A team's cover image, name, and description."
-msgstr "Imagen de portada, nombre y descripción de un equipo."
-
 #: blocks/build/team-progress/block.json blocks/src/team-progress/block.json
 msgctxt "block title"
 msgid "Team Progress"
 msgstr "Progreso del equipo"
-
-#: blocks/build/team-progress/block.json blocks/src/team-progress/block.json
-msgctxt "block description"
-msgid ""
-"Display a team's progress with a thermometer, stats, and donate/join "
-"buttons."
-msgstr ""
-"Muestra el progreso de un equipo con un termómetro, estadísticas y botones "
-"de donar/unirse."
 
 #. translators: %s: team name
 #: blocks/build/signup-modal/index.php:74 blocks/src/signup-modal/index.php:74
@@ -12266,3 +12242,66 @@ msgstr "Título del recaudador"
 msgctxt "block description"
 msgid "A fundraiser's heading and optional tribute."
 msgstr "El encabezado de un recaudador y un homenaje opcional."
+
+#: blocks/build/team-progress/index.php:79
+#: blocks/src/team-progress/index.php:79 blocks/build/team-progress/index.js:2
+#: blocks/src/team-progress/edit/Edit.js:60
+msgid "members"
+msgstr "miembros"
+
+#: src/P2P/templates/team-page.php:36
+msgid "Support this team"
+msgstr "Apoya a este equipo"
+
+#: blocks/build/team-image/index.js:1 blocks/src/team-image/index.js:18
+msgid "This team's cover photo appears here on the live page."
+msgstr ""
+"La foto de portada de este equipo aparece aquí en la página publicada."
+
+#: blocks/build/team-story/index.js:1 blocks/src/team-story/index.js:18
+msgid "This team's description appears here on the live page."
+msgstr "La descripción de este equipo aparece aquí en la página publicada."
+
+#: blocks/build/team-title/index.js:1 blocks/src/team-title/index.js:18
+msgid "This team's heading appears here on the live page."
+msgstr "El encabezado de este equipo aparece aquí en la página publicada."
+
+#: blocks/build/team-image/block.json blocks/src/team-image/block.json
+msgctxt "block title"
+msgid "Team Image"
+msgstr "Imagen del equipo"
+
+#: blocks/build/team-image/block.json blocks/src/team-image/block.json
+msgctxt "block description"
+msgid "A team's cover photo."
+msgstr "La foto de portada de un equipo."
+
+#: blocks/build/team-progress/block.json blocks/src/team-progress/block.json
+msgctxt "block description"
+msgid ""
+"Display a team's progress with a progress bar, stats, and donate/join "
+"buttons."
+msgstr ""
+"Muestra el progreso de un equipo con una barra de progreso, estadísticas y "
+"botones de donar/unirse."
+
+#: blocks/build/team-story/block.json blocks/src/team-story/block.json
+msgctxt "block title"
+msgid "Team Story"
+msgstr "Historia del equipo"
+
+#: blocks/build/team-story/block.json blocks/src/team-story/block.json
+msgctxt "block description"
+msgid "A team's description of who they are and why they are fundraising."
+msgstr ""
+"La descripción de un equipo sobre quiénes son y por qué recaudan fondos."
+
+#: blocks/build/team-title/block.json blocks/src/team-title/block.json
+msgctxt "block title"
+msgid "Team Title"
+msgstr "Título del equipo"
+
+#: blocks/build/team-title/block.json blocks/src/team-title/block.json
+msgctxt "block description"
+msgid "A team's name and the campaign it is fundraising for."
+msgstr "El nombre de un equipo y la campaña para la que recauda fondos."

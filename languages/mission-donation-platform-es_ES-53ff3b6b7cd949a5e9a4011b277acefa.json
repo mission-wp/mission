@@ -10,8 +10,23 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "This team's progress bar and stats appear here on the live page.": [
-                "La barra de progreso y las estad\u00edsticas de este equipo aparecen aqu\u00ed en la p\u00e1gina publicada."
+            "raised": [
+                "recaudado"
+            ],
+            "donations": [
+                "donaciones"
+            ],
+            "raised of %s team goal": [
+                "recaudado de la meta de equipo de %s"
+            ],
+            "Donate to the Team": [
+                "Donar al equipo"
+            ],
+            "Join this Team": [
+                "Unirse a este equipo"
+            ],
+            "members": [
+                "miembros"
             ]
         }
     }
