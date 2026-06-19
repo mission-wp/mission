@@ -224,7 +224,8 @@ class P2PPagesTest extends WP_UnitTestCase {
 		$this->assertSame( 'Team Page', $team->title );
 		$this->assertStringContainsString( 'mission-donation-platform/fundraiser-title', $fundraiser->content );
 		$this->assertStringContainsString( 'mission-donation-platform/fundraiser-story', $fundraiser->content );
-		$this->assertStringContainsString( 'mission-donation-platform/team-profile', $team->content );
+		$this->assertStringContainsString( 'mission-donation-platform/team-title', $team->content );
+		$this->assertStringContainsString( 'mission-donation-platform/team-story', $team->content );
 	}
 
 	/**
