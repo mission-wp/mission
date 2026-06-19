@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-17T20:59:23+00:00\n"
+"POT-Creation-Date: 2026-06-19T02:17:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -213,7 +213,11 @@ msgid "days remaining"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.php:182
+#: blocks/build/top-fundraisers/index.php:108
+#: blocks/build/top-fundraisers/index.php:112
 #: blocks/src/campaign-progress/index.php:182
+#: blocks/src/top-fundraisers/index.php:108
+#: blocks/src/top-fundraisers/index.php:112
 msgid "Become a Fundraiser"
 msgstr ""
 
@@ -896,7 +900,7 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/index.php:128
 #: blocks/src/donor-dashboard/index.php:128
-#: src/DonorDashboard/DashboardContextBuilder.php:226
+#: src/DonorDashboard/DashboardContextBuilder.php:232
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignTabNav.js:4
 #: blocks/build/donor-dashboard/index.js:1
@@ -936,15 +940,18 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-#: blocks/build/donor-dashboard/index.php:259
-#: blocks/src/donor-dashboard/index.php:259
+#: blocks/build/donor-dashboard/index.php:172
+#: blocks/src/donor-dashboard/index.php:172
+msgid "Fundraising"
+msgstr ""
+
+#: blocks/build/donor-dashboard/index.php:268
+#: blocks/src/donor-dashboard/index.php:268
 msgid "Open menu"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/auth.php:25
 #: blocks/src/donor-dashboard/parts/auth.php:25
-#: src/DonorDashboard/DonorDashboardModule.php:66
-#: src/DonorDashboard/DonorDashboardModule.php:303
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:51
 msgid "Donor Dashboard"
@@ -1169,115 +1176,180 @@ msgstr ""
 msgid "Resetting..."
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/history.php:17
-#: blocks/src/donor-dashboard/parts/history.php:17
-msgid "Filter by year"
+#: blocks/build/donor-dashboard/parts/fundraising.php:30
+#: blocks/src/donor-dashboard/parts/fundraising.php:30
+msgid "Your page is awaiting approval. You can edit it now and it will go live once an organizer approves it."
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/history.php:19
-#: blocks/src/donor-dashboard/parts/history.php:19
-msgid "All Years"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:29
-#: blocks/src/donor-dashboard/parts/history.php:29
-msgid "Filter by campaign"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:31
-#: blocks/src/donor-dashboard/parts/history.php:31
-msgid "All Campaigns"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:41
-#: blocks/src/donor-dashboard/parts/history.php:41
-msgid "Filter by type"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:43
-#: blocks/src/donor-dashboard/parts/history.php:43
-msgid "All Types"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:44
-#: blocks/src/donor-dashboard/parts/history.php:44
-#: src/DonorDashboard/DashboardContextBuilder.php:456
-#: src/Email/templates/admin-new-donation.php:79
+#: blocks/build/donor-dashboard/parts/fundraising.php:37
+#: blocks/build/team-progress/index.php:89
+#: blocks/src/donor-dashboard/parts/fundraising.php:37
+#: blocks/src/team-progress/index.php:89
+#: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:195
+#: admin/src/pages/campaigns/CampaignList.js:140
+#: admin/src/pages/Fundraisers.js:84
+#: admin/src/pages/Teams.js:97
+msgid "Raised"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:41
+#: blocks/build/donor-dashboard/parts/fundraising.php:188
+#: blocks/build/fundraiser-progress/index.php:85
+#: blocks/src/donor-dashboard/parts/fundraising.php:41
+#: blocks/src/donor-dashboard/parts/fundraising.php:188
+#: blocks/src/fundraiser-progress/index.php:85
+#: src/Admin/AdminModule.php:376
+#: src/Admin/AdminModule.php:377
+#: src/Export/ExportService.php:171
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:204
+#: admin/build/mission-admin.js:236
+#: admin/build/mission-admin.js:238
+#: admin/build/mission-admin.js:240
+#: admin/src/pages/donors/DonorList.js:205
+#: admin/src/pages/donors/DonorList.js:279
+#: admin/src/pages/tools/ExportPanel.js:7
+#: admin/src/pages/tools/ImportPanel.js:17
+#: admin/src/pages/tools/migration/MigrationReport.js:7
+#: admin/src/pages/tools/migration/ProgressTimeline.js:7
+#: admin/src/pages/tools/migration/ScanResults.js:6
+msgid "Donors"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:45
+#: blocks/src/donor-dashboard/parts/fundraising.php:45
+#: src/Email/templates/admin-milestone.php:72
+#: src/Export/ExportService.php:161
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:195
+#: admin/src/pages/campaigns/CampaignList.js:155
+#: admin/src/pages/Fundraisers.js:73
+#: admin/src/pages/Teams.js:86
+msgid "Goal"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:59
+#: blocks/src/donor-dashboard/parts/fundraising.php:59
+msgid "Cover photo"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:68
+#: blocks/src/donor-dashboard/parts/fundraising.php:68
+msgid "No cover photo yet."
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:84
+#: blocks/src/donor-dashboard/parts/fundraising.php:84
+msgid "Upload photo"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:92
+#: blocks/src/donor-dashboard/parts/fundraising.php:92
+msgid "Edit your page"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:99
+#: blocks/src/donor-dashboard/parts/fundraising.php:99
+msgid "Headline"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:112
+#: blocks/src/donor-dashboard/parts/fundraising.php:112
+msgid "Fundraising goal"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:129
+#: blocks/src/donor-dashboard/parts/fundraising.php:129
+msgid "Your story"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:152
+#: blocks/src/donor-dashboard/parts/fundraising.php:152
+#: src/Email/templates/p2p-fundraiser-milestone.php:62
+msgid "Share your page"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:157
+#: blocks/src/donor-dashboard/parts/fundraising.php:157
+#: admin/build/mission-admin.js:244
+#: admin/src/pages/tools/WebhookModal.js:412
+#: admin/src/pages/tools/WebhooksPanel.js:323
+msgid "Copy"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:161
+#: blocks/build/signup-modal/index.php:288
+#: blocks/src/donor-dashboard/parts/fundraising.php:161
+#: blocks/src/signup-modal/index.php:288
+msgid "Share on Facebook"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:162
+#: blocks/build/signup-modal/index.php:289
+#: blocks/src/donor-dashboard/parts/fundraising.php:162
+#: blocks/src/signup-modal/index.php:289
+msgid "Share on X"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:163
+#: blocks/build/signup-modal/index.php:291
+#: blocks/src/donor-dashboard/parts/fundraising.php:163
+#: blocks/src/signup-modal/index.php:291
+msgid "Share by email"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:166
+#: blocks/src/donor-dashboard/parts/fundraising.php:166
+msgid "Embed code"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:170
+#: blocks/src/donor-dashboard/parts/fundraising.php:170
+msgid "Copy embed code"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:177
+#: blocks/src/donor-dashboard/parts/fundraising.php:177
+msgid "Your team"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:185
+#: blocks/src/donor-dashboard/parts/fundraising.php:185
+msgid "Your donors"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:191
+#: blocks/src/donor-dashboard/parts/fundraising.php:191
+#: src/Email/templates/admin-new-donation.php:49
+#: src/Email/templates/admin-payment-failed.php:33
+#: src/Email/templates/admin-recurring-renewal.php:33
+#: src/Email/templates/admin-refund.php:52
+#: src/Email/templates/admin-subscription-cancelled.php:34
+#: src/Export/ExportService.php:129
+#: src/Export/ExportService.php:188
+#: src/Export/ExportService.php:220
+#: src/Receipts/templates/annual-receipt.php:68
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:83
-#: admin/src/pages/donors/DonationHistoryTable.js:78
-#: admin/src/pages/transactions/TransactionDetailsCard.js:206
-#: admin/src/pages/transactions/TransactionList.js:96
-#: assets/shared/components/FrequencyChips.js:4
-#: blocks/build/donation-form/index.js:1
-#: blocks/src/donation-form/edit/tabs/AmountsTab.js:142
-msgid "One-time"
+#: admin/src/pages/donors/DonorList.js:52
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:268
+#: admin/src/pages/transactions/AddDonationDrawer.js:463
+#: admin/src/pages/transactions/AddDonationDrawer.js:529
+#: admin/src/pages/transactions/TransactionDetailsCard.js:256
+#: admin/src/pages/transactions/TransactionDonorCard.js:12
+#: admin/src/pages/transactions/TransactionDonorCard.js:37
+msgid "Donor"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/history.php:45
-#: blocks/src/donor-dashboard/parts/history.php:45
-#: src/DonorDashboard/DashboardContextBuilder.php:456
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:82
-#: admin/src/pages/donors/DonationHistoryTable.js:77
-#: admin/src/pages/donors/DonorDetail.js:158
-#: admin/src/pages/transactions/TransactionDetailsCard.js:205
-#: admin/src/pages/transactions/TransactionList.js:95
-msgid "Recurring"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:51
-#: blocks/src/donor-dashboard/parts/history.php:51
-#: admin/build/mission-admin.js:229
-#: admin/build/mission-admin.js:244
-#: admin/src/pages/tools/LogsPanel.js:239
-#: admin/src/pages/tools/WebhookDeliveryLog.js:300
-msgid "Loading…"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:57
-#: blocks/src/donor-dashboard/parts/history.php:57
-#: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/DonorPortalPanel.js:11
-msgid "Donation history"
-msgstr ""
-
-#: blocks/build/donor-dashboard/parts/history.php:60
-#: blocks/build/donor-dashboard/parts/overview.php:35
-#: blocks/src/donor-dashboard/parts/history.php:60
-#: blocks/src/donor-dashboard/parts/overview.php:35
-#: src/Email/templates/admin-new-donation.php:86
-#: src/Email/templates/admin-payment-failed.php:60
-#: src/Email/templates/admin-recurring-renewal.php:60
-#: src/Email/templates/admin-refund.php:87
-#: src/Email/templates/donation-receipt.php:43
-#: src/Export/ExportService.php:144
-#: src/Export/ExportService.php:240
-#: src/Receipts/templates/annual-receipt.php:99
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:244
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:171
-#: admin/src/pages/donors/DonationHistoryTable.js:35
-#: admin/src/pages/settings/email-templates.js:40
-#: admin/src/pages/settings/email-templates.js:85
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:141
-#: admin/src/pages/tools/WebhookDeliveryLog.js:271
-#: admin/src/pages/transactions/AddDonationDrawer.js:658
-#: admin/src/pages/transactions/TransactionDetailsCard.js:285
-#: admin/src/pages/transactions/TransactionList.js:199
-msgid "Date"
-msgstr ""
-
+#: blocks/build/donor-dashboard/parts/fundraising.php:192
 #: blocks/build/donor-dashboard/parts/history.php:61
 #: blocks/build/donor-dashboard/parts/overview.php:36
+#: blocks/src/donor-dashboard/parts/fundraising.php:192
 #: blocks/src/donor-dashboard/parts/history.php:61
 #: blocks/src/donor-dashboard/parts/overview.php:36
 #: src/Email/templates/admin-new-donation.php:60
@@ -1312,6 +1384,120 @@ msgstr ""
 #: admin/src/pages/transactions/AddDonationDrawer.js:618
 #: admin/src/pages/transactions/TransactionList.js:171
 msgid "Amount"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:193
+#: blocks/build/donor-dashboard/parts/history.php:60
+#: blocks/build/donor-dashboard/parts/overview.php:35
+#: blocks/src/donor-dashboard/parts/fundraising.php:193
+#: blocks/src/donor-dashboard/parts/history.php:60
+#: blocks/src/donor-dashboard/parts/overview.php:35
+#: src/Email/templates/admin-new-donation.php:86
+#: src/Email/templates/admin-payment-failed.php:60
+#: src/Email/templates/admin-recurring-renewal.php:60
+#: src/Email/templates/admin-refund.php:87
+#: src/Email/templates/donation-receipt.php:43
+#: src/Export/ExportService.php:144
+#: src/Export/ExportService.php:240
+#: src/Receipts/templates/annual-receipt.php:99
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:193
+#: admin/build/mission-admin.js:244
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:171
+#: admin/src/pages/donors/DonationHistoryTable.js:35
+#: admin/src/pages/settings/email-templates.js:40
+#: admin/src/pages/settings/email-templates.js:85
+#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:141
+#: admin/src/pages/tools/WebhookDeliveryLog.js:271
+#: admin/src/pages/transactions/AddDonationDrawer.js:658
+#: admin/src/pages/transactions/TransactionDetailsCard.js:285
+#: admin/src/pages/transactions/TransactionList.js:199
+msgid "Date"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:209
+#: blocks/src/donor-dashboard/parts/fundraising.php:209
+msgid "No donations yet. Share your page to start raising funds."
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:17
+#: blocks/src/donor-dashboard/parts/history.php:17
+msgid "Filter by year"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:19
+#: blocks/src/donor-dashboard/parts/history.php:19
+msgid "All Years"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:29
+#: blocks/src/donor-dashboard/parts/history.php:29
+msgid "Filter by campaign"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:31
+#: blocks/src/donor-dashboard/parts/history.php:31
+msgid "All Campaigns"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:41
+#: blocks/src/donor-dashboard/parts/history.php:41
+msgid "Filter by type"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:43
+#: blocks/src/donor-dashboard/parts/history.php:43
+msgid "All Types"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:44
+#: blocks/src/donor-dashboard/parts/history.php:44
+#: src/DonorDashboard/DashboardContextBuilder.php:602
+#: src/Email/templates/admin-new-donation.php:79
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:193
+#: admin/build/mission-admin.js:244
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:83
+#: admin/src/pages/donors/DonationHistoryTable.js:78
+#: admin/src/pages/transactions/TransactionDetailsCard.js:206
+#: admin/src/pages/transactions/TransactionList.js:96
+#: assets/shared/components/FrequencyChips.js:4
+#: blocks/build/donation-form/index.js:1
+#: blocks/src/donation-form/edit/tabs/AmountsTab.js:142
+msgid "One-time"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:45
+#: blocks/src/donor-dashboard/parts/history.php:45
+#: src/DonorDashboard/DashboardContextBuilder.php:602
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:193
+#: admin/build/mission-admin.js:244
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:82
+#: admin/src/pages/donors/DonationHistoryTable.js:77
+#: admin/src/pages/donors/DonorDetail.js:158
+#: admin/src/pages/transactions/TransactionDetailsCard.js:205
+#: admin/src/pages/transactions/TransactionList.js:95
+msgid "Recurring"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:51
+#: blocks/src/donor-dashboard/parts/history.php:51
+#: admin/build/mission-admin.js:229
+#: admin/build/mission-admin.js:244
+#: admin/src/pages/tools/LogsPanel.js:239
+#: admin/src/pages/tools/WebhookDeliveryLog.js:300
+msgid "Loading…"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/history.php:57
+#: blocks/src/donor-dashboard/parts/history.php:57
+#: admin/build/mission-admin.js:193
+#: admin/src/pages/settings/DonorPortalPanel.js:11
+msgid "Donation history"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/history.php:62
@@ -1354,6 +1540,8 @@ msgstr ""
 #: blocks/build/donor-wall/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:265
 #: blocks/src/campaign-progress/edit/Edit.js:283
 #: blocks/src/campaign-statistics/edit/Edit.js:339
@@ -1361,7 +1549,9 @@ msgstr ""
 #: blocks/src/donation-form/edit/Edit.js:164
 #: blocks/src/donor-wall/edit/Edit.js:547
 #: blocks/src/recent-donors/edit/Edit.js:228
-#: blocks/src/top-donors/edit/Edit.js:338
+#: blocks/src/top-donors/edit/Edit.js:228
+#: blocks/src/top-fundraisers/edit/Edit.js:225
+#: blocks/src/top-teams/edit/Edit.js:254
 msgid "Campaign"
 msgstr ""
 
@@ -1447,7 +1637,7 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/overview.php:24
 #: blocks/src/donor-dashboard/parts/overview.php:24
-#: src/Campaigns/templates/campaign-page-p2p.php:45
+#: src/Campaigns/templates/campaign-page-p2p.php:59
 msgid "Recent Donations"
 msgstr ""
 
@@ -1706,6 +1896,7 @@ msgstr ""
 #: blocks/build/donor-dashboard/parts/recurring.php:30
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
+#: src/DonorDashboard/DashboardContextBuilder.php:386
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
@@ -1846,18 +2037,18 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/sidebar.php:29
-#: blocks/src/donor-dashboard/parts/sidebar.php:29
+#: blocks/build/donor-dashboard/parts/sidebar.php:30
+#: blocks/src/donor-dashboard/parts/sidebar.php:30
 msgid "Close menu"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/sidebar.php:44
-#: blocks/src/donor-dashboard/parts/sidebar.php:44
+#: blocks/build/donor-dashboard/parts/sidebar.php:45
+#: blocks/src/donor-dashboard/parts/sidebar.php:45
 msgid "Dashboard navigation"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/sidebar.php:77
-#: blocks/src/donor-dashboard/parts/sidebar.php:77
+#: blocks/build/donor-dashboard/parts/sidebar.php:78
+#: blocks/src/donor-dashboard/parts/sidebar.php:78
 msgid "Log Out"
 msgstr ""
 
@@ -1897,11 +2088,13 @@ msgstr ""
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
 #: blocks/src/top-donors/index.php:126
+#: src/DonorDashboard/DashboardContextBuilder.php:448
 #: src/Email/AdminNotificationListener.php:458
 #: src/Export/ExportService.php:739
 #: src/Reporting/ReportingService.php:626
 #: src/Reporting/ReportingService.php:760
 #: src/Reporting/ReportingService.php:1591
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:242
 #: src/Rest/Endpoints/DonorWallEndpoint.php:110
 #: src/Rest/Endpoints/DonorWallEndpoint.php:128
 #: src/Rest/Endpoints/FundraisersEndpoint.php:438
@@ -1958,31 +2151,33 @@ msgstr ""
 msgid "Be the first to donate to this campaign!"
 msgstr ""
 
+#: blocks/build/fundraiser-image/index.php:38
 #: blocks/build/fundraiser-profile/index.php:38
+#: blocks/src/fundraiser-image/index.php:38
 #: blocks/src/fundraiser-profile/index.php:38
 msgid "A fundraiser"
 msgstr ""
 
 #. translators: %s: person being honored
-#: blocks/build/fundraiser-profile/index.php:51
-#: blocks/src/fundraiser-profile/index.php:51
+#: blocks/build/fundraiser-profile/index.php:50
+#: blocks/src/fundraiser-profile/index.php:50
 msgid "In memory of %s"
 msgstr ""
 
 #. translators: %s: person being honored
-#: blocks/build/fundraiser-profile/index.php:53
-#: blocks/src/fundraiser-profile/index.php:53
+#: blocks/build/fundraiser-profile/index.php:52
+#: blocks/src/fundraiser-profile/index.php:52
 msgid "In honor of %s"
 msgstr ""
 
 #. translators: 1: fundraiser name, 2: linked campaign title
-#: blocks/build/fundraiser-profile/index.php:68
-#: blocks/src/fundraiser-profile/index.php:68
+#: blocks/build/fundraiser-profile/index.php:67
+#: blocks/src/fundraiser-profile/index.php:67
 msgid "%1$s is fundraising for %2$s"
 msgstr ""
 
-#: blocks/build/fundraiser-profile/index.php:93
-#: blocks/src/fundraiser-profile/index.php:93
+#: blocks/build/fundraiser-profile/index.php:88
+#: blocks/src/fundraiser-profile/index.php:88
 msgid "My Story"
 msgstr ""
 
@@ -2001,59 +2196,9 @@ msgstr ""
 msgid "Donations"
 msgstr ""
 
-#: blocks/build/fundraiser-progress/index.php:85
-#: blocks/src/fundraiser-progress/index.php:85
-#: src/Admin/AdminModule.php:376
-#: src/Admin/AdminModule.php:377
-#: src/Export/ExportService.php:171
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:204
-#: admin/build/mission-admin.js:236
-#: admin/build/mission-admin.js:238
-#: admin/build/mission-admin.js:240
-#: admin/src/pages/donors/DonorList.js:205
-#: admin/src/pages/donors/DonorList.js:279
-#: admin/src/pages/tools/ExportPanel.js:7
-#: admin/src/pages/tools/ImportPanel.js:17
-#: admin/src/pages/tools/migration/MigrationReport.js:7
-#: admin/src/pages/tools/migration/ProgressTimeline.js:7
-#: admin/src/pages/tools/migration/ScanResults.js:6
-msgid "Donors"
-msgstr ""
-
 #: blocks/build/fundraiser-progress/index.php:99
 #: blocks/src/fundraiser-progress/index.php:99
 msgid "Share"
-msgstr ""
-
-#: blocks/build/p2p-leaderboard/index.php:71
-#: blocks/src/p2p-leaderboard/index.php:71
-msgid "Top Teams"
-msgstr ""
-
-#. translators: %s: number of team members
-#: blocks/build/p2p-leaderboard/index.php:95
-#: blocks/src/p2p-leaderboard/index.php:95
-msgid "%s member"
-msgid_plural "%s members"
-msgstr[0] ""
-msgstr[1] ""
-
-#: blocks/build/p2p-leaderboard/index.php:116
-#: blocks/src/p2p-leaderboard/index.php:116
-msgid "Top Fundraisers"
-msgstr ""
-
-#: blocks/build/p2p-leaderboard/index.php:138
-#: blocks/src/p2p-leaderboard/index.php:138
-msgid "Individual fundraiser"
-msgstr ""
-
-#: blocks/build/p2p-leaderboard/index.php:150
-#: blocks/src/p2p-leaderboard/index.php:150
-#: admin/build/mission-admin.js:248
-#: admin/src/pages/Fundraisers.js:187
-msgid "No fundraisers yet."
 msgstr ""
 
 #: blocks/build/recent-donors/index.php:43
@@ -2273,24 +2418,9 @@ msgstr ""
 msgid "Create fundraiser"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:288
-#: blocks/src/signup-modal/index.php:288
-msgid "Share on Facebook"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:289
-#: blocks/src/signup-modal/index.php:289
-msgid "Share on X"
-msgstr ""
-
 #: blocks/build/signup-modal/index.php:290
 #: blocks/src/signup-modal/index.php:290
 msgid "Copy link"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:291
-#: blocks/src/signup-modal/index.php:291
-msgid "Share by email"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:293
@@ -2352,18 +2482,6 @@ msgstr ""
 msgid "Members"
 msgstr ""
 
-#: blocks/build/team-progress/index.php:89
-#: blocks/src/team-progress/index.php:89
-#: src/Export/ExportService.php:166
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/campaigns/CampaignList.js:140
-#: admin/src/pages/Fundraisers.js:84
-#: admin/src/pages/Teams.js:97
-msgid "Raised"
-msgstr ""
-
 #: blocks/build/team-progress/index.php:95
 #: blocks/src/team-progress/index.php:95
 msgid "Donate to the Team"
@@ -2377,7 +2495,7 @@ msgstr ""
 #: blocks/build/top-donors/index.php:43
 #: blocks/src/top-donors/index.php:43
 #: blocks/build/top-donors/index.js:1
-#: blocks/src/top-donors/edit/Edit.js:295
+#: blocks/src/top-donors/edit/Edit.js:185
 msgid "Top Donors"
 msgstr ""
 
@@ -2397,6 +2515,66 @@ msgstr ""
 #: blocks/src/top-donors/index.php:106
 msgid "Be the First Donor"
 msgstr ""
+
+#: blocks/build/top-fundraisers/index.php:43
+#: blocks/src/top-fundraisers/index.php:43
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:176
+msgid "Top Fundraisers"
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.php:104
+#: blocks/src/top-fundraisers/index.php:104
+msgid "Be the first fundraiser."
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.php:105
+#: blocks/src/top-fundraisers/index.php:105
+msgid "Start your own page and rally your friends."
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.php:156
+#: blocks/src/top-fundraisers/index.php:156
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:202
+msgid "Individual fundraiser"
+msgstr ""
+
+#: blocks/build/top-teams/index.php:44
+#: blocks/src/top-teams/index.php:44
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-teams/edit/Edit.js:196
+msgid "Top Teams"
+msgstr ""
+
+#: blocks/build/top-teams/index.php:106
+#: blocks/src/top-teams/index.php:106
+#: admin/build/mission-admin.js:248
+#: admin/src/pages/Teams.js:201
+msgid "No teams yet."
+msgstr ""
+
+#: blocks/build/top-teams/index.php:107
+#: blocks/src/top-teams/index.php:107
+msgid "Create a team and fundraise together."
+msgstr ""
+
+#: blocks/build/top-teams/index.php:110
+#: blocks/build/top-teams/index.php:114
+#: blocks/src/top-teams/index.php:110
+#: blocks/src/top-teams/index.php:114
+msgid "Start a Team"
+msgstr ""
+
+#. translators: %s: number of team members
+#: blocks/build/top-teams/index.php:160
+#: blocks/src/top-teams/index.php:160
+#: blocks/build/top-teams/index.js:2
+#: blocks/src/top-teams/edit/Edit.js:219
+msgid "%s member"
+msgid_plural "%s members"
+msgstr[0] ""
+msgstr[1] ""
 
 #: mission-donation-platform.php:31
 msgid "Mission Donation Platform can't run on this site right now."
@@ -2536,6 +2714,8 @@ msgstr ""
 #: blocks/build/donor-wall/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:263
 #: blocks/src/campaign-progress/edit/Edit.js:281
 #: blocks/src/campaign-statistics/edit/Edit.js:337
@@ -2544,7 +2724,9 @@ msgstr ""
 #: blocks/src/donation-form/edit/Edit.js:162
 #: blocks/src/donor-wall/edit/Edit.js:545
 #: blocks/src/recent-donors/edit/Edit.js:226
-#: blocks/src/top-donors/edit/Edit.js:336
+#: blocks/src/top-donors/edit/Edit.js:226
+#: blocks/src/top-fundraisers/edit/Edit.js:223
+#: blocks/src/top-teams/edit/Edit.js:252
 msgid "Settings"
 msgstr ""
 
@@ -2700,12 +2882,12 @@ msgstr ""
 msgid "Leaderboard"
 msgstr ""
 
-#: src/Campaigns/templates/campaign-page-p2p.php:55
+#: src/Campaigns/templates/campaign-page-p2p.php:69
 #: src/Campaigns/templates/campaign-page.php:79
 msgid "Make a Donation"
 msgstr ""
 
-#: src/Campaigns/templates/campaign-page-p2p.php:59
+#: src/Campaigns/templates/campaign-page-p2p.php:73
 msgid "Your gift supports the campaign and helps every fundraiser reach their goal."
 msgstr ""
 
@@ -2743,38 +2925,121 @@ msgid "/ year"
 msgstr ""
 
 #. translators: 1: current page, 2: total pages
-#: src/DonorDashboard/DashboardContextBuilder.php:233
+#: src/DonorDashboard/DashboardContextBuilder.php:239
 msgid "Page %1$d of %2$d"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:349
-#: src/DonorDashboard/DashboardContextBuilder.php:363
-#: src/DonorDashboard/DashboardContextBuilder.php:383
-#: src/DonorDashboard/DashboardContextBuilder.php:432
-#: src/DonorDashboard/DashboardContextBuilder.php:452
+#: src/DonorDashboard/DashboardContextBuilder.php:356
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/SaveBar.js:31
+msgid "Save changes"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:357
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:193
+#: admin/build/mission-admin.js:204
+#: admin/build/mission-admin.js:244
+#: admin/src/components/NotesCard.js:214
+#: admin/src/pages/settings/SaveBar.js:30
+#: admin/src/pages/tools/ComingSoonPanel.js:305
+#: admin/src/pages/tools/WebhookModal.js:446
+#: admin/src/pages/transactions/DedicationSection.js:575
+msgid "Saving…"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:358
+msgid "Saved"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:359
+msgid "Fundraiser updated"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:360
+msgid "Cover photo updated"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:361
+msgid "Link copied"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:362
+msgid "Embed code copied"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:387
+msgid "Pending review"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:388
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:195
+#: admin/src/components/P2PStatusBadge.js:17
+#: admin/src/pages/Fundraisers.js:28
+#: admin/src/pages/Teams.js:30
+msgid "Inactive"
+msgstr ""
+
+#. translators: %s: campaign title
+#: src/DonorDashboard/DashboardContextBuilder.php:393
+msgid "Support my fundraiser for %s"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:394
+msgid "Support my fundraiser"
+msgstr ""
+
+#. translators: %s: number of donors
+#. translators: %s: donor count toward goal.
+#: src/DonorDashboard/DashboardContextBuilder.php:409
+#: admin/build/mission-admin.js:161
+#: admin/src/pages/dashboard/ActivityFeed.js:634
+msgid "%s donor"
+msgid_plural "%s donors"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: amount raised, 2: goal amount
+#: src/DonorDashboard/DashboardContextBuilder.php:415
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:318
+msgid "%1$s raised of %2$s goal"
+msgstr ""
+
+#. translators: %s: amount raised
+#: src/DonorDashboard/DashboardContextBuilder.php:417
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:320
+msgid "%s raised"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:495
+#: src/DonorDashboard/DashboardContextBuilder.php:509
+#: src/DonorDashboard/DashboardContextBuilder.php:529
+#: src/DonorDashboard/DashboardContextBuilder.php:578
+#: src/DonorDashboard/DashboardContextBuilder.php:598
 #: src/Reporting/ReportingService.php:1480
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:82
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:109
 msgid "Deleted Campaign"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:392
+#: src/DonorDashboard/DashboardContextBuilder.php:538
 msgid "Card on file"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:545
+#: src/DonorDashboard/DashboardContextBuilder.php:691
 msgid "Donation Made"
 msgid_plural "Donations Made"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:549
+#: src/DonorDashboard/DashboardContextBuilder.php:695
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:69
 msgid "Lifetime Given"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:553
+#: src/DonorDashboard/DashboardContextBuilder.php:699
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Dashboard.js:198
 #: blocks/build/donor-dashboard/index.js:1
@@ -2791,7 +3056,7 @@ msgid "An account already exists for this email. Please log in instead."
 msgstr ""
 
 #: src/DonorDashboard/DonorAuthService.php:97
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:74
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:75
 #: src/Rest/Endpoints/EmailTestEndpoint.php:47
 msgid "Verify your email to activate your donor account"
 msgstr ""
@@ -2802,13 +3067,15 @@ msgstr ""
 #: src/Email/EmailModule.php:181
 #: src/Email/EmailModule.php:312
 #: src/Email/EmailModule.php:334
-#: src/Email/FundraiserEmailListener.php:80
-#: src/Email/FundraiserEmailListener.php:151
+#: src/Email/FundraiserEmailListener.php:114
+#: src/Email/FundraiserEmailListener.php:160
+#: src/Email/FundraiserEmailListener.php:231
 #: src/Email/SubscriptionEmailListener.php:195
 #: src/Email/templates/account-activation.php:12
 #: src/Email/templates/donation-receipt.php:12
 #: src/Email/templates/email-change-verification.php:12
 #: src/Email/templates/p2p-fundraiser-approved.php:14
+#: src/Email/templates/p2p-fundraiser-milestone.php:15
 #: src/Email/templates/p2p-fundraiser-received-donation.php:14
 #: src/Email/templates/password-reset.php:12
 #: src/Email/templates/payment-failed.php:13
@@ -2848,7 +3115,7 @@ msgstr ""
 
 #: src/DonorDashboard/DonorAuthService.php:423
 #: src/Email/templates/password-reset.php:15
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:75
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:76
 #: src/Rest/Endpoints/EmailTestEndpoint.php:48
 msgid "Reset your password"
 msgstr ""
@@ -2858,12 +3125,20 @@ msgstr ""
 msgid "Password must be at least %d characters."
 msgstr ""
 
+#: src/DonorDashboard/DonorDashboardModule.php:66
+msgid "Account"
+msgstr ""
+
 #: src/DonorDashboard/DonorDashboardModule.php:67
-msgid "A page template without the page title, designed for the Donor Dashboard block."
+msgid "A page template without the page title, designed for the Account block."
 msgstr ""
 
 #: src/DonorDashboard/DonorDashboardModule.php:256
-msgid "Donor Dashboard Page"
+msgid "Account Page"
+msgstr ""
+
+#: src/DonorDashboard/DonorDashboardModule.php:303
+msgid "My Account"
 msgstr ""
 
 #: src/DonorDashboard/OtpException.php:52
@@ -2962,7 +3237,7 @@ msgid "Mail dedication pending: %1$s (from %2$s)"
 msgstr ""
 
 #: src/Email/DonationEmailListener.php:119
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:77
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:78
 msgid "A note about your donation"
 msgstr ""
 
@@ -2972,8 +3247,8 @@ msgid "A donation has been made %1$s %2$s"
 msgstr ""
 
 #: src/Email/DonationEmailListener.php:190
-#: src/Email/FundraiserEmailListener.php:125
-#: src/Email/FundraiserEmailListener.php:126
+#: src/Email/FundraiserEmailListener.php:205
+#: src/Email/FundraiserEmailListener.php:206
 #: src/Email/templates/tribute-notification.php:15
 msgid "Someone"
 msgstr ""
@@ -2991,6 +3266,7 @@ msgstr ""
 #: src/Email/templates/donation-receipt.php:22
 #: src/Email/templates/email-change-verification.php:22
 #: src/Email/templates/p2p-fundraiser-approved.php:24
+#: src/Email/templates/p2p-fundraiser-milestone.php:32
 #: src/Email/templates/p2p-fundraiser-received-donation.php:24
 #: src/Email/templates/password-reset.php:22
 #: src/Email/templates/payment-failed.php:25
@@ -3000,13 +3276,19 @@ msgstr ""
 msgid "Hi %s,"
 msgstr ""
 
-#: src/Email/FundraiserEmailListener.php:73
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:79
+#. translators: %s: milestone percentage (e.g. "50%")
+#: src/Email/FundraiserEmailListener.php:105
+#: src/Email/templates/p2p-fundraiser-milestone.php:22
+msgid "You've reached %s of your goal!"
+msgstr ""
+
+#: src/Email/FundraiserEmailListener.php:153
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:80
 msgid "Your fundraising page is live"
 msgstr ""
 
 #. translators: %s: formatted amount
-#: src/Email/FundraiserEmailListener.php:142
+#: src/Email/FundraiserEmailListener.php:222
 msgid "You received a %s donation!"
 msgstr ""
 
@@ -3023,13 +3305,13 @@ msgid "Thank you for your %1$s gift of %2$s"
 msgstr ""
 
 #: src/Email/SubscriptionEmailListener.php:146
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:72
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:73
 #: src/Rest/Endpoints/EmailTestEndpoint.php:45
 msgid "Action needed: Update your payment for your recurring donation"
 msgstr ""
 
 #: src/Email/SubscriptionEmailListener.php:175
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:73
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:74
 #: src/Rest/Endpoints/EmailTestEndpoint.php:46
 msgid "Your recurring donation has ended"
 msgstr ""
@@ -3111,17 +3393,6 @@ msgstr ""
 msgid "Total raised"
 msgstr ""
 
-#: src/Email/templates/admin-milestone.php:72
-#: src/Export/ExportService.php:161
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/campaigns/CampaignList.js:155
-#: admin/src/pages/Fundraisers.js:73
-#: admin/src/pages/Teams.js:86
-msgid "Goal"
-msgstr ""
-
 #: src/Email/templates/admin-new-donation.php:16
 msgid "New Donation Received"
 msgstr ""
@@ -3134,28 +3405,6 @@ msgstr ""
 #. translators: 1: donor name (bold), 2: formatted amount (bold)
 #: src/Email/templates/admin-new-donation.php:36
 msgid "<strong>%1$s</strong> donated <strong>%2$s</strong>."
-msgstr ""
-
-#: src/Email/templates/admin-new-donation.php:49
-#: src/Email/templates/admin-payment-failed.php:33
-#: src/Email/templates/admin-recurring-renewal.php:33
-#: src/Email/templates/admin-refund.php:52
-#: src/Email/templates/admin-subscription-cancelled.php:34
-#: src/Export/ExportService.php:129
-#: src/Export/ExportService.php:188
-#: src/Export/ExportService.php:220
-#: src/Receipts/templates/annual-receipt.php:68
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:244
-#: admin/src/pages/donors/DonorList.js:52
-#: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:268
-#: admin/src/pages/transactions/AddDonationDrawer.js:463
-#: admin/src/pages/transactions/AddDonationDrawer.js:529
-#: admin/src/pages/transactions/TransactionDetailsCard.js:256
-#: admin/src/pages/transactions/TransactionDonorCard.js:12
-#: admin/src/pages/transactions/TransactionDonorCard.js:37
-msgid "Donor"
 msgstr ""
 
 #. translators: %s: frequency label (e.g. "Monthly")
@@ -3275,7 +3524,7 @@ msgstr ""
 
 #: src/Email/templates/email-change-verification.php:15
 #: src/Rest/Endpoints/DonorDashboard/EmailChangeEndpoint.php:178
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:76
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:77
 #: src/Rest/Endpoints/EmailTestEndpoint.php:49
 msgid "Verify your new email address"
 msgstr ""
@@ -3305,6 +3554,16 @@ msgstr ""
 #: src/Email/templates/p2p-fundraiser-approved.php:39
 #: src/Email/templates/p2p-fundraiser-received-donation.php:49
 msgid "View your page"
+msgstr ""
+
+#. translators: 1: amount raised, 2: goal amount
+#: src/Email/templates/p2p-fundraiser-milestone.php:43
+msgid "Congratulations! You've raised %1$s toward your %2$s goal. Keep the momentum going by sharing your page."
+msgstr ""
+
+#. translators: %s: amount raised
+#: src/Email/templates/p2p-fundraiser-milestone.php:50
+msgid "Congratulations! You've raised %s. Keep the momentum going by sharing your page."
 msgstr ""
 
 #: src/Email/templates/p2p-fundraiser-received-donation.php:17
@@ -4079,8 +4338,8 @@ msgstr ""
 
 #: src/Models/Fundraiser.php:192
 #: src/P2P/FundraiserPostType.php:39
-#: src/Reporting/ReportingService.php:1815
-#: src/Reporting/ReportingService.php:1973
+#: src/Reporting/ReportingService.php:1895
+#: src/Reporting/ReportingService.php:2053
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/Fundraisers.js:35
 msgid "Fundraiser"
@@ -4220,6 +4479,27 @@ msgstr ""
 
 #: src/OutgoingWebhooks/WebhookEvents.php:94
 msgid "Campaign Events"
+msgstr ""
+
+#: src/P2P/FundraiserImageUploader.php:61
+msgid "The image could not be uploaded."
+msgstr ""
+
+#: src/P2P/FundraiserImageUploader.php:79
+msgid "The image could not be saved."
+msgstr ""
+
+#: src/P2P/FundraiserImageUploader.php:112
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:197
+msgid "No image was uploaded."
+msgstr ""
+
+#: src/P2P/FundraiserImageUploader.php:118
+msgid "The image is too large. Please upload a file under 5 MB."
+msgstr ""
+
+#: src/P2P/FundraiserImageUploader.php:128
+msgid "Please upload a JPEG, PNG, GIF, or WebP image."
 msgstr ""
 
 #: src/P2P/FundraiserRegistrationService.php:173
@@ -4495,6 +4775,11 @@ msgstr ""
 msgid "Email change cancelled."
 msgstr ""
 
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:277
+#: src/Rest/RestErrors.php:72
+msgid "Fundraiser not found."
+msgstr ""
+
 #. translators: %s: formatted minimum amount (e.g. "$1.00")
 #. translators: %s: formatted minimum amount
 #: src/Rest/Endpoints/DonorDashboard/SubscriptionsEndpoint.php:285
@@ -4538,31 +4823,35 @@ msgstr ""
 msgid "A donor with this email address already exists."
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:69
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:70
 msgid "Thank you for your {amount} donation"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:70
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:71
 msgid "Thank you for your {amount} {frequency} donation"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:71
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:72
 msgid "Thank you for your {frequency} gift of {amount}"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:78
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:79
 msgid "A donation has been made {tribute_type_label} {honoree_name}"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:80
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:81
 msgid "You received a {amount} donation!"
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:110
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:82
+msgid "You've reached {milestone} of your goal!"
+msgstr ""
+
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:112
 msgid "You do not have permission to view email templates."
 msgstr ""
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:125
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:127
 #: src/Rest/Endpoints/EmailTestEndpoint.php:127
 msgid "Unknown email type."
 msgstr ""
@@ -4670,15 +4959,15 @@ msgstr ""
 msgid "Invalid event: %s"
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:359
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:360
 msgid "Please verify your email to continue."
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:396
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:397
 msgid "This campaign is not accepting fundraisers."
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:401
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:402
 msgid "Registration for this campaign is closed."
 msgstr ""
 
@@ -4812,10 +5101,6 @@ msgstr ""
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignDetail.js:335
 msgid "Campaign not found."
-msgstr ""
-
-#: src/Rest/RestErrors.php:72
-msgid "Fundraiser not found."
 msgstr ""
 
 #: src/Rest/RestErrors.php:81
@@ -5901,12 +6186,6 @@ msgstr ""
 msgid "Campaign milestone reached"
 msgstr ""
 
-#. translators: %s: donor count toward goal.
-#: admin/build/mission-admin.js:161
-#: admin/src/pages/dashboard/ActivityFeed.js:634
-msgid "%s donor"
-msgstr ""
-
 #. translators: %s: donation count toward goal.
 #: admin/build/mission-admin.js:164
 #: admin/src/pages/dashboard/ActivityFeed.js:640
@@ -6582,18 +6861,6 @@ msgid "Write a note…"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:204
-#: admin/build/mission-admin.js:244
-#: admin/src/components/NotesCard.js:214
-#: admin/src/pages/settings/SaveBar.js:30
-#: admin/src/pages/tools/ComingSoonPanel.js:305
-#: admin/src/pages/tools/WebhookModal.js:446
-#: admin/src/pages/transactions/DedicationSection.js:575
-msgid "Saving…"
-msgstr ""
-
-#: admin/build/mission-admin.js:191
 #: admin/src/components/NotesCard.js:215
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/FormSettingsModal.js:559
@@ -6662,14 +6929,6 @@ msgid "Deactivate"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:195
-#: admin/src/components/P2PStatusBadge.js:17
-#: admin/src/pages/Fundraisers.js:28
-#: admin/src/pages/Teams.js:30
-msgid "Inactive"
-msgstr ""
-
-#: admin/build/mission-admin.js:191
 #: admin/src/pages/Fundraisers.js:147
 msgid "Total Fundraisers"
 msgstr ""
@@ -6689,11 +6948,6 @@ msgstr ""
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/settings/SaveBar.js:9
 msgid "All changes saved."
-msgstr ""
-
-#: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/SaveBar.js:31
-msgid "Save changes"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
@@ -7111,37 +7365,52 @@ msgid "Giver name"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:298
+#: admin/src/pages/settings/email-templates.js:295
+msgid "Fundraiser milestone"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:296
+msgid "Sent to a participant when they reach 25%, 50%, 75%, or 100% of their goal"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:306
+msgid "Milestone reached"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:315
 msgid "Account activation"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:299
+#: admin/src/pages/settings/email-templates.js:316
 msgid "Email verification for the donor dashboard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:309
+#: admin/src/pages/settings/email-templates.js:326
 msgid "Password reset"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:310
+#: admin/src/pages/settings/email-templates.js:327
 msgid "Sent when a donor requests a new password"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:320
+#: admin/src/pages/settings/email-templates.js:337
 msgid "Email change verification"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:321
+#: admin/src/pages/settings/email-templates.js:338
 msgid "Sent to the new address for confirmation"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:331
+#: admin/src/pages/settings/email-templates.js:348
 msgid "New email"
 msgstr ""
 
@@ -9655,12 +9924,6 @@ msgid "Signing Secret"
 msgstr ""
 
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/tools/WebhookModal.js:412
-#: admin/src/pages/tools/WebhooksPanel.js:323
-msgid "Copy"
-msgstr ""
-
-#: admin/build/mission-admin.js:244
 #: admin/src/pages/tools/WebhookModal.js:419
 msgid "Regenerate"
 msgstr ""
@@ -10142,6 +10405,11 @@ msgid "People raising money for your peer-to-peer campaigns."
 msgstr ""
 
 #: admin/build/mission-admin.js:248
+#: admin/src/pages/Fundraisers.js:187
+msgid "No fundraisers yet."
+msgstr ""
+
+#: admin/build/mission-admin.js:248
 #: admin/src/pages/Fundraisers.js:188
 msgid "Fundraisers appear here once supporters sign up for a peer-to-peer campaign."
 msgstr ""
@@ -10225,11 +10493,6 @@ msgstr ""
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Teams.js:188
 msgid "Groups of fundraisers working together on your campaigns."
-msgstr ""
-
-#: admin/build/mission-admin.js:248
-#: admin/src/pages/Teams.js:201
-msgid "No teams yet."
 msgstr ""
 
 #: admin/build/mission-admin.js:248
@@ -10367,8 +10630,10 @@ msgstr ""
 
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign/index.js:1
+#: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-grid/edit/Edit.js:157
 #: blocks/src/campaign/edit/Edit.js:263
+#: blocks/src/top-teams/edit/Edit.js:302
 msgid "Show progress bar"
 msgstr ""
 
@@ -10457,13 +10722,17 @@ msgstr ""
 #: blocks/build/donor-wall/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:272
 #: blocks/src/campaign-progress/edit/Edit.js:290
 #: blocks/src/campaign-statistics/edit/Edit.js:346
 #: blocks/src/campaign/edit/Edit.js:238
 #: blocks/src/donor-wall/edit/Edit.js:554
 #: blocks/src/recent-donors/edit/Edit.js:235
-#: blocks/src/top-donors/edit/Edit.js:345
+#: blocks/src/top-donors/edit/Edit.js:235
+#: blocks/src/top-fundraisers/edit/Edit.js:232
+#: blocks/src/top-teams/edit/Edit.js:261
 msgid "If empty, the campaign will be detected from the current post."
 msgstr ""
 
@@ -10544,12 +10813,16 @@ msgstr ""
 #: blocks/build/donor-wall/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:2
 #: blocks/src/campaign-image/index.js:251
 #: blocks/src/campaign-progress/edit/Edit.js:214
 #: blocks/src/campaign/edit/Edit.js:147
 #: blocks/src/donor-wall/edit/Edit.js:486
 #: blocks/src/recent-donors/edit/Edit.js:175
-#: blocks/src/top-donors/edit/Edit.js:279
+#: blocks/src/top-donors/edit/Edit.js:169
+#: blocks/src/top-fundraisers/edit/Edit.js:160
+#: blocks/src/top-teams/edit/Edit.js:180
 msgid "Select a campaign or place this block on a campaign page."
 msgstr ""
 
@@ -10560,7 +10833,7 @@ msgstr ""
 #: blocks/src/campaign-progress/edit/Edit.js:21
 #: blocks/src/donate-button/edit/Edit.js:14
 #: blocks/src/recent-donors/edit/Edit.js:26
-#: blocks/src/top-donors/edit/Edit.js:137
+#: blocks/src/top-donors/edit/Edit.js:27
 msgid "Scroll to donation form"
 msgstr ""
 
@@ -10568,19 +10841,27 @@ msgstr ""
 #: blocks/build/donate-button/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:24
 #: blocks/src/donate-button/edit/Edit.js:17
 #: blocks/src/recent-donors/edit/Edit.js:29
-#: blocks/src/top-donors/edit/Edit.js:140
+#: blocks/src/top-donors/edit/Edit.js:30
+#: blocks/src/top-fundraisers/edit/Edit.js:30
+#: blocks/src/top-teams/edit/Edit.js:30
 msgid "Custom URL"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:25
 #: blocks/src/recent-donors/edit/Edit.js:30
-#: blocks/src/top-donors/edit/Edit.js:141
+#: blocks/src/top-donors/edit/Edit.js:31
+#: blocks/src/top-fundraisers/edit/Edit.js:31
+#: blocks/src/top-teams/edit/Edit.js:31
 msgid "Hide"
 msgstr ""
 
@@ -10594,7 +10875,7 @@ msgstr ""
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:305
 #: blocks/src/recent-donors/edit/Edit.js:261
-#: blocks/src/top-donors/edit/Edit.js:371
+#: blocks/src/top-donors/edit/Edit.js:261
 msgid "Donate URL"
 msgstr ""
 
@@ -11229,9 +11510,14 @@ msgstr ""
 msgid "Showing"
 msgstr ""
 
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/src/fundraiser-image/index.js:18
+msgid "This fundraiser's cover photo appears here on the live page."
+msgstr ""
+
 #: blocks/build/fundraiser-profile/index.js:1
 #: blocks/src/fundraiser-profile/index.js:18
-msgid "This fundraiser's name, photo, and story appear here on the live page."
+msgid "This fundraiser's name and story appear here on the live page."
 msgstr ""
 
 #: blocks/build/fundraiser-progress/index.js:1
@@ -11239,36 +11525,33 @@ msgstr ""
 msgid "This fundraiser's progress bar and stats appear here on the live page."
 msgstr ""
 
-#: blocks/build/p2p-leaderboard/index.js:1
-#: blocks/src/p2p-leaderboard/index.js:18
-msgid "The campaign leaderboard appears here on the live page."
-msgstr ""
-
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/recent-donors/edit/Edit.js:243
-#: blocks/src/top-donors/edit/Edit.js:353
+#: blocks/src/top-donors/edit/Edit.js:243
 msgid "Number of donors"
 msgstr ""
 
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/recent-donors/edit/Edit.js:251
-#: blocks/src/top-donors/edit/Edit.js:361
+#: blocks/src/top-donors/edit/Edit.js:251
 msgid "Donate button (empty state)"
 msgstr ""
 
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1
 #: blocks/src/recent-donors/edit/Edit.js:269
-#: blocks/src/top-donors/edit/Edit.js:379
+#: blocks/src/top-donors/edit/Edit.js:269
+#: blocks/src/top-fundraisers/edit/Edit.js:265
 msgid "Show avatars"
 msgstr ""
 
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/recent-donors/edit/Edit.js:274
-#: blocks/src/top-donors/edit/Edit.js:384
+#: blocks/src/top-donors/edit/Edit.js:274
 msgid "Show dedications"
 msgstr ""
 
@@ -11293,13 +11576,73 @@ msgid "This team's progress bar and stats appear here on the live page."
 msgstr ""
 
 #: blocks/build/top-donors/index.js:1
-#: blocks/src/top-donors/edit/Edit.js:389
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-donors/edit/Edit.js:279
+#: blocks/src/top-fundraisers/edit/Edit.js:275
+#: blocks/src/top-teams/edit/Edit.js:307
 msgid "Show ribbons"
 msgstr ""
 
 #: blocks/build/top-donors/index.js:1
-#: blocks/src/top-donors/edit/Edit.js:392
+#: blocks/src/top-donors/edit/Edit.js:282
 msgid "Gold, silver, and bronze badges for the top 3 donors."
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:27
+#: blocks/src/top-teams/edit/Edit.js:27
+msgid "Open the sign-up modal"
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:240
+msgid "Number of fundraisers"
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:250
+#: blocks/src/top-teams/edit/Edit.js:277
+msgid "Button (empty state)"
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:257
+#: blocks/src/top-teams/edit/Edit.js:284
+msgid "Button URL"
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:270
+msgid "Show team"
+msgstr ""
+
+#: blocks/build/top-fundraisers/index.js:1
+#: blocks/src/top-fundraisers/edit/Edit.js:278
+msgid "Gold, silver, and bronze badges for the top 3 fundraisers."
+msgstr ""
+
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-teams/edit/Edit.js:269
+msgid "Number of teams"
+msgstr ""
+
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-teams/edit/Edit.js:292
+msgid "Show logos"
+msgstr ""
+
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-teams/edit/Edit.js:297
+msgid "Show member count"
+msgstr ""
+
+#: blocks/build/top-teams/index.js:1
+#: blocks/src/top-teams/edit/Edit.js:310
+msgid "Gold, silver, and bronze badges for the top 3 teams."
 msgstr ""
 
 #: blocks/build/campaign-grid/block.json
@@ -11413,13 +11756,13 @@ msgstr ""
 #: blocks/build/donor-dashboard/block.json
 #: blocks/src/donor-dashboard/block.json
 msgctxt "block title"
-msgid "Donor Dashboard"
+msgid "Account"
 msgstr ""
 
 #: blocks/build/donor-dashboard/block.json
 #: blocks/src/donor-dashboard/block.json
 msgctxt "block description"
-msgid "A self-service portal where donors can view donation history, manage recurring gifts, download tax receipts, and update their profile."
+msgid "A self-service account area where donors and fundraisers can view donation history, manage recurring gifts, download tax receipts, edit their fundraising pages, and update their profile."
 msgstr ""
 
 #: blocks/build/donor-wall/block.json
@@ -11434,6 +11777,18 @@ msgctxt "block description"
 msgid "Display a grid of donations for a campaign."
 msgstr ""
 
+#: blocks/build/fundraiser-image/block.json
+#: blocks/src/fundraiser-image/block.json
+msgctxt "block title"
+msgid "Fundraiser Image"
+msgstr ""
+
+#: blocks/build/fundraiser-image/block.json
+#: blocks/src/fundraiser-image/block.json
+msgctxt "block description"
+msgid "A fundraiser's cover photo, set from their dashboard."
+msgstr ""
+
 #: blocks/build/fundraiser-profile/block.json
 #: blocks/src/fundraiser-profile/block.json
 msgctxt "block title"
@@ -11443,7 +11798,7 @@ msgstr ""
 #: blocks/build/fundraiser-profile/block.json
 #: blocks/src/fundraiser-profile/block.json
 msgctxt "block description"
-msgid "A fundraiser's cover image, name, headline, tribute, and story."
+msgid "A fundraiser's name, headline, tribute, and story."
 msgstr ""
 
 #: blocks/build/fundraiser-progress/block.json
@@ -11456,18 +11811,6 @@ msgstr ""
 #: blocks/src/fundraiser-progress/block.json
 msgctxt "block description"
 msgid "Display a fundraiser's progress with a thermometer, stats, and donate/share buttons."
-msgstr ""
-
-#: blocks/build/p2p-leaderboard/block.json
-#: blocks/src/p2p-leaderboard/block.json
-msgctxt "block title"
-msgid "P2P Leaderboard"
-msgstr ""
-
-#: blocks/build/p2p-leaderboard/block.json
-#: blocks/src/p2p-leaderboard/block.json
-msgctxt "block description"
-msgid "Display the campaign leaderboard: top teams and top fundraisers side by side."
 msgstr ""
 
 #: blocks/build/recent-donors/block.json
@@ -11540,4 +11883,28 @@ msgstr ""
 #: blocks/src/top-donors/block.json
 msgctxt "block description"
 msgid "Display a ranked list of top donors for a campaign."
+msgstr ""
+
+#: blocks/build/top-fundraisers/block.json
+#: blocks/src/top-fundraisers/block.json
+msgctxt "block title"
+msgid "Top Fundraisers"
+msgstr ""
+
+#: blocks/build/top-fundraisers/block.json
+#: blocks/src/top-fundraisers/block.json
+msgctxt "block description"
+msgid "Display a ranked list of top fundraisers for a peer-to-peer campaign."
+msgstr ""
+
+#: blocks/build/top-teams/block.json
+#: blocks/src/top-teams/block.json
+msgctxt "block title"
+msgid "Top Teams"
+msgstr ""
+
+#: blocks/build/top-teams/block.json
+#: blocks/src/top-teams/block.json
+msgctxt "block description"
+msgid "Display a ranked list of top teams for a peer-to-peer campaign."
 msgstr ""

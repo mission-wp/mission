@@ -3271,6 +3271,15 @@
 			],
 			"Fundraiser Emails": [
 				"Correos de recaudadores"
+			],
+			"Fundraiser milestone": [
+				"Hito de recaudación"
+			],
+			"Sent to a participant when they reach 25%, 50%, 75%, or 100% of their goal": [
+				"Se envía a un participante cuando alcanza el 25 %, 50 %, 75 % o 100 % de su meta"
+			],
+			"Milestone reached": [
+				"Hito alcanzado"
 			]
 		}
 	}
