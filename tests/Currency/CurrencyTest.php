@@ -105,6 +105,28 @@ class CurrencyTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test major-to-minor conversion per decimal class.
+	 */
+	public function test_major_to_minor(): void {
+		$this->assertSame( 4500, Currency::major_to_minor( 45.0, 'USD' ) );
+		$this->assertSame( 30000, Currency::major_to_minor( 300, 'USD' ) );
+		$this->assertSame( 1250, Currency::major_to_minor( 12.5, 'USD' ) );
+		$this->assertSame( 500, Currency::major_to_minor( 500, 'JPY' ) );
+		$this->assertSame( 1500, Currency::major_to_minor( 1.5, 'KWD' ) );
+	}
+
+	/**
+	 * Test major-to-minor round-trips with minor-to-major.
+	 */
+	public function test_major_minor_round_trip(): void {
+		foreach ( [ 'USD', 'JPY', 'KWD' ] as $code ) {
+			$minor = 12345;
+			$major = Currency::minor_to_major( $minor, $code );
+			$this->assertSame( $minor, Currency::major_to_minor( $major, $code ) );
+		}
+	}
+
+	/**
 	 * Test format_amount uses two decimals for USD.
 	 */
 	public function test_format_amount_usd(): void {

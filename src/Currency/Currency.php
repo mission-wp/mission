@@ -197,6 +197,20 @@ class Currency {
 	}
 
 	/**
+	 * Convert a major-units value (what a person enters) to a minor-units integer.
+	 *
+	 * @param float  $major_units Display value (e.g. 45.00 for USD, 500 for JPY).
+	 * @param string $code        ISO 4217 currency code.
+	 *
+	 * @return int Amount in the smallest currency unit (e.g. 45.00 → 4500 for USD).
+	 */
+	public static function major_to_minor( float $major_units, string $code ): int {
+		$decimals = self::get_decimals( $code );
+
+		return (int) round( $major_units * ( 10 ** $decimals ) );
+	}
+
+	/**
 	 * Format a minor-unit amount as a currency string.
 	 *
 	 * @param int    $minor_units   Amount in minor units (e.g. 5000 = $50.00).
