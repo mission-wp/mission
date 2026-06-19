@@ -1,24 +1,31 @@
 /**
  * Team Story block — editor registration.
  *
- * Server-rendered; the editor shows a placeholder since the description comes
- * from the team whose page the block sits on.
+ * The block resolves its team from the page it sits on (the team template), so
+ * the editor shows self-describing placeholder copy rather than real data.
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
-import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import './style.scss';
 
 function Edit() {
-  return createElement(
-    'div',
-    useBlockProps( { className: 'mission-ts-story' } ),
-    __(
-      "This team's description appears here on the live page.",
-      'mission-donation-platform'
-    )
+  return (
+    <div { ...useBlockProps( { className: 'mission-ts-story' } ) }>
+      <p>
+        { __(
+          "Your team's description appears here. Tell visitors who you are and why you're fundraising together.",
+          'mission-donation-platform'
+        ) }
+      </p>
+      <p>
+        { __(
+          'Invite others to join the team or chip in toward your shared goal.',
+          'mission-donation-platform'
+        ) }
+      </p>
+    </div>
   );
 }
 

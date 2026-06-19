@@ -10,8 +10,17 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "This fundraiser's supporters appear here on the live page.": [
-                "Los colaboradores de este recaudador aparecen aqu\u00ed en la p\u00e1gina publicada."
+            "Preview uses sample data.": [
+                "La vista previa usa datos de ejemplo."
+            ],
+            "Supporter name": [
+                "Nombre del colaborador"
+            ],
+            "A note of support appears here.": [
+                "Aqu\u00ed aparece un mensaje de apoyo."
+            ],
+            "Just now": [
+                "Ahora mismo"
             ]
         }
     }

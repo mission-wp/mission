@@ -10,8 +10,20 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "The team's members appear here on the live page.": [
-                "Los miembros del equipo aparecen aqu\u00ed en la p\u00e1gina publicada."
+            "of %s": [
+                "de %s"
+            ],
+            "Preview uses sample data.": [
+                "La vista previa usa datos de ejemplo."
+            ],
+            "Captain": [
+                "Capit\u00e1n"
+            ],
+            "Team captain": [
+                "Capit\u00e1n del equipo"
+            ],
+            "Member name": [
+                "Nombre del miembro"
             ]
         }
     }

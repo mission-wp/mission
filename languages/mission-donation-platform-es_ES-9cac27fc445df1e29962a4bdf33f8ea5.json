@@ -10,8 +10,14 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "This team's heading appears here on the live page.": [
-                "El encabezado de este equipo aparece aqu\u00ed en la p\u00e1gina publicada."
+            "Team name": [
+                "Nombre del equipo"
+            ],
+            "Team fundraising for": [
+                "Equipo recaudando fondos para"
+            ],
+            "Your Campaign": [
+                "Tu campa\u00f1a"
             ]
         }
     }

@@ -10,8 +10,11 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "This fundraiser's story appears here on the live page.": [
-                "La historia de este recaudador aparece aqu\u00ed en la p\u00e1gina publicada."
+            "Your fundraiser's story appears here. Share why this cause matters to you and what donations will make possible.": [
+                "Aqu\u00ed aparece la historia de tu recaudaci\u00f3n. Cuenta por qu\u00e9 esta causa te importa y qu\u00e9 har\u00e1n posible las donaciones."
+            ],
+            "Supporters read this before they give, so make it personal.": [
+                "Los colaboradores leen esto antes de donar, as\u00ed que hazlo personal."
             ]
         }
     }

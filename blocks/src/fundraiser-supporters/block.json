@@ -27,6 +27,7 @@
 	"example": {},
 	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"render": "file:./index.php"
 }

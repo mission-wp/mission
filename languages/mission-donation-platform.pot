@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T17:27:29+00:00\n"
+"POT-Creation-Date: 2026-06-19T19:25:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -104,6 +104,8 @@ msgstr[1] ""
 #: blocks/src/campaign/index.php:114
 #: blocks/src/campaign/index.php:120
 #: blocks/src/team-members/index.php:108
+#: blocks/build/team-members/index.js:2
+#: blocks/src/team-members/index.js:76
 msgid "of %s"
 msgstr ""
 
@@ -1258,6 +1260,10 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:59
 #: blocks/src/donor-dashboard/parts/fundraising.php:59
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/fundraiser-image/index.js:20
+#: blocks/src/team-image/index.js:20
 msgid "Cover photo"
 msgstr ""
 
@@ -1566,7 +1572,7 @@ msgstr ""
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
-#: blocks/src/campaign-image/index.js:265
+#: blocks/src/campaign-image/index.js:194
 #: blocks/src/campaign-progress/edit/Edit.js:285
 #: blocks/src/campaign-statistics/edit/Edit.js:339
 #: blocks/src/campaign/edit/Edit.js:231
@@ -2418,6 +2424,8 @@ msgstr ""
 
 #: blocks/build/signup-modal/index.php:247
 #: blocks/src/signup-modal/index.php:247
+#: blocks/build/team-title/index.js:1
+#: blocks/src/team-title/index.js:27
 msgid "Team name"
 msgstr ""
 
@@ -2473,6 +2481,8 @@ msgstr[1] ""
 #: blocks/src/team-members/index.php:96
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/Teams.js:62
+#: blocks/build/team-members/index.js:1
+#: blocks/src/team-members/index.js:56
 msgid "Captain"
 msgstr ""
 
@@ -2734,6 +2744,7 @@ msgstr ""
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/campaigns/CampaignTabNav.js:6
 #: admin/src/pages/Settings.js:371
+#: assets/shared/ImageBlockEdit.js:64
 #: blocks/build/campaign-image/index.js:1
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/campaign-statistics/index.js:1
@@ -2741,12 +2752,14 @@ msgstr ""
 #: blocks/build/donate-button/index.js:1
 #: blocks/build/donation-form/index.js:3
 #: blocks/build/donor-wall/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
 #: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
+#: blocks/build/team-image/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
-#: blocks/src/campaign-image/index.js:263
+#: blocks/src/campaign-image/index.js:192
 #: blocks/src/campaign-progress/edit/Edit.js:283
 #: blocks/src/campaign-statistics/edit/Edit.js:337
 #: blocks/src/campaign/edit/Edit.js:229
@@ -5405,7 +5418,7 @@ msgstr ""
 #: admin/src/pages/campaigns/CampaignCreateStepImage.js:39
 #: admin/src/pages/campaigns/tabs/EditPageTab.js:170
 #: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:217
+#: blocks/src/campaign-image/index.js:146
 msgid "Campaign Image"
 msgstr ""
 
@@ -10615,6 +10628,200 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+#: assets/shared/image-controls.js:10
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Original"
+msgstr ""
+
+#: assets/shared/image-controls.js:11
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Square - 1:1"
+msgstr ""
+
+#: assets/shared/image-controls.js:12
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Standard - 4:3"
+msgstr ""
+
+#: assets/shared/image-controls.js:13
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Portrait - 3:4"
+msgstr ""
+
+#: assets/shared/image-controls.js:14
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Classic - 3:2"
+msgstr ""
+
+#: assets/shared/image-controls.js:16
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Classic Portrait - 2:3"
+msgstr ""
+
+#: assets/shared/image-controls.js:19
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Wide - 16:9"
+msgstr ""
+
+#: assets/shared/image-controls.js:20
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Tall - 9:16"
+msgstr ""
+
+#: assets/shared/image-controls.js:24
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Thumbnail"
+msgstr ""
+
+#: assets/shared/image-controls.js:25
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/campaign-statistics/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-statistics/edit/Edit.js:99
+msgid "Medium"
+msgstr ""
+
+#: assets/shared/image-controls.js:26
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/campaign-statistics/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-statistics/edit/Edit.js:104
+msgid "Large"
+msgstr ""
+
+#: assets/shared/image-controls.js:27
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+msgid "Full Size"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:66
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:209
+msgid "Alternative text"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:69
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:212
+msgid "Describe the purpose of the image. Leave empty if decorative."
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:78
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:221
+msgid "Aspect ratio"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:85
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:228
+msgid "Width"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:90
+#: assets/shared/ImageBlockEdit.js:100
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:233
+#: blocks/src/campaign-image/index.js:243
+msgid "Auto"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:95
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:238
+msgid "Height"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:107
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:250
+msgid "Scale"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:113
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:256
+msgid "Image covers the space evenly."
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:117
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:260
+msgid "Image is contained without distortion."
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:125
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:268
+msgid "Cover"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:129
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:272
+msgid "Contain"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:136
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:279
+msgid "Resolution"
+msgstr ""
+
+#: assets/shared/ImageBlockEdit.js:140
+#: blocks/build/campaign-image/index.js:1
+#: blocks/build/fundraiser-image/index.js:1
+#: blocks/build/team-image/index.js:1
+#: blocks/src/campaign-image/index.js:283
+msgid "Select the size of the source image."
+msgstr ""
+
 #: blocks/build/campaign-description/index.js:1
 #: blocks/src/campaign-description/index.js:18
 msgid "The campaign's description appears here on the live page."
@@ -10739,70 +10946,6 @@ msgid "Button text"
 msgstr ""
 
 #: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:32
-msgid "Original"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:33
-msgid "Square - 1:1"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:35
-msgid "Standard - 4:3"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:39
-msgid "Portrait - 3:4"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:42
-msgid "Classic - 3:2"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:44
-msgid "Classic Portrait - 2:3"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:47
-msgid "Wide - 16:9"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:48
-msgid "Tall - 9:16"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:53
-msgid "Thumbnail"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/build/campaign-statistics/index.js:1
-#: blocks/src/campaign-image/index.js:56
-#: blocks/src/campaign-statistics/edit/Edit.js:99
-msgid "Medium"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/build/campaign-statistics/index.js:1
-#: blocks/src/campaign-image/index.js:57
-#: blocks/src/campaign-statistics/edit/Edit.js:104
-msgid "Large"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:58
-msgid "Full Size"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/campaign-statistics/index.js:1
 #: blocks/build/campaign/index.js:1
@@ -10811,7 +10954,7 @@ msgstr ""
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
-#: blocks/src/campaign-image/index.js:272
+#: blocks/src/campaign-image/index.js:201
 #: blocks/src/campaign-progress/edit/Edit.js:292
 #: blocks/src/campaign-statistics/edit/Edit.js:346
 #: blocks/src/campaign/edit/Edit.js:238
@@ -10824,73 +10967,7 @@ msgid "If empty, the campaign will be detected from the current post."
 msgstr ""
 
 #: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:280
-msgid "Alternative text"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:283
-msgid "Describe the purpose of the image. Leave empty if decorative."
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:292
-msgid "Aspect ratio"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:299
-msgid "Width"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:304
-#: blocks/src/campaign-image/index.js:314
-msgid "Auto"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:309
-msgid "Height"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:321
-msgid "Scale"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:327
-msgid "Image covers the space evenly."
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:331
-msgid "Image is contained without distortion."
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:339
-msgid "Cover"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:343
-msgid "Contain"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:350
-msgid "Resolution"
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:354
-msgid "Select the size of the source image."
-msgstr ""
-
-#: blocks/build/campaign-image/index.js:1
-#: blocks/src/campaign-image/index.js:250
+#: blocks/src/campaign-image/index.js:179
 msgid "No campaign image set."
 msgstr ""
 
@@ -10902,7 +10979,7 @@ msgstr ""
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:2
-#: blocks/src/campaign-image/index.js:251
+#: blocks/src/campaign-image/index.js:180
 #: blocks/src/campaign-progress/edit/Edit.js:214
 #: blocks/src/campaign/edit/Edit.js:147
 #: blocks/src/donor-wall/edit/Edit.js:486
@@ -11600,18 +11677,17 @@ msgid "Read more text"
 msgstr ""
 
 #: blocks/build/donor-wall/index.js:1
+#: blocks/build/fundraiser-supporters/index.js:1
+#: blocks/build/team-members/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:516
+#: blocks/src/fundraiser-supporters/index.js:39
+#: blocks/src/team-members/index.js:38
 msgid "Preview uses sample data."
 msgstr ""
 
 #: blocks/build/donor-wall/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:532
 msgid "Showing"
-msgstr ""
-
-#: blocks/build/fundraiser-image/index.js:1
-#: blocks/src/fundraiser-image/index.js:18
-msgid "This fundraiser's cover photo appears here on the live page."
 msgstr ""
 
 #: blocks/build/fundraiser-progress/index.js:1
@@ -11626,17 +11702,39 @@ msgstr ""
 
 #: blocks/build/fundraiser-story/index.js:1
 #: blocks/src/fundraiser-story/index.js:18
-msgid "This fundraiser's story appears here on the live page."
+msgid "Your fundraiser's story appears here. Share why this cause matters to you and what donations will make possible."
+msgstr ""
+
+#: blocks/build/fundraiser-story/index.js:1
+#: blocks/src/fundraiser-story/index.js:24
+msgid "Supporters read this before they give, so make it personal."
 msgstr ""
 
 #: blocks/build/fundraiser-supporters/index.js:1
-#: blocks/src/fundraiser-supporters/index.js:18
-msgid "This fundraiser's supporters appear here on the live page."
+#: blocks/src/fundraiser-supporters/index.js:50
+msgid "Supporter name"
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/index.js:1
+#: blocks/src/fundraiser-supporters/index.js:54
+msgid "A note of support appears here."
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/index.js:1
+#: blocks/src/fundraiser-supporters/index.js:61
+msgid "Just now"
 msgstr ""
 
 #: blocks/build/fundraiser-title/index.js:1
-#: blocks/src/fundraiser-title/index.js:18
-msgid "This fundraiser's heading appears here on the live page."
+#: blocks/src/fundraiser-title/index.js:28
+msgid "Fundraiser name is fundraising for"
+msgstr ""
+
+#: blocks/build/fundraiser-title/index.js:1
+#: blocks/build/team-title/index.js:1
+#: blocks/src/fundraiser-title/index.js:33
+#: blocks/src/team-title/index.js:32
+msgid "Your Campaign"
 msgstr ""
 
 #: blocks/build/recent-donors/index.js:1
@@ -11674,24 +11772,29 @@ msgstr ""
 msgid "The fundraiser sign-up modal opens here when a visitor chooses to become a fundraiser."
 msgstr ""
 
-#: blocks/build/team-image/index.js:1
-#: blocks/src/team-image/index.js:18
-msgid "This team's cover photo appears here on the live page."
+#: blocks/build/team-members/index.js:1
+#: blocks/src/team-members/index.js:52
+msgid "Team captain"
 msgstr ""
 
 #: blocks/build/team-members/index.js:1
-#: blocks/src/team-members/index.js:18
-msgid "The team's members appear here on the live page."
+#: blocks/src/team-members/index.js:53
+msgid "Member name"
 msgstr ""
 
 #: blocks/build/team-story/index.js:1
-#: blocks/src/team-story/index.js:18
-msgid "This team's description appears here on the live page."
+#: blocks/src/team-story/index.js:17
+msgid "Your team's description appears here. Tell visitors who you are and why you're fundraising together."
+msgstr ""
+
+#: blocks/build/team-story/index.js:1
+#: blocks/src/team-story/index.js:23
+msgid "Invite others to join the team or chip in toward your shared goal."
 msgstr ""
 
 #: blocks/build/team-title/index.js:1
-#: blocks/src/team-title/index.js:18
-msgid "This team's heading appears here on the live page."
+#: blocks/src/team-title/index.js:30
+msgid "Team fundraising for"
 msgstr ""
 
 #: blocks/build/top-donors/index.js:1
@@ -11801,13 +11904,21 @@ msgid "Display the image associated with a campaign."
 msgstr ""
 
 #: blocks/build/campaign-image/block.json
+#: blocks/build/fundraiser-image/block.json
+#: blocks/build/team-image/block.json
 #: blocks/src/campaign-image/block.json
+#: blocks/src/fundraiser-image/block.json
+#: blocks/src/team-image/block.json
 msgctxt "block style label"
 msgid "Default"
 msgstr ""
 
 #: blocks/build/campaign-image/block.json
+#: blocks/build/fundraiser-image/block.json
+#: blocks/build/team-image/block.json
 #: blocks/src/campaign-image/block.json
+#: blocks/src/fundraiser-image/block.json
+#: blocks/src/team-image/block.json
 msgctxt "block style label"
 msgid "Rounded"
 msgstr ""

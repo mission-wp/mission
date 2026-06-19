@@ -10,8 +10,11 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "This fundraiser's heading appears here on the live page.": [
-                "El encabezado de este recaudador aparece aqu\u00ed en la p\u00e1gina publicada."
+            "Fundraiser name is fundraising for": [
+                "Nombre del recaudador est\u00e1 recaudando fondos para"
+            ],
+            "Your Campaign": [
+                "Tu campa\u00f1a"
             ]
         }
     }
