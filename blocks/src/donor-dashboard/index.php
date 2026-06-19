@@ -166,6 +166,15 @@ else :
 		}
 	}
 
+	// Fundraising panel only appears for donors with at least one fundraiser.
+	if ( ! empty( $donor->fundraisers( [ 'per_page' => 1 ] ) ) ) {
+		$panels['fundraising'] = [
+			'label' => __( 'Fundraising', 'mission-donation-platform' ),
+			'icon'  => 'heart',
+			'file'  => __DIR__ . '/parts/fundraising.php',
+		];
+	}
+
 	// Whether to show the "Update Payment Method" button in the recurring panel.
 	$show_update_payment = $portal_features['update_payment'] ?? true;
 

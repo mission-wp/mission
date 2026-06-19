@@ -305,6 +305,32 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test Donor::fundraisers() returns only that donor's fundraisers.
+	 */
+	public function test_donor_fundraisers_relationship(): void {
+		$campaign_a = new Campaign( [ 'title' => 'A', 'type' => 'p2p' ] );
+		$campaign_a->save();
+		$campaign_b = new Campaign( [ 'title' => 'B', 'type' => 'p2p' ] );
+		$campaign_b->save();
+
+		$donor = new Donor( [ 'email' => 'multi@example.com', 'first_name' => 'Mary' ] );
+		$donor->save();
+		$other = new Donor( [ 'email' => 'other@example.com', 'first_name' => 'Otto' ] );
+		$other->save();
+
+		$this->create_fundraiser( [ 'campaign_id' => $campaign_a->id, 'donor_id' => $donor->id ] );
+		$this->create_fundraiser( [ 'campaign_id' => $campaign_b->id, 'donor_id' => $donor->id ] );
+		$this->create_fundraiser( [ 'campaign_id' => $campaign_a->id, 'donor_id' => $other->id ] );
+
+		$fundraisers = $donor->fundraisers();
+
+		$this->assertCount( 2, $fundraisers );
+		foreach ( $fundraisers as $fundraiser ) {
+			$this->assertSame( $donor->id, $fundraiser->donor_id );
+		}
+	}
+
+	/**
 	 * Test team() returns null when the fundraiser has no team.
 	 */
 	public function test_team_returns_null_without_team(): void {

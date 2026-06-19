@@ -245,6 +245,16 @@ class Donor extends Model {
 	}
 
 	/**
+	 * Get the fundraisers (campaign participations) for this donor.
+	 *
+	 * @param array<string, mixed> $args Additional query args.
+	 * @return Fundraiser[]
+	 */
+	public function fundraisers( array $args = [] ): array {
+		return Fundraiser::query( array_merge( $args, [ 'donor_id' => $this->id ] ) );
+	}
+
+	/**
 	 * Get the notes for this donor.
 	 *
 	 * @param array<string, mixed> $args Additional query args.

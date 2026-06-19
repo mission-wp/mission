@@ -47,6 +47,7 @@ use MissionDP\Rest\Endpoints\DonorDashboard\TransactionsEndpoint as DashboardTra
 use MissionDP\Rest\Endpoints\DonorDashboard\SubscriptionsEndpoint as DashboardSubscriptionsEndpoint;
 use MissionDP\Rest\Endpoints\DonorDashboard\EmailChangeEndpoint as DashboardEmailChangeEndpoint;
 use MissionDP\Rest\Endpoints\DonorDashboard\ProfileEndpoint as DashboardProfileEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\FundraiserEndpoint as DashboardFundraiserEndpoint;
 use MissionDP\Rest\Endpoints\StripeWebhookEndpoint;
 use MissionDP\Rest\Endpoints\SubscriptionsEndpoint;
 use MissionDP\Rest\Endpoints\SystemStatusEndpoint;
@@ -57,6 +58,7 @@ use MissionDP\Cleanup\CleanupService;
 use MissionDP\DonorDashboard\DonorAuthService;
 use MissionDP\DonorDashboard\OtpService;
 use MissionDP\P2P\FundraiserRegistrationService;
+use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Email\EmailModule;
 use MissionDP\Payments\PaymentIntentVerifier;
 use MissionDP\Settings\SettingsService;
@@ -133,6 +135,7 @@ class RestModule {
 		( new DashboardTransactionsEndpoint( $reporting, $settings ) )->register();
 		( new DashboardSubscriptionsEndpoint( $settings ) )->register();
 		( new DashboardProfileEndpoint() )->register();
+		( new DashboardFundraiserEndpoint( $reporting, $settings, new FundraiserImageUploader() ) )->register();
 		( new DashboardEmailChangeEndpoint( $this->email ) )->register();
 		( new EmailTestEndpoint( $settings, $this->email ) )->register();
 		( new EmailTemplateEndpoint( $this->email ) )->register();

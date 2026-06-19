@@ -7,6 +7,7 @@
 import { store, getContext, getElement } from '@wordpress/interactivity';
 import { authState, authCallbacks, authActions } from './actions/auth';
 import { historyState, historyActions } from './actions/history';
+import { fundraisingState, fundraisingActions } from './actions/fundraising';
 import { profileState, profileActions } from './actions/profile';
 import { receiptsActions } from './actions/receipts';
 import { showToast } from './utils/toast';
@@ -70,46 +71,56 @@ function focusActivePanel() {
 }
 
 store( 'mission-donation-platform/donor-dashboard', {
-  state: mergeState( authState, historyState, recurringState, profileState, {
-    // ── Toast ──
-    get toastIsSuccess() {
-      return getContext().toast?.type === 'success';
-    },
-    get toastIsError() {
-      return getContext().toast?.type === 'error';
-    },
+  state: mergeState(
+    authState,
+    historyState,
+    recurringState,
+    profileState,
+    fundraisingState,
+    {
+      // ── Toast ──
+      get toastIsSuccess() {
+        return getContext().toast?.type === 'success';
+      },
+      get toastIsError() {
+        return getContext().toast?.type === 'error';
+      },
 
-    // ── Donor info (sidebar) ──
-    get donorFullName() {
-      const ctx = getContext();
-      return (
-        [ ctx.donor?.firstName, ctx.donor?.lastName ]
-          .filter( Boolean )
-          .join( ' ' ) || ''
-      );
-    },
+      // ── Donor info (sidebar) ──
+      get donorFullName() {
+        const ctx = getContext();
+        return (
+          [ ctx.donor?.firstName, ctx.donor?.lastName ]
+            .filter( Boolean )
+            .join( ' ' ) || ''
+        );
+      },
 
-    // ── Dashboard panels ──
-    get panelTitle() {
-      const ctx = getContext();
-      return ctx.panelLabels?.[ ctx.activePanel ] || 'Overview';
-    },
-    get isOverview() {
-      return getContext().activePanel === 'overview';
-    },
-    get isHistory() {
-      return getContext().activePanel === 'history';
-    },
-    get isRecurring() {
-      return getContext().activePanel === 'recurring';
-    },
-    get isReceipts() {
-      return getContext().activePanel === 'receipts';
-    },
-    get isProfile() {
-      return getContext().activePanel === 'profile';
-    },
-  } ),
+      // ── Dashboard panels ──
+      get panelTitle() {
+        const ctx = getContext();
+        return ctx.panelLabels?.[ ctx.activePanel ] || 'Overview';
+      },
+      get isOverview() {
+        return getContext().activePanel === 'overview';
+      },
+      get isHistory() {
+        return getContext().activePanel === 'history';
+      },
+      get isRecurring() {
+        return getContext().activePanel === 'recurring';
+      },
+      get isReceipts() {
+        return getContext().activePanel === 'receipts';
+      },
+      get isProfile() {
+        return getContext().activePanel === 'profile';
+      },
+      get isFundraising() {
+        return getContext().activePanel === 'fundraising';
+      },
+    }
+  ),
 
   callbacks: {
     ...authCallbacks,
@@ -284,5 +295,8 @@ store( 'mission-donation-platform/donor-dashboard', {
 
     // ── Profile ──
     ...profileActions,
+
+    // ── Fundraising ──
+    ...fundraisingActions,
   },
 } );

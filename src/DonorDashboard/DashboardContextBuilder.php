@@ -217,12 +217,18 @@ class DashboardContextBuilder {
 			],
 		];
 
+		$fundraising = $this->build_fundraising();
+		if ( null !== $fundraising ) {
+			$context['fundraising'] = $fundraising;
+		}
+
 		$state = [
 			'isOverview'             => true,
 			'isHistory'              => false,
 			'isRecurring'            => false,
 			'isReceipts'             => false,
 			'isProfile'              => false,
+			'isFundraising'          => false,
 			'panelTitle'             => __( 'Overview', 'mission-donation-platform' ),
 			'historyIsEmpty'         => 0 === $history_total,
 			'historyHasOnePage'      => $history_total <= $history_per_page,
@@ -305,6 +311,146 @@ class DashboardContextBuilder {
 				'is_test'  => $this->is_test,
 			]
 		);
+	}
+
+	// ── Fundraising ──
+
+	/**
+	 * Build the fundraising panel context, or null when the donor has none.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	private function build_fundraising(): ?array {
+		$fundraisers = $this->donor->fundraisers(
+			[
+				'orderby' => 'date_created',
+				'order'   => 'DESC',
+			]
+		);
+
+		if ( empty( $fundraisers ) ) {
+			return null;
+		}
+
+		$list   = array_map( [ $this, 'prepare_fundraiser' ], $fundraisers );
+		$active = $list[0];
+
+		return [
+			'activeId'       => $active['id'],
+			'list'           => $list,
+			'multiple'       => count( $list ) > 1,
+			'currency'       => $this->currency,
+			'currencySymbol' => Currency::get_symbol( $this->currency ),
+			'view'           => $active,
+			'edit'           => [
+				'headline' => $active['headline'],
+				'story'    => $active['story'],
+				'goal'     => $active['goalMajor'],
+				'saving'   => false,
+				'saved'    => false,
+				'error'    => '',
+			],
+			'uploading'      => false,
+			'uploadError'    => '',
+			'i18n'           => [
+				'save'        => __( 'Save changes', 'mission-donation-platform' ),
+				'saving'      => __( 'Saving…', 'mission-donation-platform' ),
+				'saved'       => __( 'Saved', 'mission-donation-platform' ),
+				'savedToast'  => __( 'Fundraiser updated', 'mission-donation-platform' ),
+				'photoToast'  => __( 'Cover photo updated', 'mission-donation-platform' ),
+				'copied'      => __( 'Link copied', 'mission-donation-platform' ),
+				'copiedEmbed' => __( 'Embed code copied', 'mission-donation-platform' ),
+			],
+		];
+	}
+
+	/**
+	 * Prepare a fundraiser for the dashboard panel.
+	 *
+	 * @param \MissionDP\Models\Fundraiser $fundraiser Fundraiser model.
+	 * @return array<string, mixed>
+	 */
+	private function prepare_fundraiser( \MissionDP\Models\Fundraiser $fundraiser ): array {
+		$campaign      = $fundraiser->campaign();
+		$raised        = $fundraiser->amount_raised( $this->is_test );
+		$donor_count   = $this->is_test ? $fundraiser->test_donor_count : $fundraiser->donor_count;
+		$goal_display  = $fundraiser->goal > 0 ? Currency::format_amount( $fundraiser->goal, $this->currency ) : '';
+		$raised_disp   = Currency::format_amount( $raised, $this->currency );
+		$url           = $fundraiser->get_url() ?? '';
+		$cover_url     = ctype_digit( $fundraiser->cover_image )
+			? ( wp_get_attachment_image_url( (int) $fundraiser->cover_image, 'large' ) ?: '' )
+			: $fundraiser->cover_image;
+		$team          = $fundraiser->team();
+		$donor_page    = $this->reporting->fundraiser_donations_query( (int) $fundraiser->id, 5, 1 );
+		$status_labels = [
+			\MissionDP\Models\Fundraiser::STATUS_ACTIVE   => __( 'Active', 'mission-donation-platform' ),
+			\MissionDP\Models\Fundraiser::STATUS_PENDING  => __( 'Pending review', 'mission-donation-platform' ),
+			\MissionDP\Models\Fundraiser::STATUS_INACTIVE => __( 'Inactive', 'mission-donation-platform' ),
+		];
+
+		$share_text = $campaign
+			/* translators: %s: campaign title */
+			? sprintf( __( 'Support my fundraiser for %s', 'mission-donation-platform' ), $campaign->title )
+			: __( 'Support my fundraiser', 'mission-donation-platform' );
+
+		return [
+			'id'              => (int) $fundraiser->id,
+			'campaignTitle'   => $campaign?->title ?? '',
+			'headline'        => $fundraiser->headline,
+			'story'           => $fundraiser->story,
+			'goalMinor'       => $fundraiser->goal,
+			'goalMajor'       => (string) Currency::minor_to_major( $fundraiser->goal, $this->currency ),
+			'goalDisplay'     => $goal_display,
+			'hasGoal'         => $fundraiser->goal > 0,
+			'raisedDisplay'   => $raised_disp,
+			'donorCount'      => $donor_count,
+			'donorCountLabel' => sprintf(
+				/* translators: %s: number of donors */
+				_n( '%s donor', '%s donors', $donor_count, 'mission-donation-platform' ),
+				number_format_i18n( $donor_count )
+			),
+			'progress'        => $fundraiser->progress( $this->is_test ),
+			'progressLabel'   => $goal_display
+				/* translators: 1: amount raised, 2: goal amount */
+				? sprintf( __( '%1$s raised of %2$s goal', 'mission-donation-platform' ), $raised_disp, $goal_display )
+				/* translators: %s: amount raised */
+				: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_disp ),
+			'coverImageUrl'   => $cover_url,
+			'hasCover'        => '' !== $cover_url,
+			'url'             => $url,
+			'status'          => $fundraiser->status,
+			'statusLabel'     => $status_labels[ $fundraiser->status ] ?? $fundraiser->status,
+			'isPending'       => \MissionDP\Models\Fundraiser::STATUS_PENDING === $fundraiser->status,
+			'onTeam'          => null !== $fundraiser->team_id,
+			'teamName'        => $team?->name ?? '',
+			'teamUrl'         => $team?->get_url() ?? '',
+			'shareFacebook'   => $url ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode( $url ) : '',
+			'shareTwitter'    => $url ? 'https://twitter.com/intent/tweet?text=' . rawurlencode( $share_text ) . '&url=' . rawurlencode( $url ) : '',
+			'shareEmail'      => $url ? 'mailto:?subject=' . rawurlencode( $share_text ) . '&body=' . rawurlencode( $url ) : '',
+			'embed'           => $url ? sprintf( '<iframe src="%s" width="100%%" height="640" style="border:0;max-width:100%%"></iframe>', esc_url( $url ) ) : '',
+			'donors'          => array_map( [ $this, 'prepare_fundraiser_donor' ], $donor_page['items'] ),
+			'donorsTotal'     => $donor_page['total'],
+			'hasDonors'       => $donor_page['total'] > 0,
+		];
+	}
+
+	/**
+	 * Prepare one donor row for the fundraiser donors/activity list.
+	 *
+	 * @param array<string, mixed> $row Row from ReportingService::fundraiser_donations_query().
+	 * @return array<string, mixed>
+	 */
+	private function prepare_fundraiser_donor( array $row ): array {
+		$name = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
+
+		return [
+			'name'    => $row['is_anonymous'] || '' === $name
+				? __( 'Anonymous', 'mission-donation-platform' )
+				: $name,
+			'amount'  => Currency::format_amount( $row['amount'], $this->currency ),
+			'date'    => $row['date'] ? date_i18n( 'M j, Y', strtotime( $row['date'] ) ) : '',
+			'comment' => $row['comment'],
+		];
 	}
 
 	// ── Campaign batch loading ──

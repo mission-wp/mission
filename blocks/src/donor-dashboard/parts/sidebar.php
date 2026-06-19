@@ -18,6 +18,7 @@ $panel_state_map = [
 	'recurring' => 'state.isRecurring',
 	'receipts'  => 'state.isReceipts',
 	'profile'   => 'state.isProfile',
+	'fundraising' => 'state.isFundraising',
 ];
 ?>
 <aside class="mission-dd-sidebar">

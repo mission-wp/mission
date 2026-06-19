@@ -1741,6 +1741,86 @@ class ReportingService {
 	}
 
 	/**
+	 * Completed donations attributed to a single fundraiser.
+	 *
+	 * Powers the dashboard "My Donors" and "Activity" sections: the people who
+	 * gave through this fundraiser's page, newest first. Test/live scoped by the
+	 * current mode so a fundraiser sees totals matching their dashboard cards.
+	 *
+	 * @param int $fundraiser_id Fundraiser ID.
+	 * @param int $per_page      Results per page.
+	 * @param int $page          Page number (1-based).
+	 * @return array{items: array<int, array<string, mixed>>, total: int}
+	 */
+	public function fundraiser_donations_query( int $fundraiser_id, int $per_page = 10, int $page = 1 ): array {
+		global $wpdb;
+
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
+		$offset      = ( max( 1, $page ) - 1 ) * $per_page;
+		$is_test     = (int) $this->is_test_mode();
+
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS t
+				 WHERE t.fundraiser_id = %d AND t.status = \'completed\' AND t.is_test = %d',
+				$txn_table,
+				$fundraiser_id,
+				$is_test
+			)
+		);
+
+		if ( 0 === $total ) {
+			return [
+				'items' => [],
+				'total' => 0,
+			];
+		}
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,
+						t.date_completed, t.currency, d.first_name, d.last_name
+				 FROM %i AS t
+				 INNER JOIN %i AS d ON t.donor_id = d.id
+				 WHERE t.fundraiser_id = %d AND t.status = \'completed\' AND t.is_test = %d
+				 ORDER BY t.date_completed DESC
+				 LIMIT %d OFFSET %d',
+				$txn_table,
+				$donor_table,
+				$fundraiser_id,
+				$is_test,
+				$per_page,
+				$offset
+			),
+			ARRAY_A
+		);
+
+		$txn_ids     = array_column( $rows ?: [], 'transaction_id' );
+		$comment_map = $txn_ids ? $this->batch_fetch_donor_comments( $txn_ids ) : [];
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$txn_id  = (int) $row['transaction_id'];
+			$items[] = [
+				'first_name'   => $row['first_name'],
+				'last_name'    => $row['last_name'],
+				'is_anonymous' => (bool) $row['is_anonymous'],
+				'amount'       => (int) $row['amount'],
+				'type'         => $row['type'],
+				'date'         => $row['date_completed'],
+				'currency'     => $row['currency'],
+				'comment'      => $comment_map[ $txn_id ] ?? null,
+			];
+		}
+
+		return [
+			'items' => $items,
+			'total' => $total,
+		];
+	}
+
+	/**
 	 * Aggregate stats for the Teams admin list.
 	 *
 	 * @return array{total_teams: int, active_count: int, pending_count: int, total_raised: int}
