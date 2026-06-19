@@ -1,0 +1,32 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/fundraiser-supporters",
+	"version": "0.1.0",
+	"title": "Fundraiser Supporters",
+	"category": "mission-donation-platform",
+	"icon": "groups",
+	"description": "The people who donated through a fundraiser's page.",
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"fundraiserId": {
+			"type": "number",
+			"default": 0
+		},
+		"numberOfSupporters": {
+			"type": "number",
+			"default": 20
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

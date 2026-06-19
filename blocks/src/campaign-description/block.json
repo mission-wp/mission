@@ -1,12 +1,12 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission-donation-platform/fundraiser-profile",
+	"name": "mission-donation-platform/campaign-description",
 	"version": "0.1.0",
-	"title": "Fundraiser Profile",
+	"title": "Campaign Description",
 	"category": "mission-donation-platform",
-	"icon": "id",
-	"description": "A fundraiser's name, headline, tribute, and story.",
+	"icon": "text-page",
+	"description": "The parent campaign's short description, with a link to the campaign.",
 	"supports": {
 		"html": false,
 		"spacing": {
@@ -15,7 +15,7 @@
 		}
 	},
 	"attributes": {
-		"fundraiserId": {
+		"campaignId": {
 			"type": "number",
 			"default": 0
 		}

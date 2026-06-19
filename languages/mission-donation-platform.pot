@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T16:31:38+00:00\n"
+"POT-Creation-Date: 2026-06-19T17:06:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -34,6 +34,12 @@ msgstr ""
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:476
 msgid "Mission"
+msgstr ""
+
+#. translators: %s: campaign title
+#: blocks/build/campaign-description/index.php:60
+#: blocks/src/campaign-description/index.php:60
+msgid "Learn more about %s"
 msgstr ""
 
 #: blocks/build/campaign-grid/index.php:94
@@ -2082,20 +2088,26 @@ msgstr ""
 
 #. translators: %s: human time diff, e.g. "2 hours"
 #: blocks/build/donor-wall/index.php:111
+#: blocks/build/fundraiser-supporters/index.php:90
 #: blocks/build/recent-donors/index.php:141
 #: blocks/src/donor-wall/index.php:111
+#: blocks/src/fundraiser-supporters/index.php:90
 #: blocks/src/recent-donors/index.php:141
 msgid "%s ago"
 msgstr ""
 
 #: blocks/build/donor-wall/index.php:122
 #: blocks/build/donor-wall/index.php:145
+#: blocks/build/fundraiser-supporters/index.php:77
+#: blocks/build/fundraiser-supporters/index.php:81
 #: blocks/build/recent-donors/index.php:115
 #: blocks/build/recent-donors/index.php:122
 #: blocks/build/top-donors/index.php:119
 #: blocks/build/top-donors/index.php:126
 #: blocks/src/donor-wall/index.php:122
 #: blocks/src/donor-wall/index.php:145
+#: blocks/src/fundraiser-supporters/index.php:77
+#: blocks/src/fundraiser-supporters/index.php:81
 #: blocks/src/recent-donors/index.php:115
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
@@ -2164,33 +2176,10 @@ msgid "Be the first to donate to this campaign!"
 msgstr ""
 
 #: blocks/build/fundraiser-image/index.php:38
-#: blocks/build/fundraiser-profile/index.php:38
+#: blocks/build/fundraiser-title/index.php:38
 #: blocks/src/fundraiser-image/index.php:38
-#: blocks/src/fundraiser-profile/index.php:38
+#: blocks/src/fundraiser-title/index.php:38
 msgid "A fundraiser"
-msgstr ""
-
-#. translators: %s: person being honored
-#: blocks/build/fundraiser-profile/index.php:50
-#: blocks/src/fundraiser-profile/index.php:50
-msgid "In memory of %s"
-msgstr ""
-
-#. translators: %s: person being honored
-#: blocks/build/fundraiser-profile/index.php:52
-#: blocks/src/fundraiser-profile/index.php:52
-msgid "In honor of %s"
-msgstr ""
-
-#. translators: 1: fundraiser name, 2: linked campaign title
-#: blocks/build/fundraiser-profile/index.php:67
-#: blocks/src/fundraiser-profile/index.php:67
-msgid "%1$s is fundraising for %2$s"
-msgstr ""
-
-#: blocks/build/fundraiser-profile/index.php:88
-#: blocks/src/fundraiser-profile/index.php:88
-msgid "My Story"
 msgstr ""
 
 #: blocks/build/fundraiser-progress/index.php:124
@@ -2198,6 +2187,45 @@ msgstr ""
 #: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:153
 msgid "Share"
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/index.php:55
+#: blocks/src/fundraiser-supporters/index.php:55
+msgid "No supporters yet."
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/index.php:56
+#: blocks/src/fundraiser-supporters/index.php:56
+msgid "Be the first to chip in and cheer this fundraiser on."
+msgstr ""
+
+#. translators: %s: number of donations
+#. translators: %s: donation count toward goal.
+#: blocks/build/fundraiser-supporters/index.php:64
+#: blocks/src/fundraiser-supporters/index.php:64
+#: admin/build/mission-admin.js:164
+#: admin/src/pages/dashboard/ActivityFeed.js:640
+msgid "%s donation"
+msgid_plural "%s donations"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: person being honored
+#: blocks/build/fundraiser-title/index.php:49
+#: blocks/src/fundraiser-title/index.php:49
+msgid "In memory of %s"
+msgstr ""
+
+#. translators: %s: person being honored
+#: blocks/build/fundraiser-title/index.php:51
+#: blocks/src/fundraiser-title/index.php:51
+msgid "In honor of %s"
+msgstr ""
+
+#. translators: 1: fundraiser name, 2: linked campaign title
+#: blocks/build/fundraiser-title/index.php:65
+#: blocks/src/fundraiser-title/index.php:65
+msgid "%1$s is fundraising for %2$s"
 msgstr ""
 
 #: blocks/build/recent-donors/index.php:43
@@ -3001,6 +3029,7 @@ msgid "Support my fundraiser for %s"
 msgstr ""
 
 #: src/DonorDashboard/DashboardContextBuilder.php:394
+#: src/P2P/templates/fundraiser-page.php:42
 msgid "Support my fundraiser"
 msgstr ""
 
@@ -4535,6 +4564,18 @@ msgstr ""
 
 #: src/P2P/TeamPostType.php:49
 msgid "Displays a single team page."
+msgstr ""
+
+#: src/P2P/templates/fundraiser-page.php:24
+msgid "My Story"
+msgstr ""
+
+#: src/P2P/templates/fundraiser-page.php:30
+msgid "About the Campaign"
+msgstr ""
+
+#: src/P2P/templates/fundraiser-page.php:36
+msgid "Supporters"
 msgstr ""
 
 #. translators: %d: calendar year
@@ -6214,12 +6255,6 @@ msgstr ""
 #: admin/build/mission-admin.js:158
 #: admin/src/pages/dashboard/ActivityFeed.js:616
 msgid "Campaign milestone reached"
-msgstr ""
-
-#. translators: %s: donation count toward goal.
-#: admin/build/mission-admin.js:164
-#: admin/src/pages/dashboard/ActivityFeed.js:640
-msgid "%s donation"
 msgstr ""
 
 #: admin/build/mission-admin.js:164
@@ -10563,6 +10598,11 @@ msgstr ""
 msgid "Add"
 msgstr ""
 
+#: blocks/build/campaign-description/index.js:1
+#: blocks/src/campaign-description/index.js:18
+msgid "The campaign's description appears here on the live page."
+msgstr ""
+
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/src/campaign-grid/edit/Edit.js:19
 msgid "Newest first"
@@ -11557,11 +11597,6 @@ msgstr ""
 msgid "This fundraiser's cover photo appears here on the live page."
 msgstr ""
 
-#: blocks/build/fundraiser-profile/index.js:1
-#: blocks/src/fundraiser-profile/index.js:18
-msgid "This fundraiser's name and story appear here on the live page."
-msgstr ""
-
 #: blocks/build/fundraiser-progress/index.js:1
 #: blocks/src/fundraiser-progress/edit/Edit.js:75
 msgid "Show donations"
@@ -11570,6 +11605,21 @@ msgstr ""
 #: blocks/build/fundraiser-progress/index.js:1
 #: blocks/src/fundraiser-progress/edit/Edit.js:85
 msgid "Show share button"
+msgstr ""
+
+#: blocks/build/fundraiser-story/index.js:1
+#: blocks/src/fundraiser-story/index.js:18
+msgid "This fundraiser's story appears here on the live page."
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/index.js:1
+#: blocks/src/fundraiser-supporters/index.js:18
+msgid "This fundraiser's supporters appear here on the live page."
+msgstr ""
+
+#: blocks/build/fundraiser-title/index.js:1
+#: blocks/src/fundraiser-title/index.js:18
+msgid "This fundraiser's heading appears here on the live page."
 msgstr ""
 
 #: blocks/build/recent-donors/index.js:1
@@ -11690,6 +11740,18 @@ msgstr ""
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/top-teams/edit/Edit.js:310
 msgid "Gold, silver, and bronze badges for the top 3 teams."
+msgstr ""
+
+#: blocks/build/campaign-description/block.json
+#: blocks/src/campaign-description/block.json
+msgctxt "block title"
+msgid "Campaign Description"
+msgstr ""
+
+#: blocks/build/campaign-description/block.json
+#: blocks/src/campaign-description/block.json
+msgctxt "block description"
+msgid "The parent campaign's short description, with a link to the campaign."
 msgstr ""
 
 #: blocks/build/campaign-grid/block.json
@@ -11836,18 +11898,6 @@ msgctxt "block description"
 msgid "A fundraiser's cover photo, set from their dashboard."
 msgstr ""
 
-#: blocks/build/fundraiser-profile/block.json
-#: blocks/src/fundraiser-profile/block.json
-msgctxt "block title"
-msgid "Fundraiser Profile"
-msgstr ""
-
-#: blocks/build/fundraiser-profile/block.json
-#: blocks/src/fundraiser-profile/block.json
-msgctxt "block description"
-msgid "A fundraiser's name, headline, tribute, and story."
-msgstr ""
-
 #: blocks/build/fundraiser-progress/block.json
 #: blocks/src/fundraiser-progress/block.json
 msgctxt "block title"
@@ -11858,6 +11908,42 @@ msgstr ""
 #: blocks/src/fundraiser-progress/block.json
 msgctxt "block description"
 msgid "Display a fundraiser's progress with a progress bar, stats, and donate/share buttons."
+msgstr ""
+
+#: blocks/build/fundraiser-story/block.json
+#: blocks/src/fundraiser-story/block.json
+msgctxt "block title"
+msgid "Fundraiser Story"
+msgstr ""
+
+#: blocks/build/fundraiser-story/block.json
+#: blocks/src/fundraiser-story/block.json
+msgctxt "block description"
+msgid "The story a fundraiser wrote about why they are fundraising."
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/block.json
+#: blocks/src/fundraiser-supporters/block.json
+msgctxt "block title"
+msgid "Fundraiser Supporters"
+msgstr ""
+
+#: blocks/build/fundraiser-supporters/block.json
+#: blocks/src/fundraiser-supporters/block.json
+msgctxt "block description"
+msgid "The people who donated through a fundraiser's page."
+msgstr ""
+
+#: blocks/build/fundraiser-title/block.json
+#: blocks/src/fundraiser-title/block.json
+msgctxt "block title"
+msgid "Fundraiser Title"
+msgstr ""
+
+#: blocks/build/fundraiser-title/block.json
+#: blocks/src/fundraiser-title/block.json
+msgctxt "block description"
+msgid "A fundraiser's heading and optional tribute."
 msgstr ""
 
 #: blocks/build/recent-donors/block.json

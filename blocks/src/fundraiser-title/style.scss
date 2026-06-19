@@ -1,18 +1,13 @@
-// Fundraiser Profile — frontend styles.
+// Fundraiser Title — frontend styles.
 
-.mission-fp-profile {
+.mission-ft-title {
   --mission-text: #1a1a1a;
   --mission-text-secondary: #666;
-  --mission-radius: 12px;
 
   line-height: 1.6;
 }
 
-.mission-fp-profile__header {
-  margin-bottom: 24px;
-}
-
-.mission-fp-profile__title {
+.mission-ft-title__heading {
   font-size: 34px;
   font-weight: 800;
   line-height: 1.15;
@@ -30,13 +25,13 @@
   }
 }
 
-.mission-fp-profile__headline {
+.mission-ft-title__headline {
   font-size: 19px;
   color: var(--mission-text-secondary);
   margin: 0;
 }
 
-.mission-fp-profile__tribute {
+.mission-ft-title__tribute {
   display: inline-flex;
   align-items: center;
   margin: 14px 0 0;
@@ -49,29 +44,9 @@
   border-radius: 9999px;
 }
 
-.mission-fp-profile__story-heading {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--mission-text);
-  margin: 0 0 12px;
-}
-
-.mission-fp-profile__story {
-  color: var(--mission-text);
-
-  p {
-    margin: 0 0 14px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-}
-
 @media (max-width: 600px) {
 
-  .mission-fp-profile__title {
+  .mission-ft-title__heading {
     font-size: 27px;
   }
 }

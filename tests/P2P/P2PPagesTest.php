@@ -222,7 +222,8 @@ class P2PPagesTest extends WP_UnitTestCase {
 		$this->assertInstanceOf( \WP_Block_Template::class, $team );
 		$this->assertSame( 'Fundraiser Page', $fundraiser->title );
 		$this->assertSame( 'Team Page', $team->title );
-		$this->assertStringContainsString( 'mission-donation-platform/fundraiser-profile', $fundraiser->content );
+		$this->assertStringContainsString( 'mission-donation-platform/fundraiser-title', $fundraiser->content );
+		$this->assertStringContainsString( 'mission-donation-platform/fundraiser-story', $fundraiser->content );
 		$this->assertStringContainsString( 'mission-donation-platform/team-profile', $team->content );
 	}
 

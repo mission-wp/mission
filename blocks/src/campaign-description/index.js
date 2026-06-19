@@ -1,8 +1,8 @@
 /**
- * Fundraiser Profile block — editor registration.
+ * Campaign Description block — editor registration.
  *
- * Server-rendered; the editor shows a simple placeholder since the data comes
- * from the fundraiser whose page the block sits on.
+ * Server-rendered; the editor shows a placeholder since the description comes
+ * from the campaign the page belongs to.
  */
 import { registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
@@ -14,9 +14,9 @@ import './style.scss';
 function Edit() {
   return createElement(
     'div',
-    useBlockProps( { className: 'mission-fp-profile' } ),
+    useBlockProps( { className: 'mission-cd-description' } ),
     __(
-      "This fundraiser's name and story appear here on the live page.",
+      "The campaign's description appears here on the live page.",
       'mission-donation-platform'
     )
   );
