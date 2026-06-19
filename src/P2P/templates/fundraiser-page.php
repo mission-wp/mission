@@ -11,6 +11,8 @@
 
 defined( 'ABSPATH' ) || exit;
 ?>
+<!-- wp:mission-donation-platform/fundraiser-image /-->
+
 <!-- wp:mission-donation-platform/fundraiser-profile /-->
 
 <!-- wp:mission-donation-platform/fundraiser-progress /-->

@@ -39,7 +39,6 @@ $name       = $name ?: __( 'A fundraiser', 'mission-donation-platform' );
 $campaign   = $fundraiser->campaign();
 $headline   = $fundraiser->headline;
 $story      = $fundraiser->story;
-$cover_html = BlockSupport::image_html( $fundraiser->cover_image, $name );
 
 // Optional tribute (set during registration).
 $tribute_type = (string) $fundraiser->get_meta( 'tribute_type' );
@@ -83,10 +82,6 @@ ob_start();
 			<p class="mission-fp-profile__tribute"><?php echo esc_html( $tribute_text ); ?></p>
 		<?php endif; ?>
 	</header>
-
-	<?php if ( '' !== $cover_html ) : ?>
-		<figure class="mission-fp-profile__cover"><?php echo wp_kses_post( $cover_html ); ?></figure>
-	<?php endif; ?>
 
 	<?php if ( '' !== trim( $story ) ) : ?>
 		<div class="mission-fp-profile__story">

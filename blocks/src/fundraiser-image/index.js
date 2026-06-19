@@ -1,7 +1,7 @@
 /**
- * Fundraiser Profile block — editor registration.
+ * Fundraiser Image block — editor registration.
  *
- * Server-rendered; the editor shows a simple placeholder since the data comes
+ * Server-rendered; the editor shows a placeholder since the cover photo comes
  * from the fundraiser whose page the block sits on.
  */
 import { registerBlockType } from '@wordpress/blocks';
@@ -14,9 +14,9 @@ import './style.scss';
 function Edit() {
   return createElement(
     'div',
-    useBlockProps( { className: 'mission-fp-profile' } ),
+    useBlockProps( { className: 'mission-fi-image' } ),
     __(
-      "This fundraiser's name and story appear here on the live page.",
+      "This fundraiser's cover photo appears here on the live page.",
       'mission-donation-platform'
     )
   );

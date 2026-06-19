@@ -1,12 +1,12 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission-donation-platform/fundraiser-profile",
+	"name": "mission-donation-platform/fundraiser-image",
 	"version": "0.1.0",
-	"title": "Fundraiser Profile",
+	"title": "Fundraiser Image",
 	"category": "mission-donation-platform",
-	"icon": "id",
-	"description": "A fundraiser's name, headline, tribute, and story.",
+	"icon": "format-image",
+	"description": "A fundraiser's cover photo, set from their dashboard.",
 	"supports": {
 		"html": false,
 		"spacing": {
