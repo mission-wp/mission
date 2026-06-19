@@ -12,6 +12,7 @@
 
 namespace MissionDP\Rest\Endpoints;
 
+use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\DonorAuthService;
 use MissionDP\DonorDashboard\OtpException;
 use MissionDP\Models\Campaign;
@@ -183,8 +184,8 @@ class RegisterFundraiserEndpoint {
 						'sanitize_callback' => 'sanitize_text_field',
 					],
 					'goal'         => [
-						'type'              => 'integer',
-						'sanitize_callback' => 'absint',
+						'type'              => 'number',
+						'sanitize_callback' => static fn( $value ) => max( 0, (float) $value ),
 					],
 					'story'        => [
 						'type'              => 'string',
@@ -371,8 +372,8 @@ class RegisterFundraiserEndpoint {
 				'team_mode'    => $request->get_param( 'team_mode' ),
 				'team_id'      => (int) $request->get_param( 'team_id' ),
 				'team_name'    => (string) $request->get_param( 'team_name' ),
-				// Goal arrives in minor units (the modal converts via majorToMinor).
-				'goal'         => (int) $request->get_param( 'goal' ),
+				// Goal arrives in major units (what the participant entered); convert here.
+				'goal'         => Currency::major_to_minor( (float) $request->get_param( 'goal' ), $campaign->currency ),
 				'story'        => (string) $request->get_param( 'story' ),
 				'dedicate'     => (bool) $request->get_param( 'dedicate' ),
 				'tribute_type' => $request->get_param( 'tribute_type' ),

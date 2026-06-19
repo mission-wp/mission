@@ -59,7 +59,7 @@ defined( 'ABSPATH' ) || exit;
 	$teams_enabled     = ! empty( $settings['teams_enabled'] );
 	$creation_enabled  = $teams_enabled && ! empty( $settings['team_creation_enabled'] );
 	$currency          = $campaign->currency ?: 'USD';
-	$default_goal      = (int) ( $settings['default_fundraiser_goal'] ?? 0 );
+	$default_goal      = Currency::minor_to_major( (int) ( $settings['default_fundraiser_goal'] ?? 0 ), $currency );
 	$story_placeholder = (string) ( $settings['story_placeholder'] ?? '' );
 	$teams             = $teams_enabled ? Team::query( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : [];
 
@@ -79,7 +79,7 @@ defined( 'ABSPATH' ) || exit;
 		'nonce'               => wp_create_nonce( 'wp_rest' ),
 		'campaignId'          => (int) $campaign->id,
 		'currency'            => $currency,
-		'defaultGoalMinor'    => $default_goal,
+		'defaultGoal'         => $default_goal,
 		'teamsEnabled'        => $teams_enabled,
 		'teamCreationEnabled' => $creation_enabled,
 		'preselectedTeamId'   => $preselected_team ? (int) $preselected_team->id : 0,

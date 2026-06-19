@@ -12,7 +12,6 @@
 // as donation-form/view.js). User-facing copy lives in the translated PHP
 // template; only these error fallbacks are inline English.
 import { store, getContext, getElement } from '@wordpress/interactivity';
-import { majorToMinor, minorToMajor } from '@shared/currencies';
 
 let cooldownTimer = null;
 
@@ -447,10 +446,8 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
             ctx.preselectedTeamId ||
             ( state.teamId ? Number( state.teamId ) : 0 ),
           team_name: state.teamName,
-          goal: majorToMinor(
-            Number( state.goal ) || 0,
-            ctx.currency || 'USD'
-          ),
+          // Send the goal in major units; the server converts to minor.
+          goal: Number( state.goal ) || 0,
           story: state.story,
           dedicate: state.tributeChecked,
           tribute_type: state.tributeType,
@@ -553,10 +550,8 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.donorEmail = ctx.donorEmail || '';
       state.step1View = ctx.signedIn ? 'signedin' : 'form';
       if ( ! state.goal ) {
-        state.goal = minorToMajor(
-          ctx.defaultGoalMinor || 0,
-          ctx.currency || 'USD'
-        );
+        // The server provides the default goal in major units, ready to display.
+        state.goal = ctx.defaultGoal || 0;
       }
       if ( ctx.preselectedTeamId ) {
         state.teamMode = 'join';
