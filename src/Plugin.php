@@ -147,6 +147,10 @@ class Plugin {
 		$milestone_tracker = new Campaigns\MilestoneTracker();
 		$milestone_tracker->init();
 
+		// Initialize milestone tracker for P2P fundraisers.
+		$fundraiser_milestone_tracker = new P2P\FundraiserMilestoneTracker();
+		$fundraiser_milestone_tracker->init();
+
 		// Initialize blocks module (registers custom blocks).
 		$this->blocks_module = new Blocks\BlocksModule();
 		$this->blocks_module->init();

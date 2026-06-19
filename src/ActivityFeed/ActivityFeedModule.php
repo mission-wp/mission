@@ -108,6 +108,7 @@ class ActivityFeedModule {
 
 		// Campaign milestone reached.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
+		add_action( 'mission_fundraiser_milestone_reached', [ $this, 'on_fundraiser_milestone_reached' ], 10, 3 );
 
 		// Plugin updated.
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_complete' ], 10, 2 );
@@ -774,6 +775,39 @@ class ActivityFeedModule {
 				'goal_type'   => $campaign->goal_type ?? 'amount',
 				'percentage'  => $pct_milestones[ $milestone_id ],
 			],
+			$is_test
+		);
+	}
+
+	/**
+	 * Handle a fundraiser reaching a goal milestone.
+	 *
+	 * @param object $fundraiser   Fundraiser model.
+	 * @param string $milestone_id Milestone ID ('25-pct', '50-pct', '75-pct', '100-pct').
+	 * @param bool   $is_test      Whether from a test-mode transaction.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_milestone_reached( object $fundraiser, string $milestone_id, bool $is_test = false ): void {
+		$pct_milestones = [
+			'25-pct'  => 25,
+			'50-pct'  => 50,
+			'75-pct'  => 75,
+			'100-pct' => 100,
+		];
+
+		if ( ! isset( $pct_milestones[ $milestone_id ] ) ) {
+			return;
+		}
+
+		$this->log(
+			'fundraiser_milestone',
+			'fundraiser',
+			(int) $fundraiser->id,
+			array_merge(
+				$this->fundraiser_log_data( $fundraiser ),
+				[ 'percentage' => $pct_milestones[ $milestone_id ] ]
+			),
 			$is_test
 		);
 	}

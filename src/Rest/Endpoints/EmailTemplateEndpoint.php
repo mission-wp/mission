@@ -46,6 +46,7 @@ class EmailTemplateEndpoint {
 		'tribute_notification'             => 'tribute-notification',
 		'p2p_fundraiser_approved'          => 'p2p-fundraiser-approved',
 		'p2p_fundraiser_received_donation' => 'p2p-fundraiser-received-donation',
+		'p2p_fundraiser_milestone'         => 'p2p-fundraiser-milestone',
 	];
 
 	/**
@@ -78,6 +79,7 @@ class EmailTemplateEndpoint {
 			'tribute_notification'             => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
 			'p2p_fundraiser_approved'          => __( 'Your fundraising page is live', 'mission-donation-platform' ),
 			'p2p_fundraiser_received_donation' => __( 'You received a {amount} donation!', 'mission-donation-platform' ),
+			'p2p_fundraiser_milestone'         => __( "You've reached {milestone} of your goal!", 'mission-donation-platform' ),
 		];
 	}
 
@@ -223,6 +225,13 @@ class EmailTemplateEndpoint {
 			case 'p2p_fundraiser_received_donation':
 				$data['page_url']   = '{page_url}';
 				$data['giver_name'] = '{giver_name}';
+				break;
+
+			case 'p2p_fundraiser_milestone':
+				$data['page_url']         = '{page_url}';
+				$data['milestone_label']  = '{milestone}';
+				$data['raised_formatted'] = '{amount}';
+				$data['goal_formatted']   = '{goal}';
 				break;
 		}
 

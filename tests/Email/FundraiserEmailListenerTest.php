@@ -209,4 +209,47 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 
 		$this->assertCount( 0, $email->sent );
 	}
+
+	/**
+	 * Test the participant is emailed when they reach a milestone.
+	 */
+	public function test_milestone_emails_participant(): void {
+		$fundraiser = $this->create_fundraiser();
+		$email      = $this->stub_email_module();
+
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+		$listener->on_fundraiser_milestone( $fundraiser, '50-pct', false );
+
+		$this->assertCount( 1, $email->sent );
+		$this->assertSame( 'owner@example.com', $email->sent[0]['to'] );
+	}
+
+	/**
+	 * Test milestone emails are skipped in test mode.
+	 */
+	public function test_milestone_skips_test_mode(): void {
+		$fundraiser = $this->create_fundraiser();
+		$email      = $this->stub_email_module();
+
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+		$listener->on_fundraiser_milestone( $fundraiser, '50-pct', true );
+
+		$this->assertCount( 0, $email->sent );
+	}
+
+	/**
+	 * Test an unrecognized milestone ID sends nothing.
+	 */
+	public function test_milestone_skips_unknown_id(): void {
+		$fundraiser = $this->create_fundraiser();
+		$email      = $this->stub_email_module();
+
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+		$listener->on_fundraiser_milestone( $fundraiser, '10-pct', false );
+
+		$this->assertCount( 0, $email->sent );
+	}
 }

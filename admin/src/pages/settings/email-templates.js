@@ -290,6 +290,23 @@ export const FUNDRAISER_EMAILS = [
       { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
     ],
   },
+  {
+    id: 'p2p_fundraiser_milestone',
+    name: __( 'Fundraiser milestone', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a participant when they reach 25%, 50%, 75%, or 100% of their goal',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: "You've reached {milestone} of your goal!",
+    mergeTags: [
+      ...GLOBAL_TAGS,
+      {
+        tag: '{milestone}',
+        label: __( 'Milestone reached', 'mission-donation-platform' ),
+      },
+    ],
+  },
 ];
 
 export const ACCOUNT_EMAILS = [
