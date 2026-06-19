@@ -24,39 +24,18 @@ import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
+import {
+  computeImageStyles,
+  isWideAligned,
+  showScaleControl,
+} from '@shared/image-styles';
+import {
+  ASPECT_RATIO_OPTIONS,
+  RESOLUTION_OPTIONS,
+} from '@shared/image-controls';
 import metadata from './block.json';
 import './style.scss';
 import './editor.scss';
-
-const ASPECT_RATIO_OPTIONS = [
-  { label: __( 'Original', 'mission-donation-platform' ), value: '' },
-  { label: __( 'Square - 1:1', 'mission-donation-platform' ), value: '1/1' },
-  {
-    label: __( 'Standard - 4:3', 'mission-donation-platform' ),
-    value: '4/3',
-  },
-  {
-    label: __( 'Portrait - 3:4', 'mission-donation-platform' ),
-    value: '3/4',
-  },
-  { label: __( 'Classic - 3:2', 'mission-donation-platform' ), value: '3/2' },
-  {
-    label: __( 'Classic Portrait - 2:3', 'mission-donation-platform' ),
-    value: '2/3',
-  },
-  { label: __( 'Wide - 16:9', 'mission-donation-platform' ), value: '16/9' },
-  { label: __( 'Tall - 9:16', 'mission-donation-platform' ), value: '9/16' },
-];
-
-const RESOLUTION_OPTIONS = [
-  {
-    label: __( 'Thumbnail', 'mission-donation-platform' ),
-    value: 'thumbnail',
-  },
-  { label: __( 'Medium', 'mission-donation-platform' ), value: 'medium' },
-  { label: __( 'Large', 'mission-donation-platform' ), value: 'large' },
-  { label: __( 'Full Size', 'mission-donation-platform' ), value: 'full' },
-];
 
 /**
  * Edit component for the Campaign Image block.
@@ -153,59 +132,9 @@ function Edit( { attributes, setAttributes } ) {
   );
 
   // Build inline styles for the img element (matching core/image pattern).
-  const isWideAligned = [ 'wide', 'full' ].includes( align );
-  const showScaleControl =
-    ! isWideAligned && ( aspectRatio || ( width && height ) );
-  const imgStyle = {};
-  if ( aspectRatio ) {
-    imgStyle.aspectRatio = aspectRatio;
-  }
-  if ( showScaleControl ) {
-    imgStyle.objectFit = scale;
-  }
-  if ( width ) {
-    imgStyle.width = width.includes( 'px' ) ? width : width + 'px';
-  }
-  if ( height ) {
-    imgStyle.height = height.includes( 'px' ) ? height : height + 'px';
-  }
-
-  // Border and shadow styles (skip-serialized, applied manually to img).
-  const borderStyles = attributes?.style?.border || {};
-  if ( borderStyles.radius ) {
-    if ( typeof borderStyles.radius === 'object' ) {
-      imgStyle.borderTopLeftRadius = borderStyles.radius.topLeft || 0;
-      imgStyle.borderTopRightRadius = borderStyles.radius.topRight || 0;
-      imgStyle.borderBottomLeftRadius = borderStyles.radius.bottomLeft || 0;
-      imgStyle.borderBottomRightRadius = borderStyles.radius.bottomRight || 0;
-    } else {
-      imgStyle.borderRadius = borderStyles.radius;
-    }
-  }
-  if ( borderStyles.width ) {
-    imgStyle.borderWidth = borderStyles.width;
-  }
-  if ( borderStyles.style ) {
-    imgStyle.borderStyle = borderStyles.style;
-  }
-  if ( borderStyles.color ) {
-    const color = borderStyles.color.startsWith( 'var:preset|color|' )
-      ? `var(--wp--preset--color--${ borderStyles.color.replace(
-          'var:preset|color|',
-          ''
-        ) })`
-      : borderStyles.color;
-    imgStyle.borderColor = color;
-  }
-  const shadow = attributes?.style?.shadow || '';
-  if ( shadow ) {
-    imgStyle.boxShadow = shadow.startsWith( 'var:preset|shadow|' )
-      ? `var(--wp--preset--shadow--${ shadow.replace(
-          'var:preset|shadow|',
-          ''
-        ) })`
-      : shadow;
-  }
+  const wideAligned = isWideAligned( align );
+  const scaleVisible = showScaleControl( attributes, align );
+  const imgStyle = computeImageStyles( attributes, align );
 
   const isLoading = ! preloaded && isLoadingList;
 
@@ -286,7 +215,7 @@ function Edit( { attributes, setAttributes } ) {
             ) }
             rows={ 2 }
           />
-          { ! isWideAligned && (
+          { ! wideAligned && (
             <>
               <SelectControl
                 label={ __( 'Aspect ratio', 'mission-donation-platform' ) }
@@ -316,7 +245,7 @@ function Edit( { attributes, setAttributes } ) {
                   size="__unstable-large"
                 />
               </div>
-              { showScaleControl && (
+              { scaleVisible && (
                 <ToggleGroupControl
                   label={ __( 'Scale', 'mission-donation-platform' ) }
                   value={ scale }
