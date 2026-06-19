@@ -1,0 +1,11 @@
+.wp-block-mission-donation-platform-fundraiser-progress {
+
+  .mission-fp-progress__fill {
+    width: var(--bar-width);
+    animation: none;
+  }
+
+  .mission-fp-progress__btn {
+    pointer-events: none;
+  }
+}

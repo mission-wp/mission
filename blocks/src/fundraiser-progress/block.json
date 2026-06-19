@@ -6,7 +6,7 @@
 	"title": "Fundraiser Progress",
 	"category": "mission-donation-platform",
 	"icon": "chart-bar",
-	"description": "Display a fundraiser's progress with a thermometer, stats, and donate/share buttons.",
+	"description": "Display a fundraiser's progress with a progress bar, stats, and donate/share buttons.",
 	"supports": {
 		"html": false,
 		"interactivity": true,
@@ -19,11 +19,32 @@
 		"fundraiserId": {
 			"type": "number",
 			"default": 0
+		},
+		"donateButtonAction": {
+			"type": "string",
+			"default": "scroll"
+		},
+		"donateButtonUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"showDonations": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDonors": {
+			"type": "boolean",
+			"default": true
+		},
+		"showShare": {
+			"type": "boolean",
+			"default": true
 		}
 	},
 	"example": {},
 	"textdomain": "mission-donation-platform",
 	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"viewScriptModule": "file:./view.js",
 	"render": "file:./index.php"

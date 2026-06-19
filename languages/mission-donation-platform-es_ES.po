@@ -121,35 +121,43 @@ msgstr "En curso"
 #: blocks/build/campaign-grid/index.php:230
 #: blocks/build/campaign-progress/index.php:100
 #: blocks/build/campaign-progress/index.php:156
-#: blocks/build/campaign/index.php:215 blocks/src/campaign-grid/index.php:230
+#: blocks/build/campaign/index.php:215
+#: blocks/build/fundraiser-progress/index.php:97
+#: blocks/src/campaign-grid/index.php:230
 #: blocks/src/campaign-progress/index.php:100
 #: blocks/src/campaign-progress/index.php:156
-#: blocks/src/campaign/index.php:215 admin/build/mission-admin.js:152
+#: blocks/src/campaign/index.php:215
+#: blocks/src/fundraiser-progress/index.php:97
+#: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignHero.js:103
 #: admin/src/pages/campaigns/CampaignProgressBar.js:22
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:286
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign-progress/index.js:1 blocks/build/campaign/index.js:1
+#: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/campaign-grid/edit/CardPreview.js:77
 #: blocks/src/campaign-progress/edit/Edit.js:253
 #: blocks/src/campaign/edit/Edit.js:209
+#: blocks/src/fundraiser-progress/edit/Edit.js:132
 msgid "donors"
 msgstr "donantes"
 
 #. translators: %s: formatted goal amount
 #: blocks/build/campaign-progress/index.php:87
-#: blocks/build/fundraiser-progress/index.php:63
+#: blocks/build/fundraiser-progress/index.php:62
 #: blocks/src/campaign-progress/index.php:87
-#: blocks/src/fundraiser-progress/index.php:63
+#: blocks/src/fundraiser-progress/index.php:62
+#: blocks/build/fundraiser-progress/index.js:2
+#: blocks/src/fundraiser-progress/edit/Edit.js:100
 #, php-format
 msgid "raised of %s goal"
 msgstr "recaudado de la meta de %s"
 
 #: blocks/build/campaign-progress/index.php:88
-#: blocks/build/fundraiser-progress/index.php:68
+#: blocks/build/fundraiser-progress/index.php:63
 #: blocks/build/team-progress/index.php:68
 #: blocks/src/campaign-progress/index.php:88
-#: blocks/src/fundraiser-progress/index.php:68
+#: blocks/src/fundraiser-progress/index.php:63
 #: blocks/src/team-progress/index.php:68 admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:428
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:291
@@ -164,12 +172,16 @@ msgid "donations of %s goal"
 msgstr "donaciones de la meta de %s"
 
 #: blocks/build/campaign-progress/index.php:94
-#: blocks/src/campaign-progress/index.php:94 admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:193
+#: blocks/build/fundraiser-progress/index.php:91
+#: blocks/src/campaign-progress/index.php:94
+#: blocks/src/fundraiser-progress/index.php:91
+#: admin/build/mission-admin.js:152 admin/build/mission-admin.js:193
 #: admin/src/pages/campaigns/CampaignHero.js:104
 #: admin/src/pages/campaigns/CampaignProgressBar.js:23
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:289
 #: admin/src/pages/transactions/TransactionDonorCard.js:91
+#: blocks/build/fundraiser-progress/index.js:2
+#: blocks/src/fundraiser-progress/edit/Edit.js:122
 msgid "donations"
 msgstr "donaciones"
 
@@ -190,17 +202,23 @@ msgstr "días restantes"
 #: blocks/build/campaign-progress/index.php:193
 #: blocks/build/campaign-progress/index.php:197
 #: blocks/build/donate-button/index.php:28
+#: blocks/build/fundraiser-progress/index.php:108
+#: blocks/build/fundraiser-progress/index.php:112
 #: blocks/build/recent-donors/index.php:101
 #: blocks/build/recent-donors/index.php:105
 #: blocks/src/campaign-progress/index.php:193
 #: blocks/src/campaign-progress/index.php:197
 #: blocks/src/donate-button/index.php:28
+#: blocks/src/fundraiser-progress/index.php:108
+#: blocks/src/fundraiser-progress/index.php:112
 #: blocks/src/recent-donors/index.php:101
 #: blocks/src/recent-donors/index.php:105
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/donate-button/index.js:1
+#: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/campaign-progress/edit/Edit.js:271
 #: blocks/src/donate-button/edit/Edit.js:244
+#: blocks/src/fundraiser-progress/edit/Edit.js:142
 msgid "Donate Now"
 msgstr "Donar ahora"
 
@@ -735,9 +753,7 @@ msgid "Increase tip"
 msgstr "Aumentar la propina"
 
 #: blocks/build/donation-form/index.php:970
-#: blocks/build/fundraiser-progress/index.php:91
 #: blocks/src/donation-form/index.php:970
-#: blocks/src/fundraiser-progress/index.php:91
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/tabs/AppearanceTab.js:192
 msgid "Donate"
@@ -2006,14 +2022,13 @@ msgstr "Transacciones"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:41
 #: blocks/build/donor-dashboard/parts/fundraising.php:188
-#: blocks/build/fundraiser-progress/index.php:85
 #: blocks/src/donor-dashboard/parts/fundraising.php:41
 #: blocks/src/donor-dashboard/parts/fundraising.php:188
-#: blocks/src/fundraiser-progress/index.php:85 src/Admin/AdminModule.php:376
-#: src/Admin/AdminModule.php:377 src/Export/ExportService.php:171
-#: admin/build/mission-admin.js:191 admin/build/mission-admin.js:204
-#: admin/build/mission-admin.js:236 admin/build/mission-admin.js:238
-#: admin/build/mission-admin.js:240 admin/src/pages/donors/DonorList.js:205
+#: src/Admin/AdminModule.php:376 src/Admin/AdminModule.php:377
+#: src/Export/ExportService.php:171 admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:204 admin/build/mission-admin.js:236
+#: admin/build/mission-admin.js:238 admin/build/mission-admin.js:240
+#: admin/src/pages/donors/DonorList.js:205
 #: admin/src/pages/donors/DonorList.js:279
 #: admin/src/pages/tools/ExportPanel.js:7
 #: admin/src/pages/tools/ImportPanel.js:17
@@ -2047,6 +2062,7 @@ msgstr "Suscripciones"
 #: blocks/build/campaign-statistics/index.js:1
 #: blocks/build/campaign/index.js:1 blocks/build/donate-button/index.js:1
 #: blocks/build/donation-form/index.js:3 blocks/build/donor-wall/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1 blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1 blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:263
@@ -2056,6 +2072,7 @@ msgstr "Suscripciones"
 #: blocks/src/donate-button/edit/Edit.js:218
 #: blocks/src/donation-form/edit/Edit.js:162
 #: blocks/src/donor-wall/edit/Edit.js:545
+#: blocks/src/fundraiser-progress/edit/Edit.js:58
 #: blocks/src/recent-donors/edit/Edit.js:226
 #: blocks/src/top-donors/edit/Edit.js:226
 #: blocks/src/top-fundraisers/edit/Edit.js:223
@@ -2880,9 +2897,7 @@ msgstr "Nombre"
 msgid "Total Given"
 msgstr "Total donado"
 
-#: blocks/build/fundraiser-progress/index.php:81
 #: blocks/build/team-progress/index.php:85
-#: blocks/src/fundraiser-progress/index.php:81
 #: blocks/src/team-progress/index.php:85 src/Export/ExportService.php:112
 #: admin/build/mission-admin.js:152 admin/build/mission-admin.js:191
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:354
@@ -8244,21 +8259,25 @@ msgid "Select a campaign or place this block on a campaign page."
 msgstr "Selecciona una campaña o coloca este bloque en una página de campaña."
 
 #: blocks/build/campaign-progress/index.js:1
-#: blocks/build/donate-button/index.js:1 blocks/build/recent-donors/index.js:1
-#: blocks/build/top-donors/index.js:1
+#: blocks/build/donate-button/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
+#: blocks/build/recent-donors/index.js:1 blocks/build/top-donors/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:21
 #: blocks/src/donate-button/edit/Edit.js:14
+#: blocks/src/fundraiser-progress/edit/Edit.js:22
 #: blocks/src/recent-donors/edit/Edit.js:26
 #: blocks/src/top-donors/edit/Edit.js:27
 msgid "Scroll to donation form"
 msgstr "Desplazarse al formulario de donación"
 
 #: blocks/build/campaign-progress/index.js:1
-#: blocks/build/donate-button/index.js:1 blocks/build/recent-donors/index.js:1
-#: blocks/build/top-donors/index.js:1 blocks/build/top-fundraisers/index.js:1
-#: blocks/build/top-teams/index.js:1
+#: blocks/build/donate-button/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
+#: blocks/build/recent-donors/index.js:1 blocks/build/top-donors/index.js:1
+#: blocks/build/top-fundraisers/index.js:1 blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:24
 #: blocks/src/donate-button/edit/Edit.js:17
+#: blocks/src/fundraiser-progress/edit/Edit.js:25
 #: blocks/src/recent-donors/edit/Edit.js:29
 #: blocks/src/top-donors/edit/Edit.js:30
 #: blocks/src/top-fundraisers/edit/Edit.js:30
@@ -8267,9 +8286,11 @@ msgid "Custom URL"
 msgstr "URL personalizada"
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1 blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1 blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:25
+#: blocks/src/fundraiser-progress/edit/Edit.js:26
 #: blocks/src/recent-donors/edit/Edit.js:30
 #: blocks/src/top-donors/edit/Edit.js:31
 #: blocks/src/top-fundraisers/edit/Edit.js:31
@@ -8278,20 +8299,26 @@ msgid "Hide"
 msgstr "Ocultar"
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:298
+#: blocks/src/fundraiser-progress/edit/Edit.js:60
 msgid "Donate button"
 msgstr "Botón de donación"
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1 blocks/build/top-donors/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:305
+#: blocks/src/fundraiser-progress/edit/Edit.js:67
 #: blocks/src/recent-donors/edit/Edit.js:261
 #: blocks/src/top-donors/edit/Edit.js:261
 msgid "Donate URL"
 msgstr "URL de donación"
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:313
+#: blocks/src/fundraiser-progress/edit/Edit.js:80
 msgid "Show donors"
 msgstr "Mostrar donantes"
 
@@ -11190,8 +11217,10 @@ msgstr "%1$s está recaudando fondos para %2$s"
 msgid "My Story"
 msgstr "Mi historia"
 
-#: blocks/build/fundraiser-progress/index.php:99
-#: blocks/src/fundraiser-progress/index.php:99
+#: blocks/build/fundraiser-progress/index.php:124
+#: blocks/src/fundraiser-progress/index.php:124
+#: blocks/build/fundraiser-progress/index.js:2
+#: blocks/src/fundraiser-progress/edit/Edit.js:153
 msgid "Share"
 msgstr "Compartir"
 
@@ -11277,13 +11306,6 @@ msgid ""
 msgstr ""
 "Tu donación apoya la campaña y ayuda a cada recaudador a alcanzar su meta."
 
-#: blocks/build/fundraiser-progress/index.js:1
-#: blocks/src/fundraiser-progress/index.js:18
-msgid "This fundraiser's progress bar and stats appear here on the live page."
-msgstr ""
-"La barra de progreso y las estadísticas de este recaudador aparecen aquí en "
-"la página publicada."
-
 #: blocks/build/team-members/index.js:1 blocks/src/team-members/index.js:18
 msgid "The team's members appear here on the live page."
 msgstr "Los miembros del equipo aparecen aquí en la página publicada."
@@ -11311,16 +11333,6 @@ msgstr "Perfil del recaudador"
 msgctxt "block title"
 msgid "Fundraiser Progress"
 msgstr "Progreso del recaudador"
-
-#: blocks/build/fundraiser-progress/block.json
-#: blocks/src/fundraiser-progress/block.json
-msgctxt "block description"
-msgid ""
-"Display a fundraiser's progress with a thermometer, stats, and donate/share "
-"buttons."
-msgstr ""
-"Muestra el progreso de un recaudador con un termómetro, estadísticas y "
-"botones de donar/compartir."
 
 #: blocks/build/team-members/block.json blocks/src/team-members/block.json
 msgctxt "block title"
@@ -12147,3 +12159,23 @@ msgstr "Página de equipo"
 #: src/P2P/TeamPostType.php:49
 msgid "Displays a single team page."
 msgstr "Muestra la página de un equipo."
+
+#: blocks/build/fundraiser-progress/index.js:1
+#: blocks/src/fundraiser-progress/edit/Edit.js:75
+msgid "Show donations"
+msgstr "Mostrar donaciones"
+
+#: blocks/build/fundraiser-progress/index.js:1
+#: blocks/src/fundraiser-progress/edit/Edit.js:85
+msgid "Show share button"
+msgstr "Mostrar botón de compartir"
+
+#: blocks/build/fundraiser-progress/block.json
+#: blocks/src/fundraiser-progress/block.json
+msgctxt "block description"
+msgid ""
+"Display a fundraiser's progress with a progress bar, stats, and donate/share"
+" buttons."
+msgstr ""
+"Muestra el progreso de un recaudador con una barra de progreso, estadísticas"
+" y botones de donar/compartir."

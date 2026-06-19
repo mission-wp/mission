@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T15:33:10+00:00\n"
+"POT-Creation-Date: 2026-06-19T15:55:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -135,10 +135,12 @@ msgstr ""
 #: blocks/build/campaign-progress/index.php:100
 #: blocks/build/campaign-progress/index.php:156
 #: blocks/build/campaign/index.php:215
+#: blocks/build/fundraiser-progress/index.php:97
 #: blocks/src/campaign-grid/index.php:230
 #: blocks/src/campaign-progress/index.php:100
 #: blocks/src/campaign-progress/index.php:156
 #: blocks/src/campaign/index.php:215
+#: blocks/src/fundraiser-progress/index.php:97
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignHero.js:103
 #: admin/src/pages/campaigns/CampaignProgressBar.js:22
@@ -146,25 +148,29 @@ msgstr ""
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/campaign/index.js:1
+#: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/campaign-grid/edit/CardPreview.js:77
 #: blocks/src/campaign-progress/edit/Edit.js:253
 #: blocks/src/campaign/edit/Edit.js:209
+#: blocks/src/fundraiser-progress/edit/Edit.js:132
 msgid "donors"
 msgstr ""
 
 #. translators: %s: formatted goal amount
 #: blocks/build/campaign-progress/index.php:87
-#: blocks/build/fundraiser-progress/index.php:63
+#: blocks/build/fundraiser-progress/index.php:62
 #: blocks/src/campaign-progress/index.php:87
-#: blocks/src/fundraiser-progress/index.php:63
+#: blocks/src/fundraiser-progress/index.php:62
+#: blocks/build/fundraiser-progress/index.js:2
+#: blocks/src/fundraiser-progress/edit/Edit.js:100
 msgid "raised of %s goal"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.php:88
-#: blocks/build/fundraiser-progress/index.php:68
+#: blocks/build/fundraiser-progress/index.php:63
 #: blocks/build/team-progress/index.php:68
 #: blocks/src/campaign-progress/index.php:88
-#: blocks/src/fundraiser-progress/index.php:68
+#: blocks/src/fundraiser-progress/index.php:63
 #: blocks/src/team-progress/index.php:68
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:428
@@ -179,13 +185,17 @@ msgid "donations of %s goal"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.php:94
+#: blocks/build/fundraiser-progress/index.php:91
 #: blocks/src/campaign-progress/index.php:94
+#: blocks/src/fundraiser-progress/index.php:91
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/campaigns/CampaignHero.js:104
 #: admin/src/pages/campaigns/CampaignProgressBar.js:23
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:289
 #: admin/src/pages/transactions/TransactionDonorCard.js:91
+#: blocks/build/fundraiser-progress/index.js:2
+#: blocks/src/fundraiser-progress/edit/Edit.js:122
 msgid "donations"
 msgstr ""
 
@@ -224,17 +234,23 @@ msgstr ""
 #: blocks/build/campaign-progress/index.php:193
 #: blocks/build/campaign-progress/index.php:197
 #: blocks/build/donate-button/index.php:28
+#: blocks/build/fundraiser-progress/index.php:108
+#: blocks/build/fundraiser-progress/index.php:112
 #: blocks/build/recent-donors/index.php:101
 #: blocks/build/recent-donors/index.php:105
 #: blocks/src/campaign-progress/index.php:193
 #: blocks/src/campaign-progress/index.php:197
 #: blocks/src/donate-button/index.php:28
+#: blocks/src/fundraiser-progress/index.php:108
+#: blocks/src/fundraiser-progress/index.php:112
 #: blocks/src/recent-donors/index.php:101
 #: blocks/src/recent-donors/index.php:105
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/donate-button/index.js:1
+#: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/campaign-progress/edit/Edit.js:271
 #: blocks/src/donate-button/edit/Edit.js:244
+#: blocks/src/fundraiser-progress/edit/Edit.js:142
 msgid "Donate Now"
 msgstr ""
 
@@ -841,9 +857,7 @@ msgid "Increase tip"
 msgstr ""
 
 #: blocks/build/donation-form/index.php:970
-#: blocks/build/fundraiser-progress/index.php:91
 #: blocks/src/donation-form/index.php:970
-#: blocks/src/fundraiser-progress/index.php:91
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/tabs/AppearanceTab.js:192
 msgid "Donate"
@@ -1197,10 +1211,8 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:41
 #: blocks/build/donor-dashboard/parts/fundraising.php:188
-#: blocks/build/fundraiser-progress/index.php:85
 #: blocks/src/donor-dashboard/parts/fundraising.php:41
 #: blocks/src/donor-dashboard/parts/fundraising.php:188
-#: blocks/src/fundraiser-progress/index.php:85
 #: src/Admin/AdminModule.php:376
 #: src/Admin/AdminModule.php:377
 #: src/Export/ExportService.php:171
@@ -2181,23 +2193,10 @@ msgstr ""
 msgid "My Story"
 msgstr ""
 
-#: blocks/build/fundraiser-progress/index.php:81
-#: blocks/build/team-progress/index.php:85
-#: blocks/src/fundraiser-progress/index.php:81
-#: blocks/src/team-progress/index.php:85
-#: src/Export/ExportService.php:112
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:354
-#: admin/src/pages/donors/DonorDetail.js:189
-#: admin/src/pages/donors/DonorList.js:113
-#: blocks/build/donor-dashboard/index.js:1
-#: blocks/src/donor-dashboard/edit/Edit.js:63
-msgid "Donations"
-msgstr ""
-
-#: blocks/build/fundraiser-progress/index.php:99
-#: blocks/src/fundraiser-progress/index.php:99
+#: blocks/build/fundraiser-progress/index.php:124
+#: blocks/src/fundraiser-progress/index.php:124
+#: blocks/build/fundraiser-progress/index.js:2
+#: blocks/src/fundraiser-progress/edit/Edit.js:153
 msgid "Share"
 msgstr ""
 
@@ -2482,6 +2481,19 @@ msgstr ""
 msgid "Members"
 msgstr ""
 
+#: blocks/build/team-progress/index.php:85
+#: blocks/src/team-progress/index.php:85
+#: src/Export/ExportService.php:112
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:354
+#: admin/src/pages/donors/DonorDetail.js:189
+#: admin/src/pages/donors/DonorList.js:113
+#: blocks/build/donor-dashboard/index.js:1
+#: blocks/src/donor-dashboard/edit/Edit.js:63
+msgid "Donations"
+msgstr ""
+
 #: blocks/build/team-progress/index.php:95
 #: blocks/src/team-progress/index.php:95
 msgid "Donate to the Team"
@@ -2712,6 +2724,7 @@ msgstr ""
 #: blocks/build/donate-button/index.js:1
 #: blocks/build/donation-form/index.js:3
 #: blocks/build/donor-wall/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
@@ -2723,6 +2736,7 @@ msgstr ""
 #: blocks/src/donate-button/edit/Edit.js:218
 #: blocks/src/donation-form/edit/Edit.js:162
 #: blocks/src/donor-wall/edit/Edit.js:545
+#: blocks/src/fundraiser-progress/edit/Edit.js:58
 #: blocks/src/recent-donors/edit/Edit.js:226
 #: blocks/src/top-donors/edit/Edit.js:226
 #: blocks/src/top-fundraisers/edit/Edit.js:223
@@ -10844,10 +10858,12 @@ msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/donate-button/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:21
 #: blocks/src/donate-button/edit/Edit.js:14
+#: blocks/src/fundraiser-progress/edit/Edit.js:22
 #: blocks/src/recent-donors/edit/Edit.js:26
 #: blocks/src/top-donors/edit/Edit.js:27
 msgid "Scroll to donation form"
@@ -10855,12 +10871,14 @@ msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/donate-button/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:24
 #: blocks/src/donate-button/edit/Edit.js:17
+#: blocks/src/fundraiser-progress/edit/Edit.js:25
 #: blocks/src/recent-donors/edit/Edit.js:29
 #: blocks/src/top-donors/edit/Edit.js:30
 #: blocks/src/top-fundraisers/edit/Edit.js:30
@@ -10869,11 +10887,13 @@ msgid "Custom URL"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:25
+#: blocks/src/fundraiser-progress/edit/Edit.js:26
 #: blocks/src/recent-donors/edit/Edit.js:30
 #: blocks/src/top-donors/edit/Edit.js:31
 #: blocks/src/top-fundraisers/edit/Edit.js:31
@@ -10882,21 +10902,27 @@ msgid "Hide"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:298
+#: blocks/src/fundraiser-progress/edit/Edit.js:60
 msgid "Donate button"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:305
+#: blocks/src/fundraiser-progress/edit/Edit.js:67
 #: blocks/src/recent-donors/edit/Edit.js:261
 #: blocks/src/top-donors/edit/Edit.js:261
 msgid "Donate URL"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
+#: blocks/build/fundraiser-progress/index.js:1
 #: blocks/src/campaign-progress/edit/Edit.js:313
+#: blocks/src/fundraiser-progress/edit/Edit.js:80
 msgid "Show donors"
 msgstr ""
 
@@ -11537,8 +11563,13 @@ msgid "This fundraiser's name and story appear here on the live page."
 msgstr ""
 
 #: blocks/build/fundraiser-progress/index.js:1
-#: blocks/src/fundraiser-progress/index.js:18
-msgid "This fundraiser's progress bar and stats appear here on the live page."
+#: blocks/src/fundraiser-progress/edit/Edit.js:75
+msgid "Show donations"
+msgstr ""
+
+#: blocks/build/fundraiser-progress/index.js:1
+#: blocks/src/fundraiser-progress/edit/Edit.js:85
+msgid "Show share button"
 msgstr ""
 
 #: blocks/build/recent-donors/index.js:1
@@ -11826,7 +11857,7 @@ msgstr ""
 #: blocks/build/fundraiser-progress/block.json
 #: blocks/src/fundraiser-progress/block.json
 msgctxt "block description"
-msgid "Display a fundraiser's progress with a thermometer, stats, and donate/share buttons."
+msgid "Display a fundraiser's progress with a progress bar, stats, and donate/share buttons."
 msgstr ""
 
 #: blocks/build/recent-donors/block.json

@@ -10,8 +10,47 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "This fundraiser's progress bar and stats appear here on the live page.": [
-                "La barra de progreso y las estad\u00edsticas de este recaudador aparecen aqu\u00ed en la p\u00e1gina publicada."
+            "donors": [
+                "donantes"
+            ],
+            "raised of %s goal": [
+                "recaudado de la meta de %s"
+            ],
+            "donations": [
+                "donaciones"
+            ],
+            "Donate Now": [
+                "Donar ahora"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "Scroll to donation form": [
+                "Desplazarse al formulario de donaci\u00f3n"
+            ],
+            "Custom URL": [
+                "URL personalizada"
+            ],
+            "Hide": [
+                "Ocultar"
+            ],
+            "Donate button": [
+                "Bot\u00f3n de donaci\u00f3n"
+            ],
+            "Donate URL": [
+                "URL de donaci\u00f3n"
+            ],
+            "Show donors": [
+                "Mostrar donantes"
+            ],
+            "Share": [
+                "Compartir"
+            ],
+            "Show donations": [
+                "Mostrar donaciones"
+            ],
+            "Show share button": [
+                "Mostrar bot\u00f3n de compartir"
             ]
         }
     }
