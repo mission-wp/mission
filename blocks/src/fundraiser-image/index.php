@@ -37,17 +37,37 @@ defined( 'ABSPATH' ) || exit;
 	$name  = $donor ? trim( $donor->first_name . ' ' . $donor->last_name ) : '';
 	$name  = $name ?: __( 'A fundraiser', 'mission-donation-platform' );
 
-	$image_html = BlockSupport::image_html( $fundraiser->cover_image, $name );
+	// Validate the requested resolution against the registered image sizes.
+	$resolution    = $attributes['resolution'] ?? 'large';
+	$valid_sizes   = array_keys( wp_get_registered_image_subsizes() );
+	$valid_sizes[] = 'full';
+	$resolution    = in_array( $resolution, $valid_sizes, true ) ? $resolution : 'large';
+
+	$alt = $attributes['alt'] ?? '';
+	$alt = '' !== $alt ? $alt : $name;
+
+	$inline_style = BlockSupport::image_inline_style( $attributes );
+
+	$image_html = BlockSupport::image_html( $fundraiser->cover_image, $alt, $resolution, [ 'style' => $inline_style ] );
 
 	if ( '' === $image_html ) {
 		return;
 	}
 
-	$output = sprintf(
-		'<figure %s>%s</figure>',
-		get_block_wrapper_attributes( [ 'class' => 'mission-fi-image' ] ),
-		$image_html
-	);
+	// Border is skip-serialized and shadow is applied to the image, so adjust the
+	// wrapper to match (matching the Campaign Image block).
+	$border_styles   = $attributes['style']['border'] ?? [];
+	$shadow          = $attributes['style']['shadow'] ?? '';
+	$wrapper_classes = 'mission-fi-image';
+	if ( ! empty( $border_styles ) ) {
+		$wrapper_classes .= ' has-custom-border';
+	}
+	$wrapper_attrs = get_block_wrapper_attributes( [ 'class' => $wrapper_classes ] );
+	if ( $shadow ) {
+		$wrapper_attrs = preg_replace( '/box-shadow:[^;]*;?\s*/', '', $wrapper_attrs );
+	}
+
+	$output = sprintf( '<figure %s>%s</figure>', $wrapper_attrs, $image_html );
 
 	/**
 	 * Filters the fundraiser image block output.

@@ -4,12 +4,25 @@
   --mission-radius: 12px;
 
   margin: 0 0 24px;
-  border-radius: var(--mission-radius);
-  overflow: hidden;
+  line-height: 0;
 
   img {
     display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--mission-radius);
+  }
+}
+
+.wp-block-mission-donation-platform-team-image {
+
+  &.alignfull img,
+  &.alignwide img {
     width: 100%;
     height: auto;
+  }
+
+  &.is-style-rounded img {
+    border-radius: 9999px;
   }
 }
