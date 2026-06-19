@@ -148,6 +148,17 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   } );
 
   test.afterAll( async ( { requestUtils } ) => {
+    // Remove the participants created during sign-up (their fundraiser pages,
+    // donor records, and login accounts) before deleting the campaign, since
+    // campaign deletion does not cascade to fundraisers.
+    execSync(
+      'npx wp-env run tests-cli -- wp eval ' +
+        `'foreach ( \\MissionDP\\Models\\Fundraiser::query( [ "campaign_id" => ${ campaign.id }, "per_page" => 100 ] ) as $f ) {` +
+        ' $d = $f->donor(); $f->delete();' +
+        ' if ( $d ) { if ( $d->user_id ) { wp_delete_user( $d->user_id ); } $d->delete(); } }\'',
+      { stdio: 'pipe', timeout: 30000 }
+    );
+
     await requestUtils.rest( {
       path: `/mission-donation-platform/v1/campaigns/${ campaign.id }`,
       method: 'DELETE',
