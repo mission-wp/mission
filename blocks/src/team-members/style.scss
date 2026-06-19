@@ -15,25 +15,10 @@
   line-height: 1.5;
 }
 
-.mission-tm__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.mission-tm__title {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--mission-text);
-}
-
 .mission-tm__count {
   font-size: 13px;
   color: var(--mission-text-secondary);
+  margin: 0 0 12px;
 }
 
 .mission-tm__list {

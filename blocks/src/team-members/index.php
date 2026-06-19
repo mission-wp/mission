@@ -47,20 +47,17 @@ ob_start();
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-tm' ] ) ); ?>
 	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
-	<div class="mission-tm__head">
-		<h2 class="mission-tm__title"><?php esc_html_e( 'Team Members', 'mission-donation-platform' ); ?></h2>
-		<span class="mission-tm__count">
-			<?php
-			echo esc_html(
-				sprintf(
-					/* translators: %s: number of fundraisers on the team */
-					_n( '%s fundraiser', '%s fundraisers', $count, 'mission-donation-platform' ),
-					number_format_i18n( $count )
-				)
-			);
-			?>
-		</span>
-	</div>
+	<p class="mission-tm__count">
+		<?php
+		echo esc_html(
+			sprintf(
+				/* translators: %s: number of fundraisers on the team */
+				_n( '%s fundraiser', '%s fundraisers', $count, 'mission-donation-platform' ),
+				number_format_i18n( $count )
+			)
+		);
+		?>
+	</p>
 
 	<?php if ( $members ) : ?>
 		<ul class="mission-tm__list">

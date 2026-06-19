@@ -1,0 +1,40 @@
+// Team Title — frontend styles.
+
+.mission-tt-title {
+  --mission-text: #1a1a1a;
+  --mission-text-secondary: #666;
+
+  line-height: 1.6;
+}
+
+.mission-tt-title__heading {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--mission-text);
+  margin: 0 0 8px;
+}
+
+.mission-tt-title__subtitle {
+  font-size: 17px;
+  color: var(--mission-text-secondary);
+  margin: 0;
+
+  a {
+    font-weight: 600;
+    color: var(--mission-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+
+  .mission-tt-title__heading {
+    font-size: 27px;
+  }
+}

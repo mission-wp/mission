@@ -1,12 +1,12 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "mission-donation-platform/team-profile",
+	"name": "mission-donation-platform/team-story",
 	"version": "0.1.0",
-	"title": "Team Profile",
+	"title": "Team Story",
 	"category": "mission-donation-platform",
-	"icon": "groups",
-	"description": "A team's cover image, name, and description.",
+	"icon": "text",
+	"description": "A team's description of who they are and why they are fundraising.",
 	"supports": {
 		"html": false,
 		"spacing": {
