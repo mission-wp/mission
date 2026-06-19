@@ -129,61 +129,61 @@ $context = [
 ob_start();
 ?>
 <div
-	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-campaign-progress' ] ) ); ?>
+	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/campaign-progress"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
 	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>;"
 >
-	<div class="mission-cp-header">
-		<span class="mission-cp-raised"><?php echo esc_html( $progress_text ); ?></span>
-		<span class="mission-cp-goal"><?php echo esc_html( $goal_text ); ?></span>
+	<div class="mission-progress__header">
+		<span class="mission-progress__raised"><?php echo esc_html( $progress_text ); ?></span>
+		<span class="mission-progress__goal"><?php echo esc_html( $goal_text ); ?></span>
 		<?php if ( $has_goal ) : ?>
-			<span class="mission-cp-percentage"><?php echo esc_html( $real_percent . '%' ); ?></span>
+			<span class="mission-progress__percentage"><?php echo esc_html( $real_percent . '%' ); ?></span>
 		<?php endif; ?>
 	</div>
 
 	<?php if ( $has_goal ) : ?>
-		<div class="mission-cp-bar" data-wp-init="callbacks.animateBar">
-			<div class="mission-cp-bar__fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
+		<div class="mission-progress__bar" data-wp-init="callbacks.animateBar">
+			<div class="mission-progress__bar-fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
 		</div>
 	<?php endif; ?>
 
 	<?php if ( $show_donors || $show_days_remaining || $is_p2p ) : ?>
-		<div class="mission-cp-stats">
+		<div class="mission-progress__stats">
 			<?php if ( $show_donors ) : ?>
-				<div class="mission-cp-stat">
-					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat">
+					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
+					<span class="mission-progress__stat-label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $is_p2p ) : ?>
-				<div class="mission-cp-stat">
-					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'fundraisers', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat">
+					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
+					<span class="mission-progress__stat-label"><?php esc_html_e( 'fundraisers', 'mission-donation-platform' ); ?></span>
 				</div>
-				<div class="mission-cp-stat">
-					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'teams', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat">
+					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
+					<span class="mission-progress__stat-label"><?php esc_html_e( 'teams', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
-				<div class="mission-cp-stat">
-					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'days remaining', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat">
+					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
+					<span class="mission-progress__stat-label"><?php esc_html_e( 'days remaining', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 
 	<?php if ( $show_become || $show_button ) : ?>
-		<div class="mission-cp-actions">
+		<div class="mission-progress__actions">
 			<?php if ( $show_become ) : ?>
-				<button type="button" class="mission-cp-donate-btn" data-wp-on--click="actions.openSignup">
+				<button type="button" class="mission-progress__btn" data-wp-on--click="actions.openSignup">
 					<?php esc_html_e( 'Become a Fundraiser', 'mission-donation-platform' ); ?>
 				</button>
 			<?php endif; ?>
 			<?php if ( $show_button ) : ?>
-				<?php $donate_btn_class = $show_become ? 'mission-cp-donate-btn mission-cp-donate-btn--secondary' : 'mission-cp-donate-btn'; ?>
+				<?php $donate_btn_class = $show_become ? 'mission-progress__btn mission-progress__btn--secondary' : 'mission-progress__btn'; ?>
 				<?php if ( 'scroll' === $donate_action ) : ?>
 					<button
 						type="button"

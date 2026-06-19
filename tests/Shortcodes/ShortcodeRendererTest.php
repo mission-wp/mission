@@ -99,7 +99,7 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 
 		$output = do_shortcode( '[mission_campaign_progress campaign_id="' . $campaign->id . '"]' );
 
-		$this->assertStringContainsString( 'mission-cp-', $output );
+		$this->assertStringContainsString( 'mission-progress__', $output );
 	}
 
 	/**

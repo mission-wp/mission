@@ -76,7 +76,8 @@ class BlockRenderTest extends WP_UnitTestCase {
 
 		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/fundraiser-progress {"fundraiserId":%d} /-->', $fundraiser->id ) );
 
-		$this->assertStringContainsString( 'mission-fp-progress', $html );
+		$this->assertStringContainsString( 'wp-block-mission-donation-platform-fundraiser-progress', $html );
+		$this->assertStringContainsString( 'mission-progress__', $html );
 		$this->assertStringContainsString( '$50', $html );
 	}
 

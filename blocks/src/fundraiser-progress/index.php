@@ -65,56 +65,56 @@ $goal_text = $has_goal
 ob_start();
 ?>
 <div
-	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-fp-progress' ] ) ); ?>
+	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/fundraiser-progress"
 	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
-	<div class="mission-fp-progress__header">
-		<span class="mission-fp-progress__raised"><?php echo esc_html( Currency::format_amount( $raised, $currency ) ); ?></span>
-		<span class="mission-fp-progress__goal"><?php echo esc_html( $goal_text ); ?></span>
+	<div class="mission-progress__header">
+		<span class="mission-progress__raised"><?php echo esc_html( Currency::format_amount( $raised, $currency ) ); ?></span>
+		<span class="mission-progress__goal"><?php echo esc_html( $goal_text ); ?></span>
 		<?php if ( $has_goal ) : ?>
-			<span class="mission-fp-progress__percentage"><?php echo esc_html( $percentage . '%' ); ?></span>
+			<span class="mission-progress__percentage"><?php echo esc_html( $percentage . '%' ); ?></span>
 		<?php endif; ?>
 	</div>
 
 	<?php if ( $has_goal ) : ?>
-		<div class="mission-fp-progress__bar" data-wp-init="callbacks.animateBar">
-			<div class="mission-fp-progress__fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
+		<div class="mission-progress__bar" data-wp-init="callbacks.animateBar">
+			<div class="mission-progress__bar-fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
 		</div>
 	<?php endif; ?>
 
 	<?php if ( $show_stats ) : ?>
-		<div class="mission-fp-progress__stats">
+		<div class="mission-progress__stats">
 			<?php if ( $show_donations ) : ?>
-				<div class="mission-fp-progress__stat">
-					<span class="mission-fp-progress__stat-value"><?php echo esc_html( number_format_i18n( $donations ) ); ?></span>
-					<span class="mission-fp-progress__stat-label"><?php esc_html_e( 'donations', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat">
+					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donations ) ); ?></span>
+					<span class="mission-progress__stat-label"><?php esc_html_e( 'donations', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_donors ) : ?>
-				<div class="mission-fp-progress__stat">
-					<span class="mission-fp-progress__stat-value"><?php echo esc_html( number_format_i18n( $donors ) ); ?></span>
-					<span class="mission-fp-progress__stat-label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat">
+					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donors ) ); ?></span>
+					<span class="mission-progress__stat-label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 
 	<?php if ( $show_donate || $show_share ) : ?>
-		<div class="mission-fp-progress__actions">
+		<div class="mission-progress__actions">
 			<?php if ( $show_donate ) : ?>
 				<?php if ( 'scroll' === $donate_action ) : ?>
-					<button type="button" class="mission-fp-progress__btn" data-wp-on--click="actions.scrollToForm">
+					<button type="button" class="mission-progress__btn" data-wp-on--click="actions.scrollToForm">
 						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
 					</button>
 				<?php else : ?>
-					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-fp-progress__btn">
+					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-progress__btn">
 						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
 					</a>
 				<?php endif; ?>
 			<?php endif; ?>
 			<?php if ( $show_share ) : ?>
-				<?php $share_class = $show_donate ? 'mission-fp-progress__btn mission-fp-progress__btn--secondary' : 'mission-fp-progress__btn'; ?>
+				<?php $share_class = $show_donate ? 'mission-progress__btn mission-progress__btn--secondary' : 'mission-progress__btn'; ?>
 				<button
 					type="button"
 					class="<?php echo esc_attr( $share_class ); ?>"

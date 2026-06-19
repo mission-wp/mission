@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T15:55:43+00:00\n"
+"POT-Creation-Date: 2026-06-19T16:31:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -150,7 +150,7 @@ msgstr ""
 #: blocks/build/campaign/index.js:1
 #: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/campaign-grid/edit/CardPreview.js:77
-#: blocks/src/campaign-progress/edit/Edit.js:253
+#: blocks/src/campaign-progress/edit/Edit.js:255
 #: blocks/src/campaign/edit/Edit.js:209
 #: blocks/src/fundraiser-progress/edit/Edit.js:132
 msgid "donors"
@@ -218,7 +218,7 @@ msgstr ""
 #: blocks/build/campaign-progress/index.php:172
 #: blocks/src/campaign-progress/index.php:172
 #: blocks/build/campaign-progress/index.js:1
-#: blocks/src/campaign-progress/edit/Edit.js:263
+#: blocks/src/campaign-progress/edit/Edit.js:265
 msgid "days remaining"
 msgstr ""
 
@@ -248,7 +248,7 @@ msgstr ""
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/donate-button/index.js:1
 #: blocks/build/fundraiser-progress/index.js:2
-#: blocks/src/campaign-progress/edit/Edit.js:271
+#: blocks/src/campaign-progress/edit/Edit.js:273
 #: blocks/src/donate-button/edit/Edit.js:244
 #: blocks/src/fundraiser-progress/edit/Edit.js:142
 msgid "Donate Now"
@@ -1555,7 +1555,7 @@ msgstr ""
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:265
-#: blocks/src/campaign-progress/edit/Edit.js:283
+#: blocks/src/campaign-progress/edit/Edit.js:285
 #: blocks/src/campaign-statistics/edit/Edit.js:339
 #: blocks/src/campaign/edit/Edit.js:231
 #: blocks/src/donation-form/edit/Edit.js:164
@@ -2730,7 +2730,7 @@ msgstr ""
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:263
-#: blocks/src/campaign-progress/edit/Edit.js:281
+#: blocks/src/campaign-progress/edit/Edit.js:283
 #: blocks/src/campaign-statistics/edit/Edit.js:337
 #: blocks/src/campaign/edit/Edit.js:229
 #: blocks/src/donate-button/edit/Edit.js:218
@@ -10755,7 +10755,7 @@ msgstr ""
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/campaign-image/index.js:272
-#: blocks/src/campaign-progress/edit/Edit.js:290
+#: blocks/src/campaign-progress/edit/Edit.js:292
 #: blocks/src/campaign-statistics/edit/Edit.js:346
 #: blocks/src/campaign/edit/Edit.js:238
 #: blocks/src/donor-wall/edit/Edit.js:554
@@ -10903,7 +10903,7 @@ msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/fundraiser-progress/index.js:1
-#: blocks/src/campaign-progress/edit/Edit.js:298
+#: blocks/src/campaign-progress/edit/Edit.js:300
 #: blocks/src/fundraiser-progress/edit/Edit.js:60
 msgid "Donate button"
 msgstr ""
@@ -10912,7 +10912,7 @@ msgstr ""
 #: blocks/build/fundraiser-progress/index.js:1
 #: blocks/build/recent-donors/index.js:1
 #: blocks/build/top-donors/index.js:1
-#: blocks/src/campaign-progress/edit/Edit.js:305
+#: blocks/src/campaign-progress/edit/Edit.js:307
 #: blocks/src/fundraiser-progress/edit/Edit.js:67
 #: blocks/src/recent-donors/edit/Edit.js:261
 #: blocks/src/top-donors/edit/Edit.js:261
@@ -10921,18 +10921,18 @@ msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/fundraiser-progress/index.js:1
-#: blocks/src/campaign-progress/edit/Edit.js:313
+#: blocks/src/campaign-progress/edit/Edit.js:315
 #: blocks/src/fundraiser-progress/edit/Edit.js:80
 msgid "Show donors"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
-#: blocks/src/campaign-progress/edit/Edit.js:318
+#: blocks/src/campaign-progress/edit/Edit.js:320
 msgid "Show days remaining"
 msgstr ""
 
 #: blocks/build/campaign-progress/index.js:1
-#: blocks/src/campaign-progress/edit/Edit.js:323
+#: blocks/src/campaign-progress/edit/Edit.js:325
 msgid "This campaign has no end date, so days remaining will be hidden automatically."
 msgstr ""
 

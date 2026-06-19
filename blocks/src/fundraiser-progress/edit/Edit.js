@@ -89,46 +89,46 @@ export default function Edit( { attributes, setAttributes } ) {
         </PanelBody>
       </InspectorControls>
       <div { ...useBlockProps() }>
-        <div className="mission-fp-progress" style={ primaryColorVars }>
-          <div className="mission-fp-progress__header">
-            <span className="mission-fp-progress__raised">
+        <div className="mission-progress" style={ primaryColorVars }>
+          <div className="mission-progress__header">
+            <span className="mission-progress__raised">
               { formatAmount( SAMPLE.raised ) }
             </span>
-            <span className="mission-fp-progress__goal">
+            <span className="mission-progress__goal">
               { sprintf(
                 /* translators: %s: formatted goal amount */
                 __( 'raised of %s goal', 'mission-donation-platform' ),
                 formatAmount( SAMPLE.goal )
               ) }
             </span>
-            <span className="mission-fp-progress__percentage">
+            <span className="mission-progress__percentage">
               { percentage + '%' }
             </span>
           </div>
-          <div className="mission-fp-progress__bar">
+          <div className="mission-progress__bar">
             <div
-              className="mission-fp-progress__fill"
+              className="mission-progress__bar-fill"
               style={ { '--bar-width': percentage + '%' } }
             />
           </div>
           { showStats && (
-            <div className="mission-fp-progress__stats">
+            <div className="mission-progress__stats">
               { showDonations && (
-                <div className="mission-fp-progress__stat">
-                  <span className="mission-fp-progress__stat-value">
+                <div className="mission-progress__stat">
+                  <span className="mission-progress__stat-value">
                     { SAMPLE.donations }
                   </span>
-                  <span className="mission-fp-progress__stat-label">
+                  <span className="mission-progress__stat-label">
                     { __( 'donations', 'mission-donation-platform' ) }
                   </span>
                 </div>
               ) }
               { showDonors && (
-                <div className="mission-fp-progress__stat">
-                  <span className="mission-fp-progress__stat-value">
+                <div className="mission-progress__stat">
+                  <span className="mission-progress__stat-value">
                     { SAMPLE.donors }
                   </span>
-                  <span className="mission-fp-progress__stat-label">
+                  <span className="mission-progress__stat-label">
                     { __( 'donors', 'mission-donation-platform' ) }
                   </span>
                 </div>
@@ -136,9 +136,9 @@ export default function Edit( { attributes, setAttributes } ) {
             </div>
           ) }
           { ( showDonate || showShare ) && (
-            <div className="mission-fp-progress__actions">
+            <div className="mission-progress__actions">
               { showDonate && (
-                <span className="mission-fp-progress__btn">
+                <span className="mission-progress__btn">
                   { __( 'Donate Now', 'mission-donation-platform' ) }
                 </span>
               ) }
@@ -146,8 +146,8 @@ export default function Edit( { attributes, setAttributes } ) {
                 <span
                   className={
                     showDonate
-                      ? 'mission-fp-progress__btn mission-fp-progress__btn--secondary'
-                      : 'mission-fp-progress__btn'
+                      ? 'mission-progress__btn mission-progress__btn--secondary'
+                      : 'mission-progress__btn'
                   }
                 >
                   { __( 'Share', 'mission-donation-platform' ) }
