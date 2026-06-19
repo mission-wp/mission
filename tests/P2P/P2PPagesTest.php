@@ -209,6 +209,24 @@ class P2PPagesTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the fundraiser and team pages are registered as editable Site Editor templates.
+	 */
+	public function test_block_templates_are_registered(): void {
+		// Registered by the post types on init during plugin boot.
+		$registry = \WP_Block_Templates_Registry::get_instance();
+
+		$fundraiser = $registry->get_by_slug( 'single-' . Fundraiser::POST_TYPE );
+		$team       = $registry->get_by_slug( 'single-' . Team::POST_TYPE );
+
+		$this->assertInstanceOf( \WP_Block_Template::class, $fundraiser );
+		$this->assertInstanceOf( \WP_Block_Template::class, $team );
+		$this->assertSame( 'Fundraiser Page', $fundraiser->title );
+		$this->assertSame( 'Team Page', $team->title );
+		$this->assertStringContainsString( 'mission-donation-platform/fundraiser-profile', $fundraiser->content );
+		$this->assertStringContainsString( 'mission-donation-platform/team-profile', $team->content );
+	}
+
+	/**
 	 * Test the document title is prefixed with the parent campaign name.
 	 */
 	public function test_document_title_uses_campaign_name(): void {

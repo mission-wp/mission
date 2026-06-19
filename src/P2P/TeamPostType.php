@@ -27,6 +27,38 @@ class TeamPostType {
 	 */
 	public function init(): void {
 		add_action( 'init', [ $this, 'register' ] );
+		add_action( 'init', [ $this, 'register_block_templates' ] );
+	}
+
+	/**
+	 * Register the single-team block template for the Site Editor.
+	 *
+	 * Mirrors FundraiserPostType: makes "Team Page" an editable template on
+	 * block themes, with the shared team page markup wrapped in the theme's
+	 * header, main, and footer as the default content.
+	 */
+	public function register_block_templates(): void {
+		ob_start();
+		include __DIR__ . '/templates/team-page.php';
+		$inner = (string) ob_get_clean();
+
+		\register_block_template(
+			'mission-donation-platform//single-' . self::POST_TYPE,
+			[
+				'title'       => __( 'Team Page', 'mission-donation-platform' ),
+				'description' => __( 'Displays a single team page.', 'mission-donation-platform' ),
+				'content'     => '<!-- wp:template-part {"slug":"header","area":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
+<main class="wp-block-group">
+
+' . $inner . '
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","area":"footer","tagName":"footer"} /-->',
+			]
+		);
 	}
 
 	/**

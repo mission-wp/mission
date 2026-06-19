@@ -10886,13 +10886,13 @@ msgid "The payment service returned an unexpected response."
 msgstr "El servicio de pago devolvió una respuesta inesperada."
 
 #: src/Admin/AdminModule.php:387 src/Admin/AdminModule.php:388
-#: src/P2P/FundraiserPostType.php:38 admin/build/mission-admin.js:248
+#: src/P2P/FundraiserPostType.php:72 admin/build/mission-admin.js:248
 #: admin/src/pages/Fundraisers.js:173
 msgid "Fundraisers"
 msgstr "Recaudadores"
 
 #: src/Admin/AdminModule.php:396 src/Admin/AdminModule.php:397
-#: src/P2P/TeamPostType.php:37 admin/build/mission-admin.js:248
+#: src/P2P/TeamPostType.php:69 admin/build/mission-admin.js:248
 #: admin/src/pages/Teams.js:187
 msgid "Teams"
 msgstr "Equipos"
@@ -11074,14 +11074,14 @@ msgstr "Desactivar"
 msgid "Inactive"
 msgstr "Inactivo"
 
-#: src/Models/Fundraiser.php:192 src/P2P/FundraiserPostType.php:39
+#: src/Models/Fundraiser.php:192 src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1895
 #: src/Reporting/ReportingService.php:2053 admin/build/mission-admin.js:191
 #: admin/src/pages/Fundraisers.js:35
 msgid "Fundraiser"
 msgstr "Recaudador"
 
-#: src/Models/Team.php:153 src/P2P/TeamPostType.php:38
+#: src/Models/Team.php:153 src/P2P/TeamPostType.php:70
 #: admin/build/mission-admin.js:191 admin/build/mission-admin.js:195
 #: admin/src/pages/Fundraisers.js:60 admin/src/pages/Teams.js:37
 msgid "Team"
@@ -12131,3 +12131,19 @@ msgid "Display a ranked list of top teams for a peer-to-peer campaign."
 msgstr ""
 "Muestra una lista clasificada de los principales equipos de una campaña "
 "entre pares."
+
+#: src/P2P/FundraiserPostType.php:51
+msgid "Fundraiser Page"
+msgstr "Página de recaudador"
+
+#: src/P2P/FundraiserPostType.php:52
+msgid "Displays a single fundraiser page."
+msgstr "Muestra la página de un recaudador."
+
+#: src/P2P/TeamPostType.php:48
+msgid "Team Page"
+msgstr "Página de equipo"
+
+#: src/P2P/TeamPostType.php:49
+msgid "Displays a single team page."
+msgstr "Muestra la página de un equipo."

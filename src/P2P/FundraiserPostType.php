@@ -28,6 +28,40 @@ class FundraiserPostType {
 	 */
 	public function init(): void {
 		add_action( 'init', [ $this, 'register' ] );
+		add_action( 'init', [ $this, 'register_block_templates' ] );
+	}
+
+	/**
+	 * Register the single-fundraiser block template for the Site Editor.
+	 *
+	 * Without this the fundraiser page renders only through the the_content
+	 * filter (P2PPageRenderer) and never appears in the Site Editor. Registering
+	 * it makes "Fundraiser Page" an editable template on block themes, mirroring
+	 * the campaign single template. The default content is the shared fundraiser
+	 * page markup wrapped in the theme's header, main, and footer.
+	 */
+	public function register_block_templates(): void {
+		ob_start();
+		include __DIR__ . '/templates/fundraiser-page.php';
+		$inner = (string) ob_get_clean();
+
+		\register_block_template(
+			'mission-donation-platform//single-' . self::POST_TYPE,
+			[
+				'title'       => __( 'Fundraiser Page', 'mission-donation-platform' ),
+				'description' => __( 'Displays a single fundraiser page.', 'mission-donation-platform' ),
+				'content'     => '<!-- wp:template-part {"slug":"header","area":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} -->
+<main class="wp-block-group">
+
+' . $inner . '
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","area":"footer","tagName":"footer"} /-->',
+			]
+		);
 	}
 
 	/**

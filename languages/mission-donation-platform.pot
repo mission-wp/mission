@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T02:17:38+00:00\n"
+"POT-Creation-Date: 2026-06-19T15:33:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -2665,7 +2665,7 @@ msgstr ""
 
 #: src/Admin/AdminModule.php:387
 #: src/Admin/AdminModule.php:388
-#: src/P2P/FundraiserPostType.php:38
+#: src/P2P/FundraiserPostType.php:72
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Fundraisers.js:173
 msgid "Fundraisers"
@@ -2673,7 +2673,7 @@ msgstr ""
 
 #: src/Admin/AdminModule.php:396
 #: src/Admin/AdminModule.php:397
-#: src/P2P/TeamPostType.php:37
+#: src/P2P/TeamPostType.php:69
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Teams.js:187
 msgid "Teams"
@@ -4337,7 +4337,7 @@ msgid "This donor already has an account."
 msgstr ""
 
 #: src/Models/Fundraiser.php:192
-#: src/P2P/FundraiserPostType.php:39
+#: src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1895
 #: src/Reporting/ReportingService.php:2053
 #: admin/build/mission-admin.js:191
@@ -4374,7 +4374,7 @@ msgid "The payment service returned an unexpected response."
 msgstr ""
 
 #: src/Models/Team.php:153
-#: src/P2P/TeamPostType.php:38
+#: src/P2P/TeamPostType.php:70
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/Fundraisers.js:60
@@ -4502,9 +4502,25 @@ msgstr ""
 msgid "Please upload a JPEG, PNG, GIF, or WebP image."
 msgstr ""
 
+#: src/P2P/FundraiserPostType.php:51
+msgid "Fundraiser Page"
+msgstr ""
+
+#: src/P2P/FundraiserPostType.php:52
+msgid "Displays a single fundraiser page."
+msgstr ""
+
 #: src/P2P/FundraiserRegistrationService.php:173
 #: src/P2P/FundraiserRegistrationService.php:179
 msgid "This reset session is invalid or has expired. Please start over."
+msgstr ""
+
+#: src/P2P/TeamPostType.php:48
+msgid "Team Page"
+msgstr ""
+
+#: src/P2P/TeamPostType.php:49
+msgid "Displays a single team page."
 msgstr ""
 
 #. translators: %d: calendar year
