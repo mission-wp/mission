@@ -48,6 +48,7 @@ use MissionDP\Rest\Endpoints\DonorDashboard\SubscriptionsEndpoint as DashboardSu
 use MissionDP\Rest\Endpoints\DonorDashboard\EmailChangeEndpoint as DashboardEmailChangeEndpoint;
 use MissionDP\Rest\Endpoints\DonorDashboard\ProfileEndpoint as DashboardProfileEndpoint;
 use MissionDP\Rest\Endpoints\DonorDashboard\FundraiserEndpoint as DashboardFundraiserEndpoint;
+use MissionDP\Rest\Endpoints\DonorDashboard\TeamEndpoint as DashboardTeamEndpoint;
 use MissionDP\Rest\Endpoints\StripeWebhookEndpoint;
 use MissionDP\Rest\Endpoints\SubscriptionsEndpoint;
 use MissionDP\Rest\Endpoints\SystemStatusEndpoint;
@@ -136,6 +137,7 @@ class RestModule {
 		( new DashboardSubscriptionsEndpoint( $settings ) )->register();
 		( new DashboardProfileEndpoint() )->register();
 		( new DashboardFundraiserEndpoint( $reporting, $settings, new FundraiserImageUploader() ) )->register();
+		( new DashboardTeamEndpoint( $settings, new FundraiserImageUploader() ) )->register();
 		( new DashboardEmailChangeEndpoint( $this->email ) )->register();
 		( new EmailTestEndpoint( $settings, $this->email ) )->register();
 		( new EmailTemplateEndpoint( $this->email ) )->register();
