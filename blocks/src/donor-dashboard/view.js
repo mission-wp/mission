@@ -8,6 +8,7 @@ import { store, getContext, getElement } from '@wordpress/interactivity';
 import { authState, authCallbacks, authActions } from './actions/auth';
 import { historyState, historyActions } from './actions/history';
 import { fundraisingState, fundraisingActions } from './actions/fundraising';
+import { teamState, teamActions } from './actions/team';
 import { profileState, profileActions } from './actions/profile';
 import { receiptsActions } from './actions/receipts';
 import { showToast } from './utils/toast';
@@ -77,6 +78,7 @@ store( 'mission-donation-platform/donor-dashboard', {
     recurringState,
     profileState,
     fundraisingState,
+    teamState,
     {
       // ── Toast ──
       get toastIsSuccess() {
@@ -298,5 +300,8 @@ store( 'mission-donation-platform/donor-dashboard', {
 
     // ── Fundraising ──
     ...fundraisingActions,
+
+    // ── Team (captain controls) ──
+    ...teamActions,
   },
 } );

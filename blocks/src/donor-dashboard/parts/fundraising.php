@@ -180,6 +180,149 @@ defined( 'ABSPATH' ) || exit;
 		</p>
 	</div>
 
+	<!-- Captain controls (only for the team captain) -->
+	<div class="mission-fd-section mission-dd-captain" data-wp-bind--hidden="!state.isCaptain">
+		<h2 class="mission-dd-section-title"><?php esc_html_e( 'Manage your team', 'mission-donation-platform' ); ?></h2>
+
+		<div class="mission-fd-notice" data-wp-bind--hidden="!context.fundraising.captain.isPending" role="status">
+			<?php esc_html_e( 'Your team is awaiting approval. You can edit it now and it will go live once an organizer approves it.', 'mission-donation-platform' ); ?>
+		</div>
+
+		<div class="mission-dd-profile-error" data-wp-bind--hidden="!context.fundraising.captain.error" role="alert" aria-live="polite">
+			<span data-wp-text="context.fundraising.captain.error"></span>
+		</div>
+
+		<!-- Team image -->
+		<div class="mission-dd-team-cover">
+			<img
+				class="mission-fd-cover-preview"
+				alt=""
+				data-wp-bind--src="context.fundraising.captain.coverImageUrl"
+				data-wp-bind--hidden="!context.fundraising.captain.hasCover"
+			>
+			<div class="mission-fd-cover-placeholder" data-wp-bind--hidden="context.fundraising.captain.hasCover">
+				<?php esc_html_e( 'No team image yet.', 'mission-donation-platform' ); ?>
+			</div>
+			<input
+				type="file"
+				class="mission-fd-cover-input"
+				accept="image/jpeg,image/png,image/gif,image/webp"
+				data-wp-on--change="actions.uploadTeamPhoto"
+				hidden
+			>
+			<button
+				type="button"
+				class="mission-dd-btn-secondary"
+				data-wp-on--click="actions.triggerTeamPhotoUpload"
+				data-wp-bind--disabled="context.fundraising.captain.uploading"
+			>
+				<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
+				<?php esc_html_e( 'Upload team image', 'mission-donation-platform' ); ?>
+			</button>
+			<span class="mission-dd-field-error" data-wp-bind--hidden="!context.fundraising.captain.uploadError" data-wp-text="context.fundraising.captain.uploadError"></span>
+		</div>
+
+		<!-- Team details -->
+		<div class="mission-dd-profile-group">
+			<label class="mission-dd-profile-label" for="mission-dd-team-name"><?php esc_html_e( 'Team name', 'mission-donation-platform' ); ?></label>
+			<input
+				type="text"
+				id="mission-dd-team-name"
+				class="mission-dd-profile-input"
+				maxlength="200"
+				data-wp-bind--value="context.fundraising.captain.name"
+				data-wp-on--input="actions.editTeamName"
+				data-wp-bind--disabled="context.fundraising.captain.saving"
+			>
+		</div>
+
+		<div class="mission-dd-profile-group">
+			<label class="mission-dd-profile-label" for="mission-dd-team-goal"><?php esc_html_e( 'Team goal', 'mission-donation-platform' ); ?></label>
+			<div class="mission-fd-goal-input">
+				<span class="mission-fd-goal-prefix" data-wp-text="context.fundraising.currencySymbol"></span>
+				<input
+					type="number"
+					id="mission-dd-team-goal"
+					class="mission-dd-profile-input"
+					min="0"
+					step="1"
+					data-wp-bind--value="context.fundraising.captain.goal"
+					data-wp-on--input="actions.editTeamGoal"
+					data-wp-bind--disabled="context.fundraising.captain.saving"
+				>
+			</div>
+		</div>
+
+		<div class="mission-dd-profile-group">
+			<label class="mission-dd-profile-label" for="mission-dd-team-story"><?php esc_html_e( 'Team story', 'mission-donation-platform' ); ?></label>
+			<textarea
+				id="mission-dd-team-story"
+				class="mission-dd-profile-input mission-fd-story"
+				rows="6"
+				data-wp-bind--value="context.fundraising.captain.description"
+				data-wp-on--input="actions.editTeamDescription"
+				data-wp-bind--disabled="context.fundraising.captain.saving"
+			></textarea>
+		</div>
+
+		<button
+			class="mission-dd-btn-primary"
+			data-wp-on--click="actions.saveTeam"
+			data-wp-bind--disabled="state.teamSaveDisabled"
+			data-wp-class--mission-dd-btn-saved="context.fundraising.captain.saved"
+		>
+			<span data-wp-text="state.teamSaveLabel"></span>
+		</button>
+
+		<!-- Members -->
+		<h3 class="mission-dd-subsection-title"><?php esc_html_e( 'Members', 'mission-donation-platform' ); ?></h3>
+		<ul class="mission-dd-members">
+			<template data-wp-each--member="context.fundraising.captain.members">
+				<li class="mission-dd-member">
+					<span class="mission-dd-member-name" data-wp-text="context.member.name"></span>
+					<span class="mission-dd-member-badge" data-wp-bind--hidden="!context.member.isCaptain"><?php esc_html_e( 'Captain', 'mission-donation-platform' ); ?></span>
+					<span class="mission-dd-member-raised" data-wp-text="context.member.raised"></span>
+					<span class="mission-dd-member-actions" data-wp-bind--hidden="context.member.isCaptain">
+						<button type="button" class="mission-dd-btn-secondary" data-wp-on--click="actions.promoteMember"><?php esc_html_e( 'Make captain', 'mission-donation-platform' ); ?></button>
+						<button type="button" class="mission-dd-btn-secondary" data-wp-on--click="actions.removeMember"><?php esc_html_e( 'Remove', 'mission-donation-platform' ); ?></button>
+					</span>
+				</li>
+			</template>
+		</ul>
+
+		<!-- Invite by email -->
+		<h3 class="mission-dd-subsection-title"><?php esc_html_e( 'Invite a member', 'mission-donation-platform' ); ?></h3>
+		<p class="mission-dd-help"><?php esc_html_e( 'Send an invitation link by email. They can join even if your team is private.', 'mission-donation-platform' ); ?></p>
+		<div class="mission-dd-invite">
+			<input
+				type="email"
+				class="mission-dd-profile-input"
+				placeholder="<?php esc_attr_e( 'name@example.com', 'mission-donation-platform' ); ?>"
+				data-wp-bind--value="context.fundraising.captain.inviteEmail"
+				data-wp-on--input="actions.editInviteEmail"
+				data-wp-bind--disabled="context.fundraising.captain.inviting"
+			>
+			<button
+				type="button"
+				class="mission-dd-btn-secondary"
+				data-wp-on--click="actions.inviteMember"
+				data-wp-bind--disabled="context.fundraising.captain.inviting"
+			>
+				<?php esc_html_e( 'Send invite', 'mission-donation-platform' ); ?>
+			</button>
+		</div>
+		<span class="mission-dd-field-error" data-wp-bind--hidden="!context.fundraising.captain.inviteError" data-wp-text="context.fundraising.captain.inviteError"></span>
+
+		<ul class="mission-dd-invitations" data-wp-bind--hidden="!state.hasInvitations">
+			<template data-wp-each--invite="context.fundraising.captain.invitations">
+				<li class="mission-dd-invitation">
+					<span data-wp-text="context.invite.email"></span>
+					<span class="mission-dd-invitation-status"><?php esc_html_e( 'Pending', 'mission-donation-platform' ); ?></span>
+				</li>
+			</template>
+		</ul>
+	</div>
+
 	<!-- My Donors / Activity -->
 	<div class="mission-fd-section">
 		<h2 class="mission-dd-section-title"><?php esc_html_e( 'Your donors', 'mission-donation-platform' ); ?></h2>

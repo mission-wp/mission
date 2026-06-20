@@ -13,7 +13,7 @@ import { showToast } from '../utils/toast';
  * @param {Object} ctx Interactivity context.
  * @return {Object|undefined} The active fundraiser, if any.
  */
-function activeFundraiser( ctx ) {
+export function activeFundraiser( ctx ) {
   const fr = ctx.fundraising;
   return fr?.list?.find( ( item ) => item.id === fr.activeId );
 }
@@ -35,6 +35,8 @@ function syncActive( ctx ) {
   ctx.fundraising.edit.goal = item.goalMajor;
   ctx.fundraising.edit.error = '';
   ctx.fundraising.edit.saved = false;
+  // The captain sub-section follows the active fundraiser's team (or null).
+  ctx.fundraising.captain = item.captain || null;
 }
 
 export const fundraisingState = {

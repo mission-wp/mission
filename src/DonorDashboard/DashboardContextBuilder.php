@@ -352,14 +352,22 @@ class DashboardContextBuilder {
 			],
 			'uploading'      => false,
 			'uploadError'    => '',
+			'captain'        => $active['captain'],
 			'i18n'           => [
-				'save'        => __( 'Save changes', 'mission-donation-platform' ),
-				'saving'      => __( 'Saving…', 'mission-donation-platform' ),
-				'saved'       => __( 'Saved', 'mission-donation-platform' ),
-				'savedToast'  => __( 'Fundraiser updated', 'mission-donation-platform' ),
-				'photoToast'  => __( 'Cover photo updated', 'mission-donation-platform' ),
-				'copied'      => __( 'Link copied', 'mission-donation-platform' ),
-				'copiedEmbed' => __( 'Embed code copied', 'mission-donation-platform' ),
+				'save'           => __( 'Save changes', 'mission-donation-platform' ),
+				'saving'         => __( 'Saving…', 'mission-donation-platform' ),
+				'saved'          => __( 'Saved', 'mission-donation-platform' ),
+				'savedToast'     => __( 'Fundraiser updated', 'mission-donation-platform' ),
+				'photoToast'     => __( 'Cover photo updated', 'mission-donation-platform' ),
+				'copied'         => __( 'Link copied', 'mission-donation-platform' ),
+				'copiedEmbed'    => __( 'Embed code copied', 'mission-donation-platform' ),
+				'teamToast'      => __( 'Team updated', 'mission-donation-platform' ),
+				'teamPhoto'      => __( 'Team image updated', 'mission-donation-platform' ),
+				'inviteToast'    => __( 'Invitation sent', 'mission-donation-platform' ),
+				'removeToast'    => __( 'Member removed', 'mission-donation-platform' ),
+				'promoteToast'   => __( 'New captain set', 'mission-donation-platform' ),
+				'confirmRemove'  => __( 'Remove this member from the team?', 'mission-donation-platform' ),
+				'confirmPromote' => __( 'Make this member the captain? You will no longer manage the team.', 'mission-donation-platform' ),
 			],
 		];
 	}
@@ -431,6 +439,89 @@ class DashboardContextBuilder {
 			'donors'          => array_map( [ $this, 'prepare_fundraiser_donor' ], $donor_page['items'] ),
 			'donorsTotal'     => $donor_page['total'],
 			'hasDonors'       => $donor_page['total'] > 0,
+			'captain'         => $this->prepare_captain( $fundraiser ),
+		];
+	}
+
+	/**
+	 * Build the captain management payload for a fundraiser, or null.
+	 *
+	 * Returns null unless the fundraiser leads a team; the data is the working
+	 * copy the dashboard edits and submits back through the team endpoints.
+	 *
+	 * @param \MissionDP\Models\Fundraiser $fundraiser Fundraiser model.
+	 * @return array<string, mixed>|null
+	 */
+	private function prepare_captain( \MissionDP\Models\Fundraiser $fundraiser ): ?array {
+		if ( ! $fundraiser->is_captain() ) {
+			return null;
+		}
+
+		$team = $fundraiser->team();
+		if ( ! $team ) {
+			return null;
+		}
+
+		$cover_url = ctype_digit( $team->cover_image )
+			? ( wp_get_attachment_image_url( (int) $team->cover_image, 'large' ) ?: '' )
+			: $team->cover_image;
+
+		$members = array_map(
+			function ( \MissionDP\Models\Fundraiser $member ): array {
+				$name = trim( (string) ( $member->donor()?->full_name() ?? '' ) );
+
+				return [
+					'fundraiserId' => (int) $member->id,
+					'name'         => '' !== $name ? $name : __( 'Participant', 'mission-donation-platform' ),
+					'isCaptain'    => (bool) $member->is_team_captain,
+					'raised'       => Currency::format_amount( $member->amount_raised( $this->is_test ), $this->currency ),
+				];
+			},
+			$team->members(
+				[
+					'orderby' => 'total_raised',
+					'order'   => 'DESC',
+				]
+			)
+		);
+
+		$invitations = array_map(
+			static fn( \MissionDP\Models\TeamInvitation $invitation ): array => [
+				'id'    => (int) $invitation->id,
+				'email' => $invitation->email,
+				'sent'  => ! empty( $invitation->sent_at ),
+			],
+			$team->invitations( [ 'status' => \MissionDP\Models\TeamInvitation::STATUS_PENDING ] )
+		);
+
+		$status_labels = [
+			\MissionDP\Models\Team::STATUS_ACTIVE   => __( 'Active', 'mission-donation-platform' ),
+			\MissionDP\Models\Team::STATUS_PENDING  => __( 'Pending review', 'mission-donation-platform' ),
+			\MissionDP\Models\Team::STATUS_INACTIVE => __( 'Inactive', 'mission-donation-platform' ),
+		];
+
+		return [
+			'teamId'        => (int) $team->id,
+			'name'          => $team->name,
+			'description'   => $team->description,
+			'goal'          => (string) Currency::minor_to_major( $team->goal, $this->currency ),
+			'coverImageUrl' => $cover_url,
+			'hasCover'      => '' !== $cover_url,
+			'url'           => $team->get_url() ?? '',
+			'status'        => $team->status,
+			'statusLabel'   => $status_labels[ $team->status ] ?? $team->status,
+			'isPending'     => \MissionDP\Models\Team::STATUS_PENDING === $team->status,
+			'isPrivate'     => \MissionDP\Models\Team::ACCESS_PRIVATE === $team->access,
+			'members'       => $members,
+			'invitations'   => $invitations,
+			'inviteEmail'   => '',
+			'inviteError'   => '',
+			'inviting'      => false,
+			'saving'        => false,
+			'saved'         => false,
+			'error'         => '',
+			'uploading'     => false,
+			'uploadError'   => '',
 		];
 	}
 
