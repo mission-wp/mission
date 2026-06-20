@@ -13,6 +13,12 @@
             "Campaign": [
                 "Campa\u00f1a"
             ],
+            "Top Fundraisers": [
+                "Mejores recaudadores"
+            ],
+            "Individual fundraiser": [
+                "Recaudador individual"
+            ],
             "Settings": [
                 "Ajustes"
             ],
@@ -33,12 +39,6 @@
             ],
             "Show ribbons": [
                 "Mostrar distintivos"
-            ],
-            "Top Fundraisers": [
-                "Mejores recaudadores"
-            ],
-            "Individual fundraiser": [
-                "Recaudador individual"
             ],
             "Open the sign-up modal": [
                 "Abrir la ventana de registro"

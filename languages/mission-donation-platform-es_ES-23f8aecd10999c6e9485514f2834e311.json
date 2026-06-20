@@ -22,6 +22,9 @@
             "Donate Now": [
                 "Donar ahora"
             ],
+            "Share": [
+                "Compartir"
+            ],
             "Settings": [
                 "Ajustes"
             ],
@@ -42,9 +45,6 @@
             ],
             "Show donors": [
                 "Mostrar donantes"
-            ],
-            "Share": [
-                "Compartir"
             ],
             "Show donations": [
                 "Mostrar donaciones"

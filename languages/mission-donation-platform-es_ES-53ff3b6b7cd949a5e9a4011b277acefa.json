@@ -19,14 +19,14 @@
             "raised of %s team goal": [
                 "recaudado de la meta de equipo de %s"
             ],
+            "members": [
+                "miembros"
+            ],
             "Donate to the Team": [
                 "Donar al equipo"
             ],
             "Join this Team": [
                 "Unirse a este equipo"
-            ],
-            "members": [
-                "miembros"
             ]
         }
     }

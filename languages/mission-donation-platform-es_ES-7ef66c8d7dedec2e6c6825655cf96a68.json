@@ -10,6 +10,9 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
+            "Cover photo": [
+                "Foto de portada"
+            ],
             "Settings": [
                 "Ajustes"
             ],
@@ -87,9 +90,6 @@
             ],
             "Select the size of the source image.": [
                 "Selecciona el tama\u00f1o de la imagen de origen."
-            ],
-            "Cover photo": [
-                "Foto de portada"
             ]
         }
     }

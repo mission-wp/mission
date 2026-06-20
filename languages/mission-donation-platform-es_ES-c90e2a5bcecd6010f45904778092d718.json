@@ -13,6 +13,13 @@
             "Campaign": [
                 "Campa\u00f1a"
             ],
+            "Top Teams": [
+                "Mejores equipos"
+            ],
+            "%s member": [
+                "%s miembro",
+                "%s miembros"
+            ],
             "Settings": [
                 "Ajustes"
             ],
@@ -33,13 +40,6 @@
             ],
             "Show ribbons": [
                 "Mostrar distintivos"
-            ],
-            "Top Teams": [
-                "Mejores equipos"
-            ],
-            "%s member": [
-                "%s miembro",
-                "%s miembros"
             ],
             "Open the sign-up modal": [
                 "Abrir la ventana de registro"

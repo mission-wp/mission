@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T19:25:59+00:00\n"
+"POT-Creation-Date: 2026-06-19T20:34:32+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -753,7 +753,7 @@ msgstr ""
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:244
 #: admin/src/pages/campaigns/CampaignList.js:325
-#: admin/src/pages/settings/EmailsPanel.js:34
+#: admin/src/pages/settings/EmailsPanel.js:35
 #: admin/src/pages/tools/WebhooksPanel.js:377
 #: admin/src/pages/transactions/DedicationSection.js:256
 msgid "Edit"
@@ -1224,9 +1224,9 @@ msgid "Raised"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:41
-#: blocks/build/donor-dashboard/parts/fundraising.php:188
+#: blocks/build/donor-dashboard/parts/fundraising.php:331
 #: blocks/src/donor-dashboard/parts/fundraising.php:41
-#: blocks/src/donor-dashboard/parts/fundraising.php:188
+#: blocks/src/donor-dashboard/parts/fundraising.php:331
 #: src/Admin/AdminModule.php:376
 #: src/Admin/AdminModule.php:377
 #: src/Export/ExportService.php:171
@@ -1349,11 +1349,139 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:185
 #: blocks/src/donor-dashboard/parts/fundraising.php:185
+msgid "Manage your team"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:188
+#: blocks/src/donor-dashboard/parts/fundraising.php:188
+msgid "Your team is awaiting approval. You can edit it now and it will go live once an organizer approves it."
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:204
+#: blocks/src/donor-dashboard/parts/fundraising.php:204
+msgid "No team image yet."
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:220
+#: blocks/src/donor-dashboard/parts/fundraising.php:220
+msgid "Upload team image"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:227
+#: blocks/build/signup-modal/index.php:247
+#: blocks/src/donor-dashboard/parts/fundraising.php:227
+#: blocks/src/signup-modal/index.php:247
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:325
+#: admin/src/pages/settings/email-templates.js:353
+#: admin/src/pages/settings/email-templates.js:377
+#: blocks/build/team-title/index.js:1
+#: blocks/src/team-title/index.js:27
+msgid "Team name"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:240
+#: blocks/src/donor-dashboard/parts/fundraising.php:240
+msgid "Team goal"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:257
+#: blocks/src/donor-dashboard/parts/fundraising.php:257
+msgid "Team story"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:278
+#: blocks/src/donor-dashboard/parts/fundraising.php:278
+#: admin/build/mission-admin.js:195
+#: admin/src/pages/Teams.js:75
+msgid "Members"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:283
+#: blocks/build/team-members/index.php:96
+#: blocks/src/donor-dashboard/parts/fundraising.php:283
+#: blocks/src/team-members/index.php:96
+#: src/Email/TeamEmailListener.php:148
+#: src/Email/TeamEmailListener.php:200
+#: src/Email/templates/p2p-team-approved.php:14
+#: src/Email/templates/p2p-team-member-joined.php:14
+#: admin/build/mission-admin.js:195
+#: admin/src/pages/Teams.js:62
+#: blocks/build/team-members/index.js:1
+#: blocks/src/team-members/index.js:56
+msgid "Captain"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:286
+#: blocks/src/donor-dashboard/parts/fundraising.php:286
+msgid "Make captain"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:287
+#: blocks/src/donor-dashboard/parts/fundraising.php:287
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:193
+#: admin/build/mission-admin.js:207
+#: admin/src/components/onboarding/StepCampaign.js:237
+#: admin/src/pages/campaigns/CampaignCreateStepImage.js:66
+#: admin/src/pages/campaigns/tabs/EditPageTab.js:203
+#: admin/src/pages/tools/ImportPanel.js:788
+#: admin/src/pages/transactions/DedicationSection.js:266
+msgid "Remove"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:294
+#: blocks/src/donor-dashboard/parts/fundraising.php:294
+msgid "Invite a member"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:295
+#: blocks/src/donor-dashboard/parts/fundraising.php:295
+msgid "Send an invitation link by email. They can join even if your team is private."
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:300
+#: blocks/src/donor-dashboard/parts/fundraising.php:300
+msgid "name@example.com"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:311
+#: blocks/src/donor-dashboard/parts/fundraising.php:311
+msgid "Send invite"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:320
+#: blocks/src/donor-dashboard/parts/fundraising.php:320
+#: admin/build/mission-admin.js:152
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:193
+#: admin/build/mission-admin.js:195
+#: admin/build/mission-admin.js:204
+#: admin/build/mission-admin.js:244
+#: admin/src/components/P2PStatusBadge.js:12
+#: admin/src/constants.js:98
+#: admin/src/constants.js:131
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:38
+#: admin/src/pages/campaigns/tabs/OverviewTab.js:206
+#: admin/src/pages/Fundraisers.js:27
+#: admin/src/pages/subscriptions/SubscriptionDetail.js:28
+#: admin/src/pages/subscriptions/SubscriptionList.js:174
+#: admin/src/pages/Teams.js:29
+#: admin/src/pages/tools/ExportPanel.js:261
+#: admin/src/pages/transactions/TransactionDetail.js:58
+#: admin/src/pages/transactions/TransactionList.js:51
+#: admin/src/pages/transactions/TransactionList.js:234
+msgid "Pending"
+msgstr ""
+
+#: blocks/build/donor-dashboard/parts/fundraising.php:328
+#: blocks/src/donor-dashboard/parts/fundraising.php:328
 msgid "Your donors"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/fundraising.php:191
-#: blocks/src/donor-dashboard/parts/fundraising.php:191
+#: blocks/build/donor-dashboard/parts/fundraising.php:334
+#: blocks/src/donor-dashboard/parts/fundraising.php:334
 #: src/Email/templates/admin-new-donation.php:49
 #: src/Email/templates/admin-payment-failed.php:33
 #: src/Email/templates/admin-recurring-renewal.php:33
@@ -1376,10 +1504,10 @@ msgstr ""
 msgid "Donor"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/fundraising.php:192
+#: blocks/build/donor-dashboard/parts/fundraising.php:335
 #: blocks/build/donor-dashboard/parts/history.php:61
 #: blocks/build/donor-dashboard/parts/overview.php:36
-#: blocks/src/donor-dashboard/parts/fundraising.php:192
+#: blocks/src/donor-dashboard/parts/fundraising.php:335
 #: blocks/src/donor-dashboard/parts/history.php:61
 #: blocks/src/donor-dashboard/parts/overview.php:36
 #: src/Email/templates/admin-new-donation.php:60
@@ -1416,10 +1544,10 @@ msgstr ""
 msgid "Amount"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/fundraising.php:193
+#: blocks/build/donor-dashboard/parts/fundraising.php:336
 #: blocks/build/donor-dashboard/parts/history.php:60
 #: blocks/build/donor-dashboard/parts/overview.php:35
-#: blocks/src/donor-dashboard/parts/fundraising.php:193
+#: blocks/src/donor-dashboard/parts/fundraising.php:336
 #: blocks/src/donor-dashboard/parts/history.php:60
 #: blocks/src/donor-dashboard/parts/overview.php:35
 #: src/Email/templates/admin-new-donation.php:86
@@ -1446,8 +1574,8 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: blocks/build/donor-dashboard/parts/fundraising.php:209
-#: blocks/src/donor-dashboard/parts/fundraising.php:209
+#: blocks/build/donor-dashboard/parts/fundraising.php:352
+#: blocks/src/donor-dashboard/parts/fundraising.php:352
 msgid "No donations yet. Share your page to start raising funds."
 msgstr ""
 
@@ -1483,7 +1611,7 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/history.php:44
 #: blocks/src/donor-dashboard/parts/history.php:44
-#: src/DonorDashboard/DashboardContextBuilder.php:602
+#: src/DonorDashboard/DashboardContextBuilder.php:693
 #: src/Email/templates/admin-new-donation.php:79
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -1501,7 +1629,7 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/history.php:45
 #: blocks/src/donor-dashboard/parts/history.php:45
-#: src/DonorDashboard/DashboardContextBuilder.php:602
+#: src/DonorDashboard/DashboardContextBuilder.php:693
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
@@ -1926,7 +2054,8 @@ msgstr ""
 #: blocks/build/donor-dashboard/parts/recurring.php:30
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
-#: src/DonorDashboard/DashboardContextBuilder.php:386
+#: src/DonorDashboard/DashboardContextBuilder.php:394
+#: src/DonorDashboard/DashboardContextBuilder.php:498
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
@@ -2124,7 +2253,7 @@ msgstr ""
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
 #: blocks/src/top-donors/index.php:126
-#: src/DonorDashboard/DashboardContextBuilder.php:448
+#: src/DonorDashboard/DashboardContextBuilder.php:539
 #: src/Email/AdminNotificationListener.php:458
 #: src/Export/ExportService.php:739
 #: src/Reporting/ReportingService.php:626
@@ -2422,13 +2551,6 @@ msgstr ""
 msgid "Leave blank to fundraise on your own."
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:247
-#: blocks/src/signup-modal/index.php:247
-#: blocks/build/team-title/index.js:1
-#: blocks/src/team-title/index.js:27
-msgid "Team name"
-msgstr ""
-
 #: blocks/build/signup-modal/index.php:248
 #: blocks/src/signup-modal/index.php:248
 msgid "You can add a team logo later from your dashboard."
@@ -2476,15 +2598,6 @@ msgid "%s fundraiser"
 msgid_plural "%s fundraisers"
 msgstr[0] ""
 msgstr[1] ""
-
-#: blocks/build/team-members/index.php:96
-#: blocks/src/team-members/index.php:96
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/Teams.js:62
-#: blocks/build/team-members/index.js:1
-#: blocks/src/team-members/index.js:56
-msgid "Captain"
-msgstr ""
 
 #: blocks/build/team-members/index.php:116
 #: blocks/src/team-members/index.php:116
@@ -2973,13 +3086,13 @@ msgstr ""
 msgid "Page %1$d of %2$d"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:356
+#: src/DonorDashboard/DashboardContextBuilder.php:357
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/settings/SaveBar.js:31
 msgid "Save changes"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:357
+#: src/DonorDashboard/DashboardContextBuilder.php:358
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:204
@@ -2992,31 +3105,61 @@ msgstr ""
 msgid "Saving…"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:358
+#: src/DonorDashboard/DashboardContextBuilder.php:359
 msgid "Saved"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:359
+#: src/DonorDashboard/DashboardContextBuilder.php:360
 msgid "Fundraiser updated"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:360
+#: src/DonorDashboard/DashboardContextBuilder.php:361
 msgid "Cover photo updated"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:361
+#: src/DonorDashboard/DashboardContextBuilder.php:362
 msgid "Link copied"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:362
+#: src/DonorDashboard/DashboardContextBuilder.php:363
 msgid "Embed code copied"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:387
+#: src/DonorDashboard/DashboardContextBuilder.php:364
+msgid "Team updated"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:365
+msgid "Team image updated"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:366
+msgid "Invitation sent"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:367
+msgid "Member removed"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:368
+msgid "New captain set"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:369
+msgid "Remove this member from the team?"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:370
+msgid "Make this member the captain? You will no longer manage the team."
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:395
+#: src/DonorDashboard/DashboardContextBuilder.php:499
 msgid "Pending review"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:388
+#: src/DonorDashboard/DashboardContextBuilder.php:396
+#: src/DonorDashboard/DashboardContextBuilder.php:500
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:195
 #: admin/src/components/P2PStatusBadge.js:17
@@ -3026,18 +3169,18 @@ msgid "Inactive"
 msgstr ""
 
 #. translators: %s: campaign title
-#: src/DonorDashboard/DashboardContextBuilder.php:393
+#: src/DonorDashboard/DashboardContextBuilder.php:401
 msgid "Support my fundraiser for %s"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:394
+#: src/DonorDashboard/DashboardContextBuilder.php:402
 #: src/P2P/templates/fundraiser-page.php:42
 msgid "Support my fundraiser"
 msgstr ""
 
 #. translators: %s: number of donors
 #. translators: %s: donor count toward goal.
-#: src/DonorDashboard/DashboardContextBuilder.php:409
+#: src/DonorDashboard/DashboardContextBuilder.php:417
 #: admin/build/mission-admin.js:161
 #: admin/src/pages/dashboard/ActivityFeed.js:634
 msgid "%s donor"
@@ -3046,45 +3189,52 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: 1: amount raised, 2: goal amount
-#: src/DonorDashboard/DashboardContextBuilder.php:415
+#: src/DonorDashboard/DashboardContextBuilder.php:423
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:318
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:350
 msgid "%1$s raised of %2$s goal"
 msgstr ""
 
 #. translators: %s: amount raised
-#: src/DonorDashboard/DashboardContextBuilder.php:417
+#: src/DonorDashboard/DashboardContextBuilder.php:425
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:320
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:352
 msgid "%s raised"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:495
-#: src/DonorDashboard/DashboardContextBuilder.php:509
-#: src/DonorDashboard/DashboardContextBuilder.php:529
-#: src/DonorDashboard/DashboardContextBuilder.php:578
-#: src/DonorDashboard/DashboardContextBuilder.php:598
+#: src/DonorDashboard/DashboardContextBuilder.php:475
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:378
+msgid "Participant"
+msgstr ""
+
+#: src/DonorDashboard/DashboardContextBuilder.php:586
+#: src/DonorDashboard/DashboardContextBuilder.php:600
+#: src/DonorDashboard/DashboardContextBuilder.php:620
+#: src/DonorDashboard/DashboardContextBuilder.php:669
+#: src/DonorDashboard/DashboardContextBuilder.php:689
 #: src/Reporting/ReportingService.php:1480
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:82
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:109
 msgid "Deleted Campaign"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:538
+#: src/DonorDashboard/DashboardContextBuilder.php:629
 msgid "Card on file"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:691
+#: src/DonorDashboard/DashboardContextBuilder.php:782
 msgid "Donation Made"
 msgid_plural "Donations Made"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:695
+#: src/DonorDashboard/DashboardContextBuilder.php:786
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:69
 msgid "Lifetime Given"
 msgstr ""
 
-#: src/DonorDashboard/DashboardContextBuilder.php:699
+#: src/DonorDashboard/DashboardContextBuilder.php:790
 #: admin/build/mission-admin.js:248
 #: admin/src/pages/Dashboard.js:198
 #: blocks/build/donor-dashboard/index.js:1
@@ -3306,6 +3456,7 @@ msgstr ""
 
 #. translators: %s: donor first name
 #. translators: %s: participant first name
+#. translators: %s: captain first name
 #: src/Email/EmailModule.php:338
 #: src/Email/templates/account-activation.php:22
 #: src/Email/templates/donation-receipt.php:22
@@ -3313,6 +3464,8 @@ msgstr ""
 #: src/Email/templates/p2p-fundraiser-approved.php:24
 #: src/Email/templates/p2p-fundraiser-milestone.php:32
 #: src/Email/templates/p2p-fundraiser-received-donation.php:24
+#: src/Email/templates/p2p-team-approved.php:25
+#: src/Email/templates/p2p-team-member-joined.php:26
 #: src/Email/templates/password-reset.php:22
 #: src/Email/templates/payment-failed.php:25
 #: src/Email/templates/renewal-receipt.php:22
@@ -3363,6 +3516,26 @@ msgstr ""
 
 #: src/Email/SubscriptionEmailListener.php:213
 msgid "N/A"
+msgstr ""
+
+#. translators: %s: team name
+#: src/Email/TeamEmailListener.php:78
+#: src/Email/templates/p2p-team-invitation.php:19
+msgid "You're invited to join %s"
+msgstr ""
+
+#: src/Email/TeamEmailListener.php:127
+msgid "A new member"
+msgstr ""
+
+#. translators: %s: team name
+#: src/Email/TeamEmailListener.php:139
+msgid "A new member joined %s"
+msgstr ""
+
+#. translators: %s: team name
+#: src/Email/TeamEmailListener.php:191
+msgid "Your team %s has been approved"
 msgstr ""
 
 #: src/Email/templates/account-activation.php:29
@@ -3627,6 +3800,37 @@ msgstr ""
 #. translators: %d: number of minutes before the code expires
 #: src/Email/templates/p2p-otp-code.php:33
 msgid "This code expires in %d minutes. If you didn't request it, you can safely ignore this email."
+msgstr ""
+
+#: src/Email/templates/p2p-team-approved.php:18
+msgid "Your team page is live!"
+msgstr ""
+
+#. translators: %s: team name
+#: src/Email/templates/p2p-team-approved.php:35
+msgid "%s has been approved and is now live. Invite members and share your team link to start raising funds together."
+msgstr ""
+
+#: src/Email/templates/p2p-team-approved.php:46
+#: src/Email/templates/p2p-team-member-joined.php:48
+msgid "View your team"
+msgstr ""
+
+#: src/Email/templates/p2p-team-invitation.php:26
+msgid "A team captain has invited you to fundraise together. Accept the invitation to create your fundraising page and join the team."
+msgstr ""
+
+#: src/Email/templates/p2p-team-invitation.php:34
+msgid "Accept invitation"
+msgstr ""
+
+#: src/Email/templates/p2p-team-member-joined.php:19
+msgid "Your team has a new member!"
+msgstr ""
+
+#. translators: 1: new member name, 2: team name
+#: src/Email/templates/p2p-team-member-joined.php:36
+msgid "%1$s just joined %2$s. Cheer them on as they start raising funds."
 msgstr ""
 
 #: src/Email/templates/password-reset.php:29
@@ -4392,7 +4596,7 @@ msgstr ""
 msgid "This donor already has an account."
 msgstr ""
 
-#: src/Models/Fundraiser.php:192
+#: src/Models/Fundraiser.php:223
 #: src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1895
 #: src/Reporting/ReportingService.php:2053
@@ -4429,13 +4633,35 @@ msgstr ""
 msgid "The payment service returned an unexpected response."
 msgstr ""
 
-#: src/Models/Team.php:153
+#: src/Models/Team.php:154
 #: src/P2P/TeamPostType.php:70
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/Fundraisers.js:60
 #: admin/src/pages/Teams.js:37
 msgid "Team"
+msgstr ""
+
+#: src/Models/Team.php:313
+#: admin/build/mission-admin.js:191
+#: admin/build/mission-admin.js:244
+#: admin/src/pages/donors/AddDonorDrawer.js:76
+#: admin/src/pages/donors/EditDonorDrawer.js:110
+#: admin/src/pages/transactions/AddDonationDrawer.js:294
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: src/Models/Team.php:325
+msgid "That person is already on the team."
+msgstr ""
+
+#: src/Models/Team.php:367
+#: src/Models/Team.php:389
+msgid "That person is not on this team."
+msgstr ""
+
+#: src/Models/Team.php:371
+msgid "Promote another member to captain before leaving the team."
 msgstr ""
 
 #: src/OutgoingWebhooks/WebhookEvents.php:25
@@ -4547,6 +4773,7 @@ msgstr ""
 
 #: src/P2P/FundraiserImageUploader.php:112
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:197
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:193
 msgid "No image was uploaded."
 msgstr ""
 
@@ -4566,8 +4793,8 @@ msgstr ""
 msgid "Displays a single fundraiser page."
 msgstr ""
 
-#: src/P2P/FundraiserRegistrationService.php:173
-#: src/P2P/FundraiserRegistrationService.php:179
+#: src/P2P/FundraiserRegistrationService.php:174
+#: src/P2P/FundraiserRegistrationService.php:180
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr ""
 
@@ -4632,6 +4859,9 @@ msgstr ""
 #: src/Receipts/templates/annual-receipt.php:77
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/settings/email-templates.js:19
+#: admin/src/pages/settings/email-templates.js:329
+#: admin/src/pages/settings/email-templates.js:357
+#: admin/src/pages/settings/email-templates.js:381
 #: admin/src/pages/settings/GeneralPanel.js:301
 msgid "Organization"
 msgstr ""
@@ -4898,6 +5128,15 @@ msgstr ""
 msgid "You do not have permission to manage this subscription."
 msgstr ""
 
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:252
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:281
+msgid "Member not found."
+msgstr ""
+
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:312
+msgid "You are not the captain of this team."
+msgstr ""
+
 #: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:203
 msgid "No completed transactions found for this year."
 msgstr ""
@@ -5055,15 +5294,15 @@ msgstr ""
 msgid "Invalid event: %s"
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:360
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:364
 msgid "Please verify your email to continue."
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:397
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:402
 msgid "This campaign is not accepting fundraisers."
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:402
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:407
 msgid "Registration for this campaign is closed."
 msgstr ""
 
@@ -5439,18 +5678,6 @@ msgid "Replace"
 msgstr ""
 
 #: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:207
-#: admin/src/components/onboarding/StepCampaign.js:237
-#: admin/src/pages/campaigns/CampaignCreateStepImage.js:66
-#: admin/src/pages/campaigns/tabs/EditPageTab.js:203
-#: admin/src/pages/tools/ImportPanel.js:788
-#: admin/src/pages/transactions/DedicationSection.js:266
-msgid "Remove"
-msgstr ""
-
-#: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateStepImage.js:100
 #: admin/src/pages/campaigns/tabs/EditPageTab.js:237
 msgid "Click to upload or drag and drop"
@@ -5686,28 +5913,6 @@ msgstr ""
 #: admin/src/pages/transactions/TransactionList.js:46
 #: admin/src/pages/transactions/TransactionList.js:238
 msgid "Completed"
-msgstr ""
-
-#: admin/build/mission-admin.js:152
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:193
-#: admin/build/mission-admin.js:195
-#: admin/build/mission-admin.js:204
-#: admin/build/mission-admin.js:244
-#: admin/src/components/P2PStatusBadge.js:12
-#: admin/src/constants.js:98
-#: admin/src/constants.js:131
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:38
-#: admin/src/pages/campaigns/tabs/OverviewTab.js:206
-#: admin/src/pages/Fundraisers.js:27
-#: admin/src/pages/subscriptions/SubscriptionDetail.js:28
-#: admin/src/pages/subscriptions/SubscriptionList.js:174
-#: admin/src/pages/Teams.js:29
-#: admin/src/pages/tools/ExportPanel.js:261
-#: admin/src/pages/transactions/TransactionDetail.js:58
-#: admin/src/pages/transactions/TransactionList.js:51
-#: admin/src/pages/transactions/TransactionList.js:234
-msgid "Pending"
 msgstr ""
 
 #: admin/build/mission-admin.js:152
@@ -6774,14 +6979,6 @@ msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/donors/AddDonorDrawer.js:76
-#: admin/src/pages/donors/EditDonorDrawer.js:110
-#: admin/src/pages/transactions/AddDonationDrawer.js:294
-msgid "Please enter a valid email address."
-msgstr ""
-
-#: admin/build/mission-admin.js:191
-#: admin/build/mission-admin.js:244
 #: admin/src/pages/donors/AddDonorDrawer.js:100
 #: admin/src/pages/donors/EditDonorDrawer.js:132
 #: admin/src/pages/transactions/AddDonationDrawer.js:337
@@ -7471,36 +7668,79 @@ msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/settings/email-templates.js:315
-msgid "Account activation"
+msgid "Team invitation"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/settings/email-templates.js:316
+msgid "Sent to someone a captain invites to join a private team"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:335
+msgid "Team member joined"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:336
+msgid "Sent to a captain when a new member joins their team"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:345
+#: admin/src/pages/settings/email-templates.js:373
+msgid "Captain name"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:349
+#: blocks/build/team-members/index.js:1
+#: blocks/src/team-members/index.js:53
+msgid "Member name"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:363
+msgid "Team approved"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:364
+msgid "Sent to a captain when their team page goes live"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:390
+msgid "Account activation"
+msgstr ""
+
+#: admin/build/mission-admin.js:191
+#: admin/src/pages/settings/email-templates.js:391
 msgid "Email verification for the donor dashboard"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:326
+#: admin/src/pages/settings/email-templates.js:401
 msgid "Password reset"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:327
+#: admin/src/pages/settings/email-templates.js:402
 msgid "Sent when a donor requests a new password"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:337
+#: admin/src/pages/settings/email-templates.js:412
 msgid "Email change verification"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:338
+#: admin/src/pages/settings/email-templates.js:413
 msgid "Sent to the new address for confirmation"
 msgstr ""
 
 #: admin/build/mission-admin.js:191
-#: admin/src/pages/settings/email-templates.js:348
+#: admin/src/pages/settings/email-templates.js:423
 msgid "New email"
 msgstr ""
 
@@ -7565,13 +7805,13 @@ msgstr ""
 
 #. translators: %d: number of additional recipients
 #: admin/build/mission-admin.js:192
-#: admin/src/pages/settings/EmailsPanel.js:153
+#: admin/src/pages/settings/EmailsPanel.js:154
 msgid "and %d others"
 msgstr ""
 
 #: admin/build/mission-admin.js:192
 #: admin/build/mission-admin.js:244
-#: admin/src/pages/settings/EmailsPanel.js:204
+#: admin/src/pages/settings/EmailsPanel.js:205
 #: admin/src/pages/tools/StatusPanel.js:270
 #: blocks/build/donation-form/index.js:2
 #: blocks/src/donation-form/edit/tabs/PaymentsTab.js:105
@@ -7580,67 +7820,72 @@ msgstr ""
 
 #. translators: %s: email address
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:216
+#: admin/src/pages/settings/EmailsPanel.js:217
 msgid "Remove %s"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:238
+#: admin/src/pages/settings/EmailsPanel.js:239
 msgid "Add email…"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:246
+#: admin/src/pages/settings/EmailsPanel.js:247
 msgid "Press Enter to add. Default is your WordPress admin email."
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:313
+#: admin/src/pages/settings/EmailsPanel.js:317
 msgid "Sender Details"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:316
+#: admin/src/pages/settings/EmailsPanel.js:320
 msgid "Used as the “from” address on all outgoing emails."
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:327
+#: admin/src/pages/settings/EmailsPanel.js:331
 msgid "From name"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:344
+#: admin/src/pages/settings/EmailsPanel.js:348
 msgid "From email"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:361
+#: admin/src/pages/settings/EmailsPanel.js:365
 msgid "Reply-to email"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:373
+#: admin/src/pages/settings/EmailsPanel.js:377
 msgid "Leave blank to use the from email address."
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:383
+#: admin/src/pages/settings/EmailsPanel.js:387
 msgid "Donation Emails"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:401
+#: admin/src/pages/settings/EmailsPanel.js:405
 msgid "Account Emails"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:419
+#: admin/src/pages/settings/EmailsPanel.js:423
 msgid "Fundraiser Emails"
 msgstr ""
 
 #: admin/build/mission-admin.js:193
-#: admin/src/pages/settings/EmailsPanel.js:437
+#: admin/src/pages/settings/EmailsPanel.js:441
+msgid "Team Emails"
+msgstr ""
+
+#: admin/build/mission-admin.js:193
+#: admin/src/pages/settings/EmailsPanel.js:459
 msgid "Admin Notifications"
 msgstr ""
 
@@ -8267,11 +8512,6 @@ msgstr ""
 #: admin/build/mission-admin.js:195
 #: admin/src/pages/subscriptions/SubscriptionDetail.js:215
 msgid "Failed to cancel subscription."
-msgstr ""
-
-#: admin/build/mission-admin.js:195
-#: admin/src/pages/Teams.js:75
-msgid "Members"
 msgstr ""
 
 #: admin/build/mission-admin.js:195
@@ -11775,11 +12015,6 @@ msgstr ""
 #: blocks/build/team-members/index.js:1
 #: blocks/src/team-members/index.js:52
 msgid "Team captain"
-msgstr ""
-
-#: blocks/build/team-members/index.js:1
-#: blocks/src/team-members/index.js:53
-msgid "Member name"
 msgstr ""
 
 #: blocks/build/team-story/index.js:1

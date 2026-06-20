@@ -13,17 +13,17 @@
             "of %s": [
                 "de %s"
             ],
-            "Preview uses sample data.": [
-                "La vista previa usa datos de ejemplo."
-            ],
             "Captain": [
                 "Capit\u00e1n"
             ],
-            "Team captain": [
-                "Capit\u00e1n del equipo"
-            ],
             "Member name": [
                 "Nombre del miembro"
+            ],
+            "Preview uses sample data.": [
+                "La vista previa usa datos de ejemplo."
+            ],
+            "Team captain": [
+                "Capit\u00e1n del equipo"
             ]
         }
     }

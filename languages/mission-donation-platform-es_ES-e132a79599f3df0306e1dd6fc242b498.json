@@ -10,15 +10,6 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
-            "Total Raised": [
-                "Total recaudado"
-            ],
-            "Campaign": [
-                "Campa\u00f1a"
-            ],
-            "Settings": [
-                "Ajustes"
-            ],
             "Number of Donations": [
                 "N\u00famero de donaciones"
             ],
@@ -28,6 +19,18 @@
             "Average Donation": [
                 "Donaci\u00f3n media"
             ],
+            "Top Donation": [
+                "Donaci\u00f3n principal"
+            ],
+            "Total Raised": [
+                "Total recaudado"
+            ],
+            "Campaign": [
+                "Campa\u00f1a"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
             "Medium": [
                 "Mediana"
             ],
@@ -36,9 +39,6 @@
             ],
             "If empty, the campaign will be detected from the current post.": [
                 "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."
-            ],
-            "Top Donation": [
-                "Donaci\u00f3n principal"
             ],
             "Small": [
                 "Peque\u00f1a"
