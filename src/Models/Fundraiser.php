@@ -173,6 +173,37 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Detach this fundraiser from its team and fire the left event.
+	 *
+	 * Clears both the team association and the captain flag. Safe to call on a
+	 * fundraiser with no team (a no-op that still reports success).
+	 *
+	 * @return bool True on success.
+	 */
+	public function leave_team(): bool {
+		$team = $this->team();
+
+		$this->team_id         = null;
+		$this->is_team_captain = false;
+
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		if ( $team ) {
+			/**
+			 * Fires after a fundraiser leaves a team.
+			 *
+			 * @param Fundraiser $fundraiser The fundraiser that left.
+			 * @param Team       $team       The team they left.
+			 */
+			do_action( 'mission_team_left', $this, $team );
+		}
+
+		return true;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected function shell_post_type(): string {

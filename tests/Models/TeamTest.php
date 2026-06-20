@@ -372,4 +372,168 @@ class TeamTest extends WP_UnitTestCase {
 		$this->assertNull( get_post( $post_id ) );
 		$this->assertNull( Team::find( $id ) );
 	}
+
+	// -------------------------------------------------------------------------
+	// Captain management: invite().
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test invite() creates a pending invitation with a random token.
+	 */
+	public function test_invite_creates_pending_invitation_with_token(): void {
+		$team   = $this->create_team();
+		$invite = $team->invite( 'invitee@example.com' );
+
+		$this->assertInstanceOf( TeamInvitation::class, $invite );
+		$this->assertSame( 'invitee@example.com', $invite->email );
+		$this->assertSame( TeamInvitation::STATUS_PENDING, $invite->status );
+		$this->assertSame( 32, strlen( $invite->token ) );
+		$this->assertSame( $team->id, $invite->team_id );
+	}
+
+	/**
+	 * Test invite() rejects an invalid email address.
+	 */
+	public function test_invite_rejects_invalid_email(): void {
+		$team   = $this->create_team();
+		$result = $team->invite( 'not-an-email' );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invalid_email', $result->get_error_code() );
+	}
+
+	/**
+	 * Test invite() reuses an outstanding pending invitation rather than duplicating.
+	 */
+	public function test_invite_dedupes_pending_invitation(): void {
+		$team  = $this->create_team();
+		$first = $team->invite( 'invitee@example.com' );
+
+		$second = $team->invite( 'invitee@example.com' );
+
+		$this->assertSame( $first->id, $second->id );
+		$this->assertCount( 1, $team->invitations() );
+	}
+
+	/**
+	 * Test invite() rejects someone who is already a member.
+	 */
+	public function test_invite_rejects_existing_member(): void {
+		$campaign = new Campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+		$campaign->save();
+
+		$donor = new \MissionDP\Models\Donor( [ 'email' => 'member@example.com', 'first_name' => 'Mem' ] );
+		$donor->save();
+
+		$team = $this->create_team( [ 'campaign_id' => $campaign->id ] );
+		$this->create_member( $team->id, $donor->id, [ 'campaign_id' => $campaign->id ] );
+
+		$result = $team->invite( 'member@example.com' );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'already_member', $result->get_error_code() );
+	}
+
+	// -------------------------------------------------------------------------
+	// Captain management: remove_member().
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test remove_member() clears the member's team association.
+	 */
+	public function test_remove_member_clears_team(): void {
+		$team    = $this->create_team();
+		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$team->set_captain( $captain );
+		$member = $this->create_member( $team->id, 2 );
+
+		$this->assertTrue( $team->remove_member( $member ) );
+		$this->assertNull( Fundraiser::find( $member->id )->team_id );
+		$this->assertSame( 1, $team->member_count() );
+	}
+
+	/**
+	 * Test remove_member() refuses to remove the captain.
+	 */
+	public function test_remove_member_refuses_captain(): void {
+		$team    = $this->create_team();
+		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$team->set_captain( $captain );
+
+		$result = $team->remove_member( $captain );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'cannot_remove_captain', $result->get_error_code() );
+		$this->assertSame( $team->id, Fundraiser::find( $captain->id )->team_id );
+	}
+
+	/**
+	 * Test remove_member() rejects a fundraiser on a different team.
+	 */
+	public function test_remove_member_rejects_non_member(): void {
+		$team  = $this->create_team();
+		$other = $this->create_team( [ 'name' => 'Others' ] );
+		$alien = $this->create_member( $other->id, 1 );
+
+		$result = $team->remove_member( $alien );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'not_a_member', $result->get_error_code() );
+	}
+
+	// -------------------------------------------------------------------------
+	// Captain management: promote_captain().
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test promote_captain() swaps the flag on both fundraisers and the team FK.
+	 */
+	public function test_promote_captain_updates_both_sides(): void {
+		$team    = $this->create_team();
+		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$team->set_captain( $captain );
+		$member = $this->create_member( $team->id, 2 );
+
+		$this->assertTrue( $team->promote_captain( $member ) );
+
+		$this->assertSame( $member->id, Team::find( $team->id )->captain_id );
+		$this->assertTrue( Fundraiser::find( $member->id )->is_team_captain );
+		$this->assertFalse( Fundraiser::find( $captain->id )->is_team_captain );
+	}
+
+	/**
+	 * Test promote_captain() fires the captain-promoted action.
+	 */
+	public function test_promote_captain_fires_action(): void {
+		$fired = false;
+		add_action(
+			'mission_team_captain_promoted',
+			function () use ( &$fired ) {
+				$fired = true;
+			}
+		);
+
+		$team    = $this->create_team();
+		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$team->set_captain( $captain );
+		$member = $this->create_member( $team->id, 2 );
+
+		$team->promote_captain( $member );
+
+		$this->assertTrue( $fired );
+	}
+
+	/**
+	 * Test promote_captain() rejects a non-member.
+	 */
+	public function test_promote_captain_rejects_non_member(): void {
+		$team  = $this->create_team();
+		$other = $this->create_team( [ 'name' => 'Others' ] );
+		$alien = $this->create_member( $other->id, 1 );
+
+		$result = $team->promote_captain( $alien );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'not_a_member', $result->get_error_code() );
+	}
 }

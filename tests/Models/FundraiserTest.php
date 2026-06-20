@@ -231,6 +231,34 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertSame( [ $fundraiser->id, $team->id ], $fired );
 	}
 
+	/**
+	 * Test leave_team() clears the team, captain flag, and fires mission_team_left.
+	 */
+	public function test_leave_team_clears_team_and_fires_event(): void {
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
+		$team->save();
+
+		$fired = [];
+		add_action(
+			'mission_team_left',
+			function ( $fundraiser, $left ) use ( &$fired ) {
+				$fired = [ $fundraiser->id, $left->id ];
+			},
+			10,
+			2
+		);
+
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+		$fundraiser->join_team( $team, true );
+
+		$this->assertTrue( $fundraiser->leave_team() );
+
+		$this->assertNull( $fundraiser->team_id );
+		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertNull( Fundraiser::find( $fundraiser->id )->team_id );
+		$this->assertSame( [ $fundraiser->id, $team->id ], $fired );
+	}
+
 	// -------------------------------------------------------------------------
 	// query() / count() tests.
 	// -------------------------------------------------------------------------

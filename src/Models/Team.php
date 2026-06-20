@@ -9,6 +9,7 @@ namespace MissionDP\Models;
 
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\TeamDataStore;
+use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -291,6 +292,130 @@ class Team extends Model {
 		 * @param Team $team The deactivated team.
 		 */
 		do_action( 'mission_team_deactivated', $this );
+
+		return true;
+	}
+
+	/**
+	 * Invite an email address to join this (private) team.
+	 *
+	 * Idempotent per (team, email): an outstanding pending invite is returned
+	 * as-is. The bearer token is a fresh CSPRNG value; the email and sent_at
+	 * stamp are handled by the email listener, not here.
+	 *
+	 * @param string $email The invitee's email address.
+	 * @return TeamInvitation|WP_Error The invitation, or an error.
+	 */
+	public function invite( string $email ): TeamInvitation|WP_Error {
+		$email = sanitize_email( $email );
+
+		if ( ! is_email( $email ) ) {
+			return new WP_Error( 'invalid_email', __( 'Please enter a valid email address.', 'mission-donation-platform' ) );
+		}
+
+		// Already a member of this team? Nothing to invite.
+		$member = Fundraiser::query(
+			[
+				'team_id'  => $this->id,
+				'per_page' => 1,
+			]
+		);
+		foreach ( $member as $fundraiser ) {
+			if ( strtolower( (string) $fundraiser->donor()?->email ) === strtolower( $email ) ) {
+				return new WP_Error( 'already_member', __( 'That person is already on the team.', 'mission-donation-platform' ) );
+			}
+		}
+
+		// Reuse an outstanding pending invite rather than minting duplicates.
+		$existing = TeamInvitation::query(
+			[
+				'team_id'  => $this->id,
+				'email'    => $email,
+				'status'   => TeamInvitation::STATUS_PENDING,
+				'per_page' => 1,
+			]
+		);
+		if ( $existing ) {
+			do_action( 'mission_team_invitation_created', $existing[0] );
+			return $existing[0];
+		}
+
+		$invitation = new TeamInvitation(
+			[
+				'team_id' => $this->id,
+				'email'   => $email,
+				'token'   => bin2hex( random_bytes( 16 ) ),
+				'status'  => TeamInvitation::STATUS_PENDING,
+			]
+		);
+		$invitation->save();
+
+		return $invitation;
+	}
+
+	/**
+	 * Remove a member from this team.
+	 *
+	 * The captain cannot be removed; promote a successor first. Clears the
+	 * member's team association.
+	 *
+	 * @param Fundraiser $fundraiser The member to remove.
+	 * @return bool|WP_Error True on success, or an error.
+	 */
+	public function remove_member( Fundraiser $fundraiser ): bool|WP_Error {
+		if ( (int) $fundraiser->team_id !== (int) $this->id ) {
+			return new WP_Error( 'not_a_member', __( 'That person is not on this team.', 'mission-donation-platform' ) );
+		}
+
+		if ( (int) $fundraiser->id === (int) $this->captain_id ) {
+			return new WP_Error( 'cannot_remove_captain', __( 'Promote another member to captain before leaving the team.', 'mission-donation-platform' ) );
+		}
+
+		return $fundraiser->leave_team();
+	}
+
+	/**
+	 * Promote a member to captain, demoting the current captain.
+	 *
+	 * Updates both sides of the circular captain/team association: the old
+	 * captain's flag is cleared, the new captain's flag is set, and the team's
+	 * captain_id is repointed.
+	 *
+	 * @param Fundraiser $fundraiser The member to promote.
+	 * @return bool|WP_Error True on success, or an error.
+	 */
+	public function promote_captain( Fundraiser $fundraiser ): bool|WP_Error {
+		if ( (int) $fundraiser->team_id !== (int) $this->id ) {
+			return new WP_Error( 'not_a_member', __( 'That person is not on this team.', 'mission-donation-platform' ) );
+		}
+
+		if ( (int) $fundraiser->id === (int) $this->captain_id ) {
+			return true;
+		}
+
+		$old_captain = $this->captain();
+
+		if ( $old_captain ) {
+			$old_captain->is_team_captain = false;
+			$old_captain->save();
+		}
+
+		$fundraiser->is_team_captain = true;
+		$fundraiser->save();
+
+		$this->captain_id = (int) $fundraiser->id;
+		if ( ! $this->save() ) {
+			return false;
+		}
+
+		/**
+		 * Fires after a team captain is changed.
+		 *
+		 * @param Team       $team        The team.
+		 * @param Fundraiser $captain     The new captain.
+		 * @param Fundraiser|null $previous The previous captain, if any.
+		 */
+		do_action( 'mission_team_captain_promoted', $this, $fundraiser, $old_captain );
 
 		return true;
 	}
