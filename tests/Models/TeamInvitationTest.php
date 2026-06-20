@@ -139,4 +139,62 @@ class TeamInvitationTest extends WP_UnitTestCase {
 
 		$this->assertSame( $team->id, $invitation->team()->id );
 	}
+
+	/**
+	 * Test the token round-trips through save and find.
+	 */
+	public function test_token_round_trip(): void {
+		$invitation = $this->create_invitation( [ 'token' => 'abc123token' ] );
+
+		$found = TeamInvitation::find( $invitation->id );
+		$this->assertSame( 'abc123token', $found->token );
+	}
+
+	/**
+	 * Test find_by_token() locates the invitation, or returns null.
+	 */
+	public function test_find_by_token(): void {
+		$invitation = $this->create_invitation( [ 'token' => 'lookup-token' ] );
+
+		$found = TeamInvitation::find_by_token( 'lookup-token' );
+		$this->assertNotNull( $found );
+		$this->assertSame( $invitation->id, $found->id );
+
+		$this->assertNull( TeamInvitation::find_by_token( 'missing' ) );
+		$this->assertNull( TeamInvitation::find_by_token( '' ) );
+	}
+
+	/**
+	 * Test is_pending() reflects the status.
+	 */
+	public function test_is_pending(): void {
+		$pending  = $this->create_invitation( [ 'status' => TeamInvitation::STATUS_PENDING ] );
+		$accepted = $this->create_invitation( [ 'status' => TeamInvitation::STATUS_ACCEPTED ] );
+
+		$this->assertTrue( $pending->is_pending() );
+		$this->assertFalse( $accepted->is_pending() );
+	}
+
+	/**
+	 * Test is_expired() compares date_created against the filterable TTL.
+	 */
+	public function test_is_expired(): void {
+		$fresh = $this->create_invitation( [ 'date_created' => current_time( 'mysql', true ) ] );
+		$this->assertFalse( $fresh->is_expired() );
+
+		$stale = $this->create_invitation( [ 'date_created' => gmdate( 'Y-m-d H:i:s', time() - ( 20 * DAY_IN_SECONDS ) ) ] );
+		$this->assertTrue( $stale->is_expired() );
+	}
+
+	/**
+	 * Test the TTL filter changes the expiry window.
+	 */
+	public function test_is_expired_respects_ttl_filter(): void {
+		$invitation = $this->create_invitation( [ 'date_created' => gmdate( 'Y-m-d H:i:s', time() - ( 2 * DAY_IN_SECONDS ) ) ] );
+
+		$this->assertFalse( $invitation->is_expired() );
+
+		add_filter( 'mission_team_invitation_ttl', static fn() => DAY_IN_SECONDS );
+		$this->assertTrue( $invitation->is_expired() );
+	}
 }

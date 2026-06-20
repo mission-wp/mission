@@ -318,10 +318,12 @@ class Schema {
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   team_id bigint(20) unsigned NOT NULL DEFAULT 0,
   email varchar(255) NOT NULL DEFAULT '',
+  token varchar(64) NOT NULL DEFAULT '',
   status varchar(20) NOT NULL DEFAULT 'pending',
   date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   sent_at datetime DEFAULT NULL,
   PRIMARY KEY  (id),
+  UNIQUE KEY token (token),
   KEY team_id (team_id),
   KEY email (email)
 ) {$charset_collate};",

@@ -45,6 +45,13 @@ class TeamInvitationDataStore implements DataStoreInterface {
 		$data = $this->model_to_row( $model );
 
 		$data['date_created'] = $data['date_created'] ?: $now;
+
+		// Every invitation needs a unique bearer token (the column is UNIQUE).
+		if ( empty( $data['token'] ) ) {
+			$data['token'] = bin2hex( random_bytes( 16 ) );
+			$model->token  = $data['token'];
+		}
+
 		unset( $data['id'] );
 
 		$wpdb->insert( $this->get_table_name(), $data );
@@ -72,6 +79,24 @@ class TeamInvitationDataStore implements DataStoreInterface {
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
+			ARRAY_A
+		);
+
+		return $row ? $this->row_to_model( $row ) : null;
+	}
+
+	/**
+	 * Read an invitation by its bearer token.
+	 *
+	 * @param string $token The invitation token.
+	 *
+	 * @return TeamInvitation|null
+	 */
+	public function read_by_token( string $token ): ?TeamInvitation {
+		global $wpdb;
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare( 'SELECT * FROM %i WHERE token = %s', $this->get_table_name(), $token ),
 			ARRAY_A
 		);
 
@@ -222,6 +247,7 @@ class TeamInvitationDataStore implements DataStoreInterface {
 			'id'           => $model->id,
 			'team_id'      => $model->team_id,
 			'email'        => $model->email,
+			'token'        => $model->token,
 			'status'       => $model->status,
 			'date_created' => $model->date_created,
 			'sent_at'      => $model->sent_at,
