@@ -105,6 +105,8 @@ class ActivityFeedModule {
 		add_action( 'mission_team_created', [ $this, 'on_team_created' ] );
 		add_action( 'mission_team_approved', [ $this, 'on_team_approved' ] );
 		add_action( 'mission_team_joined', [ $this, 'on_team_joined' ], 10, 2 );
+		add_action( 'mission_team_invitation_created', [ $this, 'on_team_invited' ] );
+		add_action( 'mission_team_captain_promoted', [ $this, 'on_team_captain_promoted' ], 10, 3 );
 
 		// Campaign milestone reached.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
@@ -697,6 +699,50 @@ class ActivityFeedModule {
 				'donor_id'        => $fundraiser->donor_id,
 				'donor_name'      => $donor?->full_name() ?: '',
 				'is_team_captain' => $fundraiser->is_team_captain,
+			]
+		);
+	}
+
+	/**
+	 * Handle an invitation being sent to join a team.
+	 *
+	 * @param object $invitation TeamInvitation model.
+	 *
+	 * @return void
+	 */
+	public function on_team_invited( object $invitation ): void {
+		$team = $invitation->team();
+
+		$this->log(
+			'team_invited',
+			'team',
+			(int) $invitation->team_id,
+			[
+				'team_name' => $team?->name ?: '',
+				'email'     => $invitation->email,
+			]
+		);
+	}
+
+	/**
+	 * Handle a team captain being changed.
+	 *
+	 * @param object      $team     Team model.
+	 * @param object      $captain  The new captain fundraiser.
+	 * @param object|null $previous The previous captain fundraiser, if any.
+	 *
+	 * @return void
+	 */
+	public function on_team_captain_promoted( object $team, object $captain, ?object $previous = null ): void {
+		$this->log(
+			'team_captain_promoted',
+			'team',
+			(int) $team->id,
+			[
+				'team_name'        => $team->name,
+				'captain_id'       => (int) $captain->id,
+				'captain_name'     => $captain->donor()?->full_name() ?: '',
+				'previous_captain' => $previous?->donor()?->full_name() ?: '',
 			]
 		);
 	}
