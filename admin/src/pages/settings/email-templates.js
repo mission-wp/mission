@@ -309,6 +309,81 @@ export const FUNDRAISER_EMAILS = [
   },
 ];
 
+export const TEAM_EMAILS = [
+  {
+    id: 'p2p_team_invitation',
+    name: __( 'Team invitation', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to someone a captain invites to join a private team',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: "You're invited to join {team_name}",
+    mergeTags: [
+      {
+        tag: '{team_name}',
+        label: __( 'Team name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{organization}',
+        label: __( 'Organization', 'mission-donation-platform' ),
+      },
+    ],
+  },
+  {
+    id: 'p2p_team_member_joined',
+    name: __( 'Team member joined', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a captain when a new member joins their team',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: 'A new member joined {team_name}',
+    mergeTags: [
+      {
+        tag: '{captain_name}',
+        label: __( 'Captain name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{member_name}',
+        label: __( 'Member name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{team_name}',
+        label: __( 'Team name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{organization}',
+        label: __( 'Organization', 'mission-donation-platform' ),
+      },
+    ],
+  },
+  {
+    id: 'p2p_team_approved',
+    name: __( 'Team approved', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a captain when their team page goes live',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: 'Your team {team_name} has been approved',
+    mergeTags: [
+      {
+        tag: '{captain_name}',
+        label: __( 'Captain name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{team_name}',
+        label: __( 'Team name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{organization}',
+        label: __( 'Organization', 'mission-donation-platform' ),
+      },
+    ],
+  },
+];
+
 export const ACCOUNT_EMAILS = [
   {
     id: 'account_activation',
@@ -358,6 +433,7 @@ export const ALL_EMAILS = [
   ...DONATION_EMAILS,
   ...ACCOUNT_EMAILS,
   ...FUNDRAISER_EMAILS,
+  ...TEAM_EMAILS,
   ...ADMIN_EMAILS,
 ];
 
