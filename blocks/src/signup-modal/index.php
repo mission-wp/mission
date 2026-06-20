@@ -61,7 +61,14 @@ defined( 'ABSPATH' ) || exit;
 	$currency          = $campaign->currency ?: 'USD';
 	$default_goal      = Currency::minor_to_major( (int) ( $settings['default_fundraiser_goal'] ?? 0 ), $currency );
 	$story_placeholder = (string) ( $settings['story_placeholder'] ?? '' );
-	$teams             = $teams_enabled ? Team::query( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : [];
+	// Only public teams are browseable; private teams are joined via invitation.
+	$teams = $teams_enabled ? Team::query(
+		[
+			'campaign_id' => $campaign->id,
+			'status'      => Team::STATUS_ACTIVE,
+			'access'      => Team::ACCESS_PUBLIC,
+		]
+	) : [];
 
 	// Resolve a signed-in donor inline (cheap; avoids booting the auth service).
 	$current_user  = wp_get_current_user();

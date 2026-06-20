@@ -203,6 +203,10 @@ class RegisterFundraiserEndpoint {
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					],
+					'invite_token' => [
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					],
 				],
 			]
 		);
@@ -378,6 +382,7 @@ class RegisterFundraiserEndpoint {
 				'dedicate'     => (bool) $request->get_param( 'dedicate' ),
 				'tribute_type' => $request->get_param( 'tribute_type' ),
 				'honoree_name' => (string) $request->get_param( 'honoree_name' ),
+				'invite_token' => (string) $request->get_param( 'invite_token' ),
 			]
 		);
 

@@ -1931,7 +1931,7 @@ class ReportingService {
 							FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d ) AS raised,
 						( SELECT COUNT(*) FROM %i AS m2 WHERE m2.team_id = t.id ) AS member_count
 				 FROM %i AS t
-				 WHERE t.campaign_id = %d AND t.status = %s
+				 WHERE t.campaign_id = %d AND t.status = %s AND t.access = %s
 				 ORDER BY raised DESC, t.id ASC
 				 LIMIT %d",
 				$raised_col,
@@ -1942,6 +1942,7 @@ class ReportingService {
 				$t_table,
 				$campaign_id,
 				\MissionDP\Models\Team::STATUS_ACTIVE,
+				\MissionDP\Models\Team::ACCESS_PUBLIC,
 				$limit
 			),
 			ARRAY_A

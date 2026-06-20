@@ -50,6 +50,7 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisermeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_team_invitations" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
@@ -391,6 +392,112 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( $first['fundraiser']['id'], $second['fundraiser']['id'] );
 		$this->assertSame( 1, Fundraiser::count( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	// -------------------------------------------------------------------------
+	// Private team invitation accept flow.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test joining a private team is blocked without an invitation.
+	 */
+	public function test_register_fundraiser_private_team_blocked_without_invite(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
+		$donor    = new Donor( [ 'email' => 'nope@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000 ] );
+
+		$this->assertNull( $result['team'] );
+		$this->assertNull( Fundraiser::find( $result['fundraiser']['id'] )->team_id );
+	}
+
+	/**
+	 * Test a valid invitation lets the matching email join a private team.
+	 */
+	public function test_register_fundraiser_private_team_accepts_valid_invite(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
+		$invite   = $team->invite( 'invited@example.com' );
+
+		$donor = new Donor( [ 'email' => 'invited@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser(
+			$donor,
+			$campaign,
+			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
+		);
+
+		$this->assertSame( $team->id, $result['team']['id'] );
+		$this->assertSame( $team->id, Fundraiser::find( $result['fundraiser']['id'] )->team_id );
+		$this->assertSame( \MissionDP\Models\TeamInvitation::STATUS_ACCEPTED, \MissionDP\Models\TeamInvitation::find( $invite->id )->status );
+	}
+
+	/**
+	 * Test an invitation for a different email is refused.
+	 */
+	public function test_register_fundraiser_private_team_rejects_email_mismatch(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
+		$invite   = $team->invite( 'someone@example.com' );
+
+		$donor = new Donor( [ 'email' => 'imposter@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser(
+			$donor,
+			$campaign,
+			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
+		);
+
+		$this->assertNull( $result['team'] );
+	}
+
+	/**
+	 * Test an invitation for a different team is refused.
+	 */
+	public function test_register_fundraiser_private_team_rejects_wrong_team(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
+		$other    = Team::register( $campaign->id, 'Other', 100000, Team::ACCESS_PRIVATE );
+		$invite   = $other->invite( 'invited@example.com' );
+
+		$donor = new Donor( [ 'email' => 'invited@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser(
+			$donor,
+			$campaign,
+			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
+		);
+
+		$this->assertNull( $result['team'] );
+	}
+
+	/**
+	 * Test an expired invitation is refused and retired as expired.
+	 */
+	public function test_register_fundraiser_private_team_rejects_expired_invite(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
+		$invite   = $team->invite( 'invited@example.com' );
+
+		$invite->date_created = gmdate( 'Y-m-d H:i:s', time() - ( 30 * DAY_IN_SECONDS ) );
+		$invite->save();
+
+		$donor = new Donor( [ 'email' => 'invited@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser(
+			$donor,
+			$campaign,
+			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
+		);
+
+		$this->assertNull( $result['team'] );
+		$this->assertSame( \MissionDP\Models\TeamInvitation::STATUS_EXPIRED, \MissionDP\Models\TeamInvitation::find( $invite->id )->status );
 	}
 
 	/**

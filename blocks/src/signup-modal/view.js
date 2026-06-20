@@ -82,6 +82,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     teamMode: 'join',
     teamId: '',
     teamName: '',
+    inviteToken: '',
     goal: 0,
     story: '',
     tributeChecked: false,
@@ -452,6 +453,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           dedicate: state.tributeChecked,
           tribute_type: state.tributeType,
           honoree_name: state.honoreeName,
+          invite_token: state.inviteToken,
         } );
         const data = yield res.json();
 
@@ -556,6 +558,18 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       if ( ctx.preselectedTeamId ) {
         state.teamMode = 'join';
         state.teamId = String( ctx.preselectedTeamId );
+      }
+
+      // An invite link (?team_invite=<token>) carries the invitation token and
+      // opens the modal straight away so the invitee can accept.
+      const params = new URLSearchParams( window.location.search );
+      const token = params.get( 'team_invite' );
+      if ( token ) {
+        state.inviteToken = token;
+        state.isOpen = true;
+        state.currentStep = 1;
+        state.step1View = ctx.signedIn ? 'signedin' : 'form';
+        document.body.style.overflow = 'hidden';
       }
     },
   },

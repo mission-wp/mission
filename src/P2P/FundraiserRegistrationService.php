@@ -18,6 +18,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\Models\TeamInvitation;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -193,7 +194,8 @@ class FundraiserRegistrationService {
 	 * @param Donor    $donor    The participant.
 	 * @param Campaign $campaign The parent P2P campaign.
 	 * @param array    $input    Sanitized setup fields (team_mode, team_id, team_name,
-	 *                           goal in minor units, story, dedicate, tribute_type, honoree_name).
+	 *                           goal in minor units, story, dedicate, tribute_type, honoree_name,
+	 *                           invite_token).
 	 * @return array{fundraiser: array, team: ?array} Result payload.
 	 */
 	public function register_fundraiser( Donor $donor, Campaign $campaign, array $input ): array {
@@ -208,7 +210,15 @@ class FundraiserRegistrationService {
 		);
 
 		if ( $existing ) {
-			return $this->result( $existing[0], $existing[0]->team() );
+			$fundraiser = $existing[0];
+
+			// An existing, team-less participant can still accept a team invitation.
+			if ( ! $fundraiser->team_id && ! empty( $input['invite_token'] ) ) {
+				$team = $this->resolve_team( $campaign, $fundraiser, $input, $settings );
+				return $this->result( $fundraiser, $team ?? $fundraiser->team() );
+			}
+
+			return $this->result( $fundraiser, $fundraiser->team() );
 		}
 
 		$status = empty( $settings['approval_required'] ) ? Fundraiser::STATUS_ACTIVE : Fundraiser::STATUS_PENDING;
@@ -278,14 +288,57 @@ class FundraiserRegistrationService {
 
 		$team = Team::find( $team_id );
 
-		// Public, active teams in this campaign only (private/invite is Phase 6).
-		if ( ! $team || $team->campaign_id !== $campaign->id || Team::STATUS_ACTIVE !== $team->status || Team::ACCESS_PUBLIC !== $team->access ) {
+		if ( ! $team || $team->campaign_id !== $campaign->id || Team::STATUS_ACTIVE !== $team->status ) {
+			return null;
+		}
+
+		// Public teams are open to anyone; private teams need a valid invitation.
+		if ( Team::ACCESS_PUBLIC !== $team->access
+			&& ! $this->accept_invitation( $team, $fundraiser->donor(), (string) ( $input['invite_token'] ?? '' ) ) ) {
 			return null;
 		}
 
 		$fundraiser->join_team( $team, false );
 
 		return $team;
+	}
+
+	/**
+	 * Validate an invitation token and mark it accepted.
+	 *
+	 * The token is the only trusted input: the matching row supplies the team and
+	 * email, never the client. A pending invite past its TTL is retired as expired.
+	 *
+	 * @param Team       $team  The team being joined.
+	 * @param Donor|null $donor The accepting donor.
+	 * @param string     $token The bearer token from the invite link.
+	 * @return bool True when the invitation is valid for this team and donor.
+	 */
+	private function accept_invitation( Team $team, ?Donor $donor, string $token ): bool {
+		if ( ! $donor || '' === $token ) {
+			return false;
+		}
+
+		$invitation = TeamInvitation::find_by_token( $token );
+
+		if ( ! $invitation || ! $invitation->is_pending() || (int) $invitation->team_id !== (int) $team->id ) {
+			return false;
+		}
+
+		if ( $invitation->is_expired() ) {
+			$invitation->status = TeamInvitation::STATUS_EXPIRED;
+			$invitation->save();
+			return false;
+		}
+
+		if ( strtolower( $invitation->email ) !== strtolower( (string) $donor->email ) ) {
+			return false;
+		}
+
+		$invitation->status = TeamInvitation::STATUS_ACCEPTED;
+		$invitation->save();
+
+		return true;
 	}
 
 	/**
