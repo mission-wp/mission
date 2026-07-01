@@ -175,6 +175,60 @@ class AttributionTest extends WP_UnitTestCase {
 		$this->assertSame( 0, $fundraiser->fresh()->total_raised );
 	}
 
+	/**
+	 * Test deleting a fundraiser detaches its donations and captaincy.
+	 */
+	public function test_delete_fundraiser_detaches_transactions_and_captaincy(): void {
+		$fundraiser  = $this->make_fundraiser( 1, 1 );
+		$transaction = $this->make_completed( [ 'fundraiser_id' => $fundraiser->id, 'campaign_id' => 1, 'amount' => 5000 ] );
+
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Rangers', 'captain_id' => $fundraiser->id, 'status' => 'active' ] );
+		$team->save();
+
+		$post_id = $fundraiser->post_id;
+		$fundraiser->delete();
+
+		$this->assertNull( Fundraiser::find( $fundraiser->id ) );
+		$this->assertNull( get_post( $post_id ) );
+
+		// The donation stays a campaign donation; the team is left captainless.
+		$fresh = Transaction::find( $transaction->id );
+		$this->assertNull( $fresh->fundraiser_id );
+		$this->assertSame( 1, $fresh->campaign_id );
+		$this->assertNull( Team::find( $team->id )->captain_id );
+	}
+
+	/**
+	 * Test re-crediting a donation rebuilds both fundraisers' totals.
+	 */
+	public function test_recredit_updates_both_fundraisers(): void {
+		$original    = $this->make_fundraiser( 1, 1 );
+		$replacement = $this->make_fundraiser( 1, 2 );
+		$transaction = $this->make_completed( [ 'fundraiser_id' => $original->id, 'amount' => 5000 ] );
+		$this->assertSame( 5000, $original->fresh()->total_raised );
+
+		$transaction->fundraiser_id = $replacement->id;
+		$transaction->save();
+
+		$this->assertSame( 0, $original->fresh()->total_raised );
+		$this->assertSame( 5000, $replacement->fresh()->total_raised );
+		$this->assertSame( 1, $replacement->fresh()->transaction_count );
+	}
+
+	/**
+	 * Test un-crediting a donation (back to the campaign) rebuilds the old total.
+	 */
+	public function test_uncredit_updates_old_fundraiser(): void {
+		$fundraiser  = $this->make_fundraiser( 1, 1 );
+		$transaction = $this->make_completed( [ 'fundraiser_id' => $fundraiser->id, 'amount' => 5000 ] );
+		$this->assertSame( 5000, $fundraiser->fresh()->total_raised );
+
+		$transaction->fundraiser_id = null;
+		$transaction->save();
+
+		$this->assertSame( 0, $fundraiser->fresh()->total_raised );
+	}
+
 	// -------------------------------------------------------------------------
 	// Team rollups (live, no stored aggregates).
 	// -------------------------------------------------------------------------
@@ -257,6 +311,41 @@ class AttributionTest extends WP_UnitTestCase {
 		$this->assertSame( $campaign->id, $result['campaign_id'] );
 		$this->assertNull( $result['fundraiser_id'] );
 		$this->assertNull( $result['team_id'] );
+	}
+
+	/**
+	 * Test pending and deactivated fundraisers stop receiving attribution.
+	 */
+	public function test_resolve_non_active_fundraiser_falls_back_to_campaign(): void {
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+
+		foreach ( [ Fundraiser::STATUS_PENDING, Fundraiser::STATUS_INACTIVE ] as $donor_id => $status ) {
+			$fundraiser = $this->make_fundraiser( $campaign->id, $donor_id + 1, [ 'status' => $status ] );
+
+			$result = DonationAttribution::resolve( $campaign->id, $fundraiser->id, 0 );
+
+			$this->assertSame( $campaign->id, $result['campaign_id'] );
+			$this->assertNull( $result['fundraiser_id'] );
+		}
+	}
+
+	/**
+	 * Test pending and deactivated teams stop receiving attribution.
+	 */
+	public function test_resolve_non_active_team_falls_back_to_campaign(): void {
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+
+		foreach ( [ Team::STATUS_PENDING, Team::STATUS_INACTIVE ] as $status ) {
+			$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => "Rangers {$status}", 'status' => $status ] );
+			$team->save();
+
+			$result = DonationAttribution::resolve( $campaign->id, 0, $team->id );
+
+			$this->assertSame( $campaign->id, $result['campaign_id'] );
+			$this->assertNull( $result['team_id'] );
+		}
 	}
 
 	// -------------------------------------------------------------------------

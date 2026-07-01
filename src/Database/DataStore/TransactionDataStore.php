@@ -253,9 +253,17 @@ class TransactionDataStore implements DataStoreInterface {
 		}
 
 		// Rebuild the fundraiser's stored totals once the row reflects its final
-		// state (a refund or status change can move what counts toward "raised").
-		if ( $model->amount_refunded > $old->amount_refunded || $old->status !== $model->status ) {
+		// state (a refund, status change, or re-credit to a different fundraiser
+		// can move what counts toward "raised"). On a re-credit, both the old and
+		// new fundraiser need their totals rebuilt.
+		$recredited = (int) $old->fundraiser_id !== (int) $model->fundraiser_id;
+
+		if ( $recredited || $model->amount_refunded > $old->amount_refunded || $old->status !== $model->status ) {
 			$this->recompute_fundraiser_aggregates( $model->fundraiser_id );
+		}
+
+		if ( $recredited ) {
+			$this->recompute_fundraiser_aggregates( $old->fundraiser_id );
 		}
 
 		return true;

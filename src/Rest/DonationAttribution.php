@@ -20,8 +20,9 @@ defined( 'ABSPATH' ) || exit;
  * A fundraiser or team is authoritative for its campaign, so the campaign is
  * derived from it (the submitted campaign_id can't disagree). A fundraiser-page
  * gift credits the fundraiser only; its team total rolls up live from member
- * fundraisers. Unknown fundraiser/team IDs are dropped, leaving a plain campaign
- * donation rather than a broken attribution.
+ * fundraisers. Unknown IDs, and fundraisers/teams that aren't active (pending
+ * approval or deactivated pages must stop accruing credit), are dropped, leaving
+ * a plain campaign donation rather than a broken attribution.
  */
 class DonationAttribution {
 
@@ -37,7 +38,7 @@ class DonationAttribution {
 		if ( $fundraiser_id ) {
 			$fundraiser = Fundraiser::find( $fundraiser_id );
 
-			if ( $fundraiser ) {
+			if ( $fundraiser && Fundraiser::STATUS_ACTIVE === $fundraiser->status ) {
 				return [
 					'campaign_id'   => $fundraiser->campaign_id,
 					'fundraiser_id' => $fundraiser->id,
@@ -47,7 +48,7 @@ class DonationAttribution {
 		} elseif ( $team_id ) {
 			$team = Team::find( $team_id );
 
-			if ( $team ) {
+			if ( $team && Team::STATUS_ACTIVE === $team->status ) {
 				return [
 					'campaign_id'   => $team->campaign_id,
 					'fundraiser_id' => null,

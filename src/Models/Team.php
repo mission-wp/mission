@@ -217,15 +217,15 @@ class Team extends Model {
 	}
 
 	/**
-	 * Get the amount raised across all member fundraisers.
+	 * Get the amount raised: member fundraisers plus direct team gifts.
 	 *
-	 * @param bool $is_test Whether to sum the test-mode mirror column.
+	 * @param bool $is_test Whether to sum test-mode amounts.
 	 * @return int Total raised in minor units.
 	 */
 	public function amount_raised( bool $is_test = false ): int {
 		/** @var TeamDataStore $store */
 		$store = static::store();
-		return $store->sum_member_raised( (int) $this->id, $is_test );
+		return $store->sum_amount_raised( (int) $this->id, $is_test );
 	}
 
 	/**
@@ -300,8 +300,9 @@ class Team extends Model {
 	 * Invite an email address to join this (private) team.
 	 *
 	 * Idempotent per (team, email): an outstanding pending invite is returned
-	 * as-is. The bearer token is a fresh CSPRNG value; the email and sent_at
-	 * stamp are handled by the email listener, not here.
+	 * as-is, and only re-emailed after a cooldown so the invite flow can't be
+	 * used to spam an address. The bearer token is a fresh CSPRNG value; the
+	 * email and sent_at stamp are handled by the email listener, not here.
 	 *
 	 * @param string $email The invitee's email address.
 	 * @return TeamInvitation|WP_Error The invitation, or an error.
@@ -314,16 +315,14 @@ class Team extends Model {
 		}
 
 		// Already a member of this team? Nothing to invite.
-		$member = Fundraiser::query(
+		$donor = Donor::find_by_email( $email );
+		if ( $donor && Fundraiser::count(
 			[
 				'team_id'  => $this->id,
-				'per_page' => 1,
+				'donor_id' => $donor->id,
 			]
-		);
-		foreach ( $member as $fundraiser ) {
-			if ( strtolower( (string) $fundraiser->donor()?->email ) === strtolower( $email ) ) {
-				return new WP_Error( 'already_member', __( 'That person is already on the team.', 'mission-donation-platform' ) );
-			}
+		) > 0 ) {
+			return new WP_Error( 'already_member', __( 'That person is already on the team.', 'mission-donation-platform' ) );
 		}
 
 		// Reuse an outstanding pending invite rather than minting duplicates.
@@ -336,8 +335,22 @@ class Team extends Model {
 			]
 		);
 		if ( $existing ) {
-			do_action( 'mission_team_invitation_created', $existing[0] );
-			return $existing[0];
+			$invitation = $existing[0];
+
+			/**
+			 * Filters how long to wait before an outstanding invitation may be re-emailed.
+			 *
+			 * @param int            $cooldown   Cooldown in seconds (default 15 minutes).
+			 * @param TeamInvitation $invitation The outstanding invitation.
+			 */
+			$cooldown  = (int) apply_filters( 'mission_team_invitation_resend_cooldown', 15 * MINUTE_IN_SECONDS, $invitation );
+			$last_sent = $invitation->sent_at ? (int) strtotime( $invitation->sent_at . ' UTC' ) : 0;
+
+			if ( ! $last_sent || ( $last_sent + $cooldown ) <= time() ) {
+				do_action( 'mission_team_invitation_created', $invitation );
+			}
+
+			return $invitation;
 		}
 
 		$invitation = new TeamInvitation(

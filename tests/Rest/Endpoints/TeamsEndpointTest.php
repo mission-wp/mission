@@ -11,6 +11,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\Models\Transaction;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -186,6 +187,18 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 		$this->create_member( $campaign->id, [ 'team_id' => $team->id, 'total_raised' => 30000 ] );
 		$this->create_member( $campaign->id, [ 'team_id' => $team->id, 'total_raised' => 20000 ] );
 
+		// A gift made directly to the team counts toward its raised total.
+		// Mirrored live/test so the assertion holds in either mode.
+		foreach ( [ false, true ] as $is_test ) {
+			( new Transaction( [
+				'status'   => Transaction::STATUS_COMPLETED,
+				'donor_id' => 99,
+				'team_id'  => $team->id,
+				'amount'   => 10000,
+				'is_test'  => $is_test,
+			] ) )->save();
+		}
+
 		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/teams' );
 		$response = $this->server->dispatch( $request );
 		$data     = $response->get_data();
@@ -194,7 +207,7 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $data );
 		$this->assertSame( 'Marathon', $data[0]['campaign_title'] );
 		$this->assertSame( 2, $data[0]['member_count'] );
-		$this->assertSame( 50000, $data[0]['raised'] );
+		$this->assertSame( 60000, $data[0]['raised'] );
 	}
 
 	/**

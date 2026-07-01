@@ -14,6 +14,7 @@ use MissionDP\Models\TeamInvitation;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\RateLimitTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -31,6 +32,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class TeamEndpoint {
 
+	use RateLimitTrait;
 	use ResolveDonorTrait;
 
 	/**
@@ -217,6 +219,11 @@ class TeamEndpoint {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function invite_member( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$rate_error = $this->check_rate_limit( 'team_invite', 20, 3600 );
+		if ( $rate_error ) {
+			return $rate_error;
+		}
+
 		$team = $this->resolve_captained_team( $request );
 
 		if ( is_wp_error( $team ) ) {

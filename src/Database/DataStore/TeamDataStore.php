@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * A team groups peer-to-peer fundraisers under a captain. Teams have no stored
  * aggregate columns; amount_raised is summed live from member fundraisers'
- * aggregate columns via sum_member_raised().
+ * aggregate columns plus direct team gifts via sum_amount_raised().
  */
 class TeamDataStore implements DataStoreInterface {
 
@@ -150,7 +150,11 @@ class TeamDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Delete a team by ID, including its meta.
+	 * Delete a team by ID, including its meta and invitations.
+	 *
+	 * Detaches references first so nothing points at the deleted row: members
+	 * become solo fundraisers, direct team gifts become plain campaign donations
+	 * (their campaign_id stays), and outstanding invitation tokens are destroyed.
 	 *
 	 * @param int $id Team ID.
 	 *
@@ -158,6 +162,29 @@ class TeamDataStore implements DataStoreInterface {
 	 */
 	public function delete( int $id ): bool {
 		global $wpdb;
+
+		$wpdb->update(
+			$wpdb->prefix . 'missiondp_fundraisers',
+			[
+				'team_id'         => null,
+				'is_team_captain' => 0,
+			],
+			[ 'team_id' => $id ],
+			[ '%d', '%d' ],
+			[ '%d' ]
+		);
+		$wpdb->update(
+			$wpdb->prefix . 'missiondp_transactions',
+			[ 'team_id' => null ],
+			[ 'team_id' => $id ],
+			[ '%d' ],
+			[ '%d' ]
+		);
+		$wpdb->delete(
+			$wpdb->prefix . 'missiondp_team_invitations',
+			[ 'team_id' => $id ],
+			[ '%d' ]
+		);
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -173,32 +200,39 @@ class TeamDataStore implements DataStoreInterface {
 	}
 
 	/**
-	 * Sum the amount raised across a team's member fundraisers.
+	 * Sum the amount raised by a team: member fundraisers plus direct team gifts.
 	 *
-	 * Reads the members' stored aggregate columns (no per-transaction scan), so
-	 * it stays consistent with what each fundraiser page displays.
+	 * Members are read from their stored aggregate columns (consistent with what
+	 * each fundraiser page displays); direct gifts are completed transactions with
+	 * this team_id, netted for refunds, matching ReportingService::team_totals().
 	 *
 	 * @param int  $team_id Team ID.
-	 * @param bool $is_test Whether to sum the test-mode mirror column.
+	 * @param bool $is_test Whether to sum test-mode amounts.
 	 *
 	 * @return int Total raised in minor units.
 	 */
-	public function sum_member_raised( int $team_id, bool $is_test = false ): int {
+	public function sum_amount_raised( int $team_id, bool $is_test = false ): int {
 		global $wpdb;
 
 		if ( $team_id <= 0 ) {
 			return 0;
 		}
 
-		$fundraisers_table = $wpdb->prefix . 'missiondp_fundraisers';
-		$column            = $is_test ? 'test_total_raised' : 'total_raised';
+		$fundraisers_table  = $wpdb->prefix . 'missiondp_fundraisers';
+		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
+		$column             = $is_test ? 'test_total_raised' : 'total_raised';
 
 		$total = $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT COALESCE(SUM(%i), 0) FROM %i WHERE team_id = %d',
+				"SELECT ( SELECT COALESCE(SUM(%i), 0) FROM %i WHERE team_id = %d )
+					+ ( SELECT COALESCE(SUM(amount - LEAST(amount_refunded, amount)), 0)
+						FROM %i WHERE team_id = %d AND status = 'completed' AND is_test = %d )",
 				$column,
 				$fundraisers_table,
-				$team_id
+				$team_id,
+				$transactions_table,
+				$team_id,
+				$is_test ? 1 : 0
 			)
 		);
 

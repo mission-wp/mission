@@ -271,4 +271,21 @@ class Donor extends Model {
 			)
 		);
 	}
+
+	/**
+	 * Delete the donor, cascading to their fundraiser records.
+	 *
+	 * A fundraiser record is one person's participation in one campaign; without
+	 * the person it has no meaning, and its shell post would otherwise stay
+	 * published. Model-level deletes so each shell post and detach logic runs.
+	 *
+	 * @return bool
+	 */
+	public function delete(): bool {
+		foreach ( $this->fundraisers() as $fundraiser ) {
+			$fundraiser->delete();
+		}
+
+		return parent::delete();
+	}
 }

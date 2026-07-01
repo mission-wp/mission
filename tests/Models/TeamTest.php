@@ -12,6 +12,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\TeamInvitation;
+use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
 /**
@@ -38,6 +39,7 @@ class TeamTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teammeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
@@ -266,6 +268,35 @@ class TeamTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test amount_raised includes gifts made directly to the team.
+	 */
+	public function test_amount_raised_includes_direct_team_gifts(): void {
+		$team = $this->create_team();
+		$this->create_member( $team->id, 1, [ 'total_raised' => 5000 ] );
+
+		$gift = new Transaction( [
+			'status'   => Transaction::STATUS_COMPLETED,
+			'donor_id' => 2,
+			'team_id'  => $team->id,
+			'amount'   => 10000,
+		] );
+		$gift->save();
+
+		$this->assertSame( 15000, $team->amount_raised() );
+
+		// Partially refunded direct gifts are netted.
+		$gift->amount_refunded = 4000;
+		$gift->save();
+		$this->assertSame( 11000, $team->amount_raised() );
+
+		// Pending and test-mode direct gifts don't count toward the live total.
+		( new Transaction( [ 'status' => Transaction::STATUS_PENDING, 'donor_id' => 3, 'team_id' => $team->id, 'amount' => 999 ] ) )->save();
+		( new Transaction( [ 'status' => Transaction::STATUS_COMPLETED, 'donor_id' => 4, 'team_id' => $team->id, 'amount' => 777, 'is_test' => true ] ) )->save();
+		$this->assertSame( 11000, $team->amount_raised() );
+		$this->assertSame( 777, $team->amount_raised( true ) );
+	}
+
+	/**
 	 * Test progress is 0 without a goal and capped at 100.
 	 */
 	public function test_progress(): void {
@@ -432,6 +463,86 @@ class TeamTest extends WP_UnitTestCase {
 
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertSame( 'already_member', $result->get_error_code() );
+	}
+
+	/**
+	 * Test invite() rejects every existing member, not just the newest one.
+	 */
+	public function test_invite_rejects_existing_member_on_multi_member_team(): void {
+		$campaign = new Campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+		$campaign->save();
+
+		$team   = $this->create_team( [ 'campaign_id' => $campaign->id ] );
+		$emails = [ 'first@example.com', 'second@example.com', 'third@example.com' ];
+
+		foreach ( $emails as $email ) {
+			$donor = new \MissionDP\Models\Donor( [ 'email' => $email, 'first_name' => 'M' ] );
+			$donor->save();
+			$this->create_member( $team->id, $donor->id, [ 'campaign_id' => $campaign->id ] );
+		}
+
+		foreach ( $emails as $email ) {
+			$result = $team->invite( $email );
+
+			$this->assertInstanceOf( \WP_Error::class, $result, "Member {$email} was invitable." );
+			$this->assertSame( 'already_member', $result->get_error_code() );
+		}
+	}
+
+	/**
+	 * Test deleting a team detaches members, direct gifts, and invitations.
+	 */
+	public function test_delete_detaches_members_gifts_and_invitations(): void {
+		$team    = $this->create_team();
+		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+
+		$team->captain_id = $captain->id;
+		$team->save();
+
+		$invite = $team->invite( 'invitee@example.com' );
+		$gift   = new Transaction( [
+			'status'   => Transaction::STATUS_COMPLETED,
+			'donor_id' => 2,
+			'team_id'  => $team->id,
+			'amount'   => 1000,
+		] );
+		$gift->save();
+
+		$post_id = $team->post_id;
+		$team->delete();
+
+		$this->assertNull( Team::find( $team->id ) );
+		$this->assertNull( get_post( $post_id ) );
+		$this->assertNull( TeamInvitation::find( $invite->id ) );
+
+		// Members become solo fundraisers; the direct gift stays with the campaign.
+		$member = Fundraiser::find( $captain->id );
+		$this->assertNull( $member->team_id );
+		$this->assertFalse( $member->is_team_captain );
+		$this->assertNull( Transaction::find( $gift->id )->team_id );
+	}
+
+	/**
+	 * Test re-inviting inside the resend cooldown doesn't re-fire the email event.
+	 */
+	public function test_invite_resend_respects_cooldown(): void {
+		$team   = $this->create_team();
+		$invite = $team->invite( 'invitee@example.com' );
+
+		// Simulate the email listener having just sent the invitation.
+		$invite->sent_at = current_time( 'mysql', true );
+		$invite->save();
+
+		$fired_before = did_action( 'mission_team_invitation_created' );
+		$team->invite( 'invitee@example.com' );
+		$this->assertSame( $fired_before, did_action( 'mission_team_invitation_created' ) );
+
+		// Outside the cooldown the event fires again for a resend.
+		add_filter( 'mission_team_invitation_resend_cooldown', '__return_zero' );
+		$team->invite( 'invitee@example.com' );
+		remove_filter( 'mission_team_invitation_resend_cooldown', '__return_zero' );
+
+		$this->assertSame( $fired_before + 1, did_action( 'mission_team_invitation_created' ) );
 	}
 
 	// -------------------------------------------------------------------------

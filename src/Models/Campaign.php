@@ -563,6 +563,28 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Delete the campaign, cascading to its P2P children.
+	 *
+	 * Fundraisers and teams (and their shell posts, meta, and invitations) can't
+	 * outlive their campaign — a live fundraising page pointing at a deleted
+	 * campaign would keep collecting donations for nothing. Model-level deletes
+	 * so each child's shell post and detach logic runs.
+	 *
+	 * @return bool
+	 */
+	public function delete(): bool {
+		foreach ( Team::query( [ 'campaign_id' => $this->id ] ) as $team ) {
+			$team->delete();
+		}
+
+		foreach ( Fundraiser::query( [ 'campaign_id' => $this->id ] ) as $fundraiser ) {
+			$fundraiser->delete();
+		}
+
+		return parent::delete();
+	}
+
+	/**
 	 * Transparent access to WP Post properties (slug, page_content).
 	 *
 	 * @param string $name Property name.

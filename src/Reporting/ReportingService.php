@@ -1668,22 +1668,27 @@ class ReportingService {
 			)
 		);
 
+		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+		$is_test  = $this->is_test_mode() ? 1 : 0;
+
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT t.id, t.campaign_id, t.name, t.goal, t.status, t.access, t.date_created,
+				"SELECT t.id, t.campaign_id, t.name, t.goal, t.status, t.access, t.date_created,
 						c.title AS campaign_title,
 						cd.first_name AS captain_first_name, cd.last_name AS captain_last_name,
 						( SELECT COUNT(*) FROM %i AS m WHERE m.team_id = t.id ) AS member_count,
-						( SELECT COALESCE(SUM(m2.%i), 0) FROM %i AS m2 WHERE m2.team_id = t.id ) AS raised
+						( SELECT COALESCE(SUM(m2.%i), 0) FROM %i AS m2 WHERE m2.team_id = t.id )
+						+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
+							FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d ) AS raised
 				 FROM %i AS t
 				 LEFT JOIN %i AS c ON t.campaign_id = c.id
 				 LEFT JOIN %i AS cap ON t.captain_id = cap.id
 				 LEFT JOIN %i AS cd ON cap.donor_id = cd.id
-				 ' . $where . "
+				 " . $where . "
 				 ORDER BY t.%i {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
-					[ $f_table, $raised_col, $f_table, $t_table, $c_table, $f_table, $d_table ],
+					[ $f_table, $raised_col, $f_table, $tx_table, $is_test, $t_table, $c_table, $f_table, $d_table ],
 					$where_args,
 					[ $orderby, $per_page, $offset ]
 				)
@@ -1830,12 +1835,24 @@ class ReportingService {
 
 		$t_table    = $wpdb->prefix . 'missiondp_teams';
 		$f_table    = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table   = $wpdb->prefix . 'missiondp_transactions';
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
+		$is_test    = $this->is_test_mode() ? 1 : 0;
 
 		$total   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $t_table ) );
 		$active  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $t_table, \MissionDP\Models\Team::STATUS_ACTIVE ) );
 		$pending = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $t_table, \MissionDP\Models\Team::STATUS_PENDING ) );
-		$raised  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COALESCE(SUM(%i), 0) FROM %i WHERE team_id IS NOT NULL', $raised_col, $f_table ) );
+		$raised  = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT ( SELECT COALESCE(SUM(%i), 0) FROM %i WHERE team_id IS NOT NULL )
+					+ ( SELECT COALESCE(SUM(amount - LEAST(amount_refunded, amount)), 0)
+						FROM %i WHERE team_id IS NOT NULL AND status = 'completed' AND is_test = %d )",
+				$raised_col,
+				$f_table,
+				$tx_table,
+				$is_test
+			)
+		);
 
 		return [
 			'total_teams'   => $total,

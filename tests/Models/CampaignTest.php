@@ -729,4 +729,34 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $campaign->teams() );
 		$this->assertSame( $fundraiser->id, $campaign->fundraisers()[0]->id );
 	}
+
+	/**
+	 * Test deleting a P2P campaign removes its fundraisers, teams, and their
+	 * shell posts — no orphaned fundraising pages left live on the site.
+	 */
+	public function test_delete_cascades_p2p_children(): void {
+		$campaign = $this->create_campaign( [ 'type' => 'p2p' ] );
+		$survivor = $this->create_campaign( [ 'title' => 'Other', 'type' => 'p2p' ] );
+
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1, 'status' => 'active' ] );
+		$fundraiser->save();
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A', 'status' => 'active' ] );
+		$team->save();
+
+		$other_fundraiser = new Fundraiser( [ 'campaign_id' => $survivor->id, 'donor_id' => 1 ] );
+		$other_fundraiser->save();
+
+		$fundraiser_post = $fundraiser->post_id;
+		$team_post       = $team->post_id;
+
+		$campaign->trash();
+
+		$this->assertNull( Fundraiser::find( $fundraiser->id ) );
+		$this->assertNull( Team::find( $team->id ) );
+		$this->assertNull( get_post( $fundraiser_post ) );
+		$this->assertNull( get_post( $team_post ) );
+
+		// Another campaign's records are untouched.
+		$this->assertNotNull( Fundraiser::find( $other_fundraiser->id ) );
+	}
 }
