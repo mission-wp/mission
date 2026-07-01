@@ -104,6 +104,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     resendIn: 0,
     resendLabel: '',
     successUrl: '',
+    isPending: false,
     copyLabel: 'Copy',
 
     get isStep1() {
@@ -463,6 +464,8 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         }
 
         state.successUrl = ( data.fundraiser && data.fundraiser.url ) || '';
+        state.isPending =
+          ( ( data.fundraiser && data.fundraiser.status ) || '' ) === 'pending';
         state.currentStep = 3;
       } catch ( e ) {
         state.formError = GENERIC_ERROR;

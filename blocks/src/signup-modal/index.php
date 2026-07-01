@@ -111,6 +111,22 @@ defined( 'ABSPATH' ) || exit;
 	 */
 	$success_message = apply_filters( 'mission_signup_success_message', __( 'Your page is live. Share it with friends and family to start raising funds.', 'mission-donation-platform' ), $campaign );
 
+	/**
+	 * Filters the heading on the sign-up success screen when approval is pending.
+	 *
+	 * @param string   $title    Default heading.
+	 * @param Campaign $campaign The campaign being fundraised for.
+	 */
+	$pending_title = apply_filters( 'mission_signup_pending_title', __( "You're almost there!", 'mission-donation-platform' ), $campaign );
+
+	/**
+	 * Filters the message on the sign-up success screen when approval is pending.
+	 *
+	 * @param string   $message  Default message.
+	 * @param Campaign $campaign The campaign being fundraised for.
+	 */
+	$pending_message = apply_filters( 'mission_signup_pending_message', __( "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share.", 'mission-donation-platform' ), $campaign );
+
 	ob_start();
 	?>
 <div
@@ -286,9 +302,9 @@ defined( 'ABSPATH' ) || exit;
 					<button type="button" class="mission-su__btn mission-su__btn--ghost" data-wp-bind--hidden="state.signedIn" data-wp-on--click="actions.back"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></button>
 				</div>
 
-				<!-- Step 3: success -->
+				<!-- Step 3: success (live page, or submitted pending approval) -->
 				<div class="mission-su__step" data-wp-class--is-active="state.isStep3">
-					<div class="mission-su__success">
+					<div class="mission-su__success" data-wp-bind--hidden="state.isPending">
 						<h2 class="mission-su__title mission-su__title--success"><?php echo esc_html( $success_title ); ?></h2>
 						<p class="mission-su__subtitle"><?php echo esc_html( $success_message ); ?></p>
 						<div class="mission-su__share">
@@ -298,6 +314,11 @@ defined( 'ABSPATH' ) || exit;
 							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareEmail" aria-label="<?php esc_attr_e( 'Share by email', 'mission-donation-platform' ); ?>">@</button>
 						</div>
 						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
+					</div>
+					<div class="mission-su__success" data-wp-bind--hidden="!state.isPending">
+						<h2 class="mission-su__title mission-su__title--success"><?php echo esc_html( $pending_title ); ?></h2>
+						<p class="mission-su__subtitle"><?php echo esc_html( $pending_message ); ?></p>
+						<button type="button" class="mission-su__btn" data-wp-on--click="actions.close"><?php esc_html_e( 'Done', 'mission-donation-platform' ); ?></button>
 					</div>
 				</div>
 			</div>
