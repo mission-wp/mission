@@ -1,0 +1,60 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/campaign-progress\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "donors": [
+                "lahjoittajaa"
+            ],
+            "days remaining": [
+                "p\u00e4iv\u00e4\u00e4 j\u00e4ljell\u00e4"
+            ],
+            "Donate Now": [
+                "Lahjoita nyt"
+            ],
+            "Campaign": [
+                "Kampanja"
+            ],
+            "Settings": [
+                "Asetukset"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "Valitse kampanja tai sijoita t\u00e4m\u00e4 lohko kampanjasivulle."
+            ],
+            "Scroll to donation form": [
+                "Vierit\u00e4 lahjoituslomakkeeseen"
+            ],
+            "Custom URL": [
+                "Mukautettu URL"
+            ],
+            "Hide": [
+                "Piilota"
+            ],
+            "Donate button": [
+                "Lahjoita-painike"
+            ],
+            "Donate URL": [
+                "Lahjoituksen URL"
+            ],
+            "Show donors": [
+                "N\u00e4yt\u00e4 lahjoittajat"
+            ],
+            "Show days remaining": [
+                "N\u00e4yt\u00e4 j\u00e4ljell\u00e4 olevat p\u00e4iv\u00e4t"
+            ],
+            "This campaign has no end date, so days remaining will be hidden automatically.": [
+                "T\u00e4ll\u00e4 kampanjalla ei ole p\u00e4\u00e4ttymisp\u00e4iv\u00e4\u00e4, joten j\u00e4ljell\u00e4 olevat p\u00e4iv\u00e4t piilotetaan automaattisesti."
+            ]
+        }
+    }
+}
