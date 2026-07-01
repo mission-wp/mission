@@ -298,6 +298,31 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * Test no reset code is mailed for a donor linked to a privileged user, and
+	 * the OTP reset path can never change that user's password.
+	 */
+	public function test_reset_refuses_privileged_accounts(): void {
+		$donor = new Donor( [ 'email' => 'admin-donor@example.com', 'first_name' => 'Ad', 'last_name' => 'Min' ] );
+		$donor->save();
+
+		$admin_id = self::factory()->user->create( [
+			'role'      => 'administrator',
+			'user_pass' => 'adminpass99',
+			'user_email' => 'admin-donor@example.com',
+		] );
+		$donor->user_id = $admin_id;
+		$donor->save();
+		wp_set_current_user( 0 );
+
+		$service = $this->service();
+		$service->send_code( 'admin-donor@example.com', 'reset' );
+
+		// No code mailed: silent no-op, indistinguishable from a missing account.
+		$this->assertSame( '', $this->last_code );
+		$this->assertTrue( wp_check_password( 'adminpass99', get_userdata( $admin_id )->user_pass, $admin_id ) );
+	}
+
 	// -------------------------------------------------------------------------
 	// register_fundraiser()
 	// -------------------------------------------------------------------------

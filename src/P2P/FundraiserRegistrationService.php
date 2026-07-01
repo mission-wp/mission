@@ -89,9 +89,11 @@ class FundraiserRegistrationService {
 	 */
 	public function send_code( string $email, string $purpose ): void {
 		if ( self::PURPOSE_RESET === $purpose ) {
-			// Only mail a reset code to a real account; silent otherwise.
+			// Only mail a reset code to a donor-role account; silent otherwise so
+			// responses don't reveal whether (or what kind of) an account exists.
+			// Privileged users who also donated must use core's reset flow.
 			$donor = Donor::find_by_email( $email );
-			if ( ! $donor || ! $donor->user_id ) {
+			if ( ! $donor || ! $donor->user_id || ! $this->auth->is_donor_user( $donor->user_id ) ) {
 				return;
 			}
 

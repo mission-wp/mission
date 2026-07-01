@@ -261,12 +261,11 @@ class DonorAuthService {
 	 * @throws \RuntimeException If the user is missing or is not a donor.
 	 */
 	public function login_user( int $user_id ): Donor {
-		$user = get_userdata( $user_id );
-
-		if ( ! $user || ! in_array( 'missiondp_donor', $user->roles, true ) ) {
+		if ( ! $this->is_donor_user( $user_id ) ) {
 			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
 		}
 
+		$user  = get_userdata( $user_id );
 		$donor = Donor::find_by_user_id( $user_id );
 
 		if ( ! $donor ) {
@@ -333,14 +332,36 @@ class DonorAuthService {
 	}
 
 	/**
+	 * Whether a user ID belongs to a donor-role account.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return bool
+	 */
+	public function is_donor_user( int $user_id ): bool {
+		$user = get_userdata( $user_id );
+
+		return $user && in_array( 'missiondp_donor', $user->roles, true );
+	}
+
+	/**
 	 * Set a new password on an existing user (after a verified reset grant).
+	 *
+	 * Refuses non-donor accounts: a donor record can be linked to a privileged
+	 * user (an admin who donated), and the OTP reset flow must never become a
+	 * password-change path for those accounts.
 	 *
 	 * @param int    $user_id  WordPress user ID.
 	 * @param string $password New plain-text password.
 	 * @return void
+	 *
+	 * @throws \RuntimeException If the password is too weak or the user is not a donor.
 	 */
 	public function set_password( int $user_id, string $password ): void {
 		$this->validate_password_length( $password );
+
+		if ( ! $this->is_donor_user( $user_id ) ) {
+			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
+		}
 
 		// Destroys other sessions for the user, which is the intended behavior.
 		wp_set_password( $password, $user_id );

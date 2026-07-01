@@ -278,4 +278,20 @@ class DonorAuthServiceTest extends WP_UnitTestCase {
 
 		$this->assertTrue( wp_check_password( 'brandnewpw2', get_userdata( $donor->user_id )->user_pass, $donor->user_id ) );
 	}
+
+	/**
+	 * Test set_password() refuses a privileged (non-donor) account and leaves
+	 * its password unchanged.
+	 */
+	public function test_set_password_rejects_non_donor(): void {
+		$admin_id = self::factory()->user->create( [ 'role' => 'administrator', 'user_pass' => 'adminpass99' ] );
+		$service  = new DonorAuthService( $this->stub_email_module() );
+
+		try {
+			$service->set_password( $admin_id, 'attackerpw1' );
+			$this->fail( 'Expected RuntimeException for a non-donor user.' );
+		} catch ( \RuntimeException $e ) {
+			$this->assertTrue( wp_check_password( 'adminpass99', get_userdata( $admin_id )->user_pass, $admin_id ) );
+		}
+	}
 }
