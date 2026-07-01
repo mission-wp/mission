@@ -207,6 +207,61 @@ class EmailModuleTest extends WP_UnitTestCase {
 		$this->assertSame( '', $tags['{campaign}'] );
 		$this->assertSame( '', $tags['{receipt_id}'] );
 		$this->assertSame( '', $tags['{note_content}'] );
+		$this->assertSame( '', $tags['{team_name}'] );
+		$this->assertSame( '', $tags['{giver_name}'] );
+	}
+
+	/**
+	 * Test the P2P tags offered by the template editor resolve from listener data.
+	 */
+	public function test_build_merge_tags_p2p_data(): void {
+		$captain = new Donor( [ 'first_name' => 'Cap' ] );
+
+		$tags = $this->module->build_merge_tags(
+			[
+				'donor'            => $captain,
+				'team'             => (object) [ 'name' => 'Runners' ],
+				'member_name'      => 'Jane Doe',
+				'giver_name'       => 'Generous Gil',
+				'milestone_label'  => '50%',
+				'raised_formatted' => '$500.00',
+				'goal_formatted'   => '$1,000.00',
+				'page_url'         => 'https://example.com/fundraiser/jane',
+				'accept_url'       => 'https://example.com/team/runners?team_invite=abc',
+			]
+		);
+
+		$this->assertSame( 'Runners', $tags['{team_name}'] );
+		$this->assertSame( 'Cap', $tags['{captain_name}'] );
+		$this->assertSame( 'Jane Doe', $tags['{member_name}'] );
+		$this->assertSame( 'Generous Gil', $tags['{giver_name}'] );
+		$this->assertSame( '50%', $tags['{milestone}'] );
+		$this->assertSame( '$500.00', $tags['{amount}'] );
+		$this->assertSame( '$1,000.00', $tags['{goal}'] );
+		$this->assertSame( 'https://example.com/fundraiser/jane', $tags['{page_url}'] );
+		$this->assertSame( 'https://example.com/team/runners?team_invite=abc', $tags['{accept_url}'] );
+	}
+
+	/**
+	 * Test a customized body has P2P merge tags replaced when the email renders.
+	 */
+	public function test_render_template_replaces_p2p_tags_in_custom_body(): void {
+		$this->set_email_settings( 'p2p_team_member_joined', [ 'body' => '<p>{member_name} joined {team_name}!</p>' ] );
+
+		$module = new EmailModule();
+		$module->init();
+
+		$html = $module->render_template(
+			'p2p-team-member-joined',
+			[
+				'donor'       => new Donor( [ 'first_name' => 'Cap' ] ),
+				'team'        => (object) [ 'name' => 'Runners' ],
+				'member_name' => 'Jane Doe',
+				'subject'     => 'x',
+			]
+		);
+
+		$this->assertStringContainsString( 'Jane Doe joined Runners!', $html );
 	}
 
 	// -------------------------------------------------------------------------

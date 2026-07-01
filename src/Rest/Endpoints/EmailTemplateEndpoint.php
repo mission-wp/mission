@@ -47,6 +47,9 @@ class EmailTemplateEndpoint {
 		'p2p_fundraiser_approved'          => 'p2p-fundraiser-approved',
 		'p2p_fundraiser_received_donation' => 'p2p-fundraiser-received-donation',
 		'p2p_fundraiser_milestone'         => 'p2p-fundraiser-milestone',
+		'p2p_team_invitation'              => 'p2p-team-invitation',
+		'p2p_team_member_joined'           => 'p2p-team-member-joined',
+		'p2p_team_approved'                => 'p2p-team-approved',
 	];
 
 	/**
@@ -80,6 +83,9 @@ class EmailTemplateEndpoint {
 			'p2p_fundraiser_approved'          => __( 'Your fundraising page is live', 'mission-donation-platform' ),
 			'p2p_fundraiser_received_donation' => __( 'You received a {amount} donation!', 'mission-donation-platform' ),
 			'p2p_fundraiser_milestone'         => __( "You've reached {milestone} of your goal!", 'mission-donation-platform' ),
+			'p2p_team_invitation'              => __( "You're invited to join {team_name}", 'mission-donation-platform' ),
+			'p2p_team_member_joined'           => __( 'A new member joined {team_name}', 'mission-donation-platform' ),
+			'p2p_team_approved'                => __( 'Your team {team_name} has been approved', 'mission-donation-platform' ),
 		];
 	}
 
@@ -91,7 +97,7 @@ class EmailTemplateEndpoint {
 	public function register(): void {
 		register_rest_route(
 			RestModule::NAMESPACE,
-			'/email/template/(?P<type>[a-z_]+)',
+			'/email/template/(?P<type>[a-z0-9_]+)',
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_template' ],
@@ -233,8 +239,43 @@ class EmailTemplateEndpoint {
 				$data['raised_formatted'] = '{amount}';
 				$data['goal_formatted']   = '{goal}';
 				break;
+
+			case 'p2p_team_invitation':
+				$data['team']       = (object) [ 'name' => '{team_name}' ];
+				$data['accept_url'] = '{accept_url}';
+				break;
+
+			case 'p2p_team_member_joined':
+				$data['donor']       = $this->fake_captain();
+				$data['team']        = (object) [ 'name' => '{team_name}' ];
+				$data['member_name'] = '{member_name}';
+				$data['page_url']    = '{page_url}';
+				break;
+
+			case 'p2p_team_approved':
+				$data['donor']    = $this->fake_captain();
+				$data['team']     = (object) [ 'name' => '{team_name}' ];
+				$data['page_url'] = '{page_url}';
+				break;
 		}
 
 		return $data;
+	}
+
+	/**
+	 * A fake donor whose name renders as the captain merge tag (team emails
+	 * greet the captain, so the editor should show {captain_name}).
+	 *
+	 * @return Donor
+	 */
+	private function fake_captain(): Donor {
+		return new Donor(
+			[
+				'id'         => 0,
+				'email'      => '',
+				'first_name' => '{captain_name}',
+				'last_name'  => '',
+			]
+		);
 	}
 }

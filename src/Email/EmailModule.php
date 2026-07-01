@@ -182,8 +182,8 @@ class EmailModule {
 			'{organization}'       => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
 			'{site_url}'           => home_url(),
 
-			// Donation / transaction.
-			'{amount}'             => $data['amount_formatted'] ?? '',
+			// Donation / transaction. Milestone emails pass the raised total.
+			'{amount}'             => $data['amount_formatted'] ?? $data['raised_formatted'] ?? '',
 			'{date}'               => $data['date_formatted'] ?? '',
 			'{campaign}'           => $data['campaign_name'] ?? '',
 			'{receipt_id}'         => isset( $data['transaction'] ) ? (string) $data['transaction']->id : '',
@@ -208,6 +208,16 @@ class EmailModule {
 			'{tribute_type_label}' => $data['tribute_type_label'] ?? '',
 			'{honoree_name}'       => $data['honoree_name'] ?? '',
 			'{message}'            => $data['message'] ?? '',
+
+			// Peer-to-peer. The donor in team emails is the captain.
+			'{page_url}'           => $data['page_url'] ?? '',
+			'{giver_name}'         => $data['giver_name'] ?? '',
+			'{milestone}'          => $data['milestone_label'] ?? '',
+			'{goal}'               => $data['goal_formatted'] ?? '',
+			'{team_name}'          => isset( $data['team'] ) ? (string) $data['team']->name : '',
+			'{member_name}'        => $data['member_name'] ?? '',
+			'{captain_name}'       => $donor->first_name ?? '',
+			'{accept_url}'         => $data['accept_url'] ?? '',
 		];
 	}
 
