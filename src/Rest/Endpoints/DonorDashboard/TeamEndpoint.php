@@ -15,6 +15,7 @@ use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
 use WP_REST_Request;
@@ -33,6 +34,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class TeamEndpoint {
 
+	use DonorDashboardPrepareTrait;
 	use RateLimitTrait;
 	use ResolveDonorTrait;
 
@@ -189,6 +191,11 @@ class TeamEndpoint {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function upload_photo( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$rate_error = $this->check_rate_limit( 'p2p_photo_upload', 30, HOUR_IN_SECONDS );
+		if ( $rate_error ) {
+			return $rate_error;
+		}
+
 		$team = $this->resolve_captained_team( $request );
 
 		if ( is_wp_error( $team ) ) {
@@ -207,8 +214,12 @@ class TeamEndpoint {
 			return $attachment_id;
 		}
 
+		$previous = (string) $team->cover_image;
+
 		$team->cover_image = (string) $attachment_id;
 		$team->save();
+
+		$this->uploader->cleanup_replaced_image( $previous );
 
 		return new WP_REST_Response(
 			[
@@ -338,7 +349,7 @@ class TeamEndpoint {
 	 */
 	private function prepare_team( Team $team ): array {
 		$is_test  = (bool) $this->settings->get( 'test_mode' );
-		$currency = strtoupper( (string) ( $this->settings->get( 'currency' ) ?: 'USD' ) );
+		$currency = $this->dashboard_currency();
 		$cover    = $team->cover_image;
 		$raised   = $team->amount_raised( $is_test );
 
@@ -358,15 +369,9 @@ class TeamEndpoint {
 			'raised'          => $raised,
 			'raised_display'  => $raised_display,
 			'progress'        => $team->progress( $is_test ),
-			'progress_label'  => $goal_display
-				/* translators: 1: amount raised, 2: goal amount */
-				? sprintf( __( '%1$s raised of %2$s goal', 'mission-donation-platform' ), $raised_display, $goal_display )
-				/* translators: %s: amount raised */
-				: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_display ),
-			'cover_image'     => ctype_digit( $cover ) ? (int) $cover : 0,
-			'cover_image_url' => '' !== $cover && ctype_digit( $cover )
-				? ( wp_get_attachment_image_url( (int) $cover, 'large' ) ?: '' )
-				: $cover,
+			'progress_label'  => $this->progress_label( $raised_display, $goal_display ),
+			'cover_image'     => $this->cover_image_id( $cover ),
+			'cover_image_url' => $this->cover_image_url( $cover ),
 			'url'             => $team->get_url() ?? '',
 			'members'         => $this->prepare_members( $team, $is_test, $currency ),
 			'invitations'     => $this->prepare_invitations( $team ),
@@ -395,8 +400,9 @@ class TeamEndpoint {
 			},
 			$team->members(
 				[
-					'orderby' => 'total_raised',
-					'order'   => 'DESC',
+					'orderby'  => 'total_raised',
+					'order'    => 'DESC',
+					'per_page' => -1,
 				]
 			)
 		);
@@ -415,7 +421,12 @@ class TeamEndpoint {
 				'email' => $invitation->email,
 				'sent'  => ! empty( $invitation->sent_at ),
 			],
-			$team->invitations( [ 'status' => TeamInvitation::STATUS_PENDING ] )
+			$team->invitations(
+				[
+					'status'   => TeamInvitation::STATUS_PENDING,
+					'per_page' => -1,
+				]
+			)
 		);
 	}
 

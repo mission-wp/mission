@@ -12,6 +12,8 @@ use MissionDP\Models\Fundraiser;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
+use MissionDP\Rest\Traits\RateLimitTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
@@ -30,6 +32,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class FundraiserEndpoint {
 
+	use DonorDashboardPrepareTrait;
+	use RateLimitTrait;
 	use ResolveDonorTrait;
 
 	/**
@@ -185,6 +189,11 @@ class FundraiserEndpoint {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function upload_photo( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$rate_error = $this->check_rate_limit( 'p2p_photo_upload', 30, HOUR_IN_SECONDS );
+		if ( $rate_error ) {
+			return $rate_error;
+		}
+
 		$fundraiser = $this->resolve_owned_fundraiser( $request );
 
 		if ( is_wp_error( $fundraiser ) ) {
@@ -203,8 +212,12 @@ class FundraiserEndpoint {
 			return $attachment_id;
 		}
 
+		$previous = (string) $fundraiser->cover_image;
+
 		$fundraiser->cover_image = (string) $attachment_id;
 		$fundraiser->save();
+
+		$this->uploader->cleanup_replaced_image( $previous );
 
 		return new WP_REST_Response(
 			[
@@ -231,7 +244,7 @@ class FundraiserEndpoint {
 		$page     = max( 1, (int) ( $request->get_param( 'page' ) ?: 1 ) );
 
 		$result   = $this->reporting->fundraiser_donations_query( (int) $fundraiser->id, $per_page, $page );
-		$currency = strtoupper( (string) ( $this->settings->get( 'currency' ) ?: 'USD' ) );
+		$currency = $this->dashboard_currency();
 
 		$items = array_map(
 			static function ( array $row ) use ( $currency ): array {
@@ -290,7 +303,7 @@ class FundraiserEndpoint {
 	 */
 	private function prepare_fundraiser( Fundraiser $fundraiser ): array {
 		$is_test  = (bool) $this->settings->get( 'test_mode' );
-		$currency = strtoupper( (string) ( $this->settings->get( 'currency' ) ?: 'USD' ) );
+		$currency = $this->dashboard_currency();
 		$campaign = $fundraiser->campaign();
 		$team     = $fundraiser->team();
 		$cover    = $fundraiser->cover_image;
@@ -313,15 +326,9 @@ class FundraiserEndpoint {
 			'raised_display'  => $raised_display,
 			'donor_count'     => $is_test ? $fundraiser->test_donor_count : $fundraiser->donor_count,
 			'progress'        => $fundraiser->progress( $is_test ),
-			'progress_label'  => $goal_display
-				/* translators: 1: amount raised, 2: goal amount */
-				? sprintf( __( '%1$s raised of %2$s goal', 'mission-donation-platform' ), $raised_display, $goal_display )
-				/* translators: %s: amount raised */
-				: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_display ),
-			'cover_image'     => ctype_digit( $cover ) ? (int) $cover : 0,
-			'cover_image_url' => '' !== $cover && ctype_digit( $cover )
-				? ( wp_get_attachment_image_url( (int) $cover, 'large' ) ?: '' )
-				: $cover,
+			'progress_label'  => $this->progress_label( $raised_display, $goal_display ),
+			'cover_image'     => $this->cover_image_id( $cover ),
+			'cover_image_url' => $this->cover_image_url( $cover ),
 			'url'             => $fundraiser->get_url() ?? '',
 			'team_id'         => $fundraiser->team_id,
 			'team_name'       => $team?->name ?? '',

@@ -7,16 +7,10 @@
 
 namespace MissionDP\Rest\Endpoints;
 
-use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
-use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\Args;
-use MissionDP\Rest\CollectionParams;
 use MissionDP\Rest\RestErrors;
-use MissionDP\Rest\RestModule;
-use MissionDP\Rest\Traits\AdminPermissionTrait;
-use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_Error;
@@ -26,102 +20,24 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Teams endpoint class.
  */
-class TeamsEndpoint {
-
-	use AdminPermissionTrait;
+class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 
 	/**
-	 * Constructor.
+	 * The model class this endpoint manages.
 	 *
-	 * @param ReportingService $reporting Reporting service.
-	 * @param SettingsService  $settings  Settings service.
+	 * @return class-string
 	 */
-	public function __construct(
-		private ReportingService $reporting,
-		private SettingsService $settings,
-	) {}
+	protected function model_class(): string {
+		return Team::class;
+	}
 
 	/**
-	 * Register REST routes.
+	 * The route slug.
 	 *
-	 * @return void
+	 * @return string
 	 */
-	public function register(): void {
-		register_rest_route(
-			RestModule::NAMESPACE,
-			'/teams',
-			[
-				[
-					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_teams' ],
-					'permission_callback' => [ $this, 'check_admin_permission' ],
-					'args'                => $this->get_collection_params(),
-				],
-				[
-					'methods'             => 'POST',
-					'callback'            => [ $this, 'create_team' ],
-					'permission_callback' => [ $this, 'check_admin_permission' ],
-					'args'                => $this->get_create_params(),
-				],
-			]
-		);
-
-		register_rest_route(
-			RestModule::NAMESPACE,
-			'/teams/summary',
-			[
-				'methods'             => 'GET',
-				'callback'            => [ $this, 'get_summary' ],
-				'permission_callback' => [ $this, 'check_admin_permission' ],
-			]
-		);
-
-		register_rest_route(
-			RestModule::NAMESPACE,
-			'/teams/bulk',
-			[
-				'methods'             => 'POST',
-				'callback'            => [ $this, 'bulk_action' ],
-				'permission_callback' => [ $this, 'check_admin_permission' ],
-				'args'                => $this->get_bulk_params(),
-			]
-		);
-
-		register_rest_route(
-			RestModule::NAMESPACE,
-			'/teams/(?P<id>\d+)',
-			[
-				[
-					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_team' ],
-					'permission_callback' => [ $this, 'check_admin_permission' ],
-					'args'                => [ 'id' => Args::id() ],
-				],
-				[
-					'methods'             => 'PUT',
-					'callback'            => [ $this, 'update_team' ],
-					'permission_callback' => [ $this, 'check_admin_permission' ],
-					'args'                => $this->get_update_params(),
-				],
-				[
-					'methods'             => 'DELETE',
-					'callback'            => [ $this, 'delete_team' ],
-					'permission_callback' => [ $this, 'check_admin_permission' ],
-					'args'                => [ 'id' => Args::id() ],
-				],
-			]
-		);
-
-		register_rest_route(
-			RestModule::NAMESPACE,
-			'/teams/(?P<id>\d+)/approve',
-			[
-				'methods'             => 'POST',
-				'callback'            => [ $this, 'approve_team' ],
-				'permission_callback' => [ $this, 'check_admin_permission' ],
-				'args'                => [ 'id' => Args::id() ],
-			]
-		);
+	protected function route_base(): string {
+		return 'teams';
 	}
 
 	/**
@@ -134,59 +50,49 @@ class TeamsEndpoint {
 	}
 
 	/**
-	 * GET handler — paginated teams with campaign/captain/aggregate data.
+	 * Message for a create attempt against a non-P2P campaign.
 	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
+	 * @return string
 	 */
-	public function get_teams( WP_REST_Request $request ): WP_REST_Response {
-		$per_page = $request->get_param( 'per_page' ) ?? 25;
-
-		$result = $this->reporting->teams_with_relations(
-			[
-				'per_page'    => $per_page,
-				'page'        => $request->get_param( 'page' ) ?? 1,
-				'orderby'     => $request->get_param( 'orderby' ) ?? 'date_created',
-				'order'       => $request->get_param( 'order' ) ?? 'DESC',
-				'search'      => $request->get_param( 'search' ),
-				'campaign_id' => $request->get_param( 'campaign_id' ),
-				'status'      => $request->get_param( 'status' ),
-			]
-		);
-
-		$total       = $result['total'];
-		$total_pages = $per_page > 0 ? (int) ceil( $total / $per_page ) : 0;
-
-		$response = new WP_REST_Response( $result['items'], 200 );
-		$response->header( 'X-WP-Total', (string) $total );
-		$response->header( 'X-WP-TotalPages', (string) $total_pages );
-
-		return $response;
+	protected function invalid_campaign_type_message(): string {
+		return __( 'Teams can only be added to peer-to-peer campaigns.', 'mission-donation-platform' );
 	}
 
 	/**
-	 * GET handler — aggregate team stats.
+	 * The not-found error for teams.
 	 *
-	 * @return WP_REST_Response
+	 * @return WP_Error
 	 */
-	public function get_summary(): WP_REST_Response {
-		return new WP_REST_Response( $this->reporting->team_summary(), 200 );
+	protected function not_found_error(): WP_Error {
+		return RestErrors::team_not_found();
 	}
 
 	/**
-	 * GET handler — a single team with detail fields.
+	 * Allowed orderby values for the collection route.
 	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
+	 * @return string[]
 	 */
-	public function get_team( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$team = Team::find( $request->get_param( 'id' ) );
+	protected function allowed_orderby(): array {
+		return [ 'date_created', 'name', 'goal', 'status' ];
+	}
 
-		if ( ! $team ) {
-			return RestErrors::team_not_found();
-		}
+	/**
+	 * Run the list query with campaign/captain/aggregate data.
+	 *
+	 * @param array $args Query args.
+	 * @return array{items: array, total: int}
+	 */
+	protected function query_list( array $args ): array {
+		return $this->reporting->teams_with_relations( $args );
+	}
 
-		return new WP_REST_Response( $this->prepare_team( $team ), 200 );
+	/**
+	 * Aggregate team stats.
+	 *
+	 * @return array<string, mixed>
+	 */
+	protected function summary(): array {
+		return $this->reporting->team_summary();
 	}
 
 	/**
@@ -195,19 +101,11 @@ class TeamsEndpoint {
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function create_team( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$campaign = Campaign::find( (int) $request->get_param( 'campaign_id' ) );
+	public function create_item( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$campaign = $this->find_p2p_campaign( (int) $request->get_param( 'campaign_id' ) );
 
-		if ( ! $campaign ) {
-			return RestErrors::campaign_not_found();
-		}
-
-		if ( ! $campaign->is_p2p() ) {
-			return new WP_Error(
-				'invalid_campaign_type',
-				__( 'Teams can only be added to peer-to-peer campaigns.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
+		if ( is_wp_error( $campaign ) ) {
+			return $campaign;
 		}
 
 		$captain_id    = $request->get_param( 'captain_id' );
@@ -247,7 +145,7 @@ class TeamsEndpoint {
 			$team->set_captain( $captain );
 		}
 
-		return new WP_REST_Response( $this->prepare_team( $team ), 201 );
+		return new WP_REST_Response( $this->prepare_item( $team ), 201 );
 	}
 
 	/**
@@ -256,7 +154,7 @@ class TeamsEndpoint {
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public function update_team( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+	public function update_item( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$team = Team::find( $request->get_param( 'id' ) );
 
 		if ( ! $team ) {
@@ -311,101 +209,9 @@ class TeamsEndpoint {
 			}
 		}
 
-		// Status transitions go through the model methods so approval fires the
-		// email/activity events (a plain field write would approve silently).
-		$status = $request->get_param( 'status' );
-		if ( null !== $status && $status !== $team->status ) {
-			if ( Team::STATUS_ACTIVE === $status ) {
-				$team->approve();
-			} elseif ( Team::STATUS_INACTIVE === $status ) {
-				$team->deactivate();
-			} else {
-				$team->status = $status;
-				$team->save();
-			}
-		}
+		$this->apply_status_transition( $team, $request->get_param( 'status' ) );
 
-		return new WP_REST_Response( $this->prepare_team( $team ), 200 );
-	}
-
-	/**
-	 * DELETE handler — removes a team record.
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function delete_team( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$team = Team::find( $request->get_param( 'id' ) );
-
-		if ( ! $team ) {
-			return RestErrors::team_not_found();
-		}
-
-		$team->delete();
-
-		return new WP_REST_Response(
-			[
-				'deleted' => true,
-				'id'      => (int) $request->get_param( 'id' ),
-			],
-			200
-		);
-	}
-
-	/**
-	 * POST handler — approves a single team.
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function approve_team( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$team = Team::find( $request->get_param( 'id' ) );
-
-		if ( ! $team ) {
-			return RestErrors::team_not_found();
-		}
-
-		$team->approve();
-
-		return new WP_REST_Response( $this->prepare_team( $team ), 200 );
-	}
-
-	/**
-	 * POST handler — bulk approve or deactivate teams.
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
-	 */
-	public function bulk_action( WP_REST_Request $request ): WP_REST_Response {
-		$action  = $request->get_param( 'action' );
-		$ids     = $request->get_param( 'ids' );
-		$updated = [];
-		$errors  = [];
-
-		foreach ( $ids as $id ) {
-			$team = Team::find( $id );
-
-			if ( ! $team ) {
-				$errors[] = $id;
-				continue;
-			}
-
-			$result = 'approve' === $action ? $team->approve() : $team->deactivate();
-
-			if ( $result ) {
-				$updated[] = $id;
-			} else {
-				$errors[] = $id;
-			}
-		}
-
-		return new WP_REST_Response(
-			[
-				'updated' => $updated,
-				'errors'  => $errors,
-			],
-			200
-		);
+		return new WP_REST_Response( $this->prepare_item( $team ), 200 );
 	}
 
 	/**
@@ -416,70 +222,45 @@ class TeamsEndpoint {
 	 * @return WP_Error|null Error when invalid, null when valid or unset.
 	 */
 	private function validate_captain( mixed $captain_id, int $campaign_id ): ?WP_Error {
-		if ( empty( $captain_id ) ) {
-			return null;
-		}
-
-		$captain = Fundraiser::find( (int) $captain_id );
-
-		if ( ! $captain || $captain->campaign_id !== $campaign_id ) {
-			return new WP_Error(
-				'invalid_captain',
-				__( 'The selected captain is not a fundraiser in this campaign.', 'mission-donation-platform' ),
-				[ 'status' => 400 ]
-			);
-		}
-
-		return null;
+		return $this->validate_campaign_relation(
+			$captain_id,
+			$campaign_id,
+			Fundraiser::class,
+			'invalid_captain',
+			__( 'The selected captain is not a fundraiser in this campaign.', 'mission-donation-platform' )
+		);
 	}
 
 	/**
 	 * Prepare a team model for a REST response.
 	 *
-	 * @param Team $team Team model.
+	 * @param object $item Team model.
 	 * @return array<string, mixed>
 	 */
-	private function prepare_team( Team $team ): array {
+	protected function prepare_item( object $item ): array {
+		/** @var Team $item */
 		$is_test  = (bool) $this->settings->get( 'test_mode' );
-		$campaign = $team->campaign();
-		$captain  = $team->captain();
+		$campaign = $item->campaign();
+		$captain  = $item->captain();
 
 		return [
-			'id'             => (int) $team->id,
-			'campaign_id'    => $team->campaign_id,
+			'id'             => (int) $item->id,
+			'campaign_id'    => $item->campaign_id,
 			'campaign_title' => $campaign?->title ?? '',
-			'name'           => $team->name,
-			'description'    => $team->description,
-			'goal'           => $team->goal,
-			'status'         => $team->status,
-			'access'         => $team->access,
-			'captain_id'     => $team->captain_id,
+			'name'           => $item->name,
+			'description'    => $item->description,
+			'goal'           => $item->goal,
+			'status'         => $item->status,
+			'access'         => $item->access,
+			'captain_id'     => $item->captain_id,
 			'captain_name'   => $captain?->donor()?->full_name() ?? '',
-			'member_count'   => $team->member_count(),
-			'raised'         => $team->amount_raised( $is_test ),
-			'progress'       => $team->progress( $is_test ),
-			'cover_image'    => $team->cover_image,
-			'date_created'   => $team->date_created,
-			'date_modified'  => $team->date_modified,
+			'member_count'   => $item->member_count(),
+			'raised'         => $item->amount_raised( $is_test ),
+			'progress'       => $item->progress( $is_test ),
+			'cover_image'    => $item->cover_image,
+			'date_created'   => $item->date_created,
+			'date_modified'  => $item->date_modified,
 		];
-	}
-
-	/**
-	 * Collection query parameters.
-	 *
-	 * @return array<string, array<string, mixed>>
-	 */
-	private function get_collection_params(): array {
-		return array_merge(
-			CollectionParams::base(
-				orderby: [ 'date_created', 'name', 'goal', 'status' ],
-				default_orderby: 'date_created'
-			),
-			[
-				'campaign_id' => Args::integer(),
-				'status'      => Args::enum( Team::STATUSES ),
-			]
-		);
 	}
 
 	/**
@@ -487,7 +268,7 @@ class TeamsEndpoint {
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
-	private function get_create_params(): array {
+	protected function get_create_params(): array {
 		return [
 			'campaign_id' => Args::integer( [ 'required' => true ] ),
 			'name'        => Args::string( [ 'required' => true ] ),
@@ -509,7 +290,7 @@ class TeamsEndpoint {
 	 *
 	 * @return array<string, array<string, mixed>>
 	 */
-	private function get_update_params(): array {
+	protected function get_update_params(): array {
 		return [
 			'id'          => Args::id(),
 			'name'        => Args::string(),
@@ -524,23 +305,6 @@ class TeamsEndpoint {
 				'type' => [ 'integer', 'null' ],
 			],
 			'cover_image' => Args::string(),
-		];
-	}
-
-	/**
-	 * Bulk-action endpoint parameters.
-	 *
-	 * @return array<string, array<string, mixed>>
-	 */
-	private function get_bulk_params(): array {
-		return [
-			'action' => Args::enum( [ 'approve', 'deactivate' ], [ 'required' => true ] ),
-			'ids'    => [
-				'type'              => 'array',
-				'required'          => true,
-				'items'             => [ 'type' => 'integer' ],
-				'sanitize_callback' => static fn( $ids ) => array_map( 'absint', (array) $ids ),
-			],
 		];
 	}
 }

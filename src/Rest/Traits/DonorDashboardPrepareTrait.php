@@ -61,6 +61,56 @@ trait DonorDashboardPrepareTrait {
 	}
 
 	/**
+	 * The store currency code for dashboard responses.
+	 *
+	 * @return string Uppercase ISO currency code.
+	 */
+	private function dashboard_currency(): string {
+		return strtoupper( (string) ( $this->settings->get( 'currency' ) ?: 'USD' ) );
+	}
+
+	/**
+	 * Human-readable progress label for a fundraiser or team.
+	 *
+	 * @param string $raised_display Formatted amount raised.
+	 * @param string $goal_display   Formatted goal, or an empty string when no goal is set.
+	 * @return string
+	 */
+	private function progress_label( string $raised_display, string $goal_display ): string {
+		return $goal_display
+			/* translators: 1: amount raised, 2: goal amount */
+			? sprintf( __( '%1$s raised of %2$s goal', 'mission-donation-platform' ), $raised_display, $goal_display )
+			/* translators: %s: amount raised */
+			: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_display );
+	}
+
+	/**
+	 * The attachment ID a cover image field references, or 0 when it holds a URL.
+	 *
+	 * Fundraiser/team cover images are a varchar that may hold either form.
+	 *
+	 * @param string $cover Attachment ID or image URL.
+	 * @return int
+	 */
+	private function cover_image_id( string $cover ): int {
+		return ctype_digit( $cover ) ? (int) $cover : 0;
+	}
+
+	/**
+	 * Resolve a cover image field (attachment ID or URL) to a URL.
+	 *
+	 * @param string $cover Attachment ID or image URL.
+	 * @return string
+	 */
+	private function cover_image_url( string $cover ): string {
+		if ( '' !== $cover && ctype_digit( $cover ) ) {
+			return wp_get_attachment_image_url( (int) $cover, 'large' ) ?: '';
+		}
+
+		return $cover;
+	}
+
+	/**
 	 * Prepare a transaction for REST response.
 	 *
 	 * @param Transaction $transaction Transaction model.
