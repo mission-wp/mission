@@ -3,6 +3,7 @@
 .mission-top-teams {
   --mission-text: #1e1e1e;
   --mission-text-secondary: #6b7280;
+  --mission-text-light: #999;
   --mission-bg-secondary: #f7f7f7;
   --mission-border: #f0f0f0;
   --mission-radius: 8px;
@@ -13,7 +14,7 @@
 .mission-tt-rank {
   font-size: 13px;
   font-weight: 600;
-  color: #bbb;
+  color: var(--mission-text-light);
   min-width: 22px;
   flex-shrink: 0;
 }

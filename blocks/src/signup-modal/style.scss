@@ -1,11 +1,11 @@
 // Fundraiser sign-up modal — frontend styles.
 
 .mission-su {
-  --mission-text: #1a1a1a;
-  --mission-text-secondary: #666;
+  --mission-text: #1e1e1e;
+  --mission-text-secondary: #6b7280;
   --mission-border: #ddd;
   --mission-bg: #fff;
-  --mission-bg-light: #f7f7f7;
+  --mission-bg-secondary: #f7f7f7;
   --mission-radius: 10px;
 
   *,
@@ -17,15 +17,6 @@
   [hidden] {
     display: none;
   }
-}
-
-// In the editor the block is just a hint, not a fixed overlay.
-.mission-su-editor {
-  padding: 16px;
-  border: 1px dashed var(--mission-border, #ddd);
-  border-radius: 8px;
-  color: #666;
-  font-size: 14px;
 }
 
 .mission-su__overlay {
@@ -218,7 +209,7 @@
   gap: 2px;
   padding: 4px;
   margin-bottom: 18px;
-  background: var(--mission-bg-light);
+  background: var(--mission-bg-secondary);
   border-radius: 9999px;
 }
 
@@ -421,7 +412,7 @@
   gap: 2px;
   padding: 14px;
   margin-bottom: 20px;
-  background: var(--mission-bg-light);
+  background: var(--mission-bg-secondary);
   border: 1px solid var(--mission-border);
   border-radius: var(--mission-radius);
 

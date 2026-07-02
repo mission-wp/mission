@@ -1,8 +1,8 @@
 // Fundraiser Title — frontend styles.
 
 .mission-ft-title {
-  --mission-text: #1a1a1a;
-  --mission-text-secondary: #666;
+  --mission-text: #1e1e1e;
+  --mission-text-secondary: #6b7280;
 
   line-height: 1.6;
 }
@@ -38,7 +38,7 @@
   padding: 6px 14px;
   font-size: 14px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--mission-primary) 70%, #1a1a1a);
+  color: color-mix(in srgb, var(--mission-primary) 70%, var(--mission-text));
   background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
   border: 1px solid color-mix(in srgb, var(--mission-primary) 20%, transparent);
   border-radius: 9999px;

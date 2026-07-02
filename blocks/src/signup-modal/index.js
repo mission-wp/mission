@@ -10,6 +10,7 @@ import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import metadata from './block.json';
 import './style.scss';
+import './editor.scss';
 
 function Edit() {
   return createElement(

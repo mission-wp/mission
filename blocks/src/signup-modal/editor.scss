@@ -1,0 +1,8 @@
+// In the editor the block is just a hint, not a fixed overlay.
+.mission-su-editor {
+  padding: 16px;
+  border: 1px dashed var(--mission-border, #ddd);
+  border-radius: 8px;
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+}
