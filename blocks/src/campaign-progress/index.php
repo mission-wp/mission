@@ -90,14 +90,14 @@ if ( 'amount' === $goal_type ) {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donations of %s goal', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
-		: __( 'donations', 'mission-donation-platform' );
+		? sprintf( _n( 'donation of %s goal', 'donations of %s goal', $goal_progress, 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: _n( 'donation', 'donations', $goal_progress, 'mission-donation-platform' );
 } else {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donors of %s goal', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
-		: __( 'donors', 'mission-donation-platform' );
+		? sprintf( _n( 'donor of %s goal', 'donors of %s goal', $goal_progress, 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: _n( 'donor', 'donors', $goal_progress, 'mission-donation-platform' );
 }
 
 // Primary color (same pattern as donation form).
@@ -153,23 +153,23 @@ ob_start();
 			<?php if ( $show_donors ) : ?>
 				<div class="mission-progress__stat">
 					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
+					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'donor', 'donors', $donor_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $is_p2p ) : ?>
 				<div class="mission-progress__stat">
 					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php esc_html_e( 'fundraisers', 'mission-donation-platform' ); ?></span>
+					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'fundraiser', 'fundraisers', $fundraiser_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
 				<div class="mission-progress__stat">
 					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php esc_html_e( 'teams', 'mission-donation-platform' ); ?></span>
+					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'team', 'teams', $team_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
 				<div class="mission-progress__stat">
 					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php esc_html_e( 'days remaining', 'mission-donation-platform' ); ?></span>
+					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'day remaining', 'days remaining', $days_remaining, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>

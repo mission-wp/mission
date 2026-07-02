@@ -79,13 +79,13 @@ defined( 'ABSPATH' ) || exit;
 				<?php if ( $show_donations ) : ?>
 					<div class="mission-progress__stat">
 						<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donations ) ); ?></span>
-						<span class="mission-progress__stat-label"><?php esc_html_e( 'donations', 'mission-donation-platform' ); ?></span>
+						<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'donation', 'donations', $donations, 'mission-donation-platform' ) ); ?></span>
 					</div>
 				<?php endif; ?>
 				<?php if ( $show_donors ) : ?>
 					<div class="mission-progress__stat">
 						<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donors ) ); ?></span>
-						<span class="mission-progress__stat-label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
+						<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'donor', 'donors', $donors, 'mission-donation-platform' ) ); ?></span>
 					</div>
 				<?php endif; ?>
 			</div>

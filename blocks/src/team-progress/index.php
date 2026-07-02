@@ -72,11 +72,11 @@ defined( 'ABSPATH' ) || exit;
 		<div class="mission-progress__stats">
 			<div class="mission-progress__stat">
 				<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $member_count ) ); ?></span>
-				<span class="mission-progress__stat-label"><?php esc_html_e( 'members', 'mission-donation-platform' ); ?></span>
+				<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'member', 'members', $member_count, 'mission-donation-platform' ) ); ?></span>
 			</div>
 			<div class="mission-progress__stat">
 				<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donations ) ); ?></span>
-				<span class="mission-progress__stat-label"><?php esc_html_e( 'donations', 'mission-donation-platform' ); ?></span>
+				<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'donation', 'donations', $donations, 'mission-donation-platform' ) ); ?></span>
 			</div>
 			<div class="mission-progress__stat">
 				<span class="mission-progress__stat-value"><?php echo esc_html( Currency::format_amount( $raised, $currency ) ); ?></span>
