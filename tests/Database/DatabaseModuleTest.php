@@ -87,6 +87,47 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a true pre-1.4 upgrade (no P2P tables yet) migrates cleanly: no DB
+	 * errors from the shell-post backfill, tables created, flush scheduled.
+	 */
+	public function test_migration_from_pre_p2p_install_is_clean(): void {
+		global $wpdb;
+
+		// Simulate a 1.3.x install: version predates P2P and its tables are absent.
+		update_option( DatabaseModule::DB_VERSION_OPTION, '1.3.0' );
+		delete_option( 'missiondp_flush_rewrite_rules' );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_fundraisermeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_teammeta" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_team_invitations" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_teams" );
+		// phpcs:enable
+
+		set_current_screen( 'dashboard' );
+
+		$module = new DatabaseModule();
+		$module->init();
+
+		$wpdb->last_error = '';
+		$module->maybe_run_migrations();
+
+		$this->assertSame( '', $wpdb->last_error );
+		$this->assertSame( DatabaseModule::DB_VERSION, get_option( DatabaseModule::DB_VERSION_OPTION ) );
+		$this->assertSame( 1, (int) get_option( 'missiondp_flush_rewrite_rules' ) );
+
+		// The P2P tables now exist.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->assertSame(
+			$wpdb->prefix . 'missiondp_fundraisers',
+			$wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'missiondp_fundraisers' ) )
+		);
+
+		set_current_screen( 'front' );
+	}
+
+	/**
 	 * Test that migration skips on frontend (is_admin() false).
 	 */
 	public function test_migration_skips_on_frontend(): void {

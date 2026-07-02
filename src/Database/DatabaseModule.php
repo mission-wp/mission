@@ -107,14 +107,25 @@ class DatabaseModule {
 	private function migrate_142_shell_posts(): void {
 		global $wpdb;
 
-		$this->backfill_shell_posts( $wpdb->prefix . 'missiondp_fundraisers', \MissionDP\Models\Fundraiser::class );
+		$fundraisers_table = $wpdb->prefix . 'missiondp_fundraisers';
+
+		// P2P rewrite rules are new in this version; flush on the next init.
+		update_option( 'missiondp_flush_rewrite_rules', 1 );
+
+		// A pre-1.4 install has no P2P tables yet (create_tables() runs right
+		// after this and builds them with the UNIQUE index already in place),
+		// so there are no legacy rows to migrate and the queries below would
+		// only log table-not-found errors.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $fundraisers_table ) ) !== $fundraisers_table ) {
+			return;
+		}
+
+		$this->backfill_shell_posts( $fundraisers_table, \MissionDP\Models\Fundraiser::class );
 		$this->backfill_shell_posts( $wpdb->prefix . 'missiondp_teams', \MissionDP\Models\Team::class );
 
-		$this->drop_nonunique_post_id_index( $wpdb->prefix . 'missiondp_fundraisers' );
+		$this->drop_nonunique_post_id_index( $fundraisers_table );
 		$this->drop_nonunique_post_id_index( $wpdb->prefix . 'missiondp_teams' );
-
-		// P2P rewrite rules change in this version; flush on the next init.
-		update_option( 'missiondp_flush_rewrite_rules', 1 );
 	}
 
 	/**
