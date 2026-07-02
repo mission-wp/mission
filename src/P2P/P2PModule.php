@@ -44,6 +44,13 @@ class P2PModule {
 	private P2PPageRenderer $page_renderer;
 
 	/**
+	 * Shell-post status guard instance.
+	 *
+	 * @var ShellPostStatusGuard
+	 */
+	private ShellPostStatusGuard $status_guard;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -51,6 +58,7 @@ class P2PModule {
 		$this->team_post_type       = new TeamPostType();
 		$this->rewrites             = new P2PRewrites();
 		$this->page_renderer        = new P2PPageRenderer();
+		$this->status_guard         = new ShellPostStatusGuard();
 	}
 
 	/**
@@ -61,5 +69,6 @@ class P2PModule {
 		$this->team_post_type->init();
 		$this->rewrites->init();
 		$this->page_renderer->init();
+		$this->status_guard->init();
 	}
 }

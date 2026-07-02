@@ -28,6 +28,25 @@ trait HasShellPost {
 	private ?\WP_Post $shell_post = null;
 
 	/**
+	 * True while this model type is pushing its own state to the shell post.
+	 *
+	 * @var bool
+	 */
+	private static bool $syncing_shell_post = false;
+
+	/**
+	 * Whether the current shell-post write originated from a model sync.
+	 *
+	 * Read by ShellPostStatusGuard to distinguish the model's own status
+	 * projection from external post-status changes.
+	 *
+	 * @return bool
+	 */
+	public static function is_syncing_shell_post(): bool {
+		return self::$syncing_shell_post;
+	}
+
+	/**
 	 * The post type slug for this model's shell posts.
 	 *
 	 * @return string
@@ -46,7 +65,7 @@ trait HasShellPost {
 	 *
 	 * @return string
 	 */
-	protected function shell_post_status(): string {
+	public function shell_post_status(): string {
 		return match ( $this->status ) {
 			'active'   => 'publish',
 			'inactive' => 'draft',
@@ -55,24 +74,35 @@ trait HasShellPost {
 	}
 
 	/**
-	 * Save the model, creating or syncing the shell post first.
+	 * Save the model, keeping the shell post in sync.
 	 *
-	 * If the row insert for a brand-new record fails (e.g. a unique-constraint
-	 * violation), the shell post just created is removed so it isn't orphaned.
+	 * New records create the shell post first (the row stores its ID); if the
+	 * row insert then fails (e.g. a unique-constraint violation), the post is
+	 * removed so it isn't orphaned. Existing records write the row first and
+	 * only project onto the post when the row update succeeded, so a failed
+	 * update can't desync the two.
 	 *
 	 * @return int|bool New ID on insert, true on update, false on failure.
 	 */
 	public function save(): int|bool {
-		$was_new = ! $this->post_id;
+		if ( ! $this->post_id ) {
+			$this->sync_shell_post();
 
-		$this->sync_shell_post();
+			$result = parent::save();
+
+			if ( ! $result && $this->post_id ) {
+				wp_delete_post( $this->post_id, true );
+				$this->post_id    = 0;
+				$this->shell_post = null;
+			}
+
+			return $result;
+		}
 
 		$result = parent::save();
 
-		if ( $was_new && ! $result && $this->post_id ) {
-			wp_delete_post( $this->post_id, true );
-			$this->post_id    = 0;
-			$this->shell_post = null;
+		if ( $result ) {
+			$this->sync_shell_post();
 		}
 
 		return $result;
@@ -82,35 +112,41 @@ trait HasShellPost {
 	 * Create the shell post on first save, or sync title/status on later saves.
 	 */
 	protected function sync_shell_post(): void {
-		if ( ! $this->post_id ) {
-			$post_id = wp_insert_post(
-				[
-					'post_type'   => $this->shell_post_type(),
-					'post_title'  => $this->shell_post_title(),
-					'post_status' => $this->shell_post_status(),
-				],
-				true
-			);
+		self::$syncing_shell_post = true;
 
-			if ( is_wp_error( $post_id ) ) {
+		try {
+			if ( ! $this->post_id ) {
+				$post_id = wp_insert_post(
+					[
+						'post_type'   => $this->shell_post_type(),
+						'post_title'  => $this->shell_post_title(),
+						'post_status' => $this->shell_post_status(),
+					],
+					true
+				);
+
+				if ( is_wp_error( $post_id ) ) {
+					return;
+				}
+
+				$this->post_id    = (int) $post_id;
+				$this->shell_post = null;
+
 				return;
 			}
 
-			$this->post_id    = (int) $post_id;
+			wp_update_post(
+				[
+					'ID'          => $this->post_id,
+					'post_title'  => $this->shell_post_title(),
+					'post_status' => $this->shell_post_status(),
+				]
+			);
+
 			$this->shell_post = null;
-
-			return;
+		} finally {
+			self::$syncing_shell_post = false;
 		}
-
-		wp_update_post(
-			[
-				'ID'          => $this->post_id,
-				'post_title'  => $this->shell_post_title(),
-				'post_status' => $this->shell_post_status(),
-			]
-		);
-
-		$this->shell_post = null;
 	}
 
 	/**
@@ -156,6 +192,10 @@ trait HasShellPost {
 
 	/**
 	 * Transparent read access to the shell post slug.
+	 *
+	 * Note: any other undeclared property reads null (no notice), so a typoed
+	 * property name fails silently — check spelling against the model's
+	 * declared properties before reaching for this.
 	 *
 	 * @param string $name Property name.
 	 * @return mixed The slug for 'slug', otherwise null.
