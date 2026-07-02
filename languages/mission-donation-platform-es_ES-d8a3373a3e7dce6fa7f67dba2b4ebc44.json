@@ -3403,6 +3403,9 @@
 			],
 			"Deactivating hides the selected pages from the site. %d selected.": [
 				"Al desactivar se ocultan las páginas seleccionadas del sitio. %d seleccionados."
+			],
+			"The list could not be loaded.": [
+				"No se ha podido cargar la lista."
 			]
 		}
 	}

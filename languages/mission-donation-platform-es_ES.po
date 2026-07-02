@@ -28,8 +28,8 @@ msgid "The free donation plugin for nonprofits. Powerful features, modern forms,
 msgstr "El plugin de donaciones gratuito para organizaciones sin ánimo de lucro. Funciones potentes, formularios modernos y sin necesidad de extensiones."
 
 #. Author of the plugin
-#: src/Admin/AdminModule.php:338
-#: src/Admin/AdminModule.php:339
+#: src/Admin/AdminModule.php:357
+#: src/Admin/AdminModule.php:358
 #: src/Blocks/BlocksModule.php:204
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:476
@@ -97,13 +97,13 @@ msgstr[1] "Quedan %d días"
 #: blocks/build/campaign/index.php:108
 #: blocks/build/campaign/index.php:114
 #: blocks/build/campaign/index.php:120
-#: blocks/build/team-members/index.php:108
+#: blocks/build/team-members/index.php:87
 #: blocks/src/campaign-grid/index.php:159
 #: blocks/src/campaign-grid/index.php:165
 #: blocks/src/campaign/index.php:108
 #: blocks/src/campaign/index.php:114
 #: blocks/src/campaign/index.php:120
-#: blocks/src/team-members/index.php:108
+#: blocks/src/team-members/index.php:87
 #: blocks/build/team-members/index.js:2
 #: blocks/src/team-members/index.js:76
 msgid "of %s"
@@ -143,12 +143,12 @@ msgstr "En curso"
 #: blocks/build/campaign-progress/index.php:100
 #: blocks/build/campaign-progress/index.php:156
 #: blocks/build/campaign/index.php:215
-#: blocks/build/fundraiser-progress/index.php:97
+#: blocks/build/fundraiser-progress/index.php:88
 #: blocks/src/campaign-grid/index.php:230
 #: blocks/src/campaign-progress/index.php:100
 #: blocks/src/campaign-progress/index.php:156
 #: blocks/src/campaign/index.php:215
-#: blocks/src/fundraiser-progress/index.php:97
+#: blocks/src/fundraiser-progress/index.php:88
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignHero.js:103
 #: admin/src/pages/campaigns/CampaignProgressBar.js:22
@@ -166,22 +166,22 @@ msgstr "donantes"
 
 #. translators: %s: formatted goal amount
 #: blocks/build/campaign-progress/index.php:87
-#: blocks/build/fundraiser-progress/index.php:62
+#: blocks/build/fundraiser-progress/index.php:53
 #: blocks/src/campaign-progress/index.php:87
-#: blocks/src/fundraiser-progress/index.php:62
+#: blocks/src/fundraiser-progress/index.php:53
 #: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:100
 msgid "raised of %s goal"
 msgstr "recaudado de la meta de %s"
 
 #: blocks/build/campaign-progress/index.php:88
-#: blocks/build/fundraiser-progress/index.php:63
-#: blocks/build/team-progress/index.php:53
-#: blocks/build/team-progress/index.php:92
+#: blocks/build/fundraiser-progress/index.php:54
+#: blocks/build/team-progress/index.php:44
+#: blocks/build/team-progress/index.php:83
 #: blocks/src/campaign-progress/index.php:88
-#: blocks/src/fundraiser-progress/index.php:63
-#: blocks/src/team-progress/index.php:53
-#: blocks/src/team-progress/index.php:92
+#: blocks/src/fundraiser-progress/index.php:54
+#: blocks/src/team-progress/index.php:44
+#: blocks/src/team-progress/index.php:83
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:428
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:291
@@ -197,11 +197,11 @@ msgid "donations of %s goal"
 msgstr "donaciones de la meta de %s"
 
 #: blocks/build/campaign-progress/index.php:94
-#: blocks/build/fundraiser-progress/index.php:91
-#: blocks/build/team-progress/index.php:88
+#: blocks/build/fundraiser-progress/index.php:82
+#: blocks/build/team-progress/index.php:79
 #: blocks/src/campaign-progress/index.php:94
-#: blocks/src/fundraiser-progress/index.php:91
-#: blocks/src/team-progress/index.php:88
+#: blocks/src/fundraiser-progress/index.php:82
+#: blocks/src/team-progress/index.php:79
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/campaigns/CampaignHero.js:104
@@ -239,26 +239,26 @@ msgid "days remaining"
 msgstr "días restantes"
 
 #: blocks/build/campaign-progress/index.php:182
-#: blocks/build/top-fundraisers/index.php:108
-#: blocks/build/top-fundraisers/index.php:112
+#: blocks/build/top-fundraisers/index.php:64
+#: blocks/build/top-fundraisers/index.php:68
 #: blocks/src/campaign-progress/index.php:182
-#: blocks/src/top-fundraisers/index.php:108
-#: blocks/src/top-fundraisers/index.php:112
+#: blocks/src/top-fundraisers/index.php:64
+#: blocks/src/top-fundraisers/index.php:68
 msgid "Become a Fundraiser"
 msgstr "Conviértete en recaudador"
 
 #: blocks/build/campaign-progress/index.php:193
 #: blocks/build/campaign-progress/index.php:197
 #: blocks/build/donate-button/index.php:28
-#: blocks/build/fundraiser-progress/index.php:108
-#: blocks/build/fundraiser-progress/index.php:112
+#: blocks/build/fundraiser-progress/index.php:99
+#: blocks/build/fundraiser-progress/index.php:103
 #: blocks/build/recent-donors/index.php:101
 #: blocks/build/recent-donors/index.php:105
 #: blocks/src/campaign-progress/index.php:193
 #: blocks/src/campaign-progress/index.php:197
 #: blocks/src/donate-button/index.php:28
-#: blocks/src/fundraiser-progress/index.php:108
-#: blocks/src/fundraiser-progress/index.php:112
+#: blocks/src/fundraiser-progress/index.php:99
+#: blocks/src/fundraiser-progress/index.php:103
 #: blocks/src/recent-donors/index.php:101
 #: blocks/src/recent-donors/index.php:105
 #: blocks/build/campaign-progress/index.js:1
@@ -952,7 +952,7 @@ msgstr "Historial de donaciones"
 #: blocks/build/donor-dashboard/index.php:138
 #: blocks/src/donor-dashboard/index.php:138
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:232
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:233
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:39
 msgid "Recurring Donations"
@@ -1229,8 +1229,8 @@ msgstr "Recaudado"
 #: blocks/build/donor-dashboard/parts/fundraising.php:346
 #: blocks/src/donor-dashboard/parts/fundraising.php:41
 #: blocks/src/donor-dashboard/parts/fundraising.php:346
-#: src/Admin/AdminModule.php:376
-#: src/Admin/AdminModule.php:377
+#: src/Admin/AdminModule.php:395
+#: src/Admin/AdminModule.php:396
 #: src/Export/ExportService.php:171
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:207
@@ -1402,9 +1402,9 @@ msgid "Members"
 msgstr "Miembros"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:298
-#: blocks/build/team-members/index.php:96
+#: blocks/build/team-members/index.php:75
 #: blocks/src/donor-dashboard/parts/fundraising.php:298
-#: blocks/src/team-members/index.php:96
+#: blocks/src/team-members/index.php:75
 #: src/Email/TeamEmailListener.php:151
 #: src/Email/TeamEmailListener.php:199
 #: src/Email/templates/p2p-team-approved.php:14
@@ -1617,7 +1617,7 @@ msgstr "Todos los tipos"
 
 #: blocks/build/donor-dashboard/parts/history.php:44
 #: blocks/src/donor-dashboard/parts/history.php:44
-#: src/DonorDashboard/DashboardContextBuilder.php:694
+#: src/DonorDashboard/DashboardContextBuilder.php:700
 #: src/Email/templates/admin-new-donation.php:79
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -1635,7 +1635,7 @@ msgstr "Única"
 
 #: blocks/build/donor-dashboard/parts/history.php:45
 #: blocks/src/donor-dashboard/parts/history.php:45
-#: src/DonorDashboard/DashboardContextBuilder.php:694
+#: src/DonorDashboard/DashboardContextBuilder.php:700
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:196
@@ -1888,7 +1888,7 @@ msgstr "Verificación enviada a"
 #: admin/build/mission-admin.js:251
 #: admin/src/components/NotesCard.js:202
 #: admin/src/components/NotesCard.js:258
-#: admin/src/components/P2PListView.js:266
+#: admin/src/components/P2PListView.js:286
 #: admin/src/pages/campaigns/CampaignCreateModal.js:202
 #: admin/src/pages/campaigns/CampaignList.js:367
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:88
@@ -2065,7 +2065,7 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
 #: src/DonorDashboard/DashboardContextBuilder.php:394
-#: src/DonorDashboard/DashboardContextBuilder.php:498
+#: src/DonorDashboard/DashboardContextBuilder.php:504
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:196
@@ -2240,40 +2240,40 @@ msgstr "Mostrar más donaciones"
 
 #. translators: %s: human time diff, e.g. "2 hours"
 #: blocks/build/donor-wall/index.php:111
-#: blocks/build/fundraiser-supporters/index.php:90
+#: blocks/build/fundraiser-supporters/index.php:81
 #: blocks/build/recent-donors/index.php:141
 #: blocks/src/donor-wall/index.php:111
-#: blocks/src/fundraiser-supporters/index.php:90
+#: blocks/src/fundraiser-supporters/index.php:81
 #: blocks/src/recent-donors/index.php:141
 msgid "%s ago"
 msgstr "hace %s"
 
 #: blocks/build/donor-wall/index.php:122
 #: blocks/build/donor-wall/index.php:145
-#: blocks/build/fundraiser-supporters/index.php:77
-#: blocks/build/fundraiser-supporters/index.php:81
+#: blocks/build/fundraiser-supporters/index.php:68
+#: blocks/build/fundraiser-supporters/index.php:72
 #: blocks/build/recent-donors/index.php:115
 #: blocks/build/recent-donors/index.php:122
 #: blocks/build/top-donors/index.php:119
 #: blocks/build/top-donors/index.php:126
 #: blocks/src/donor-wall/index.php:122
 #: blocks/src/donor-wall/index.php:145
-#: blocks/src/fundraiser-supporters/index.php:77
-#: blocks/src/fundraiser-supporters/index.php:81
+#: blocks/src/fundraiser-supporters/index.php:68
+#: blocks/src/fundraiser-supporters/index.php:72
 #: blocks/src/recent-donors/index.php:115
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
 #: blocks/src/top-donors/index.php:126
-#: src/DonorDashboard/DashboardContextBuilder.php:540
+#: src/DonorDashboard/DashboardContextBuilder.php:546
 #: src/Email/AdminNotificationListener.php:458
 #: src/Export/ExportService.php:739
 #: src/Reporting/ReportingService.php:626
 #: src/Reporting/ReportingService.php:760
 #: src/Reporting/ReportingService.php:1591
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:242
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:255
 #: src/Rest/Endpoints/DonorWallEndpoint.php:110
 #: src/Rest/Endpoints/DonorWallEndpoint.php:128
-#: src/Rest/Endpoints/FundraisersEndpoint.php:444
+#: src/Rest/Endpoints/FundraisersEndpoint.php:290
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:196
@@ -2327,34 +2327,34 @@ msgstr "Todavía no hay donaciones"
 msgid "Be the first to donate to this campaign!"
 msgstr "¡Sé la primera persona en donar a esta campaña!"
 
-#: blocks/build/fundraiser-image/index.php:38
-#: blocks/build/fundraiser-title/index.php:38
-#: blocks/src/fundraiser-image/index.php:38
-#: blocks/src/fundraiser-title/index.php:38
+#: blocks/build/fundraiser-image/index.php:29
+#: blocks/build/fundraiser-title/index.php:29
+#: blocks/src/fundraiser-image/index.php:29
+#: blocks/src/fundraiser-title/index.php:29
 msgid "A fundraiser"
 msgstr "Un recaudador"
 
-#: blocks/build/fundraiser-progress/index.php:124
-#: blocks/src/fundraiser-progress/index.php:124
+#: blocks/build/fundraiser-progress/index.php:115
+#: blocks/src/fundraiser-progress/index.php:115
 #: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:153
 msgid "Share"
 msgstr "Compartir"
 
-#: blocks/build/fundraiser-supporters/index.php:55
-#: blocks/src/fundraiser-supporters/index.php:55
+#: blocks/build/fundraiser-supporters/index.php:46
+#: blocks/src/fundraiser-supporters/index.php:46
 msgid "No supporters yet."
 msgstr "Aún no hay colaboradores."
 
-#: blocks/build/fundraiser-supporters/index.php:56
-#: blocks/src/fundraiser-supporters/index.php:56
+#: blocks/build/fundraiser-supporters/index.php:47
+#: blocks/src/fundraiser-supporters/index.php:47
 msgid "Be the first to chip in and cheer this fundraiser on."
 msgstr "Sé el primero en contribuir y animar a este recaudador."
 
 #. translators: %s: number of donations
 #. translators: %s: donation count toward goal.
-#: blocks/build/fundraiser-supporters/index.php:64
-#: blocks/src/fundraiser-supporters/index.php:64
+#: blocks/build/fundraiser-supporters/index.php:55
+#: blocks/src/fundraiser-supporters/index.php:55
 #: admin/build/mission-admin.js:164
 #: admin/src/pages/dashboard/ActivityFeed.js:671
 msgid "%s donation"
@@ -2363,20 +2363,20 @@ msgstr[0] "%s donación"
 msgstr[1] ""
 
 #. translators: %s: person being honored
-#: blocks/build/fundraiser-title/index.php:49
-#: blocks/src/fundraiser-title/index.php:49
+#: blocks/build/fundraiser-title/index.php:40
+#: blocks/src/fundraiser-title/index.php:40
 msgid "In memory of %s"
 msgstr "En memoria de %s"
 
 #. translators: %s: person being honored
-#: blocks/build/fundraiser-title/index.php:51
-#: blocks/src/fundraiser-title/index.php:51
+#: blocks/build/fundraiser-title/index.php:42
+#: blocks/src/fundraiser-title/index.php:42
 msgid "In honor of %s"
 msgstr "En honor a %s"
 
 #. translators: 1: fundraiser name, 2: linked campaign title
-#: blocks/build/fundraiser-title/index.php:65
-#: blocks/src/fundraiser-title/index.php:65
+#: blocks/build/fundraiser-title/index.php:56
+#: blocks/src/fundraiser-title/index.php:56
 msgid "%1$s is fundraising for %2$s"
 msgstr "%1$s está recaudando fondos para %2$s"
 
@@ -2604,55 +2604,55 @@ msgid "View my page"
 msgstr "Ver mi página"
 
 #. translators: %s: number of fundraisers on the team
-#: blocks/build/team-members/index.php:55
-#: blocks/src/team-members/index.php:55
+#: blocks/build/team-members/index.php:46
+#: blocks/src/team-members/index.php:46
 msgid "%s fundraiser"
 msgid_plural "%s fundraisers"
 msgstr[0] "%s recaudador"
 msgstr[1] "%s recaudadores"
 
-#: blocks/build/team-members/index.php:116
-#: blocks/src/team-members/index.php:116
+#: blocks/build/team-members/index.php:95
+#: blocks/src/team-members/index.php:95
 msgid "No members have joined this team yet."
 msgstr "Aún no se ha unido ningún miembro a este equipo."
 
 #. translators: %s: formatted goal amount
-#: blocks/build/team-progress/index.php:52
-#: blocks/src/team-progress/index.php:52
+#: blocks/build/team-progress/index.php:43
+#: blocks/src/team-progress/index.php:43
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:40
 msgid "raised of %s team goal"
 msgstr "recaudado de la meta de equipo de %s"
 
-#: blocks/build/team-progress/index.php:84
-#: blocks/src/team-progress/index.php:84
+#: blocks/build/team-progress/index.php:75
+#: blocks/src/team-progress/index.php:75
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:60
 msgid "members"
 msgstr "miembros"
 
-#: blocks/build/team-progress/index.php:98
-#: blocks/src/team-progress/index.php:98
+#: blocks/build/team-progress/index.php:89
+#: blocks/src/team-progress/index.php:89
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:82
 msgid "Donate to the Team"
 msgstr "Donar al equipo"
 
-#: blocks/build/team-progress/index.php:106
-#: blocks/src/team-progress/index.php:106
+#: blocks/build/team-progress/index.php:97
+#: blocks/src/team-progress/index.php:97
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:85
 msgid "Join this Team"
 msgstr "Unirse a este equipo"
 
 #. translators: %s: linked campaign title
-#: blocks/build/team-title/index.php:50
-#: blocks/src/team-title/index.php:50
+#: blocks/build/team-title/index.php:41
+#: blocks/src/team-title/index.php:41
 msgid "Team fundraising for %s"
 msgstr "Equipo recaudando fondos para %s"
 
-#: blocks/build/team-title/index.php:54
-#: blocks/src/team-title/index.php:54
+#: blocks/build/team-title/index.php:45
+#: blocks/src/team-title/index.php:45
 msgid "Team fundraising"
 msgstr "Recaudación en equipo"
 
@@ -2680,59 +2680,59 @@ msgstr "Haz una donación y hazte con lo más alto de la lista."
 msgid "Be the First Donor"
 msgstr "Sé el primer donante"
 
-#: blocks/build/top-fundraisers/index.php:43
-#: blocks/src/top-fundraisers/index.php:43
+#: blocks/build/top-fundraisers/index.php:34
+#: blocks/src/top-fundraisers/index.php:34
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/src/top-fundraisers/edit/Edit.js:176
 msgid "Top Fundraisers"
 msgstr "Mejores recaudadores"
 
-#: blocks/build/top-fundraisers/index.php:104
-#: blocks/src/top-fundraisers/index.php:104
+#: blocks/build/top-fundraisers/index.php:60
+#: blocks/src/top-fundraisers/index.php:60
 msgid "Be the first fundraiser."
 msgstr "Sé el primer recaudador."
 
-#: blocks/build/top-fundraisers/index.php:105
-#: blocks/src/top-fundraisers/index.php:105
+#: blocks/build/top-fundraisers/index.php:61
+#: blocks/src/top-fundraisers/index.php:61
 msgid "Start your own page and rally your friends."
 msgstr "Crea tu propia página y reúne a tus amigos."
 
-#: blocks/build/top-fundraisers/index.php:156
-#: blocks/src/top-fundraisers/index.php:156
+#: blocks/build/top-fundraisers/index.php:106
+#: blocks/src/top-fundraisers/index.php:106
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/src/top-fundraisers/edit/Edit.js:202
 msgid "Individual fundraiser"
 msgstr "Recaudador individual"
 
-#: blocks/build/top-teams/index.php:44
-#: blocks/src/top-teams/index.php:44
+#: blocks/build/top-teams/index.php:34
+#: blocks/src/top-teams/index.php:34
 #: blocks/build/top-teams/index.js:1
 #: blocks/src/top-teams/edit/Edit.js:196
 msgid "Top Teams"
 msgstr "Mejores equipos"
 
-#: blocks/build/top-teams/index.php:106
-#: blocks/src/top-teams/index.php:106
+#: blocks/build/top-teams/index.php:61
+#: blocks/src/top-teams/index.php:61
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/Teams.js:201
 msgid "No teams yet."
 msgstr "Aún no hay equipos."
 
-#: blocks/build/top-teams/index.php:107
-#: blocks/src/top-teams/index.php:107
+#: blocks/build/top-teams/index.php:62
+#: blocks/src/top-teams/index.php:62
 msgid "Create a team and fundraise together."
 msgstr "Crea un equipo y recaudad juntos."
 
-#: blocks/build/top-teams/index.php:110
-#: blocks/build/top-teams/index.php:114
-#: blocks/src/top-teams/index.php:110
-#: blocks/src/top-teams/index.php:114
+#: blocks/build/top-teams/index.php:65
+#: blocks/build/top-teams/index.php:69
+#: blocks/src/top-teams/index.php:65
+#: blocks/src/top-teams/index.php:69
 msgid "Start a Team"
 msgstr "Crear un equipo"
 
 #. translators: %s: number of team members
-#: blocks/build/top-teams/index.php:160
-#: blocks/src/top-teams/index.php:160
+#: blocks/build/top-teams/index.php:109
+#: blocks/src/top-teams/index.php:109
 #: blocks/build/top-teams/index.js:2
 #: blocks/src/top-teams/edit/Edit.js:219
 msgid "%s member"
@@ -2783,13 +2783,13 @@ msgstr "Mission Donation Platform requiere WordPress 6.7 o superior."
 msgid "Mission Donor"
 msgstr "Donante de Mission"
 
-#: src/Admin/AdminModule.php:349
-#: src/Admin/AdminModule.php:350
+#: src/Admin/AdminModule.php:368
+#: src/Admin/AdminModule.php:369
 msgid "Dashboard"
 msgstr "Panel"
 
-#: src/Admin/AdminModule.php:358
-#: src/Admin/AdminModule.php:359
+#: src/Admin/AdminModule.php:377
+#: src/Admin/AdminModule.php:378
 #: src/Campaigns/CampaignPostType.php:115
 #: src/Campaigns/CampaignPostType.php:232
 #: src/Campaigns/CampaignPostType.php:242
@@ -2808,8 +2808,8 @@ msgstr "Panel"
 msgid "Campaigns"
 msgstr "Campañas"
 
-#: src/Admin/AdminModule.php:367
-#: src/Admin/AdminModule.php:368
+#: src/Admin/AdminModule.php:386
+#: src/Admin/AdminModule.php:387
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:207
 #: admin/build/mission-admin.js:239
@@ -2827,24 +2827,24 @@ msgstr "Campañas"
 msgid "Transactions"
 msgstr "Transacciones"
 
-#: src/Admin/AdminModule.php:387
-#: src/Admin/AdminModule.php:388
+#: src/Admin/AdminModule.php:406
+#: src/Admin/AdminModule.php:407
 #: src/P2P/FundraiserPostType.php:72
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/Fundraisers.js:175
 msgid "Fundraisers"
 msgstr "Recaudadores"
 
-#: src/Admin/AdminModule.php:396
-#: src/Admin/AdminModule.php:397
+#: src/Admin/AdminModule.php:415
+#: src/Admin/AdminModule.php:416
 #: src/P2P/TeamPostType.php:69
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/Teams.js:187
 msgid "Teams"
 msgstr "Equipos"
 
-#: src/Admin/AdminModule.php:406
-#: src/Admin/AdminModule.php:407
+#: src/Admin/AdminModule.php:425
+#: src/Admin/AdminModule.php:426
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:196
 #: admin/build/mission-admin.js:207
@@ -2862,9 +2862,9 @@ msgstr "Equipos"
 msgid "Subscriptions"
 msgstr "Suscripciones"
 
-#: src/Admin/AdminModule.php:415
-#: src/Admin/AdminModule.php:416
-#: src/Admin/AdminModule.php:443
+#: src/Admin/AdminModule.php:434
+#: src/Admin/AdminModule.php:435
+#: src/Admin/AdminModule.php:462
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/campaigns/CampaignTabNav.js:6
@@ -2899,14 +2899,14 @@ msgstr "Suscripciones"
 msgid "Settings"
 msgstr "Ajustes"
 
-#: src/Admin/AdminModule.php:424
-#: src/Admin/AdminModule.php:425
+#: src/Admin/AdminModule.php:443
+#: src/Admin/AdminModule.php:444
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/Tools.js:206
 msgid "Tools"
 msgstr "Herramientas"
 
-#: src/Admin/AdminModule.php:512
+#: src/Admin/AdminModule.php:531
 msgid "Mission Test Mode Active"
 msgstr "Modo de pruebas de Mission activo"
 
@@ -3167,12 +3167,12 @@ msgid "Make this member the captain? You will no longer manage the team."
 msgstr "¿Hacer a este miembro el capitán? Dejarás de gestionar el equipo."
 
 #: src/DonorDashboard/DashboardContextBuilder.php:395
-#: src/DonorDashboard/DashboardContextBuilder.php:499
+#: src/DonorDashboard/DashboardContextBuilder.php:505
 msgid "Pending review"
 msgstr "Pendiente de revisión"
 
 #: src/DonorDashboard/DashboardContextBuilder.php:396
-#: src/DonorDashboard/DashboardContextBuilder.php:500
+#: src/DonorDashboard/DashboardContextBuilder.php:506
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/src/components/P2PStatusBadge.js:17
@@ -3203,51 +3203,49 @@ msgstr[1] ""
 
 #. translators: 1: amount raised, 2: goal amount
 #: src/DonorDashboard/DashboardContextBuilder.php:423
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:318
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:363
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:82
 msgid "%1$s raised of %2$s goal"
 msgstr "%1$s recaudados de la meta de %2$s"
 
 #. translators: %s: amount raised
 #: src/DonorDashboard/DashboardContextBuilder.php:425
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:320
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:365
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:84
 msgid "%s raised"
 msgstr "%s recaudados"
 
 #: src/DonorDashboard/DashboardContextBuilder.php:475
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:391
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:396
 msgid "Participant"
 msgstr "Participante"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:587
-#: src/DonorDashboard/DashboardContextBuilder.php:601
-#: src/DonorDashboard/DashboardContextBuilder.php:621
-#: src/DonorDashboard/DashboardContextBuilder.php:670
-#: src/DonorDashboard/DashboardContextBuilder.php:690
+#: src/DonorDashboard/DashboardContextBuilder.php:593
+#: src/DonorDashboard/DashboardContextBuilder.php:607
+#: src/DonorDashboard/DashboardContextBuilder.php:627
+#: src/DonorDashboard/DashboardContextBuilder.php:676
+#: src/DonorDashboard/DashboardContextBuilder.php:696
 #: src/Reporting/ReportingService.php:1480
-#: src/Rest/Traits/DonorDashboardPrepareTrait.php:82
-#: src/Rest/Traits/DonorDashboardPrepareTrait.php:109
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:132
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:159
 msgid "Deleted Campaign"
 msgstr "Campaña eliminada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:630
+#: src/DonorDashboard/DashboardContextBuilder.php:636
 msgid "Card on file"
 msgstr "Tarjeta guardada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:783
+#: src/DonorDashboard/DashboardContextBuilder.php:789
 msgid "Donation Made"
 msgid_plural "Donations Made"
 msgstr[0] "Donación realizada"
 msgstr[1] "Donaciones realizadas"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:787
+#: src/DonorDashboard/DashboardContextBuilder.php:793
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:69
 msgid "Lifetime Given"
 msgstr "Total donado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:791
+#: src/DonorDashboard/DashboardContextBuilder.php:797
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/Dashboard.js:198
 #: blocks/build/donor-dashboard/index.js:1
@@ -3275,9 +3273,9 @@ msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 #: src/Email/EmailModule.php:181
 #: src/Email/EmailModule.php:322
 #: src/Email/EmailModule.php:344
-#: src/Email/FundraiserEmailListener.php:114
-#: src/Email/FundraiserEmailListener.php:160
-#: src/Email/FundraiserEmailListener.php:236
+#: src/Email/FundraiserEmailListener.php:128
+#: src/Email/FundraiserEmailListener.php:174
+#: src/Email/FundraiserEmailListener.php:250
 #: src/Email/SubscriptionEmailListener.php:195
 #: src/Email/templates/account-activation.php:12
 #: src/Email/templates/donation-receipt.php:12
@@ -3456,8 +3454,8 @@ msgid "A donation has been made %1$s %2$s"
 msgstr "Se ha realizado una donación %1$s %2$s"
 
 #: src/Email/DonationEmailListener.php:190
-#: src/Email/FundraiserEmailListener.php:210
-#: src/Email/FundraiserEmailListener.php:211
+#: src/Email/FundraiserEmailListener.php:224
+#: src/Email/FundraiserEmailListener.php:225
 #: src/Email/templates/tribute-notification.php:15
 msgid "Someone"
 msgstr "Alguien"
@@ -3489,18 +3487,18 @@ msgid "Hi %s,"
 msgstr "Hola %s:"
 
 #. translators: %s: milestone percentage (e.g. "50%")
-#: src/Email/FundraiserEmailListener.php:105
+#: src/Email/FundraiserEmailListener.php:119
 #: src/Email/templates/p2p-fundraiser-milestone.php:22
 msgid "You've reached %s of your goal!"
 msgstr "¡Has alcanzado el %s de tu meta!"
 
-#: src/Email/FundraiserEmailListener.php:153
+#: src/Email/FundraiserEmailListener.php:167
 #: src/Rest/Endpoints/EmailTemplateEndpoint.php:83
 msgid "Your fundraising page is live"
 msgstr "Tu página de recaudación está activa"
 
 #. translators: %s: formatted amount
-#: src/Email/FundraiserEmailListener.php:227
+#: src/Email/FundraiserEmailListener.php:241
 msgid "You received a %s donation!"
 msgstr "¡Has recibido una donación de %s!"
 
@@ -4192,7 +4190,7 @@ msgstr "Importe de la meta"
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/onboarding/StepCampaign.js:98
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:73
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:74
 msgid "Goal Type"
 msgstr "Tipo de meta"
 
@@ -4614,7 +4612,7 @@ msgstr "Este donante ya tiene una cuenta."
 #: src/Models/Fundraiser.php:223
 #: src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1912
-#: src/Reporting/ReportingService.php:2071
+#: src/Reporting/ReportingService.php:2074
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/Fundraisers.js:35
 msgid "Fundraiser"
@@ -4778,25 +4776,25 @@ msgstr "Eventos de donante"
 msgid "Campaign Events"
 msgstr "Eventos de campaña"
 
-#: src/P2P/FundraiserImageUploader.php:61
+#: src/P2P/FundraiserImageUploader.php:70
 msgid "The image could not be uploaded."
 msgstr "No se ha podido subir la imagen."
 
-#: src/P2P/FundraiserImageUploader.php:79
+#: src/P2P/FundraiserImageUploader.php:88
 msgid "The image could not be saved."
 msgstr "No se ha podido guardar la imagen."
 
-#: src/P2P/FundraiserImageUploader.php:112
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:197
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:201
+#: src/P2P/FundraiserImageUploader.php:145
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:206
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:208
 msgid "No image was uploaded."
 msgstr "No se ha subido ninguna imagen."
 
-#: src/P2P/FundraiserImageUploader.php:118
+#: src/P2P/FundraiserImageUploader.php:154
 msgid "The image is too large. Please upload a file under 5 MB."
 msgstr "La imagen es demasiado grande. Sube un archivo de menos de 5 MB."
 
-#: src/P2P/FundraiserImageUploader.php:128
+#: src/P2P/FundraiserImageUploader.php:164
 msgid "Please upload a JPEG, PNG, GIF, or WebP image."
 msgstr "Sube una imagen JPEG, PNG, GIF o WebP."
 
@@ -4808,8 +4806,8 @@ msgstr "Página de recaudador"
 msgid "Displays a single fundraiser page."
 msgstr "Muestra la página de un recaudador."
 
-#: src/P2P/FundraiserRegistrationService.php:176
-#: src/P2P/FundraiserRegistrationService.php:182
+#: src/P2P/FundraiserRegistrationService.php:187
+#: src/P2P/FundraiserRegistrationService.php:193
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr "Esta sesión de restablecimiento no es válida o ha caducado. Empieza de nuevo."
 
@@ -5116,7 +5114,7 @@ msgstr "Dirección de correo electrónico actualizada. Inicia sesión con tu nue
 msgid "Email change cancelled."
 msgstr "Cambio de correo electrónico cancelado."
 
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:277
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:290
 #: src/Rest/RestErrors.php:72
 msgid "Fundraiser not found."
 msgstr "Recaudador no encontrado."
@@ -5143,12 +5141,12 @@ msgstr "El importe de la propina no puede ser negativo."
 msgid "You do not have permission to manage this subscription."
 msgstr "No tienes permiso para gestionar esta suscripción."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:265
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:294
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:276
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:305
 msgid "Member not found."
 msgstr "Miembro no encontrado."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:325
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:336
 msgid "You are not the captain of this team."
 msgstr "No eres el capitán de este equipo."
 
@@ -5239,23 +5237,23 @@ msgstr "No se ha podido crear el archivo ZIP."
 msgid "Invalid export type. Must be one of: donors, transactions, campaigns, subscriptions, tributes."
 msgstr "Tipo de exportación no válido. Debe ser uno de: donantes, transacciones, campañas, suscripciones, dedicatorias."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:134
+#: src/Rest/Endpoints/FundraisersEndpoint.php:50
 msgid "You do not have permission to view fundraisers."
 msgstr "No tienes permiso para ver los recaudadores."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:210
+#: src/Rest/Endpoints/FundraisersEndpoint.php:59
 msgid "Fundraisers can only be added to peer-to-peer campaigns."
 msgstr "Los recaudadores solo se pueden añadir a campañas entre pares."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:233
+#: src/Rest/Endpoints/FundraisersEndpoint.php:250
 msgid "This person is already a fundraiser for this campaign."
 msgstr "Esta persona ya es recaudadora de esta campaña."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:261
+#: src/Rest/Endpoints/FundraisersEndpoint.php:169
 msgid "The fundraiser could not be created."
 msgstr "No se ha podido crear el recaudador."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:419
+#: src/Rest/Endpoints/FundraisersEndpoint.php:268
 msgid "The selected team does not belong to this campaign."
 msgstr "El equipo seleccionado no pertenece a esta campaña."
 
@@ -5313,11 +5311,12 @@ msgstr "Evento no válido: %s"
 msgid "Please verify your email to continue."
 msgstr "Verifica tu correo electrónico para continuar."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:402
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:406
 msgid "This campaign is not accepting fundraisers."
 msgstr "Esta campaña no acepta recaudadores."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:407
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:412
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:417
 msgid "Registration for this campaign is closed."
 msgstr "El registro para esta campaña está cerrado."
 
@@ -5364,19 +5363,19 @@ msgstr "Desconocido"
 msgid "Not available"
 msgstr "No disponible"
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:133
+#: src/Rest/Endpoints/TeamsEndpoint.php:49
 msgid "You do not have permission to view teams."
 msgstr "No tienes permiso para ver los equipos."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:208
+#: src/Rest/Endpoints/TeamsEndpoint.php:58
 msgid "Teams can only be added to peer-to-peer campaigns."
 msgstr "Los equipos solo se pueden añadir a campañas entre pares."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:237
+#: src/Rest/Endpoints/TeamsEndpoint.php:135
 msgid "The team could not be created."
 msgstr "No se ha podido crear el equipo."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:428
+#: src/Rest/Endpoints/TeamsEndpoint.php:230
 msgid "The selected captain is not a fundraiser in this campaign."
 msgstr "El capitán seleccionado no es un recaudador de esta campaña."
 
@@ -5512,7 +5511,7 @@ msgstr "Una campaña estándar con un formulario de donación."
 #: admin/build/mission-admin.js:151
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateStepType.js:19
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:351
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:27
 msgid "Peer-to-Peer"
 msgstr "Entre pares"
 
@@ -5602,19 +5601,19 @@ msgstr "Importe recaudado"
 
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateStepGoal.js:14
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:12
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:13
 msgid "Fundraising Goal"
 msgstr "Meta de recaudación"
 
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateStepGoal.js:15
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:13
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:14
 msgid "Donation Goal"
 msgstr "Meta de donaciones"
 
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateStepGoal.js:16
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:14
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:15
 msgid "Donor Goal"
 msgstr "Meta de donantes"
 
@@ -5627,7 +5626,7 @@ msgstr "Introduce una meta superior a cero"
 #: admin/build/mission-admin.js:191
 #: admin/src/components/onboarding/StepCampaign.js:165
 #: admin/src/pages/campaigns/CampaignCreateStepGoal.js:60
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:135
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:136
 msgid "Start Date"
 msgstr "Fecha de inicio"
 
@@ -5640,13 +5639,13 @@ msgstr "Déjalo en blanco para empezar de inmediato"
 #: admin/build/mission-admin.js:191
 #: admin/src/components/onboarding/StepCampaign.js:185
 #: admin/src/pages/campaigns/CampaignCreateStepGoal.js:74
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:147
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:148
 msgid "End Date"
 msgstr "Fecha de finalización"
 
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateStepGoal.js:78
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:162
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:163
 msgid "Leave blank for an ongoing campaign"
 msgstr "Déjalo en blanco para una campaña continua"
 
@@ -6110,187 +6109,187 @@ msgid "Are you sure you want to delete"
 msgstr "¿Seguro que quieres eliminar"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:67
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:68
 msgid "Campaign Details"
 msgstr "Detalles de la campaña"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:116
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:117
 msgid "Leave blank for no goal"
 msgstr "Déjalo en blanco para no fijar ninguna meta"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:124
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:125
 msgid "End campaign early when goal is reached"
 msgstr "Finalizar la campaña antes de tiempo cuando se alcance la meta"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:158
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:159
 msgid "Campaign will also end when the goal is reached"
 msgstr "La campaña también finalizará cuando se alcance la meta"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:177
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:178
 msgid "When Campaign Ends"
 msgstr "Cuando finaliza la campaña"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:185
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:186
 msgid "Stop accepting donations"
 msgstr "Dejar de aceptar donaciones"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:189
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:190
 msgid "Donation forms for this campaign will be disabled"
 msgstr "Los formularios de donación de esta campaña se desactivarán"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:200
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:201
 msgid "Show \"campaign ended\" message"
 msgstr "Mostrar el mensaje de «campaña finalizada»"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:204
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:205
 msgid "Replace the campaign page with a message and link to other active campaigns"
 msgstr "Sustituye la página de la campaña por un mensaje y un enlace a otras campañas activas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:218
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:219
 msgid "Remove from campaign listings"
 msgstr "Quitar de los listados de campañas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:222
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:223
 msgid "Hide this campaign from the public campaigns page"
 msgstr "Oculta esta campaña de la página pública de campañas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:238
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:239
 msgid "Keep recurring donations active"
 msgstr "Mantener activas las donaciones recurrentes"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:242
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:243
 msgid "Existing recurring donations will continue unchanged"
 msgstr "Las donaciones recurrentes existentes continuarán sin cambios"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:249
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:250
 msgid "Cancel recurring donations"
 msgstr "Cancelar las donaciones recurrentes"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:253
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:254
 msgid "Active subscriptions will be canceled and donors notified"
 msgstr "Las suscripciones activas se cancelarán y se avisará a los donantes"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:260
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:261
 msgid "Redirect funds to another campaign"
 msgstr "Redirigir los fondos a otra campaña"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:264
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:265
 msgid "Future recurring donations will be designated to another campaign"
 msgstr "Las futuras donaciones recurrentes se asignarán a otra campaña"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:312
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:313
 msgid "Redirect funds to"
 msgstr "Redirigir los fondos a"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:326
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:327
 msgid "Select a campaign…"
 msgstr "Selecciona una campaña…"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:357
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:33
 msgid "Registration open"
 msgstr "Registro abierto"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:358
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:34
 msgid "Allow new supporters to sign up as fundraisers"
 msgstr "Permitir que nuevos colaboradores se registren como recaudadores"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:368
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:44
 msgid "Require approval for fundraisers"
 msgstr "Requerir aprobación para los recaudadores"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:372
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:48
 msgid "New fundraiser pages stay pending until you approve them"
 msgstr "Las nuevas páginas de recaudadores quedan pendientes hasta que las apruebes"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:387
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:60
 msgid "Default fundraiser goal"
 msgstr "Meta predeterminada del recaudador"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:403
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:76
 msgid "Suggested goal for a new fundraiser"
 msgstr "Meta sugerida para un nuevo recaudador"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:412
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:85
 msgid "Story placeholder"
 msgstr "Texto de ejemplo de la historia"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:424
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:97
 msgid "Suggested text shown in the fundraiser story field"
 msgstr "Texto sugerido que se muestra en el campo de la historia del recaudador"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:434
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:107
 msgid "Enable teams"
 msgstr "Activar equipos"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:435
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:108
 msgid "Let fundraisers group together into teams"
 msgstr "Permitir que los recaudadores se agrupen en equipos"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:449
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:120
 msgid "Let supporters create teams"
 msgstr "Permitir que los colaboradores creen equipos"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:453
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:124
 msgid "Otherwise only admins create teams"
 msgstr "De lo contrario, solo los administradores crean equipos"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:465
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:134
 msgid "Require approval for teams"
 msgstr "Requerir aprobación para los equipos"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:469
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:138
 msgid "New teams stay pending until you approve them"
 msgstr "Los nuevos equipos quedan pendientes hasta que los apruebes"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:481
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:150
 msgid "Default team goal"
 msgstr "Meta predeterminada del equipo"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:502
+#: admin/src/pages/campaigns/tabs/settings/P2PSettings.js:169
 msgid "Team story placeholder"
 msgstr "Texto de ejemplo de la historia del equipo"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:537
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:369
 msgid "Settings Saved"
 msgstr "Ajustes guardados"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/tabs/SettingsTab.js:538
+#: admin/src/pages/campaigns/tabs/SettingsTab.js:370
 msgid "Save Settings"
 msgstr "Guardar ajustes"
 
@@ -7229,14 +7228,14 @@ msgid "Only visible to your organization."
 msgstr "Solo visible para tu organización."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/components/P2PListView.js:180
+#: admin/src/components/P2PListView.js:200
 msgid "Approve"
 msgstr "Aprobar"
 
 #: admin/build/mission-admin.js:193
 #: admin/build/mission-admin.js:194
-#: admin/src/components/P2PListView.js:188
-#: admin/src/components/P2PListView.js:276
+#: admin/src/components/P2PListView.js:208
+#: admin/src/components/P2PListView.js:296
 msgid "Deactivate"
 msgstr "Desactivar"
 
@@ -12033,7 +12032,7 @@ msgid "Show dedications"
 msgstr "Mostrar dedicatorias"
 
 #: blocks/build/signup-modal/index.js:1
-#: blocks/src/signup-modal/index.js:18
+#: blocks/src/signup-modal/index.js:19
 msgid "The fundraiser sign-up modal opens here when a visitor chooses to become a fundraiser."
 msgstr "La ventana de registro de recaudador se abre aquí cuando un visitante decide convertirse en recaudador."
 
@@ -12516,11 +12515,11 @@ msgstr "Introduce el código de 6 dígitos."
 msgid "Enter a new password."
 msgstr "Introduce una nueva contraseña."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:437
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:447
 msgid "That code didn't work. Request a new one and try again."
 msgstr "Ese código no funcionó. Solicita uno nuevo e inténtalo de nuevo."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:301
+#: src/Rest/Endpoints/TeamsEndpoint.php:199
 msgid "The selected captain is not a member of this team."
 msgstr "El capitán seleccionado no es miembro de este equipo."
 
@@ -12656,28 +12655,37 @@ msgstr "Cambio de capitán del equipo"
 
 #. translators: 1: number updated, 2: number failed
 #: admin/build/mission-admin.js:192
-#: admin/src/components/P2PListView.js:147
+#: admin/src/components/P2PListView.js:167
 msgid "%1$d updated, %2$d failed."
 msgstr "%1$d actualizados, %2$d fallidos."
 
 #. translators: %d: number of records updated
 #: admin/build/mission-admin.js:193
-#: admin/src/components/P2PListView.js:157
+#: admin/src/components/P2PListView.js:177
 msgid "%d updated."
 msgstr "%d actualizados."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/components/P2PListView.js:166
+#: admin/src/components/P2PListView.js:186
 msgid "The bulk action failed."
 msgstr "La acción en lote falló."
 
 #: admin/build/mission-admin.js:193
-#: admin/src/components/P2PListView.js:246
+#: admin/src/components/P2PListView.js:266
 msgid "Deactivate?"
 msgstr "¿Desactivar?"
 
 #. translators: %d: number of selected records
 #: admin/build/mission-admin.js:194
-#: admin/src/components/P2PListView.js:254
+#: admin/src/components/P2PListView.js:274
 msgid "Deactivating hides the selected pages from the site. %d selected."
 msgstr "Al desactivar se ocultan las páginas seleccionadas del sitio. %d seleccionados."
+
+#: src/P2P/FundraiserRegistrationService.php:280
+msgid "We could not create your fundraising page. Please try again."
+msgstr "No hemos podido crear tu página de recaudación. Inténtalo de nuevo."
+
+#: admin/build/mission-admin.js:191
+#: admin/src/components/P2PListView.js:99
+msgid "The list could not be loaded."
+msgstr "No se ha podido cargar la lista."
