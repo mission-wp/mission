@@ -18,6 +18,7 @@
 
 use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
+use MissionDP\Helpers\Sharing;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
@@ -134,6 +135,23 @@ defined( 'ABSPATH' ) || exit;
 	 * @param Campaign $campaign The campaign being fundraised for.
 	 */
 	$pending_message = apply_filters( 'mission_signup_pending_message', __( "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share.", 'mission-donation-platform' ), $campaign );
+
+	// Success-screen share buttons, in render order (see mission_share_networks).
+	$share_networks = Sharing::networks( 'signup-modal' );
+	$share_buttons  = [
+		'facebook' => [
+			'action' => 'actions.shareFacebook',
+			'label'  => __( 'Share on Facebook', 'mission-donation-platform' ),
+		],
+		'x'        => [
+			'action' => 'actions.shareX',
+			'label'  => __( 'Share on X', 'mission-donation-platform' ),
+		],
+		'bluesky'  => [
+			'action' => 'actions.shareBluesky',
+			'label'  => __( 'Share on Bluesky', 'mission-donation-platform' ),
+		],
+	];
 
 	ob_start();
 	?>
@@ -316,10 +334,10 @@ defined( 'ABSPATH' ) || exit;
 						<h2 class="mission-su__title mission-su__title--success"><?php echo esc_html( $success_title ); ?></h2>
 						<p class="mission-su__subtitle"><?php echo esc_html( $success_message ); ?></p>
 						<div class="mission-su__share">
-							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareFacebook" aria-label="<?php esc_attr_e( 'Share on Facebook', 'mission-donation-platform' ); ?>">f</button>
-							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareX" aria-label="<?php esc_attr_e( 'Share on X', 'mission-donation-platform' ); ?>">X</button>
-							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.copyLink" aria-label="<?php esc_attr_e( 'Copy link', 'mission-donation-platform' ); ?>"><span data-wp-text="state.copyLabel"></span></button>
-							<button type="button" class="mission-su__share-btn" data-wp-on--click="actions.shareEmail" aria-label="<?php esc_attr_e( 'Share by email', 'mission-donation-platform' ); ?>">@</button>
+							<?php foreach ( $share_networks as $network ) : ?>
+								<button type="button" class="mission-su__share-btn" data-wp-on--click="<?php echo esc_attr( $share_buttons[ $network ]['action'] ); ?>" aria-label="<?php echo esc_attr( $share_buttons[ $network ]['label'] ); ?>"><span class="<?php echo esc_attr( 'mission-su__share-icon mission-su__share-icon--' . $network ); ?>" aria-hidden="true"></span></button>
+							<?php endforeach; ?>
+							<button type="button" class="mission-su__share-btn" data-wp-class--is-copied="state.copied" data-wp-on--click="actions.copyLink" aria-label="<?php esc_attr_e( 'Copy link', 'mission-donation-platform' ); ?>"><span class="mission-su__share-icon mission-su__share-icon--copy" aria-hidden="true"></span><span class="mission-su__sr-only" aria-live="polite" data-wp-text="state.copyLabel"></span></button>
 						</div>
 						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
 					</div>

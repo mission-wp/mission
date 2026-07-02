@@ -157,11 +157,31 @@ defined( 'ABSPATH' ) || exit;
 				<?php esc_html_e( 'Copy', 'mission-donation-platform' ); ?>
 			</button>
 		</div>
-		<div class="mission-fd-share-links">
-			<a class="mission-dd-btn-secondary" target="_blank" rel="noopener noreferrer" data-wp-bind--href="context.fundraising.view.shareFacebook"><?php esc_html_e( 'Share on Facebook', 'mission-donation-platform' ); ?></a>
-			<a class="mission-dd-btn-secondary" target="_blank" rel="noopener noreferrer" data-wp-bind--href="context.fundraising.view.shareTwitter"><?php esc_html_e( 'Share on X', 'mission-donation-platform' ); ?></a>
-			<a class="mission-dd-btn-secondary" data-wp-bind--href="context.fundraising.view.shareEmail"><?php esc_html_e( 'Share by email', 'mission-donation-platform' ); ?></a>
-		</div>
+		<?php
+		// Same networks (and filter) as the sign-up success screen.
+		$share_networks = \MissionDP\Helpers\Sharing::networks( 'donor-dashboard' );
+		$share_chips    = [
+			'facebook' => [
+				'bind'  => 'context.fundraising.view.shareFacebook',
+				'label' => __( 'Share on Facebook', 'mission-donation-platform' ),
+			],
+			'x'        => [
+				'bind'  => 'context.fundraising.view.shareX',
+				'label' => __( 'Share on X', 'mission-donation-platform' ),
+			],
+			'bluesky'  => [
+				'bind'  => 'context.fundraising.view.shareBluesky',
+				'label' => __( 'Share on Bluesky', 'mission-donation-platform' ),
+			],
+		];
+		?>
+		<?php if ( $share_networks ) : ?>
+			<div class="mission-fd-share-links">
+				<?php foreach ( $share_networks as $network ) : ?>
+					<a class="mission-dd-btn-secondary" target="_blank" rel="noopener noreferrer" data-wp-bind--href="<?php echo esc_attr( $share_chips[ $network ]['bind'] ); ?>"><?php echo esc_html( $share_chips[ $network ]['label'] ); ?></a>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
 		<div class="mission-fd-embed">
 			<label class="mission-dd-profile-label" for="mission-fd-embed"><?php esc_html_e( 'Embed code', 'mission-donation-platform' ); ?></label>
 			<textarea id="mission-fd-embed" class="mission-dd-profile-input mission-fd-embed-code" rows="2" readonly data-wp-bind--value="context.fundraising.view.embed"></textarea>

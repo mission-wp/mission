@@ -165,6 +165,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     successUrl: '',
     isPending: false,
     copyLabel: 'Copy',
+    copied: false,
 
     get isStep1() {
       return state.currentStep === 1;
@@ -618,14 +619,25 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         'noopener,width=600,height=500'
       );
     },
-    shareEmail() {
-      window.location.href = 'mailto:?body=' + encodeURIComponent( shareUrl() );
+    shareBluesky() {
+      window.open(
+        'https://bsky.app/intent/compose?text=' +
+          encodeURIComponent( shareUrl() ),
+        '_blank',
+        'noopener,width=600,height=500'
+      );
     },
     copyLink() {
-      if ( navigator.clipboard ) {
-        navigator.clipboard.writeText( shareUrl() ).catch( () => {} );
-        state.copyLabel = i18n( 'copied', 'Copied' );
+      if ( ! navigator.clipboard ) {
+        return;
       }
+      navigator.clipboard.writeText( shareUrl() ).catch( () => {} );
+      state.copied = true;
+      state.copyLabel = i18n( 'copied', 'Copied' );
+      setTimeout( () => {
+        state.copied = false;
+        state.copyLabel = i18n( 'copy', 'Copy' );
+      }, 2000 );
     },
   },
 
