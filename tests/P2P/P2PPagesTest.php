@@ -190,6 +190,68 @@ class P2PPagesTest extends WP_UnitTestCase {
 		$this->assertSame( $team->post_id, get_queried_object_id() );
 	}
 
+	/**
+	 * Test a URL with the wrong campaign segment 301s to the canonical permalink.
+	 *
+	 * Core's redirect_canonical() does not correct the path (the rule resolves
+	 * by CPT slug alone), so P2PRewrites issues the redirect itself.
+	 */
+	public function test_wrong_campaign_url_redirects_to_canonical(): void {
+		$campaign   = $this->create_campaign();
+		$other      = $this->create_campaign( 'Other Drive' );
+		$fundraiser = $this->create_fundraiser( $campaign->id );
+
+		$canonical = get_permalink( $fundraiser->post_id );
+		$wrong     = str_replace(
+			'/' . get_post( $campaign->post_id )->post_name . '/',
+			'/' . get_post( $other->post_id )->post_name . '/',
+			$canonical
+		);
+		$this->assertNotSame( $canonical, $wrong );
+
+		$this->go_to( $wrong );
+		$this->assertSame( $fundraiser->post_id, get_queried_object_id() );
+
+		$this->assertSame( $canonical, ( new P2PRewrites() )->get_canonical_redirect_url( $wrong ) );
+	}
+
+	/**
+	 * Test a wrong-campaign team URL redirects and unrelated query args survive.
+	 */
+	public function test_wrong_campaign_team_url_redirects_preserving_query(): void {
+		$campaign = $this->create_campaign();
+		$other    = $this->create_campaign( 'Other Drive' );
+		$team     = $this->create_team( $campaign->id );
+
+		$canonical = get_permalink( $team->post_id );
+		$wrong     = str_replace(
+			'/' . get_post( $campaign->post_id )->post_name . '/',
+			'/' . get_post( $other->post_id )->post_name . '/',
+			$canonical
+		) . '?utm_source=email';
+
+		$this->go_to( $wrong );
+
+		$this->assertSame(
+			$canonical . '?utm_source=email',
+			( new P2PRewrites() )->get_canonical_redirect_url( $wrong )
+		);
+	}
+
+	/**
+	 * Test the canonical URL itself does not redirect.
+	 */
+	public function test_canonical_url_does_not_redirect(): void {
+		$campaign   = $this->create_campaign();
+		$fundraiser = $this->create_fundraiser( $campaign->id );
+		$canonical  = get_permalink( $fundraiser->post_id );
+
+		$this->go_to( $canonical );
+
+		$this->assertNull( ( new P2PRewrites() )->get_canonical_redirect_url( $canonical ) );
+		$this->assertNull( redirect_canonical( $canonical, false ) );
+	}
+
 	// -------------------------------------------------------------------------
 	// Rendering.
 	// -------------------------------------------------------------------------

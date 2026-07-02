@@ -31,6 +31,8 @@ class P2PRewrites {
 	public function init(): void {
 		add_action( 'init', [ $this, 'add_rewrite_rules' ] );
 		add_filter( 'post_type_link', [ $this, 'filter_post_type_link' ], 10, 2 );
+		// Before core's redirect_canonical() (priority 10) so one hop lands on the permalink.
+		add_action( 'template_redirect', [ $this, 'redirect_to_canonical' ], 5 );
 	}
 
 	/**
@@ -101,6 +103,58 @@ class P2PRewrites {
 		}
 
 		return $permalink;
+	}
+
+	/**
+	 * Redirect non-canonical shell-page URLs to the permalink.
+	 */
+	public function redirect_to_canonical(): void {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return;
+		}
+
+		$redirect = $this->get_canonical_redirect_url( esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+
+		if ( $redirect ) {
+			wp_safe_redirect( $redirect, 301 );
+			exit;
+		}
+	}
+
+	/**
+	 * Compute the canonical redirect for the current shell-page request, if any.
+	 *
+	 * The nested rules resolve by the globally-unique CPT slug, so a request
+	 * with the wrong campaign segment still resolves, and core's
+	 * redirect_canonical() never corrects the path.
+	 *
+	 * @param string $requested_url The requested URL (or path with query).
+	 * @return string|null The canonical URL to redirect to, or null when none.
+	 */
+	public function get_canonical_redirect_url( string $requested_url ): ?string {
+		if ( ! is_singular( [ Fundraiser::POST_TYPE, Team::POST_TYPE ] ) ) {
+			return null;
+		}
+
+		$canonical = get_permalink( get_queried_object_id() );
+
+		if ( ! $canonical ) {
+			return null;
+		}
+
+		$requested_path = (string) wp_parse_url( $requested_url, PHP_URL_PATH );
+		$canonical_path = (string) wp_parse_url( $canonical, PHP_URL_PATH );
+
+		if ( untrailingslashit( $requested_path ) === untrailingslashit( $canonical_path ) ) {
+			return null;
+		}
+
+		// Preserve unrelated query args, dropping the ones that resolved the post.
+		$args = [];
+		parse_str( (string) wp_parse_url( $requested_url, PHP_URL_QUERY ), $args );
+		unset( $args[ Fundraiser::POST_TYPE ], $args[ Team::POST_TYPE ], $args['post_type'], $args['name'], $args['p'] );
+
+		return $args ? add_query_arg( $args, $canonical ) : $canonical;
 	}
 
 	/**
