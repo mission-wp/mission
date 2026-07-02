@@ -432,6 +432,10 @@ class RegisterFundraiserEndpoint {
 			);
 		}
 
-		return new WP_Error( 'otp_invalid', $e->getMessage(), [ 'status' => 400 ] );
+		return new WP_Error(
+			'otp_invalid',
+			__( "That code didn't work. Request a new one and try again.", 'mission-donation-platform' ),
+			[ 'status' => 400 ]
+		);
 	}
 }

@@ -181,6 +181,54 @@ class OtpServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the sixth code request within the hour is throttled.
+	 */
+	public function test_send_throttled_after_hourly_cap(): void {
+		$service = $this->service();
+		$email   = 'cap@example.com';
+
+		// Five sends are allowed; clear the resend cooldown between each so
+		// only the hourly counter is in play.
+		for ( $i = 0; $i < 5; $i++ ) {
+			$service->send( $email, 'signup' );
+			delete_transient( 'missiondp_otp_cooldown_' . md5( $email . '|signup' ) );
+		}
+
+		try {
+			$service->send( $email, 'signup' );
+			$this->fail( 'Expected an OtpException once the hourly cap is hit.' );
+		} catch ( OtpException $e ) {
+			$this->assertSame( OtpException::THROTTLED, $e->reason );
+			$this->assertGreaterThan( 0, $e->retry_after );
+		}
+	}
+
+	/**
+	 * Test a stored code past its expiry verifies as expired and is burned.
+	 */
+	public function test_verify_stale_code_reports_expired(): void {
+		$service = $this->service();
+		$email   = 'stale@example.com';
+		$service->send( $email, 'signup' );
+
+		// Age the stored code past its expiry while the transient still exists.
+		$key             = 'missiondp_otp_code_' . md5( $email . '|signup' );
+		$data            = get_transient( $key );
+		$data['expires'] = time() - 1;
+		set_transient( $key, $data, 60 );
+
+		try {
+			$service->verify( $email, 'signup', $this->last_code );
+			$this->fail( 'Expected an OtpException for a stale code.' );
+		} catch ( OtpException $e ) {
+			$this->assertSame( OtpException::EXPIRED, $e->reason );
+		}
+
+		// The stale code is deleted, so it reads the same as never existing.
+		$this->assertFalse( get_transient( $key ) );
+	}
+
+	/**
 	 * Test verifying with no outstanding code reports as expired.
 	 */
 	public function test_verify_without_code_throws_expired(): void {

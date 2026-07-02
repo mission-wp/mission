@@ -294,6 +294,62 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A logged-in user without the donor role gets 403, not 401.
+	 */
+	public function test_logged_in_without_donor_role_gets_403(): void {
+		$fundraiser = $this->create_fundraiser();
+		$subscriber = self::factory()->user->create( [ 'role' => 'subscriber' ] );
+		wp_set_current_user( $subscriber );
+
+		$response = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}" );
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * A logged-in non-donor cannot list a fundraiser's supporters (PII).
+	 */
+	public function test_non_donor_cannot_list_supporters(): void {
+		$fundraiser = $this->create_fundraiser();
+		$subscriber = self::factory()->user->create( [ 'role' => 'subscriber' ] );
+		wp_set_current_user( $subscriber );
+
+		$response = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}/donors" );
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * Another fundraiser's session gets 404 reading or editing this one's page.
+	 */
+	public function test_other_fundraiser_session_cannot_read_or_edit(): void {
+		$fundraiser = $this->create_fundraiser( [ 'headline' => 'Original' ] );
+
+		// Fundraiser B: a different donor with their own session and page.
+		$other_user  = self::factory()->user->create( [ 'role' => 'missiondp_donor', 'user_email' => 'mallory@example.com' ] );
+		$other_donor = new Donor(
+			[
+				'email'      => 'mallory@example.com',
+				'first_name' => 'Mal',
+				'user_id'    => $other_user,
+			]
+		);
+		$other_donor->save();
+		$this->create_fundraiser( [ 'donor_id' => $other_donor->id ] );
+		wp_set_current_user( $other_user );
+
+		$get = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}" );
+		$this->assertSame( 404, $get->get_status() );
+
+		$put = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'headline' => 'Hijacked' ]
+		);
+		$this->assertSame( 404, $put->get_status() );
+		$this->assertSame( 'Original', Fundraiser::find( $fundraiser->id )->headline );
+	}
+
+	/**
 	 * The donors route lists supporters of the fundraiser.
 	 */
 	public function test_donors_route_lists_supporters(): void {
