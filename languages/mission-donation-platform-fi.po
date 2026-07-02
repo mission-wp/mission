@@ -131,7 +131,7 @@ msgstr "Päättyy %s"
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:77
 msgid "Ongoing"
-msgstr "Käynnissä"
+msgstr "Toistuva"
 
 #: blocks/build/campaign-grid/index.php:230
 #: blocks/build/campaign/index.php:215
@@ -356,7 +356,7 @@ msgstr "Testitila käytössä: Testitilassa tehtyjä lahjoituksia ei käsitellä
 #: blocks/src/donation-form/edit/FormPreview.js:68
 #: blocks/src/donation-form/edit/tabs/AppearanceTab.js:84
 msgid "Choose Your Gift"
-msgstr "Valitse lahjasi"
+msgstr "Valitse lahjoituksesi"
 
 #: blocks/build/donation-form/index.php:289
 #: blocks/src/donation-form/index.php:289
@@ -394,7 +394,7 @@ msgstr "Pienin lahjoitus on %s"
 #: blocks/build/donation-form/index.php:381
 #: blocks/src/donation-form/index.php:381
 msgid "Dedicate this gift in honor or memory of someone"
-msgstr "Omista tämä lahja jonkun kunniaksi tai muistoksi"
+msgstr "Omista tämä lahjoitus jonkun kunniaksi tai muistoksi"
 
 #: blocks/build/donation-form/index.php:391
 #: blocks/build/recent-donors/index.php:134
@@ -684,7 +684,7 @@ msgstr "Tämä kenttä on pakollinen."
 #: blocks/build/donation-form/index.php:734
 #: blocks/src/donation-form/index.php:734
 msgid "Complete Your Gift"
-msgstr "Viimeistele lahjasi"
+msgstr "Viimeistele lahjoituksesi"
 
 #: blocks/build/donation-form/index.php:748
 #: blocks/build/donation-form/index.php:751
@@ -713,7 +713,7 @@ msgstr "Muokkaa"
 #: blocks/build/donation-form/index.php:760
 #: blocks/src/donation-form/index.php:760
 msgid "Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about."
-msgstr "Maksunvälittäjät ottavat osuuden jokaisesta maksutapahtumasta. Voit halutessasi kattaa nämä maksut, jotta 100 % lahjastasi menee sinulle tärkeään tarkoitukseen."
+msgstr "Maksunvälittäjät ottavat osuuden jokaisesta maksutapahtumasta. Voit halutessasi kattaa nämä maksut, jotta 100 % lahjoituksestasi menee sinulle tärkeään tarkoitukseen."
 
 #: blocks/build/donation-form/index.php:767
 #: blocks/build/donor-dashboard/parts/recurring.php:151
@@ -2592,7 +2592,7 @@ msgstr "Kiitos %1$s %2$s lahjoituksestasi"
 #: src/Email/SubscriptionEmailListener.php:111
 #: src/Rest/Endpoints/EmailTestEndpoint.php:44
 msgid "Thank you for your %1$s gift of %2$s"
-msgstr "Kiitos %1$s lahjastasi, %2$s"
+msgstr "Kiitos %1$s lahjoituksestasi, %2$s"
 
 #: src/Email/SubscriptionEmailListener.php:146
 #: src/Rest/Endpoints/EmailTemplateEndpoint.php:76
@@ -4082,7 +4082,7 @@ msgstr "Kiitos {amount} {frequency} lahjoituksestasi"
 
 #: src/Rest/Endpoints/EmailTemplateEndpoint.php:75
 msgid "Thank you for your {frequency} gift of {amount}"
-msgstr "Kiitos {frequency} lahjastasi, {amount}"
+msgstr "Kiitos {frequency} lahjoituksestasi, {amount}"
 
 #: src/Rest/Endpoints/EmailTemplateEndpoint.php:82
 msgid "A donation has been made {tribute_type_label} {honoree_name}"
@@ -10179,7 +10179,7 @@ msgstr "Salli omistukset"
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/tabs/DonorInfoTab.js:45
 msgid "Let donors dedicate their gift in honor or memory of someone"
-msgstr "Anna lahjoittajien omistaa lahjansa jonkun kunniaksi tai muistoksi"
+msgstr "Anna lahjoittajien omistaa lahjoituksensa jonkun kunniaksi tai muistoksi"
 
 #. translators: %s: Stripe account display name
 #: blocks/build/donation-form/index.js:2
@@ -11396,7 +11396,7 @@ msgstr "Tulostaulu"
 
 #: src/Campaigns/templates/campaign-page-p2p.php:73
 msgid "Your gift supports the campaign and helps every fundraiser reach their goal."
-msgstr "Lahjasi tukee kampanjaa ja auttaa jokaista varainkerääjää saavuttamaan tavoitteensa."
+msgstr "Lahjoituksesi tukee kampanjaa ja auttaa jokaista varainkerääjää saavuttamaan tavoitteensa."
 
 #: src/DonorDashboard/DashboardContextBuilder.php:359
 msgid "Saved"

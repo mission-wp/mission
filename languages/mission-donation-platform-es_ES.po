@@ -137,7 +137,7 @@ msgstr "Finaliza el %s"
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:77
 msgid "Ongoing"
-msgstr "En curso"
+msgstr "Recurrente"
 
 #: blocks/build/campaign-grid/index.php:230
 #: blocks/build/campaign/index.php:215
