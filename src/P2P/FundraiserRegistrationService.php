@@ -207,8 +207,8 @@ class FundraiserRegistrationService {
 	 * @param Donor    $donor    The participant.
 	 * @param Campaign $campaign The parent P2P campaign.
 	 * @param array    $input    Sanitized setup fields (team_mode, team_id, team_name,
-	 *                           goal in minor units, story, dedicate, tribute_type, honoree_name,
-	 *                           invite_token).
+	 *                           team_access, goal in minor units, story, dedicate, tribute_type,
+	 *                           honoree_name, invite_token).
 	 * @return array{fundraiser: array, team: ?array}|WP_Error Result payload, or an error when the row can't be created.
 	 */
 	public function register_fundraiser( Donor $donor, Campaign $campaign, array $input ): array|WP_Error {
@@ -325,7 +325,10 @@ class FundraiserRegistrationService {
 			}
 
 			$team_status = empty( $settings['team_approval_required'] ) ? Team::STATUS_ACTIVE : Team::STATUS_PENDING;
-			$team        = Team::register( $campaign->id, $name, (int) $settings['default_team_goal'], Team::ACCESS_PUBLIC, $team_status );
+			$team_access = in_array( $input['team_access'] ?? '', Team::ACCESS_LEVELS, true )
+				? $input['team_access']
+				: Team::ACCESS_PUBLIC;
+			$team        = Team::register( $campaign->id, $name, (int) $settings['default_team_goal'], $team_access, $team_status );
 
 			// Circular FK: fundraiser joins as captain, then the team records it.
 			$fundraiser->join_team( $team, true );

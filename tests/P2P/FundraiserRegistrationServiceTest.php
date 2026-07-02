@@ -391,6 +391,34 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test creating a team honors the requested private access level.
+	 */
+	public function test_register_fundraiser_creates_private_team(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true, 'team_creation_enabled' => true ] );
+		$donor    = new Donor( [ 'email' => 'private-captain@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'create', 'team_name' => 'Secret Squad', 'goal' => 10000, 'team_access' => 'private' ] );
+		$team   = Team::find( $result['team']['id'] );
+
+		$this->assertSame( Team::ACCESS_PRIVATE, $team->access );
+	}
+
+	/**
+	 * Test an unknown team access value falls back to a public team.
+	 */
+	public function test_register_fundraiser_rejects_unknown_team_access(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true, 'team_creation_enabled' => true ] );
+		$donor    = new Donor( [ 'email' => 'sneaky-captain@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'create', 'team_name' => 'Sneaky Squad', 'goal' => 10000, 'team_access' => 'sneaky' ] );
+		$team   = Team::find( $result['team']['id'] );
+
+		$this->assertSame( Team::ACCESS_PUBLIC, $team->access );
+	}
+
+	/**
 	 * Test team creation falls back to solo when creation is disabled.
 	 */
 	public function test_register_fundraiser_create_blocked_when_disabled(): void {

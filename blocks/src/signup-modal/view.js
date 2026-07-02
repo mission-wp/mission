@@ -139,6 +139,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     resetGrant: '',
     // Setup fields.
     teamMode: 'join',
+    teamPrivate: false,
     teamId: '',
     teamName: '',
     inviteToken: '',
@@ -293,6 +294,9 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     },
     updateTeamName( event ) {
       state.teamName = event.target.value;
+    },
+    updateTeamPrivate( event ) {
+      state.teamPrivate = event.target.checked;
     },
     updateGoal( event ) {
       state.goal = event.target.value;
@@ -531,6 +535,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
             ctx.preselectedTeamId ||
             ( state.teamId ? Number( state.teamId ) : 0 ),
           team_name: state.teamName,
+          team_access: state.teamPrivate ? 'private' : 'public',
           // Send the goal in major units; the server converts to minor.
           goal: Number( state.goal ) || 0,
           story: state.story,

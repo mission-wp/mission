@@ -183,6 +183,10 @@ class RegisterFundraiserEndpoint {
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					],
+					'team_access'  => [
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					],
 					'goal'         => [
 						'type'              => 'number',
 						'sanitize_callback' => static fn( $value ) => max( 0, (float) $value ),
@@ -376,6 +380,7 @@ class RegisterFundraiserEndpoint {
 				'team_mode'    => $request->get_param( 'team_mode' ),
 				'team_id'      => (int) $request->get_param( 'team_id' ),
 				'team_name'    => (string) $request->get_param( 'team_name' ),
+				'team_access'  => (string) $request->get_param( 'team_access' ),
 				// Goal arrives in major units (what the participant entered); convert here.
 				'goal'         => Currency::major_to_minor( (float) $request->get_param( 'goal' ), $campaign->currency ),
 				'story'        => (string) $request->get_param( 'story' ),

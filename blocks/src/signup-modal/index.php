@@ -294,6 +294,23 @@ defined( 'ABSPATH' ) || exit;
 						<?php if ( $creation_enabled ) : ?>
 							<div class="mission-su__panel" data-wp-class--is-active="state.isCreateMode">
 								<label class="mission-su__field"><span><?php esc_html_e( 'Team name', 'mission-donation-platform' ); ?></span><input type="text" data-wp-bind--value="state.teamName" data-wp-on--input="actions.updateTeamName" /></label>
+								<div class="mission-su__field">
+									<span><?php esc_html_e( 'Team access', 'mission-donation-platform' ); ?></span>
+									<div class="mission-su__access">
+										<label class="mission-su__access-toggle">
+											<input type="checkbox" aria-label="<?php esc_attr_e( 'Make this team private', 'mission-donation-platform' ); ?>" data-wp-bind--checked="state.teamPrivate" data-wp-on--change="actions.updateTeamPrivate" />
+											<span class="mission-su__access-track">
+												<span class="mission-su__access-knob"></span>
+												<span class="mission-su__access-labels">
+													<span class="mission-su__access-text mission-su__access-text--public"><?php esc_html_e( 'Public', 'mission-donation-platform' ); ?></span>
+													<span class="mission-su__access-text mission-su__access-text--private"><?php esc_html_e( 'Private', 'mission-donation-platform' ); ?></span>
+												</span>
+											</span>
+										</label>
+										<p class="mission-su__hint" data-wp-bind--hidden="state.teamPrivate"><?php esc_html_e( 'Anyone can join your team.', 'mission-donation-platform' ); ?></p>
+										<p class="mission-su__hint" data-wp-bind--hidden="!state.teamPrivate"><?php esc_html_e( 'Only people you invite can join.', 'mission-donation-platform' ); ?></p>
+									</div>
+								</div>
 								<p class="mission-su__hint"><?php esc_html_e( 'You can add a team logo later from your dashboard.', 'mission-donation-platform' ); ?></p>
 							</div>
 						<?php endif; ?>

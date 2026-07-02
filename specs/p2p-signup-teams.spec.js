@@ -80,6 +80,41 @@ test.describe( 'Peer-to-peer team sign-up', () => {
     ).toBeVisible();
   } );
 
+  test( 'flipping the access toggle creates a private team', async ( {
+    page,
+  } ) => {
+    const email = `e2e-private-${ Date.now() }@example.com`;
+    const newTeam = `Owls ${ Date.now() }`;
+
+    const modal = await openModal( page, url );
+    await advanceToSetup( modal, {
+      first: 'Private',
+      last: 'Founder',
+      email,
+      password: 'longenough1',
+    } );
+
+    await modal.getByRole( 'button', { name: 'Create a team' } ).click();
+    await modal.getByLabel( 'Team name' ).fill( newTeam );
+
+    // Flip the access toggle; the hint swaps to the private explanation.
+    await modal.getByLabel( 'Make this team private' ).check();
+    await expect(
+      modal.getByText( 'Only people you invite can join.' )
+    ).toBeVisible();
+
+    await modal.getByRole( 'button', { name: 'Create fundraiser' } ).click();
+    await expect(
+      modal.getByRole( 'heading', { name: "You're a fundraiser!" } )
+    ).toBeVisible();
+
+    const out = wpEval(
+      `foreach ( \\MissionDP\\Models\\Team::query( [ "campaign_id" => ${ campaign.id }, "per_page" => 100 ] ) as $t ) {` +
+        ` if ( "${ newTeam }" === $t->name ) { echo $t->access; } }`
+    );
+    expect( out.split( '\n' ).pop().trim() ).toBe( 'private' );
+  } );
+
   test( 'a new participant creates a team and becomes its captain', async ( {
     page,
   } ) => {
