@@ -300,15 +300,21 @@ class FundraisersEndpoint {
 			$fundraiser->story = wp_kses_post( $request->get_param( 'story' ) );
 		}
 
-		if ( null !== $request->get_param( 'status' ) ) {
-			$fundraiser->status = $request->get_param( 'status' );
-		}
-
-		if ( null !== $request->get_param( 'is_team_captain' ) ) {
-			$fundraiser->is_team_captain = (bool) $request->get_param( 'is_team_captain' );
-		}
-
 		$fundraiser->save();
+
+		// Status transitions go through the model methods so approval fires the
+		// email/activity events (a plain field write would approve silently).
+		$status = $request->get_param( 'status' );
+		if ( null !== $status && $status !== $fundraiser->status ) {
+			if ( Fundraiser::STATUS_ACTIVE === $status ) {
+				$fundraiser->approve();
+			} elseif ( Fundraiser::STATUS_INACTIVE === $status ) {
+				$fundraiser->deactivate();
+			} else {
+				$fundraiser->status = $status;
+				$fundraiser->save();
+			}
+		}
 
 		return new WP_REST_Response( $this->prepare_fundraiser( $fundraiser ), 200 );
 	}
@@ -501,18 +507,17 @@ class FundraisersEndpoint {
 	 */
 	private function get_update_params(): array {
 		return [
-			'id'              => Args::id(),
-			'team_id'         => [
+			'id'       => Args::id(),
+			'team_id'  => [
 				'type' => [ 'integer', 'null' ],
 			],
-			'goal'            => Args::integer(),
-			'headline'        => Args::string(),
-			'story'           => [
+			'goal'     => Args::integer(),
+			'headline' => Args::string(),
+			'story'    => [
 				'type'              => 'string',
 				'sanitize_callback' => 'wp_kses_post',
 			],
-			'status'          => Args::enum( Fundraiser::STATUSES ),
-			'is_team_captain' => Args::boolean(),
+			'status'   => Args::enum( Fundraiser::STATUSES ),
 		];
 	}
 

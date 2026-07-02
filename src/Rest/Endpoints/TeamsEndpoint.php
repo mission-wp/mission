@@ -222,7 +222,6 @@ class TeamsEndpoint {
 		$team = new Team(
 			[
 				'campaign_id' => $campaign->id,
-				'captain_id'  => $captain_id ? (int) $captain_id : null,
 				'name'        => sanitize_text_field( $request->get_param( 'name' ) ),
 				'description' => wp_kses_post( $request->get_param( 'description' ) ?? '' ),
 				'goal'        => null !== $goal ? max( 0, (int) $goal ) : (int) $settings['default_team_goal'],
@@ -238,6 +237,14 @@ class TeamsEndpoint {
 				__( 'The team could not be created.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
+		}
+
+		// The captain joins through the model path so their team_id and captain
+		// flag stay in sync with the team's captain_id.
+		if ( $captain_id ) {
+			$captain = Fundraiser::find( (int) $captain_id );
+			$captain->join_team( $team, true );
+			$team->set_captain( $captain );
 		}
 
 		return new WP_REST_Response( $this->prepare_team( $team ), 201 );
@@ -256,15 +263,6 @@ class TeamsEndpoint {
 			return RestErrors::team_not_found();
 		}
 
-		if ( $request->has_param( 'captain_id' ) ) {
-			$captain_id    = $request->get_param( 'captain_id' );
-			$captain_error = $this->validate_captain( $captain_id, $team->campaign_id );
-			if ( $captain_error ) {
-				return $captain_error;
-			}
-			$team->captain_id = $captain_id ? (int) $captain_id : null;
-		}
-
 		if ( null !== $request->get_param( 'name' ) ) {
 			$team->name = sanitize_text_field( $request->get_param( 'name' ) );
 		}
@@ -281,15 +279,51 @@ class TeamsEndpoint {
 			$team->access = $request->get_param( 'access' );
 		}
 
-		if ( null !== $request->get_param( 'status' ) ) {
-			$team->status = $request->get_param( 'status' );
-		}
-
 		if ( null !== $request->get_param( 'cover_image' ) ) {
 			$team->cover_image = sanitize_text_field( $request->get_param( 'cover_image' ) );
 		}
 
 		$team->save();
+
+		// Captain changes go through the model so both sides of the association
+		// stay in sync (captain_id and the members' is_team_captain flags).
+		if ( $request->has_param( 'captain_id' ) ) {
+			$captain_id = $request->get_param( 'captain_id' );
+
+			if ( empty( $captain_id ) ) {
+				$team->clear_captain();
+			} else {
+				$captain = Fundraiser::find( (int) $captain_id );
+
+				if ( ! $captain ) {
+					return new WP_Error(
+						'invalid_captain',
+						__( 'The selected captain is not a member of this team.', 'mission-donation-platform' ),
+						[ 'status' => 400 ]
+					);
+				}
+
+				$result = $team->promote_captain( $captain );
+				if ( is_wp_error( $result ) ) {
+					$result->add_data( [ 'status' => 400 ] );
+					return $result;
+				}
+			}
+		}
+
+		// Status transitions go through the model methods so approval fires the
+		// email/activity events (a plain field write would approve silently).
+		$status = $request->get_param( 'status' );
+		if ( null !== $status && $status !== $team->status ) {
+			if ( Team::STATUS_ACTIVE === $status ) {
+				$team->approve();
+			} elseif ( Team::STATUS_INACTIVE === $status ) {
+				$team->deactivate();
+			} else {
+				$team->status = $status;
+				$team->save();
+			}
+		}
 
 		return new WP_REST_Response( $this->prepare_team( $team ), 200 );
 	}

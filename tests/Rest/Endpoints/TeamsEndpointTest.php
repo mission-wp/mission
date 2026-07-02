@@ -179,6 +179,49 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test every route rejects a subscriber with 403 and changes nothing.
+	 */
+	public function test_all_routes_require_manage_options(): void {
+		$campaign = $this->create_p2p_campaign();
+		$team     = $this->create_team(
+			$campaign->id,
+			[
+				'name'   => 'Original',
+				'status' => Team::STATUS_PENDING,
+			]
+		);
+
+		wp_set_current_user( $this->subscriber_id );
+
+		$base   = '/mission-donation-platform/v1/teams';
+		$routes = [
+			[ 'GET', "$base/{$team->id}", [] ],
+			[ 'POST', $base, [ 'campaign_id' => $campaign->id, 'name' => 'Intruders' ] ],
+			[ 'PUT', "$base/{$team->id}", [ 'name' => 'Hijacked' ] ],
+			[ 'POST', "$base/{$team->id}/approve", [] ],
+			[ 'POST', "$base/bulk", [ 'action' => 'approve', 'ids' => [ $team->id ] ] ],
+			[ 'GET', "$base/summary", [] ],
+			[ 'DELETE', "$base/{$team->id}", [] ],
+		];
+
+		foreach ( $routes as [ $method, $route, $body ] ) {
+			$request = new WP_REST_Request( $method, $route );
+			if ( $body ) {
+				$request->set_body_params( $body );
+			}
+
+			$response = $this->server->dispatch( $request );
+			$this->assertSame( 403, $response->get_status(), "$method $route should be forbidden for a subscriber." );
+		}
+
+		$after = Team::find( $team->id );
+		$this->assertNotNull( $after );
+		$this->assertSame( Team::STATUS_PENDING, $after->status );
+		$this->assertSame( 'Original', $after->name );
+		$this->assertCount( 1, Team::query( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
 	 * Test list returns teams with campaign title, member count, and raised total.
 	 */
 	public function test_list_returns_teams_with_relations(): void {
@@ -380,6 +423,61 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 'New Name', $data['name'] );
 		$this->assertSame( 400000, $data['goal'] );
+	}
+
+	/**
+	 * Test changing the captain via PUT keeps both sides of the association in
+	 * sync and rejects non-members.
+	 */
+	public function test_update_team_captain_syncs_member_flags(): void {
+		$campaign = $this->create_p2p_campaign();
+		$team     = $this->create_team( $campaign->id );
+		$old      = $this->create_member( $campaign->id, [ 'team_id' => $team->id, 'is_team_captain' => true ] );
+		$new      = $this->create_member( $campaign->id, [ 'team_id' => $team->id ] );
+		$outsider = $this->create_member( $campaign->id );
+
+		$team->captain_id = $old->id;
+		$team->save();
+
+		// A fundraiser who isn't on the team can't become its captain.
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
+		$request->set_body_params( [ 'captain_id' => $outsider->id ] );
+		$this->assertSame( 400, $this->server->dispatch( $request )->get_status() );
+
+		// Promoting a member repoints captain_id and swaps both flags.
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
+		$request->set_body_params( [ 'captain_id' => $new->id ] );
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$this->assertSame( $new->id, Team::find( $team->id )->captain_id );
+		$this->assertTrue( Fundraiser::find( $new->id )->is_team_captain );
+		$this->assertFalse( Fundraiser::find( $old->id )->is_team_captain );
+
+		// Clearing the captain clears the flag too.
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
+		$request->set_body_params( [ 'captain_id' => 0 ] );
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$this->assertNull( Team::find( $team->id )->captain_id );
+		$this->assertFalse( Fundraiser::find( $new->id )->is_team_captain );
+	}
+
+	/**
+	 * Test approving via PUT fires the approval event like the /approve route.
+	 */
+	public function test_update_team_status_fires_approval_event(): void {
+		$campaign = $this->create_p2p_campaign();
+		$team     = $this->create_team( $campaign->id, [ 'status' => 'pending' ] );
+
+		$fired = did_action( 'mission_team_approved' );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
+		$request->set_body_params( [ 'status' => 'active' ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'active', $response->get_data()['status'] );
+		$this->assertSame( $fired + 1, did_action( 'mission_team_approved' ) );
 	}
 
 	/**

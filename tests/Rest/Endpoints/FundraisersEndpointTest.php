@@ -167,6 +167,51 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test every route rejects a subscriber with 403 and changes nothing.
+	 */
+	public function test_all_routes_require_manage_options(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser(
+			$campaign->id,
+			$donor->id,
+			[
+				'status'   => Fundraiser::STATUS_PENDING,
+				'headline' => 'Original',
+			]
+		);
+
+		wp_set_current_user( $this->subscriber_id );
+
+		$base   = '/mission-donation-platform/v1/fundraisers';
+		$routes = [
+			[ 'GET', "$base/{$fundraiser->id}", [] ],
+			[ 'POST', $base, [ 'campaign_id' => $campaign->id, 'donor_id' => $donor->id ] ],
+			[ 'PUT', "$base/{$fundraiser->id}", [ 'headline' => 'Hijacked' ] ],
+			[ 'POST', "$base/{$fundraiser->id}/approve", [] ],
+			[ 'POST', "$base/bulk", [ 'action' => 'approve', 'ids' => [ $fundraiser->id ] ] ],
+			[ 'GET', "$base/summary", [] ],
+			[ 'DELETE', "$base/{$fundraiser->id}", [] ],
+		];
+
+		foreach ( $routes as [ $method, $route, $body ] ) {
+			$request = new WP_REST_Request( $method, $route );
+			if ( $body ) {
+				$request->set_body_params( $body );
+			}
+
+			$response = $this->server->dispatch( $request );
+			$this->assertSame( 403, $response->get_status(), "$method $route should be forbidden for a subscriber." );
+		}
+
+		$after = Fundraiser::find( $fundraiser->id );
+		$this->assertNotNull( $after );
+		$this->assertSame( Fundraiser::STATUS_PENDING, $after->status );
+		$this->assertSame( 'Original', $after->headline );
+		$this->assertCount( 1, Fundraiser::query( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
 	 * Test list returns fundraisers with related names.
 	 */
 	public function test_list_returns_fundraisers_with_relations(): void {
@@ -382,6 +427,25 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 'New headline', $data['headline'] );
 		$this->assertSame( 90000, $data['goal'] );
+	}
+
+	/**
+	 * Test approving via PUT fires the approval event like the /approve route.
+	 */
+	public function test_update_fundraiser_status_fires_approval_event(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'pending@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id, [ 'status' => 'pending' ] );
+
+		$fired = did_action( 'mission_fundraiser_approved' );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [ 'status' => 'active' ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'active', $response->get_data()['status'] );
+		$this->assertSame( $fired + 1, did_action( 'mission_fundraiser_approved' ) );
 	}
 
 	/**
