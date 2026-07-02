@@ -1,5 +1,4 @@
 // Editor-only placeholder for the fundraiser/team image blocks.
-//
 // Stands in for the cover photo that comes from the live page. Tinted with the
 // primary color so it reads as a populated image slot rather than an error.
 
@@ -15,12 +14,7 @@
   padding: 24px;
   border-radius: var(--mission-radius, 12px);
   color: var(--mission-primary, #2fa36b);
-  background:
-    linear-gradient(
-      135deg,
-      var(--mission-primary-light, rgba(47, 163, 107, 0.08)),
-      color-mix(in srgb, var(--mission-primary, #2fa36b) 16%, transparent)
-    );
+  background: linear-gradient(135deg, var(--mission-primary-light, rgba(47, 163, 107, 0.08)), color-mix(in srgb, var(--mission-primary, #2fa36b) 16%, transparent));
 
   svg {
     opacity: 0.85;

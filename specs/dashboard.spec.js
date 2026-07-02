@@ -208,7 +208,7 @@ const MOCK_ZERO_PREVIOUS = {
 // Clear persisted period before each test so default is always "month".
 test.beforeEach( async ( { page } ) => {
   await page.addInitScript( () => {
-    localStorage.removeItem( 'missiondp_dashboard_period' );
+    window.localStorage.removeItem( 'missiondp_dashboard_period' );
   } );
 } );
 

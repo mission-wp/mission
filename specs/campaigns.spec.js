@@ -420,7 +420,7 @@ test.describe( 'Campaigns Page', () => {
 test.describe( 'Campaign Detail View', () => {
   /**
    * Mock campaign detail + transactions endpoints for detail view tests.
-   * @param page
+   * @param {import('@playwright/test').Page} page Playwright page.
    */
   async function mockDetailApis( page ) {
     await page.route(

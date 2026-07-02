@@ -213,7 +213,6 @@ class DonationFormPage {
    */
   async openTipMenu() {
     const menu = this.form.locator( '.mission-df-tip-menu' );
-    const trigger = this.form.locator( '.mission-df-tip-trigger' );
 
     if ( await menu.isVisible() ) {
       return menu;
@@ -221,6 +220,7 @@ class DonationFormPage {
 
     // Wait for the trigger to be fully interactive (not just attached) before
     // clicking. Avoids the case where Interactivity API handlers haven't hooked up yet.
+    const trigger = this.form.locator( '.mission-df-tip-trigger' );
     await trigger.waitFor( { state: 'visible' } );
 
     for ( let attempt = 0; attempt < 3; attempt++ ) {
