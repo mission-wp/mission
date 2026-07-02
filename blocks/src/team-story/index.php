@@ -11,22 +11,14 @@
  */
 
 use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
 
 defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes ): void {
 	// Resolve the team from the block attribute or the queried shell page.
-	$team = null;
-
-	if ( ! empty( $attributes['teamId'] ) ) {
-		$team = Team::find( (int) $attributes['teamId'] );
-	} else {
-		$current_post = get_post();
-		if ( $current_post && Team::POST_TYPE === $current_post->post_type ) {
-			$team = Team::find_by_post_id( $current_post->ID );
-		}
-	}
+	$team = BlockSupport::resolve_team( $attributes );
 
 	if ( ! $team || '' === trim( $team->description ) ) {
 		return;

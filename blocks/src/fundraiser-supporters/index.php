@@ -20,16 +20,7 @@ defined( 'ABSPATH' ) || exit;
 
 ( static function ( $attributes ): void {
 	// Resolve the fundraiser from the block attribute or the queried shell page.
-	$fundraiser = null;
-
-	if ( ! empty( $attributes['fundraiserId'] ) ) {
-		$fundraiser = Fundraiser::find( (int) $attributes['fundraiserId'] );
-	} else {
-		$current_post = get_post();
-		if ( $current_post && Fundraiser::POST_TYPE === $current_post->post_type ) {
-			$fundraiser = Fundraiser::find_by_post_id( $current_post->ID );
-		}
-	}
+	$fundraiser = BlockSupport::resolve_fundraiser( $attributes );
 
 	if ( ! $fundraiser ) {
 		return;

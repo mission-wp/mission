@@ -2,12 +2,10 @@
  * Top Teams frontend — Interactivity API store.
  */
 import { store } from '@wordpress/interactivity';
+import { openSignup } from '@shared/p2p-view-utils';
 
 store( 'mission-donation-platform/top-teams', {
   actions: {
-    // Open the shared peer-to-peer sign-up modal (registered by the signup-modal block).
-    openSignup() {
-      store( 'mission-donation-platform/p2p-signup' )?.actions?.open?.();
-    },
+    openSignup,
   },
 } );

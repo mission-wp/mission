@@ -7,13 +7,79 @@
 
 namespace MissionDP\P2P;
 
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Small helpers the P2P display blocks share: the primary-color CSS variables
- * (derived from the admin color setting) and progress math.
+ * Small helpers the P2P display blocks share: model resolution from block
+ * attributes, the primary-color CSS variables (derived from the admin color
+ * setting), and progress math.
  */
 class BlockSupport {
+
+	/**
+	 * Resolve the fundraiser a block should render, from the block attribute or
+	 * the queried fundraiser shell page.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return Fundraiser|null
+	 */
+	public static function resolve_fundraiser( array $attributes ): ?Fundraiser {
+		if ( ! empty( $attributes['fundraiserId'] ) ) {
+			return Fundraiser::find( (int) $attributes['fundraiserId'] );
+		}
+
+		$current_post = get_post();
+		if ( $current_post && Fundraiser::POST_TYPE === $current_post->post_type ) {
+			return Fundraiser::find_by_post_id( $current_post->ID );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Resolve the team a block should render, from the block attribute or the
+	 * queried team shell page.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return Team|null
+	 */
+	public static function resolve_team( array $attributes ): ?Team {
+		if ( ! empty( $attributes['teamId'] ) ) {
+			return Team::find( (int) $attributes['teamId'] );
+		}
+
+		$current_post = get_post();
+		if ( $current_post && Team::POST_TYPE === $current_post->post_type ) {
+			return Team::find_by_post_id( $current_post->ID );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Resolve the campaign a block should render, from the block attribute or
+	 * the queried campaign page.
+	 *
+	 * @param array $attributes Block attributes.
+	 * @return Campaign|null
+	 */
+	public static function resolve_campaign( array $attributes ): ?Campaign {
+		if ( ! empty( $attributes['campaignId'] ) ) {
+			return Campaign::find( (int) $attributes['campaignId'] );
+		}
+
+		$current_post = get_post();
+		if ( $current_post && CampaignPostType::POST_TYPE === $current_post->post_type ) {
+			return Campaign::find_by_post_id( $current_post->ID );
+		}
+
+		return null;
+	}
 
 	/**
 	 * Build the inline `--mission-*` primary color custom properties for a block
@@ -43,6 +109,56 @@ class BlockSupport {
 			$primary,
 			$hover,
 			$text
+		);
+	}
+
+	/**
+	 * Up-to-two-letter initials from a display name.
+	 *
+	 * @param string $name Display name.
+	 * @return string
+	 */
+	public static function initials( string $name ): string {
+		$parts   = preg_split( '/\s+/', trim( $name ) ) ?: [];
+		$letters = '';
+		foreach ( $parts as $part ) {
+			if ( '' !== $part ) {
+				$letters .= mb_substr( $part, 0, 1 );
+			}
+			if ( mb_strlen( $letters ) >= 2 ) {
+				break;
+			}
+		}
+
+		return mb_strtoupper( $letters ?: mb_substr( trim( $name ), 0, 1 ) ) ?: '?';
+	}
+
+	/**
+	 * The gold/silver/bronze medal SVG for a leaderboard rank.
+	 *
+	 * @param int $rank Rank (1-3).
+	 * @return string SVG markup, or an empty string for ranks off the podium.
+	 */
+	public static function medal_svg( int $rank ): string {
+		$palettes = [
+			1 => [ '#D4A843', '#C4962F', '#E8C96A', '#7A5C1F' ],
+			2 => [ '#B0B4BC', '#9CA0A8', '#D0D4DC', '#5C5F66' ],
+			3 => [ '#C68E5B', '#B07A48', '#DAA872', '#6B4420' ],
+		];
+
+		if ( ! isset( $palettes[ $rank ] ) ) {
+			return '';
+		}
+
+		[ $fill, $stroke, $ring, $number ] = $palettes[ $rank ];
+
+		return sprintf(
+			'<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="7" fill="%1$s" stroke="%2$s" stroke-width="1"/><circle cx="12" cy="9" r="5" fill="none" stroke="%3$s" stroke-width="0.75" opacity="0.6"/><text x="12" y="12.5" text-anchor="middle" font-size="8" font-weight="700" fill="%4$s" font-family="-apple-system, sans-serif">%5$d</text><path d="M7.5 15L6 22l6-3 6 3-1.5-7" fill="%1$s" stroke="%2$s" stroke-width="0.75" stroke-linejoin="round"/></svg>',
+			$fill,
+			$stroke,
+			$ring,
+			$number,
+			$rank
 		);
 	}
 

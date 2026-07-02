@@ -1,17 +1,13 @@
 /**
  * Fundraiser Progress frontend — Interactivity API store.
  */
-/* global IntersectionObserver, navigator */
+/* global navigator */
 import { store, getElement } from '@wordpress/interactivity';
+import { animateBar, scrollToForm } from '@shared/p2p-view-utils';
 
 store( 'mission-donation-platform/fundraiser-progress', {
   actions: {
-    scrollToForm() {
-      const form = document.querySelector( '.mission-donation-form' );
-      if ( form ) {
-        form.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-      }
-    },
+    scrollToForm,
     share() {
       const { ref } = getElement();
       const url = ref?.getAttribute( 'data-share-url' ) || window.location.href;
@@ -27,25 +23,6 @@ store( 'mission-donation-platform/fundraiser-progress', {
     },
   },
   callbacks: {
-    animateBar() {
-      const { ref } = getElement();
-      if ( ! ref ) {
-        return;
-      }
-
-      const observer = new IntersectionObserver(
-        ( entries ) => {
-          for ( const entry of entries ) {
-            if ( entry.isIntersecting ) {
-              ref.classList.add( 'is-visible' );
-              observer.disconnect();
-            }
-          }
-        },
-        { threshold: 0.2 }
-      );
-
-      observer.observe( ref );
-    },
+    animateBar,
   },
 } );
