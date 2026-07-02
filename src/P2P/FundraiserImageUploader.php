@@ -7,6 +7,8 @@
 
 namespace MissionDP\P2P;
 
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -53,6 +55,13 @@ class FundraiserImageUploader {
 			'mimes'     => self::ALLOWED_MIMES,
 		];
 
+		/**
+		 * Filters the wp_handle_upload() overrides for fundraiser photo uploads.
+		 *
+		 * @param array<string, mixed> $overrides Upload overrides.
+		 */
+		$overrides = (array) apply_filters( 'mission_fundraiser_photo_upload_overrides', $overrides );
+
 		$uploaded = wp_handle_upload( $file, $overrides );
 
 		if ( ! is_array( $uploaded ) || isset( $uploaded['error'] ) ) {
@@ -88,6 +97,30 @@ class FundraiserImageUploader {
 	}
 
 	/**
+	 * Delete a replaced cover photo unless another record still references it.
+	 *
+	 * Dashboard uploads create a dedicated attachment per photo, but an admin
+	 * can point multiple records at one media-library image, so the attachment
+	 * is only removed once nothing references it.
+	 *
+	 * @param string $old_value Previous cover_image value (attachment ID or URL).
+	 */
+	public function cleanup_replaced_image( string $old_value ): void {
+		// URLs and empty values aren't attachments this plugin manages.
+		if ( '' === $old_value || ! ctype_digit( $old_value ) ) {
+			return;
+		}
+
+		$referenced = Fundraiser::count( [ 'cover_image' => $old_value ] ) > 0
+			|| Fundraiser::count( [ 'profile_image' => $old_value ] ) > 0
+			|| Team::count( [ 'cover_image' => $old_value ] ) > 0;
+
+		if ( ! $referenced && wp_attachment_is_image( (int) $old_value ) ) {
+			wp_delete_attachment( (int) $old_value, true );
+		}
+	}
+
+	/**
 	 * Maximum upload size in bytes.
 	 *
 	 * @return int
@@ -112,7 +145,10 @@ class FundraiserImageUploader {
 			return new WP_Error( 'no_file', __( 'No image was uploaded.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		if ( (int) ( $file['size'] ?? 0 ) > $this->max_size() ) {
+		// Measure the file on disk; the request's size field is client-supplied.
+		$size = file_exists( $file['tmp_name'] ) ? (int) filesize( $file['tmp_name'] ) : 0;
+
+		if ( $size > $this->max_size() ) {
 			return new WP_Error(
 				'file_too_large',
 				__( 'The image is too large. Please upload a file under 5 MB.', 'mission-donation-platform' ),

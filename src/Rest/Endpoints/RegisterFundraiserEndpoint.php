@@ -386,6 +386,10 @@ class RegisterFundraiserEndpoint {
 			]
 		);
 
+		if ( $result instanceof WP_Error ) {
+			return $result;
+		}
+
 		return new WP_REST_Response( $result, 201 );
 	}
 
@@ -400,6 +404,12 @@ class RegisterFundraiserEndpoint {
 
 		if ( ! $campaign || ! $campaign->is_p2p() ) {
 			return new WP_Error( 'invalid_campaign', __( 'This campaign is not accepting fundraisers.', 'mission-donation-platform' ), [ 'status' => 404 ] );
+		}
+
+		// registration_open alone isn't enough: scheduled or ended campaigns
+		// must not accept sign-ups regardless of the toggle.
+		if ( Campaign::STATUS_ACTIVE !== $campaign->status ) {
+			return new WP_Error( 'registration_closed', __( 'Registration for this campaign is closed.', 'mission-donation-platform' ), [ 'status' => 403 ] );
 		}
 
 		$settings = $campaign->p2p_settings();

@@ -19,6 +19,7 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\TeamInvitation;
+use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,8 +50,11 @@ class FundraiserRegistrationService {
 	 * Decide the account branch for an email + password on "Continue".
 	 *
 	 * Existing account → log in (a) or report a mismatch (b). Any other email
-	 * (a prior donor, or brand new) → send a signup code (c+d). The two are
-	 * deliberately indistinguishable so donor status never leaks.
+	 * (a prior donor, or brand new) → send a signup code (c+d). Branches c and
+	 * d are deliberately indistinguishable so donor status never leaks. Branch
+	 * b does reveal that a full account exists for the email — a deliberate
+	 * trade-off of the combined login/signup screen (the user has to be told a
+	 * password is required), consistent with core's own login behavior.
 	 *
 	 * @param string $email    Email address.
 	 * @param string $password Password the user entered.
@@ -119,9 +123,16 @@ class FundraiserRegistrationService {
 	 * @throws \RuntimeException If account creation fails.
 	 */
 	public function complete_signup( string $email, string $code, string $first, string $last, string $phone, string $password ): Donor {
-		$this->otp->verify( $email, self::PURPOSE_SIGNUP, $code );
-
 		$donor = Donor::find_by_email( $email );
+
+		// Reject a bad password BEFORE burning the one-time code, so a failed
+		// attempt doesn't consume the code (new accounts only; an already-linked
+		// account proved email ownership and just logs in below).
+		if ( ! $donor || ! $donor->user_id ) {
+			$this->auth->validate_password( $password );
+		}
+
+		$this->otp->verify( $email, self::PURPOSE_SIGNUP, $code );
 
 		// Already linked (e.g. concurrent signup): just log in.
 		if ( $donor && $donor->user_id ) {
@@ -198,9 +209,9 @@ class FundraiserRegistrationService {
 	 * @param array    $input    Sanitized setup fields (team_mode, team_id, team_name,
 	 *                           goal in minor units, story, dedicate, tribute_type, honoree_name,
 	 *                           invite_token).
-	 * @return array{fundraiser: array, team: ?array} Result payload.
+	 * @return array{fundraiser: array, team: ?array}|WP_Error Result payload, or an error when the row can't be created.
 	 */
-	public function register_fundraiser( Donor $donor, Campaign $campaign, array $input ): array {
+	public function register_fundraiser( Donor $donor, Campaign $campaign, array $input ): array|WP_Error {
 		$settings = $campaign->p2p_settings();
 
 		$existing = Fundraiser::query(
@@ -214,10 +225,32 @@ class FundraiserRegistrationService {
 		if ( $existing ) {
 			$fundraiser = $existing[0];
 
-			// An existing, team-less participant can still accept a team invitation.
-			if ( ! $fundraiser->team_id && ! empty( $input['invite_token'] ) ) {
-				$team = $this->resolve_team( $campaign, $fundraiser, $input, $settings );
-				return $this->result( $fundraiser, $team ?? $fundraiser->team() );
+			// An existing, team-less participant can still accept a team
+			// invitation — but only a token that maps to a real pending invite
+			// on this campaign re-runs team resolution. A junk token must not
+			// let a re-submission create or join a team via team_mode.
+			$token = (string) ( $input['invite_token'] ?? '' );
+
+			if ( ! $fundraiser->team_id && '' !== $token ) {
+				$invitation   = TeamInvitation::find_by_token( $token );
+				$invited_team = $invitation && $invitation->is_pending() ? Team::find( (int) $invitation->team_id ) : null;
+
+				if ( $invited_team && $invited_team->campaign_id === $campaign->id ) {
+					$team = $this->resolve_team(
+						$campaign,
+						$fundraiser,
+						array_merge(
+							$input,
+							[
+								'team_mode' => 'join',
+								'team_id'   => $invited_team->id,
+							]
+						),
+						$settings
+					);
+
+					return $this->result( $fundraiser, $team ?? $fundraiser->team() );
+				}
 			}
 
 			return $this->result( $fundraiser, $fundraiser->team() );
@@ -231,6 +264,24 @@ class FundraiserRegistrationService {
 		}
 
 		$fundraiser = Fundraiser::register( $campaign->id, $donor->id, $goal, (string) ( $input['story'] ?? '' ), '', $status );
+
+		if ( ! $fundraiser->id ) {
+			// Most likely a lost create race on the (campaign, donor) unique key;
+			// the idempotent answer is the row the other request created.
+			$existing = Fundraiser::query(
+				[
+					'campaign_id' => $campaign->id,
+					'donor_id'    => $donor->id,
+					'per_page'    => 1,
+				]
+			);
+
+			if ( ! $existing ) {
+				return new WP_Error( 'registration_failed', __( 'We could not create your fundraising page. Please try again.', 'mission-donation-platform' ), [ 'status' => 500 ] );
+			}
+
+			return $this->result( $existing[0], $existing[0]->team() );
+		}
 
 		if ( ! empty( $input['dedicate'] ) && ! empty( $input['honoree_name'] ) ) {
 			$fundraiser->update_meta( 'tribute_type', 'memory' === ( $input['tribute_type'] ?? '' ) ? 'memory' : 'honor' );
