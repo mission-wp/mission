@@ -10,11 +10,23 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
+            "Settings": [
+                "Ajustes"
+            ],
             "Your team's description appears here. Tell visitors who you are and why you're fundraising together.": [
                 "Aqu\u00ed aparece la descripci\u00f3n de tu equipo. Cu\u00e9ntales a los visitantes qui\u00e9nes sois y por qu\u00e9 recaud\u00e1is fondos juntos."
             ],
             "Invite others to join the team or chip in toward your shared goal.": [
                 "Invita a otros a unirse al equipo o a aportar a vuestra meta com\u00fan."
+            ],
+            "We have teamed up because we can make a bigger difference together. Every donation to a team member brings us closer to our shared goal.": [
+                "Nos hemos unido porque juntos podemos marcar una diferencia mayor. Cada donaci\u00f3n a un miembro del equipo nos acerca m\u00e1s a nuestra meta compartida."
+            ],
+            "Fallback text": [
+                "Texto predeterminado"
+            ],
+            "Shown when a team has not written a story yet.": [
+                "Se muestra cuando un equipo a\u00fan no ha escrito su historia."
             ]
         }
     }
