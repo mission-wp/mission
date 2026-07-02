@@ -52,6 +52,11 @@ $goal_text = $has_goal
 	? sprintf( __( 'raised of %s team goal', 'mission-donation-platform' ), Currency::format_amount( $goal, $currency ) )
 	: __( 'raised', 'mission-donation-platform' );
 
+// The sign-up modal only renders while registration is open, so the Join
+// button would silently no-op without this gate (campaign-progress does the same).
+$p2p_settings = $team->campaign()?->p2p_settings() ?? [];
+$show_join    = ! empty( $p2p_settings['registration_open'] );
+
 ob_start();
 ?>
 <div
@@ -92,13 +97,15 @@ ob_start();
 		<button type="button" class="mission-progress__btn" data-wp-on--click="actions.scrollToForm">
 			<?php esc_html_e( 'Donate to the Team', 'mission-donation-platform' ); ?>
 		</button>
-		<button
-			type="button"
-			class="mission-progress__btn mission-progress__btn--secondary"
-			data-wp-on--click="actions.openSignup"
-		>
-			<?php esc_html_e( 'Join this Team', 'mission-donation-platform' ); ?>
-		</button>
+		<?php if ( $show_join ) : ?>
+			<button
+				type="button"
+				class="mission-progress__btn mission-progress__btn--secondary"
+				data-wp-on--click="actions.openSignup"
+			>
+				<?php esc_html_e( 'Join this Team', 'mission-donation-platform' ); ?>
+			</button>
+		<?php endif; ?>
 	</div>
 </div>
 <?php
