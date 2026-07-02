@@ -329,7 +329,8 @@
   }
 }
 
-.mission-su__optional {
+.mission-su__field .mission-su__optional {
+  display: inline;
   font-weight: 400;
   color: var(--mission-text-secondary);
 }
