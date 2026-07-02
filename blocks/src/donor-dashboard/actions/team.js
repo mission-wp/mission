@@ -65,6 +65,13 @@ export const teamActions = {
     }
   },
 
+  editTeamAccess( event ) {
+    const cap = captainBlock( getContext() );
+    if ( cap ) {
+      cap.access = event.target.value;
+    }
+  },
+
   editInviteEmail( event ) {
     const cap = captainBlock( getContext() );
     if ( cap ) {
@@ -98,6 +105,7 @@ export const teamActions = {
             description: cap.description,
             // Send the goal in major units; the server converts to minor.
             goal: Number( cap.goal ) || 0,
+            access: cap.access,
           } ),
         }
       );
@@ -113,6 +121,8 @@ export const teamActions = {
       cap.name = data.name;
       cap.description = data.description;
       cap.goal = data.goal_major;
+      cap.access = data.access;
+      cap.isPrivate = data.access === 'private';
       cap.saving = false;
       cap.saved = true;
       showToast( ctx, ctx.fundraising.i18n?.teamToast || 'Team updated' );

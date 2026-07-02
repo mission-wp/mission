@@ -511,6 +511,7 @@ class DashboardContextBuilder {
 			'status'        => $team->status,
 			'statusLabel'   => $status_labels[ $team->status ] ?? $team->status,
 			'isPending'     => \MissionDP\Models\Team::STATUS_PENDING === $team->status,
+			'access'        => $team->access,
 			'isPrivate'     => \MissionDP\Models\Team::ACCESS_PRIVATE === $team->access,
 			'members'       => $members,
 			'invitations'   => $invitations,

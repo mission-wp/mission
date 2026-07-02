@@ -13,6 +13,7 @@ use MissionDP\Models\Team;
 use MissionDP\Models\TeamInvitation;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Settings\SettingsService;
+use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\RateLimitTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
@@ -162,6 +163,11 @@ class TeamEndpoint {
 			// The goal arrives in major units (what the captain entered); convert here.
 			$currency   = $team->campaign()?->currency ?: 'USD';
 			$team->goal = Currency::major_to_minor( max( 0, (float) $request->get_param( 'goal' ) ), $currency );
+		}
+
+		$access = $request->get_param( 'access' );
+		if ( null !== $access && in_array( $access, Team::ACCESS_LEVELS, true ) ) {
+			$team->access = $access;
 		}
 
 		$team->save();
@@ -431,6 +437,7 @@ class TeamEndpoint {
 			'goal'        => [
 				'type' => 'number',
 			],
+			'access'      => Args::enum( Team::ACCESS_LEVELS ),
 		];
 	}
 }

@@ -167,6 +167,24 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Add a plain (non-captain) member with a linked WP user and act as them.
+	 *
+	 * @param string $email Member email (the WP user gets a wp- prefixed one).
+	 * @return Fundraiser
+	 */
+	private function act_as_member( string $email = 'member@example.com' ): Fundraiser {
+		$member = $this->add_member( $email );
+		$user   = self::factory()->user->create( [ 'role' => 'missiondp_donor', 'user_email' => 'wp-' . $email ] );
+
+		$member_donor          = $member->donor();
+		$member_donor->user_id = $user;
+		$member_donor->save();
+		wp_set_current_user( $user );
+
+		return $member;
+	}
+
+	/**
 	 * Dispatch a request as the current user.
 	 */
 	private function dispatch( string $method, string $route, array $body = [] ): \WP_REST_Response {
@@ -226,6 +244,29 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'Trail Blazers', $updated->name );
 		$this->assertSame( 'We run', $updated->description );
 		$this->assertSame( 200000, $updated->goal );
+	}
+
+	/**
+	 * PUT lets the captain change the access level, rejecting unknown values.
+	 */
+	public function test_put_updates_access_level(): void {
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'access' => Team::ACCESS_PRIVATE ]
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( Team::ACCESS_PRIVATE, Team::find( $this->team->id )->access );
+
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'access' => 'secret' ]
+		);
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( Team::ACCESS_PRIVATE, Team::find( $this->team->id )->access );
 	}
 
 	/**
@@ -307,6 +348,97 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		// The original captain (still the current user) is no longer captain.
 		$after = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
 		$this->assertSame( 403, $after->get_status() );
+	}
+
+	/**
+	 * A plain member cannot edit the team; nothing changes.
+	 */
+	public function test_non_captain_cannot_update_team(): void {
+		$this->act_as_member();
+
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Hijacked' ]
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( 'Runners', Team::find( $this->team->id )->name );
+	}
+
+	/**
+	 * A plain member cannot invite; no invitation is created.
+	 */
+	public function test_non_captain_cannot_invite(): void {
+		$this->act_as_member();
+
+		$response = $this->dispatch(
+			'POST',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/invite",
+			[ 'email' => 'newbie@example.com' ]
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertCount( 0, $this->team->invitations( [ 'status' => TeamInvitation::STATUS_PENDING ] ) );
+	}
+
+	/**
+	 * A plain member cannot remove another member; the roster is unchanged.
+	 */
+	public function test_non_captain_cannot_remove_member(): void {
+		$target = $this->add_member( 'target@example.com' );
+		$this->act_as_member();
+
+		$response = $this->dispatch(
+			'POST',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/members/{$target->id}/remove"
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( $this->team->id, Fundraiser::find( $target->id )->team_id );
+	}
+
+	/**
+	 * A plain member cannot promote themselves; the captaincy is unchanged.
+	 */
+	public function test_non_captain_cannot_promote_member(): void {
+		$captain_id = $this->team->captain_id;
+		$member     = $this->act_as_member();
+
+		$response = $this->dispatch(
+			'POST',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/members/{$member->id}/promote"
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( $captain_id, Team::find( $this->team->id )->captain_id );
+		$this->assertFalse( Fundraiser::find( $member->id )->is_team_captain );
+	}
+
+	/**
+	 * A plain member cannot upload a cover photo.
+	 */
+	public function test_non_captain_cannot_upload_photo(): void {
+		$this->act_as_member();
+
+		$response = $this->dispatch(
+			'POST',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/photo"
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
+	 * A logged-in user without the donor role gets 403, not 401.
+	 */
+	public function test_logged_in_without_donor_role_gets_403(): void {
+		$subscriber = self::factory()->user->create( [ 'role' => 'subscriber' ] );
+		wp_set_current_user( $subscriber );
+
+		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+
+		$this->assertSame( 403, $response->get_status() );
 	}
 
 	/**

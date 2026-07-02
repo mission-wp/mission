@@ -254,6 +254,21 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 
 		<div class="mission-dd-profile-group">
+			<label class="mission-dd-profile-label" for="mission-dd-team-access"><?php esc_html_e( 'Team privacy', 'mission-donation-platform' ); ?></label>
+			<select
+				id="mission-dd-team-access"
+				class="mission-dd-profile-input"
+				data-wp-bind--value="context.fundraising.captain.access"
+				data-wp-on--change="actions.editTeamAccess"
+				data-wp-bind--disabled="context.fundraising.captain.saving"
+			>
+				<option value="public"><?php esc_html_e( 'Public — anyone can join', 'mission-donation-platform' ); ?></option>
+				<option value="private"><?php esc_html_e( 'Private — invitation only', 'mission-donation-platform' ); ?></option>
+			</select>
+			<span class="mission-dd-profile-hint"><?php esc_html_e( 'Private teams are hidden from the sign-up form; people join through your email invitations.', 'mission-donation-platform' ); ?></span>
+		</div>
+
+		<div class="mission-dd-profile-group">
 			<label class="mission-dd-profile-label" for="mission-dd-team-story"><?php esc_html_e( 'Team story', 'mission-donation-platform' ); ?></label>
 			<textarea
 				id="mission-dd-team-story"
