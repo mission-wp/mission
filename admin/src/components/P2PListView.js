@@ -66,7 +66,7 @@ export default function P2PListView( {
     storageKey,
     defaultView
   );
-  const { data, totalItems, totalPages, isLoading, refresh } =
+  const { data, totalItems, totalPages, isLoading, error, refresh } =
     usePaginatedFetch( { path: listPath, view, filterFields } );
   const [ summary, setSummary ] = useState( null );
   const [ selection, setSelection ] = useState( [] );
@@ -91,7 +91,27 @@ export default function P2PListView( {
     fetchSummary();
   }, [ fetchSummary ] );
 
-  // Prefetch P2P campaigns for the campaign filter dropdown.
+  // Surface list-fetch failures so an error doesn't read as "no results".
+  useEffect( () => {
+    if ( error ) {
+      showToast(
+        'error',
+        __( 'The list could not be loaded.', 'mission-donation-platform' )
+      );
+    }
+  }, [ error, showToast ] );
+
+  // Bulk-deactivating a full last page can strand the view past the new
+  // total; clamp back once the refreshed totals arrive.
+  useEffect( () => {
+    if ( ! isLoading && totalPages > 0 && view.page > totalPages ) {
+      setView( { ...view, page: totalPages } );
+    }
+  }, [ isLoading, totalPages, view, setView ] );
+
+  // Prefetch P2P campaigns for the campaign filter dropdown. Deliberately
+  // capped at the first 100 (newest first) — beyond that the dropdown becomes
+  // unusable anyway and the list is still reachable via search.
   useEffect( () => {
     apiFetch( {
       path: '/mission-donation-platform/v1/campaigns?per_page=100&type=p2p',
@@ -159,10 +179,10 @@ export default function P2PListView( {
             )
           );
         }
-      } catch ( error ) {
+      } catch ( err ) {
         showToast(
           'error',
-          error?.message ||
+          err?.message ||
             __( 'The bulk action failed.', 'mission-donation-platform' )
         );
       } finally {

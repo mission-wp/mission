@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 /**
@@ -6,8 +6,11 @@ import apiFetch from '@wordpress/api-fetch';
  *
  * Builds the page/per_page/order/orderby/search query from the view, copies
  * any of `filterFields` present in view.filters to same-named query params,
- * and reads the totals from the X-WP-Total / X-WP-TotalPages headers. On
- * error the data resets to an empty list with zero totals.
+ * and reads the totals from the X-WP-Total / X-WP-TotalPages headers.
+ *
+ * Each refresh aborts the previous in-flight request so rapid view changes
+ * can't paint stale out-of-order responses. A failed fetch resets the data
+ * and exposes the error so callers can tell "no results" from "failed".
  *
  * @param {Object}   options
  * @param {string}   options.path             REST path without a query string.
@@ -15,7 +18,7 @@ import apiFetch from '@wordpress/api-fetch';
  * @param {string}   [options.defaultOrderby] Orderby used when the view has no sort field.
  * @param {string[]} [options.filterFields]   view.filters fields to copy to query params.
  * @param {Object}   [options.extraParams]    Fixed query params (e.g. { campaign_id }).
- * @return {Object} { data, totalItems, totalPages, isLoading, refresh }.
+ * @return {Object} { data, totalItems, totalPages, isLoading, error, refresh }.
  */
 export function usePaginatedFetch( {
   path,
@@ -28,6 +31,8 @@ export function usePaginatedFetch( {
   const [ totalItems, setTotalItems ] = useState( 0 );
   const [ totalPages, setTotalPages ] = useState( 0 );
   const [ isLoading, setIsLoading ] = useState( true );
+  const [ error, setError ] = useState( null );
+  const abortRef = useRef( null );
 
   // Depend on stable strings so inline object/array literals at the call
   // site don't retrigger the fetch on every render.
@@ -35,6 +40,10 @@ export function usePaginatedFetch( {
   const filterFieldsString = filterFields.join( ',' );
 
   const refresh = useCallback( async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsLoading( true );
 
     const params = new URLSearchParams( extraParamsString );
@@ -58,7 +67,13 @@ export function usePaginatedFetch( {
       const response = await apiFetch( {
         path: `${ path }?${ params.toString() }`,
         parse: false,
+        signal: controller.signal,
       } );
+
+      // A superseded request must not paint, even if it still resolved.
+      if ( controller.signal.aborted ) {
+        return;
+      }
 
       setTotalItems(
         parseInt( response.headers.get( 'X-WP-Total' ) || '0', 10 )
@@ -68,13 +83,26 @@ export function usePaginatedFetch( {
       );
 
       const items = await response.json();
+
+      if ( controller.signal.aborted ) {
+        return;
+      }
+
       setData( items );
-    } catch {
+      setError( null );
+    } catch ( err ) {
+      // An aborted request was superseded; the newer one owns the state.
+      if ( controller.signal.aborted ) {
+        return;
+      }
       setData( [] );
       setTotalItems( 0 );
       setTotalPages( 0 );
+      setError( err );
     } finally {
-      setIsLoading( false );
+      if ( ! controller.signal.aborted ) {
+        setIsLoading( false );
+      }
     }
   }, [
     path,
@@ -90,7 +118,9 @@ export function usePaginatedFetch( {
 
   useEffect( () => {
     refresh();
+
+    return () => abortRef.current?.abort();
   }, [ refresh ] );
 
-  return { data, totalItems, totalPages, isLoading, refresh };
+  return { data, totalItems, totalPages, isLoading, error, refresh };
 }
