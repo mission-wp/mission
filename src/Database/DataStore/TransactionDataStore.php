@@ -65,7 +65,7 @@ class TransactionDataStore implements DataStoreInterface {
 		// Update donor/campaign aggregates if created with a completed status.
 		if ( Transaction::STATUS_COMPLETED === $model->status ) {
 			$this->increment_aggregates( $model );
-			$this->recompute_fundraiser_aggregates( $model->fundraiser_id );
+			$this->recompute_fundraiser_aggregates( $model->fundraiser_id, (bool) $model->is_test );
 		}
 
 		return $model->id;
@@ -259,11 +259,11 @@ class TransactionDataStore implements DataStoreInterface {
 		$recredited = (int) $old->fundraiser_id !== (int) $model->fundraiser_id;
 
 		if ( $recredited || $model->amount_refunded > $old->amount_refunded || $old->status !== $model->status ) {
-			$this->recompute_fundraiser_aggregates( $model->fundraiser_id );
+			$this->recompute_fundraiser_aggregates( $model->fundraiser_id, (bool) $model->is_test );
 		}
 
 		if ( $recredited ) {
-			$this->recompute_fundraiser_aggregates( $old->fundraiser_id );
+			$this->recompute_fundraiser_aggregates( $old->fundraiser_id, (bool) $model->is_test );
 		}
 
 		return true;
@@ -343,7 +343,7 @@ class TransactionDataStore implements DataStoreInterface {
 
 		// Recompute after the row is gone so the deleted transaction is excluded.
 		if ( $transaction && Transaction::STATUS_COMPLETED === $transaction->status ) {
-			$this->recompute_fundraiser_aggregates( $transaction->fundraiser_id );
+			$this->recompute_fundraiser_aggregates( $transaction->fundraiser_id, (bool) $transaction->is_test );
 		}
 
 		return false !== $result;
@@ -358,9 +358,9 @@ class TransactionDataStore implements DataStoreInterface {
 	 * @param int|null $fundraiser_id The attributed fundraiser ID, if any.
 	 * @return void
 	 */
-	private function recompute_fundraiser_aggregates( ?int $fundraiser_id ): void {
+	private function recompute_fundraiser_aggregates( ?int $fundraiser_id, bool $is_test = false ): void {
 		if ( $fundraiser_id ) {
-			( new FundraiserDataStore() )->recompute_aggregates( $fundraiser_id );
+			( new FundraiserDataStore() )->recompute_aggregates( $fundraiser_id, $is_test );
 		}
 	}
 

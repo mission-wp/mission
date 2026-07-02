@@ -178,9 +178,11 @@ class FundraiserDataStore implements DataStoreInterface {
 	 * mirrors from transactions attributed to this fundraiser. Fires
 	 * mission_fundraiser_aggregates_updated. No-op if the ID is invalid.
 	 *
-	 * @param int $fundraiser_id Fundraiser ID.
+	 * @param int  $fundraiser_id Fundraiser ID.
+	 * @param bool $is_test       Mode of the transaction that triggered the
+	 *                            recompute (both arms are rebuilt regardless).
 	 */
-	public function recompute_aggregates( int $fundraiser_id ): void {
+	public function recompute_aggregates( int $fundraiser_id, bool $is_test = false ): void {
 		global $wpdb;
 
 		if ( $fundraiser_id <= 0 ) {
@@ -235,9 +237,9 @@ class FundraiserDataStore implements DataStoreInterface {
 			 * Fires when a fundraiser's aggregate columns are recomputed.
 			 *
 			 * @param int  $fundraiser_id The fundraiser ID.
-			 * @param bool $is_test       Always false here; recompute updates both arms together.
+			 * @param bool $is_test       Mode of the transaction that triggered the recompute.
 			 */
-			do_action( 'mission_fundraiser_aggregates_updated', $fundraiser_id, false );
+			do_action( 'mission_fundraiser_aggregates_updated', $fundraiser_id, $is_test );
 		}
 	}
 

@@ -541,6 +541,30 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test only a pending -> active transition fires the approved event;
+	 * reactivating fires its own event, and re-approving fires nothing.
+	 */
+	public function test_approve_fires_approved_only_from_pending(): void {
+		$fundraiser = $this->create_fundraiser( [ 'status' => 'pending' ] );
+
+		$approved    = did_action( 'mission_fundraiser_approved' );
+		$reactivated = did_action( 'mission_fundraiser_reactivated' );
+
+		$fundraiser->approve();
+		$this->assertSame( $approved + 1, did_action( 'mission_fundraiser_approved' ) );
+
+		// Idempotent: approving an active fundraiser fires nothing.
+		$fundraiser->approve();
+		$this->assertSame( $approved + 1, did_action( 'mission_fundraiser_approved' ) );
+
+		// Reactivation is not an approval (no "your page is live" re-send).
+		$fundraiser->deactivate();
+		$fundraiser->approve();
+		$this->assertSame( $approved + 1, did_action( 'mission_fundraiser_approved' ) );
+		$this->assertSame( $reactivated + 1, did_action( 'mission_fundraiser_reactivated' ) );
+	}
+
+	/**
 	 * Test find_by_post_id() resolves the fundraiser from its shell post.
 	 */
 	public function test_find_by_post_id(): void {

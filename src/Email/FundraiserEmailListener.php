@@ -190,6 +190,11 @@ class FundraiserEmailListener {
 			return;
 		}
 
+		// Test gifts are fake money; don't congratulate the fundraiser about them.
+		if ( $transaction->is_test ) {
+			return;
+		}
+
 		if ( ! $this->email->is_email_enabled( 'p2p_fundraiser_received_donation' ) ) {
 			return;
 		}

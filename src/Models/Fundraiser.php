@@ -250,12 +250,13 @@ class Fundraiser extends Model {
 	/**
 	 * Recompute a fundraiser's aggregate totals from the transactions table.
 	 *
-	 * @param int $fundraiser_id Fundraiser ID.
+	 * @param int  $fundraiser_id Fundraiser ID.
+	 * @param bool $is_test       Mode of the change that prompted the recompute.
 	 */
-	public static function recompute_aggregates( int $fundraiser_id ): void {
+	public static function recompute_aggregates( int $fundraiser_id, bool $is_test = false ): void {
 		/** @var FundraiserDataStore $store */
 		$store = static::store();
-		$store->recompute_aggregates( $fundraiser_id );
+		$store->recompute_aggregates( $fundraiser_id, $is_test );
 	}
 
 	/**
@@ -332,7 +333,9 @@ class Fundraiser extends Model {
 	 * Approve this fundraiser, moving them to the active status.
 	 *
 	 * Idempotent: a fundraiser that is already active is left untouched and no
-	 * event fires. Approval is the admin sign-off that makes a pending page live.
+	 * event fires. Approval is the admin sign-off that makes a pending page live;
+	 * re-activating a deactivated fundraiser is not an approval, so it fires a
+	 * separate event and never re-sends the "your page is live" email.
 	 *
 	 * @return bool True on success (or when already active).
 	 */
@@ -341,18 +344,28 @@ class Fundraiser extends Model {
 			return true;
 		}
 
+		$was_pending  = self::STATUS_PENDING === $this->status;
 		$this->status = self::STATUS_ACTIVE;
 
 		if ( ! $this->save() ) {
 			return false;
 		}
 
-		/**
-		 * Fires after a fundraiser is approved.
-		 *
-		 * @param Fundraiser $fundraiser The approved fundraiser.
-		 */
-		do_action( 'mission_fundraiser_approved', $this );
+		if ( $was_pending ) {
+			/**
+			 * Fires after a pending fundraiser is approved.
+			 *
+			 * @param Fundraiser $fundraiser The approved fundraiser.
+			 */
+			do_action( 'mission_fundraiser_approved', $this );
+		} else {
+			/**
+			 * Fires after a deactivated fundraiser is made active again.
+			 *
+			 * @param Fundraiser $fundraiser The reactivated fundraiser.
+			 */
+			do_action( 'mission_fundraiser_reactivated', $this );
+		}
 
 		return true;
 	}

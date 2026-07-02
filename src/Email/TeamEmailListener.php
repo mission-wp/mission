@@ -4,7 +4,9 @@
  *
  * Sends an invitation email when a captain invites someone to a private team, a
  * "new member joined" email to the captain, and a "team approved" email to the
- * captain when a pending team goes live.
+ * captain when a pending team goes live. Invitations to a still-pending team
+ * are held (sent_at stays NULL, so their page link would 404) and flushed when
+ * the team is approved.
  *
  * @package MissionDP
  */
@@ -42,6 +44,7 @@ class TeamEmailListener {
 		add_action( 'mission_team_invitation_created', [ $this, 'on_invitation_created' ] );
 		add_action( 'mission_team_joined', [ $this, 'on_member_joined' ], 10, 2 );
 		add_action( 'mission_team_approved', [ $this, 'on_team_approved' ] );
+		add_action( 'mission_team_approved', [ $this, 'flush_pending_invitations' ] );
 	}
 
 	/**
@@ -51,16 +54,18 @@ class TeamEmailListener {
 	 * @return void
 	 */
 	public function on_invitation_created( TeamInvitation $invitation ): void {
-		if ( $this->is_test_mode() ) {
-			return;
-		}
-
 		if ( ! $invitation->email || ! $this->email->is_email_enabled( 'p2p_team_invitation' ) ) {
 			return;
 		}
 
 		$team = $invitation->team();
 		if ( ! $team ) {
+			return;
+		}
+
+		// A pending team's page isn't publicly visible yet, so the accept link
+		// would 404. Hold the email; flush_pending_invitations() sends it on approval.
+		if ( Team::STATUS_ACTIVE !== $team->status ) {
 			return;
 		}
 
@@ -105,12 +110,10 @@ class TeamEmailListener {
 	 * @return void
 	 */
 	public function on_member_joined( Fundraiser $fundraiser, Team $team ): void {
-		if ( $this->is_test_mode() ) {
-			return;
-		}
-
 		// The captain creating the team is not a "new member" to notify about.
-		if ( (int) $fundraiser->id === (int) $team->captain_id ) {
+		// captain_id isn't set yet at this point in registration, so key off
+		// the captain flag on the joining fundraiser.
+		if ( $fundraiser->is_team_captain || (int) $fundraiser->id === (int) $team->captain_id ) {
 			return;
 		}
 
@@ -164,10 +167,6 @@ class TeamEmailListener {
 	 * @return void
 	 */
 	public function on_team_approved( Team $team ): void {
-		if ( $this->is_test_mode() ) {
-			return;
-		}
-
 		if ( ! $this->email->is_email_enabled( 'p2p_team_approved' ) ) {
 			return;
 		}
@@ -209,11 +208,19 @@ class TeamEmailListener {
 	}
 
 	/**
-	 * Whether the plugin is in test mode (no team management emails are sent).
+	 * Send the invitations that were held while the team awaited approval.
 	 *
-	 * @return bool
+	 * Runs on mission_team_approved independently of the captain email, so
+	 * disabling the team-approved email doesn't strand held invitations.
+	 *
+	 * @param Team $team The just-approved team.
+	 * @return void
 	 */
-	private function is_test_mode(): bool {
-		return (bool) ( new SettingsService() )->get( 'test_mode' );
+	public function flush_pending_invitations( Team $team ): void {
+		foreach ( $team->invitations( [ 'status' => TeamInvitation::STATUS_PENDING ] ) as $invitation ) {
+			if ( null === $invitation->sent_at ) {
+				$this->on_invitation_created( $invitation );
+			}
+		}
 	}
 }

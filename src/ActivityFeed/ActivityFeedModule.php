@@ -102,8 +102,10 @@ class ActivityFeedModule {
 		// Peer-to-peer fundraisers and teams.
 		add_action( 'mission_fundraiser_created', [ $this, 'on_fundraiser_registered' ] );
 		add_action( 'mission_fundraiser_approved', [ $this, 'on_fundraiser_approved' ] );
+		add_action( 'mission_fundraiser_reactivated', [ $this, 'on_fundraiser_reactivated' ] );
 		add_action( 'mission_team_created', [ $this, 'on_team_created' ] );
 		add_action( 'mission_team_approved', [ $this, 'on_team_approved' ] );
+		add_action( 'mission_team_reactivated', [ $this, 'on_team_reactivated' ] );
 		add_action( 'mission_team_joined', [ $this, 'on_team_joined' ], 10, 2 );
 		add_action( 'mission_team_invitation_created', [ $this, 'on_team_invited' ] );
 		add_action( 'mission_team_captain_promoted', [ $this, 'on_team_captain_promoted' ], 10, 3 );
@@ -679,6 +681,38 @@ class ActivityFeedModule {
 	}
 
 	/**
+	 * Handle a deactivated fundraiser being made active again.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_reactivated( object $fundraiser ): void {
+		$this->log(
+			'fundraiser_reactivated',
+			'fundraiser',
+			(int) $fundraiser->id,
+			$this->fundraiser_log_data( $fundraiser )
+		);
+	}
+
+	/**
+	 * Handle a deactivated team being made active again.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_reactivated( object $team ): void {
+		$this->log(
+			'team_reactivated',
+			'team',
+			(int) $team->id,
+			$this->team_log_data( $team )
+		);
+	}
+
+	/**
 	 * Handle a fundraiser joining a team.
 	 *
 	 * @param object $fundraiser Fundraiser model (the member who joined).
@@ -687,6 +721,13 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	public function on_team_joined( object $fundraiser, object $team ): void {
+		// The captain's founding join is not a "member joined" event; that
+		// creation is already logged as team_created. (captain_id isn't set yet
+		// at this point in registration, so key off the captain flag.)
+		if ( $fundraiser->is_team_captain ) {
+			return;
+		}
+
 		$donor = $fundraiser->donor();
 
 		$this->log(

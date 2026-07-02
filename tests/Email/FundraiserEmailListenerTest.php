@@ -186,6 +186,33 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a test-mode gift never congratulates the fundraiser.
+	 */
+	public function test_received_donation_skips_test_gifts(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$transaction = new Transaction(
+			[
+				'donor_id'      => $fundraiser->donor_id,
+				'campaign_id'   => $fundraiser->campaign_id,
+				'fundraiser_id' => $fundraiser->id,
+				'amount'        => 5000,
+				'currency'      => 'USD',
+				'status'        => Transaction::STATUS_COMPLETED,
+				'is_test'       => true,
+			]
+		);
+		$transaction->save();
+
+		$email    = $this->stub_email_module();
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+		$listener->on_donation_completed( $transaction );
+
+		$this->assertCount( 0, $email->sent );
+	}
+
+	/**
 	 * Test a gift with no fundraiser attribution sends nothing.
 	 */
 	public function test_received_donation_skips_without_fundraiser(): void {

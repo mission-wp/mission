@@ -173,7 +173,9 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 	/**
 	 * Test the invitation email is skipped in test mode.
 	 */
-	public function test_invitation_skips_test_mode(): void {
+	public function test_invitation_sends_in_test_mode(): void {
+		// Team lifecycle emails are human-initiated and independent of payment
+		// mode; test mode must not silently break the invite flow.
 		update_option( SettingsService::OPTION_NAME, [ 'test_mode' => true ] );
 
 		$team   = $this->create_team_with_captain();
@@ -185,8 +187,39 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 		$listener->init( $email );
 		$listener->on_invitation_created( $invite );
 
+		$this->assertCount( 1, $email->sent );
+		$this->assertNotNull( TeamInvitation::find( $invite->id )->sent_at );
+	}
+
+	/**
+	 * Test invitations to a pending team are held until approval, then flushed.
+	 */
+	public function test_invitation_held_while_team_pending_and_flushed_on_approval(): void {
+		$team = $this->create_team_with_captain();
+		$team->status = Team::STATUS_PENDING;
+		$team->save();
+
+		$invite = new TeamInvitation( [ 'team_id' => $team->id, 'email' => 'invitee@example.com', 'token' => 'tok123' ] );
+		$invite->save();
+
+		$email    = $this->stub_email_module();
+		$listener = new TeamEmailListener();
+		$listener->init( $email );
+
+		// A pending team's page 404s, so the invite is held (no email, no stamp).
+		$listener->on_invitation_created( $invite );
 		$this->assertCount( 0, $email->sent );
 		$this->assertNull( TeamInvitation::find( $invite->id )->sent_at );
+
+		// The flush is wired to team approval and sends the held invitation.
+		$this->assertNotFalse( has_action( 'mission_team_approved', [ $listener, 'flush_pending_invitations' ] ) );
+
+		$team->status = Team::STATUS_ACTIVE;
+		$team->save();
+		$listener->flush_pending_invitations( $team );
+
+		$this->assertContains( 'invitee@example.com', array_column( $email->sent, 'to' ) );
+		$this->assertNotNull( TeamInvitation::find( $invite->id )->sent_at );
 	}
 
 	/**

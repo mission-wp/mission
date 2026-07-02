@@ -10,6 +10,7 @@ namespace MissionDP\Tests\P2P;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Transaction;
 use MissionDP\P2P\FundraiserMilestoneTracker;
 use MissionDP\P2P\FundraiserPostType;
 use WP_UnitTestCase;
@@ -137,5 +138,46 @@ class FundraiserMilestoneTrackerTest extends WP_UnitTestCase {
 		$this->fired = [];
 		$this->tracker->recompile( $fundraiser->id, false );
 		$this->assertSame( [], $this->fired );
+	}
+
+	/**
+	 * Saving a real donation fires milestones through the wired hooks, not just
+	 * via a direct recompile() call.
+	 */
+	public function test_transaction_save_fires_milestones_through_hooks(): void {
+		$this->tracker->init();
+		$fundraiser = $this->create_fundraiser( 10000, 0 );
+
+		( new Transaction( [
+			'status'        => Transaction::STATUS_COMPLETED,
+			'donor_id'      => 1,
+			'fundraiser_id' => $fundraiser->id,
+			'campaign_id'   => $fundraiser->campaign_id,
+			'amount'        => 5000,
+		] ) )->save();
+
+		$this->assertContains( '25-pct', $this->fired );
+		$this->assertContains( '50-pct', $this->fired );
+	}
+
+	/**
+	 * A test-mode donation tracks milestones in the test meta arm, leaving the
+	 * live arm untouched.
+	 */
+	public function test_test_transaction_tracks_test_milestones_through_hooks(): void {
+		$this->tracker->init();
+		$fundraiser = $this->create_fundraiser( 10000, 0 );
+
+		( new Transaction( [
+			'status'        => Transaction::STATUS_COMPLETED,
+			'donor_id'      => 1,
+			'fundraiser_id' => $fundraiser->id,
+			'campaign_id'   => $fundraiser->campaign_id,
+			'amount'        => 10000,
+			'is_test'       => true,
+		] ) )->save();
+
+		$this->assertContains( '100-pct', (array) $fundraiser->get_meta( 'test_milestones_reached' ) );
+		$this->assertEmpty( $fundraiser->get_meta( 'milestones_reached' ) );
 	}
 }

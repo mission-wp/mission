@@ -246,6 +246,8 @@ class Team extends Model {
 	 * Approve this team, moving it to the active status.
 	 *
 	 * Idempotent: an already-active team is left untouched and no event fires.
+	 * Re-activating a deactivated team is not an approval, so it fires a
+	 * separate event and never re-sends the "your team page is live" email.
 	 *
 	 * @return bool True on success (or when already active).
 	 */
@@ -254,18 +256,28 @@ class Team extends Model {
 			return true;
 		}
 
+		$was_pending  = self::STATUS_PENDING === $this->status;
 		$this->status = self::STATUS_ACTIVE;
 
 		if ( ! $this->save() ) {
 			return false;
 		}
 
-		/**
-		 * Fires after a team is approved.
-		 *
-		 * @param Team $team The approved team.
-		 */
-		do_action( 'mission_team_approved', $this );
+		if ( $was_pending ) {
+			/**
+			 * Fires after a pending team is approved.
+			 *
+			 * @param Team $team The approved team.
+			 */
+			do_action( 'mission_team_approved', $this );
+		} else {
+			/**
+			 * Fires after a deactivated team is made active again.
+			 *
+			 * @param Team $team The reactivated team.
+			 */
+			do_action( 'mission_team_reactivated', $this );
+		}
 
 		return true;
 	}
@@ -385,6 +397,27 @@ class Team extends Model {
 		}
 
 		return $fundraiser->leave_team();
+	}
+
+	/**
+	 * Clear the team's captain, leaving it captainless.
+	 *
+	 * Updates both sides of the association: the old captain's flag is cleared
+	 * along with the team's captain_id.
+	 *
+	 * @return bool True on success.
+	 */
+	public function clear_captain(): bool {
+		$old_captain = $this->captain();
+
+		if ( $old_captain ) {
+			$old_captain->is_team_captain = false;
+			$old_captain->save();
+		}
+
+		$this->captain_id = null;
+
+		return (bool) $this->save();
 	}
 
 	/**

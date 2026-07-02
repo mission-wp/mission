@@ -356,6 +356,25 @@ class TeamTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test only a pending -> active transition fires the approved event;
+	 * reactivating a deactivated team fires its own event instead.
+	 */
+	public function test_approve_fires_approved_only_from_pending(): void {
+		$team = $this->create_team( [ 'status' => 'pending' ] );
+
+		$approved    = did_action( 'mission_team_approved' );
+		$reactivated = did_action( 'mission_team_reactivated' );
+
+		$team->approve();
+		$this->assertSame( $approved + 1, did_action( 'mission_team_approved' ) );
+
+		$team->deactivate();
+		$team->approve();
+		$this->assertSame( $approved + 1, did_action( 'mission_team_approved' ) );
+		$this->assertSame( $reactivated + 1, did_action( 'mission_team_reactivated' ) );
+	}
+
+	/**
 	 * Test find_by_post_id() resolves the team from its shell post.
 	 */
 	public function test_find_by_post_id(): void {
