@@ -3310,6 +3310,99 @@
 			],
 			"Utilities and configuration for Mission": [
 				"Utilidades y configuración de Mission"
+			],
+			"<donor /> became a fundraiser for <campaign />": [
+				"<donor /> se convirtió en recaudador de <campaign />"
+			],
+			"<donor /> became a fundraiser": [
+				"<donor /> se convirtió en recaudador"
+			],
+			"New fundraiser registered": [
+				"Nuevo recaudador registrado"
+			],
+			"<donor />'s fundraising page was approved": [
+				"La página de recaudación de <donor /> fue aprobada"
+			],
+			"A fundraising page was approved": [
+				"Se aprobó una página de recaudación"
+			],
+			"<donor />'s fundraising page was reactivated": [
+				"La página de recaudación de <donor /> fue reactivada"
+			],
+			"A fundraising page was reactivated": [
+				"Se reactivó una página de recaudación"
+			],
+			"<donor /> reached <pct />% of their fundraising goal": [
+				"<donor /> alcanzó el <pct />% de su meta de recaudación"
+			],
+			"<donor /> reached a fundraising milestone": [
+				"<donor /> alcanzó un hito de recaudación"
+			],
+			"Fundraiser milestone reached": [
+				"Hito de recaudación alcanzado"
+			],
+			"New team <team /> created for <campaign />": [
+				"Nuevo equipo <team /> creado para <campaign />"
+			],
+			"New team <team /> created": [
+				"Nuevo equipo <team /> creado"
+			],
+			"New team created": [
+				"Nuevo equipo creado"
+			],
+			"Team <team /> was approved": [
+				"El equipo <team /> fue aprobado"
+			],
+			"A team was approved": [
+				"Se aprobó un equipo"
+			],
+			"Team <team /> was reactivated": [
+				"El equipo <team /> fue reactivado"
+			],
+			"A team was reactivated": [
+				"Se reactivó un equipo"
+			],
+			"<donor /> joined team <team />": [
+				"<donor /> se unió al equipo <team />"
+			],
+			"<donor /> joined a team": [
+				"<donor /> se unió a un equipo"
+			],
+			"A fundraiser joined a team": [
+				"Un recaudador se unió a un equipo"
+			],
+			"Invitation sent to <email /> to join <team />": [
+				"Invitación enviada a <email /> para unirse a <team />"
+			],
+			"Invitation sent to <email /> to join a team": [
+				"Invitación enviada a <email /> para unirse a un equipo"
+			],
+			"Team invitation sent": [
+				"Invitación de equipo enviada"
+			],
+			"<captain /> became captain of <team />": [
+				"<captain /> se convirtió en capitán de <team />"
+			],
+			"<captain /> became a team captain": [
+				"<captain /> se convirtió en capitán de equipo"
+			],
+			"Team captain changed": [
+				"Cambio de capitán del equipo"
+			],
+			"%1$d updated, %2$d failed.": [
+				"%1$d actualizados, %2$d fallidos."
+			],
+			"%d updated.": [
+				"%d actualizados."
+			],
+			"The bulk action failed.": [
+				"La acción en lote falló."
+			],
+			"Deactivate?": [
+				"¿Desactivar?"
+			],
+			"Deactivating hides the selected pages from the site. %d selected.": [
+				"Al desactivar se ocultan las páginas seleccionadas del sitio. %d seleccionados."
 			]
 		}
 	}
