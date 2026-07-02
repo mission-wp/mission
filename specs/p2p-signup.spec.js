@@ -4,60 +4,17 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 /**
- * Node dependencies
+ * Internal dependencies
  */
-const { execSync } = require( 'child_process' );
-
-/**
- * Create a peer-to-peer campaign (its default page includes the sign-up modal).
- *
- * @param {import('@wordpress/e2e-test-utils-playwright').RequestUtils} requestUtils
- * @return {Promise<{campaign: Object, url: string}>} The created campaign and its URL.
- */
-async function createP2PCampaign( requestUtils ) {
-  const campaign = await requestUtils.rest( {
-    path: '/mission-donation-platform/v1/campaigns',
-    method: 'POST',
-    data: {
-      title: `P2P Signup E2E ${ Date.now() }`,
-      type: 'p2p',
-      goal_amount: 100000,
-    },
-  } );
-
-  return { campaign, url: campaign.url || `/?p=${ campaign.post_id }` };
-}
-
-/**
- * Read the most recent verification code from the captured outgoing mail.
- *
- * global-setup installs a mu-plugin that stores each wp_mail() in an option;
- * the OTP renders in a distinctive letter-spacing block in the email body.
- *
- * @return {string} The 6-digit code.
- */
-function readOtpCode() {
-  const raw = execSync(
-    'npx wp-env run tests-cli -- wp option get missiondp_e2e_last_mail --format=json',
-    { encoding: 'utf8', timeout: 20000 }
-  );
-
-  const line = raw
-    .split( '\n' )
-    .map( ( s ) => s.trim() )
-    .filter( Boolean )
-    .reverse()
-    .find( ( s ) => s.startsWith( '{' ) );
-
-  const message = String( JSON.parse( line ).message || '' );
-  const match = message.match( /letter-spacing:\s*8px[^>]*>\s*([0-9]{6})/ );
-
-  if ( ! match ) {
-    throw new Error( 'Could not read an OTP code from the captured email.' );
-  }
-
-  return match[ 1 ];
-}
+const { readOtpCode } = require( './helpers/mail' );
+const {
+  wpEval,
+  createP2PCampaign,
+  cleanupCampaignParticipants,
+  openModal,
+  fillAccount,
+  fillOtp,
+} = require( './helpers/p2p' );
 
 /**
  * Create a donor with a login account directly, for the existing-account branch.
@@ -66,77 +23,11 @@ function readOtpCode() {
  * @param {string} password Account password.
  */
 function createDonorAccount( email, password ) {
-  const php =
+  wpEval(
     `$d = new \\MissionDP\\Models\\Donor( [ "email" => "${ email }", "first_name" => "Existing", "last_name" => "User" ] );` +
-    ' $d->save();' +
-    ` $d->create_user_account( "${ password }" );`;
-
-  execSync( `npx wp-env run tests-cli -- wp eval '${ php }'`, {
-    stdio: 'pipe',
-    timeout: 20000,
-  } );
-}
-
-/**
- * Open the sign-up modal from the campaign page and return its root locator.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string}                          url  Campaign page URL.
- * @return {Promise<import('@playwright/test').Locator>} The modal root.
- */
-async function openModal( page, url ) {
-  await page.goto( url );
-  await page
-    .getByRole( 'button', { name: 'Become a Fundraiser' } )
-    .first()
-    .click();
-
-  const modal = page.locator( '.mission-su' );
-  await expect( modal.locator( '.mission-su__overlay' ) ).toHaveClass(
-    /is-open/
+      ' $d->save();' +
+      ` $d->create_user_account( "${ password }" );`
   );
-  return modal;
-}
-
-/**
- * Fill the step-1 account form (scoped to the modal).
- *
- * @param {import('@playwright/test').Locator} modal           Modal root locator.
- * @param {Object}                             fields          Account field values.
- * @param {string}                             fields.first    First name.
- * @param {string}                             fields.last     Last name.
- * @param {string}                             fields.email    Email address.
- * @param {string}                             fields.password Password.
- */
-async function fillAccount( modal, { first, last, email, password } ) {
-  await modal
-    .locator( '.mission-su__field input[autocomplete="given-name"]' )
-    .fill( first );
-  await modal
-    .locator( '.mission-su__field input[autocomplete="family-name"]' )
-    .fill( last );
-  await modal
-    .locator( '.mission-su__field input[autocomplete="email"]' )
-    .fill( email );
-  // The set-new-password view shares autocomplete="new-password"; the account
-  // field is the first one in the DOM.
-  await modal
-    .locator( '.mission-su__field input[autocomplete="new-password"]' )
-    .first()
-    .fill( password );
-}
-
-/**
- * Type a code into the six OTP boxes.
- *
- * @param {import('@playwright/test').Locator} modal
- * @param {string}                             code
- */
-async function fillOtp( modal, code ) {
-  const boxes = modal.locator( '.mission-su__otp-input' );
-  for ( let i = 0; i < 6; i++ ) {
-    await boxes.nth( i ).fill( code[ i ] );
-  }
 }
 
 test.describe( 'Peer-to-peer fundraiser sign-up', () => {
@@ -144,20 +35,17 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   let url;
 
   test.beforeAll( async ( { requestUtils } ) => {
-    ( { campaign, url } = await createP2PCampaign( requestUtils ) );
+    ( { campaign, url } = await createP2PCampaign(
+      requestUtils,
+      'P2P Signup E2E'
+    ) );
   } );
 
   test.afterAll( async ( { requestUtils } ) => {
     // Remove the participants created during sign-up (their fundraiser pages,
     // donor records, and login accounts) before deleting the campaign, since
     // campaign deletion does not cascade to fundraisers.
-    execSync(
-      'npx wp-env run tests-cli -- wp eval ' +
-        `'foreach ( \\MissionDP\\Models\\Fundraiser::query( [ "campaign_id" => ${ campaign.id }, "per_page" => 100 ] ) as $f ) {` +
-        ' $d = $f->donor(); $f->delete();' +
-        ' if ( $d ) { if ( $d->user_id ) { wp_delete_user( $d->user_id ); } $d->delete(); } }\'',
-      { stdio: 'pipe', timeout: 30000 }
-    );
+    cleanupCampaignParticipants( campaign.id );
 
     await requestUtils.rest( {
       path: `/mission-donation-platform/v1/campaigns/${ campaign.id }`,
@@ -168,6 +56,7 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   test( 'a new participant verifies by code and reaches the success screen', async ( {
     page,
   } ) => {
+    const email = `e2e-new-${ Date.now() }@example.com`;
     const modal = await openModal( page, url );
     await expect(
       modal.getByRole( 'heading', { name: 'Create your account' } )
@@ -176,7 +65,7 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
     await fillAccount( modal, {
       first: 'Pat',
       last: 'Runner',
-      email: `e2e-new-${ Date.now() }@example.com`,
+      email,
       password: 'longenough1',
     } );
     await modal.getByRole( 'button', { name: 'Continue' } ).click();
@@ -185,7 +74,7 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
     await expect(
       modal.getByRole( 'heading', { name: 'Verify your email' } )
     ).toBeVisible();
-    await fillOtp( modal, readOtpCode() );
+    await fillOtp( modal, readOtpCode( email ) );
     await modal.getByRole( 'button', { name: 'Verify' } ).click();
 
     // Fundraiser setup.
@@ -248,11 +137,12 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   test( 'an invalid code shows a correctly rendered error', async ( {
     page,
   } ) => {
+    const email = `e2e-badcode-${ Date.now() }@example.com`;
     const modal = await openModal( page, url );
     await fillAccount( modal, {
       first: 'Wrong',
       last: 'Code',
-      email: `e2e-badcode-${ Date.now() }@example.com`,
+      email,
       password: 'longenough1',
     } );
     await modal.getByRole( 'button', { name: 'Continue' } ).click();
@@ -262,14 +152,14 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
     ).toBeVisible();
 
     // A code guaranteed to differ from the real one.
-    const real = readOtpCode();
+    const real = readOtpCode( email );
     const wrong = real === '111111' ? '222222' : '111111';
     await fillOtp( modal, wrong );
     await modal.getByRole( 'button', { name: 'Verify' } ).click();
 
     const error = modal.locator( '.mission-su__error:visible' );
     await expect( error ).toHaveText(
-      "That code didn't match. Please try again."
+      "That code didn't work. Request a new one and try again."
     );
     // Regression: the apostrophe must not be a raw HTML entity.
     await expect( error ).not.toContainText( '&#039;' );
@@ -278,11 +168,12 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   test( 'Enter submits each step, but not from the story textarea', async ( {
     page,
   } ) => {
+    const email = `e2e-enter-${ Date.now() }@example.com`;
     const modal = await openModal( page, url );
     await fillAccount( modal, {
       first: 'Enter',
       last: 'Key',
-      email: `e2e-enter-${ Date.now() }@example.com`,
+      email,
       password: 'longenough1',
     } );
 
@@ -296,7 +187,7 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
     ).toBeVisible();
 
     // Enter from an OTP box verifies.
-    await fillOtp( modal, readOtpCode() );
+    await fillOtp( modal, readOtpCode( email ) );
     await modal.locator( '.mission-su__otp-input' ).last().press( 'Enter' );
     await expect(
       modal.getByRole( 'heading', { name: 'Set up your fundraiser' } )

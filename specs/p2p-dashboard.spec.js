@@ -4,27 +4,14 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 /**
- * Node dependencies
+ * Internal dependencies
  */
-const { execSync } = require( 'child_process' );
-
-/**
- * Run a PHP snippet in the test container and return trimmed stdout.
- *
- * @param {string} php PHP code (without opening tag).
- * @return {string} Output.
- */
-function wpEval( php ) {
-  return execSync(
-    `npx wp-env run tests-cli -- wp eval '${ php.replace( /\n/g, ' ' ) }'`,
-    { encoding: 'utf8', timeout: 30000, stdio: [ 'pipe', 'pipe', 'pipe' ] }
-  ).trim();
-}
+const { wpEval, dashboardLogin } = require( './helpers/p2p' );
 
 /**
  * Seed a donor (with a login account) who owns a fundraiser on a P2P campaign.
  *
- * @return {{email: string, password: string, headline: string, dashboardUrl: string, ids: Object}}
+ * @return {{email: string, password: string, headline: string, dashboardUrl: string, ids: Object}} Seed data including credentials, dashboard URL, and IDs.
  */
 function seedFundraiser() {
   const stamp = Date.now();
@@ -57,7 +44,8 @@ function seedFundraiser() {
  *
  * @param {Object} ids Created entity IDs.
  */
-function cleanupFundraiser( { campaign, donor, fundraiser, user } ) {
+function cleanupFundraiser( ids ) {
+  const { campaign, donor, fundraiser, user } = ids;
   const php =
     `$f = \\MissionDP\\Models\\Fundraiser::find( ${ fundraiser } ); if ( $f ) { $f->delete(); }` +
     ` $d = \\MissionDP\\Models\\Donor::find( ${ donor } ); if ( $d ) { $d->delete(); }` +
@@ -65,26 +53,6 @@ function cleanupFundraiser( { campaign, donor, fundraiser, user } ) {
     ` $c = \\MissionDP\\Models\\Campaign::find( ${ campaign } ); if ( $c ) { $c->delete(); }`;
 
   wpEval( php );
-}
-
-/**
- * Log into the donor dashboard through its own login form.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string}                          email
- * @param {string}                          password
- */
-async function login( page, email, password ) {
-  await page.locator( '#mission-dd-login-email' ).fill( email );
-  await page.locator( '#mission-dd-login-password' ).fill( password );
-  await page
-    .locator( 'form[data-wp-on--submit="actions.submitLogin"] .mission-dd-auth-submit' )
-    .click();
-
-  // On success the dashboard re-renders with the sidebar nav.
-  await expect( page.locator( '.mission-dd-sidebar' ) ).toBeVisible( {
-    timeout: 15000,
-  } );
 }
 
 test.describe( 'P2P fundraiser dashboard', () => {
@@ -105,7 +73,7 @@ test.describe( 'P2P fundraiser dashboard', () => {
     const newHeadline = `Edited headline ${ Date.now() }`;
 
     await page.goto( dashboardUrl );
-    await login( page, email, password );
+    await dashboardLogin( page, email, password );
 
     // The Fundraising tab appears because this donor owns a fundraiser.
     await page.locator( 'button[data-panel="fundraising"]' ).click();

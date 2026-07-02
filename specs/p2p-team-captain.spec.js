@@ -4,22 +4,9 @@
 const { test, expect } = require( '@wordpress/e2e-test-utils-playwright' );
 
 /**
- * Node dependencies
+ * Internal dependencies
  */
-const { execSync } = require( 'child_process' );
-
-/**
- * Run a PHP snippet in the test container and return trimmed stdout.
- *
- * @param {string} php PHP code (without opening tag).
- * @return {string} Output.
- */
-function wpEval( php ) {
-  return execSync(
-    `npx wp-env run tests-cli -- wp eval '${ php.replace( /\n/g, ' ' ) }'`,
-    { encoding: 'utf8', timeout: 30000, stdio: [ 'pipe', 'pipe', 'pipe' ] }
-  ).trim();
-}
+const { wpEval, dashboardLogin } = require( './helpers/p2p' );
 
 /**
  * Seed a captain (with a login account) leading a team that has one other
@@ -32,6 +19,7 @@ function seedCaptainTeam() {
   const email = `captain+${ stamp }@example.com`;
   const password = 'longenough123';
   const teamName = `Team ${ stamp }`;
+  const memberName = 'Mem Ber';
 
   const php =
     `$c = new \\MissionDP\\Models\\Campaign( [ "title" => "Captain E2E ${ stamp }", "type" => "p2p" ] ); $c->save();` +
@@ -61,6 +49,7 @@ function seedCaptainTeam() {
     email,
     password,
     teamName,
+    memberName,
     dashboardUrl,
     ids: { campaign, donor, fundraiser, user, team, memberDonor, member },
   };
@@ -86,27 +75,6 @@ function cleanup( ids ) {
   wpEval( php );
 }
 
-/**
- * Log into the donor dashboard through its own login form.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string}                          email
- * @param {string}                          password
- */
-async function login( page, email, password ) {
-  await page.locator( '#mission-dd-login-email' ).fill( email );
-  await page.locator( '#mission-dd-login-password' ).fill( password );
-  await page
-    .locator(
-      'form[data-wp-on--submit="actions.submitLogin"] .mission-dd-auth-submit'
-    )
-    .click();
-
-  await expect( page.locator( '.mission-dd-sidebar' ) ).toBeVisible( {
-    timeout: 15000,
-  } );
-}
-
 test.describe( 'P2P team captain controls', () => {
   let seed;
 
@@ -121,10 +89,10 @@ test.describe( 'P2P team captain controls', () => {
   test( 'a captain edits the team, invites a member, and removes a member', async ( {
     page,
   } ) => {
-    const { email, password, teamName, dashboardUrl } = seed;
+    const { email, password, teamName, memberName, dashboardUrl } = seed;
 
     await page.goto( dashboardUrl );
-    await login( page, email, password );
+    await dashboardLogin( page, email, password );
     await page.locator( 'button[data-panel="fundraising"]' ).click();
 
     // The captain sub-section is shown with the team's current name.
@@ -149,13 +117,13 @@ test.describe( 'P2P team captain controls', () => {
     );
     await expect( page.locator( '.mission-dd-invitation' ) ).toHaveCount( 1 );
 
-    // Remove the seeded member (confirm dialog auto-accepted).
+    // Remove the seeded member, targeting their row by name so the action
+    // never depends on member ordering (confirm dialog auto-accepted).
     page.on( 'dialog', ( dialog ) => dialog.accept() );
     await expect( page.locator( '.mission-dd-member' ) ).toHaveCount( 2 );
     await page
-      .locator( '.mission-dd-member-actions' )
+      .locator( '.mission-dd-member', { hasText: memberName } )
       .getByRole( 'button', { name: 'Remove' } )
-      .first()
       .click();
     await expect( page.locator( '.mission-dd-toast' ) ).toContainText(
       'Member removed'
