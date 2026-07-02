@@ -14,6 +14,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Transaction;
+use MissionDP\Settings\SettingsService;
 use WP_UnitTestCase;
 
 /**
@@ -56,7 +57,7 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 			/**
 			 * Captured send() calls.
 			 *
-			 * @var array<array{to: string, subject: string}>
+			 * @var array<array{to: string, subject: string, body: string}>
 			 */
 			public array $sent = [];
 
@@ -88,18 +89,7 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 			}
 
 			/**
-			 * Skip template rendering.
-			 *
-			 * @param string $template Template name.
-			 * @param array  $data     Template data.
-			 * @return string
-			 */
-			public function render_template( string $template, array $data = [] ): string {
-				return '<html>' . $template . '</html>';
-			}
-
-			/**
-			 * Record the send.
+			 * Record the send. Templates render for real so bodies can be asserted.
 			 *
 			 * @param string $to      Recipient.
 			 * @param string $subject Subject.
@@ -108,7 +98,7 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 			 * @return bool
 			 */
 			public function send( string $to, string $subject, string $message, array $headers = [] ): bool {
-				$this->sent[] = [ 'to' => $to, 'subject' => $subject ];
+				$this->sent[] = [ 'to' => $to, 'subject' => $subject, 'body' => $message ];
 				return true;
 			}
 		};
@@ -142,6 +132,7 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $email->sent );
 		$this->assertSame( 'owner@example.com', $email->sent[0]['to'] );
+		$this->assertSame( 'Your fundraising page is live', $email->sent[0]['subject'] );
 	}
 
 	/**
@@ -181,8 +172,14 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 		$listener->init( $email );
 		$listener->on_donation_completed( $transaction );
 
+		$amount = $email->format_amount( 5000, 'USD' );
+
 		$this->assertCount( 1, $email->sent );
 		$this->assertSame( 'owner@example.com', $email->sent[0]['to'] );
+		$this->assertSame( "You received a {$amount} donation!", $email->sent[0]['subject'] );
+		// The donation amount and the giver's name appear in the body.
+		$this->assertStringContainsString( $amount, $email->sent[0]['body'] );
+		$this->assertStringContainsString( 'Owen Er', $email->sent[0]['body'] );
 	}
 
 	/**
@@ -250,6 +247,10 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $email->sent );
 		$this->assertSame( 'owner@example.com', $email->sent[0]['to'] );
+		$this->assertSame( "You've reached 50% of your goal!", $email->sent[0]['subject'] );
+		// The milestone label and the goal amount appear in the body.
+		$this->assertStringContainsString( 'reached 50% of your goal', $email->sent[0]['body'] );
+		$this->assertStringContainsString( $email->format_amount( 50000, 'USD' ), $email->sent[0]['body'] );
 	}
 
 	/**
@@ -278,5 +279,96 @@ class FundraiserEmailListenerTest extends WP_UnitTestCase {
 		$listener->on_fundraiser_milestone( $fundraiser, '10-pct', false );
 
 		$this->assertCount( 0, $email->sent );
+	}
+
+	/**
+	 * Test the email-levels filter trims which milestones send email.
+	 */
+	public function test_milestone_email_levels_filterable(): void {
+		add_filter( 'mission_fundraiser_milestone_email_levels', static fn() => [ 50, 100 ] );
+
+		$fundraiser = $this->create_fundraiser();
+		$email      = $this->stub_email_module();
+
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+		$listener->on_fundraiser_milestone( $fundraiser, '25-pct', false );
+		$listener->on_fundraiser_milestone( $fundraiser, '50-pct', false );
+
+		remove_all_filters( 'mission_fundraiser_milestone_email_levels' );
+
+		$this->assertCount( 1, $email->sent );
+		$this->assertSame( "You've reached 50% of your goal!", $email->sent[0]['subject'] );
+	}
+
+	/**
+	 * Test a custom template subject has its merge tags replaced, not sent literally.
+	 */
+	public function test_custom_subject_replaces_merge_tags(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			[
+				'emails' => [
+					'p2p_fundraiser_received_donation' => [
+						'subject' => '{giver_name} gave {amount} to {donor_name}',
+					],
+				],
+			]
+		);
+
+		$fundraiser = $this->create_fundraiser();
+
+		$giver = new Donor( [ 'email' => 'giver@example.com', 'first_name' => 'Gia', 'last_name' => 'Ver' ] );
+		$giver->save();
+
+		$transaction = new Transaction(
+			[
+				'donor_id'      => $giver->id,
+				'campaign_id'   => $fundraiser->campaign_id,
+				'fundraiser_id' => $fundraiser->id,
+				'amount'        => 5000,
+				'currency'      => 'USD',
+				'status'        => Transaction::STATUS_COMPLETED,
+			]
+		);
+		$transaction->save();
+
+		$email    = $this->stub_email_module();
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+		$listener->on_donation_completed( $transaction );
+
+		$amount = $email->format_amount( 5000, 'USD' );
+
+		$this->assertCount( 1, $email->sent );
+		$this->assertSame( "Gia Ver gave {$amount} to Owen", $email->sent[0]['subject'] );
+		$this->assertStringNotContainsString( '{giver_name}', $email->sent[0]['subject'] );
+	}
+
+	/**
+	 * Test init() wires the real WordPress actions with the right arg counts.
+	 *
+	 * Fires do_action() with the production hook names/args instead of calling
+	 * the on_*() handlers directly, so a wrong hook name or arg count in init()
+	 * cannot pass unnoticed.
+	 */
+	public function test_init_wires_real_actions(): void {
+		$fundraiser = $this->create_fundraiser();
+		$email      = $this->stub_email_module();
+
+		$listener = new FundraiserEmailListener();
+		$listener->init( $email );
+
+		do_action( 'mission_fundraiser_approved', $fundraiser );
+		$this->assertCount( 1, $email->sent );
+		$this->assertSame( 'Your fundraising page is live', $email->sent[0]['subject'] );
+
+		do_action( 'mission_fundraiser_milestone_reached', $fundraiser, '25-pct', false );
+		$this->assertCount( 2, $email->sent );
+		$this->assertSame( "You've reached 25% of your goal!", $email->sent[1]['subject'] );
+
+		// The is_test arg must reach the handler; a test-mode milestone sends nothing.
+		do_action( 'mission_fundraiser_milestone_reached', $fundraiser, '50-pct', true );
+		$this->assertCount( 2, $email->sent );
 	}
 }

@@ -183,6 +183,22 @@ class TeamTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the search query arg matches against the team name.
+	 */
+	public function test_query_search_matches_name(): void {
+		$match = $this->create_team( [ 'name' => 'Marathon Runners' ] );
+		$this->create_team( [ 'name' => 'Cycling Squad' ] );
+
+		$results = Team::query( [ 'search' => 'marathon' ] );
+
+		$this->assertCount( 1, $results );
+		$this->assertSame( $match->id, $results[0]->id );
+		$this->assertSame( 1, Team::count( [ 'search' => 'marathon' ] ) );
+
+		$this->assertSame( [], Team::query( [ 'search' => 'kayak' ] ) );
+	}
+
+	/**
 	 * Test query() pagination.
 	 */
 	public function test_query_pagination(): void {
@@ -368,10 +384,32 @@ class TeamTest extends WP_UnitTestCase {
 		$team->approve();
 		$this->assertSame( $approved + 1, did_action( 'mission_team_approved' ) );
 
+		// Idempotent: approving an active team succeeds and fires nothing.
+		$this->assertTrue( $team->approve() );
+		$this->assertSame( $approved + 1, did_action( 'mission_team_approved' ) );
+		$this->assertSame( $reactivated, did_action( 'mission_team_reactivated' ) );
+
 		$team->deactivate();
 		$team->approve();
 		$this->assertSame( $approved + 1, did_action( 'mission_team_approved' ) );
 		$this->assertSame( $reactivated + 1, did_action( 'mission_team_reactivated' ) );
+	}
+
+	/**
+	 * Test deactivate() fires its event exactly once and is idempotent.
+	 */
+	public function test_deactivate_fires_event_once_and_is_idempotent(): void {
+		$team = $this->create_team( [ 'status' => 'active' ] );
+
+		$deactivated = did_action( 'mission_team_deactivated' );
+
+		$this->assertTrue( $team->deactivate() );
+		$this->assertSame( $deactivated + 1, did_action( 'mission_team_deactivated' ) );
+		$this->assertSame( 'inactive', Team::find( $team->id )->status );
+
+		// Deactivating an already-inactive team succeeds and fires nothing.
+		$this->assertTrue( $team->deactivate() );
+		$this->assertSame( $deactivated + 1, did_action( 'mission_team_deactivated' ) );
 	}
 
 	/**

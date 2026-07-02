@@ -163,6 +163,23 @@ class AttributionTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a completed donation that flips to failed decrements the totals.
+	 */
+	public function test_completed_to_failed_decrements_fundraiser_total(): void {
+		$fundraiser  = $this->make_fundraiser( 1, 1 );
+		$transaction = $this->make_completed( [ 'fundraiser_id' => $fundraiser->id, 'amount' => 10000 ] );
+
+		$this->assertSame( 10000, $fundraiser->fresh()->total_raised );
+		$this->assertSame( 1, $fundraiser->fresh()->transaction_count );
+
+		$transaction->status = Transaction::STATUS_FAILED;
+		$transaction->save();
+
+		$this->assertSame( 0, $fundraiser->fresh()->total_raised );
+		$this->assertSame( 0, $fundraiser->fresh()->transaction_count );
+	}
+
+	/**
 	 * Test deleting a completed donation updates the fundraiser's total.
 	 */
 	public function test_delete_donation_updates_fundraiser_total(): void {
@@ -262,6 +279,36 @@ class AttributionTest extends WP_UnitTestCase {
 		$totals = ( new ReportingService() )->team_totals( $team->id );
 		$this->assertSame( 8500, $totals['raised'] );
 		$this->assertSame( 2, $totals['donations'] );
+	}
+
+	/**
+	 * Test team_totals() excludes refunded and pending direct team gifts.
+	 */
+	public function test_team_totals_excludes_refunded_and_pending_direct_gifts(): void {
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Rangers', 'status' => 'active' ] );
+		$team->save();
+
+		$this->make_completed( [ 'team_id' => $team->id, 'donor_id' => 2, 'amount' => 2500 ] );
+
+		// A fully refunded direct gift drops out of both raised and donations.
+		$refunded = $this->make_completed( [ 'team_id' => $team->id, 'donor_id' => 3, 'amount' => 4000 ] );
+		$refunded->status          = Transaction::STATUS_REFUNDED;
+		$refunded->amount_refunded = 4000;
+		$refunded->save();
+
+		// A pending direct gift never counts.
+		$pending = new Transaction( [
+			'status'   => Transaction::STATUS_PENDING,
+			'donor_id' => 4,
+			'team_id'  => $team->id,
+			'amount'   => 999,
+		] );
+		$pending->save();
+
+		$totals = ( new ReportingService() )->team_totals( $team->id );
+
+		$this->assertSame( 2500, $totals['raised'] );
+		$this->assertSame( 1, $totals['donations'] );
 	}
 
 	// -------------------------------------------------------------------------

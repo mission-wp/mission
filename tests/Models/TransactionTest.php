@@ -34,6 +34,8 @@ class TransactionTest extends WP_UnitTestCase {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		// phpcs:enable
@@ -533,10 +535,6 @@ class TransactionTest extends WP_UnitTestCase {
 
 		$direct = $this->create_transaction();
 		$this->assertNull( $direct->fundraiser() );
-
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
 	}
 
 	// -------------------------------------------------------------------------
@@ -577,9 +575,5 @@ class TransactionTest extends WP_UnitTestCase {
 
 		$direct = $this->create_transaction();
 		$this->assertNull( $direct->team() );
-
-		global $wpdb;
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 	}
 }

@@ -710,6 +710,41 @@ class CampaignTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test p2p_settings() returns the documented defaults, with native types,
+	 * when no settings meta has ever been saved.
+	 */
+	public function test_p2p_settings_returns_typed_defaults_when_unset(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		// assertSame on the full array checks values, types, and key order.
+		$this->assertSame( Campaign::P2P_DEFAULT_SETTINGS, $campaign->p2p_settings() );
+	}
+
+	/**
+	 * Test p2p_settings() casts stored string meta back to native types.
+	 */
+	public function test_p2p_settings_casts_stored_string_meta(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		// Meta round-trips as strings; p2p_settings() must cast them back.
+		$campaign->update_meta( 'registration_open', '0' );
+		$campaign->update_meta( 'approval_required', '1' );
+		$campaign->update_meta( 'default_fundraiser_goal', '75000' );
+		$campaign->update_meta( 'story_placeholder', 'Tell your story' );
+
+		$settings = $campaign->p2p_settings();
+
+		$this->assertFalse( $settings['registration_open'] );
+		$this->assertTrue( $settings['approval_required'] );
+		$this->assertSame( 75000, $settings['default_fundraiser_goal'] );
+		$this->assertSame( 'Tell your story', $settings['story_placeholder'] );
+
+		// Keys never saved still resolve to their typed defaults.
+		$this->assertSame( 200000, $settings['default_team_goal'] );
+		$this->assertFalse( $settings['teams_enabled'] );
+	}
+
+	/**
 	 * Test fundraisers() and teams() return records scoped to the campaign.
 	 */
 	public function test_fundraisers_and_teams_relationships(): void {

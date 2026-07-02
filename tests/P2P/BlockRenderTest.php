@@ -43,6 +43,26 @@ class BlockRenderTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Require a built/registered block: skip locally, but FAIL on CI.
+	 *
+	 * Without the failure, an unbuilt CI runner green-skips the whole class and
+	 * P2P block rendering silently has zero coverage.
+	 *
+	 * @param string $block Full block name.
+	 */
+	private function require_block( string $block ): void {
+		if ( \WP_Block_Type_Registry::get_instance()->is_registered( $block ) ) {
+			return;
+		}
+
+		if ( getenv( 'CI' ) ) {
+			$this->fail( "{$block} is not registered — run npm run build before the PHP suite in CI." );
+		}
+
+		$this->markTestSkipped( "{$block} is not built/registered in this environment." );
+	}
+
+	/**
 	 * Clean up after each test.
 	 */
 	public function tear_down(): void {
@@ -62,9 +82,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	 * Test the fundraiser-progress block renders the bound fundraiser's totals.
 	 */
 	public function test_fundraiser_progress_renders(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/fundraiser-progress' ) ) {
-			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
-		}
+		$this->require_block( 'mission-donation-platform/fundraiser-progress' );
 
 		$campaign   = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
@@ -85,9 +103,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	 * Test the top-fundraisers block ranks a campaign's fundraisers.
 	 */
 	public function test_top_fundraisers_renders(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/top-fundraisers' ) ) {
-			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
-		}
+		$this->require_block( 'mission-donation-platform/top-fundraisers' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
@@ -108,9 +124,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	 * Test the top-teams block ranks a campaign's teams with member counts.
 	 */
 	public function test_top_teams_renders(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/top-teams' ) ) {
-			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
-		}
+		$this->require_block( 'mission-donation-platform/top-teams' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
@@ -132,9 +146,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	 * Test the team-members block lists the team's members.
 	 */
 	public function test_team_members_renders(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/team-members' ) ) {
-			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
-		}
+		$this->require_block( 'mission-donation-platform/team-members' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
@@ -152,9 +164,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	 * Test the sign-up modal renders for an open p2p campaign.
 	 */
 	public function test_signup_modal_renders_when_registration_open(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/signup-modal' ) ) {
-			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
-		}
+		$this->require_block( 'mission-donation-platform/signup-modal' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
@@ -170,9 +180,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	 * Test the sign-up modal renders nothing when registration is closed.
 	 */
 	public function test_signup_modal_hidden_when_registration_closed(): void {
-		if ( ! \WP_Block_Type_Registry::get_instance()->is_registered( 'mission-donation-platform/signup-modal' ) ) {
-			$this->markTestSkipped( 'Blocks are not built/registered in this environment.' );
-		}
+		$this->require_block( 'mission-donation-platform/signup-modal' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();

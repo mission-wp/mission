@@ -67,7 +67,7 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 			/**
 			 * Captured send() calls.
 			 *
-			 * @var array<array{to: string, subject: string}>
+			 * @var array<array{to: string, subject: string, body: string}>
 			 */
 			public array $sent = [];
 
@@ -99,18 +99,7 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 			}
 
 			/**
-			 * Skip template rendering.
-			 *
-			 * @param string $template Template name.
-			 * @param array  $data     Template data.
-			 * @return string
-			 */
-			public function render_template( string $template, array $data = [] ): string {
-				return '<html>' . $template . '</html>';
-			}
-
-			/**
-			 * Record the send.
+			 * Record the send. Templates render for real so bodies can be asserted.
 			 *
 			 * @param string $to      Recipient.
 			 * @param string $subject Subject.
@@ -119,7 +108,7 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 			 * @return bool
 			 */
 			public function send( string $to, string $subject, string $message, array $headers = [] ): bool {
-				$this->sent[] = [ 'to' => $to, 'subject' => $subject ];
+				$this->sent[] = [ 'to' => $to, 'subject' => $subject, 'body' => $message ];
 				return true;
 			}
 		};
@@ -167,6 +156,9 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $email->sent );
 		$this->assertSame( 'invitee@example.com', $email->sent[0]['to'] );
+		$this->assertSame( "You're invited to join Runners", $email->sent[0]['subject'] );
+		// The accept URL, carrying the invitation token, appears in the body.
+		$this->assertStringContainsString( 'team_invite=tok123', $email->sent[0]['body'] );
 		$this->assertNotNull( TeamInvitation::find( $invite->id )->sent_at );
 	}
 
@@ -256,6 +248,8 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $email->sent );
 		$this->assertSame( 'cap@example.com', $email->sent[0]['to'] );
+		$this->assertSame( 'A new member joined Runners', $email->sent[0]['subject'] );
+		$this->assertStringContainsString( 'New Bie', $email->sent[0]['body'] );
 	}
 
 	/**
@@ -286,5 +280,64 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 
 		$this->assertCount( 1, $email->sent );
 		$this->assertSame( 'cap@example.com', $email->sent[0]['to'] );
+		$this->assertSame( 'Your team Runners has been approved', $email->sent[0]['subject'] );
+	}
+
+	/**
+	 * Test a custom template subject has its merge tags replaced, not sent literally.
+	 */
+	public function test_custom_subject_replaces_merge_tags(): void {
+		update_option(
+			SettingsService::OPTION_NAME,
+			[
+				'test_mode' => false,
+				'emails'    => [
+					'p2p_team_approved' => [
+						'subject' => '{captain_name}, your {team_name} page is ready',
+					],
+				],
+			]
+		);
+
+		$team = $this->create_team_with_captain();
+
+		$email    = $this->stub_email_module();
+		$listener = new TeamEmailListener();
+		$listener->init( $email );
+		$listener->on_team_approved( $team );
+
+		$this->assertCount( 1, $email->sent );
+		$this->assertSame( 'Cap, your Runners page is ready', $email->sent[0]['subject'] );
+		$this->assertStringNotContainsString( '{team_name}', $email->sent[0]['subject'] );
+	}
+
+	/**
+	 * Test init() wires the real WordPress actions with the right arg counts.
+	 *
+	 * Fires do_action() with the production hook names/args instead of calling
+	 * the on_*() handlers directly, so a wrong hook name or arg count in init()
+	 * cannot pass unnoticed.
+	 */
+	public function test_init_wires_real_actions(): void {
+		$team = $this->create_team_with_captain();
+
+		$donor = new Donor( [ 'email' => 'newbie@example.com', 'first_name' => 'New', 'last_name' => 'Bie' ] );
+		$donor->save();
+		$member = new Fundraiser( [ 'campaign_id' => $team->campaign_id, 'donor_id' => $donor->id, 'team_id' => $team->id ] );
+		$member->save();
+
+		$email    = $this->stub_email_module();
+		$listener = new TeamEmailListener();
+		$listener->init( $email );
+
+		// mission_team_joined passes two args (fundraiser, team).
+		do_action( 'mission_team_joined', $member, $team );
+		$this->assertCount( 1, $email->sent );
+		$this->assertSame( 'cap@example.com', $email->sent[0]['to'] );
+		$this->assertSame( 'A new member joined Runners', $email->sent[0]['subject'] );
+
+		do_action( 'mission_team_approved', $team );
+		$this->assertCount( 2, $email->sent );
+		$this->assertSame( 'Your team Runners has been approved', $email->sent[1]['subject'] );
 	}
 }
