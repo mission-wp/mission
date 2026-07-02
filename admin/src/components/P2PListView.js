@@ -1,17 +1,21 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import {
+  Button,
   Card,
   CardBody,
+  Modal,
   __experimentalHeading as Heading,
   __experimentalVStack as VStack,
+  __experimentalHStack as HStack,
   __experimentalText as Text,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
 import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from './EmptyState';
+import Toast from './Toast';
 
 const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
   id: `skeleton-${ i }`,
@@ -26,19 +30,20 @@ const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
  * supplies its columns (via buildFields) and stat cards (via renderStats).
  *
  * @param {Object}      props
- * @param {string}      props.title        Page heading.
- * @param {string}      props.description  Sub-heading copy.
- * @param {string}      props.listPath     REST collection path.
- * @param {string}      props.summaryPath  REST summary path.
- * @param {string}      props.bulkPath     REST bulk-action path.
- * @param {string}      props.storageKey   usePersistedView storage key.
- * @param {Function}    props.buildFields  (campaignElements) => DataViews fields.
- * @param {Object}      props.defaultView  Default DataViews view.
- * @param {string[]}    props.filterFields view.filters fields to pass as query params.
- * @param {Function}    props.renderStats  (summary) => stat card nodes.
- * @param {JSX.Element} props.emptyIcon    Empty-state icon.
- * @param {string}      props.emptyText    Empty-state heading.
- * @param {string}      props.emptyHint    Empty-state hint.
+ * @param {string}      props.title          Page heading.
+ * @param {string}      props.description    Sub-heading copy.
+ * @param {string}      props.listPath       REST collection path.
+ * @param {string}      props.summaryPath    REST summary path.
+ * @param {string}      props.bulkPath       REST bulk-action path.
+ * @param {string}      props.storageKey     usePersistedView storage key.
+ * @param {Function}    props.buildFields    (campaignElements, teamElements) => DataViews fields.
+ * @param {Object}      props.defaultView    Default DataViews view.
+ * @param {string[]}    props.filterFields   view.filters fields to pass as query params.
+ * @param {boolean}     props.withTeamFilter Whether to prefetch teams for a team filter.
+ * @param {Function}    props.renderStats    (summary) => stat card nodes.
+ * @param {JSX.Element} props.emptyIcon      Empty-state icon.
+ * @param {string}      props.emptyText      Empty-state heading.
+ * @param {string}      props.emptyHint      Empty-state hint.
  * @return {JSX.Element} The list page.
  */
 export default function P2PListView( {
@@ -51,6 +56,7 @@ export default function P2PListView( {
   buildFields,
   defaultView,
   filterFields = [],
+  withTeamFilter = false,
   renderStats,
   emptyIcon,
   emptyText,
@@ -65,6 +71,15 @@ export default function P2PListView( {
   const [ summary, setSummary ] = useState( null );
   const [ selection, setSelection ] = useState( [] );
   const [ campaignElements, setCampaignElements ] = useState( [] );
+  const [ teamElements, setTeamElements ] = useState( [] );
+  const [ toast, setToast ] = useState( null );
+  const [ toastKey, setToastKey ] = useState( 0 );
+  const [ confirmItems, setConfirmItems ] = useState( null );
+
+  const showToast = useCallback( ( type, message ) => {
+    setToast( { type, message } );
+    setToastKey( ( key ) => key + 1 );
+  }, [] );
 
   const fetchSummary = useCallback( () => {
     apiFetch( { path: summaryPath } )
@@ -92,22 +107,71 @@ export default function P2PListView( {
       .catch( () => {} );
   }, [] );
 
+  // Prefetch teams for the team filter dropdown (Fundraisers page only).
+  useEffect( () => {
+    if ( ! withTeamFilter ) {
+      return;
+    }
+    apiFetch( { path: '/mission-donation-platform/v1/teams?per_page=100' } )
+      .then( ( items ) =>
+        setTeamElements(
+          ( items || [] ).map( ( t ) => ( {
+            value: String( t.id ),
+            label: t.name,
+          } ) )
+        )
+      )
+      .catch( () => {} );
+  }, [ withTeamFilter ] );
+
   const runBulk = useCallback(
     async ( action, items ) => {
       const ids = items.map( ( item ) => item.id );
       try {
-        await apiFetch( {
+        const result = await apiFetch( {
           path: bulkPath,
           method: 'POST',
           data: { action, ids },
         } );
+
+        const updated = Array.isArray( result?.updated )
+          ? result.updated.length
+          : ids.length;
+        const failed = ( result?.errors || [] ).length;
+
+        if ( failed ) {
+          showToast(
+            'error',
+            sprintf(
+              /* translators: 1: number updated, 2: number failed */
+              __( '%1$d updated, %2$d failed.', 'mission-donation-platform' ),
+              updated,
+              failed
+            )
+          );
+        } else {
+          showToast(
+            'success',
+            sprintf(
+              /* translators: %d: number of records updated */
+              __( '%d updated.', 'mission-donation-platform' ),
+              updated
+            )
+          );
+        }
+      } catch ( error ) {
+        showToast(
+          'error',
+          error?.message ||
+            __( 'The bulk action failed.', 'mission-donation-platform' )
+        );
       } finally {
         setSelection( [] );
         refresh();
         fetchSummary();
       }
     },
-    [ bulkPath, refresh, fetchSummary ]
+    [ bulkPath, refresh, fetchSummary, showToast ]
   );
 
   const actions = [
@@ -124,11 +188,11 @@ export default function P2PListView( {
       label: __( 'Deactivate', 'mission-donation-platform' ),
       supportsBulk: true,
       isEligible: ( item ) => ! item._isSkeleton && item.status !== 'inactive',
-      callback: ( items ) => runBulk( 'deactivate', items ),
+      callback: ( items ) => setConfirmItems( items ),
     },
   ];
 
-  const fields = buildFields( campaignElements );
+  const fields = buildFields( campaignElements, teamElements );
 
   const hasNoFilters = ! view.filters || view.filters.length === 0;
   const showEmptyState =
@@ -176,6 +240,51 @@ export default function P2PListView( {
           />
         ) }
       </VStack>
+
+      { confirmItems && (
+        <Modal
+          title={ __( 'Deactivate?', 'mission-donation-platform' ) }
+          onRequestClose={ () => setConfirmItems( null ) }
+          size="small"
+        >
+          <VStack spacing={ 4 }>
+            <Text>
+              { sprintf(
+                /* translators: %d: number of selected records */
+                __(
+                  'Deactivating hides the selected pages from the site. %d selected.',
+                  'mission-donation-platform'
+                ),
+                confirmItems.length
+              ) }
+            </Text>
+            <HStack justify="flex-end">
+              <Button
+                variant="tertiary"
+                onClick={ () => setConfirmItems( null ) }
+              >
+                { __( 'Cancel', 'mission-donation-platform' ) }
+              </Button>
+              <Button
+                variant="primary"
+                isDestructive
+                onClick={ () => {
+                  runBulk( 'deactivate', confirmItems );
+                  setConfirmItems( null );
+                } }
+              >
+                { __( 'Deactivate', 'mission-donation-platform' ) }
+              </Button>
+            </HStack>
+          </VStack>
+        </Modal>
+      ) }
+
+      <Toast
+        key={ toastKey }
+        notice={ toast }
+        onDone={ () => setToast( null ) }
+      />
     </div>
   );
 }

@@ -28,7 +28,7 @@ const STATUS_ELEMENTS = [
   { value: 'inactive', label: __( 'Inactive', 'mission-donation-platform' ) },
 ];
 
-function buildFields( campaignElements ) {
+function buildFields( campaignElements, teamElements ) {
   return [
     {
       id: 'fundraiser',
@@ -56,7 +56,7 @@ function buildFields( campaignElements ) {
       filterBy: { operators: [ 'is' ] },
     },
     {
-      id: 'team_name',
+      id: 'team_id',
       label: __( 'Team', 'mission-donation-platform' ),
       enableSorting: false,
       render: ( { item } ) =>
@@ -67,6 +67,8 @@ function buildFields( campaignElements ) {
             { item.team_name || '\u2014' }
           </span>
         ),
+      elements: teamElements,
+      filterBy: { operators: [ 'is' ] },
     },
     {
       id: 'goal',
@@ -126,7 +128,7 @@ const DEFAULT_VIEW = {
   titleField: 'fundraiser',
   fields: [
     'campaign_id',
-    'team_name',
+    'team_id',
     'goal',
     'raised',
     'status',
@@ -181,7 +183,8 @@ export default function Fundraisers() {
       storageKey="fundraisers"
       buildFields={ buildFields }
       defaultView={ DEFAULT_VIEW }
-      filterFields={ [ 'campaign_id', 'status' ] }
+      filterFields={ [ 'campaign_id', 'team_id', 'status' ] }
+      withTeamFilter
       renderStats={ renderStats }
       emptyIcon={ <FlagIcon /> }
       emptyText={ __( 'No fundraisers yet.', 'mission-donation-platform' ) }
