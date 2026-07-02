@@ -110,8 +110,16 @@ class AdminModule {
 		add_filter( 'parent_file', [ $this, 'set_campaign_parent_menu' ] );
 		add_filter( 'submenu_file', [ $this, 'set_campaign_submenu_file' ] );
 		add_filter( 'plugin_action_links_' . MISSIONDP_BASENAME, [ $this, 'add_plugin_action_links' ] );
+		add_action( 'mission_campaign_created', [ $this, 'invalidate_p2p_campaigns_cache' ] );
 
 		( new DeactivationSurvey() )->init();
+	}
+
+	/**
+	 * Drop the cached has-P2P-campaigns flag when a campaign is created.
+	 */
+	public function invalidate_p2p_campaigns_cache(): void {
+		delete_transient( 'missiondp_has_p2p_campaigns' );
 	}
 
 	/**
@@ -323,7 +331,18 @@ class AdminModule {
 	 * @return bool
 	 */
 	private function has_p2p_campaigns(): bool {
-		return Campaign::count( [ 'type' => Campaign::TYPE_P2P ] ) > 0;
+		$cached = get_transient( 'missiondp_has_p2p_campaigns' );
+
+		if ( false !== $cached ) {
+			return '1' === $cached;
+		}
+
+		$has = Campaign::count( [ 'type' => Campaign::TYPE_P2P ] ) > 0;
+
+		// Short TTL: creates invalidate explicitly; deletes just age out.
+		set_transient( 'missiondp_has_p2p_campaigns', $has ? '1' : '0', HOUR_IN_SECONDS );
+
+		return $has;
 	}
 
 	/**

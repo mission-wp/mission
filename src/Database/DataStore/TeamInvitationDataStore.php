@@ -36,7 +36,7 @@ class TeamInvitationDataStore implements DataStoreInterface {
 	 *
 	 * @param object $model TeamInvitation model.
 	 *
-	 * @return int New invitation ID.
+	 * @return int New invitation ID, 0 when the insert failed.
 	 */
 	public function create( object $model ): int {
 		global $wpdb;
@@ -54,15 +54,17 @@ class TeamInvitationDataStore implements DataStoreInterface {
 
 		unset( $data['id'] );
 
-		$wpdb->insert( $this->get_table_name(), $data );
-		$model->id = (int) $wpdb->insert_id;
+		$result    = $wpdb->insert( $this->get_table_name(), $data );
+		$model->id = false === $result ? 0 : (int) $wpdb->insert_id;
 
-		/**
-		 * Fires after a team invitation is created.
-		 *
-		 * @param TeamInvitation $model The invitation.
-		 */
-		do_action( 'mission_team_invitation_created', $model );
+		if ( $model->id ) {
+			/**
+			 * Fires after a team invitation is created.
+			 *
+			 * @param TeamInvitation $model The invitation.
+			 */
+			do_action( 'mission_team_invitation_created', $model );
+		}
 
 		return $model->id;
 	}
@@ -163,7 +165,9 @@ class TeamInvitationDataStore implements DataStoreInterface {
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		// Bounded by default; -1 means "all" for full-set consumers (cascades, flushes).
+		$per_page = (int) ( $args['per_page'] ?? 100 );
+		$per_page = $per_page < 1 ? PHP_INT_MAX : $per_page;
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
@@ -219,6 +223,12 @@ class TeamInvitationDataStore implements DataStoreInterface {
 		if ( ! empty( $args['status'] ) ) {
 			$clauses[] = 'status = %s';
 			$values[]  = (string) $args['status'];
+		}
+
+		if ( ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['id__in'] ), '%d' ) );
+			$clauses[]    = "id IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'intval', $args['id__in'] ) );
 		}
 
 		return [ $clauses ? implode( ' AND ', $clauses ) : '1 = 1', $values ];

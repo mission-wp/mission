@@ -152,29 +152,17 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test save_silent() does not fire the created action.
-	 */
-	public function test_save_silent_does_not_fire_created_action(): void {
-		$fired = false;
-
-		add_action( 'mission_fundraiser_created', function () use ( &$fired ) {
-			$fired = true;
-		} );
-
-		$fundraiser = new Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
-		$fundraiser->save_silent();
-
-		$this->assertFalse( $fired );
-		$this->assertNotNull( Fundraiser::find( $fundraiser->id ) );
-	}
-
-	/**
 	 * Test the unique (campaign_id, donor_id) constraint blocks a duplicate.
 	 */
 	public function test_unique_campaign_donor_constraint(): void {
 		global $wpdb;
 
 		$this->create_fundraiser( [ 'campaign_id' => 5, 'donor_id' => 9 ] );
+
+		$fired = 0;
+		add_action( 'mission_fundraiser_created', function () use ( &$fired ) {
+			$fired++;
+		} );
 
 		// Second fundraiser for the same campaign/donor pair must not create a row.
 		// The duplicate-key INSERT fails by design; silence its expected error log.
@@ -184,6 +172,46 @@ class FundraiserTest extends WP_UnitTestCase {
 		$wpdb->suppress_errors( $suppress );
 
 		$this->assertSame( 1, Fundraiser::count( [ 'campaign_id' => 5 ] ) );
+		// The failed insert must not fire the created hook, keep a stale ID, or
+		// leave its shell post behind.
+		$this->assertSame( 0, $fired );
+		$this->assertSame( 0, $dup->id );
+		$this->assertSame( 0, $dup->post_id );
+	}
+
+	/**
+	 * Test a failed row update does not push state onto the shell post.
+	 */
+	public function test_failed_row_update_leaves_post_untouched(): void {
+		global $wpdb;
+
+		$fundraiser = $this->create_fundraiser( [ 'status' => 'active' ] );
+		$this->assertSame( 'publish', get_post_status( $fundraiser->post_id ) );
+
+		// Simulate the row vanishing under the model (the update path's failure mode).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->delete( "{$wpdb->prefix}missiondp_fundraisers", [ 'id' => $fundraiser->id ] );
+
+		$fundraiser->status = 'inactive';
+		$this->assertFalse( $fundraiser->save() );
+
+		$this->assertSame( 'publish', get_post_status( $fundraiser->post_id ) );
+	}
+
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$first  = $this->create_fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$second = $this->create_fundraiser( [ 'campaign_id' => 1, 'donor_id' => 2 ] );
+		$third  = $this->create_fundraiser( [ 'campaign_id' => 1, 'donor_id' => 3 ] );
+
+		$found = Fundraiser::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
 	}
 
 	// -------------------------------------------------------------------------
@@ -302,6 +330,22 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$this->assertSame( 2, Fundraiser::count() );
 		$this->assertSame( 1, Fundraiser::count( [ 'status' => 'active' ] ) );
+	}
+
+	/**
+	 * Test the search query arg matches against the headline.
+	 */
+	public function test_query_search_matches_headline(): void {
+		$match = $this->create_fundraiser( [ 'donor_id' => 1, 'headline' => 'Run for rivers' ] );
+		$this->create_fundraiser( [ 'donor_id' => 2, 'headline' => 'Bake sale bonanza' ] );
+
+		$results = Fundraiser::query( [ 'search' => 'rivers' ] );
+
+		$this->assertCount( 1, $results );
+		$this->assertSame( $match->id, $results[0]->id );
+		$this->assertSame( 1, Fundraiser::count( [ 'search' => 'rivers' ] ) );
+
+		$this->assertSame( [], Fundraiser::query( [ 'search' => 'zebras' ] ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -553,15 +597,33 @@ class FundraiserTest extends WP_UnitTestCase {
 		$fundraiser->approve();
 		$this->assertSame( $approved + 1, did_action( 'mission_fundraiser_approved' ) );
 
-		// Idempotent: approving an active fundraiser fires nothing.
-		$fundraiser->approve();
+		// Idempotent: approving an active fundraiser succeeds and fires nothing.
+		$this->assertTrue( $fundraiser->approve() );
 		$this->assertSame( $approved + 1, did_action( 'mission_fundraiser_approved' ) );
+		$this->assertSame( $reactivated, did_action( 'mission_fundraiser_reactivated' ) );
 
 		// Reactivation is not an approval (no "your page is live" re-send).
 		$fundraiser->deactivate();
 		$fundraiser->approve();
 		$this->assertSame( $approved + 1, did_action( 'mission_fundraiser_approved' ) );
 		$this->assertSame( $reactivated + 1, did_action( 'mission_fundraiser_reactivated' ) );
+	}
+
+	/**
+	 * Test deactivate() fires its event exactly once and is idempotent.
+	 */
+	public function test_deactivate_fires_event_once_and_is_idempotent(): void {
+		$fundraiser = $this->create_fundraiser( [ 'status' => 'active' ] );
+
+		$deactivated = did_action( 'mission_fundraiser_deactivated' );
+
+		$this->assertTrue( $fundraiser->deactivate() );
+		$this->assertSame( $deactivated + 1, did_action( 'mission_fundraiser_deactivated' ) );
+		$this->assertSame( 'inactive', Fundraiser::find( $fundraiser->id )->status );
+
+		// Deactivating an already-inactive fundraiser succeeds and fires nothing.
+		$this->assertTrue( $fundraiser->deactivate() );
+		$this->assertSame( $deactivated + 1, did_action( 'mission_fundraiser_deactivated' ) );
 	}
 
 	/**
@@ -588,6 +650,22 @@ class FundraiserTest extends WP_UnitTestCase {
 		$fundraiser = $this->create_fundraiser( [ 'donor_id' => $donor->id, 'status' => 'active' ] );
 
 		$this->assertSame( 'jane-doe', Fundraiser::find( $fundraiser->id )->slug );
+	}
+
+	/**
+	 * Test two participants with the same display name get distinct shell post slugs.
+	 */
+	public function test_shell_post_slug_collision_gets_numeric_suffix(): void {
+		$first_jane = new Donor( [ 'email' => 'jane1@example.com', 'first_name' => 'Jane', 'last_name' => 'Doe' ] );
+		$first_jane->save();
+		$second_jane = new Donor( [ 'email' => 'jane2@example.com', 'first_name' => 'Jane', 'last_name' => 'Doe' ] );
+		$second_jane->save();
+
+		$first  = $this->create_fundraiser( [ 'donor_id' => $first_jane->id, 'status' => 'active' ] );
+		$second = $this->create_fundraiser( [ 'donor_id' => $second_jane->id, 'status' => 'active' ] );
+
+		$this->assertSame( 'jane-doe', Fundraiser::find( $first->id )->slug );
+		$this->assertSame( 'jane-doe-2', Fundraiser::find( $second->id )->slug );
 	}
 
 	/**

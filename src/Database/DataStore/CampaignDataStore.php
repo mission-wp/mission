@@ -180,7 +180,8 @@ class CampaignDataStore implements DataStoreInterface {
 
 		$data                  = $this->model_to_row( $model );
 		$data['date_modified'] = current_time( 'mysql', true );
-		unset( $data['id'] );
+		// A campaign's type (standard/p2p) is fixed at creation; never rewrite it.
+		unset( $data['id'], $data['type'] );
 
 		$result = $wpdb->update(
 			$this->get_table_name(),

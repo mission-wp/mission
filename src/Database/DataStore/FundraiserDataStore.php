@@ -54,36 +54,26 @@ class FundraiserDataStore implements DataStoreInterface {
 	 *
 	 * @param object $model Fundraiser model.
 	 *
-	 * @return int New fundraiser ID.
+	 * @return int New fundraiser ID, 0 when the insert failed (e.g. a
+	 *             campaign_donor unique-constraint race).
 	 */
 	public function create( object $model ): int {
 		$this->insert_row( $model );
 
-		/**
-		 * Fires after a fundraiser is created.
-		 *
-		 * @param Fundraiser $model The fundraiser.
-		 */
-		do_action( 'mission_fundraiser_created', $model );
+		if ( $model->id ) {
+			/**
+			 * Fires after a fundraiser is created.
+			 *
+			 * @param Fundraiser $model The fundraiser.
+			 */
+			do_action( 'mission_fundraiser_created', $model );
+		}
 
 		return $model->id;
 	}
 
 	/**
-	 * Create a fundraiser without firing side-effect hooks.
-	 *
-	 * Internal — consumer code should use Fundraiser::save_silent().
-	 *
-	 * @param Fundraiser $model Fundraiser model.
-	 * @return int New fundraiser ID.
-	 */
-	public function create_silent( Fundraiser $model ): int {
-		$this->insert_row( $model );
-		return $model->id;
-	}
-
-	/**
-	 * Raw insert path shared by create() and create_silent().
+	 * Raw insert path for create().
 	 *
 	 * @param object $model Fundraiser model.
 	 */
@@ -97,8 +87,8 @@ class FundraiserDataStore implements DataStoreInterface {
 		$data['date_modified'] = $now;
 		unset( $data['id'] );
 
-		$wpdb->insert( $this->get_table_name(), $data );
-		$model->id = (int) $wpdb->insert_id;
+		$result    = $wpdb->insert( $this->get_table_name(), $data );
+		$model->id = false === $result ? 0 : (int) $wpdb->insert_id;
 	}
 
 	/**
@@ -301,7 +291,9 @@ class FundraiserDataStore implements DataStoreInterface {
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
+		// Bounded by default; -1 means "all" for full-set consumers (cascades, flushes).
+		$per_page = (int) ( $args['per_page'] ?? 100 );
+		$per_page = $per_page < 1 ? PHP_INT_MAX : $per_page;
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
@@ -378,6 +370,22 @@ class FundraiserDataStore implements DataStoreInterface {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['status__in'] ), '%s' ) );
 			$clauses[]    = "status IN ( {$placeholders} )";
 			$values       = array_merge( $values, array_map( 'strval', $args['status__in'] ) );
+		}
+
+		if ( ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['id__in'] ), '%d' ) );
+			$clauses[]    = "id IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'intval', $args['id__in'] ) );
+		}
+
+		if ( ! empty( $args['cover_image'] ) ) {
+			$clauses[] = 'cover_image = %s';
+			$values[]  = (string) $args['cover_image'];
+		}
+
+		if ( ! empty( $args['profile_image'] ) ) {
+			$clauses[] = 'profile_image = %s';
+			$values[]  = (string) $args['profile_image'];
 		}
 
 		return [ $clauses ? implode( ' AND ', $clauses ) : '1 = 1', $values ];

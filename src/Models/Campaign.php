@@ -81,6 +81,12 @@ class Campaign extends Model {
 	public string $description;
 	public int $goal_amount;
 	public string $goal_type;
+	/**
+	 * Campaign type (standard/p2p/event). Immutable after creation — the data
+	 * store never rewrites it on update.
+	 *
+	 * @var string
+	 */
 	public string $type;
 	public int $total_raised;
 	public int $transaction_count;
@@ -573,11 +579,21 @@ class Campaign extends Model {
 	 * @return bool
 	 */
 	public function delete(): bool {
-		foreach ( Team::query( [ 'campaign_id' => $this->id ] ) as $team ) {
+		foreach ( Team::query(
+			[
+				'campaign_id' => $this->id,
+				'per_page'    => -1,
+			]
+		) as $team ) {
 			$team->delete();
 		}
 
-		foreach ( Fundraiser::query( [ 'campaign_id' => $this->id ] ) as $fundraiser ) {
+		foreach ( Fundraiser::query(
+			[
+				'campaign_id' => $this->id,
+				'per_page'    => -1,
+			]
+		) as $fundraiser ) {
 			$fundraiser->delete();
 		}
 

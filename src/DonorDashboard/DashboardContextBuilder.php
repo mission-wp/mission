@@ -479,8 +479,9 @@ class DashboardContextBuilder {
 			},
 			$team->members(
 				[
-					'orderby' => 'total_raised',
-					'order'   => 'DESC',
+					'orderby'  => 'total_raised',
+					'order'    => 'DESC',
+					'per_page' => -1,
 				]
 			)
 		);
@@ -491,7 +492,12 @@ class DashboardContextBuilder {
 				'email' => $invitation->email,
 				'sent'  => ! empty( $invitation->sent_at ),
 			],
-			$team->invitations( [ 'status' => \MissionDP\Models\TeamInvitation::STATUS_PENDING ] )
+			$team->invitations(
+				[
+					'status'   => \MissionDP\Models\TeamInvitation::STATUS_PENDING,
+					'per_page' => -1,
+				]
+			)
 		);
 
 		$status_labels = [

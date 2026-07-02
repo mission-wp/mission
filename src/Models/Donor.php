@@ -282,7 +282,7 @@ class Donor extends Model {
 	 * @return bool
 	 */
 	public function delete(): bool {
-		foreach ( $this->fundraisers() as $fundraiser ) {
+		foreach ( $this->fundraisers( [ 'per_page' => -1 ] ) as $fundraiser ) {
 			$fundraiser->delete();
 		}
 

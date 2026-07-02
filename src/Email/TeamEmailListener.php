@@ -217,7 +217,12 @@ class TeamEmailListener {
 	 * @return void
 	 */
 	public function flush_pending_invitations( Team $team ): void {
-		foreach ( $team->invitations( [ 'status' => TeamInvitation::STATUS_PENDING ] ) as $invitation ) {
+		foreach ( $team->invitations(
+			[
+				'status'   => TeamInvitation::STATUS_PENDING,
+				'per_page' => -1,
+			]
+		) as $invitation ) {
 			if ( null === $invitation->sent_at ) {
 				$this->on_invitation_created( $invitation );
 			}

@@ -2034,9 +2034,10 @@ class ReportingService {
 	 * A team's member fundraisers with per-member progress, ordered by raised.
 	 *
 	 * @param int $team_id Team ID.
+	 * @param int $limit   Maximum members to return.
 	 * @return array<int, array{id:int, post_id:int, name:string, goal:int, raised:int, is_captain:bool}>
 	 */
-	public function team_members( int $team_id ): array {
+	public function team_members( int $team_id, int $limit = 100 ): array {
 		global $wpdb;
 
 		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
@@ -2051,12 +2052,14 @@ class ReportingService {
 				 FROM %i AS f
 				 LEFT JOIN %i AS d ON f.donor_id = d.id
 				 WHERE f.team_id = %d AND f.status = %s
-				 ORDER BY raised DESC, f.id ASC',
+				 ORDER BY raised DESC, f.id ASC
+				 LIMIT %d',
 				$raised_col,
 				$f_table,
 				$d_table,
 				$team_id,
-				\MissionDP\Models\Fundraiser::STATUS_ACTIVE
+				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
+				max( 1, $limit )
 			),
 			ARRAY_A
 		);

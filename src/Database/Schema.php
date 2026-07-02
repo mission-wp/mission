@@ -256,7 +256,6 @@ class Schema {
   date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY  (id),
   UNIQUE KEY campaign_donor (campaign_id, donor_id),
-  KEY campaign_id (campaign_id),
   KEY donor_id (donor_id),
   KEY team_id (team_id),
   KEY status (status),
