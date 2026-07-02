@@ -41,8 +41,18 @@ defined( 'ABSPATH' ) || exit;
 		}
 	}
 
-	if ( ! $campaign || '' === trim( $campaign->description ) ) {
+	if ( ! $campaign ) {
 		return;
+	}
+
+	// Campaigns without a description get the block's fallback text (editable
+	// in the editor), so the section never renders empty.
+	$description = trim( $campaign->description );
+	if ( '' === $description ) {
+		$description = trim( $attributes['fallback'] ?? '' );
+	}
+	if ( '' === $description ) {
+		$description = __( 'This page is part of a larger campaign. Every donation made here counts toward the campaign\'s overall goal.', 'mission-donation-platform' );
 	}
 
 	$url = $is_child ? $campaign->get_url() : '';
@@ -50,7 +60,7 @@ defined( 'ABSPATH' ) || exit;
 	ob_start();
 	?>
 	<div <?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-cd-description' ] ) ); ?>>
-		<?php echo wp_kses_post( wpautop( $campaign->description ) ); ?>
+		<?php echo wp_kses_post( wpautop( $description ) ); ?>
 		<?php if ( $url ) : ?>
 			<p class="mission-cd-description__link">
 				<a href="<?php echo esc_url( $url ); ?>">

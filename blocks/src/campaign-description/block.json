@@ -18,6 +18,9 @@
 		"campaignId": {
 			"type": "number",
 			"default": 0
+		},
+		"fallback": {
+			"type": "string"
 		}
 	},
 	"example": {},

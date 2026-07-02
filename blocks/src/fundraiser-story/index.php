@@ -20,14 +20,24 @@ defined( 'ABSPATH' ) || exit;
 	// Resolve the fundraiser from the block attribute or the queried shell page.
 	$fundraiser = BlockSupport::resolve_fundraiser( $attributes );
 
-	if ( ! $fundraiser || '' === trim( $fundraiser->story ) ) {
+	if ( ! $fundraiser ) {
 		return;
+	}
+
+	// Fundraisers who skipped the story get the block's fallback text
+	// (editable in the editor), so the section never renders empty.
+	$story = trim( $fundraiser->story );
+	if ( '' === $story ) {
+		$story = trim( $attributes['fallback'] ?? '' );
+	}
+	if ( '' === $story ) {
+		$story = __( 'I am raising money for a cause that means a lot to me. Every donation, big or small, helps me get closer to my goal. Thank you for your support!', 'mission-donation-platform' );
 	}
 
 	$output = sprintf(
 		'<div %s>%s</div>',
 		get_block_wrapper_attributes( [ 'class' => 'mission-fs-story' ] ),
-		wpautop( wp_kses_post( $fundraiser->story ) )
+		wpautop( wp_kses_post( $story ) )
 	);
 
 	/**

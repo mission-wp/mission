@@ -20,14 +20,24 @@ defined( 'ABSPATH' ) || exit;
 	// Resolve the team from the block attribute or the queried shell page.
 	$team = BlockSupport::resolve_team( $attributes );
 
-	if ( ! $team || '' === trim( $team->description ) ) {
+	if ( ! $team ) {
 		return;
+	}
+
+	// Teams without a story get the block's fallback text (editable in the
+	// editor), so the section never renders empty.
+	$story = trim( $team->description );
+	if ( '' === $story ) {
+		$story = trim( $attributes['fallback'] ?? '' );
+	}
+	if ( '' === $story ) {
+		$story = __( 'We have teamed up because we can make a bigger difference together. Every donation to a team member brings us closer to our shared goal.', 'mission-donation-platform' );
 	}
 
 	$output = sprintf(
 		'<div %s>%s</div>',
 		get_block_wrapper_attributes( [ 'class' => 'mission-ts-story' ] ),
-		wpautop( wp_kses_post( $team->description ) )
+		wpautop( wp_kses_post( $story ) )
 	);
 
 	/**
