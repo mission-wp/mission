@@ -1,0 +1,33 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-story\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Settings": [
+                "Asetukset"
+            ],
+            "I am raising money for a cause that means a lot to me. Every donation, big or small, helps me get closer to my goal. Thank you for your support!": [
+                "Ker\u00e4\u00e4n rahaa asialle, joka merkitsee minulle paljon. Jokainen lahjoitus, pieni tai suuri, auttaa minua l\u00e4hemm\u00e4s tavoitettani. Kiitos tuestasi!"
+            ],
+            "Fallback text": [
+                "Varateksti"
+            ],
+            "Shown when a fundraiser has not written a story yet.": [
+                "N\u00e4ytet\u00e4\u00e4n, kun varainker\u00e4\u00e4j\u00e4 ei ole viel\u00e4 kirjoittanut tarinaa."
+            ],
+            "Your fundraiser's story appears here. Share why this cause matters to you and what donations will make possible.": [
+                "Varainkeruusivusi tarina n\u00e4kyy t\u00e4ss\u00e4. Kerro, miksi t\u00e4m\u00e4 asia on sinulle t\u00e4rke\u00e4 ja mit\u00e4 lahjoituksilla saadaan aikaan."
+            ],
+            "Supporters read this before they give, so make it personal.": [
+                "Tukijat lukevat t\u00e4m\u00e4n ennen lahjoittamista, joten tee siit\u00e4 henkil\u00f6kohtainen."
+            ]
+        }
+    }
+}

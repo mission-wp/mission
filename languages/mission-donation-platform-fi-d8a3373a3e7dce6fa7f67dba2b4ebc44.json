@@ -235,6 +235,9 @@
 			"Total Donated": [
 				"Lahjoitettu yhteensä"
 			],
+			"Date Created": [
+				"Luontipäivä"
+			],
 			"Currency": [
 				"Valuutta"
 			],
@@ -3121,6 +3124,288 @@
 			],
 			"Utilities and configuration for Mission": [
 				"Mission-työkalut ja -asetukset"
+			],
+			"Donation Form": [
+				"Lahjoituslomake"
+			],
+			"Team name": [
+				"Tiimin nimi"
+			],
+			"Members": [
+				"Jäsenet"
+			],
+			"Captain": [
+				"Kapteeni"
+			],
+			"No teams yet.": [
+				"Ei vielä tiimejä."
+			],
+			"Fundraisers": [
+				"Varainkerääjät"
+			],
+			"Teams": [
+				"Tiimit"
+			],
+			"Inactive": [
+				"Ei aktiivinen"
+			],
+			"Fundraiser": [
+				"Varainkerääjä"
+			],
+			"Team": [
+				"Tiimi"
+			],
+			"A standard campaign with a donation form.": [
+				"Tavallinen kampanja lahjoituslomakkeella."
+			],
+			"Peer-to-Peer": [
+				"Vertaisvarainkeruu"
+			],
+			"Supporters create personal fundraising pages that roll up into this campaign.": [
+				"Tukijat luovat henkilökohtaisia varainkeruusivuja, joiden tuotto lasketaan mukaan tähän kampanjaan."
+			],
+			"Ticketed Event": [
+				"Lipullinen tapahtuma"
+			],
+			"Sell tickets to an event.": [
+				"Myy lippuja tapahtumaan."
+			],
+			"What kind of campaign is this? This can’t be changed later.": [
+				"Millainen kampanja tämä on? Tätä ei voi muuttaa myöhemmin."
+			],
+			"Registration open": [
+				"Ilmoittautuminen avoinna"
+			],
+			"Allow new supporters to sign up as fundraisers": [
+				"Salli uusien tukijoiden ilmoittautua varainkerääjiksi"
+			],
+			"Require approval for fundraisers": [
+				"Vaadi hyväksyntä varainkerääjille"
+			],
+			"New fundraiser pages stay pending until you approve them": [
+				"Uudet varainkeruusivut odottavat hyväksyntää, kunnes hyväksyt ne"
+			],
+			"Default fundraiser goal": [
+				"Varainkerääjän oletustavoite"
+			],
+			"Suggested goal for a new fundraiser": [
+				"Ehdotettu tavoite uudelle varainkerääjälle"
+			],
+			"Story placeholder": [
+				"Tarinan paikkamerkkiteksti"
+			],
+			"Suggested text shown in the fundraiser story field": [
+				"Ehdotettu teksti, joka näytetään varainkerääjän tarinakentässä"
+			],
+			"Enable teams": [
+				"Ota tiimit käyttöön"
+			],
+			"Let fundraisers group together into teams": [
+				"Anna varainkerääjien ryhmittyä tiimeiksi"
+			],
+			"Let supporters create teams": [
+				"Anna tukijoiden luoda tiimejä"
+			],
+			"Otherwise only admins create teams": [
+				"Muutoin vain ylläpitäjät voivat luoda tiimejä"
+			],
+			"Require approval for teams": [
+				"Vaadi hyväksyntä tiimeille"
+			],
+			"New teams stay pending until you approve them": [
+				"Uudet tiimit odottavat hyväksyntää, kunnes hyväksyt ne"
+			],
+			"Default team goal": [
+				"Tiimin oletustavoite"
+			],
+			"Team story placeholder": [
+				"Tiimin tarinan paikkamerkkiteksti"
+			],
+			"<donor /> became a fundraiser for <campaign />": [
+				"<donor /> ryhtyi kampanjan <campaign /> varainkerääjäksi"
+			],
+			"<donor /> became a fundraiser": [
+				"<donor /> ryhtyi varainkerääjäksi"
+			],
+			"New fundraiser registered": [
+				"Uusi varainkerääjä rekisteröityi"
+			],
+			"<donor />'s fundraising page was approved": [
+				"Varainkerääjän <donor /> keräyssivu hyväksyttiin"
+			],
+			"A fundraising page was approved": [
+				"Varainkeruusivu hyväksyttiin"
+			],
+			"<donor />'s fundraising page was reactivated": [
+				"Varainkerääjän <donor /> keräyssivu aktivoitiin uudelleen"
+			],
+			"A fundraising page was reactivated": [
+				"Varainkeruusivu aktivoitiin uudelleen"
+			],
+			"<donor /> reached <pct />% of their fundraising goal": [
+				"<donor /> saavutti <pct />% varainkeruutavoitteestaan"
+			],
+			"<donor /> reached a fundraising milestone": [
+				"<donor /> saavutti varainkeruun välitavoitteen"
+			],
+			"Fundraiser milestone reached": [
+				"Varainkerääjän välitavoite saavutettu"
+			],
+			"New team <team /> created for <campaign />": [
+				"Uusi tiimi <team /> luotiin kampanjalle <campaign />"
+			],
+			"New team <team /> created": [
+				"Uusi tiimi <team /> luotiin"
+			],
+			"New team created": [
+				"Uusi tiimi luotu"
+			],
+			"Team <team /> was approved": [
+				"Tiimi <team /> hyväksyttiin"
+			],
+			"A team was approved": [
+				"Tiimi hyväksyttiin"
+			],
+			"Team <team /> was reactivated": [
+				"Tiimi <team /> aktivoitiin uudelleen"
+			],
+			"A team was reactivated": [
+				"Tiimi aktivoitiin uudelleen"
+			],
+			"<donor /> joined team <team />": [
+				"<donor /> liittyi tiimiin <team />"
+			],
+			"<donor /> joined a team": [
+				"<donor /> liittyi tiimiin"
+			],
+			"A fundraiser joined a team": [
+				"Varainkerääjä liittyi tiimiin"
+			],
+			"Invitation sent to <email /> to join <team />": [
+				"Kutsu liittyä tiimiin <team /> lähetettiin osoitteeseen <email />"
+			],
+			"Invitation sent to <email /> to join a team": [
+				"Kutsu liittyä tiimiin lähetettiin osoitteeseen <email />"
+			],
+			"Team invitation sent": [
+				"Tiimikutsu lähetetty"
+			],
+			"<captain /> became captain of <team />": [
+				"<captain /> ryhtyi tiimin <team /> kapteeniksi"
+			],
+			"<captain /> became a team captain": [
+				"<captain /> ryhtyi tiimin kapteeniksi"
+			],
+			"Team captain changed": [
+				"Tiimin kapteeni vaihtui"
+			],
+			"The list could not be loaded.": [
+				"Listaa ei voitu ladata."
+			],
+			"%1$d updated, %2$d failed.": [
+				"%1$d päivitetty, %2$d epäonnistui."
+			],
+			"%d updated.": [
+				"%d päivitetty."
+			],
+			"The bulk action failed.": [
+				"Massatoiminto epäonnistui."
+			],
+			"Approve": [
+				"Hyväksy"
+			],
+			"Deactivate": [
+				"Poista käytöstä"
+			],
+			"Deactivate?": [
+				"Poistetaanko käytöstä?"
+			],
+			"Deactivating hides the selected pages from the site. %d selected.": [
+				"Käytöstä poistaminen piilottaa valitut sivut sivustolta. %d valittu."
+			],
+			"Total Fundraisers": [
+				"Varainkerääjiä yhteensä"
+			],
+			"Pending Approval": [
+				"Odottaa hyväksyntää"
+			],
+			"New fundraiser": [
+				"Uusi varainkerääjä"
+			],
+			"Sent when someone registers as a peer-to-peer fundraiser": [
+				"Lähetetään, kun joku rekisteröityy vertaisvarainkerääjäksi"
+			],
+			"Fundraiser approved": [
+				"Varainkerääjä hyväksytty"
+			],
+			"Sent to a participant when their fundraising page goes live": [
+				"Lähetetään osallistujalle, kun hänen varainkeruusivunsa julkaistaan"
+			],
+			"Fundraiser received a donation": [
+				"Varainkerääjä sai lahjoituksen"
+			],
+			"Sent to a participant when a gift is credited to their page": [
+				"Lähetetään osallistujalle, kun lahjoitus kirjataan hänen sivulleen"
+			],
+			"Giver name": [
+				"Lahjoittajan nimi"
+			],
+			"Fundraiser milestone": [
+				"Varainkerääjän välitavoite"
+			],
+			"Sent to a participant when they reach 25%, 50%, 75%, or 100% of their goal": [
+				"Lähetetään osallistujalle, kun hän saavuttaa 25 %, 50 %, 75 % tai 100 % tavoitteestaan"
+			],
+			"Milestone reached": [
+				"Välitavoite saavutettu"
+			],
+			"Team invitation": [
+				"Tiimikutsu"
+			],
+			"Sent to someone a captain invites to join a private team": [
+				"Lähetetään henkilölle, jonka kapteeni kutsuu yksityiseen tiimiin"
+			],
+			"Team member joined": [
+				"Tiimin jäsen liittyi"
+			],
+			"Sent to a captain when a new member joins their team": [
+				"Lähetetään kapteenille, kun uusi jäsen liittyy hänen tiimiinsä"
+			],
+			"Captain name": [
+				"Kapteenin nimi"
+			],
+			"Member name": [
+				"Jäsenen nimi"
+			],
+			"Team approved": [
+				"Tiimi hyväksytty"
+			],
+			"Sent to a captain when their team page goes live": [
+				"Lähetetään kapteenille, kun hänen tiiminsä sivu julkaistaan"
+			],
+			"Fundraiser Emails": [
+				"Varainkerääjien sähköpostit"
+			],
+			"Team Emails": [
+				"Tiimien sähköpostit"
+			],
+			"Total Teams": [
+				"Tiimejä yhteensä"
+			],
+			"People raising money for your peer-to-peer campaigns.": [
+				"Ihmiset, jotka keräävät rahaa vertaisvarainkeruukampanjoihisi."
+			],
+			"No fundraisers yet.": [
+				"Ei vielä varainkerääjiä."
+			],
+			"Fundraisers appear here once supporters sign up for a peer-to-peer campaign.": [
+				"Varainkerääjät näkyvät täällä, kun tukijat ilmoittautuvat vertaisvarainkeruukampanjaan."
+			],
+			"Groups of fundraisers working together on your campaigns.": [
+				"Varainkerääjien ryhmät, jotka työskentelevät yhdessä kampanjoissasi."
+			],
+			"Teams appear here once supporters create or are added to one.": [
+				"Tiimit näkyvät täällä, kun tukijat luovat tiimin tai heidät lisätään sellaiseen."
 			]
 		}
 	}

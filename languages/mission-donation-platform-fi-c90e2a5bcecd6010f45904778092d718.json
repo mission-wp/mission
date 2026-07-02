@@ -1,0 +1,67 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/top-teams\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Campaign": [
+                "Kampanja"
+            ],
+            "Settings": [
+                "Asetukset"
+            ],
+            "Show progress bar": [
+                "N\u00e4yt\u00e4 edistymispalkki"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "Valitse kampanja tai sijoita t\u00e4m\u00e4 lohko kampanjasivulle."
+            ],
+            "Custom URL": [
+                "Mukautettu URL"
+            ],
+            "Hide": [
+                "Piilota"
+            ],
+            "Show ribbons": [
+                "N\u00e4yt\u00e4 nauhat"
+            ],
+            "Top Teams": [
+                "Parhaat tiimit"
+            ],
+            "%s member": [
+                "%s j\u00e4sen",
+                "%s j\u00e4sent\u00e4"
+            ],
+            "Open the sign-up modal": [
+                "Avaa ilmoittautumisikkuna"
+            ],
+            "Button (empty state)": [
+                "Painike (tyhj\u00e4 tila)"
+            ],
+            "Button URL": [
+                "Painikkeen URL"
+            ],
+            "Number of teams": [
+                "Tiimien m\u00e4\u00e4r\u00e4"
+            ],
+            "Show logos": [
+                "N\u00e4yt\u00e4 logot"
+            ],
+            "Show member count": [
+                "N\u00e4yt\u00e4 j\u00e4senm\u00e4\u00e4r\u00e4"
+            ],
+            "Gold, silver, and bronze badges for the top 3 teams.": [
+                "Kulta-, hopea- ja pronssimerkit kolmelle parhaalle tiimille."
+            ]
+        }
+    }
+}

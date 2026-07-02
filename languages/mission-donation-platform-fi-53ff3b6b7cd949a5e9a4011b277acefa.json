@@ -1,0 +1,33 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/team-progress\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "raised": [
+                "ker\u00e4tty"
+            ],
+            "donations": [
+                "lahjoitusta"
+            ],
+            "raised of %s team goal": [
+                "ker\u00e4tty tiimin %s tavoitteesta"
+            ],
+            "Donate to the Team": [
+                "Lahjoita tiimille"
+            ],
+            "Join this Team": [
+                "Liity t\u00e4h\u00e4n tiimiin"
+            ],
+            "members": [
+                "j\u00e4sent\u00e4"
+            ]
+        }
+    }
+}
