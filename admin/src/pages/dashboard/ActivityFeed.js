@@ -187,6 +187,24 @@ const ActivityIcon = () => (
   </svg>
 );
 
+const UsersIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
 const WebhookIcon = () => (
   <svg
     width="16"
@@ -233,6 +251,19 @@ const eventMetaMap = {
   campaign_goal_reached: { icon: <FlagIcon />, className: 'is-milestone' },
   campaign_created: { icon: <BullhornIcon />, className: 'is-campaign' },
   campaign_ended: { icon: <CheckmarkIcon />, className: 'is-campaign-ended' },
+  fundraiser_registered: { icon: <UsersIcon />, className: 'is-campaign' },
+  fundraiser_approved: { icon: <CheckmarkIcon />, className: 'is-system' },
+  fundraiser_reactivated: { icon: <CheckmarkIcon />, className: 'is-system' },
+  fundraiser_milestone: { icon: <FlagIcon />, className: 'is-milestone' },
+  team_created: { icon: <UsersIcon />, className: 'is-campaign' },
+  team_approved: { icon: <CheckmarkIcon />, className: 'is-system' },
+  team_reactivated: { icon: <CheckmarkIcon />, className: 'is-system' },
+  team_joined: { icon: <UsersIcon />, className: 'is-donation' },
+  team_invited: { icon: <UsersIcon />, className: 'is-import' },
+  team_captain_promoted: {
+    icon: <UpArrowIcon />,
+    className: 'is-recurring-increase',
+  },
   data_imported: { icon: <ImportIcon />, className: 'is-import' },
   data_migrated: { icon: <ImportIcon />, className: 'is-import' },
   migration_rolled_back: { icon: <ImportIcon />, className: 'is-import' },
@@ -663,6 +694,209 @@ function getEventText( event ) {
       );
     }
     return __( 'Campaign reached its goal', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'fundraiser_registered' ) {
+    const donor = donorLink( data.donor_name, data.donor_id );
+    const campaign = campaignLink( data.campaign_title, data.campaign_id );
+
+    if ( donor && campaign ) {
+      return createInterpolateElement(
+        __(
+          '<donor /> became a fundraiser for <campaign />',
+          'mission-donation-platform'
+        ),
+        { donor, campaign }
+      );
+    }
+    if ( donor ) {
+      return createInterpolateElement(
+        __( '<donor /> became a fundraiser', 'mission-donation-platform' ),
+        { donor }
+      );
+    }
+    return __( 'New fundraiser registered', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'fundraiser_approved' ) {
+    const donor = donorLink( data.donor_name, data.donor_id );
+
+    if ( donor ) {
+      return createInterpolateElement(
+        __(
+          "<donor />'s fundraising page was approved",
+          'mission-donation-platform'
+        ),
+        { donor }
+      );
+    }
+    return __( 'A fundraising page was approved', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'fundraiser_reactivated' ) {
+    const donor = donorLink( data.donor_name, data.donor_id );
+
+    if ( donor ) {
+      return createInterpolateElement(
+        __(
+          "<donor />'s fundraising page was reactivated",
+          'mission-donation-platform'
+        ),
+        { donor }
+      );
+    }
+    return __(
+      'A fundraising page was reactivated',
+      'mission-donation-platform'
+    );
+  }
+
+  if ( eventType === 'fundraiser_milestone' ) {
+    const donor = donorLink( data.donor_name, data.donor_id );
+    const pct = data.percentage || '';
+
+    if ( donor && pct ) {
+      return createInterpolateElement(
+        __(
+          '<donor /> reached <pct />% of their fundraising goal',
+          'mission-donation-platform'
+        ),
+        {
+          donor,
+          pct: <>{ pct }</>,
+        }
+      );
+    }
+    if ( donor ) {
+      return createInterpolateElement(
+        __(
+          '<donor /> reached a fundraising milestone',
+          'mission-donation-platform'
+        ),
+        { donor }
+      );
+    }
+    return __( 'Fundraiser milestone reached', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'team_created' ) {
+    const name = data.name || '';
+    const campaign = campaignLink( data.campaign_title, data.campaign_id );
+
+    if ( name && campaign ) {
+      return createInterpolateElement(
+        __(
+          'New team <team /> created for <campaign />',
+          'mission-donation-platform'
+        ),
+        {
+          team: <strong>{ name }</strong>,
+          campaign,
+        }
+      );
+    }
+    if ( name ) {
+      return createInterpolateElement(
+        __( 'New team <team /> created', 'mission-donation-platform' ),
+        { team: <strong>{ name }</strong> }
+      );
+    }
+    return __( 'New team created', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'team_approved' ) {
+    if ( data.name ) {
+      return createInterpolateElement(
+        __( 'Team <team /> was approved', 'mission-donation-platform' ),
+        { team: <strong>{ data.name }</strong> }
+      );
+    }
+    return __( 'A team was approved', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'team_reactivated' ) {
+    if ( data.name ) {
+      return createInterpolateElement(
+        __( 'Team <team /> was reactivated', 'mission-donation-platform' ),
+        { team: <strong>{ data.name }</strong> }
+      );
+    }
+    return __( 'A team was reactivated', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'team_joined' ) {
+    const donor = donorLink( data.donor_name, data.donor_id );
+    const name = data.team_name || '';
+
+    if ( donor && name ) {
+      return createInterpolateElement(
+        __( '<donor /> joined team <team />', 'mission-donation-platform' ),
+        {
+          donor,
+          team: <strong>{ name }</strong>,
+        }
+      );
+    }
+    if ( donor ) {
+      return createInterpolateElement(
+        __( '<donor /> joined a team', 'mission-donation-platform' ),
+        { donor }
+      );
+    }
+    return __( 'A fundraiser joined a team', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'team_invited' ) {
+    const email = data.email || '';
+    const name = data.team_name || '';
+
+    if ( email && name ) {
+      return createInterpolateElement(
+        __(
+          'Invitation sent to <email /> to join <team />',
+          'mission-donation-platform'
+        ),
+        {
+          email: <strong>{ email }</strong>,
+          team: <strong>{ name }</strong>,
+        }
+      );
+    }
+    if ( email ) {
+      return createInterpolateElement(
+        __(
+          'Invitation sent to <email /> to join a team',
+          'mission-donation-platform'
+        ),
+        { email: <strong>{ email }</strong> }
+      );
+    }
+    return __( 'Team invitation sent', 'mission-donation-platform' );
+  }
+
+  if ( eventType === 'team_captain_promoted' ) {
+    const captain = data.captain_name || '';
+    const name = data.team_name || '';
+
+    if ( captain && name ) {
+      return createInterpolateElement(
+        __(
+          '<captain /> became captain of <team />',
+          'mission-donation-platform'
+        ),
+        {
+          captain: <strong>{ captain }</strong>,
+          team: <strong>{ name }</strong>,
+        }
+      );
+    }
+    if ( captain ) {
+      return createInterpolateElement(
+        __( '<captain /> became a team captain', 'mission-donation-platform' ),
+        { captain: <strong>{ captain }</strong> }
+      );
+    }
+    return __( 'Team captain changed', 'mission-donation-platform' );
   }
 
   if ( eventType === 'plugin_installed' ) {

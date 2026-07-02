@@ -59,6 +59,21 @@ function migrationSourceName( source ) {
 }
 
 /**
+ * Escape a user-supplied value for safe inclusion in a log message HTML string.
+ *
+ * @param {*} value Raw value.
+ * @return {string} HTML-escaped string.
+ */
+function esc( value ) {
+  return String( value ?? '' )
+    .replace( /&/g, '&amp;' )
+    .replace( /</g, '&lt;' )
+    .replace( />/g, '&gt;' )
+    .replace( /"/g, '&quot;' )
+    .replace( /'/g, '&#039;' );
+}
+
+/**
  * Build a human-readable message string for a log entry.
  *
  * Returns an object with `__html` for use with dangerouslySetInnerHTML,
@@ -181,6 +196,87 @@ export function buildLogMessage( entry ) {
     case 'campaign_goal_reached': {
       const title = data.title || 'A campaign';
       return `<strong>${ title }</strong> reached its goal`;
+    }
+
+    case 'fundraiser_registered': {
+      const name = data.donor_name ? esc( data.donor_name ) : 'A donor';
+      const campaign = data.campaign_title ? esc( data.campaign_title ) : '';
+      return campaign
+        ? `<strong>${ name }</strong> became a fundraiser for ${ campaign }`
+        : `<strong>${ name }</strong> became a fundraiser`;
+    }
+
+    case 'fundraiser_approved': {
+      const name = data.donor_name ? esc( data.donor_name ) : '';
+      return name
+        ? `Fundraising page for <strong>${ name }</strong> approved`
+        : 'Fundraising page approved';
+    }
+
+    case 'fundraiser_reactivated': {
+      const name = data.donor_name ? esc( data.donor_name ) : '';
+      return name
+        ? `Fundraising page for <strong>${ name }</strong> reactivated`
+        : 'Fundraising page reactivated';
+    }
+
+    case 'fundraiser_milestone': {
+      const name = data.donor_name ? esc( data.donor_name ) : 'A fundraiser';
+      const pct = data.percentage || '';
+      return pct
+        ? `<strong>${ name }</strong> reached ${ pct }% of their fundraising goal`
+        : `<strong>${ name }</strong> reached a fundraising milestone`;
+    }
+
+    case 'team_created': {
+      const name = data.name ? esc( data.name ) : '';
+      const campaign = data.campaign_title ? esc( data.campaign_title ) : '';
+      if ( ! name ) {
+        return 'New team created';
+      }
+      return campaign
+        ? `New team <strong>${ name }</strong> created for ${ campaign }`
+        : `New team <strong>${ name }</strong> created`;
+    }
+
+    case 'team_approved': {
+      const name = data.name ? esc( data.name ) : '';
+      return name
+        ? `Team <strong>${ name }</strong> approved`
+        : 'Team approved';
+    }
+
+    case 'team_reactivated': {
+      const name = data.name ? esc( data.name ) : '';
+      return name
+        ? `Team <strong>${ name }</strong> reactivated`
+        : 'Team reactivated';
+    }
+
+    case 'team_joined': {
+      const donor = data.donor_name ? esc( data.donor_name ) : 'A donor';
+      const team = data.team_name ? esc( data.team_name ) : '';
+      return team
+        ? `${ donor } joined team <strong>${ team }</strong>`
+        : `${ donor } joined a team`;
+    }
+
+    case 'team_invited': {
+      const email = data.email ? esc( data.email ) : 'unknown';
+      const team = data.team_name ? esc( data.team_name ) : '';
+      return team
+        ? `Invitation sent to <strong>${ email }</strong> to join ${ team }`
+        : `Invitation sent to <strong>${ email }</strong> to join a team`;
+    }
+
+    case 'team_captain_promoted': {
+      const captain = data.captain_name
+        ? esc( data.captain_name )
+        : 'A fundraiser';
+      const team = data.team_name ? esc( data.team_name ) : '';
+      return team
+        ? `${ captain } became captain of <strong>${ team }</strong>`
+        : `${ captain } became a team captain`;
     }
 
     case 'plugin_updated': {
