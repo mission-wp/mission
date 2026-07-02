@@ -1,0 +1,105 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/donor-wall\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Monthly": [
+                "Kuukausittain"
+            ],
+            "Quarterly": [
+                "Nelj\u00e4nnesvuosittain"
+            ],
+            "Annually": [
+                "Vuosittain"
+            ],
+            "Campaign": [
+                "Kampanja"
+            ],
+            "Read more": [
+                "Lue lis\u00e4\u00e4"
+            ],
+            "Show More Donations": [
+                "N\u00e4yt\u00e4 lis\u00e4\u00e4 lahjoituksia"
+            ],
+            "Most Recent": [
+                "Uusimmat"
+            ],
+            "Highest Amount": [
+                "Suurin summa"
+            ],
+            "Earliest": [
+                "Vanhimmat"
+            ],
+            "Settings": [
+                "Asetukset"
+            ],
+            "of": [
+                "\/"
+            ],
+            "Display": [
+                "N\u00e4ytt\u00f6"
+            ],
+            "Columns": [
+                "Sarakkeet"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "Valitse kampanja tai sijoita t\u00e4m\u00e4 lohko kampanjasivulle."
+            ],
+            "Donors per page": [
+                "Lahjoittajia sivua kohden"
+            ],
+            "Default sort": [
+                "Oletusj\u00e4rjestys"
+            ],
+            "Load more text": [
+                "N\u00e4yt\u00e4 lis\u00e4\u00e4 -teksti"
+            ],
+            "Show name": [
+                "N\u00e4yt\u00e4 nimi"
+            ],
+            "Show anonymous donations": [
+                "N\u00e4yt\u00e4 anonyymit lahjoitukset"
+            ],
+            "Show avatar": [
+                "N\u00e4yt\u00e4 profiilikuva"
+            ],
+            "Avatar size (px)": [
+                "Profiilikuvan koko (px)"
+            ],
+            "Show donation amount": [
+                "N\u00e4yt\u00e4 lahjoituksen summa"
+            ],
+            "Show date": [
+                "N\u00e4yt\u00e4 p\u00e4iv\u00e4m\u00e4\u00e4r\u00e4"
+            ],
+            "Show sort controls": [
+                "N\u00e4yt\u00e4 j\u00e4rjestyksen hallinta"
+            ],
+            "Show comments": [
+                "N\u00e4yt\u00e4 kommentit"
+            ],
+            "Comment length": [
+                "Kommentin pituus"
+            ],
+            "Read more text": [
+                "Lue lis\u00e4\u00e4 -teksti"
+            ],
+            "Preview uses sample data.": [
+                "Esikatselu k\u00e4ytt\u00e4\u00e4 esimerkkitietoja."
+            ],
+            "Showing": [
+                "N\u00e4ytet\u00e4\u00e4n"
+            ]
+        }
+    }
+}

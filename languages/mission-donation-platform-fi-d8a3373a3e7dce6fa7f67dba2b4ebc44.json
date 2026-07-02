@@ -1,0 +1,3127 @@
+{
+	"translation-revision-date": "2026-06-12T17:33:14+00:00",
+	"generator": "WP-CLI/2.9.0",
+	"source": "admin/build/mission-admin.js",
+	"domain": "messages",
+	"locale_data": {
+		"messages": {
+			"": {
+				"domain": "messages",
+				"lang": "fi",
+				"plural-forms": "nplurals=2; plural=(n != 1);"
+			},
+			"Mission": [
+				"Mission"
+			],
+			"Ended": [
+				"Päättynyt"
+			],
+			"donors": [
+				"lahjoittajaa"
+			],
+			"raised": [
+				"kerätty"
+			],
+			"donations": [
+				"lahjoitusta"
+			],
+			"Number of Donations": [
+				"Lahjoitusten määrä"
+			],
+			"Number of Donors": [
+				"Lahjoittajien määrä"
+			],
+			"Average Donation": [
+				"Keskimääräinen lahjoitus"
+			],
+			"Total Raised": [
+				"Kerätty yhteensä"
+			],
+			"Weekly": [
+				"Viikoittain"
+			],
+			"Monthly": [
+				"Kuukausittain"
+			],
+			"Quarterly": [
+				"Neljännesvuosittain"
+			],
+			"Annually": [
+				"Vuosittain"
+			],
+			"In honor of": [
+				"Kunniaksi"
+			],
+			"In memory of": [
+				"Muistoksi"
+			],
+			"Honoree name": [
+				"Kunnianosoituksen saajan nimi"
+			],
+			"Email": [
+				"Sähköposti"
+			],
+			"Mail": [
+				"Posti"
+			],
+			"Country": [
+				"Maa"
+			],
+			"Street Address": [
+				"Katuosoite"
+			],
+			"City": [
+				"Kaupunki"
+			],
+			"Continue": [
+				"Jatka"
+			],
+			"Back": [
+				"Takaisin"
+			],
+			"This field is required.": [
+				"Tämä kenttä on pakollinen."
+			],
+			"Edit": [
+				"Muokkaa"
+			],
+			"First Name": [
+				"Etunimi"
+			],
+			"Last Name": [
+				"Sukunimi"
+			],
+			"Overview": [
+				"Yleiskatsaus"
+			],
+			"Donation History": [
+				"Lahjoitushistoria"
+			],
+			"Recurring Donations": [
+				"Toistuvat lahjoitukset"
+			],
+			"Email address": [
+				"Sähköpostiosoite"
+			],
+			"One-time": [
+				"Kertaluontoinen"
+			],
+			"Recurring": [
+				"Toistuva"
+			],
+			"Loading…": [
+				"Ladataan…"
+			],
+			"Donation history": [
+				"Lahjoitushistoria"
+			],
+			"Date": [
+				"Päivämäärä"
+			],
+			"Amount": [
+				"Summa"
+			],
+			"Campaign": [
+				"Kampanja"
+			],
+			"Type": [
+				"Tyyppi"
+			],
+			"Status": [
+				"Tila"
+			],
+			"Cancel": [
+				"Peruuta"
+			],
+			"Phone": [
+				"Puhelin"
+			],
+			"Address": [
+				"Osoite"
+			],
+			"State": [
+				"Osavaltio"
+			],
+			"Download PDF": [
+				"Lataa PDF"
+			],
+			"Active": [
+				"Aktiivinen"
+			],
+			"Paused": [
+				"Keskeytetty"
+			],
+			"Frequency": [
+				"Maksuväli"
+			],
+			"Started": [
+				"Aloitettu"
+			],
+			"Cancelled": [
+				"Peruutettu"
+			],
+			"Anonymous": [
+				"Anonyymi"
+			],
+			"No donations yet": [
+				"Ei vielä lahjoituksia"
+			],
+			"Campaigns": [
+				"Kampanjat"
+			],
+			"Transactions": [
+				"Maksutapahtumat"
+			],
+			"Donors": [
+				"Lahjoittajat"
+			],
+			"Subscriptions": [
+				"Tilaukset"
+			],
+			"Settings": [
+				"Asetukset"
+			],
+			"Tools": [
+				"Työkalut"
+			],
+			"Avg. Donation": [
+				"Keskim. lahjoitus"
+			],
+			"First donation": [
+				"Ensimmäinen lahjoitus"
+			],
+			"Donation": [
+				"Lahjoitus"
+			],
+			"Message": [
+				"Viesti"
+			],
+			"Goal": [
+				"Tavoite"
+			],
+			"Donor": [
+				"Lahjoittaja"
+			],
+			"Refund amount": [
+				"Hyvityksen summa"
+			],
+			"Payment failed": [
+				"Maksu epäonnistui"
+			],
+			"Next payment": [
+				"Seuraava maksu"
+			],
+			"Subscription cancelled": [
+				"Tilaus peruutettu"
+			],
+			"Name": [
+				"Nimi"
+			],
+			"Donations": [
+				"Lahjoitukset"
+			],
+			"ID": [
+				"Tunnus"
+			],
+			"Raised": [
+				"Kerätty"
+			],
+			"Transaction": [
+				"Maksutapahtuma"
+			],
+			"Honoree": [
+				"Kunnianosoituksen kohde"
+			],
+			"Total Donated": [
+				"Lahjoitettu yhteensä"
+			],
+			"Currency": [
+				"Valuutta"
+			],
+			"Payment Gateway": [
+				"Maksunvälittäjä"
+			],
+			"Test": [
+				"Testi"
+			],
+			"Description": [
+				"Kuvaus"
+			],
+			"Goal Amount": [
+				"Tavoitesumma"
+			],
+			"Goal Type": [
+				"Tavoitteen tyyppi"
+			],
+			"Yes": [
+				"Kyllä"
+			],
+			"No": [
+				"Ei"
+			],
+			"Only .csv and .json files are supported.": [
+				"Vain .csv- ja .json-tiedostoja tuetaan."
+			],
+			"File exceeds the 10 MB limit.": [
+				"Tiedosto ylittää 10 Mt:n rajan."
+			],
+			"Subscription created": [
+				"Tilaus luotu"
+			],
+			"Campaign created": [
+				"Kampanja luotu"
+			],
+			"Organization": [
+				"Organisaatio"
+			],
+			"Goal amount cannot be negative.": [
+				"Tavoitesumma ei voi olla negatiivinen."
+			],
+			"Not available": [
+				"Ei saatavilla"
+			],
+			"Donor not found.": [
+				"Lahjoittajaa ei löytynyt."
+			],
+			"Transaction not found.": [
+				"Maksutapahtumaa ei löytynyt."
+			],
+			"Subscription not found.": [
+				"Tilausta ei löytynyt."
+			],
+			"Campaign not found.": [
+				"Kampanjaa ei löytynyt."
+			],
+			"Test Mode": [
+				"Testitila"
+			],
+			"No real charges are being made. Stats shown are based on test transactions.": [
+				"Todellisia veloituksia ei tehdä. Näytetyt tilastot perustuvat testimaksutapahtumiin."
+			],
+			"Go Live": [
+				"Siirry tuotantotilaan"
+			],
+			"Winter": [
+				"Talvi"
+			],
+			"Spring": [
+				"Kevät"
+			],
+			"Summer": [
+				"Kesä"
+			],
+			"Fall": [
+				"Syksy"
+			],
+			"e.g. %1$s Fundraiser %2$s": [
+				"esim. %1$s Varainkeruu %2$s"
+			],
+			"Campaign Name": [
+				"Kampanjan nimi"
+			],
+			"Short Description": [
+				"Lyhyt kuvaus"
+			],
+			"Briefly describe the purpose of this campaign. This will be used as a starting point for your campaign page.": [
+				"Kuvaile lyhyesti tämän kampanjan tarkoitus. Tätä käytetään lähtökohtana kampanjasivullesi."
+			],
+			"Amount Raised": [
+				"Kerätty summa"
+			],
+			"Fundraising Goal": [
+				"Varainkeruutavoite"
+			],
+			"Donation Goal": [
+				"Lahjoitustavoite"
+			],
+			"Donor Goal": [
+				"Lahjoittajatavoite"
+			],
+			"Enter a goal above zero": [
+				"Anna nollaa suurempi tavoite"
+			],
+			"Start Date": [
+				"Alkamispäivä"
+			],
+			"Leave blank to start immediately": [
+				"Jätä tyhjäksi aloittaaksesi heti"
+			],
+			"End Date": [
+				"Päättymispäivä"
+			],
+			"Leave blank for an ongoing campaign": [
+				"Jätä tyhjäksi jatkuvaa kampanjaa varten"
+			],
+			"Select Campaign Image": [
+				"Valitse kampanjan kuva"
+			],
+			"Use this image": [
+				"Käytä tätä kuvaa"
+			],
+			"Campaign Image": [
+				"Kampanjan kuva"
+			],
+			"Campaign image preview": [
+				"Kampanjan kuvan esikatselu"
+			],
+			"Replace": [
+				"Vaihda"
+			],
+			"Remove": [
+				"Poista"
+			],
+			"Click to upload or drag and drop": [
+				"Napsauta ladataksesi tai vedä ja pudota"
+			],
+			"PNG, JPG, or WebP up to 5MB": [
+				"PNG, JPG tai WebP enintään 5 Mt"
+			],
+			"This image will appear on your campaign page and in listings": [
+				"Tämä kuva näkyy kampanjasivullasi ja listauksissa"
+			],
+			"Details": [
+				"Tiedot"
+			],
+			"Goal & Timeline": [
+				"Tavoite ja aikataulu"
+			],
+			"Image": [
+				"Kuva"
+			],
+			"Create Campaign": [
+				"Luo kampanja"
+			],
+			"Something went wrong. Please try again.": [
+				"Jokin meni pieleen. Yritä uudelleen."
+			],
+			"Scheduled": [
+				"Ajastettu"
+			],
+			"Progress": [
+				"Edistyminen"
+			],
+			"Starts": [
+				"Alkaa"
+			],
+			"Ends": [
+				"Päättyy"
+			],
+			"active": [
+				"aktiivinen"
+			],
+			"ended": [
+				"päättynyt"
+			],
+			"scheduled": [
+				"ajastettu"
+			],
+			"All": [
+				"Kaikki"
+			],
+			"View": [
+				"Näytä"
+			],
+			"Delete": [
+				"Poista"
+			],
+			"Are you sure you want to delete this campaign?": [
+				"Haluatko varmasti poistaa tämän kampanjan?"
+			],
+			"This action cannot be undone.": [
+				"Tätä toimintoa ei voi perua."
+			],
+			"Total Campaigns": [
+				"Kampanjat yhteensä"
+			],
+			"Avg. per Campaign": [
+				"Keskim. per kampanja"
+			],
+			"Across active campaigns": [
+				"Aktiivisissa kampanjoissa"
+			],
+			"Top Campaign": [
+				"Paras kampanja"
+			],
+			"Create and manage your fundraising campaigns.": [
+				"Luo ja hallitse varainkeruukampanjoitasi."
+			],
+			"No campaigns yet": [
+				"Ei vielä kampanjoita"
+			],
+			"Create your first campaign to start accepting donations.": [
+				"Luo ensimmäinen kampanjasi ja ala vastaanottaa lahjoituksia."
+			],
+			"Create a Campaign": [
+				"Luo kampanja"
+			],
+			"Add Campaign": [
+				"Lisää kampanja"
+			],
+			"Copied!": [
+				"Kopioitu!"
+			],
+			"Copy URL": [
+				"Kopioi URL"
+			],
+			"View Campaign Page": [
+				"Näytä kampanjasivu"
+			],
+			"of": [
+				"/"
+			],
+			"funded": [
+				"rahoitettu"
+			],
+			"Edit Page": [
+				"Muokkaa sivua"
+			],
+			"/wk": [
+				"/vko"
+			],
+			"/mo": [
+				"/kk"
+			],
+			"/qtr": [
+				"/vuosinelj."
+			],
+			"/yr": [
+				"/v"
+			],
+			"Completed": [
+				"Valmis"
+			],
+			"Pending": [
+				"Odottaa"
+			],
+			"Refunded": [
+				"Hyvitetty"
+			],
+			"Failed": [
+				"Epäonnistui"
+			],
+			"Past Due": [
+				"Erääntynyt"
+			],
+			"First donation received": [
+				"Ensimmäinen lahjoitus vastaanotettu"
+			],
+			"25% milestone reached": [
+				"25 %:n virstanpylväs saavutettu"
+			],
+			"25% milestone": [
+				"25 %:n virstanpylväs"
+			],
+			"50% milestone reached": [
+				"50 %:n virstanpylväs saavutettu"
+			],
+			"50% milestone": [
+				"50 %:n virstanpylväs"
+			],
+			"75% milestone reached": [
+				"75 %:n virstanpylväs saavutettu"
+			],
+			"75% milestone": [
+				"75 %:n virstanpylväs"
+			],
+			"100% — Goal reached!": [
+				"100 % — Tavoite saavutettu!"
+			],
+			"more needed": [
+				"tarvitaan vielä"
+			],
+			"Donations to this campaign will appear here as they come in": [
+				"Tämän kampanjan lahjoitukset näkyvät täällä sitä mukaa kun niitä saapuu"
+			],
+			"Milestones": [
+				"Virstanpylväät"
+			],
+			"Loading editor…": [
+				"Ladataan editoria…"
+			],
+			"Toggle block inserter": [
+				"Näytä tai piilota lohkojen lisääjä"
+			],
+			"Open full editor": [
+				"Avaa koko editori"
+			],
+			"Visibility": [
+				"Näkyvyys"
+			],
+			"Campaign page": [
+				"Kampanjasivu"
+			],
+			"Give this campaign its own dedicated page where donors can learn more and give": [
+				"Anna tälle kampanjalle oma sivunsa, jolla lahjoittajat voivat tutustua siihen ja lahjoittaa"
+			],
+			"Show in campaign listings": [
+				"Näytä kampanjalistauksissa"
+			],
+			"Display this campaign on your public campaigns page": [
+				"Näytä tämä kampanja julkisella kampanjasivullasi"
+			],
+			"Campaign URL": [
+				"Kampanjan URL-osoite"
+			],
+			"A brief summary shown in campaign listings and search results…": [
+				"Lyhyt kuvaus, joka näytetään kampanjalistauksissa ja hakutuloksissa…"
+			],
+			"Changes Saved": [
+				"Muutokset tallennettu"
+			],
+			"Save Changes": [
+				"Tallenna muutokset"
+			],
+			"Danger Zone": [
+				"Vaaravyöhyke"
+			],
+			"Permanently delete this campaign. This action cannot be undone.": [
+				"Poista tämä kampanja pysyvästi. Tätä toimintoa ei voi peruuttaa."
+			],
+			"Delete Campaign": [
+				"Poista kampanja"
+			],
+			"Are you sure you want to delete": [
+				"Haluatko varmasti poistaa"
+			],
+			"Campaign Details": [
+				"Kampanjan tiedot"
+			],
+			"Leave blank for no goal": [
+				"Jätä tyhjäksi, jos tavoitetta ei ole"
+			],
+			"End campaign early when goal is reached": [
+				"Lopeta kampanja aikaisin, kun tavoite saavutetaan"
+			],
+			"Campaign will also end when the goal is reached": [
+				"Kampanja päättyy myös silloin, kun tavoite saavutetaan"
+			],
+			"When Campaign Ends": [
+				"Kun kampanja päättyy"
+			],
+			"Stop accepting donations": [
+				"Lopeta lahjoitusten vastaanottaminen"
+			],
+			"Donation forms for this campaign will be disabled": [
+				"Tämän kampanjan lahjoituslomakkeet poistetaan käytöstä"
+			],
+			"Show \"campaign ended\" message": [
+				"Näytä ”kampanja päättynyt” -viesti"
+			],
+			"Replace the campaign page with a message and link to other active campaigns": [
+				"Korvaa kampanjasivu viestillä ja linkillä muihin aktiivisiin kampanjoihin"
+			],
+			"Remove from campaign listings": [
+				"Poista kampanjalistauksista"
+			],
+			"Hide this campaign from the public campaigns page": [
+				"Piilota tämä kampanja julkiselta kampanjasivulta"
+			],
+			"Keep recurring donations active": [
+				"Pidä toistuvat lahjoitukset aktiivisina"
+			],
+			"Existing recurring donations will continue unchanged": [
+				"Olemassa olevat toistuvat lahjoitukset jatkuvat muuttumattomina"
+			],
+			"Cancel recurring donations": [
+				"Peruuta toistuvat lahjoitukset"
+			],
+			"Active subscriptions will be canceled and donors notified": [
+				"Aktiiviset tilaukset perutaan ja lahjoittajille ilmoitetaan"
+			],
+			"Redirect funds to another campaign": [
+				"Ohjaa varat toiseen kampanjaan"
+			],
+			"Future recurring donations will be designated to another campaign": [
+				"Tulevat toistuvat lahjoitukset kohdistetaan toiseen kampanjaan"
+			],
+			"Redirect funds to": [
+				"Ohjaa varat kohteeseen"
+			],
+			"Select a campaign…": [
+				"Valitse kampanja…"
+			],
+			"Settings Saved": [
+				"Asetukset tallennettu"
+			],
+			"Save Settings": [
+				"Tallenna asetukset"
+			],
+			"Failed to load campaign.": [
+				"Kampanjan lataaminen epäonnistui."
+			],
+			"Campaign saved.": [
+				"Kampanja tallennettu."
+			],
+			"Failed to save campaign.": [
+				"Kampanjan tallentaminen epäonnistui."
+			],
+			"Back to Campaigns": [
+				"Takaisin kampanjoihin"
+			],
+			"No donations have come in today.": [
+				"Tänään ei ole tullut lahjoituksia."
+			],
+			"No donations this week.": [
+				"Ei lahjoituksia tällä viikolla."
+			],
+			"No donations this month.": [
+				"Ei lahjoituksia tässä kuussa."
+			],
+			"Donations Over Time": [
+				"Lahjoitukset ajan mittaan"
+			],
+			"Donation trends will appear here once you receive your first gift.": [
+				"Lahjoitusten kehitys näkyy tässä, kun saat ensimmäisen lahjoituksesi."
+			],
+			"Top Campaigns": [
+				"Suosituimmat kampanjat"
+			],
+			"By amount raised": [
+				"Kerätyn summan mukaan"
+			],
+			"Create a campaign to start tracking donations.": [
+				"Luo kampanja aloittaaksesi lahjoitusten seurannan."
+			],
+			"View all campaigns": [
+				"Näytä kaikki kampanjat"
+			],
+			"another plugin": [
+				"toinen lisäosa"
+			],
+			"Recent Activity": [
+				"Viimeaikainen toiminta"
+			],
+			"<donor /> donated <amount /> to <campaign />": [
+				"<donor /> lahjoitti <amount /> kampanjaan <campaign />"
+			],
+			"<donor /> donated <amount />": [
+				"<donor /> lahjoitti <amount />"
+			],
+			"%s donation received": [
+				"%s lahjoitus vastaanotettu"
+			],
+			"Donation received": [
+				"Lahjoitus vastaanotettu"
+			],
+			"<donor />'s <amount /><suffix /> recurring donation was processed": [
+				"<donor />:n <amount /><suffix /> toistuva lahjoitus käsiteltiin"
+			],
+			"Recurring donation processed": [
+				"Toistuva lahjoitus käsitelty"
+			],
+			"<amount /> refund processed for <donor />": [
+				"<amount /> hyvitys käsitelty lahjoittajalle <donor />"
+			],
+			"%s refund processed": [
+				"%s hyvitys käsitelty"
+			],
+			"Refund processed": [
+				"Hyvitys käsitelty"
+			],
+			"<donor /> started a <amount /><suffix /> recurring donation to <campaign />": [
+				"<donor /> aloitti <amount /><suffix /> toistuvan lahjoituksen kampanjaan <campaign />"
+			],
+			"<donor /> started a <amount /><suffix /> recurring donation": [
+				"<donor /> aloitti <amount /><suffix /> toistuvan lahjoituksen"
+			],
+			"New recurring donation started": [
+				"Uusi toistuva lahjoitus aloitettu"
+			],
+			"<donor /> increased recurring donation to <amount /><suffix />": [
+				"<donor /> nosti toistuvan lahjoituksen summaksi <amount /><suffix />"
+			],
+			"Recurring donation amount increased": [
+				"Toistuvan lahjoituksen summa nostettu"
+			],
+			"<donor /> decreased recurring donation to <amount /><suffix />": [
+				"<donor /> laski toistuvan lahjoituksen summaksi <amount /><suffix />"
+			],
+			"Recurring donation amount decreased": [
+				"Toistuvan lahjoituksen summa laskettu"
+			],
+			"<donor /> cancelled their recurring donation": [
+				"<donor /> peruutti toistuvan lahjoituksensa"
+			],
+			"Recurring donation cancelled": [
+				"Toistuva lahjoitus peruutettu"
+			],
+			"Recurring donation failed for <donor />": [
+				"Toistuva lahjoitus epäonnistui lahjoittajalle <donor />"
+			],
+			"Recurring donation failed": [
+				"Toistuva lahjoitus epäonnistui"
+			],
+			"New campaign <campaign /> was created": [
+				"Uusi kampanja <campaign /> luotiin"
+			],
+			"New campaign created": [
+				"Uusi kampanja luotiin"
+			],
+			"<campaign /> campaign has ended": [
+				"Kampanja <campaign /> on päättynyt"
+			],
+			"Campaign has ended": [
+				"Kampanja on päättynyt"
+			],
+			"<campaign /> is <pct />% toward its goal": [
+				"<campaign /> on <pct /> % kohti tavoitettaan"
+			],
+			"Campaign milestone reached": [
+				"Kampanjan välitavoite saavutettu"
+			],
+			"%s donor": [
+				"%s lahjoittaja"
+			],
+			"%s donation": [
+				"%s lahjoitus"
+			],
+			"<campaign /> reached its <goal /> goal": [
+				"<campaign /> saavutti <goal /> tavoitteensa"
+			],
+			"<campaign /> reached its goal": [
+				"<campaign /> saavutti tavoitteensa"
+			],
+			"Campaign reached its goal": [
+				"Kampanja saavutti tavoitteensa"
+			],
+			"Mission plugin installed": [
+				"Mission-lisäosa asennettu"
+			],
+			"Mission plugin activated": [
+				"Mission-lisäosa aktivoitu"
+			],
+			"Mission plugin deactivated": [
+				"Mission-lisäosa poistettu käytöstä"
+			],
+			"Mission plugin updated to %s": [
+				"Mission-lisäosa päivitetty versioon %s"
+			],
+			"Mission plugin updated": [
+				"Mission-lisäosa päivitetty"
+			],
+			"Migration from %s finished with no new records": [
+				"Siirto lähteestä %s valmistui ilman uusia tietueita"
+			],
+			"%1$s migrated <count /> records from %2$s": [
+				"%1$s siirsi <count /> tietuetta lähteestä %2$s"
+			],
+			"Migrated <count /> records from %s": [
+				"Siirretty <count /> tietuetta lähteestä %s"
+			],
+			"%1$s removed the data migrated from %2$s": [
+				"%1$s poisti lähteestä %2$s siirretyt tiedot"
+			],
+			"Removed the data migrated from %s": [
+				"Poistettiin lähteestä %s siirretyt tiedot"
+			],
+			"Migration from %s failed": [
+				"Siirto lähteestä %s epäonnistui"
+			],
+			"%s created <name /> webhook": [
+				"%s loi <name />-webhookin"
+			],
+			"%s deleted <name /> webhook": [
+				"%s poisti <name />-webhookin"
+			],
+			"Created <name /> webhook": [
+				"Luotiin <name />-webhook"
+			],
+			"Deleted <name /> webhook": [
+				"Poistettiin <name />-webhook"
+			],
+			"Webhook created": [
+				"Webhook luotu"
+			],
+			"Webhook deleted": [
+				"Webhook poistettu"
+			],
+			"<name /> webhook was paused automatically after repeated failures": [
+				"<name />-webhook keskeytettiin automaattisesti toistuvien virheiden jälkeen"
+			],
+			"A webhook was paused automatically after repeated failures": [
+				"Webhook keskeytettiin automaattisesti toistuvien virheiden jälkeen"
+			],
+			"No activity yet": [
+				"Ei vielä toimintaa"
+			],
+			"Activity will appear here as donations come in.": [
+				"Toiminta näkyy tässä, kun lahjoituksia saapuu."
+			],
+			"Dismiss": [
+				"Hylkää"
+			],
+			"Enjoying Mission?": [
+				"Pidätkö Missionista?"
+			],
+			"Congratulations on raising over": [
+				"Onnittelut, olet kerännyt yli"
+			],
+			"with Mission! How would you rate your experience?": [
+				"Missionilla! Miten arvioisit kokemustasi?"
+			],
+			"Thank you for your feedback! We'll use it to make Mission better.": [
+				"Kiitos palautteestasi! Käytämme sitä Missionin parantamiseen."
+			],
+			"Start accepting donations": [
+				"Aloita lahjoitusten vastaanottaminen"
+			],
+			"Connect your Stripe account": [
+				"Yhdistä Stripe-tilisi"
+			],
+			"to begin processing donations securely. It only takes a couple of minutes and you'll be ready to receive your first gift.": [
+				"aloittaaksesi maksujen käsittelyn turvallisesti. Se vie vain pari minuuttia, ja olet valmis vastaanottamaan ensimmäisen lahjoituksesi."
+			],
+			"Connect Stripe": [
+				"Yhdistä Stripe"
+			],
+			"Today": [
+				"Tänään"
+			],
+			"Week": [
+				"Viikko"
+			],
+			"Month": [
+				"Kuukausi"
+			],
+			"Basics": [
+				"Perusteet"
+			],
+			"Payments": [
+				"Maksut"
+			],
+			"Done": [
+				"Valmis"
+			],
+			"Welcome to Mission Donation Platform": [
+				"Tervetuloa Mission Donation Platform -alustaan"
+			],
+			"Let’s get your nonprofit set up to start accepting donations. This will only take a few minutes.": [
+				"Otetaan yleishyödyllinen järjestösi käyttöön lahjoitusten vastaanottamista varten. Tämä vie vain muutaman minuutin."
+			],
+			"Organization Name": [
+				"Organisaation nimi"
+			],
+			"Tax ID / EIN": [
+				"Y-tunnus / verotunnus"
+			],
+			"— optional": [
+				"— valinnainen"
+			],
+			"e.g. 12-3456789": [
+				"esim. 12-3456789"
+			],
+			"Used on tax receipts. You can add this later.": [
+				"Käytetään verokuiteissa. Voit lisätä tämän myöhemmin."
+			],
+			"Organization details": [
+				"Organisaation tiedot"
+			],
+			"This information appears on donation receipts and email footers.": [
+				"Nämä tiedot näkyvät lahjoituskuiteissa ja sähköpostien alatunnisteissa."
+			],
+			"Springfield": [
+				"Springfield"
+			],
+			"Select": [
+				"Valitse"
+			],
+			"Brand Color": [
+				"Brändiväri"
+			],
+			"Used for donation forms, emails, and receipts.": [
+				"Käytetään lahjoituslomakkeissa, sähköposteissa ja kuiteissa."
+			],
+			"Connect your payment processor": [
+				"Yhdistä maksunvälittäjäsi"
+			],
+			"Stripe handles all payment processing securely. Connect your existing Stripe account or create a new one — it only takes a minute.": [
+				"Stripe hoitaa kaiken maksujen käsittelyn turvallisesti. Yhdistä olemassa oleva Stripe-tilisi tai luo uusi — se vie vain minuutin."
+			],
+			"Connected": [
+				"Yhdistetty"
+			],
+			"Connect with Stripe": [
+				"Yhdistä Stripeen"
+			],
+			"You’ll be redirected to Stripe to connect or create an account, then returned here automatically.": [
+				"Sinut ohjataan Stripeen yhdistämään tai luomaan tili, minkä jälkeen palaat automaattisesti takaisin tänne."
+			],
+			"You can skip this for now, but you won’t be able to accept donations until Stripe is connected.": [
+				"Voit ohittaa tämän toistaiseksi, mutta et voi vastaanottaa lahjoituksia ennen kuin Stripe on yhdistetty."
+			],
+			"Create a campaign": [
+				"Luo kampanja"
+			],
+			"Campaigns organize your fundraising efforts. Fill out the details below to generate a ready-to-share campaign page.": [
+				"Kampanjat jäsentävät varainkeruusi. Täytä alla olevat tiedot luodaksesi valmiin, jaettavan kampanjasivun."
+			],
+			"e.g. General Fund": [
+				"esim. Yleisrahasto"
+			],
+			"A brief description of this campaign…": [
+				"Lyhyt kuvaus tästä kampanjasta…"
+			],
+			"Click to upload or select from media library": [
+				"Napsauta ladataksesi tai valitse mediakirjastosta"
+			],
+			"You’re all set!": [
+				"Kaikki on valmista!"
+			],
+			"Mission is configured and ready to accept donations. Here’s a summary of your setup.": [
+				"Mission on määritetty ja valmis vastaanottamaan lahjoituksia. Tässä on yhteenveto asetuksistasi."
+			],
+			"Configuration Summary": [
+				"Asetusten yhteenveto"
+			],
+			"Organization:": [
+				"Organisaatio:"
+			],
+			"Not set": [
+				"Ei asetettu"
+			],
+			"configured": [
+				"määritetty"
+			],
+			"not configured": [
+				"ei määritetty"
+			],
+			"Add now": [
+				"Lisää nyt"
+			],
+			"Stripe": [
+				"Stripe"
+			],
+			"connected": [
+				"yhdistetty"
+			],
+			"not connected": [
+				"ei yhdistetty"
+			],
+			"Connect now": [
+				"Yhdistä nyt"
+			],
+			"Campaign:": [
+				"Kampanja:"
+			],
+			"not created": [
+				"ei luotu"
+			],
+			"Create now": [
+				"Luo nyt"
+			],
+			"Go to Dashboard": [
+				"Siirry hallintapaneeliin"
+			],
+			"Stripe connection was cancelled. You can try again whenever you’re ready.": [
+				"Stripe-yhteys peruutettiin. Voit yrittää uudelleen milloin tahansa."
+			],
+			"Stripe connected, but your account isn’t ready to accept payments yet. Finish setting up your account on the Stripe Dashboard.": [
+				"Stripe on yhdistetty, mutta tilisi ei ole vielä valmis vastaanottamaan maksuja. Viimeistele tilisi määritys Stripe-hallintapaneelissa."
+			],
+			"Setup": [
+				"Määritys"
+			],
+			"Close": [
+				"Sulje"
+			],
+			"Skip step": [
+				"Ohita vaihe"
+			],
+			"Organization name is required.": [
+				"Organisaation nimi on pakollinen."
+			],
+			"Campaign name is required.": [
+				"Kampanjan nimi on pakollinen."
+			],
+			"Goal amount is required.": [
+				"Tavoitesumma on pakollinen."
+			],
+			"vs yesterday": [
+				"vs. eilinen"
+			],
+			"vs last week": [
+				"vs. viime viikko"
+			],
+			"vs last month": [
+				"vs. viime kuukausi"
+			],
+			"Last 7 days": [
+				"Viimeiset 7 päivää"
+			],
+			"Last 30 days": [
+				"Viimeiset 30 päivää"
+			],
+			"Please enter a valid email address.": [
+				"Anna kelvollinen sähköpostiosoite."
+			],
+			"Please fix the errors below and try again.": [
+				"Korjaa alla olevat virheet ja yritä uudelleen."
+			],
+			"Something went wrong.": [
+				"Jokin meni pieleen."
+			],
+			"Save Donor": [
+				"Tallenna lahjoittaja"
+			],
+			"Add Donor": [
+				"Lisää lahjoittaja"
+			],
+			"Address Line 1": [
+				"Osoiterivi 1"
+			],
+			"Address Line 2": [
+				"Osoiterivi 2"
+			],
+			"Select…": [
+				"Valitse…"
+			],
+			"Note": [
+				"Huomautus"
+			],
+			"Last Donation": [
+				"Viimeisin lahjoitus"
+			],
+			"Date Added": [
+				"Lisäyspäivä"
+			],
+			"View and manage all donors.": [
+				"Näytä ja hallitse kaikkia lahjoittajia."
+			],
+			"Total Donors": [
+				"Lahjoittajia yhteensä"
+			],
+			"Top Donor": [
+				"Paras lahjoittaja"
+			],
+			"lifetime": [
+				"kaikkiaan"
+			],
+			"Average Donated": [
+				"Keskimääräinen lahjoitus"
+			],
+			"Repeat Donors": [
+				"Toistuvat lahjoittajat"
+			],
+			"of all donors": [
+				"kaikista lahjoittajista"
+			],
+			"No donors yet.": [
+				"Ei vielä lahjoittajia."
+			],
+			"Donors will appear here once people start giving.": [
+				"Lahjoittajat ilmestyvät tähän, kun ihmiset alkavat lahjoittaa."
+			],
+			"No donations yet.": [
+				"Ei vielä lahjoituksia."
+			],
+			"Created": [
+				"Luotu"
+			],
+			"Full name": [
+				"Koko nimi"
+			],
+			"+ Add name": [
+				"+ Lisää nimi"
+			],
+			"+ Add phone": [
+				"+ Lisää puhelinnumero"
+			],
+			"+ Add address": [
+				"+ Lisää osoite"
+			],
+			"No notes yet.": [
+				"Ei vielä muistiinpanoja."
+			],
+			"Delete note": [
+				"Poista muistiinpano"
+			],
+			"Write a note…": [
+				"Kirjoita muistiinpano…"
+			],
+			"Saving…": [
+				"Tallennetaan…"
+			],
+			"Save": [
+				"Tallenna"
+			],
+			"Add a note": [
+				"Lisää muistiinpano"
+			],
+			"Edit Donor": [
+				"Muokkaa lahjoittajaa"
+			],
+			"Failed to load donor.": [
+				"Lahjoittajan lataaminen epäonnistui."
+			],
+			"Back to Donors": [
+				"Takaisin lahjoittajiin"
+			],
+			"Since": [
+				"Alkaen"
+			],
+			"Lifetime given": [
+				"Lahjoitettu yhteensä"
+			],
+			"Avg. donation": [
+				"Keskim. lahjoitus"
+			],
+			"Internal Notes": [
+				"Sisäiset muistiinpanot"
+			],
+			"Only visible to your organization.": [
+				"Näkyy vain organisaatiollesi."
+			],
+			"You have unsaved changes.": [
+				"Sinulla on tallentamattomia muutoksia."
+			],
+			"All changes saved.": [
+				"Kaikki muutokset tallennettu."
+			],
+			"Save changes": [
+				"Tallenna muutokset"
+			],
+			"Stripe account": [
+				"Stripe-tili"
+			],
+			"Default": [
+				"Oletus"
+			],
+			"Make default": [
+				"Aseta oletukseksi"
+			],
+			"Disconnect": [
+				"Katkaise yhteys"
+			],
+			"Connect one or more Stripe accounts to process donations. New donations are routed through your default account.": [
+				"Yhdistä yksi tai useampi Stripe-tili lahjoitusten käsittelyä varten. Uudet lahjoitukset ohjataan oletustilisi kautta."
+			],
+			"Connect your Stripe account to process donations.": [
+				"Yhdistä Stripe-tilisi lahjoitusten käsittelyä varten."
+			],
+			"Connection error — please try again.": [
+				"Yhteysvirhe — yritä uudelleen."
+			],
+			"Connect another Stripe account": [
+				"Yhdistä toinen Stripe-tili"
+			],
+			"Connected accounts": [
+				"Yhdistetyt tilit"
+			],
+			"One or more connected accounts can’t accept charges yet. Finish setting them up on the Stripe Dashboard.": [
+				"Yksi tai useampi yhdistetty tili ei voi vielä vastaanottaa maksuja. Viimeistele niiden asetukset Stripe-hallintapaneelissa."
+			],
+			"Your default Stripe account isn’t ready to accept charges. Finish setting it up before donations can complete.": [
+				"Oletusarvoinen Stripe-tilisi ei ole valmis vastaanottamaan maksuja. Viimeistele sen asetukset, ennen kuin lahjoitukset voidaan suorittaa loppuun."
+			],
+			"Go to Stripe Dashboard →": [
+				"Siirry Stripe-hallintapaneeliin →"
+			],
+			"Test mode": [
+				"Testitila"
+			],
+			"Using Stripe test keys — no real charges.": [
+				"Käytössä Stripen testiavaimet — ei todellisia maksuja."
+			],
+			"Using Stripe live keys — real charges.": [
+				"Käytössä Stripen tuotantoavaimet — todellisia veloituksia."
+			],
+			"Used on donation receipts and tax documents.": [
+				"Käytetään lahjoituskuiteissa ja veroasiakirjoissa."
+			],
+			"Organization name": [
+				"Organisaation nimi"
+			],
+			"Shown on donation receipts, emails, and the donor dashboard. Defaults to your site name.": [
+				"Näytetään lahjoituskuiteissa, sähköposteissa ja lahjoittajan hallintapaneelissa. Oletuksena sivustosi nimi."
+			],
+			"Street address": [
+				"Katuosoite"
+			],
+			"EIN": [
+				"EIN"
+			],
+			"Your Employer Identification Number for tax receipts.": [
+				"Työnantajan tunnistenumerosi verokuitteja varten."
+			],
+			"The currency used for all donations.": [
+				"Kaikissa lahjoituksissa käytettävä valuutta."
+			],
+			"Percentage (%)": [
+				"Prosenttiosuus (%)"
+			],
+			"Fixed fee": [
+				"Kiinteä maksu"
+			],
+			"Used when calculating fee recovery. Nonprofits may qualify for discounted Stripe rates.": [
+				"Käytetään maksujen kattamisen laskennassa. Yleishyödylliset järjestöt voivat olla oikeutettuja alennettuihin Stripe-hintoihin."
+			],
+			"Appearance": [
+				"Ulkoasu"
+			],
+			"Customize how Mission looks on your site.": [
+				"Mukauta Missionin ulkoasua sivustollasi."
+			],
+			"Primary color": [
+				"Pääväri"
+			],
+			"Used as the primary accent color throughout Mission.": [
+				"Käytetään pääkorostusvärinä kaikkialla Missionissa."
+			],
+			"Show Mission credit on donation forms": [
+				"Näytä Mission-maininta lahjoituslomakkeilla"
+			],
+			"Displays a \"Secure donation powered by Mission\" badge below donation forms that links to missionwp.com.": [
+				"Näyttää lahjoituslomakkeiden alapuolella \"Turvallinen lahjoitus Missionin voimalla\" -merkin, joka linkittää osoitteeseen missionwp.com."
+			],
+			"Campaign URLs": [
+				"Kampanjoiden URL-osoitteet"
+			],
+			"Controls the web address for your campaign pages.": [
+				"Määrittää kampanjasivujesi verkko-osoitteen."
+			],
+			"URL slug": [
+				"URL-osoitteen polkutunnus"
+			],
+			"Setup Wizard": [
+				"Ohjattu käyttöönotto"
+			],
+			"Re-run the guided setup to update your organization details, reconnect Stripe, or create a campaign.": [
+				"Suorita ohjattu käyttöönotto uudelleen päivittääksesi organisaatiosi tiedot, yhdistääksesi Stripen uudelleen tai luodaksesi kampanjan."
+			],
+			"Run setup wizard": [
+				"Suorita ohjattu käyttöönotto"
+			],
+			"Data": [
+				"Tiedot"
+			],
+			"Control what happens to your donation data when the plugin is removed.": [
+				"Hallitse, mitä lahjoitustiedoillesi tapahtuu, kun lisäosa poistetaan."
+			],
+			"Remove all data on uninstall": [
+				"Poista kaikki tiedot asennuksen poiston yhteydessä"
+			],
+			"When enabled, all donation records, donor information, campaigns, and settings will be permanently deleted if the plugin is uninstalled. This cannot be undone.": [
+				"Kun tämä on käytössä, kaikki lahjoitustiedot, lahjoittajatiedot, kampanjat ja asetukset poistetaan pysyvästi, jos lisäosan asennus poistetaan. Tätä ei voi kumota."
+			],
+			"Donor name": [
+				"Lahjoittajan nimi"
+			],
+			"One-time donation receipt": [
+				"Kertaluontoisen lahjoituksen kuitti"
+			],
+			"Sent after a completed one-time transaction": [
+				"Lähetetään valmiin kertaluontoisen maksutapahtuman jälkeen"
+			],
+			"Receipt ID": [
+				"Kuitin tunnus"
+			],
+			"Subscription activated": [
+				"Tilaus aktivoitu"
+			],
+			"Sent when a recurring donation goes active": [
+				"Lähetetään, kun toistuva lahjoitus aktivoituu"
+			],
+			"Next renewal": [
+				"Seuraava uusiminen"
+			],
+			"Renewal receipt": [
+				"Uusimisen kuitti"
+			],
+			"Sent each time a recurring payment is processed": [
+				"Lähetetään joka kerta, kun toistuva maksu käsitellään"
+			],
+			"Sent when a renewal charge fails": [
+				"Lähetetään, kun uusimisveloitus epäonnistuu"
+			],
+			"Donor dashboard URL": [
+				"Lahjoittajan hallintapaneelin URL-osoite"
+			],
+			"Sent when a donor cancels their subscription": [
+				"Lähetetään, kun lahjoittaja peruuttaa tilauksensa"
+			],
+			"Donor note": [
+				"Lahjoittajan huomautus"
+			],
+			"Sent when a donor-visible note is added to a transaction": [
+				"Lähetetään, kun maksutapahtumaan lisätään lahjoittajalle näkyvä muistiinpano"
+			],
+			"Note content": [
+				"Muistiinpanon sisältö"
+			],
+			"Tribute notification": [
+				"Muistoilmoitus"
+			],
+			"Sent to the recipient of a dedication": [
+				"Lähetetään omistuskirjoituksen vastaanottajalle"
+			],
+			"Tribute type": [
+				"Muiston tyyppi"
+			],
+			"Personal message": [
+				"Henkilökohtainen viesti"
+			],
+			"New donation": [
+				"Uusi lahjoitus"
+			],
+			"Sent when a one-time or first recurring donation is received": [
+				"Lähetetään, kun kertaluontoinen tai ensimmäinen toistuva lahjoitus vastaanotetaan"
+			],
+			"Recurring renewal": [
+				"Toistuvan lahjoituksen uusiutuminen"
+			],
+			"Sent each time a recurring donation renews": [
+				"Lähetetään joka kerta, kun toistuva lahjoitus uusiutuu"
+			],
+			"Sent when a donation is fully or partially refunded": [
+				"Lähetetään, kun lahjoitus hyvitetään kokonaan tai osittain"
+			],
+			"Failed payment": [
+				"Epäonnistunut maksu"
+			],
+			"Sent when a recurring charge is declined": [
+				"Lähetetään, kun toistuva veloitus hylätään"
+			],
+			"Sent when a donor cancels their recurring donation": [
+				"Lähetetään, kun lahjoittaja peruuttaa toistuvan lahjoituksensa"
+			],
+			"Campaign milestone": [
+				"Kampanjan virstanpylväs"
+			],
+			"Sent when a campaign reaches 50%, 75%, or 100% of its goal": [
+				"Lähetetään, kun kampanja saavuttaa 50 %, 75 % tai 100 % tavoitteestaan"
+			],
+			"Mail dedication pending": [
+				"Postitettava omistuskirjoitus odottaa"
+			],
+			"Sent when a donation includes a dedication that needs to be mailed": [
+				"Lähetetään, kun lahjoitukseen sisältyy omistuskirjoitus, joka pitää postittaa"
+			],
+			"Account activation": [
+				"Tilin aktivointi"
+			],
+			"Email verification for the donor dashboard": [
+				"Sähköpostin vahvistus lahjoittajan hallintapaneelia varten"
+			],
+			"Password reset": [
+				"Salasanan palautus"
+			],
+			"Sent when a donor requests a new password": [
+				"Lähetetään, kun lahjoittaja pyytää uutta salasanaa"
+			],
+			"Email change verification": [
+				"Sähköpostin vaihdon vahvistus"
+			],
+			"Sent to the new address for confirmation": [
+				"Lähetetään uuteen osoitteeseen vahvistusta varten"
+			],
+			"New email": [
+				"Uusi sähköposti"
+			],
+			"Subject line": [
+				"Aiherivi"
+			],
+			"Email body": [
+				"Sähköpostin leipäteksti"
+			],
+			"Preview": [
+				"Esikatselu"
+			],
+			"Edit HTML": [
+				"Muokkaa HTML:ää"
+			],
+			"Loading preview…": [
+				"Ladataan esikatselua…"
+			],
+			"Email preview": [
+				"Sähköpostin esikatselu"
+			],
+			"Reset to default template": [
+				"Palauta oletuspohja"
+			],
+			"Send test email": [
+				"Lähetä testisähköposti"
+			],
+			"Sending…": [
+				"Lähetetään…"
+			],
+			"Sent!": [
+				"Lähetetty!"
+			],
+			"Failed to send": [
+				"Lähetys epäonnistui"
+			],
+			"and %d others": [
+				"ja %d muuta"
+			],
+			"default": [
+				"oletus"
+			],
+			"Remove %s": [
+				"Poista %s"
+			],
+			"Add email…": [
+				"Lisää sähköposti…"
+			],
+			"Press Enter to add. Default is your WordPress admin email.": [
+				"Lisää painamalla Enter. Oletuksena WordPress-järjestelmänvalvojan sähköpostiosoitteesi."
+			],
+			"Sender Details": [
+				"Lähettäjän tiedot"
+			],
+			"Used as the “from” address on all outgoing emails.": [
+				"Käytetään kaikkien lähtevien sähköpostien lähettäjäosoitteena."
+			],
+			"From name": [
+				"Lähettäjän nimi"
+			],
+			"From email": [
+				"Lähettäjän sähköposti"
+			],
+			"Reply-to email": [
+				"Vastausosoite"
+			],
+			"Leave blank to use the from email address.": [
+				"Jätä tyhjäksi käyttääksesi lähettäjän sähköpostiosoitetta."
+			],
+			"Donation Emails": [
+				"Lahjoitussähköpostit"
+			],
+			"Account Emails": [
+				"Tilisähköpostit"
+			],
+			"Admin Notifications": [
+				"Järjestelmänvalvojan ilmoitukset"
+			],
+			"Let donors view past donations and download receipts.": [
+				"Anna lahjoittajien tarkastella aiempia lahjoituksia ja ladata kuitteja."
+			],
+			"Manage recurring gifts": [
+				"Hallitse toistuvia lahjoituksia"
+			],
+			"Allow donors to pause, resume, or cancel their recurring donations.": [
+				"Anna lahjoittajien keskeyttää, jatkaa tai peruuttaa toistuvat lahjoituksensa."
+			],
+			"Update payment method": [
+				"Päivitä maksutapa"
+			],
+			"Let donors update the card on file for recurring donations.": [
+				"Anna lahjoittajien päivittää toistuviin lahjoituksiin tallennettu korttinsa."
+			],
+			"Profile editing": [
+				"Profiilin muokkaus"
+			],
+			"Allow donors to update their name, email, and mailing address.": [
+				"Anna lahjoittajien päivittää nimensä, sähköpostinsa ja postiosoitteensa."
+			],
+			"Annual tax summary": [
+				"Vuotuinen verokooste"
+			],
+			"Provide a downloadable year-end giving summary for tax purposes.": [
+				"Tarjoa ladattava vuoden lopun lahjoituskooste verotusta varten."
+			],
+			"Donor Portal": [
+				"Lahjoittajaportaali"
+			],
+			"Let donors manage their account on your site.": [
+				"Anna lahjoittajien hallita tiliään sivustollasi."
+			],
+			"Enable donor portal": [
+				"Ota lahjoittajaportaali käyttöön"
+			],
+			"Allow donors to create accounts, view donation history, and manage recurring gifts.": [
+				"Anna lahjoittajien luoda tilejä, tarkastella lahjoitushistoriaa ja hallita toistuvia lahjoituksia."
+			],
+			"Dashboard page": [
+				"Hallintapaneelin sivu"
+			],
+			"The page where the donor dashboard block is placed.": [
+				"Sivu, jolle lahjoittajan hallintapaneelin lohko on sijoitettu."
+			],
+			"Portal Features": [
+				"Portaalin ominaisuudet"
+			],
+			"Control what donors can do from their dashboard.": [
+				"Hallitse, mitä lahjoittajat voivat tehdä hallintapaneelistaan."
+			],
+			"General": [
+				"Yleiset"
+			],
+			"Emails": [
+				"Sähköpostit"
+			],
+			"Subscription": [
+				"Tilaus"
+			],
+			"Next Renewal": [
+				"Seuraava uusinta"
+			],
+			"Manage recurring donations.": [
+				"Hallitse toistuvia lahjoituksia."
+			],
+			"Monthly Recurring": [
+				"Kuukausittainen toistuva"
+			],
+			"Active Subscriptions": [
+				"Aktiiviset tilaukset"
+			],
+			"new this month": [
+				"uutta tässä kuussa"
+			],
+			"Avg. Subscription": [
+				"Keskim. tilaus"
+			],
+			"Per month": [
+				"Kuukaudessa"
+			],
+			"Churned": [
+				"Menetetty"
+			],
+			"/mo lost": [
+				"/kk menetetty"
+			],
+			"No subscriptions yet": [
+				"Ei vielä tilauksia"
+			],
+			"Recurring donations will appear here once donors subscribe.": [
+				"Toistuvat lahjoitukset näkyvät tässä, kun lahjoittajat tilaavat."
+			],
+			"Anonymous or deleted donor": [
+				"Anonyymi tai poistettu lahjoittaja"
+			],
+			"View profile": [
+				"Näytä profiili"
+			],
+			"donation": [
+				"lahjoitus"
+			],
+			"Email notification sent to": [
+				"Sähköposti-ilmoitus lähetetty vastaanottajalle"
+			],
+			"Mail notification sent to": [
+				"Posti-ilmoitus lähetetty vastaanottajalle"
+			],
+			"Mail notification pending for": [
+				"Posti-ilmoitus odottaa vastaanottajaa"
+			],
+			"Marking…": [
+				"Merkitään…"
+			],
+			"Mark as sent": [
+				"Merkitse lähetetyksi"
+			],
+			"Dedication": [
+				"Omistus"
+			],
+			"Notification": [
+				"Ilmoitus"
+			],
+			"Send notification": [
+				"Lähetä ilmoitus"
+			],
+			"Recipient name": [
+				"Vastaanottajan nimi"
+			],
+			"Postal code": [
+				"Postinumero"
+			],
+			"Add Dedication": [
+				"Lisää omistus"
+			],
+			"Remove this dedication?": [
+				"Poistetaanko tämä omistus?"
+			],
+			"This will permanently remove the dedication from this transaction.": [
+				"Tämä poistaa omistuksen tästä maksutapahtumasta pysyvästi."
+			],
+			"Removing…": [
+				"Poistetaan…"
+			],
+			"Remove Dedication": [
+				"Poista omistus"
+			],
+			"No dedication on this donation": [
+				"Tässä lahjoituksessa ei ole omistusta"
+			],
+			"No campaign": [
+				"Ei kampanjaa"
+			],
+			"Search campaigns…": [
+				"Hae kampanjoita…"
+			],
+			"No results": [
+				"Ei tuloksia"
+			],
+			"Transaction Details": [
+				"Maksutapahtuman tiedot"
+			],
+			"Payment method": [
+				"Maksutapa"
+			],
+			"Billing address": [
+				"Laskutusosoite"
+			],
+			"Payment Breakdown": [
+				"Maksun erittely"
+			],
+			"Donation amount": [
+				"Lahjoituksen summa"
+			],
+			"Processing fee": [
+				"Käsittelymaksu"
+			],
+			"Stripe fees deducted from this payment": [
+				"Tästä maksusta vähennetyt Stripe-maksut"
+			],
+			"Fee recovered": [
+				"Maksu katettu"
+			],
+			"The donor covered processing fees so you receive the full donation.": [
+				"Lahjoittaja kattoi käsittelymaksut, joten saat koko lahjoituksen."
+			],
+			"Mission tip": [
+				"Mission-tuki"
+			],
+			"Optional tip from the donor to support the Mission platform. Doesn't affect your payout.": [
+				"Lahjoittajan vapaaehtoinen tuki Mission-alustalle. Ei vaikuta tilitykseesi."
+			],
+			"Net amount": [
+				"Nettosumma"
+			],
+			"Additional Info": [
+				"Lisätiedot"
+			],
+			"No additional info": [
+				"Ei lisätietoja"
+			],
+			"Payment Data": [
+				"Maksutiedot"
+			],
+			"Payment gateway": [
+				"Maksuyhdyskäytävä"
+			],
+			"Stripe payment": [
+				"Stripe-maksu"
+			],
+			"Stripe customer": [
+				"Stripe-asiakas"
+			],
+			"Source": [
+				"Lähde"
+			],
+			"View page": [
+				"Näytä sivu"
+			],
+			"IP address": [
+				"IP-osoite"
+			],
+			"Mode": [
+				"Tila"
+			],
+			"Payment History": [
+				"Maksuhistoria"
+			],
+			"total": [
+				"yhteensä"
+			],
+			"Subscription Details": [
+				"Tilauksen tiedot"
+			],
+			"Fee Summary": [
+				"Maksuyhteenveto"
+			],
+			"Processing fees": [
+				"Käsittelymaksut"
+			],
+			"Stripe fees deducted from payments": [
+				"Maksuista vähennetyt Stripe-maksut"
+			],
+			"Fees recovered": [
+				"Peritty takaisin maksuista"
+			],
+			"Mission tips": [
+				"Mission-tuet"
+			],
+			"Optional tips from the donor to support the Mission platform. Doesn't affect your payout.": [
+				"Vapaaehtoinen tuki lahjoittajalta Mission-alustan tukemiseksi. Ei vaikuta tilitykseesi."
+			],
+			"Stripe subscription": [
+				"Stripe-tilaus"
+			],
+			"Subscription paused": [
+				"Tilaus keskeytetty"
+			],
+			"Subscription resumed": [
+				"Tilaus jatkettu"
+			],
+			"Payment received": [
+				"Maksu vastaanotettu"
+			],
+			"Payment method updated": [
+				"Maksutapa päivitetty"
+			],
+			"Payment completed": [
+				"Maksu valmis"
+			],
+			"Status changed": [
+				"Tila muuttui"
+			],
+			"Amount increased from %1$s to %2$s": [
+				"Summaa korotettiin arvosta %1$s arvoon %2$s"
+			],
+			"Amount decreased from %1$s to %2$s": [
+				"Summaa laskettiin arvosta %1$s arvoon %2$s"
+			],
+			"Activity": [
+				"Toiminta"
+			],
+			"Actions": [
+				"Toiminnot"
+			],
+			"Resume Subscription": [
+				"Jatka tilausta"
+			],
+			"Pause Subscription": [
+				"Keskeytä tilaus"
+			],
+			"Cancel Subscription": [
+				"Peruuta tilaus"
+			],
+			"Failed to load subscription.": [
+				"Tilauksen lataaminen epäonnistui."
+			],
+			"Back to Subscriptions": [
+				"Takaisin tilauksiin"
+			],
+			"Subscription resumed.": [
+				"Tilaus jatkettu."
+			],
+			"Failed to resume subscription.": [
+				"Tilauksen jatkaminen epäonnistui."
+			],
+			"payment": [
+				"maksu"
+			],
+			"payments": [
+				"maksut"
+			],
+			"Subscription updated.": [
+				"Tilaus päivitetty."
+			],
+			"Failed to update subscription.": [
+				"Tilauksen päivittäminen epäonnistui."
+			],
+			"Only visible to your team.": [
+				"Näkyy vain tiimillesi."
+			],
+			"Pausing will stop future renewal charges until the subscription is resumed. The donor will not be charged during this time.": [
+				"Keskeyttäminen pysäyttää tulevat uusintaveloitukset, kunnes tilaus jatketaan. Lahjoittajalta ei veloiteta tänä aikana."
+			],
+			"Keep Active": [
+				"Pidä aktiivisena"
+			],
+			"Subscription paused.": [
+				"Tilaus keskeytetty."
+			],
+			"Failed to pause subscription.": [
+				"Tilauksen keskeyttäminen epäonnistui."
+			],
+			"Are you sure you want to cancel this subscription? This will also cancel the subscription on Stripe.": [
+				"Haluatko varmasti peruuttaa tämän tilauksen? Tämä peruuttaa tilauksen myös Stripessä."
+			],
+			"Keep Subscription": [
+				"Säilytä tilaus"
+			],
+			"Subscription cancelled.": [
+				"Tilaus peruutettu."
+			],
+			"Failed to cancel subscription.": [
+				"Tilauksen peruuttaminen epäonnistui."
+			],
+			"Are you sure?": [
+				"Oletko varma?"
+			],
+			"to confirm": [
+				"vahvistaaksesi"
+			],
+			"Confirm": [
+				"Vahvista"
+			],
+			"Cache & Transients": [
+				"Välimuisti ja transientit"
+			],
+			"Clear cached data. This is safe and won't remove any donor or transaction records.": [
+				"Tyhjennä välimuistiin tallennetut tiedot. Tämä on turvallista eikä poista lahjoittaja- tai maksutapahtumatietoja."
+			],
+			"Clear dashboard cache": [
+				"Tyhjennä hallintapaneelin välimuisti"
+			],
+			"Refresh cached stats, chart data, and campaign totals on the dashboard.": [
+				"Päivitä hallintapaneelin välimuistiin tallennetut tilastot, kaaviotiedot ja kampanjoiden kokonaissummat."
+			],
+			"Dashboard cache cleared.": [
+				"Hallintapaneelin välimuisti tyhjennetty."
+			],
+			"Clear email template cache": [
+				"Tyhjennä sähköpostipohjien välimuisti"
+			],
+			"Force email templates to regenerate. Useful if receipt styles appear outdated.": [
+				"Pakota sähköpostipohjat luomaan uudelleen. Hyödyllinen, jos kuittien tyylit näyttävät vanhentuneilta."
+			],
+			"Email template cache cleared.": [
+				"Sähköpostipohjien välimuisti tyhjennetty."
+			],
+			"Flush Stripe sync cache": [
+				"Tyhjennä Stripe-synkronoinnin välimuisti"
+			],
+			"Clear cached Stripe data and re-sync subscription statuses on next page load.": [
+				"Tyhjennä välimuistiin tallennetut Stripe-tiedot ja synkronoi tilausten tilat uudelleen seuraavalla sivun latauksella."
+			],
+			"Stripe sync cache cleared.": [
+				"Stripe-synkronoinnin välimuisti tyhjennetty."
+			],
+			"Logs & History": [
+				"Lokit ja historia"
+			],
+			"Remove activity history. This does not affect donor or transaction data.": [
+				"Poista toimintahistoria. Tämä ei vaikuta lahjoittaja- tai maksutapahtumatietoihin."
+			],
+			"Clear activity log": [
+				"Tyhjennä toimintaloki"
+			],
+			"Remove all entries from the activity feed.": [
+				"Poista kaikki merkinnät toimintasyötteestä."
+			],
+			"Remove all entries from the activity feed. %s currently stored.": [
+				"Poista kaikki merkinnät toimintasyötteestä. %s tällä hetkellä tallennettuna."
+			],
+			"entry": [
+				"merkintä"
+			],
+			"entries": [
+				"merkintää"
+			],
+			"This will permanently delete all %s activity log entries.": [
+				"Tämä poistaa pysyvästi kaikki %s toimintalokin merkintää."
+			],
+			"Activity log cleared.": [
+				"Toimintaloki tyhjennetty."
+			],
+			"Clear webhook delivery log": [
+				"Tyhjennä webhook-toimitusloki"
+			],
+			"Remove all outgoing webhook delivery records.": [
+				"Poista kaikki lähtevien webhookien toimitustietueet."
+			],
+			"Remove all outgoing webhook delivery records. %s currently stored.": [
+				"Poista kaikki lähtevien webhookien toimitustietueet. %s tällä hetkellä tallennettuna."
+			],
+			"record": [
+				"tietue"
+			],
+			"records": [
+				"tietuetta"
+			],
+			"This will permanently delete all %s webhook delivery records.": [
+				"Tämä poistaa pysyvästi kaikki %s webhookin toimitustietuetta."
+			],
+			"Webhook delivery log cleared.": [
+				"Webhook-toimitusloki tyhjennetty."
+			],
+			"Test Data": [
+				"Testitiedot"
+			],
+			"Remove data created while in Stripe test mode. Only test mode data is affected.": [
+				"Poista tiedot, jotka on luotu Stripen testitilassa. Vaikuttaa vain testitilan tietoihin."
+			],
+			"Delete test transactions": [
+				"Poista testimaksutapahtumat"
+			],
+			"Remove all transactions made with Stripe test mode keys.": [
+				"Poista kaikki maksutapahtumat, jotka on tehty Stripen testitilan avaimilla."
+			],
+			"Remove all transactions made with Stripe test mode keys. %s found.": [
+				"Poista kaikki maksutapahtumat, jotka on tehty Stripen testitilan avaimilla. %s löytyi."
+			],
+			"test transactions": [
+				"testimaksutapahtumat"
+			],
+			"This will permanently delete %s test transactions. This cannot be undone.": [
+				"Tämä poistaa pysyvästi %s testimaksutapahtumaa. Tätä ei voi kumota."
+			],
+			"Test transactions deleted.": [
+				"Testimaksutapahtumat poistettu."
+			],
+			"Delete test donors": [
+				"Poista testilahjoittajat"
+			],
+			"Remove donors that only have test mode transactions (no live donations).": [
+				"Poista lahjoittajat, joilla on vain testitilan maksutapahtumia (ei tuotantotilan lahjoituksia)."
+			],
+			"Remove donors that only have test mode transactions (no live donations). %s found.": [
+				"Poista lahjoittajat, joilla on vain testitilan maksutapahtumia (ei tuotantotilan lahjoituksia). %s löytyi."
+			],
+			"test-only donors": [
+				"vain testilahjoittajat"
+			],
+			"This will permanently delete %s test-only donors and their associated data. This cannot be undone.": [
+				"Tämä poistaa pysyvästi %s vain testilahjoittajaa ja heihin liittyvät tiedot. Tätä ei voi kumota."
+			],
+			"Test donors deleted.": [
+				"Testilahjoittajat poistettu."
+			],
+			"Delete all test data": [
+				"Poista kaikki testidata"
+			],
+			"Remove all test transactions, test donors, and test subscriptions in one step.": [
+				"Poista kaikki testimaksutapahtumat, testilahjoittajat ja testitilaukset yhdellä kertaa."
+			],
+			"This will permanently delete all test mode data (%1$s transactions, %2$s donors, %3$s subscriptions). This cannot be undone.": [
+				"Tämä poistaa pysyvästi kaikki testitilan tiedot (%1$s maksutapahtumaa, %2$s lahjoittajaa, %3$s tilausta). Tätä ei voi kumota."
+			],
+			"All test data deleted.": [
+				"Kaikki testidata poistettu."
+			],
+			"These actions are irreversible and will permanently delete data.": [
+				"Nämä toiminnot ovat peruuttamattomia ja poistavat tiedot pysyvästi."
+			],
+			"Reset all settings": [
+				"Palauta kaikki asetukset"
+			],
+			"Restore all Mission settings to their defaults. Stripe will be disconnected. Donor and transaction data is preserved.": [
+				"Palauta kaikki Missionin asetukset oletusarvoihinsa. Stripe-yhteys katkaistaan. Lahjoittaja- ja maksutapahtumatiedot säilytetään."
+			],
+			"This will reset ALL Mission settings to defaults and disconnect Stripe. Your donor and transaction data will NOT be deleted, but you will need to reconfigure the plugin.": [
+				"Tämä palauttaa KAIKKI Missionin asetukset oletusarvoihin ja katkaisee Stripe-yhteyden. Lahjoittaja- ja maksutapahtumatietojasi EI poisteta, mutta sinun on määritettävä lisäosa uudelleen."
+			],
+			"All settings reset to defaults.": [
+				"Kaikki asetukset palautettu oletusarvoihin."
+			],
+			"Delete all Mission data": [
+				"Poista kaikki Missionin tiedot"
+			],
+			"Completely remove all donors, transactions, campaigns, subscriptions, and settings. This is equivalent to a fresh install.": [
+				"Poista kokonaan kaikki lahjoittajat, maksutapahtumat, kampanjat, tilaukset ja asetukset. Tämä vastaa uutta asennusta."
+			],
+			"This will PERMANENTLY DELETE all Mission data including donors, transactions, campaigns, subscriptions, and settings. This action CANNOT be undone.": [
+				"Tämä POISTAA PYSYVÄSTI kaikki Missionin tiedot, mukaan lukien lahjoittajat, maksutapahtumat, kampanjat, tilaukset ja asetukset. Tätä toimintoa EI voi kumota."
+			],
+			"All Mission data has been deleted.": [
+				"Kaikki Missionin tiedot on poistettu."
+			],
+			"Running…": [
+				"Suoritetaan…"
+			],
+			"Run": [
+				"Suorita"
+			],
+			"Bring your data home": [
+				"Tuo tietosi kotiin"
+			],
+			"Import donors, transactions, campaigns, and subscriptions from a CSV or JSON file.": [
+				"Tuo lahjoittajat, maksutapahtumat, kampanjat ja tilaukset CSV- tai JSON-tiedostosta."
+			],
+			"Automatic column detection and field mapping": [
+				"Automaattinen sarakkeiden tunnistus ja kenttien vastaavuus"
+			],
+			"Duplicate detection to avoid double-counting donors": [
+				"Kaksoiskappaleiden tunnistus lahjoittajien kaksinkertaisen laskennan välttämiseksi"
+			],
+			"Preview your import before anything changes": [
+				"Esikatsele tuontiasi ennen kuin mikään muuttuu"
+			],
+			"Downloadable CSV templates for each data type": [
+				"Ladattavat CSV-mallipohjat jokaiselle tietotyypille"
+			],
+			"Switch from another plugin": [
+				"Vaihda toisesta lisäosasta"
+			],
+			"Already using a different donation plugin? The migration tool moves your donors, transactions, campaigns, and subscriptions over automatically.": [
+				"Käytätkö jo toista lahjoituslisäosaa? Siirtotyökalu siirtää lahjoittajasi, maksutapahtumasi, kampanjasi ja tilauksesi automaattisesti."
+			],
+			"One-click migration from GiveWP, Charitable, and more": [
+				"Yhden klikkauksen siirto GiveWP:stä, Charitablesta ja muista"
+			],
+			"Moves donors, transactions, campaigns, and subscriptions": [
+				"Siirtää lahjoittajat, maksutapahtumat, kampanjat ja tilaukset"
+			],
+			"Automatic field mapping between plugins": [
+				"Automaattinen kenttien vastaavuus lisäosien välillä"
+			],
+			"Your old data stays untouched": [
+				"Vanhat tietosi pysyvät koskemattomina"
+			],
+			"No add-ons. Everything is free.": [
+				"Ei lisäosia. Kaikki on ilmaista."
+			],
+			"Other donation plugins charge for recurring donations, donor management, and custom fields. Mission includes all of that in one plugin at no cost. Bigger features are on the way, and they will be free too.": [
+				"Muut lahjoituslisäosat veloittavat toistuvista lahjoituksista, lahjoittajien hallinnasta ja mukautetuista kentistä. Mission sisältää kaiken tämän yhdessä lisäosassa ilmaiseksi. Isompia ominaisuuksia on tulossa, ja nekin ovat ilmaisia."
+			],
+			"Peer-to-peer fundraising": [
+				"Vertaisvarainhankinta"
+			],
+			"Designated funds": [
+				"Nimetyt rahastot"
+			],
+			"Ticketed events": [
+				"Lipulliset tapahtumat"
+			],
+			"Get notified when they ship": [
+				"Saat ilmoituksen, kun ne julkaistaan"
+			],
+			"You’re on the list": [
+				"Olet listalla"
+			],
+			"Remove me from notifications": [
+				"Poista minut ilmoituksista"
+			],
+			"Notify me": [
+				"Ilmoita minulle"
+			],
+			"Coming Soon": [
+				"Tulossa pian"
+			],
+			"Get notified when it ships": [
+				"Saat ilmoituksen, kun se julkaistaan"
+			],
+			"Dedications": [
+				"Omistukset"
+			],
+			"Export Data": [
+				"Vie tiedot"
+			],
+			"Download your Mission data as a file.": [
+				"Lataa Mission-tietosi tiedostona."
+			],
+			"Data type": [
+				"Tietotyyppi"
+			],
+			"File format": [
+				"Tiedostomuoto"
+			],
+			"From": [
+				"Alkaen"
+			],
+			"To": [
+				"Päättyen"
+			],
+			"Leave blank to export all.": [
+				"Jätä tyhjäksi viedäksesi kaikki."
+			],
+			"Notify method": [
+				"Ilmoitustapa"
+			],
+			"Notification status": [
+				"Ilmoituksen tila"
+			],
+			"Sent": [
+				"Lähetetty"
+			],
+			"will be exported": [
+				"viedään"
+			],
+			"Export": [
+				"Vie"
+			],
+			"First 5 records that will be included in your export.": [
+				"Viisi ensimmäistä tietuetta, jotka sisältyvät vientiin."
+			],
+			"Export All Data": [
+				"Vie kaikki tiedot"
+			],
+			"Download all donors, transactions, campaigns, and subscriptions as a single ZIP file.": [
+				"Lataa kaikki lahjoittajat, maksutapahtumat, kampanjat ja tilaukset yhtenä ZIP-tiedostona."
+			],
+			"Download ZIP": [
+				"Lataa ZIP"
+			],
+			"Skip duplicates": [
+				"Ohita kaksoiskappaleet"
+			],
+			"If a matching record already exists, skip the imported row.": [
+				"Jos vastaava tietue on jo olemassa, ohita tuotu rivi."
+			],
+			"Update existing": [
+				"Päivitä olemassa oleva"
+			],
+			"If a match is found, update the existing record with the imported data.": [
+				"Jos vastaavuus löytyy, päivitä olemassa oleva tietue tuoduilla tiedoilla."
+			],
+			"The import could not be started.": [
+				"Tuontia ei voitu aloittaa."
+			],
+			"Could not validate the file.": [
+				"Tiedostoa ei voitu vahvistaa."
+			],
+			"Import Data": [
+				"Tuo tiedot"
+			],
+			"Upload a CSV or JSON file to import data into Mission.": [
+				"Lataa CSV- tai JSON-tiedosto tuodaksesi tietoja Missioniin."
+			],
+			"Supported columns:": [
+				"Tuetut sarakkeet:"
+			],
+			"Required:": [
+				"Pakollinen:"
+			],
+			"(donor_id may be used instead of donor_email)": [
+				"(donor_id-kenttää voi käyttää donor_email-kentän sijaan)"
+			],
+			"(gateway_transaction_id / Charge ID may be used instead of transaction_id)": [
+				"(gateway_transaction_id / Charge ID -kenttää voi käyttää transaction_id-kentän sijaan)"
+			],
+			"Reading file…": [
+				"Luetaan tiedostoa…"
+			],
+			"Drag and drop your file here": [
+				"Vedä ja pudota tiedostosi tähän"
+			],
+			"or": [
+				"tai"
+			],
+			"Browse files": [
+				"Selaa tiedostoja"
+			],
+			"Supports .csv and .json files up to 10MB": [
+				"Tukee .csv- ja .json-tiedostoja, joiden koko on enintään 10 Mt"
+			],
+			"Download Templates": [
+				"Lataa mallipohjat"
+			],
+			"Need a template? Download a blank CSV with the correct column headers.": [
+				"Tarvitsetko mallipohjan? Lataa tyhjä CSV-tiedosto oikeilla sarakeotsikoilla."
+			],
+			"This will import %1$d new %3$s and skip %2$d duplicates. This action cannot be undone.": [
+				"Tämä tuo %1$d uutta %3$s ja ohittaa %2$d kaksoiskappaletta. Tätä toimintoa ei voi kumota."
+			],
+			"This will import %1$d new %3$s and update %2$d existing records. This action cannot be undone.": [
+				"Tämä tuo %1$d uutta %3$s ja päivittää %2$d olemassa olevaa tietuetta. Tätä toimintoa ei voi kumota."
+			],
+			"%d row(s) with errors will be skipped.": [
+				"%d riviä, joissa on virheitä, ohitetaan."
+			],
+			"File Summary": [
+				"Tiedoston yhteenveto"
+			],
+			"Review the data before importing.": [
+				"Tarkista tiedot ennen tuontia."
+			],
+			"rows detected": [
+				"riviä havaittu"
+			],
+			"columns matched": [
+				"saraketta täsmätty"
+			],
+			"%1$d error(s), %2$d warning(s)": [
+				"%1$d virhettä, %2$d varoitusta"
+			],
+			"warnings": [
+				"varoitukset"
+			],
+			"Row %d:": [
+				"Rivi %d:"
+			],
+			"And %d more errors.": [
+				"Ja %d muuta virhettä."
+			],
+			"And %d more warnings.": [
+				"Ja %d muuta varoitusta."
+			],
+			"%1$d %2$s": [
+				"%1$d %2$s"
+			],
+			"already exist in your database (matched by Charge ID)": [
+				"on jo tietokannassasi (täsmätty Charge ID:n perusteella)"
+			],
+			"already exist in your database (matched by title)": [
+				"on jo tietokannassasi (täsmätty otsikon perusteella)"
+			],
+			"already exist in your database (matched by Subscription ID)": [
+				"on jo tietokannassasi (täsmätty Subscription ID:n perusteella)"
+			],
+			"already exist in your database (matched by transaction)": [
+				"on jo tietokannassasi (täsmätty maksutapahtuman perusteella)"
+			],
+			"already exist in your database (matched by email)": [
+				"on jo tietokannassasi (täsmätty sähköpostin perusteella)"
+			],
+			"%d rows have no Charge ID": [
+				"%d rivillä ei ole Charge ID:tä"
+			],
+			"and will be imported as new transactions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
+				"ja ne tuodaan uusina maksutapahtumina joka kerta. Poista nämä rivit CSV-tiedostostasi ennen uudelleenajoa, jos et halua kaksoiskappaleita."
+			],
+			"%d rows have no Subscription ID": [
+				"%d rivillä ei ole Subscription ID:tä"
+			],
+			"and will be imported as new subscriptions every time. Remove these rows from your CSV before re-running if you don't want duplicates.": [
+				"ja ne tuodaan uusina tilauksina joka kerta. Poista nämä rivit CSV-tiedostostasi ennen uudelleenajoa, jos et halua kaksoiskappaleita."
+			],
+			"Each campaign creates its own campaign page. Raised totals, donor counts, and transaction counts start at zero and update automatically as you import or record transactions.": [
+				"Jokainen kampanja luo oman kampanjasivunsa. Kerätyt kokonaissummat, lahjoittajamäärät ja maksutapahtumamäärät alkavat nollasta ja päivittyvät automaattisesti, kun tuot tai kirjaat maksutapahtumia."
+			],
+			"Imported subscriptions are records only. No payments are charged, and renewal counts start at zero. A subscription only renews automatically if its Subscription ID matches a live subscription at your payment gateway.": [
+				"Tuodut tilaukset ovat vain tietueita. Maksuja ei veloiteta, ja uudistusmäärät alkavat nollasta. Tilaus uudistuu automaattisesti vain, jos sen Subscription ID vastaa aktiivista tilausta maksupalvelussasi."
+			],
+			"Each dedication attaches to an existing transaction, matched by Charge ID or transaction ID. Import transactions first; rows whose transaction cannot be found are skipped. No notification emails are sent when dedications are imported.": [
+				"Jokainen omistus liittyy olemassa olevaan maksutapahtumaan, joka täsmätään Charge ID:n tai maksutapahtuman tunnuksen perusteella. Tuo maksutapahtumat ensin; rivit, joiden maksutapahtumaa ei löydy, ohitetaan. Omistusten tuonnin yhteydessä ei lähetetä ilmoitussähköposteja."
+			],
+			"Import Options": [
+				"Tuontiasetukset"
+			],
+			"Choose how to handle records that already exist.": [
+				"Valitse, miten jo olemassa olevia tietueita käsitellään."
+			],
+			"Data Preview": [
+				"Tietojen esikatselu"
+			],
+			"First 5 rows from your uploaded file.": [
+				"Ensimmäiset 5 riviä lataamastasi tiedostosta."
+			],
+			"Update %1$d %2$s": [
+				"Päivitä %1$d %2$s"
+			],
+			"Import %1$d %2$s": [
+				"Tuo %1$d %2$s"
+			],
+			"Cancelling…": [
+				"Peruutetaan…"
+			],
+			"Importing your %s": [
+				"Tuodaan kohdetta %s"
+			],
+			"%1$d of %2$d rows processed": [
+				"%1$d / %2$d riviä käsitelty"
+			],
+			"Starting up…": [
+				"Käynnistetään…"
+			],
+			"imported": [
+				"tuotu"
+			],
+			"updated": [
+				"päivitetty"
+			],
+			"skipped": [
+				"ohitettu"
+			],
+			"errors": [
+				"virheet"
+			],
+			"You can safely leave this page — the import keeps running in the background. Come back any time to check progress.": [
+				"Voit turvallisesti poistua tältä sivulta. Tuonti jatkuu taustalla. Palaa milloin tahansa tarkistamaan edistyminen."
+			],
+			"Cancel import": [
+				"Peruuta tuonti"
+			],
+			"Import failed": [
+				"Tuonti epäonnistui"
+			],
+			"Something went wrong while running the import.": [
+				"Jokin meni pieleen tuontia suoritettaessa."
+			],
+			"%1$d imported, %2$d updated, %3$d skipped before the failure.": [
+				"%1$d tuotu, %2$d päivitetty, %3$d ohitettu ennen epäonnistumista."
+			],
+			"Try again": [
+				"Yritä uudelleen"
+			],
+			"%1$d %2$s were successfully imported.": [
+				"%1$d %2$s tuotiin onnistuneesti."
+			],
+			"%d existing records were updated.": [
+				"%d olemassa olevaa tietuetta päivitettiin."
+			],
+			"%d duplicates were skipped.": [
+				"%d kaksoiskappaletta ohitettiin."
+			],
+			"%d rows failed to import.": [
+				"%d riviä ei voitu tuoda."
+			],
+			"Import complete": [
+				"Tuonti valmis"
+			],
+			"Show error details": [
+				"Näytä virheen tiedot"
+			],
+			"View %s": [
+				"Näytä %s"
+			],
+			"Import more data": [
+				"Tuo lisää tietoja"
+			],
+			"All levels": [
+				"Kaikki tasot"
+			],
+			"Info": [
+				"Tiedot"
+			],
+			"Warnings": [
+				"Varoitukset"
+			],
+			"Errors": [
+				"Virheet"
+			],
+			"All categories": [
+				"Kaikki luokat"
+			],
+			"Payment": [
+				"Maksu"
+			],
+			"Webhook": [
+				"Webhook"
+			],
+			"System": [
+				"Järjestelmä"
+			],
+			"1 entry": [
+				"1 merkintä"
+			],
+			"%s entries": [
+				"%s merkintää"
+			],
+			"Search logs…": [
+				"Hae lokeista…"
+			],
+			"Clear logs": [
+				"Tyhjennä lokit"
+			],
+			"No log entries match your filters.": [
+				"Yksikään lokimerkintä ei vastaa suodattimiasi."
+			],
+			"No log entries yet.": [
+				"Ei vielä lokimerkintöjä."
+			],
+			"Load more (%s remaining)": [
+				"Lataa lisää (%s jäljellä)"
+			],
+			"Clear all logs": [
+				"Tyhjennä kaikki lokit"
+			],
+			"This will permanently delete all %s log entries.": [
+				"Tämä poistaa pysyvästi kaikki %s lokimerkintää."
+			],
+			"Migrate from another plugin": [
+				"Siirrä toisesta lisäosasta"
+			],
+			"Mission can bring over your donors, transactions, campaigns, and subscriptions. GiveWP migration is ready today, and support for more plugins is on the way.": [
+				"Mission voi tuoda lahjoittajasi, maksutapahtumasi, kampanjasi ja tilauksesi. GiveWP-siirto on valmiina jo tänään, ja tuki useammille lisäosille on tulossa."
+			],
+			"No data from this plugin was found on your site.": [
+				"Sivustoltasi ei löytynyt tietoja tästä lisäosasta."
+			],
+			"Coming soon": [
+				"Tulossa pian"
+			],
+			"Don't see your plugin? You can use the <a>Import</a> tool to manually upload a CSV file with your data.": [
+				"Etkö näe lisäosaasi? Voit käyttää <a>Tuo</a>-työkalua ladataksesi CSV-tiedoston tietojesi kanssa manuaalisesti."
+			],
+			"Scan": [
+				"Skannaa"
+			],
+			"Migrate": [
+				"Siirrä"
+			],
+			"Review": [
+				"Tarkista"
+			],
+			"Migrate from %s to Mission": [
+				"Siirry palvelusta %s Missioniin"
+			],
+			"Bring your donors, transactions, campaigns, and subscriptions with you. Mission scans your site first and flags anything that needs attention before a single record is written.": [
+				"Tuo lahjoittajasi, maksutapahtumasi, kampanjasi ja tilauksesi mukanasi. Mission skannaa sivustosi ensin ja merkitsee kaiken, mikä vaatii huomiota, ennen kuin yhtäkään tietuetta kirjoitetaan."
+			],
+			"Back up before you begin.": [
+				"Ota varmuuskopio ennen aloittamista."
+			],
+			"The migration writes new records to your database, and a quick backup means you can always rewind.": [
+				"Siirto kirjoittaa uusia tietueita tietokantaasi, ja nopealla varmuuskopiolla voit aina palata takaisin."
+			],
+			"Scanning your site…": [
+				"Skannataan sivustoasi…"
+			],
+			"Scan My Site": [
+				"Skannaa sivustoni"
+			],
+			"Choose a different plugin": [
+				"Valitse toinen lisäosa"
+			],
+			"Scan results": [
+				"Skannauksen tulokset"
+			],
+			"Your site is ready. Review what will be migrated below.": [
+				"Sivustosi on valmis. Tarkista alta, mitä siirretään."
+			],
+			"Scanning…": [
+				"Skannataan…"
+			],
+			"Run again": [
+				"Suorita uudelleen"
+			],
+			"System status": [
+				"Järjestelmän tila"
+			],
+			"What will be migrated": [
+				"Mitä siirretään"
+			],
+			"Options": [
+				"Asetukset"
+			],
+			"Include test-mode donations": [
+				"Sisällytä testitilan lahjoitukset"
+			],
+			"%3$s has %1$s test-mode donations and %2$s test-mode subscriptions made in test/sandbox mode.": [
+				"Palvelussa %3$s on %1$s testitilan lahjoitusta ja %2$s testitilan tilausta, jotka on tehty testi- tai hiekkalaatikkotilassa."
+			],
+			"Mission copies your data. Nothing is deleted from %s, and existing Mission data is not affected.": [
+				"Mission kopioi tietosi. Palvelusta %s ei poisteta mitään, eikä olemassa oleviin Missionin tietoihin kosketa."
+			],
+			"Start Migration": [
+				"Aloita siirto"
+			],
+			"Finishing up": [
+				"Viimeistellään"
+			],
+			"Queued": [
+				"Jonossa"
+			],
+			"Working…": [
+				"Työstetään…"
+			],
+			"%s processed": [
+				"%s käsitelty"
+			],
+			"%1$s / %2$s": [
+				"%1$s / %2$s"
+			],
+			"Removing migrated data": [
+				"Poistetaan siirrettyjä tietoja"
+			],
+			"Migration in progress": [
+				"Siirto käynnissä"
+			],
+			"You can safely leave this page. The migration keeps running in the background, and you can come back any time to check progress.": [
+				"Voit turvallisesti poistua tältä sivulta. Siirto jatkuu taustalla, ja voit palata milloin tahansa tarkistamaan edistymisen."
+			],
+			"Cancel migration": [
+				"Peruuta siirto"
+			],
+			"Migration complete": [
+				"Siirto valmis"
+			],
+			"Migration failed": [
+				"Siirto epäonnistui"
+			],
+			"Migration cancelled": [
+				"Siirto peruutettu"
+			],
+			"All your %s data has been moved to Mission. Review the migration receipt below.": [
+				"Kaikki palvelun %s tietosi on siirretty Missioniin. Tarkista siirtokuitti alta."
+			],
+			"The migration stopped before finishing. Anything already migrated is listed below, and you can remove it with Reset migration.": [
+				"Siirto pysähtyi ennen valmistumista. Kaikki jo siirretty on lueteltu alla, ja voit poistaa sen toiminnolla Nollaa siirto."
+			],
+			"Migration receipt": [
+				"Siirtokuitti"
+			],
+			"How many records were migrated, out of everything found in the scan.": [
+				"Kuinka monta tietuetta siirrettiin kaikesta skannauksessa löytyneestä."
+			],
+			"Show details": [
+				"Näytä tiedot"
+			],
+			"%1$s #%2$d:": [
+				"%1$s #%2$d:"
+			],
+			"Once you've verified your data in Mission, you can safely deactivate your old donation plugin. Your original data stays untouched in case you ever need it.": [
+				"Kun olet tarkistanut tietosi Missionissa, voit turvallisesti poistaa vanhan lahjoituslisäosasi käytöstä. Alkuperäiset tietosi säilyvät koskemattomina siltä varalta, että tarvitset niitä vielä."
+			],
+			"Reset migration": [
+				"Nollaa siirto"
+			],
+			"Migrate another plugin": [
+				"Siirrä toinen lisäosa"
+			],
+			"Migrated data has been removed.": [
+				"Tuodut tiedot on poistettu."
+			],
+			"The reset did not finish. Try again from the receipt.": [
+				"Nollausta ei saatu valmiiksi. Yritä uudelleen kuitista."
+			],
+			"The scan could not be completed.": [
+				"Tarkistusta ei voitu suorittaa loppuun."
+			],
+			"The migration could not be started.": [
+				"Siirtoa ei voitu käynnistää."
+			],
+			"The reset could not be started.": [
+				"Nollausta ei voitu käynnistää."
+			],
+			"This permanently deletes every donor, transaction, campaign, and subscription this migration created in Mission. Records that existed in Mission before the migration are kept, and your %s data is not touched.": [
+				"Tämä poistaa pysyvästi kaikki lahjoittajat, maksutapahtumat, kampanjat ja tilaukset, jotka tämä siirto loi Missioniin. Missionissa ennen siirtoa olleet tietueet säilytetään, eikä %s-tietoihisi kosketa."
+			],
+			"Delete migrated data": [
+				"Poista siirretyt tiedot"
+			],
+			"Mission Environment": [
+				"Mission-ympäristö"
+			],
+			"Mission version": [
+				"Missionin versio"
+			],
+			"Database version": [
+				"Tietokannan versio"
+			],
+			"Stripe connections": [
+				"Stripe-yhteydet"
+			],
+			"Webhook endpoint": [
+				"Webhook-päätepiste"
+			],
+			"Active campaigns": [
+				"Aktiiviset kampanjat"
+			],
+			"Total donors": [
+				"Lahjoittajia yhteensä"
+			],
+			"Total transactions": [
+				"Maksutapahtumia yhteensä"
+			],
+			"Log directory": [
+				"Lokihakemisto"
+			],
+			"WordPress Environment": [
+				"WordPress-ympäristö"
+			],
+			"Site URL": [
+				"Sivuston URL-osoite"
+			],
+			"Home URL": [
+				"Etusivun URL-osoite"
+			],
+			"WordPress version": [
+				"WordPressin versio"
+			],
+			"Multisite": [
+				"Monisivusto"
+			],
+			"Memory limit": [
+				"Muistiraja"
+			],
+			"Debug mode": [
+				"Vianetsintätila"
+			],
+			"Cron": [
+				"Cron"
+			],
+			"Language": [
+				"Kieli"
+			],
+			"Timezone": [
+				"Aikavyöhyke"
+			],
+			"Server Environment": [
+				"Palvelinympäristö"
+			],
+			"Server software": [
+				"Palvelinohjelmisto"
+			],
+			"PHP version": [
+				"PHP-versio"
+			],
+			"PHP memory limit": [
+				"PHP-muistiraja"
+			],
+			"PHP max execution time": [
+				"PHP:n enimmäissuoritusaika"
+			],
+			"PHP max input vars": [
+				"PHP:n enimmäissyötemuuttujat"
+			],
+			"PHP max upload size": [
+				"PHP:n enimmäislatauskoko"
+			],
+			"MySQL version": [
+				"MySQL-versio"
+			],
+			"cURL version": [
+				"cURL-versio"
+			],
+			"fsockopen / cURL": [
+				"fsockopen / cURL"
+			],
+			"Database": [
+				"Tietokanta"
+			],
+			"Active Plugins": [
+				"Aktiiviset lisäosat"
+			],
+			"Theme": [
+				"Teema"
+			],
+			"System Status": [
+				"Järjestelmän tila"
+			],
+			"Copy this report when contacting support.": [
+				"Kopioi tämä raportti, kun otat yhteyttä tukeen."
+			],
+			"Copy system report": [
+				"Kopioi järjestelmäraportti"
+			],
+			"Stripe connection": [
+				"Stripe-yhteys",
+				"Stripe-yhteydet"
+			],
+			"%s mode": [
+				"%s-tila"
+			],
+			"Not connected": [
+				"Ei yhdistetty"
+			],
+			"Not configured": [
+				"Ei määritetty"
+			],
+			"Enabled": [
+				"Käytössä"
+			],
+			"Disabled": [
+				"Ei käytössä"
+			],
+			"Available": [
+				"Saatavilla"
+			],
+			"seconds": [
+				"sekuntia"
+			],
+			"Database prefix": [
+				"Tietokannan etuliite"
+			],
+			"Total database size": [
+				"Tietokannan kokonaiskoko"
+			],
+			"Mission tables size": [
+				"Mission-taulujen koko"
+			],
+			"by": [
+				"tekijä"
+			],
+			"Version": [
+				"Versio"
+			],
+			"Author": [
+				"Tekijä"
+			],
+			"Child theme": [
+				"Alateema"
+			],
+			"Block theme": [
+				"Lohkoteema"
+			],
+			"Mission Donation Platform Environment": [
+				"Mission Donation Platform -ympäristö"
+			],
+			"Error": [
+				"Virhe"
+			],
+			"Error:": [
+				"Virhe:"
+			],
+			"Request": [
+				"Pyyntö"
+			],
+			"Headers": [
+				"Otsakkeet"
+			],
+			"Body": [
+				"Runko"
+			],
+			"Response": [
+				"Vastaus"
+			],
+			"Back to Webhooks": [
+				"Takaisin webhookeihin"
+			],
+			"Delivery Log": [
+				"Toimitusloki"
+			],
+			"delivery": [
+				"toimitus"
+			],
+			"deliveries": [
+				"toimitusta"
+			],
+			"No deliveries recorded yet.": [
+				"Toimituksia ei ole vielä kirjattu."
+			],
+			"Event": [
+				"Tapahtuma"
+			],
+			"Duration": [
+				"Kesto"
+			],
+			"Attempt": [
+				"Yritys"
+			],
+			"Load More": [
+				"Lataa lisää"
+			],
+			"Edit Webhook": [
+				"Muokkaa webhookia"
+			],
+			"Add Webhook": [
+				"Lisää webhook"
+			],
+			"Endpoint URL": [
+				"Päätepisteen URL"
+			],
+			"The URL that will receive POST requests when events occur.": [
+				"URL, joka vastaanottaa POST-pyyntöjä tapahtumien sattuessa."
+			],
+			"e.g. Zapier integration, CRM sync": [
+				"esim. Zapier-integraatio, CRM-synkronointi"
+			],
+			"Events": [
+				"Tapahtumat"
+			],
+			"Search events…": [
+				"Hae tapahtumia…"
+			],
+			"No matching events": [
+				"Ei osumia tapahtumiin"
+			],
+			"Deselect All": [
+				"Poista kaikki valinnat"
+			],
+			"Select All": [
+				"Valitse kaikki"
+			],
+			"Choose which events trigger this webhook.": [
+				"Valitse, mitkä tapahtumat laukaisevat tämän webhookin."
+			],
+			"Signing Secret": [
+				"Allekirjoitussalaisuus"
+			],
+			"Copy": [
+				"Kopioi"
+			],
+			"Regenerate": [
+				"Luo uudelleen"
+			],
+			"Used to verify webhook payloads. Regenerating will invalidate the current secret.": [
+				"Käytetään webhookin datan varmentamiseen. Uudelleenluonti mitätöi nykyisen salaisuuden."
+			],
+			"Save Webhook": [
+				"Tallenna webhook"
+			],
+			"webhook": [
+				"webhook"
+			],
+			"webhooks": [
+				"webhookit"
+			],
+			"Endpoint": [
+				"Päätepiste"
+			],
+			"Delete Webhook": [
+				"Poista webhook"
+			],
+			"Delete the webhook": [
+				"Poista webhook"
+			],
+			"All events": [
+				"Kaikki tapahtumat"
+			],
+			"event": [
+				"tapahtuma"
+			],
+			"events": [
+				"tapahtumat"
+			],
+			"Click to reveal full URL": [
+				"Näytä koko URL napsauttamalla"
+			],
+			"Secret": [
+				"Salaisuus"
+			],
+			"Send Test Ping": [
+				"Lähetä testiviesti"
+			],
+			"Ping successful": [
+				"Testiviesti onnistui"
+			],
+			"Ping failed": [
+				"Testiviesti epäonnistui"
+			],
+			"No webhooks configured yet": [
+				"Ei webhookeja määritetty vielä"
+			],
+			"Webhooks send real-time notifications to external services when events happen in Mission, like a new donation or a canceled subscription.": [
+				"Webhookit lähettävät reaaliaikaisia ilmoituksia ulkoisiin palveluihin, kun Missionissa tapahtuu jotain, kuten uusi lahjoitus tai peruutettu tilaus."
+			],
+			"Import": [
+				"Tuo"
+			],
+			"Migration": [
+				"Siirto"
+			],
+			"Features": [
+				"Ominaisuudet"
+			],
+			"Webhooks": [
+				"Webhookit"
+			],
+			"Logs": [
+				"Lokit"
+			],
+			"Cleanup": [
+				"Siivous"
+			],
+			"Remove donor": [
+				"Poista lahjoittaja"
+			],
+			"Please select a donor.": [
+				"Valitse lahjoittaja."
+			],
+			"Please enter a valid amount.": [
+				"Anna kelvollinen summa."
+			],
+			"Save Donation": [
+				"Tallenna lahjoitus"
+			],
+			"Add Donation": [
+				"Lisää lahjoitus"
+			],
+			"Test mode is active. This donation will be recorded as a test transaction.": [
+				"Testitila on käytössä. Tämä lahjoitus kirjataan testimaksutapahtumana."
+			],
+			"Search by name or email…": [
+				"Hae nimellä tai sähköpostilla…"
+			],
+			"No donors found.": [
+				"Lahjoittajia ei löytynyt."
+			],
+			"Add a new donor": [
+				"Lisää uusi lahjoittaja"
+			],
+			"Select an existing donor instead": [
+				"Valitse sen sijaan olemassa oleva lahjoittaja"
+			],
+			"Notes": [
+				"Muistiinpanot"
+			],
+			"Billing Address": [
+				"Laskutusosoite"
+			],
+			"Send donation receipt email to donor": [
+				"Lähetä lahjoituskuitti sähköpostitse lahjoittajalle"
+			],
+			"Mail — pending": [
+				"Posti — odottaa"
+			],
+			"Mail — sent": [
+				"Posti — lähetetty"
+			],
+			"Email — sent": [
+				"Sähköposti — lähetetty"
+			],
+			"Has dedication": [
+				"Sisältää omistuksen"
+			],
+			"refund": [
+				"hyvitys"
+			],
+			"refunds": [
+				"hyvitykset"
+			],
+			"View and manage all donations.": [
+				"Katsele ja hallitse kaikkia lahjoituksia."
+			],
+			"Total Revenue": [
+				"Kokonaistulot"
+			],
+			"Total Donations": [
+				"Lahjoitukset yhteensä"
+			],
+			"Across all campaigns": [
+				"Kaikissa kampanjoissa"
+			],
+			"Refunds": [
+				"Hyvitykset"
+			],
+			"No transactions yet": [
+				"Ei vielä maksutapahtumia"
+			],
+			"Transactions will appear here once donors start giving.": [
+				"Maksutapahtumat ilmestyvät tänne, kun lahjoittajat alkavat lahjoittaa."
+			],
+			"Payment initiated": [
+				"Maksu aloitettu"
+			],
+			"Refund initiated": [
+				"Hyvitys aloitettu"
+			],
+			"Refund completed": [
+				"Hyvitys valmis"
+			],
+			"Partial refund": [
+				"Osittainen hyvitys"
+			],
+			"Receipt sent": [
+				"Kuitti lähetetty"
+			],
+			"Sent to": [
+				"Vastaanottaja"
+			],
+			"By": [
+				"Tekijä"
+			],
+			"returned to": [
+				"palautettu vastaanottajalle"
+			],
+			"returned": [
+				"palautettu"
+			],
+			"This transaction is part of a recurring subscription.": [
+				"Tämä maksutapahtuma on osa toistuvaa tilausta."
+			],
+			"View Subscription": [
+				"Näytä tilaus"
+			],
+			"Resend Receipt": [
+				"Lähetä kuitti uudelleen"
+			],
+			"Refund": [
+				"Hyvitys"
+			],
+			"Export CSV": [
+				"Vie CSV"
+			],
+			"Delete Transaction": [
+				"Poista maksutapahtuma"
+			],
+			"Failed to load transaction.": [
+				"Maksutapahtuman lataaminen epäonnistui."
+			],
+			"Transaction updated.": [
+				"Maksutapahtuma päivitetty."
+			],
+			"Failed to update transaction.": [
+				"Maksutapahtuman päivittäminen epäonnistui."
+			],
+			"Back to Transactions": [
+				"Takaisin maksutapahtumiin"
+			],
+			"Receipt sent to %s": [
+				"Kuitti lähetetty osoitteeseen %s"
+			],
+			"Failed to send receipt.": [
+				"Kuitin lähettäminen epäonnistui."
+			],
+			"Donor Notes": [
+				"Lahjoittajan muistiinpanot"
+			],
+			"Visible to the donor. Sent via email when added.": [
+				"Näkyy lahjoittajalle. Lähetetään sähköpostitse lisättäessä."
+			],
+			"Send Note to Donor?": [
+				"Lähetetäänkö muistiinpano lahjoittajalle?"
+			],
+			"This note will be emailed to the donor. Are you sure you want to send it?": [
+				"Tämä muistiinpano lähetetään lahjoittajalle sähköpostitse. Haluatko varmasti lähettää sen?"
+			],
+			"Send Note": [
+				"Lähetä muistiinpano"
+			],
+			"Refund Transaction": [
+				"Hyvitä maksutapahtuma"
+			],
+			"Original amount: %s": [
+				"Alkuperäinen summa: %s"
+			],
+			"%s already refunded": [
+				"%s jo hyvitetty"
+			],
+			"Amount exceeds refundable balance.": [
+				"Summa ylittää hyvitettävissä olevan saldon."
+			],
+			"%s refunded successfully": [
+				"%s hyvitetty onnistuneesti"
+			],
+			"Failed to process refund.": [
+				"Hyvityksen käsittely epäonnistui."
+			],
+			"Process Refund": [
+				"Käsittele hyvitys"
+			],
+			"Are you sure you want to delete transaction": [
+				"Haluatko varmasti poistaa maksutapahtuman"
+			],
+			"Change Status to Refunded?": [
+				"Vaihdetaanko tilaksi Hyvitetty?"
+			],
+			"This will only update the status on this record — it will not issue a refund through Stripe. The donor will not receive any money back.": [
+				"Tämä päivittää vain tämän tietueen tilan, se ei tee hyvitystä Stripen kautta. Lahjoittaja ei saa rahoja takaisin."
+			],
+			"To process an actual refund, use the Refund action from the Actions menu or refund directly in your Stripe dashboard.": [
+				"Tehdäksesi varsinaisen hyvityksen käytä Hyvitä-toimintoa Toiminnot-valikosta tai tee hyvitys suoraan Stripe-hallintapaneelissa."
+			],
+			"Update Status Only": [
+				"Päivitä vain tila"
+			],
+			"Mission Dashboard": [
+				"Mission-hallintapaneeli"
+			],
+			"Your donation activity at a glance": [
+				"Lahjoitusaktiivisuutesi yhdellä silmäyksellä"
+			],
+			"Stripe connected successfully!": [
+				"Stripe yhdistetty onnistuneesti!"
+			],
+			"Failed to connect Stripe.": [
+				"Stripen yhdistäminen epäonnistui."
+			],
+			"Settings saved.": [
+				"Asetukset tallennettu."
+			],
+			"Failed to save settings.": [
+				"Asetusten tallentaminen epäonnistui."
+			],
+			"Configure your Mission plugin": [
+				"Määritä Mission-liitännäisesi"
+			],
+			"Connecting to Stripe…": [
+				"Yhdistetään Stripeen…"
+			],
+			"Default Stripe account updated.": [
+				"Oletus-Stripe-tili päivitetty."
+			],
+			"Failed to update the default account.": [
+				"Oletustilin päivittäminen epäonnistui."
+			],
+			"Change Currency": [
+				"Vaihda valuutta"
+			],
+			"Make sure this matches the default currency on your Stripe account. Mismatched currencies may cause payment failures.": [
+				"Varmista, että tämä vastaa Stripe-tilisi oletusvaluuttaa. Eri valuutat voivat aiheuttaa maksujen epäonnistumisia."
+			],
+			"Disconnect Stripe": [
+				"Katkaise Stripe-yhteys"
+			],
+			"This is your default Stripe account. Disconnecting it will route donations through another connected account, or block new donations if no accounts remain.": [
+				"Tämä on oletus-Stripe-tilisi. Sen yhteyden katkaiseminen ohjaa lahjoitukset toisen yhdistetyn tilin kautta tai estää uudet lahjoitukset, jos tilejä ei jää jäljelle."
+			],
+			"Donation forms set to use this account will fall back to your default account once it’s disconnected.": [
+				"Lahjoituslomakkeet, jotka on asetettu käyttämään tätä tiliä, palautuvat oletustilillesi, kun tämän yhteys katkaistaan."
+			],
+			"Stripe disconnected.": [
+				"Stripe-yhteys katkaistu."
+			],
+			"Failed to disconnect Stripe.": [
+				"Stripe-yhteyden katkaiseminen epäonnistui."
+			],
+			"Utilities and configuration for Mission": [
+				"Mission-työkalut ja -asetukset"
+			]
+		}
+	}
+}

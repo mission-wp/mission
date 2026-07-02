@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.3.1
+Stable Tag: 1.3.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -187,6 +187,9 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.3.2 =
+* New: Added a complete Finnish (fi) translation
+
 = 1.3.1 =
 * Enhancement: Faster dashboard and reports on sites with many donations
 * Enhancement: New developer hooks fire when imports, exports, and cleanup operations complete, and clearing the activity log now leaves an audit entry
@@ -228,9 +231,5 @@ This plugin connects to the following third-party services:
 * New: Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
 * New: Added an "Edit Campaign" link to the admin bar when viewing a campaign on the frontend
 * Enhancement: Tools > Status now lists every connected Stripe account instead of only the default one
-
-= 1.1.6 =
-* Enhancement: Expanded the country dropdown to the full ISO 3166-1 list so any country is selectable
-* Fix: Fixed the plugin update entry in the activity log to show the correct new version
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

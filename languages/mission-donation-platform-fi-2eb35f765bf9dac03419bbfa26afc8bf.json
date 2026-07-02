@@ -1,0 +1,381 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/donation-form\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Ongoing": [
+                "K\u00e4ynniss\u00e4"
+            ],
+            "One Time": [
+                "Kertaluontoinen"
+            ],
+            "Weekly": [
+                "Viikoittain"
+            ],
+            "Monthly": [
+                "Kuukausittain"
+            ],
+            "Quarterly": [
+                "Nelj\u00e4nnesvuosittain"
+            ],
+            "Annually": [
+                "Vuosittain"
+            ],
+            "Choose Your Gift": [
+                "Valitse lahjasi"
+            ],
+            "Other": [
+                "Muu"
+            ],
+            "Continue": [
+                "Jatka"
+            ],
+            "Additional Information": [
+                "Lis\u00e4tiedot"
+            ],
+            "Donate": [
+                "Lahjoita"
+            ],
+            "Thank you!": [
+                "Kiitos!"
+            ],
+            "Your donation has been processed successfully. You will receive a confirmation email shortly.": [
+                "Lahjoituksesi on k\u00e4sitelty onnistuneesti. Saat pian vahvistuss\u00e4hk\u00f6postin."
+            ],
+            "One-time": [
+                "Kertaluontoinen"
+            ],
+            "Campaign": [
+                "Kampanja"
+            ],
+            "Type": [
+                "Tyyppi"
+            ],
+            "Cancel": [
+                "Peruuta"
+            ],
+            "Settings": [
+                "Asetukset"
+            ],
+            "Payments": [
+                "Maksut"
+            ],
+            "Select": [
+                "Valitse"
+            ],
+            "Save": [
+                "Tallenna"
+            ],
+            "Stripe account": [
+                "Stripe-tili"
+            ],
+            "Appearance": [
+                "Ulkoasu"
+            ],
+            "default": [
+                "oletus"
+            ],
+            "Options": [
+                "Asetukset"
+            ],
+            "Copy from\u2026": [
+                "Kopioi l\u00e4hteest\u00e4\u2026"
+            ],
+            "Add a description (optional)": [
+                "Lis\u00e4\u00e4 kuvaus (valinnainen)"
+            ],
+            "Add": [
+                "Lis\u00e4\u00e4"
+            ],
+            "Select a Campaign": [
+                "Valitse kampanja"
+            ],
+            "Donation Frequencies": [
+                "Maksuv\u00e4lit"
+            ],
+            "Select which frequencies are available on donation forms": [
+                "Valitse, mitk\u00e4 maksuv\u00e4lit ovat k\u00e4ytett\u00e4viss\u00e4 lahjoituslomakkeilla"
+            ],
+            "Suggested Amounts": [
+                "Ehdotetut summat"
+            ],
+            "With descriptions": [
+                "Kuvausten kanssa"
+            ],
+            "Press Enter to add an amount. Click an amount to set it as the pre-selected default.": [
+                "Lis\u00e4\u00e4 summa painamalla Enter. Napsauta summaa asettaaksesi sen esivalituksi oletukseksi."
+            ],
+            "Default Frequency": [
+                "Oletusmaksuv\u00e4li"
+            ],
+            "Pre-selected frequency when the form loads": [
+                "Esivalittu maksuv\u00e4li lomakkeen latautuessa"
+            ],
+            "Allow custom amount": [
+                "Salli mukautettu summa"
+            ],
+            "Let donors enter their own amount": [
+                "Anna lahjoittajien sy\u00f6tt\u00e4\u00e4 oma summansa"
+            ],
+            "Minimum Donation": [
+                "V\u00e4himm\u00e4islahjoitus"
+            ],
+            "Allow anonymous donations": [
+                "Salli anonyymit lahjoitukset"
+            ],
+            "Let donors hide their name from public displays": [
+                "Anna lahjoittajien piilottaa nimens\u00e4 julkisista n\u00e4kymist\u00e4"
+            ],
+            "Allow donor comments": [
+                "Salli lahjoittajien kommentit"
+            ],
+            "Show a comment field where donors can leave a message": [
+                "N\u00e4yt\u00e4 kommenttikentt\u00e4, johon lahjoittajat voivat j\u00e4tt\u00e4\u00e4 viestin"
+            ],
+            "Require phone number": [
+                "Vaadi puhelinnumero"
+            ],
+            "Show and require a phone number field": [
+                "N\u00e4yt\u00e4 ja vaadi puhelinnumerokentt\u00e4"
+            ],
+            "Require billing address": [
+                "Vaadi laskutusosoite"
+            ],
+            "Collect the donor's full billing address": [
+                "Ker\u00e4\u00e4 lahjoittajan t\u00e4ydellinen laskutusosoite"
+            ],
+            "Allow dedications": [
+                "Salli omistukset"
+            ],
+            "Let donors dedicate their gift in honor or memory of someone": [
+                "Anna lahjoittajien omistaa lahjansa jonkun kunniaksi tai muistoksi"
+            ],
+            "Default account (%s)": [
+                "Oletustili (%s)"
+            ],
+            "unnamed": [
+                "nimet\u00f6n"
+            ],
+            "Default account": [
+                "Oletustili"
+            ],
+            "Organization absorbs fees": [
+                "J\u00e4rjest\u00f6 kattaa maksut"
+            ],
+            "Your organization covers all processing fees": [
+                "J\u00e4rjest\u00f6si kattaa kaikki k\u00e4sittelymaksut"
+            ],
+            "Give donors the option to cover fees": [
+                "Anna lahjoittajille mahdollisuus kattaa maksut"
+            ],
+            "Donors can choose to add processing fees to their donation": [
+                "Lahjoittajat voivat halutessaan lis\u00e4t\u00e4 k\u00e4sittelymaksut lahjoitukseensa"
+            ],
+            "Require donors to cover fees": [
+                "Vaadi lahjoittajia kattamaan maksut"
+            ],
+            "Processing fees are automatically included in every donation": [
+                "K\u00e4sittelymaksut sis\u00e4ltyv\u00e4t automaattisesti jokaiseen lahjoitukseen"
+            ],
+            "Optional donor tip": [
+                "Vapaaehtoinen lahjoittajan tuki"
+            ],
+            "Donors can leave an optional tip to support the Mission platform": [
+                "Lahjoittajat voivat j\u00e4tt\u00e4\u00e4 vapaaehtoisen tuen Mission-alustan tukemiseksi"
+            ],
+            "Flat platform fee (3%)": [
+                "Kiinte\u00e4 alustamaksu (3 %)"
+            ],
+            "A flat 3% of each donation goes to support Mission": [
+                "Kiinte\u00e4 3 % jokaisesta lahjoituksesta menee Missionin tukemiseen"
+            ],
+            "Choose which connected Stripe account receives donations from this form.": [
+                "Valitse, mik\u00e4 yhdistetty Stripe-tili vastaanottaa lahjoitukset t\u00e4st\u00e4 lomakkeesta."
+            ],
+            "The previously selected account is no longer connected. Donations from this form will use the default account.": [
+                "Aiemmin valittua tili\u00e4 ei ole en\u00e4\u00e4 yhdistetty. T\u00e4m\u00e4n lomakkeen lahjoitukset k\u00e4ytt\u00e4v\u00e4t oletustili\u00e4."
+            ],
+            "Processing Fees": [
+                "K\u00e4sittelymaksut"
+            ],
+            "Stripe charges %1$s%% + %2$s%3$s per transaction for payment processing.": [
+                "Stripe veloittaa %1$s%% + %2$s%3$s maksutapahtumaa kohti maksun k\u00e4sittelyst\u00e4."
+            ],
+            "Platform Fee": [
+                "Alustamaksu"
+            ],
+            "Mission is funded by optional donor tips or a small platform fee \u2014 your choice.": [
+                "Mission rahoitetaan vapaaehtoisilla lahjoittajien tuilla tai pienell\u00e4 alustamaksulla, valintasi mukaan."
+            ],
+            "Display a confirmation message": [
+                "N\u00e4yt\u00e4 vahvistusviesti"
+            ],
+            "Show a thank-you message after a successful donation": [
+                "N\u00e4yt\u00e4 kiitosviesti onnistuneen lahjoituksen j\u00e4lkeen"
+            ],
+            "Redirect to a URL": [
+                "Ohjaa URL-osoitteeseen"
+            ],
+            "Send donors to a specific page after donating": [
+                "Ohjaa lahjoittajat tietylle sivulle lahjoittamisen j\u00e4lkeen"
+            ],
+            "After Donation": [
+                "Lahjoituksen j\u00e4lkeen"
+            ],
+            "Choose what happens after a donor completes their donation.": [
+                "Valitse, mit\u00e4 tapahtuu, kun lahjoittaja on tehnyt lahjoituksensa."
+            ],
+            "Tip: Use the \"Edit Confirmation\" button in the editor to customize the message.": [
+                "Vinkki: K\u00e4yt\u00e4 editorin \"Muokkaa vahvistusta\" -painiketta viestin mukauttamiseen."
+            ],
+            "Redirect URL": [
+                "Ohjaus-URL"
+            ],
+            "Search or type a URL": [
+                "Hae tai kirjoita URL-osoite"
+            ],
+            "Donors will be redirected to this page after a successful donation.": [
+                "Lahjoittajat ohjataan t\u00e4lle sivulle onnistuneen lahjoituksen j\u00e4lkeen."
+            ],
+            "Primary Color": [
+                "Ensisijainen v\u00e4ri"
+            ],
+            "Reset to global": [
+                "Palauta yleisiin asetuksiin"
+            ],
+            "Using a custom color for this form": [
+                "K\u00e4ytet\u00e4\u00e4n mukautettua v\u00e4ri\u00e4 t\u00e4lle lomakkeelle"
+            ],
+            "Using global setting": [
+                "K\u00e4ytet\u00e4\u00e4n yleist\u00e4 asetusta"
+            ],
+            "Choose Gift Heading": [
+                "Lahjoituksen valinnan otsikko"
+            ],
+            "The heading shown on the first step of the form": [
+                "Lomakkeen ensimm\u00e4isess\u00e4 vaiheessa n\u00e4kyv\u00e4 otsikko"
+            ],
+            "Continue Button": [
+                "Jatka-painike"
+            ],
+            "Text on the button that advances each step": [
+                "Kunkin vaiheen eteenp\u00e4in viev\u00e4n painikkeen teksti"
+            ],
+            "Additional Info Heading": [
+                "Lis\u00e4tietojen otsikko"
+            ],
+            "The heading shown on the custom fields step": [
+                "Mukautettujen kenttien vaiheessa n\u00e4kyv\u00e4 otsikko"
+            ],
+            "Summary Heading": [
+                "Yhteenvedon otsikko"
+            ],
+            "Summary": [
+                "Yhteenveto"
+            ],
+            "The heading shown on the payment\/summary step": [
+                "Maksu- tai yhteenvetovaiheessa n\u00e4kyv\u00e4 otsikko"
+            ],
+            "Donate Button": [
+                "Lahjoita-painike"
+            ],
+            "Text on the final submit button": [
+                "Viimeisen l\u00e4hetyspainikkeen teksti"
+            ],
+            "Text": [
+                "Teksti"
+            ],
+            "Textarea": [
+                "Tekstialue"
+            ],
+            "Checkbox": [
+                "Valintaruutu"
+            ],
+            "Multiselect": [
+                "Monivalinta"
+            ],
+            "Radio": [
+                "Valintapainike"
+            ],
+            "Required": [
+                "Pakollinen"
+            ],
+            "Move up": [
+                "Siirr\u00e4 yl\u00f6s"
+            ],
+            "Move down": [
+                "Siirr\u00e4 alas"
+            ],
+            "Label": [
+                "Nimike"
+            ],
+            "Enter a label\u2026": [
+                "Kirjoita nimike\u2026"
+            ],
+            "A label is required.": [
+                "Nimike on pakollinen."
+            ],
+            "Placeholder": [
+                "Paikkamerkki"
+            ],
+            "Option": [
+                "Vaihtoehto"
+            ],
+            "Remove option": [
+                "Poista vaihtoehto"
+            ],
+            "Add option": [
+                "Lis\u00e4\u00e4 vaihtoehto"
+            ],
+            "Remove field": [
+                "Poista kentt\u00e4"
+            ],
+            "Collect additional information from donors.": [
+                "Ker\u00e4\u00e4 lis\u00e4tietoja lahjoittajilta."
+            ],
+            "Add Field": [
+                "Lis\u00e4\u00e4 kentt\u00e4"
+            ],
+            "Amounts": [
+                "Summat"
+            ],
+            "Donor Info": [
+                "Lahjoittajan tiedot"
+            ],
+            "Custom Fields": [
+                "Mukautetut kent\u00e4t"
+            ],
+            "Confirmation": [
+                "Vahvistus"
+            ],
+            "Donation Form Settings": [
+                "Lahjoituslomakkeen asetukset"
+            ],
+            "Donation Form": [
+                "Lahjoituslomake"
+            ],
+            "Form Settings": [
+                "Lomakkeen asetukset"
+            ],
+            "Edit Confirmation": [
+                "Muokkaa vahvistusta"
+            ],
+            "Back to form": [
+                "Takaisin lomakkeeseen"
+            ],
+            "Confirmation Message": [
+                "Vahvistusviesti"
+            ],
+            "This is displayed after a successful donation. Add any blocks you like.": [
+                "T\u00e4m\u00e4 n\u00e4ytet\u00e4\u00e4n onnistuneen lahjoituksen j\u00e4lkeen. Lis\u00e4\u00e4 haluamiasi lohkoja."
+            ]
+        }
+    }
+}

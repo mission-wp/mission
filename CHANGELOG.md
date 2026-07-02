@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2 (2026-07-01)
+
+* New: Added a complete Finnish (fi) translation
+
 ## 1.3.1 (2026-06-11)
 
 * Enhancement: Faster dashboard and reports on sites with many donations

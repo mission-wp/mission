@@ -1,0 +1,108 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/campaign-image\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Campaign": [
+                "Kampanja"
+            ],
+            "Settings": [
+                "Asetukset"
+            ],
+            "Campaign Image": [
+                "Kampanjan kuva"
+            ],
+            "Original": [
+                "Alkuper\u00e4inen"
+            ],
+            "Square - 1:1": [
+                "Neli\u00f6 \u2013 1:1"
+            ],
+            "Standard - 4:3": [
+                "Vakio \u2013 4:3"
+            ],
+            "Portrait - 3:4": [
+                "Pysty \u2013 3:4"
+            ],
+            "Classic - 3:2": [
+                "Klassinen \u2013 3:2"
+            ],
+            "Classic Portrait - 2:3": [
+                "Klassinen pysty \u2013 2:3"
+            ],
+            "Wide - 16:9": [
+                "Leve\u00e4 \u2013 16:9"
+            ],
+            "Tall - 9:16": [
+                "Korkea \u2013 9:16"
+            ],
+            "Thumbnail": [
+                "Pienoiskuva"
+            ],
+            "Medium": [
+                "Keskikokoinen"
+            ],
+            "Large": [
+                "Suuri"
+            ],
+            "Full Size": [
+                "T\u00e4ysi koko"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."
+            ],
+            "Alternative text": [
+                "Vaihtoehtoinen teksti"
+            ],
+            "Describe the purpose of the image. Leave empty if decorative.": [
+                "Kuvaile kuvan tarkoitus. J\u00e4t\u00e4 tyhj\u00e4ksi, jos kuva on koristeellinen."
+            ],
+            "Aspect ratio": [
+                "Kuvasuhde"
+            ],
+            "Width": [
+                "Leveys"
+            ],
+            "Auto": [
+                "Automaattinen"
+            ],
+            "Height": [
+                "Korkeus"
+            ],
+            "Scale": [
+                "Skaalaus"
+            ],
+            "Image covers the space evenly.": [
+                "Kuva peitt\u00e4\u00e4 tilan tasaisesti."
+            ],
+            "Image is contained without distortion.": [
+                "Kuva mahtuu tilaan v\u00e4\u00e4ristym\u00e4tt\u00e4."
+            ],
+            "Cover": [
+                "T\u00e4yt\u00e4"
+            ],
+            "Contain": [
+                "Sovita"
+            ],
+            "Resolution": [
+                "Tarkkuus"
+            ],
+            "Select the size of the source image.": [
+                "Valitse l\u00e4hdekuvan koko."
+            ],
+            "No campaign image set.": [
+                "Kampanjan kuvaa ei ole asetettu."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "Valitse kampanja tai sijoita t\u00e4m\u00e4 lohko kampanjasivulle."
+            ]
+        }
+    }
+}
