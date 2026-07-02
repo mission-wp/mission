@@ -93,6 +93,14 @@ defined( 'ABSPATH' ) || exit;
 		'signedIn'            => (bool) $current_donor,
 		'donorName'           => $current_donor ? trim( $current_donor->first_name . ' ' . $current_donor->last_name ) : '',
 		'donorEmail'          => $current_donor ? $current_donor->email : '',
+		// Translated strings for view.js (script modules can't import @wordpress/i18n).
+		'i18n'                => [
+			'genericError'     => __( 'Something went wrong. Please try again.', 'mission-donation-platform' ),
+			'copy'             => __( 'Copy', 'mission-donation-platform' ),
+			'copied'           => __( 'Copied', 'mission-donation-platform' ),
+			'enterCode'        => __( 'Enter the 6-digit code.', 'mission-donation-platform' ),
+			'enterNewPassword' => __( 'Enter a new password.', 'mission-donation-platform' ),
+		],
 	];
 
 	/**
@@ -141,7 +149,7 @@ defined( 'ABSPATH' ) || exit;
 		data-wp-class--is-open="state.isOpen"
 		data-wp-on--keydown="actions.onKeydown"
 	>
-		<div class="mission-su__dialog" role="dialog" aria-modal="true">
+		<div class="mission-su__dialog" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr( $brandline ); ?>" tabindex="-1">
 			<div class="mission-su__head">
 				<span class="mission-su__brand"><?php echo esc_html( $brandline ); ?></span>
 				<button type="button" class="mission-su__close" aria-label="<?php esc_attr_e( 'Close', 'mission-donation-platform' ); ?>" data-wp-on--click="actions.close">&times;</button>

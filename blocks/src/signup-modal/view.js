@@ -9,13 +9,28 @@
  */
 /* global navigator */
 // Note: this is a script module, where @wordpress/i18n can't be imported (same
-// as donation-form/view.js). User-facing copy lives in the translated PHP
-// template; only these error fallbacks are inline English.
+// as donation-form/view.js). User-facing copy is translated server-side and
+// passed through the block context (ctx.i18n); the literals here are
+// English-only fallbacks.
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
 let cooldownTimer = null;
 
-const GENERIC_ERROR = 'Something went wrong. Please try again.';
+/**
+ * A translated string from the block context, with an English fallback.
+ *
+ * @param {string} key      Key in the context's i18n map.
+ * @param {string} fallback English fallback.
+ * @return {string} Translated string.
+ */
+function i18n( key, fallback ) {
+  const ctx = getContext();
+  return ( ctx.i18n && ctx.i18n[ key ] ) || fallback;
+}
+
+function genericError() {
+  return i18n( 'genericError', 'Something went wrong. Please try again.' );
+}
 
 /**
  * POST JSON to a REST route with the nonce attached.
@@ -62,6 +77,50 @@ function startCooldown( seconds ) {
  */
 function shareUrl() {
   return state.successUrl || window.location.href;
+}
+
+// The element focused before the modal opened, restored on close.
+let lastFocused = null;
+
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+function dialogElement() {
+  return document.querySelector( '.mission-su__dialog' );
+}
+
+/**
+ * Visible focusable elements inside the dialog, in tab order.
+ *
+ * @param {Element} dialog The dialog element.
+ * @return {Element[]} Focusable elements.
+ */
+function focusablesIn( dialog ) {
+  return Array.from( dialog.querySelectorAll( FOCUSABLE_SELECTOR ) ).filter(
+    ( el ) => el.offsetParent !== null
+  );
+}
+
+/**
+ * Move focus into the dialog once it has rendered open.
+ */
+function focusIntoDialog() {
+  const dialog = dialogElement();
+  if ( ! dialog ) {
+    return;
+  }
+  lastFocused = dialog.ownerDocument.activeElement;
+  window.requestAnimationFrame( () => {
+    const first = focusablesIn( dialog )[ 0 ];
+    ( first || dialog ).focus();
+  } );
+}
+
+function restoreFocus() {
+  if ( lastFocused && typeof lastFocused.focus === 'function' ) {
+    lastFocused.focus();
+  }
+  lastFocused = null;
 }
 
 const { state } = store( 'mission-donation-platform/p2p-signup', {
@@ -155,15 +214,38 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.emailError = false;
       state.passwordError = false;
       document.body.style.overflow = 'hidden';
+      focusIntoDialog();
     },
     close() {
       state.isOpen = false;
       document.body.style.overflow = '';
+      restoreFocus();
     },
     onKeydown( event ) {
       if ( event.key === 'Escape' ) {
         state.isOpen = false;
         document.body.style.overflow = '';
+        restoreFocus();
+        return;
+      }
+
+      // Trap Tab inside the dialog while the modal is open.
+      if ( event.key === 'Tab' ) {
+        const dialog = dialogElement();
+        const focusables = dialog ? focusablesIn( dialog ) : [];
+        if ( ! focusables.length ) {
+          return;
+        }
+        const first = focusables[ 0 ];
+        const last = focusables[ focusables.length - 1 ];
+        const active = dialog.ownerDocument.activeElement;
+        if ( event.shiftKey && ( active === first || active === dialog ) ) {
+          event.preventDefault();
+          last.focus();
+        } else if ( ! event.shiftKey && active === last ) {
+          event.preventDefault();
+          first.focus();
+        }
         return;
       }
 
@@ -275,7 +357,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         const data = yield res.json();
 
         if ( ! res.ok ) {
-          state.formError = data.message || GENERIC_ERROR;
+          state.formError = data.message || genericError();
           return;
         }
 
@@ -293,7 +375,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           startCooldown( data.cooldown || 30 );
         }
       } catch ( e ) {
-        state.formError = GENERIC_ERROR;
+        state.formError = genericError();
       } finally {
         state.loading = false;
       }
@@ -314,7 +396,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         state.step1View = 'otp';
         startCooldown( ( data && data.cooldown ) || 30 );
       } catch ( e ) {
-        state.formError = GENERIC_ERROR;
+        state.formError = genericError();
       } finally {
         state.loading = false;
       }
@@ -347,7 +429,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
 
       state.otpError = '';
       if ( code.length !== 6 ) {
-        state.otpError = 'Enter the 6-digit code.';
+        state.otpError = i18n( 'enterCode', 'Enter the 6-digit code.' );
         return;
       }
 
@@ -377,7 +459,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         const data = yield res.json();
 
         if ( ! res.ok ) {
-          state.otpError = data.message || GENERIC_ERROR;
+          state.otpError = data.message || genericError();
           inputs.forEach( ( input ) => {
             input.value = '';
           } );
@@ -397,7 +479,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           state.currentStep = 2;
         }
       } catch ( e ) {
-        state.otpError = GENERIC_ERROR;
+        state.otpError = genericError();
       } finally {
         state.loading = false;
       }
@@ -406,7 +488,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     *savePassword() {
       state.formError = '';
       if ( ! state.newPassword ) {
-        state.formError = 'Enter a new password.';
+        state.formError = i18n( 'enterNewPassword', 'Enter a new password.' );
         return;
       }
 
@@ -421,7 +503,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         const data = yield res.json();
 
         if ( ! res.ok ) {
-          state.formError = data.message || GENERIC_ERROR;
+          state.formError = data.message || genericError();
           return;
         }
 
@@ -430,7 +512,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         }
         state.currentStep = 2;
       } catch ( e ) {
-        state.formError = GENERIC_ERROR;
+        state.formError = genericError();
       } finally {
         state.loading = false;
       }
@@ -459,7 +541,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         const data = yield res.json();
 
         if ( ! res.ok ) {
-          state.formError = data.message || GENERIC_ERROR;
+          state.formError = data.message || genericError();
           return;
         }
 
@@ -468,7 +550,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           ( ( data.fundraiser && data.fundraiser.status ) || '' ) === 'pending';
         state.currentStep = 3;
       } catch ( e ) {
-        state.formError = GENERIC_ERROR;
+        state.formError = genericError();
       } finally {
         state.loading = false;
       }
@@ -542,7 +624,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     copyLink() {
       if ( navigator.clipboard ) {
         navigator.clipboard.writeText( shareUrl() ).catch( () => {} );
-        state.copyLabel = 'Copied';
+        state.copyLabel = i18n( 'copied', 'Copied' );
       }
     },
   },
@@ -553,6 +635,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.signedIn = !! ctx.signedIn;
       state.donorName = ctx.donorName || '';
       state.donorEmail = ctx.donorEmail || '';
+      state.copyLabel = i18n( 'copy', 'Copy' );
       state.step1View = ctx.signedIn ? 'signedin' : 'form';
       if ( ! state.goal ) {
         // The server provides the default goal in major units, ready to display.
@@ -573,6 +656,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         state.currentStep = 1;
         state.step1View = ctx.signedIn ? 'signedin' : 'form';
         document.body.style.overflow = 'hidden';
+        focusIntoDialog();
       }
     },
   },
