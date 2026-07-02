@@ -75,6 +75,20 @@ class FundraiserEmailListener {
 			return;
 		}
 
+		/**
+		 * Filters which goal milestones email the participant.
+		 *
+		 * The activity feed logs every tracked milestone regardless; this only
+		 * trims the congratulation emails (e.g. return [ 50, 100 ]).
+		 *
+		 * @param int[] $levels Milestone percentages that send an email.
+		 */
+		$email_levels = (array) apply_filters( 'mission_fundraiser_milestone_email_levels', [ 25, 50, 75, 100 ] );
+
+		if ( ! in_array( (int) $milestone_id, array_map( 'intval', $email_levels ), true ) ) {
+			return;
+		}
+
 		$donor = $fundraiser->donor();
 		if ( ! $donor?->email ) {
 			return;
