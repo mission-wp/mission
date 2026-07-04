@@ -30,16 +30,15 @@ defined( 'ABSPATH' ) || exit;
 	$campaign = $fundraiser->campaign();
 	$headline = $fundraiser->headline;
 
-	// Optional tribute (set during registration).
-	$tribute_type = (string) $fundraiser->get_meta( 'tribute_type' );
-	$tribute_name = (string) $fundraiser->get_meta( 'tribute_name' );
+	// Optional page dedication.
+	$dedication   = $fundraiser->dedication();
 	$tribute_text = '';
-	if ( '' !== $tribute_type && '' !== $tribute_name ) {
-		$tribute_text = 'in_memory' === $tribute_type
+	if ( $dedication ) {
+		$tribute_text = 'memory' === $dedication['type']
 			/* translators: %s: person being honored */
-			? sprintf( __( 'In memory of %s', 'mission-donation-platform' ), $tribute_name )
+			? sprintf( __( 'In memory of %s', 'mission-donation-platform' ), $dedication['name'] )
 			/* translators: %s: person being honored */
-			: sprintf( __( 'In honor of %s', 'mission-donation-platform' ), $tribute_name );
+			: sprintf( __( 'In honor of %s', 'mission-donation-platform' ), $dedication['name'] );
 	}
 
 	ob_start();
