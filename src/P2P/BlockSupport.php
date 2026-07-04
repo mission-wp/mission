@@ -8,6 +8,7 @@
 namespace MissionDP\P2P;
 
 use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
@@ -90,26 +91,8 @@ class BlockSupport {
 	public static function primary_color_style(): string {
 		$settings = get_option( 'missiondp_settings', [] );
 		$primary  = (string) ( $settings['primary_color'] ?? '#2fa36b' );
-		$hex      = ltrim( $primary, '#' );
 
-		$component = static function ( int $offset, float $percent ) use ( $hex ): int {
-			return max( 0, (int) round( hexdec( substr( $hex, $offset, 2 ) ) * ( 1 - $percent / 100 ) ) );
-		};
-
-		$hover = sprintf( '#%02x%02x%02x', $component( 0, 12 ), $component( 2, 12 ), $component( 4, 12 ) );
-
-		$r         = hexdec( substr( $hex, 0, 2 ) );
-		$g         = hexdec( substr( $hex, 2, 2 ) );
-		$b         = hexdec( substr( $hex, 4, 2 ) );
-		$luminance = ( 0.299 * $r + 0.587 * $g + 0.114 * $b ) / 255;
-		$text      = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
-
-		return sprintf(
-			'--mission-primary: %s; --mission-primary-hover: %s; --mission-primary-text: %s;',
-			$primary,
-			$hover,
-			$text
-		);
+		return PrimaryColorResolver::inline_style( $primary );
 	}
 
 	/**
