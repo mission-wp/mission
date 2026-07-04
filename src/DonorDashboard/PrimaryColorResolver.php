@@ -2,7 +2,9 @@
 /**
  * Computes primary color CSS custom properties from a hex color.
  *
- * Shared by the donor dashboard and donation form blocks.
+ * Shared by every frontend block that themes itself from the primary
+ * color setting (donor dashboard, donation form, campaign and donor
+ * listings, P2P blocks).
  *
  * @package MissionDP
  */
@@ -43,10 +45,20 @@ class PrimaryColorResolver {
 		$primary_text          = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
 		$primary_text_on_light = $luminance > 0.5 ? $darken( $hex, 45 ) : $hex;
 
+		// 10% primary blended into white, precomputed as a solid hex: kses
+		// strips function values (color-mix, rgba) from custom properties
+		// when block output is sanitized.
+		$light = sprintf(
+			'#%02x%02x%02x',
+			(int) round( $r * 0.1 + 255 * 0.9 ),
+			(int) round( $g * 0.1 + 255 * 0.9 ),
+			(int) round( $b * 0.1 + 255 * 0.9 )
+		);
+
 		return [
 			'--mission-primary'               => $hex,
 			'--mission-primary-hover'         => $darken( $hex, 12 ),
-			'--mission-primary-light'         => "color-mix(in srgb, {$hex} 10%, transparent)",
+			'--mission-primary-light'         => $light,
 			'--mission-primary-text'          => $primary_text,
 			'--mission-primary-text-on-light' => $primary_text_on_light,
 		];

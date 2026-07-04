@@ -49,12 +49,16 @@ class PrimaryColorResolverTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the light variant is a color-mix expression on the raw hex.
+	 * Test the light variant is a solid 10%-over-white tint of the raw hex.
+	 *
+	 * A solid hex is required: kses strips function values (color-mix, rgba)
+	 * from custom properties when block output is sanitized.
 	 */
-	public function test_light_variant_uses_color_mix(): void {
+	public function test_light_variant_is_solid_tint(): void {
 		$vars = PrimaryColorResolver::compute( '#2fa36b' );
 
-		$this->assertSame( 'color-mix(in srgb, #2fa36b 10%, transparent)', $vars['--mission-primary-light'] );
+		// 0x2f -> 234, 0xa3 -> 246, 0x6b -> 240 blended 10% into white.
+		$this->assertSame( '#eaf6f0', $vars['--mission-primary-light'] );
 	}
 
 	/**
