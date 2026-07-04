@@ -152,11 +152,19 @@ async function advanceToSetup( modal, account ) {
 /**
  * Log into the donor dashboard through its own login form.
  *
+ * Clears the login rate limiter first: it allows 5 attempts per IP per 5
+ * minutes, and a full spec run logs in more often than that. The limiter's
+ * own behavior is covered by PHPUnit.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string}                          email
  * @param {string}                          password
  */
 async function dashboardLogin( page, email, password ) {
+  wpEval(
+    'global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE \\"%missiondp_rl_login%\\"" );'
+  );
+
   await page.locator( '#mission-dd-login-email' ).fill( email );
   await page.locator( '#mission-dd-login-password' ).fill( password );
   await page

@@ -122,33 +122,63 @@ if ( ! $is_donor ) :
 else :
 	// ── Logged-in state: dashboard ──
 
+	// The builder derives the persona (donor / fundraiser / both) that decides
+	// which panels exist; the queries are cached and reused by build().
+	$builder         = new \MissionDP\DonorDashboard\DashboardContextBuilder( $donor, $mission_settings );
+	$has_giving      = $builder->has_giving();
+	$has_fundraising = $builder->has_fundraising();
+
 	// ── Panels and navigation ──
 	$panels = [
-		'overview'  => [
+		'overview' => [
 			'label' => __( 'Overview', 'mission-donation-platform' ),
 			'icon'  => 'grid',
+			'group' => '',
 			'file'  => __DIR__ . '/parts/overview.php',
 		],
-		'history'   => [
-			'label' => __( 'Donation History', 'mission-donation-platform' ),
-			'icon'  => 'clock',
-			'file'  => __DIR__ . '/parts/history.php',
-		],
-		'recurring' => [
-			'label' => __( 'Recurring Donations', 'mission-donation-platform' ),
-			'icon'  => 'refresh',
-			'file'  => __DIR__ . '/parts/recurring.php',
-		],
-		'receipts'  => [
-			'label' => __( 'Annual Receipts', 'mission-donation-platform' ),
-			'icon'  => 'receipt',
-			'file'  => __DIR__ . '/parts/receipts.php',
-		],
-		'profile'   => [
-			'label' => __( 'Profile', 'mission-donation-platform' ),
-			'icon'  => 'user',
-			'file'  => __DIR__ . '/parts/profile.php',
-		],
+	];
+
+	if ( $has_fundraising ) {
+		$panels['fundraisers'] = [
+			'label' => __( 'My Fundraisers', 'mission-donation-platform' ),
+			'icon'  => 'flag',
+			'group' => __( 'Fundraising', 'mission-donation-platform' ),
+			'file'  => __DIR__ . '/parts/fundraisers.php',
+		];
+
+		if ( $builder->has_teams() ) {
+			$panels['teams'] = [
+				'label' => __( 'My Teams', 'mission-donation-platform' ),
+				'icon'  => 'users',
+				'group' => __( 'Fundraising', 'mission-donation-platform' ),
+				'file'  => __DIR__ . '/parts/teams.php',
+			];
+		}
+	}
+
+	$panels['history']   = [
+		'label' => __( 'Donation History', 'mission-donation-platform' ),
+		'icon'  => 'clock',
+		'group' => __( 'Giving', 'mission-donation-platform' ),
+		'file'  => __DIR__ . '/parts/history.php',
+	];
+	$panels['recurring'] = [
+		'label' => __( 'Recurring Donations', 'mission-donation-platform' ),
+		'icon'  => 'refresh',
+		'group' => __( 'Giving', 'mission-donation-platform' ),
+		'file'  => __DIR__ . '/parts/recurring.php',
+	];
+	$panels['receipts']  = [
+		'label' => __( 'Annual Receipts', 'mission-donation-platform' ),
+		'icon'  => 'receipt',
+		'group' => __( 'Giving', 'mission-donation-platform' ),
+		'file'  => __DIR__ . '/parts/receipts.php',
+	];
+	$panels['profile']   = [
+		'label' => __( 'Profile', 'mission-donation-platform' ),
+		'icon'  => 'user',
+		'group' => '',
+		'file'  => __DIR__ . '/parts/profile.php',
 	];
 
 	// Remove panels disabled in Settings > Donor Portal > Portal Features.
@@ -166,13 +196,9 @@ else :
 		}
 	}
 
-	// Fundraising panel only appears for donors with at least one fundraiser.
-	if ( ! empty( $donor->fundraisers( [ 'per_page' => 1 ] ) ) ) {
-		$panels['fundraising'] = [
-			'label' => __( 'Fundraising', 'mission-donation-platform' ),
-			'icon'  => 'heart',
-			'file'  => __DIR__ . '/parts/fundraising.php',
-		];
+	// Fundraisers who have never given have no giving history to manage.
+	if ( $has_fundraising && ! $has_giving ) {
+		unset( $panels['history'], $panels['recurring'], $panels['receipts'] );
 	}
 
 	// Whether to show the "Update Payment Method" button in the recurring panel.
@@ -181,8 +207,9 @@ else :
 	/**
 	 * Filters the available donor dashboard panels.
 	 *
-	 * Each panel is a keyed array with 'label', 'icon', and 'file' keys.
-	 * Keys are the panel ID used in hash routing (e.g. 'overview', 'history').
+	 * Each panel is a keyed array with 'label', 'icon', 'group', and 'file'
+	 * keys. Keys are the panel ID used in hash routing (e.g. 'overview').
+	 * 'group' is the sidebar group heading, or '' for ungrouped items.
 	 *
 	 * @param array                $panels Panel definitions keyed by panel ID.
 	 * @param \MissionDP\Models\Donor $donor  The current donor.
@@ -200,13 +227,14 @@ else :
 			'id'    => $panel_id,
 			'label' => $panel['label'],
 			'icon'  => $panel['icon'],
+			'group' => $panel['group'] ?? '',
 		];
 	}
 
 	/**
 	 * Filters the donor dashboard navigation items.
 	 *
-	 * Each item has 'id', 'label', and 'icon' keys.
+	 * Each item has 'id', 'label', 'icon', and 'group' keys.
 	 *
 	 * @param array                $nav_items Navigation items.
 	 * @param \MissionDP\Models\Donor $donor     The current donor.
@@ -214,7 +242,6 @@ else :
 	$nav_items = apply_filters( 'mission_donor_dashboard_nav_items', $nav_items, $donor );
 
 	// Build context and state via the context builder.
-	$builder  = new \MissionDP\DonorDashboard\DashboardContextBuilder( $donor, $mission_settings );
 	$result   = $builder->build( $panels, $panel_labels );
 	$context  = $result['context'];
 	$initials = $context['donor']['initials'];
@@ -277,6 +304,14 @@ else :
 						if ( ! empty( $panel['file'] ) && file_exists( $panel['file'] ) ) {
 							require $panel['file'];
 						}
+					}
+
+					// Drill-in detail views for the list panels above.
+					if ( isset( $panels['fundraisers'] ) ) {
+						require __DIR__ . '/parts/fundraiser-detail.php';
+					}
+					if ( isset( $panels['teams'] ) ) {
+						require __DIR__ . '/parts/team-detail.php';
 					}
 					?>
 				</main>

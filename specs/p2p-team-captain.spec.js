@@ -93,16 +93,22 @@ test.describe( 'P2P team captain controls', () => {
 
     await page.goto( dashboardUrl );
     await dashboardLogin( page, email, password );
-    await page.locator( 'button[data-panel="fundraising"]' ).click();
 
-    // The captain sub-section is shown with the team's current name.
+    // Drill in: My Teams list, then the team's card.
+    await page.locator( '.mission-dd-nav-link[data-panel="teams"]' ).click();
+    await page
+      .locator( '.mission-dd-panel.active .mission-dd-fr-card' )
+      .first()
+      .click();
+
+    // The captain tools are shown with the team's current name.
     const nameInput = page.locator( '#mission-dd-team-name' );
     await expect( nameInput ).toHaveValue( teamName );
 
     // Edit and save the team name.
     const newName = `${ teamName } Renamed`;
     await nameInput.fill( newName );
-    await page.getByRole( 'button', { name: 'Save changes' } ).last().click();
+    await page.getByRole( 'button', { name: 'Save changes' } ).click();
     await expect( page.locator( '.mission-dd-toast' ) ).toContainText(
       'Team updated'
     );
@@ -120,14 +126,20 @@ test.describe( 'P2P team captain controls', () => {
     // Remove the seeded member, targeting their row by name so the action
     // never depends on member ordering (confirm dialog auto-accepted).
     page.on( 'dialog', ( dialog ) => dialog.accept() );
-    await expect( page.locator( '.mission-dd-member' ) ).toHaveCount( 2 );
+    await expect(
+      page.locator( '.mission-dd-panel.active .mission-dd-person-item' )
+    ).toHaveCount( 2 );
     await page
-      .locator( '.mission-dd-member', { hasText: memberName } )
+      .locator( '.mission-dd-panel.active .mission-dd-person-item', {
+        hasText: memberName,
+      } )
       .getByRole( 'button', { name: 'Remove' } )
       .click();
     await expect( page.locator( '.mission-dd-toast' ) ).toContainText(
       'Member removed'
     );
-    await expect( page.locator( '.mission-dd-member' ) ).toHaveCount( 1 );
+    await expect(
+      page.locator( '.mission-dd-panel.active .mission-dd-person-item' )
+    ).toHaveCount( 1 );
   } );
 } );

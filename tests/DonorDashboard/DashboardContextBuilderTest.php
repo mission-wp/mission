@@ -65,6 +65,10 @@ class DashboardContextBuilderTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptionmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisermeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teammeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
@@ -494,5 +498,147 @@ class DashboardContextBuilderTest extends WP_UnitTestCase {
 		$stats = $result['context']['overview']['stats'];
 		$this->assertCount( 4, $stats );
 		$this->assertSame( 'Extra Stat', $stats[3]['label'] );
+	}
+
+	// -------------------------------------------------------------------------
+	// Persona tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Create a P2P campaign and a fundraiser on it for the donor.
+	 *
+	 * @param Donor                $donor     The owning donor.
+	 * @param array<string, mixed> $overrides Fundraiser overrides.
+	 * @return \MissionDP\Models\Fundraiser
+	 */
+	private function create_fundraiser( Donor $donor, array $overrides = [] ): \MissionDP\Models\Fundraiser {
+		$campaign = new Campaign(
+			[
+				'title' => 'Drive',
+				'type'  => Campaign::TYPE_P2P,
+			]
+		);
+		$campaign->save();
+
+		$fundraiser = new \MissionDP\Models\Fundraiser(
+			array_merge(
+				[
+					'campaign_id' => $campaign->id,
+					'donor_id'    => $donor->id,
+					'status'      => \MissionDP\Models\Fundraiser::STATUS_ACTIVE,
+					'headline'    => 'My page',
+				],
+				$overrides
+			)
+		);
+		$fundraiser->save();
+
+		return $fundraiser;
+	}
+
+	/**
+	 * Test the persona helpers for a donor-only user.
+	 */
+	public function test_donor_only_persona(): void {
+		update_option( 'missiondp_settings', [ 'test_mode' => false ] );
+		$donor = $this->create_donor();
+		$this->create_transaction( [ 'donor_id' => $donor->id ] );
+
+		$builder = new DashboardContextBuilder( $donor, [ 'currency' => 'USD' ] );
+
+		$this->assertTrue( $builder->has_giving() );
+		$this->assertFalse( $builder->has_fundraising() );
+		$this->assertFalse( $builder->has_teams() );
+
+		$context = $builder->build( self::PANELS, self::PANEL_LABELS )['context'];
+
+		$this->assertTrue( $context['hasGiving'] );
+		$this->assertFalse( $context['hasFundraising'] );
+		$this->assertArrayNotHasKey( 'fundraisers', $context );
+		$this->assertArrayNotHasKey( 'teams', $context );
+		$this->assertFalse( $context['overview']['isFundraiserVariant'] );
+		$this->assertNull( $context['overview']['spotlight'] );
+	}
+
+	/**
+	 * Test the persona helpers for a fundraiser who never donated.
+	 */
+	public function test_fundraiser_only_persona(): void {
+		update_option( 'missiondp_settings', [ 'test_mode' => false ] );
+		$donor = $this->create_donor();
+		$this->create_fundraiser( $donor );
+
+		$builder = new DashboardContextBuilder( $donor, [ 'currency' => 'USD' ] );
+
+		$this->assertFalse( $builder->has_giving() );
+		$this->assertTrue( $builder->has_fundraising() );
+		$this->assertFalse( $builder->has_teams() );
+
+		$result  = $builder->build( self::PANELS, self::PANEL_LABELS );
+		$context = $result['context'];
+
+		$this->assertFalse( $context['hasGiving'] );
+		$this->assertTrue( $context['hasFundraising'] );
+		$this->assertArrayHasKey( 'fundraisers', $context );
+		$this->assertTrue( $context['overview']['isFundraiserVariant'] );
+		$this->assertCount( 3, $context['overview']['fundraiserStats'] );
+		$this->assertNotNull( $context['overview']['spotlight'] );
+
+		// The drill-in state flags exist for hydration; the old panel flag is gone.
+		$this->assertFalse( $result['state']['isFundraisers'] );
+		$this->assertFalse( $result['state']['isFundraiserDetail'] );
+		$this->assertArrayNotHasKey( 'isFundraising', $result['state'] );
+	}
+
+	/**
+	 * Test a donor whose only gift was refunded still counts as giving.
+	 */
+	public function test_refunded_only_donor_counts_as_giving(): void {
+		update_option( 'missiondp_settings', [ 'test_mode' => false ] );
+		$donor = $this->create_donor();
+		$this->create_transaction(
+			[
+				'donor_id' => $donor->id,
+				'status'   => Transaction::STATUS_REFUNDED,
+			]
+		);
+
+		$builder = new DashboardContextBuilder( $donor, [ 'currency' => 'USD' ] );
+
+		$this->assertTrue( $builder->has_giving() );
+	}
+
+	/**
+	 * Test a user who both gives and fundraises gets everything.
+	 */
+	public function test_donor_and_fundraiser_persona(): void {
+		update_option( 'missiondp_settings', [ 'test_mode' => false ] );
+		$donor = $this->create_donor();
+		$this->create_transaction( [ 'donor_id' => $donor->id ] );
+		$fundraiser = $this->create_fundraiser( $donor );
+
+		$team = new \MissionDP\Models\Team(
+			[
+				'campaign_id' => $fundraiser->campaign_id,
+				'name'        => 'Rangers',
+				'status'      => 'active',
+			]
+		);
+		$team->save();
+		$fundraiser->join_team( $team );
+
+		$builder = new DashboardContextBuilder( $donor, [ 'currency' => 'USD' ] );
+
+		$this->assertTrue( $builder->has_giving() );
+		$this->assertTrue( $builder->has_fundraising() );
+		$this->assertTrue( $builder->has_teams() );
+
+		$context = $builder->build( self::PANELS, self::PANEL_LABELS )['context'];
+
+		$this->assertArrayHasKey( 'fundraisers', $context );
+		$this->assertArrayHasKey( 'teams', $context );
+		// A giving fundraiser keeps the donor overview, plus the spotlight.
+		$this->assertFalse( $context['overview']['isFundraiserVariant'] );
+		$this->assertNotNull( $context['overview']['spotlight'] );
 	}
 }

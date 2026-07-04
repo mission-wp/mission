@@ -7,8 +7,12 @@
 import { store, getContext, getElement } from '@wordpress/interactivity';
 import { authState, authCallbacks, authActions } from './actions/auth';
 import { historyState, historyActions } from './actions/history';
-import { fundraisingState, fundraisingActions } from './actions/fundraising';
-import { teamState, teamActions } from './actions/team';
+import {
+  fundraisersState,
+  fundraisersActions,
+  syncFundraiserDetail,
+} from './actions/fundraisers';
+import { teamState, teamActions, syncTeamDetail } from './actions/team';
 import { profileState, profileActions } from './actions/profile';
 import { receiptsActions } from './actions/receipts';
 import { showToast } from './utils/toast';
@@ -44,15 +48,62 @@ function mergeState( ...sources ) {
 /**
  * Read the active panel from the URL hash.
  *
- * Validates against the set of valid panels provided via PHP context.
- * Falls back to 'overview' if the hash is not a known panel.
+ * Top-level panels validate against the set provided via PHP context;
+ * detail panels (fundraiser-{id}, team-{id}) validate against the record
+ * IDs in context. Falls back to 'overview' for anything unknown.
  *
- * @param {string[]} validPanels Array of valid panel IDs.
+ * @param {Object} ctx Interactivity context.
  * @return {string} Panel ID.
  */
-function panelFromHash( validPanels ) {
-  const hash = window.location.hash.replace( '#', '' );
-  return validPanels.includes( hash ) ? hash : 'overview';
+function panelFromHash( ctx ) {
+  let hash = window.location.hash.replace( '#', '' );
+
+  // The pre-5.x dashboard had a single #fundraising panel.
+  if ( hash === 'fundraising' ) {
+    hash = 'fundraisers';
+    try {
+      window.history.replaceState( null, '', '#fundraisers' );
+    } catch {
+      // Rewriting the URL is cosmetic; the redirect still happens.
+    }
+  }
+
+  if ( ctx.validPanels?.includes( hash ) ) {
+    return hash;
+  }
+
+  const fundraiser = hash.match( /^fundraiser-(\d+)$/ );
+  if (
+    fundraiser &&
+    ctx.fundraisers?.ids?.includes( Number( fundraiser[ 1 ] ) )
+  ) {
+    return hash;
+  }
+
+  const team = hash.match( /^team-(\d+)$/ );
+  if ( team && ctx.teams?.ids?.includes( Number( team[ 1 ] ) ) ) {
+    return hash;
+  }
+
+  return 'overview';
+}
+
+/**
+ * Sync the detail working objects when the active panel is a drill-in view.
+ *
+ * @param {Object} ctx Interactivity context.
+ */
+function syncDetailFromPanel( ctx ) {
+  const fundraiser = ctx.activePanel.match( /^fundraiser-(\d+)$/ );
+  if ( fundraiser ) {
+    syncFundraiserDetail( ctx, Number( fundraiser[ 1 ] ) );
+    return;
+  }
+
+  const team = ctx.activePanel.match( /^team-(\d+)$/ );
+  if ( team ) {
+    syncTeamDetail( ctx, Number( team[ 1 ] ) );
+  }
 }
 
 /**
@@ -77,7 +128,7 @@ store( 'mission-donation-platform/donor-dashboard', {
     historyState,
     recurringState,
     profileState,
-    fundraisingState,
+    fundraisersState,
     teamState,
     {
       // ── Toast ──
@@ -101,6 +152,16 @@ store( 'mission-donation-platform/donor-dashboard', {
       // ── Dashboard panels ──
       get panelTitle() {
         const ctx = getContext();
+        if ( /^fundraiser-\d+$/.test( ctx.activePanel ) ) {
+          return (
+            ctx.fundraisers?.detail?.headline ||
+            ctx.fundraisers?.detail?.campaignTitle ||
+            ''
+          );
+        }
+        if ( /^team-\d+$/.test( ctx.activePanel ) ) {
+          return ctx.teams?.detail?.name || '';
+        }
         return ctx.panelLabels?.[ ctx.activePanel ] || 'Overview';
       },
       get isOverview() {
@@ -118,8 +179,25 @@ store( 'mission-donation-platform/donor-dashboard', {
       get isProfile() {
         return getContext().activePanel === 'profile';
       },
-      get isFundraising() {
-        return getContext().activePanel === 'fundraising';
+      get isFundraisers() {
+        return getContext().activePanel === 'fundraisers';
+      },
+      get isFundraiserDetail() {
+        return /^fundraiser-\d+$/.test( getContext().activePanel );
+      },
+      get isFundraisersNav() {
+        const panel = getContext().activePanel;
+        return panel === 'fundraisers' || /^fundraiser-\d+$/.test( panel );
+      },
+      get isTeams() {
+        return getContext().activePanel === 'teams';
+      },
+      get isTeamDetail() {
+        return /^team-\d+$/.test( getContext().activePanel );
+      },
+      get isTeamsNav() {
+        const panel = getContext().activePanel;
+        return panel === 'teams' || /^team-\d+$/.test( panel );
       },
     }
   ),
@@ -135,7 +213,8 @@ store( 'mission-donation-platform/donor-dashboard', {
       const ctx = getContext();
       const { ref } = getElement();
 
-      ctx.activePanel = panelFromHash( ctx.validPanels );
+      ctx.activePanel = panelFromHash( ctx );
+      syncDetailFromPanel( ctx );
 
       // Handle email change verification link.
       const params = new URLSearchParams( window.location.search );
@@ -197,7 +276,8 @@ store( 'mission-donation-platform/donor-dashboard', {
       }
 
       const onHashChange = () => {
-        ctx.activePanel = panelFromHash( ctx.validPanels );
+        ctx.activePanel = panelFromHash( ctx );
+        syncDetailFromPanel( ctx );
         focusActivePanel();
       };
       window.addEventListener( 'hashchange', onHashChange );
@@ -298,10 +378,10 @@ store( 'mission-donation-platform/donor-dashboard', {
     // ── Profile ──
     ...profileActions,
 
-    // ── Fundraising ──
-    ...fundraisingActions,
+    // ── My Fundraisers ──
+    ...fundraisersActions,
 
-    // ── Team (captain controls) ──
+    // ── My Teams ──
     ...teamActions,
   },
 } );

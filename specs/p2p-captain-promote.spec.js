@@ -122,21 +122,31 @@ test.describe( 'P2P captain promotion', () => {
 
     await page.goto( dashboardUrl );
     await dashboardLogin( page, captainEmail, password );
-    await page.locator( 'button[data-panel="fundraising"]' ).click();
+    await page.locator( '.mission-dd-nav-link[data-panel="teams"]' ).click();
+    await page
+      .locator( '.mission-dd-panel.active .mission-dd-fr-card' )
+      .first()
+      .click();
 
-    const captainRow = page.locator( '.mission-dd-member', {
-      hasText: captainName,
-    } );
-    const memberRow = page.locator( '.mission-dd-member', {
-      hasText: memberName,
-    } );
+    const captainRow = page.locator(
+      '.mission-dd-panel.active .mission-dd-person-item',
+      {
+        hasText: captainName,
+      }
+    );
+    const memberRow = page.locator(
+      '.mission-dd-panel.active .mission-dd-person-item',
+      {
+        hasText: memberName,
+      }
+    );
 
     // Before: the badge sits on the seeded captain, not the member.
     await expect(
-      captainRow.locator( '.mission-dd-member-badge' )
+      captainRow.locator( '.mission-dd-role-badge-captain' )
     ).toBeVisible();
     await expect(
-      memberRow.locator( '.mission-dd-member-badge' )
+      memberRow.locator( '.mission-dd-role-badge-captain' )
     ).toBeHidden();
 
     // Promote the member (confirm dialog auto-accepted).
@@ -146,8 +156,8 @@ test.describe( 'P2P captain promotion', () => {
       'New captain set'
     );
 
-    // The former captain immediately loses the team management section.
-    await expect( page.locator( '.mission-dd-captain' ) ).toBeHidden();
+    // The former captain immediately loses the team management tools.
+    await expect( page.locator( '#mission-dd-team-name' ) ).toBeHidden();
 
     // The promoted member (fresh session) now has the captain controls, with
     // the badge on their own row and none on the former captain's.
@@ -156,18 +166,30 @@ test.describe( 'P2P captain promotion', () => {
     try {
       await memberPage.goto( dashboardUrl );
       await dashboardLogin( memberPage, memberEmail, password );
-      await memberPage.locator( 'button[data-panel="fundraising"]' ).click();
+      await memberPage
+        .locator( '.mission-dd-nav-link[data-panel="teams"]' )
+        .click();
+      await memberPage
+        .locator( '.mission-dd-panel.active .mission-dd-fr-card' )
+        .first()
+        .click();
 
-      await expect( memberPage.locator( '.mission-dd-captain' ) ).toBeVisible();
       await expect(
-        memberPage
-          .locator( '.mission-dd-member', { hasText: memberName } )
-          .locator( '.mission-dd-member-badge' )
+        memberPage.locator( '#mission-dd-team-name' )
       ).toBeVisible();
       await expect(
         memberPage
-          .locator( '.mission-dd-member', { hasText: captainName } )
-          .locator( '.mission-dd-member-badge' )
+          .locator( '.mission-dd-panel.active .mission-dd-person-item', {
+            hasText: memberName,
+          } )
+          .locator( '.mission-dd-role-badge-captain' )
+      ).toBeVisible();
+      await expect(
+        memberPage
+          .locator( '.mission-dd-panel.active .mission-dd-person-item', {
+            hasText: captainName,
+          } )
+          .locator( '.mission-dd-role-badge-captain' )
       ).toBeHidden();
     } finally {
       await context.close();

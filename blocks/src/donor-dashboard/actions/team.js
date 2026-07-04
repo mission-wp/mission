@@ -1,98 +1,212 @@
 /**
- * Donor Dashboard — Team captain controls (sub-section of the Fundraising panel).
+ * Donor Dashboard — My Teams panel and team detail view.
  *
- * Only shown when the active fundraiser leads a team. Every request is
- * captain-scoped; the server re-checks captaincy on each call.
+ * Captains manage the team; members can view the roster and leave. Every
+ * request is re-checked server-side (captaincy, ownership, and campaign
+ * lock), so the client state is presentation only.
  */
 import { getContext } from '@wordpress/interactivity';
 import { showToast } from '../utils/toast';
-import { activeFundraiser } from './fundraising';
+import { findFundraiserCard } from './fundraisers';
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
 
 /**
- * The captain working object for the active fundraiser, if any.
+ * Find a current-team card by ID.
  *
  * @param {Object} ctx Interactivity context.
- * @return {Object|null} The captain block, or null.
+ * @param {number} id  Team ID.
+ * @return {Object|undefined} The card, if any.
  */
-function captainBlock( ctx ) {
-  return ctx.fundraising?.captain || null;
+export function findTeamCard( ctx, id ) {
+  return ctx.teams?.current?.find( ( card ) => card.id === id );
+}
+
+/**
+ * Point the team detail working objects at a card (drill-in or deep link).
+ *
+ * @param {Object} ctx Interactivity context.
+ * @param {number} id  Team ID.
+ */
+export function syncTeamDetail( ctx, id ) {
+  const teams = ctx.teams;
+  const card = findTeamCard( ctx, id );
+  if ( ! teams || ! card ) {
+    return;
+  }
+
+  teams.detail = card;
+  teams.edit.name = card.name;
+  teams.edit.goal = card.goalMajor;
+  teams.edit.access = card.access;
+  teams.edit.description = card.description;
+  teams.edit.saving = false;
+  teams.edit.saved = false;
+  teams.edit.error = '';
+  teams.invite.email = '';
+  teams.invite.error = '';
+  teams.invite.sending = false;
+  teams.membersPage = 1;
+  teams.uploadError = '';
+}
+
+/**
+ * Map a member row from a REST response into the context shape.
+ *
+ * @param {Object} row Member row from the team endpoints.
+ * @param {Object} ctx Interactivity context.
+ * @return {Object} Member for the context.
+ */
+function mapMember( row, ctx ) {
+  const progress = Math.min( 100, Math.round( row.progress || 0 ) );
+
+  return {
+    fundraiserId: row.fundraiser_id,
+    donorId: row.donor_id,
+    name: row.name,
+    initials: row.initials,
+    isCaptain: row.is_captain,
+    isSelf: row.donor_id === ctx.teams?.donorId,
+    progress: row.progress || 0,
+    barWidth: `${ progress }%`,
+    raisedOfGoalLabel: row.raised_of_goal_label,
+  };
+}
+
+/**
+ * Translated strings, read from context so the script module needs no
+ * translation import.
+ *
+ * @return {Object} Label strings.
+ */
+function teamStrings() {
+  const i18n = getContext().teams?.i18n || {};
+  return {
+    save: i18n.save || 'Save changes',
+    saving: i18n.saving || 'Saving…',
+    saved: i18n.saved || 'Saved',
+    range: i18n.range || '%1$s–%2$s of %3$s',
+  };
 }
 
 export const teamState = {
-  get isCaptain() {
-    return !! getContext().fundraising?.captain;
-  },
   get teamSaveLabel() {
-    const cap = getContext().fundraising?.captain;
-    const i18n = getContext().fundraising?.i18n || {};
-    if ( cap?.saved ) {
-      return i18n.saved || 'Saved';
+    const edit = getContext().teams?.edit;
+    if ( edit?.saved ) {
+      return teamStrings().saved;
     }
-    if ( cap?.saving ) {
-      return i18n.saving || 'Saving…';
+    if ( edit?.saving ) {
+      return teamStrings().saving;
     }
-    return i18n.save || 'Save changes';
+    return teamStrings().save;
   },
   get teamSaveDisabled() {
-    return !! getContext().fundraising?.captain?.saving;
+    return !! getContext().teams?.edit?.saving;
   },
   get hasInvitations() {
-    return ( getContext().fundraising?.captain?.invitations?.length || 0 ) > 0;
+    return ( getContext().teams?.detail?.invitations?.length || 0 ) > 0;
+  },
+  get teamPendingNoticeVisible() {
+    const detail = getContext().teams?.detail;
+    return !! detail?.isCaptain && !! detail?.isPending;
+  },
+  get memberActionsHidden() {
+    const ctx = getContext();
+    return (
+      ! ctx.teams?.detail?.isCaptain ||
+      !! ctx.member?.isCaptain ||
+      !! ctx.member?.isSelf
+    );
+  },
+
+  // ── Members pagination (client-side; the full roster is in context) ──
+  get teamMembersPageItems() {
+    const teams = getContext().teams;
+    const members = teams?.detail?.members || [];
+    const start = ( ( teams?.membersPage || 1 ) - 1 ) * teams.membersPerPage;
+    return members.slice( start, start + teams.membersPerPage );
+  },
+  get teamMembersHasPages() {
+    const teams = getContext().teams;
+    return (
+      ( teams?.detail?.members?.length || 0 ) > ( teams?.membersPerPage || 5 )
+    );
+  },
+  get teamMembersRangeLabel() {
+    const teams = getContext().teams;
+    const total = teams?.detail?.members?.length || 0;
+    if ( ! total ) {
+      return '';
+    }
+    const first = ( teams.membersPage - 1 ) * teams.membersPerPage + 1;
+    const last = Math.min( teams.membersPage * teams.membersPerPage, total );
+    return teamStrings()
+      .range.replace( '%1$s', first )
+      .replace( '%2$s', last )
+      .replace( '%3$s', total );
+  },
+  get teamMembersPrevDisabled() {
+    return ( getContext().teams?.membersPage || 1 ) <= 1;
+  },
+  get teamMembersNextDisabled() {
+    const teams = getContext().teams;
+    const total = teams?.detail?.members?.length || 0;
+    return teams?.membersPage >= Math.ceil( total / teams?.membersPerPage );
   },
 };
 
 export const teamActions = {
-  editTeamName( event ) {
-    const cap = captainBlock( getContext() );
-    if ( cap ) {
-      cap.name = event.target.value;
+  /**
+   * Drill into a team card. The hash drives panel state; the hashchange
+   * listener re-syncs the detail objects.
+   */
+  openTeam() {
+    const ctx = getContext();
+    const id = ctx.card?.id;
+    if ( ! id ) {
+      return;
     }
+    window.location.hash = `team-${ id }`;
+    ctx.activePanel = `team-${ id }`;
+    ctx.sidebarOpen = false;
+    syncTeamDetail( ctx, id );
+  },
+
+  editTeamName( event ) {
+    getContext().teams.edit.name = event.target.value;
   },
 
   editTeamDescription( event ) {
-    const cap = captainBlock( getContext() );
-    if ( cap ) {
-      cap.description = event.target.value;
-    }
+    getContext().teams.edit.description = event.target.value;
   },
 
   editTeamGoal( event ) {
-    const cap = captainBlock( getContext() );
-    if ( cap ) {
-      cap.goal = event.target.value;
-    }
+    getContext().teams.edit.goal = event.target.value;
   },
 
   editTeamAccess( event ) {
-    const cap = captainBlock( getContext() );
-    if ( cap ) {
-      cap.access = event.target.value;
-    }
+    getContext().teams.edit.access = event.target.value;
   },
 
   editInviteEmail( event ) {
-    const cap = captainBlock( getContext() );
-    if ( cap ) {
-      cap.inviteEmail = event.target.value;
-    }
+    getContext().teams.invite.email = event.target.value;
   },
 
   *saveTeam() {
     const ctx = getContext();
-    const cap = captainBlock( ctx );
-    if ( ! cap ) {
+    const teams = ctx.teams;
+    const card = teams.detail;
+    if ( ! card ) {
       return;
     }
 
-    cap.saving = true;
-    cap.saved = false;
-    cap.error = '';
+    teams.edit.saving = true;
+    teams.edit.saved = false;
+    teams.edit.error = '';
 
     try {
       const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/teams/${ cap.teamId }`,
+        `${ ctx.restUrl }donor-dashboard/teams/${ card.id }`,
         {
           method: 'PUT',
           credentials: 'same-origin',
@@ -101,44 +215,56 @@ export const teamActions = {
             'X-WP-Nonce': ctx.nonce,
           },
           body: JSON.stringify( {
-            name: cap.name,
-            description: cap.description,
+            name: teams.edit.name,
+            description: teams.edit.description,
             // Send the goal in major units; the server converts to minor.
-            goal: Number( cap.goal ) || 0,
-            access: cap.access,
+            goal: Number( teams.edit.goal ) || 0,
+            access: teams.edit.access,
           } ),
         }
       );
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        cap.error = data.message || 'Could not save. Please try again.';
-        cap.saving = false;
+        teams.edit.error = data.message || 'Could not save. Please try again.';
+        teams.edit.saving = false;
         return;
       }
 
       const data = yield response.json();
-      cap.name = data.name;
-      cap.description = data.description;
-      cap.goal = data.goal_major;
-      cap.access = data.access;
-      cap.isPrivate = data.access === 'private';
-      cap.saving = false;
-      cap.saved = true;
-      showToast( ctx, ctx.fundraising.i18n?.teamToast || 'Team updated' );
+
+      // The detail object IS the card in the list, so the card updates too.
+      card.name = data.name;
+      card.description = data.description;
+      card.goalMajor = data.goal_major;
+      card.goalDisplay = data.goal_display;
+      card.hasGoal = data.goal > 0;
+      card.access = data.access;
+      card.isPrivate = data.access === 'private';
+      card.progress = data.progress;
+      card.barWidth = `${ Math.min( 100, Math.round( data.progress || 0 ) ) }%`;
+      card.percentLabel =
+        data.goal > 0
+          ? `${ Math.min( 100, Math.round( data.progress || 0 ) ) }%`
+          : '';
+      card.raisedDisplay = data.raised_display;
+
+      teams.edit.saving = false;
+      teams.edit.saved = true;
+      showToast( ctx, teams.i18n?.teamToast || 'Team updated' );
 
       setTimeout( () => {
-        cap.saved = false;
+        teams.edit.saved = false;
       }, 2000 );
     } catch {
-      cap.error = GENERIC_ERROR;
-      cap.saving = false;
+      teams.edit.error = GENERIC_ERROR;
+      teams.edit.saving = false;
     }
   },
 
   triggerTeamPhotoUpload( event ) {
     const input = event?.target
-      ?.closest( '.mission-dd-team-cover' )
+      ?.closest( '.mission-dd-cover' )
       ?.querySelector( 'input[type="file"]' );
     if ( input ) {
       input.click();
@@ -147,21 +273,22 @@ export const teamActions = {
 
   *uploadTeamPhoto( event ) {
     const ctx = getContext();
-    const cap = captainBlock( ctx );
+    const teams = ctx.teams;
+    const card = teams.detail;
     const file = event?.target?.files?.[ 0 ];
-    if ( ! cap || ! file ) {
+    if ( ! card || ! file ) {
       return;
     }
 
-    cap.uploading = true;
-    cap.uploadError = '';
+    teams.uploading = true;
+    teams.uploadError = '';
 
     const body = new FormData();
     body.append( 'file', file );
 
     try {
       const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/teams/${ cap.teamId }/photo`,
+        `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/photo`,
         {
           method: 'POST',
           credentials: 'same-origin',
@@ -172,20 +299,20 @@ export const teamActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        cap.uploadError =
+        teams.uploadError =
           data.message || 'Could not upload the image. Please try again.';
-        cap.uploading = false;
+        teams.uploading = false;
         return;
       }
 
       const data = yield response.json();
-      cap.coverImageUrl = data.cover_image_url;
-      cap.hasCover = !! data.cover_image_url;
-      cap.uploading = false;
-      showToast( ctx, ctx.fundraising.i18n?.teamPhoto || 'Team image updated' );
+      card.coverImageUrl = data.cover_image_url;
+      card.hasCover = !! data.cover_image_url;
+      teams.uploading = false;
+      showToast( ctx, teams.i18n?.teamPhoto || 'Team image updated' );
     } catch {
-      cap.uploadError = GENERIC_ERROR;
-      cap.uploading = false;
+      teams.uploadError = GENERIC_ERROR;
+      teams.uploading = false;
     } finally {
       if ( event?.target ) {
         event.target.value = '';
@@ -195,22 +322,19 @@ export const teamActions = {
 
   *inviteMember() {
     const ctx = getContext();
-    const cap = captainBlock( ctx );
-    if ( ! cap ) {
+    const teams = ctx.teams;
+    const card = teams.detail;
+    const email = ( teams.invite.email || '' ).trim();
+    if ( ! card || ! email ) {
       return;
     }
 
-    const email = ( cap.inviteEmail || '' ).trim();
-    if ( ! email ) {
-      return;
-    }
-
-    cap.inviting = true;
-    cap.inviteError = '';
+    teams.invite.sending = true;
+    teams.invite.error = '';
 
     try {
       const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/teams/${ cap.teamId }/invite`,
+        `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/invite`,
         {
           method: 'POST',
           credentials: 'same-origin',
@@ -225,30 +349,31 @@ export const teamActions = {
       const data = yield response.json();
 
       if ( ! response.ok ) {
-        cap.inviteError = data.message || GENERIC_ERROR;
-        cap.inviting = false;
+        teams.invite.error = data.message || GENERIC_ERROR;
+        teams.invite.sending = false;
         return;
       }
 
-      cap.invitations = data.invitations || [];
-      cap.inviteEmail = '';
-      cap.inviting = false;
-      showToast( ctx, ctx.fundraising.i18n?.inviteToast || 'Invitation sent' );
+      card.invitations = data.invitations || [];
+      teams.invite.email = '';
+      teams.invite.sending = false;
+      showToast( ctx, teams.i18n?.inviteToast || 'Invitation sent' );
     } catch {
-      cap.inviteError = GENERIC_ERROR;
-      cap.inviting = false;
+      teams.invite.error = GENERIC_ERROR;
+      teams.invite.sending = false;
     }
   },
 
   *removeMember() {
     const ctx = getContext();
-    const cap = captainBlock( ctx );
+    const teams = ctx.teams;
+    const card = teams.detail;
     const memberId = ctx.member?.fundraiserId;
-    if ( ! cap || ! memberId ) {
+    if ( ! card || ! memberId ) {
       return;
     }
 
-    const confirmMsg = ctx.fundraising?.i18n?.confirmRemove;
+    const confirmMsg = teams.i18n?.confirmRemove;
     // eslint-disable-next-line no-alert
     if ( confirmMsg && ! window.confirm( confirmMsg ) ) {
       return;
@@ -256,7 +381,7 @@ export const teamActions = {
 
     try {
       const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/teams/${ cap.teamId }/members/${ memberId }/remove`,
+        `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/members/${ memberId }/remove`,
         {
           method: 'POST',
           credentials: 'same-origin',
@@ -266,27 +391,32 @@ export const teamActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        cap.error = data.message || GENERIC_ERROR;
+        teams.edit.error = data.message || GENERIC_ERROR;
         return;
       }
 
       const data = yield response.json();
-      cap.members = data.members || [];
-      showToast( ctx, ctx.fundraising.i18n?.removeToast || 'Member removed' );
+      card.members = ( data.members || [] ).map( ( row ) =>
+        mapMember( row, ctx )
+      );
+      card.memberCount = card.members.length;
+      teams.membersPage = 1;
+      showToast( ctx, teams.i18n?.removeToast || 'Member removed' );
     } catch {
-      cap.error = GENERIC_ERROR;
+      teams.edit.error = GENERIC_ERROR;
     }
   },
 
   *promoteMember() {
     const ctx = getContext();
-    const cap = captainBlock( ctx );
-    const memberId = ctx.member?.fundraiserId;
-    if ( ! cap || ! memberId ) {
+    const teams = ctx.teams;
+    const card = teams.detail;
+    const member = ctx.member;
+    if ( ! card || ! member?.fundraiserId ) {
       return;
     }
 
-    const confirmMsg = ctx.fundraising?.i18n?.confirmPromote;
+    const confirmMsg = teams.i18n?.confirmPromote;
     // eslint-disable-next-line no-alert
     if ( confirmMsg && ! window.confirm( confirmMsg ) ) {
       return;
@@ -294,7 +424,7 @@ export const teamActions = {
 
     try {
       const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/teams/${ cap.teamId }/members/${ memberId }/promote`,
+        `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/members/${ member.fundraiserId }/promote`,
         {
           method: 'POST',
           credentials: 'same-origin',
@@ -304,19 +434,101 @@ export const teamActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        cap.error = data.message || GENERIC_ERROR;
+        teams.edit.error = data.message || GENERIC_ERROR;
         return;
       }
 
-      // The acting donor is no longer captain; drop the management section.
-      const item = activeFundraiser( ctx );
-      if ( item ) {
-        item.captain = null;
-      }
-      ctx.fundraising.captain = null;
-      showToast( ctx, ctx.fundraising.i18n?.promoteToast || 'New captain set' );
+      const data = yield response.json();
+
+      // The acting donor is no longer captain; the management tools drop away.
+      card.isCaptain = false;
+      card.roleLabel = teams.i18n?.memberRole || 'Member';
+      card.captainName = member.name;
+      card.captainChipLabel = (
+        teams.i18n?.captainChip || 'Captain: %s'
+      ).replace( '%s', member.name );
+      card.members = ( data.members || [] ).map( ( row ) =>
+        mapMember( row, ctx )
+      );
+      card.invitations = [];
+      showToast( ctx, teams.i18n?.promoteToast || 'New captain set' );
     } catch {
-      cap.error = GENERIC_ERROR;
+      teams.edit.error = GENERIC_ERROR;
+    }
+  },
+
+  *leaveTeam() {
+    const ctx = getContext();
+    const teams = ctx.teams;
+    const card = teams.detail;
+    if ( ! card || teams.leaving ) {
+      return;
+    }
+
+    const confirmMsg = teams.i18n?.confirmLeave;
+    // eslint-disable-next-line no-alert
+    if ( confirmMsg && ! window.confirm( confirmMsg ) ) {
+      return;
+    }
+
+    teams.leaving = true;
+
+    try {
+      const response = yield fetch(
+        `${ ctx.restUrl }donor-dashboard/fundraisers/${ card.myFundraiserId }/leave-team`,
+        {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'X-WP-Nonce': ctx.nonce },
+        }
+      );
+
+      if ( ! response.ok ) {
+        const data = yield response.json();
+        teams.leaving = false;
+        showToast( ctx, data.message || GENERIC_ERROR, 'error' );
+        return;
+      }
+
+      // Drop the team from the list and detach it from the fundraiser card.
+      const index = teams.current.findIndex( ( row ) => row.id === card.id );
+      if ( index > -1 ) {
+        teams.current.splice( index, 1 );
+      }
+      teams.hasCurrent = teams.current.length > 0;
+      teams.ids = teams.current.map( ( row ) => row.id );
+
+      const fundraiserCard = findFundraiserCard( ctx, card.myFundraiserId );
+      if ( fundraiserCard ) {
+        fundraiserCard.onTeam = false;
+        fundraiserCard.teamId = null;
+        fundraiserCard.teamName = '';
+        fundraiserCard.teamUrl = '';
+        fundraiserCard.roleLabel = '';
+      }
+
+      teams.leaving = false;
+      window.location.hash = 'teams';
+      ctx.activePanel = 'teams';
+      showToast( ctx, teams.i18n?.leaveToast || 'You left the team' );
+    } catch {
+      teams.leaving = false;
+      showToast( ctx, GENERIC_ERROR, 'error' );
+    }
+  },
+
+  teamMembersPrev() {
+    const teams = getContext().teams;
+    if ( teams.membersPage > 1 ) {
+      teams.membersPage--;
+    }
+  },
+
+  teamMembersNext() {
+    const teams = getContext().teams;
+    const total = teams.detail?.members?.length || 0;
+    if ( teams.membersPage < Math.ceil( total / teams.membersPerPage ) ) {
+      teams.membersPage++;
     }
   },
 };

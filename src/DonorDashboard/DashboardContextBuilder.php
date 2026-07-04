@@ -43,6 +43,17 @@ class DashboardContextBuilder {
 	private bool $is_test;
 	private ReportingService $reporting;
 
+	/** @var \MissionDP\Models\Fundraiser[]|null */
+	private ?array $fundraisers_cache = null;
+
+	/** @var Subscription[]|null */
+	private ?array $active_subscriptions_cache = null;
+
+	/** @var Subscription[]|null */
+	private ?array $cancelled_subscriptions_cache = null;
+
+	private ?int $history_total_cache = null;
+
 	/** @var array<string, string> */
 	private array $frequency_suffix;
 
@@ -82,6 +93,43 @@ class DashboardContextBuilder {
 	}
 
 	/**
+	 * Whether the donor has any giving history (transactions or subscriptions).
+	 *
+	 * Uses the raw transaction count rather than the completed-only aggregates,
+	 * so a donor whose only gifts were refunded still sees their history.
+	 *
+	 * @return bool
+	 */
+	public function has_giving(): bool {
+		return $this->count_history_transactions() > 0
+			|| count( $this->query_active_subscriptions() ) + count( $this->query_cancelled_subscriptions() ) > 0;
+	}
+
+	/**
+	 * Whether the donor has any peer-to-peer fundraising pages.
+	 *
+	 * @return bool
+	 */
+	public function has_fundraising(): bool {
+		return ! empty( $this->fundraisers() );
+	}
+
+	/**
+	 * Whether the donor belongs to any team, past or present.
+	 *
+	 * @return bool
+	 */
+	public function has_teams(): bool {
+		foreach ( $this->fundraisers() as $fundraiser ) {
+			if ( null !== $fundraiser->team_id ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Build the full Interactivity API context array.
 	 *
 	 * @param array $panels      Panel definitions (keyed by panel ID).
@@ -99,6 +147,7 @@ class DashboardContextBuilder {
 		$history_total           = $this->count_history_transactions();
 		$history_years           = $this->reporting->donor_transaction_years( $donor->id, $this->is_test );
 		$history_campaigns       = $this->reporting->donor_transaction_campaigns( $donor->id, $this->is_test );
+		$has_giving              = $this->has_giving();
 
 		// Batch-load all campaigns (avoids N+1 queries).
 		$this->preload_campaigns(
@@ -133,6 +182,8 @@ class DashboardContextBuilder {
 		$context = [
 			'activePanel'          => 'overview',
 			'sidebarOpen'          => false,
+			'hasGiving'            => $has_giving,
+			'hasFundraising'       => $this->has_fundraising(),
 			'donor'                => [
 				'firstName' => $donor->first_name,
 				'lastName'  => $donor->last_name,
@@ -176,6 +227,12 @@ class DashboardContextBuilder {
 				'activeSubscriptions' => $prepared_subscriptions,
 				'hasTransactions'     => $transaction_count > 0,
 				'hasSubscriptions'    => count( $active_subscriptions ) > 0,
+				// Fundraising defaults; FundraisersContextBuilder overrides them below.
+				'isFundraiserVariant' => false,
+				'fundraiserStats'     => [],
+				'spotlight'           => null,
+				'recentPageDonations' => [],
+				'hasPageDonations'    => false,
 			],
 			'recurring'            => [
 				'activeSubscriptions'    => $prepared_active_recurring,
@@ -217,9 +274,17 @@ class DashboardContextBuilder {
 			],
 		];
 
-		$fundraising = $this->build_fundraising();
-		if ( null !== $fundraising ) {
-			$context['fundraising'] = $fundraising;
+		$fundraisers_builder = new FundraisersContextBuilder( $donor, $this->settings, $this->reporting, $this->fundraisers() );
+		$fundraisers_context = $fundraisers_builder->build();
+
+		if ( null !== $fundraisers_context ) {
+			$context['fundraisers'] = $fundraisers_context;
+			$context['overview']    = array_merge( $context['overview'], $fundraisers_builder->overview_extras( $has_giving ) );
+
+			$teams_context = ( new TeamsContextBuilder( $donor, $this->settings, $this->reporting, $this->fundraisers() ) )->build();
+			if ( null !== $teams_context ) {
+				$context['teams'] = $teams_context;
+			}
 		}
 
 		$state = [
@@ -228,7 +293,12 @@ class DashboardContextBuilder {
 			'isRecurring'            => false,
 			'isReceipts'             => false,
 			'isProfile'              => false,
-			'isFundraising'          => false,
+			'isFundraisers'          => false,
+			'isFundraiserDetail'     => false,
+			'isFundraisersNav'       => false,
+			'isTeams'                => false,
+			'isTeamDetail'           => false,
+			'isTeamsNav'             => false,
 			'panelTitle'             => __( 'Overview', 'mission-donation-platform' ),
 			'historyIsEmpty'         => 0 === $history_total,
 			'historyHasOnePage'      => $history_total <= $history_per_page,
@@ -266,7 +336,7 @@ class DashboardContextBuilder {
 	 * @return Subscription[]
 	 */
 	private function query_active_subscriptions(): array {
-		return $this->donor->subscriptions(
+		return $this->active_subscriptions_cache ??= $this->donor->subscriptions(
 			[
 				'status__in' => [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ],
 				'is_test'    => $this->is_test,
@@ -278,11 +348,25 @@ class DashboardContextBuilder {
 	 * @return Subscription[]
 	 */
 	private function query_cancelled_subscriptions(): array {
-		return $this->donor->subscriptions(
+		return $this->cancelled_subscriptions_cache ??= $this->donor->subscriptions(
 			[
 				'status'  => Subscription::STATUS_CANCELLED,
 				'is_test' => $this->is_test,
 				'orderby' => 'date_cancelled',
+				'order'   => 'DESC',
+			]
+		);
+	}
+
+	/**
+	 * The donor's fundraisers, newest first, queried once.
+	 *
+	 * @return \MissionDP\Models\Fundraiser[]
+	 */
+	private function fundraisers(): array {
+		return $this->fundraisers_cache ??= $this->donor->fundraisers(
+			[
+				'orderby' => 'date_created',
 				'order'   => 'DESC',
 			]
 		);
@@ -305,250 +389,12 @@ class DashboardContextBuilder {
 	}
 
 	private function count_history_transactions(): int {
-		return Transaction::count(
+		return $this->history_total_cache ??= Transaction::count(
 			[
 				'donor_id' => $this->donor->id,
 				'is_test'  => $this->is_test,
 			]
 		);
-	}
-
-	// ── Fundraising ──
-
-	/**
-	 * Build the fundraising panel context, or null when the donor has none.
-	 *
-	 * @return array<string, mixed>|null
-	 */
-	private function build_fundraising(): ?array {
-		$fundraisers = $this->donor->fundraisers(
-			[
-				'orderby' => 'date_created',
-				'order'   => 'DESC',
-			]
-		);
-
-		if ( empty( $fundraisers ) ) {
-			return null;
-		}
-
-		$list   = array_map( [ $this, 'prepare_fundraiser' ], $fundraisers );
-		$active = $list[0];
-
-		return [
-			'activeId'       => $active['id'],
-			'list'           => $list,
-			'multiple'       => count( $list ) > 1,
-			'currency'       => $this->currency,
-			'currencySymbol' => Currency::get_symbol( $this->currency ),
-			'view'           => $active,
-			'edit'           => [
-				'headline' => $active['headline'],
-				'story'    => $active['story'],
-				'goal'     => $active['goalMajor'],
-				'saving'   => false,
-				'saved'    => false,
-				'error'    => '',
-			],
-			'uploading'      => false,
-			'uploadError'    => '',
-			'captain'        => $active['captain'],
-			'i18n'           => [
-				'save'           => __( 'Save changes', 'mission-donation-platform' ),
-				'saving'         => __( 'Saving…', 'mission-donation-platform' ),
-				'saved'          => __( 'Saved', 'mission-donation-platform' ),
-				'savedToast'     => __( 'Fundraiser updated', 'mission-donation-platform' ),
-				'photoToast'     => __( 'Cover photo updated', 'mission-donation-platform' ),
-				'copied'         => __( 'Link copied', 'mission-donation-platform' ),
-				'copiedEmbed'    => __( 'Embed code copied', 'mission-donation-platform' ),
-				'teamToast'      => __( 'Team updated', 'mission-donation-platform' ),
-				'teamPhoto'      => __( 'Team image updated', 'mission-donation-platform' ),
-				'inviteToast'    => __( 'Invitation sent', 'mission-donation-platform' ),
-				'removeToast'    => __( 'Member removed', 'mission-donation-platform' ),
-				'promoteToast'   => __( 'New captain set', 'mission-donation-platform' ),
-				'confirmRemove'  => __( 'Remove this member from the team?', 'mission-donation-platform' ),
-				'confirmPromote' => __( 'Make this member the captain? You will no longer manage the team.', 'mission-donation-platform' ),
-			],
-		];
-	}
-
-	/**
-	 * Prepare a fundraiser for the dashboard panel.
-	 *
-	 * @param \MissionDP\Models\Fundraiser $fundraiser Fundraiser model.
-	 * @return array<string, mixed>
-	 */
-	private function prepare_fundraiser( \MissionDP\Models\Fundraiser $fundraiser ): array {
-		$campaign      = $fundraiser->campaign();
-		$raised        = $fundraiser->amount_raised( $this->is_test );
-		$donor_count   = $this->is_test ? $fundraiser->test_donor_count : $fundraiser->donor_count;
-		$goal_display  = $fundraiser->goal > 0 ? Currency::format_amount( $fundraiser->goal, $this->currency ) : '';
-		$raised_disp   = Currency::format_amount( $raised, $this->currency );
-		$url           = $fundraiser->get_url() ?? '';
-		$cover_url     = ctype_digit( $fundraiser->cover_image )
-			? ( wp_get_attachment_image_url( (int) $fundraiser->cover_image, 'large' ) ?: '' )
-			: $fundraiser->cover_image;
-		$team          = $fundraiser->team();
-		$donor_page    = $this->reporting->fundraiser_donations_query( (int) $fundraiser->id, 5, 1 );
-		$status_labels = [
-			\MissionDP\Models\Fundraiser::STATUS_ACTIVE   => __( 'Active', 'mission-donation-platform' ),
-			\MissionDP\Models\Fundraiser::STATUS_PENDING  => __( 'Pending review', 'mission-donation-platform' ),
-			\MissionDP\Models\Fundraiser::STATUS_INACTIVE => __( 'Inactive', 'mission-donation-platform' ),
-		];
-
-		$share_text = $campaign
-			/* translators: %s: campaign title */
-			? sprintf( __( 'Support my fundraiser for %s', 'mission-donation-platform' ), $campaign->title )
-			: __( 'Support my fundraiser', 'mission-donation-platform' );
-
-		return [
-			'id'              => (int) $fundraiser->id,
-			'campaignTitle'   => $campaign?->title ?? '',
-			'headline'        => $fundraiser->headline,
-			'story'           => $fundraiser->story,
-			'goalMinor'       => $fundraiser->goal,
-			'goalMajor'       => (string) Currency::minor_to_major( $fundraiser->goal, $this->currency ),
-			'goalDisplay'     => $goal_display,
-			'hasGoal'         => $fundraiser->goal > 0,
-			'raisedDisplay'   => $raised_disp,
-			'donorCount'      => $donor_count,
-			'donorCountLabel' => sprintf(
-				/* translators: %s: number of donors */
-				_n( '%s donor', '%s donors', $donor_count, 'mission-donation-platform' ),
-				number_format_i18n( $donor_count )
-			),
-			'progress'        => $fundraiser->progress( $this->is_test ),
-			'progressLabel'   => $goal_display
-				/* translators: 1: amount raised, 2: goal amount */
-				? sprintf( __( '%1$s raised of %2$s goal', 'mission-donation-platform' ), $raised_disp, $goal_display )
-				/* translators: %s: amount raised */
-				: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_disp ),
-			'coverImageUrl'   => $cover_url,
-			'hasCover'        => '' !== $cover_url,
-			'url'             => $url,
-			'status'          => $fundraiser->status,
-			'statusLabel'     => $status_labels[ $fundraiser->status ] ?? $fundraiser->status,
-			'isPending'       => \MissionDP\Models\Fundraiser::STATUS_PENDING === $fundraiser->status,
-			'onTeam'          => null !== $fundraiser->team_id,
-			'teamName'        => $team?->name ?? '',
-			'teamUrl'         => $team?->get_url() ?? '',
-			'shareFacebook'   => $url ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode( $url ) : '',
-			'shareX'          => $url ? 'https://twitter.com/intent/tweet?text=' . rawurlencode( $share_text ) . '&url=' . rawurlencode( $url ) : '',
-			'shareBluesky'    => $url ? 'https://bsky.app/intent/compose?text=' . rawurlencode( $share_text . ' ' . $url ) : '',
-			'embed'           => $url ? sprintf( '<iframe src="%s" width="100%%" height="640" style="border:0;max-width:100%%"></iframe>', esc_url( $url ) ) : '',
-			'donors'          => array_map( [ $this, 'prepare_fundraiser_donor' ], $donor_page['items'] ),
-			'donorsTotal'     => $donor_page['total'],
-			'hasDonors'       => $donor_page['total'] > 0,
-			'captain'         => $this->prepare_captain( $fundraiser ),
-		];
-	}
-
-	/**
-	 * Build the captain management payload for a fundraiser, or null.
-	 *
-	 * Returns null unless the fundraiser leads a team; the data is the working
-	 * copy the dashboard edits and submits back through the team endpoints.
-	 *
-	 * @param \MissionDP\Models\Fundraiser $fundraiser Fundraiser model.
-	 * @return array<string, mixed>|null
-	 */
-	private function prepare_captain( \MissionDP\Models\Fundraiser $fundraiser ): ?array {
-		if ( ! $fundraiser->is_captain() ) {
-			return null;
-		}
-
-		$team = $fundraiser->team();
-		if ( ! $team ) {
-			return null;
-		}
-
-		$cover_url = ctype_digit( $team->cover_image )
-			? ( wp_get_attachment_image_url( (int) $team->cover_image, 'large' ) ?: '' )
-			: $team->cover_image;
-
-		$members = array_map(
-			function ( \MissionDP\Models\Fundraiser $member ): array {
-				$name = trim( (string) ( $member->donor()?->full_name() ?? '' ) );
-
-				return [
-					'fundraiserId' => (int) $member->id,
-					'name'         => '' !== $name ? $name : __( 'Participant', 'mission-donation-platform' ),
-					'isCaptain'    => (bool) $member->is_team_captain,
-					'raised'       => Currency::format_amount( $member->amount_raised( $this->is_test ), $this->currency ),
-				];
-			},
-			$team->members(
-				[
-					'orderby'  => 'total_raised',
-					'order'    => 'DESC',
-					'per_page' => -1,
-				]
-			)
-		);
-
-		$invitations = array_map(
-			static fn( \MissionDP\Models\TeamInvitation $invitation ): array => [
-				'id'    => (int) $invitation->id,
-				'email' => $invitation->email,
-				'sent'  => ! empty( $invitation->sent_at ),
-			],
-			$team->invitations(
-				[
-					'status'   => \MissionDP\Models\TeamInvitation::STATUS_PENDING,
-					'per_page' => -1,
-				]
-			)
-		);
-
-		$status_labels = [
-			\MissionDP\Models\Team::STATUS_ACTIVE   => __( 'Active', 'mission-donation-platform' ),
-			\MissionDP\Models\Team::STATUS_PENDING  => __( 'Pending review', 'mission-donation-platform' ),
-			\MissionDP\Models\Team::STATUS_INACTIVE => __( 'Inactive', 'mission-donation-platform' ),
-		];
-
-		return [
-			'teamId'        => (int) $team->id,
-			'name'          => $team->name,
-			'description'   => $team->description,
-			'goal'          => (string) Currency::minor_to_major( $team->goal, $this->currency ),
-			'coverImageUrl' => $cover_url,
-			'hasCover'      => '' !== $cover_url,
-			'url'           => $team->get_url() ?? '',
-			'status'        => $team->status,
-			'statusLabel'   => $status_labels[ $team->status ] ?? $team->status,
-			'isPending'     => \MissionDP\Models\Team::STATUS_PENDING === $team->status,
-			'access'        => $team->access,
-			'isPrivate'     => \MissionDP\Models\Team::ACCESS_PRIVATE === $team->access,
-			'members'       => $members,
-			'invitations'   => $invitations,
-			'inviteEmail'   => '',
-			'inviteError'   => '',
-			'inviting'      => false,
-			'saving'        => false,
-			'saved'         => false,
-			'error'         => '',
-			'uploading'     => false,
-			'uploadError'   => '',
-		];
-	}
-
-	/**
-	 * Prepare one donor row for the fundraiser donors/activity list.
-	 *
-	 * @param array<string, mixed> $row Row from ReportingService::fundraiser_donations_query().
-	 * @return array<string, mixed>
-	 */
-	private function prepare_fundraiser_donor( array $row ): array {
-		$name = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
-
-		return [
-			'name'    => $row['is_anonymous'] || '' === $name
-				? __( 'Anonymous', 'mission-donation-platform' )
-				: $name,
-			'amount'  => Currency::format_amount( $row['amount'], $this->currency ),
-			'date'    => $row['date'] ? date_i18n( 'M j, Y', strtotime( $row['date'] ) ) : '',
-			'comment' => $row['comment'],
-		];
 	}
 
 	// ── Campaign batch loading ──
