@@ -45,6 +45,7 @@
 
 // Default (fill) button styles.
 :where(.wp-block-mission-donation-platform-donate-button .mission-donate-button__link) {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
