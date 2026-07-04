@@ -12,6 +12,7 @@
 
 use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Settings\SettingsService;
@@ -179,24 +180,8 @@ foreach ( $items as $i => &$entry ) {
 unset( $entry );
 
 // Primary color.
-$global_primary = $mission_settings['primary_color'] ?? '#2fa36b';
-$primary_color  = $global_primary;
-
-$darken_color = static function ( string $hex, float $percent ): string {
-	$hex = ltrim( $hex, '#' );
-	$r   = max( 0, (int) round( hexdec( substr( $hex, 0, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$g   = max( 0, (int) round( hexdec( substr( $hex, 2, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$b   = max( 0, (int) round( hexdec( substr( $hex, 4, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	return sprintf( '#%02x%02x%02x', $r, $g, $b );
-};
-
-$primary_hover = $darken_color( $primary_color, 12 );
-$hex_trimmed   = ltrim( $primary_color, '#' );
-$primary_r     = hexdec( substr( $hex_trimmed, 0, 2 ) );
-$primary_g     = hexdec( substr( $hex_trimmed, 2, 2 ) );
-$primary_b     = hexdec( substr( $hex_trimmed, 4, 2 ) );
-$luminance     = ( 0.299 * $primary_r + 0.587 * $primary_g + 0.114 * $primary_b ) / 255;
-$primary_text  = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
+$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
+$color_style   = PrimaryColorResolver::inline_style( $primary_color );
 
 // Compute truncated comments for display.
 foreach ( $items as &$entry ) {
@@ -231,9 +216,7 @@ $context = [
 
 // Wrapper attributes.
 $style_parts = [
-	'--mission-primary:' . esc_attr( $primary_color ),
-	'--mission-primary-hover:' . esc_attr( $primary_hover ),
-	'--mission-primary-text:' . esc_attr( $primary_text ),
+	$color_style,
 	'--mission-dw-columns:' . $columns,
 	'--mission-dw-avatar-size:' . $avatar_width . 'px',
 ];

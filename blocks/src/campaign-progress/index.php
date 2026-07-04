@@ -12,6 +12,7 @@
 
 use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
@@ -100,25 +101,9 @@ if ( 'amount' === $goal_type ) {
 		: _n( 'donor', 'donors', $goal_progress, 'mission-donation-platform' );
 }
 
-// Primary color (same pattern as donation form).
-$global_primary = $mission_settings['primary_color'] ?? '#2fa36b';
-$primary_color  = $global_primary;
-
-$darken_color = static function ( string $hex, float $percent ): string {
-	$hex = ltrim( $hex, '#' );
-	$r   = max( 0, (int) round( hexdec( substr( $hex, 0, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$g   = max( 0, (int) round( hexdec( substr( $hex, 2, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$b   = max( 0, (int) round( hexdec( substr( $hex, 4, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	return sprintf( '#%02x%02x%02x', $r, $g, $b );
-};
-
-$primary_hover = $darken_color( $primary_color, 12 );
-$hex_trimmed   = ltrim( $primary_color, '#' );
-$primary_r     = hexdec( substr( $hex_trimmed, 0, 2 ) );
-$primary_g     = hexdec( substr( $hex_trimmed, 2, 2 ) );
-$primary_b     = hexdec( substr( $hex_trimmed, 4, 2 ) );
-$luminance     = ( 0.299 * $primary_r + 0.587 * $primary_g + 0.114 * $primary_b ) / 255;
-$primary_text  = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
+// Primary color.
+$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
+$color_style   = PrimaryColorResolver::inline_style( $primary_color );
 
 // Build context for Interactivity API.
 $context = [
@@ -132,7 +117,7 @@ ob_start();
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/campaign-progress"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
-	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>;"
+	style="<?php echo esc_attr( $color_style ); ?>"
 >
 	<div class="mission-progress__header">
 		<span class="mission-progress__raised"><?php echo esc_html( $progress_text ); ?></span>
