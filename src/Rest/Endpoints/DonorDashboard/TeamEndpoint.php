@@ -150,6 +150,11 @@ class TeamEndpoint {
 			return $team;
 		}
 
+		$locked = $this->check_not_locked( $team );
+		if ( $locked ) {
+			return $locked;
+		}
+
 		if ( null !== $request->get_param( 'name' ) ) {
 			$name = sanitize_text_field( $request->get_param( 'name' ) );
 			if ( '' !== $name ) {
@@ -202,6 +207,11 @@ class TeamEndpoint {
 			return $team;
 		}
 
+		$locked = $this->check_not_locked( $team );
+		if ( $locked ) {
+			return $locked;
+		}
+
 		$files = $request->get_file_params();
 
 		if ( empty( $files['file'] ) ) {
@@ -247,6 +257,11 @@ class TeamEndpoint {
 			return $team;
 		}
 
+		$locked = $this->check_not_locked( $team );
+		if ( $locked ) {
+			return $locked;
+		}
+
 		$result = $team->invite( (string) $request->get_param( 'email' ) );
 
 		if ( is_wp_error( $result ) ) {
@@ -268,6 +283,11 @@ class TeamEndpoint {
 
 		if ( is_wp_error( $team ) ) {
 			return $team;
+		}
+
+		$locked = $this->check_not_locked( $team );
+		if ( $locked ) {
+			return $locked;
 		}
 
 		$member = Fundraiser::find( (int) $request->get_param( 'fundraiser_id' ) );
@@ -297,6 +317,11 @@ class TeamEndpoint {
 
 		if ( is_wp_error( $team ) ) {
 			return $team;
+		}
+
+		$locked = $this->check_not_locked( $team );
+		if ( $locked ) {
+			return $locked;
 		}
 
 		$member = Fundraiser::find( (int) $request->get_param( 'fundraiser_id' ) );
@@ -339,6 +364,24 @@ class TeamEndpoint {
 		}
 
 		return $team;
+	}
+
+	/**
+	 * Reject writes to a team whose campaign has ended.
+	 *
+	 * @param Team $team Team model.
+	 * @return WP_Error|null An error when locked, null when editable.
+	 */
+	private function check_not_locked( Team $team ): ?WP_Error {
+		if ( ! $team->is_locked() ) {
+			return null;
+		}
+
+		return new WP_Error(
+			'team_locked',
+			__( 'This campaign has ended, so the team can no longer be edited.', 'mission-donation-platform' ),
+			[ 'status' => 403 ]
+		);
 	}
 
 	/**
@@ -388,14 +431,28 @@ class TeamEndpoint {
 	 */
 	private function prepare_members( Team $team, bool $is_test, string $currency ): array {
 		return array_map(
-			static function ( Fundraiser $member ) use ( $is_test, $currency ): array {
-				$name = trim( (string) ( $member->donor()?->full_name() ?? '' ) );
+			function ( Fundraiser $member ) use ( $is_test, $currency ): array {
+				$donor  = $member->donor();
+				$name   = trim( (string) ( $donor?->full_name() ?? '' ) );
+				$raised = $member->amount_raised( $is_test );
+
+				$raised_display = Currency::format_amount( $raised, $currency );
+				$goal_display   = $member->goal > 0 ? Currency::format_amount( $member->goal, $currency ) : '';
 
 				return [
-					'fundraiser_id' => (int) $member->id,
-					'name'          => '' !== $name ? $name : __( 'Participant', 'mission-donation-platform' ),
-					'is_captain'    => (bool) $member->is_team_captain,
-					'raised'        => Currency::format_amount( $member->amount_raised( $is_test ), $currency ),
+					'fundraiser_id'        => (int) $member->id,
+					'donor_id'             => (int) $member->donor_id,
+					'name'                 => '' !== $name ? $name : __( 'Participant', 'mission-donation-platform' ),
+					'initials'             => $this->person_initials( (string) ( $donor?->first_name ?? '' ), (string) ( $donor?->last_name ?? '' ) ),
+					'is_captain'           => (bool) $member->is_team_captain,
+					'raised'               => $raised_display,
+					'raised_minor'         => $raised,
+					'goal'                 => $member->goal,
+					'progress'             => $member->progress( $is_test ),
+					'raised_of_goal_label' => $goal_display
+						/* translators: 1: amount raised, 2: personal goal */
+						? sprintf( __( '%1$s of %2$s', 'mission-donation-platform' ), $raised_display, $goal_display )
+						: $raised_display,
 				];
 			},
 			$team->members(

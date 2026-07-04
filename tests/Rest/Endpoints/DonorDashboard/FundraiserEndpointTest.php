@@ -11,6 +11,7 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
@@ -69,7 +70,7 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 	private function reset_tables(): void {
 		global $wpdb;
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery
-		foreach ( [ 'fundraisermeta', 'fundraisers', 'transactionmeta', 'transactions', 'donormeta', 'donors', 'campaignmeta', 'campaigns' ] as $table ) {
+		foreach ( [ 'team_invitations', 'teammeta', 'teams', 'fundraisermeta', 'fundraisers', 'transactionmeta', 'transactions', 'donormeta', 'donors', 'campaignmeta', 'campaigns' ] as $table ) {
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_{$table}" );
 		}
 		// phpcs:enable
@@ -379,5 +380,174 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $data );
 		$this->assertSame( 'Gina Giver', $data[0]['name'] );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
+	}
+
+	/**
+	 * The donors route includes avatar initials and a relative time.
+	 */
+	public function test_donors_route_includes_initials_and_time_ago(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$giver = new Donor( [ 'email' => 'giver@example.com', 'first_name' => 'Gina', 'last_name' => 'Giver' ] );
+		$giver->save();
+		$anon = new Donor( [ 'email' => 'anon@example.com', 'first_name' => 'Secret', 'last_name' => 'Admirer' ] );
+		$anon->save();
+
+		foreach ( [
+			[ 'donor_id' => $giver->id, 'is_anonymous' => false, 'date_completed' => gmdate( 'Y-m-d H:i:s', time() - 2 * DAY_IN_SECONDS ) ],
+			[ 'donor_id' => $anon->id, 'is_anonymous' => true, 'date_completed' => gmdate( 'Y-m-d H:i:s', time() - 3 * DAY_IN_SECONDS ) ],
+		] as $txn_data ) {
+			$txn = new Transaction(
+				array_merge(
+					[
+						'campaign_id'   => $this->campaign->id,
+						'fundraiser_id' => $fundraiser->id,
+						'amount'        => 5000,
+						'currency'      => 'USD',
+						'status'        => Transaction::STATUS_COMPLETED,
+						'is_test'       => false,
+					],
+					$txn_data
+				)
+			);
+			$txn->save();
+		}
+
+		$data = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}/donors" )->get_data();
+
+		$this->assertSame( 'GG', $data[0]['initials'] );
+		$this->assertSame( '2 days ago', $data[0]['time_ago'] );
+
+		// Anonymous gifts never leak the giver's initials.
+		$this->assertSame( '?', $data[1]['initials'] );
+	}
+
+	/**
+	 * PUT sets, normalizes, and clears the page dedication.
+	 */
+	public function test_put_updates_dedication(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$response = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[
+				'tribute_type' => 'memory',
+				'tribute_name' => 'Jane Smith',
+			]
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'In memory of Jane Smith', $response->get_data()['dedication_label'] );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'Jane Smith',
+			],
+			Fundraiser::find( $fundraiser->id )->dedication()
+		);
+
+		// Sending only the name keeps the type.
+		$this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'tribute_name' => 'John Smith' ]
+		);
+		$this->assertSame( 'memory', Fundraiser::find( $fundraiser->id )->dedication()['type'] );
+
+		// An empty type clears the dedication.
+		$response = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'tribute_type' => '' ]
+		);
+		$this->assertSame( '', $response->get_data()['dedication_label'] );
+		$this->assertNull( Fundraiser::find( $fundraiser->id )->dedication() );
+	}
+
+	/**
+	 * Writes to a fundraiser on an ended campaign are rejected.
+	 */
+	public function test_put_rejected_when_campaign_ended(): void {
+		$ended = new Campaign(
+			[
+				'title'  => 'Last Year',
+				'type'   => Campaign::TYPE_P2P,
+				'status' => Campaign::STATUS_ENDED,
+			]
+		);
+		$ended->save();
+		$fundraiser = $this->create_fundraiser(
+			[
+				'campaign_id' => $ended->id,
+				'headline'    => 'Original',
+			]
+		);
+
+		$response = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'headline' => 'Too late' ]
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( 'fundraiser_locked', $response->get_data()['code'] );
+		$this->assertSame( 'Original', Fundraiser::find( $fundraiser->id )->headline );
+	}
+
+	/**
+	 * A member can leave their team; the page itself stays untouched.
+	 */
+	public function test_leave_team_detaches_member(): void {
+		$team = new Team(
+			[
+				'campaign_id' => $this->campaign->id,
+				'name'        => 'Rangers',
+				'status'      => Team::STATUS_ACTIVE,
+			]
+		);
+		$team->save();
+		$fundraiser = $this->create_fundraiser( [ 'team_id' => $team->id ] );
+
+		$request  = new WP_REST_Request( 'POST', "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}/leave-team" );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertNull( $response->get_data()['team_id'] );
+
+		$updated = Fundraiser::find( $fundraiser->id );
+		$this->assertNull( $updated->team_id );
+		$this->assertSame( Fundraiser::STATUS_ACTIVE, $updated->status );
+	}
+
+	/**
+	 * The captain must promote a successor before leaving; teamless pages get a 400.
+	 */
+	public function test_leave_team_rejects_captain_and_teamless(): void {
+		$team = new Team(
+			[
+				'campaign_id' => $this->campaign->id,
+				'name'        => 'Rangers',
+				'status'      => Team::STATUS_ACTIVE,
+			]
+		);
+		$team->save();
+		$captain = $this->create_fundraiser(
+			[
+				'team_id'         => $team->id,
+				'is_team_captain' => true,
+			]
+		);
+		$team->set_captain( $captain );
+
+		$response = $this->server->dispatch(
+			new WP_REST_Request( 'POST', "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$captain->id}/leave-team" )
+		);
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'captain_cannot_leave', $response->get_data()['code'] );
+		$this->assertSame( $team->id, Fundraiser::find( $captain->id )->team_id );
+
+		$captain->leave_team();
+		$response = $this->server->dispatch(
+			new WP_REST_Request( 'POST', "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$captain->id}/leave-team" )
+		);
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'not_on_team', $response->get_data()['code'] );
 	}
 }

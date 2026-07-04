@@ -85,6 +85,42 @@ trait DonorDashboardPrepareTrait {
 	}
 
 	/**
+	 * Initials for a person's avatar, with a placeholder for anonymous or unnamed people.
+	 *
+	 * @param string $first        First name.
+	 * @param string $last         Last name.
+	 * @param bool   $is_anonymous Whether the person chose to stay anonymous.
+	 * @return string
+	 */
+	private function person_initials( string $first, string $last, bool $is_anonymous = false ): string {
+		if ( $is_anonymous ) {
+			return '?';
+		}
+
+		$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
+
+		return '' === trim( $initials ) ? '?' : $initials;
+	}
+
+	/**
+	 * Human-readable dedication label for a fundraiser page.
+	 *
+	 * @param array{type: string, name: string}|null $dedication Dedication from Fundraiser::dedication().
+	 * @return string "In memory of …" / "In honor of …", or an empty string when none.
+	 */
+	private function dedication_label( ?array $dedication ): string {
+		if ( ! $dedication ) {
+			return '';
+		}
+
+		return 'memory' === $dedication['type']
+			/* translators: %s: person being honored */
+			? sprintf( __( 'In memory of %s', 'mission-donation-platform' ), $dedication['name'] )
+			/* translators: %s: person being honored */
+			: sprintf( __( 'In honor of %s', 'mission-donation-platform' ), $dedication['name'] );
+	}
+
+	/**
 	 * The attachment ID a cover image field references, or 0 when it holds a URL.
 	 *
 	 * Fundraiser/team cover images are a varchar that may hold either form.

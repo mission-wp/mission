@@ -451,4 +451,70 @@ class TeamEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 401, $response->get_status() );
 	}
+
+	/**
+	 * Every write route is rejected once the campaign has ended; reads stay open.
+	 */
+	public function test_writes_rejected_when_campaign_ended(): void {
+		$member = $this->add_member( 'member@example.com' );
+
+		$this->campaign->status = Campaign::STATUS_ENDED;
+		$this->campaign->save();
+
+		$base   = "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}";
+		$writes = [
+			[ 'PUT', $base, [ 'name' => 'Too late' ] ],
+			[ 'POST', "{$base}/invite", [ 'email' => 'new@example.com' ] ],
+			[ 'POST', "{$base}/members/{$member->id}/remove", [] ],
+			[ 'POST', "{$base}/members/{$member->id}/promote", [] ],
+		];
+
+		foreach ( $writes as [ $method, $route, $body ] ) {
+			$response = $this->dispatch( $method, $route, $body );
+
+			$this->assertSame( 403, $response->get_status(), $route );
+			$this->assertSame( 'team_locked', $response->get_data()['code'], $route );
+		}
+
+		$this->assertSame( 'Runners', Team::find( $this->team->id )->name );
+		$this->assertSame( $this->team->id, Fundraiser::find( $member->id )->team_id );
+
+		$response = $this->dispatch( 'GET', $base );
+		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * The member payload carries what the dashboard list needs.
+	 */
+	public function test_member_payload_includes_progress_fields(): void {
+		$member       = $this->add_member( 'member@example.com' );
+		$member->goal = 100000;
+		$member->save();
+
+		$txn = new \MissionDP\Models\Transaction(
+			[
+				'donor_id'      => $member->donor_id,
+				'campaign_id'   => $this->campaign->id,
+				'fundraiser_id' => $member->id,
+				'amount'        => 25000,
+				'currency'      => 'USD',
+				'status'        => \MissionDP\Models\Transaction::STATUS_COMPLETED,
+				'is_test'       => false,
+			]
+		);
+		$txn->save();
+
+		$data = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" )->get_data();
+
+		$rows = array_values( array_filter( $data['members'], static fn( array $row ) => $row['fundraiser_id'] === $member->id ) );
+		$this->assertCount( 1, $rows );
+
+		$row = $rows[0];
+		$this->assertSame( 'MB', $row['initials'] );
+		$this->assertSame( (int) $member->donor_id, $row['donor_id'] );
+		$this->assertSame( 100000, $row['goal'] );
+		$this->assertSame( 25000, $row['raised_minor'] );
+		$this->assertSame( 25.0, $row['progress'] );
+		$this->assertSame( '$250.00 of $1,000.00', $row['raised_of_goal_label'] );
+	}
 }
