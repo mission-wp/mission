@@ -206,6 +206,19 @@
   }
 }
 
+// Post-save confirmation flash: the label swaps to "Saved" and a check
+// appears. Stays at full opacity even though the button is disabled.
+:where(.mission-dd-btn-primary.mission-dd-btn-saved) {
+
+  &::before {
+    content: "✓";
+  }
+
+  &:disabled {
+    opacity: 1;
+  }
+}
+
 // ── Divider ──
 
 :where(.mission-dd-divider) {
@@ -365,6 +378,21 @@
     cursor: default;
     opacity: 0.5;
   }
+}
+
+// Anchor-based buttons: scoped under the dashboard root so theme link
+// rules (underline, link color) can't restyle them.
+.mission-donor-dashboard a.mission-dd-btn-primary,
+.mission-donor-dashboard a.mission-dd-btn-secondary {
+  text-decoration: none;
+}
+
+.mission-donor-dashboard a.mission-dd-btn-primary {
+  color: var(--mission-primary-text, #fff);
+}
+
+.mission-donor-dashboard a.mission-dd-btn-secondary {
+  color: var(--mission-text, #1e1e1e);
 }
 
 // ── Responsive ──

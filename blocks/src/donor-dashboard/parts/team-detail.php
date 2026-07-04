@@ -115,102 +115,108 @@ defined( 'ABSPATH' ) || exit;
 			<h2 class="mission-dd-section-title"><?php esc_html_e( 'Edit team', 'mission-donation-platform' ); ?></h2>
 			<p class="mission-dd-help"><?php esc_html_e( 'Changes appear on your public team page right away.', 'mission-donation-platform' ); ?></p>
 
-			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-team-name"><?php esc_html_e( 'Team name', 'mission-donation-platform' ); ?></label>
-				<input
-					type="text"
-					id="mission-dd-team-name"
-					class="mission-dd-profile-input"
-					maxlength="200"
-					data-wp-bind--value="context.teams.edit.name"
-					data-wp-on--input="actions.editTeamName"
-					data-wp-bind--disabled="context.teams.edit.saving"
-				>
-			</div>
+			<div class="mission-dd-profile-grid">
 
-			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-team-goal"><?php esc_html_e( 'Team goal', 'mission-donation-platform' ); ?></label>
-				<div class="mission-dd-goal-input">
-					<span class="mission-dd-goal-prefix" data-wp-text="context.teams.currencySymbol"></span>
+				<div class="mission-dd-profile-group">
+					<label class="mission-dd-profile-label" for="mission-dd-team-name"><?php esc_html_e( 'Team name', 'mission-donation-platform' ); ?></label>
 					<input
-						type="number"
-						id="mission-dd-team-goal"
+						type="text"
+						id="mission-dd-team-name"
 						class="mission-dd-profile-input"
-						min="0"
-						step="1"
-						data-wp-bind--value="context.teams.edit.goal"
-						data-wp-on--input="actions.editTeamGoal"
+						maxlength="200"
+						data-wp-bind--value="context.teams.edit.name"
+						data-wp-on--input="actions.editTeamName"
 						data-wp-bind--disabled="context.teams.edit.saving"
 					>
 				</div>
-			</div>
 
-			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-team-access"><?php esc_html_e( 'Team privacy', 'mission-donation-platform' ); ?></label>
-				<select
-					id="mission-dd-team-access"
-					class="mission-dd-profile-input"
-					data-wp-bind--value="context.teams.edit.access"
-					data-wp-on--change="actions.editTeamAccess"
-					data-wp-bind--disabled="context.teams.edit.saving"
-				>
-					<option value="public"><?php esc_html_e( 'Public — anyone can join', 'mission-donation-platform' ); ?></option>
-					<option value="private"><?php esc_html_e( 'Private — invitation only', 'mission-donation-platform' ); ?></option>
-				</select>
-				<span class="mission-dd-profile-hint"><?php esc_html_e( 'Private teams are hidden from the sign-up form; people join through your email invitations.', 'mission-donation-platform' ); ?></span>
-			</div>
-
-			<!-- Team image -->
-			<div class="mission-dd-profile-group mission-dd-cover">
-				<span class="mission-dd-profile-label"><?php esc_html_e( 'Team image', 'mission-donation-platform' ); ?></span>
-				<img
-					class="mission-dd-cover-preview"
-					alt=""
-					data-wp-bind--src="context.teams.detail.coverImageUrl"
-					data-wp-bind--hidden="!context.teams.detail.hasCover"
-				>
-				<div class="mission-dd-cover-placeholder" data-wp-bind--hidden="context.teams.detail.hasCover">
-					<?php esc_html_e( 'No team image yet.', 'mission-donation-platform' ); ?>
+				<div class="mission-dd-profile-group">
+					<label class="mission-dd-profile-label" for="mission-dd-team-goal"><?php esc_html_e( 'Team goal', 'mission-donation-platform' ); ?></label>
+					<div class="mission-dd-goal-input">
+						<span class="mission-dd-goal-prefix" data-wp-text="context.teams.currencySymbol"></span>
+						<input
+							type="number"
+							id="mission-dd-team-goal"
+							class="mission-dd-profile-input"
+							min="0"
+							step="1"
+							data-wp-bind--value="context.teams.edit.goal"
+							data-wp-on--input="actions.editTeamGoal"
+							data-wp-bind--disabled="context.teams.edit.saving"
+						>
+					</div>
 				</div>
-				<input
-					type="file"
-					class="mission-dd-cover-input"
-					accept="image/jpeg,image/png,image/gif,image/webp"
-					data-wp-on--change="actions.uploadTeamPhoto"
-					hidden
-				>
+
+				<div class="mission-dd-profile-group">
+					<label class="mission-dd-profile-label" for="mission-dd-team-access"><?php esc_html_e( 'Team privacy', 'mission-donation-platform' ); ?></label>
+					<select
+						id="mission-dd-team-access"
+						class="mission-dd-profile-input"
+						data-wp-bind--value="context.teams.edit.access"
+						data-wp-on--change="actions.editTeamAccess"
+						data-wp-bind--disabled="context.teams.edit.saving"
+					>
+						<option value="public"><?php esc_html_e( 'Public — anyone can join', 'mission-donation-platform' ); ?></option>
+						<option value="private"><?php esc_html_e( 'Private — invitation only', 'mission-donation-platform' ); ?></option>
+					</select>
+					<span class="mission-dd-profile-hint"><?php esc_html_e( 'Private teams are hidden from the sign-up form; people join through your email invitations.', 'mission-donation-platform' ); ?></span>
+				</div>
+
+				<!-- Team image -->
+				<div class="mission-dd-profile-group mission-dd-profile-group-full mission-dd-cover">
+					<span class="mission-dd-profile-label"><?php esc_html_e( 'Team image', 'mission-donation-platform' ); ?></span>
+					<img
+						class="mission-dd-cover-preview"
+						alt=""
+						data-wp-bind--src="context.teams.detail.coverImageUrl"
+						data-wp-bind--hidden="!context.teams.detail.hasCover"
+					>
+					<div class="mission-dd-cover-placeholder" data-wp-bind--hidden="context.teams.detail.hasCover">
+						<?php esc_html_e( 'No team image yet.', 'mission-donation-platform' ); ?>
+					</div>
+					<input
+						type="file"
+						class="mission-dd-cover-input"
+						accept="image/jpeg,image/png,image/gif,image/webp"
+						data-wp-on--change="actions.uploadTeamPhoto"
+						hidden
+					>
+					<button
+						type="button"
+						class="mission-dd-btn-secondary"
+						data-wp-on--click="actions.triggerTeamPhotoUpload"
+						data-wp-bind--disabled="context.teams.uploading"
+					>
+						<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
+						<?php esc_html_e( 'Upload team image', 'mission-donation-platform' ); ?>
+					</button>
+					<span class="mission-dd-field-error" data-wp-bind--hidden="!context.teams.uploadError" data-wp-text="context.teams.uploadError"></span>
+				</div>
+
+				<div class="mission-dd-profile-group mission-dd-profile-group-full">
+					<label class="mission-dd-profile-label" for="mission-dd-team-story"><?php esc_html_e( 'Team story', 'mission-donation-platform' ); ?></label>
+					<textarea
+						id="mission-dd-team-story"
+						class="mission-dd-profile-input mission-dd-story"
+						rows="6"
+						data-wp-bind--value="context.teams.edit.description"
+						data-wp-on--input="actions.editTeamDescription"
+						data-wp-bind--disabled="context.teams.edit.saving"
+					></textarea>
+				</div>
+
+			</div>
+
+			<div class="mission-dd-profile-actions">
 				<button
-					type="button"
-					class="mission-dd-btn-secondary"
-					data-wp-on--click="actions.triggerTeamPhotoUpload"
-					data-wp-bind--disabled="context.teams.uploading"
+					class="mission-dd-btn-primary"
+					data-wp-on--click="actions.saveTeam"
+					data-wp-bind--disabled="state.teamSaveDisabled"
+					data-wp-class--mission-dd-btn-saved="context.teams.edit.saved"
 				>
-					<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
-					<?php esc_html_e( 'Upload team image', 'mission-donation-platform' ); ?>
+					<span data-wp-text="state.teamSaveLabel"></span>
 				</button>
-				<span class="mission-dd-field-error" data-wp-bind--hidden="!context.teams.uploadError" data-wp-text="context.teams.uploadError"></span>
 			</div>
-
-			<div class="mission-dd-profile-group">
-				<label class="mission-dd-profile-label" for="mission-dd-team-story"><?php esc_html_e( 'Team story', 'mission-donation-platform' ); ?></label>
-				<textarea
-					id="mission-dd-team-story"
-					class="mission-dd-profile-input mission-dd-story"
-					rows="6"
-					data-wp-bind--value="context.teams.edit.description"
-					data-wp-on--input="actions.editTeamDescription"
-					data-wp-bind--disabled="context.teams.edit.saving"
-				></textarea>
-			</div>
-
-			<button
-				class="mission-dd-btn-primary"
-				data-wp-on--click="actions.saveTeam"
-				data-wp-bind--disabled="state.teamSaveDisabled"
-				data-wp-class--mission-dd-btn-saved="context.teams.edit.saved"
-			>
-				<span data-wp-text="state.teamSaveLabel"></span>
-			</button>
 		</div>
 	</div>
 

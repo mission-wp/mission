@@ -21,6 +21,7 @@
 
   &:hover {
     border-color: var(--mission-primary);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--mission-primary) 10%, transparent);
   }
 
   &::after {
@@ -162,10 +163,20 @@
 :where(.mission-dd-progress-meta) {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 10px;
+  gap: 4px 6px;
   margin: 8px 0 0;
   font-size: 13px;
   color: var(--mission-text-secondary, #6b7280);
+}
+
+// Empty items would otherwise contribute a stray dot separator.
+:where(.mission-dd-progress-meta > :empty) {
+  display: none;
+}
+
+:where(.mission-dd-progress-meta > * + *)::before {
+  content: "·";
+  margin-right: 6px;
 }
 
 // ── Detail views ──
@@ -195,6 +206,11 @@
   border-radius: var(--mission-radius, 8px);
   padding: 20px;
   margin-bottom: 8px;
+}
+
+// No chevron in the hero, so no need for the card-top's right padding.
+:where(.mission-dd-detail-hero .mission-dd-fr-card-top) {
+  padding-right: 0;
 }
 
 :where(.mission-dd-detail-stats) {
@@ -449,6 +465,8 @@
 :where(.mission-dd-goal-prefix) {
   position: absolute;
   left: 12px;
+  font-size: 14px;
+  line-height: 1;
   color: var(--mission-text-secondary, #6b7280);
   pointer-events: none;
 }
