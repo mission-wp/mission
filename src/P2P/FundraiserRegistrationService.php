@@ -115,14 +115,13 @@ class FundraiserRegistrationService {
 	 * @param string $code     Submitted code.
 	 * @param string $first    First name (new donors only).
 	 * @param string $last     Last name (new donors only).
-	 * @param string $phone    Phone (optional).
 	 * @param string $password Chosen password.
 	 * @return Donor The logged-in donor.
 	 *
 	 * @throws \MissionDP\DonorDashboard\OtpException If the code is wrong/expired.
 	 * @throws \RuntimeException If account creation fails.
 	 */
-	public function complete_signup( string $email, string $code, string $first, string $last, string $phone, string $password ): Donor {
+	public function complete_signup( string $email, string $code, string $first, string $last, string $password ): Donor {
 		$donor = Donor::find_by_email( $email );
 
 		// Reject a bad password BEFORE burning the one-time code, so a failed
@@ -145,7 +144,6 @@ class FundraiserRegistrationService {
 					'email'      => $email,
 					'first_name' => $first,
 					'last_name'  => $last,
-					'phone'      => $phone,
 				]
 			);
 			$donor->save();

@@ -423,12 +423,12 @@ msgstr "Dedica este donativo en honor o en memoria de alguien"
 #: blocks/build/donation-form/index.php:368
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/build/recent-donors/index.php:119
-#: blocks/build/signup-modal/index.php:334
+#: blocks/build/signup-modal/index.php:333
 #: blocks/build/top-donors/index.php:123
 #: blocks/src/donation-form/index.php:368
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/src/recent-donors/index.php:119
-#: blocks/src/signup-modal/index.php:334
+#: blocks/src/signup-modal/index.php:333
 #: blocks/src/top-donors/index.php:123
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/DedicationSection.js:48
@@ -439,12 +439,12 @@ msgstr "En honor de"
 #: blocks/build/donation-form/index.php:369
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/build/recent-donors/index.php:118
-#: blocks/build/signup-modal/index.php:335
+#: blocks/build/signup-modal/index.php:334
 #: blocks/build/top-donors/index.php:122
 #: blocks/src/donation-form/index.php:369
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/src/recent-donors/index.php:118
-#: blocks/src/signup-modal/index.php:335
+#: blocks/src/signup-modal/index.php:334
 #: blocks/src/top-donors/index.php:122
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/DedicationSection.js:47
@@ -505,11 +505,9 @@ msgid "Personal Message"
 msgstr "Mensaje personal"
 
 #: blocks/build/donation-form/index.php:411
-#: blocks/build/signup-modal/index.php:213
-#: blocks/build/signup-modal/index.php:284
+#: blocks/build/signup-modal/index.php:283
 #: blocks/src/donation-form/index.php:411
-#: blocks/src/signup-modal/index.php:213
-#: blocks/src/signup-modal/index.php:284
+#: blocks/src/signup-modal/index.php:283
 msgid "(optional)"
 msgstr "(opcional)"
 
@@ -652,11 +650,11 @@ msgstr "Deja un mensaje (opcional)"
 #: blocks/build/donation-form/index.php:542
 #: blocks/build/donation-form/index.php:694
 #: blocks/build/signup-modal/index.php:196
-#: blocks/build/signup-modal/index.php:223
+#: blocks/build/signup-modal/index.php:222
 #: blocks/src/donation-form/index.php:542
 #: blocks/src/donation-form/index.php:694
 #: blocks/src/signup-modal/index.php:196
-#: blocks/src/signup-modal/index.php:223
+#: blocks/src/signup-modal/index.php:222
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:591
@@ -670,10 +668,10 @@ msgstr "Continuar"
 
 #: blocks/build/donation-form/index.php:557
 #: blocks/build/donation-form/index.php:709
-#: blocks/build/signup-modal/index.php:345
+#: blocks/build/signup-modal/index.php:344
 #: blocks/src/donation-form/index.php:557
 #: blocks/src/donation-form/index.php:709
-#: blocks/src/signup-modal/index.php:345
+#: blocks/src/signup-modal/index.php:344
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:241
@@ -986,10 +984,10 @@ msgstr "Dirección de correo electrónico"
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
-#: blocks/build/signup-modal/index.php:214
+#: blocks/build/signup-modal/index.php:213
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
-#: blocks/src/signup-modal/index.php:214
+#: blocks/src/signup-modal/index.php:213
 msgid "Password"
 msgstr "Contraseña"
 
@@ -1165,9 +1163,9 @@ msgid "Enter a new password for your donor account."
 msgstr "Introduce una nueva contraseña para tu cuenta de donante."
 
 #: blocks/build/donor-dashboard/parts/auth.php:405
-#: blocks/build/signup-modal/index.php:257
+#: blocks/build/signup-modal/index.php:256
 #: blocks/src/donor-dashboard/parts/auth.php:405
-#: blocks/src/signup-modal/index.php:257
+#: blocks/src/signup-modal/index.php:256
 msgid "New password"
 msgstr "Nueva contraseña"
 
@@ -1350,9 +1348,9 @@ msgstr "Subir imagen del equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:247
 #: blocks/build/donor-dashboard/parts/team-detail.php:121
-#: blocks/build/signup-modal/index.php:296
+#: blocks/build/signup-modal/index.php:295
 #: blocks/src/donor-dashboard/parts/team-detail.php:121
-#: blocks/src/signup-modal/index.php:296
+#: blocks/src/signup-modal/index.php:295
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/settings/email-templates.js:325
 #: admin/src/pages/settings/email-templates.js:353
@@ -1919,9 +1917,9 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: blocks/build/donor-dashboard/parts/profile.php:83
-#: blocks/build/signup-modal/index.php:230
+#: blocks/build/signup-modal/index.php:229
 #: blocks/src/donor-dashboard/parts/profile.php:83
-#: blocks/src/signup-modal/index.php:230
+#: blocks/src/signup-modal/index.php:229
 msgid "Change email"
 msgstr "Cambiar correo electrónico"
 
@@ -1931,9 +1929,7 @@ msgid "Enter new email address"
 msgstr "Introduce la nueva dirección de correo electrónico"
 
 #: blocks/build/donor-dashboard/parts/profile.php:121
-#: blocks/build/signup-modal/index.php:213
 #: blocks/src/donor-dashboard/parts/profile.php:121
-#: blocks/src/signup-modal/index.php:213
 #: src/Export/ExportService.php:537
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/AddDonorDrawer.js:240
@@ -2481,145 +2477,145 @@ msgstr "Nombre"
 msgid "Last name"
 msgstr "Apellidos"
 
-#: blocks/build/signup-modal/index.php:214
-#: blocks/build/signup-modal/index.php:257
-#: blocks/src/signup-modal/index.php:214
-#: blocks/src/signup-modal/index.php:257
+#: blocks/build/signup-modal/index.php:213
+#: blocks/build/signup-modal/index.php:256
+#: blocks/src/signup-modal/index.php:213
+#: blocks/src/signup-modal/index.php:256
 msgid "At least 8 characters"
 msgstr "Al menos 8 caracteres"
 
-#: blocks/build/signup-modal/index.php:217
-#: blocks/src/signup-modal/index.php:217
+#: blocks/build/signup-modal/index.php:216
+#: blocks/src/signup-modal/index.php:216
 msgid "An account with this email already exists. Enter the correct password or"
 msgstr "Ya existe una cuenta con este correo electrónico. Introduce la contraseña correcta o"
 
-#: blocks/build/signup-modal/index.php:218
-#: blocks/src/signup-modal/index.php:218
+#: blocks/build/signup-modal/index.php:217
+#: blocks/src/signup-modal/index.php:217
 msgid "reset it"
 msgstr "restablécela"
 
-#: blocks/build/signup-modal/index.php:231
-#: blocks/src/signup-modal/index.php:231
+#: blocks/build/signup-modal/index.php:230
+#: blocks/src/signup-modal/index.php:230
 #: src/Email/templates/account-activation.php:15
 #: src/Email/templates/p2p-otp-code.php:18
 msgid "Verify your email"
 msgstr "Verifica tu correo electrónico"
 
-#: blocks/build/signup-modal/index.php:233
-#: blocks/src/signup-modal/index.php:233
+#: blocks/build/signup-modal/index.php:232
+#: blocks/src/signup-modal/index.php:232
 msgid "We sent a 6-digit code to"
 msgstr "Enviamos un código de 6 dígitos a"
 
 #. translators: %d: digit position
-#: blocks/build/signup-modal/index.php:238
-#: blocks/src/signup-modal/index.php:238
+#: blocks/build/signup-modal/index.php:237
+#: blocks/src/signup-modal/index.php:237
 msgid "Digit %d"
 msgstr "Dígito %d"
 
-#: blocks/build/signup-modal/index.php:243
-#: blocks/src/signup-modal/index.php:243
+#: blocks/build/signup-modal/index.php:242
+#: blocks/src/signup-modal/index.php:242
 msgid "Verify"
 msgstr "Verificar"
 
-#: blocks/build/signup-modal/index.php:247
-#: blocks/src/signup-modal/index.php:247
+#: blocks/build/signup-modal/index.php:246
+#: blocks/src/signup-modal/index.php:246
 msgid "Didn't get a code?"
 msgstr "¿No recibiste el código?"
 
-#: blocks/build/signup-modal/index.php:248
-#: blocks/src/signup-modal/index.php:248
+#: blocks/build/signup-modal/index.php:247
+#: blocks/src/signup-modal/index.php:247
 msgid "Resend"
 msgstr "Reenviar"
 
-#: blocks/build/signup-modal/index.php:255
-#: blocks/src/signup-modal/index.php:255
+#: blocks/build/signup-modal/index.php:254
+#: blocks/src/signup-modal/index.php:254
 msgid "Set a new password"
 msgstr "Establece una nueva contraseña"
 
-#: blocks/build/signup-modal/index.php:256
-#: blocks/src/signup-modal/index.php:256
+#: blocks/build/signup-modal/index.php:255
+#: blocks/src/signup-modal/index.php:255
 msgid "Choose a new password for your account."
 msgstr "Elige una nueva contraseña para tu cuenta."
 
-#: blocks/build/signup-modal/index.php:260
-#: blocks/src/signup-modal/index.php:260
+#: blocks/build/signup-modal/index.php:259
+#: blocks/src/signup-modal/index.php:259
 msgid "Save and continue"
 msgstr "Guardar y continuar"
 
-#: blocks/build/signup-modal/index.php:268
-#: blocks/src/signup-modal/index.php:268
+#: blocks/build/signup-modal/index.php:267
+#: blocks/src/signup-modal/index.php:267
 msgid "Set up your fundraiser"
 msgstr "Configura tu recaudación"
 
-#: blocks/build/signup-modal/index.php:273
-#: blocks/src/signup-modal/index.php:273
+#: blocks/build/signup-modal/index.php:272
+#: blocks/src/signup-modal/index.php:272
 msgid "Joining as a team member"
 msgstr "Te unes como miembro del equipo"
 
-#: blocks/build/signup-modal/index.php:277
-#: blocks/src/signup-modal/index.php:277
+#: blocks/build/signup-modal/index.php:276
+#: blocks/src/signup-modal/index.php:276
 msgid "Join a team"
 msgstr "Unirse a un equipo"
 
-#: blocks/build/signup-modal/index.php:279
-#: blocks/src/signup-modal/index.php:279
+#: blocks/build/signup-modal/index.php:278
+#: blocks/src/signup-modal/index.php:278
 msgid "Create a team"
 msgstr "Crear un equipo"
 
-#: blocks/build/signup-modal/index.php:284
-#: blocks/src/signup-modal/index.php:284
+#: blocks/build/signup-modal/index.php:283
+#: blocks/src/signup-modal/index.php:283
 msgid "Select a team"
 msgstr "Selecciona un equipo"
 
-#: blocks/build/signup-modal/index.php:286
-#: blocks/src/signup-modal/index.php:286
+#: blocks/build/signup-modal/index.php:285
+#: blocks/src/signup-modal/index.php:285
 msgid "No team — fundraise on your own"
 msgstr "Sin equipo — recauda por tu cuenta"
 
-#: blocks/build/signup-modal/index.php:291
-#: blocks/src/signup-modal/index.php:291
+#: blocks/build/signup-modal/index.php:290
+#: blocks/src/signup-modal/index.php:290
 msgid "Leave blank to fundraise on your own."
 msgstr "Déjalo en blanco para recaudar por tu cuenta."
 
-#: blocks/build/signup-modal/index.php:314
-#: blocks/src/signup-modal/index.php:314
+#: blocks/build/signup-modal/index.php:313
+#: blocks/src/signup-modal/index.php:313
 msgid "You can add a team logo later from your dashboard."
 msgstr "Puedes añadir el logotipo del equipo más tarde desde tu panel."
 
-#: blocks/build/signup-modal/index.php:320
-#: blocks/src/signup-modal/index.php:320
+#: blocks/build/signup-modal/index.php:319
+#: blocks/src/signup-modal/index.php:319
 msgid "Your fundraising goal"
 msgstr "Tu meta de recaudación"
 
-#: blocks/build/signup-modal/index.php:326
-#: blocks/src/signup-modal/index.php:326
+#: blocks/build/signup-modal/index.php:325
+#: blocks/src/signup-modal/index.php:325
 msgid "Tell your story"
 msgstr "Cuenta tu historia"
 
-#: blocks/build/signup-modal/index.php:330
-#: blocks/src/signup-modal/index.php:330
+#: blocks/build/signup-modal/index.php:329
+#: blocks/src/signup-modal/index.php:329
 msgid "Dedicate this fundraiser in honor or memory of someone"
 msgstr "Dedica esta recaudación en honor o memoria de alguien"
 
-#: blocks/build/signup-modal/index.php:337
-#: blocks/src/signup-modal/index.php:337
+#: blocks/build/signup-modal/index.php:336
+#: blocks/src/signup-modal/index.php:336
 msgid "Their name"
 msgstr "Su nombre"
 
-#: blocks/build/signup-modal/index.php:342
-#: blocks/src/signup-modal/index.php:342
+#: blocks/build/signup-modal/index.php:341
+#: blocks/src/signup-modal/index.php:341
 msgid "Create fundraiser"
 msgstr "Crear recaudación"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:70
-#: blocks/build/signup-modal/index.php:357
+#: blocks/build/signup-modal/index.php:356
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:70
-#: blocks/src/signup-modal/index.php:357
+#: blocks/src/signup-modal/index.php:356
 msgid "Copy link"
 msgstr "Copiar enlace"
 
-#: blocks/build/signup-modal/index.php:359
-#: blocks/src/signup-modal/index.php:359
+#: blocks/build/signup-modal/index.php:358
+#: blocks/src/signup-modal/index.php:358
 msgid "View my page"
 msgstr "Ver mi página"
 
@@ -4822,8 +4818,8 @@ msgstr "Página de recaudador"
 msgid "Displays a single fundraiser page."
 msgstr "Muestra la página de un recaudador."
 
-#: src/P2P/FundraiserRegistrationService.php:187
-#: src/P2P/FundraiserRegistrationService.php:193
+#: src/P2P/FundraiserRegistrationService.php:185
+#: src/P2P/FundraiserRegistrationService.php:191
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr "Esta sesión de restablecimiento no es válida o ha caducado. Empieza de nuevo."
 
@@ -5325,16 +5321,16 @@ msgstr "Solo se admiten URL HTTP y HTTPS."
 msgid "Invalid event: %s"
 msgstr "Evento no válido: %s"
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:368
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:363
 msgid "Please verify your email to continue."
 msgstr "Verifica tu correo electrónico para continuar."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:411
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:406
 msgid "This campaign is not accepting fundraisers."
 msgstr "Esta campaña no acepta recaudadores."
 
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:412
 #: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:417
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:422
 msgid "Registration for this campaign is closed."
 msgstr "El registro para esta campaña está cerrado."
 
@@ -6724,8 +6720,8 @@ msgstr "Conceptos básicos"
 msgid "Payments"
 msgstr "Pagos"
 
-#: blocks/build/signup-modal/index.php:364
-#: blocks/src/signup-modal/index.php:364
+#: blocks/build/signup-modal/index.php:363
+#: blocks/src/signup-modal/index.php:363
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:241
@@ -12549,7 +12545,7 @@ msgstr "Introduce el código de 6 dígitos."
 msgid "Enter a new password."
 msgstr "Introduce una nueva contraseña."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:452
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:447
 msgid "That code didn't work. Request a new one and try again."
 msgstr "Ese código no funcionó. Solicita uno nuevo e inténtalo de nuevo."
 
@@ -12715,7 +12711,7 @@ msgstr "¿Desactivar?"
 msgid "Deactivating hides the selected pages from the site. %d selected."
 msgstr "Al desactivar se ocultan las páginas seleccionadas del sitio. %d seleccionados."
 
-#: src/P2P/FundraiserRegistrationService.php:280
+#: src/P2P/FundraiserRegistrationService.php:278
 msgid "We could not create your fundraising page. Please try again."
 msgstr "No hemos podido crear tu página de recaudación. Inténtalo de nuevo."
 
@@ -12794,37 +12790,37 @@ msgstr "Compartir en Bluesky"
 msgid "I am raising money for a cause that means a lot to me. Every donation, big or small, helps me get closer to my goal. Thank you for your support!"
 msgstr "Estoy recaudando fondos para una causa que significa mucho para mí. Cada donación, grande o pequeña, me acerca más a mi meta. ¡Gracias por tu apoyo!"
 
-#: blocks/build/signup-modal/index.php:298
-#: blocks/src/signup-modal/index.php:298
+#: blocks/build/signup-modal/index.php:297
+#: blocks/src/signup-modal/index.php:297
 msgid "Team access"
 msgstr "Acceso al equipo"
 
-#: blocks/build/signup-modal/index.php:301
-#: blocks/src/signup-modal/index.php:301
+#: blocks/build/signup-modal/index.php:300
+#: blocks/src/signup-modal/index.php:300
 msgid "Make this team private"
 msgstr "Hacer que este equipo sea privado"
 
-#: blocks/build/signup-modal/index.php:305
-#: blocks/src/signup-modal/index.php:305
+#: blocks/build/signup-modal/index.php:304
+#: blocks/src/signup-modal/index.php:304
 msgid "Public"
 msgstr "Público"
 
 #: blocks/build/donor-dashboard/parts/team-detail.php:29
 #: blocks/build/donor-dashboard/parts/teams.php:31
-#: blocks/build/signup-modal/index.php:306
+#: blocks/build/signup-modal/index.php:305
 #: blocks/src/donor-dashboard/parts/team-detail.php:29
 #: blocks/src/donor-dashboard/parts/teams.php:31
-#: blocks/src/signup-modal/index.php:306
+#: blocks/src/signup-modal/index.php:305
 msgid "Private"
 msgstr "Privado"
 
-#: blocks/build/signup-modal/index.php:310
-#: blocks/src/signup-modal/index.php:310
+#: blocks/build/signup-modal/index.php:309
+#: blocks/src/signup-modal/index.php:309
 msgid "Anyone can join your team."
 msgstr "Cualquiera puede unirse a tu equipo."
 
-#: blocks/build/signup-modal/index.php:311
-#: blocks/src/signup-modal/index.php:311
+#: blocks/build/signup-modal/index.php:310
+#: blocks/src/signup-modal/index.php:310
 msgid "Only people you invite can join."
 msgstr "Solo pueden unirse las personas que invites."
 

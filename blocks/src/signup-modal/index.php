@@ -210,7 +210,6 @@ defined( 'ABSPATH' ) || exit;
 							<label class="mission-su__field"><span><?php esc_html_e( 'Last name', 'mission-donation-platform' ); ?></span><input type="text" autocomplete="family-name" data-wp-bind--value="state.lastName" data-wp-on--input="actions.updateLastName" data-wp-class--mission-su__input--error="state.lastNameError" /></label>
 						</div>
 						<label class="mission-su__field"><span><?php esc_html_e( 'Email', 'mission-donation-platform' ); ?></span><input type="email" autocomplete="email" data-wp-bind--value="state.email" data-wp-on--input="actions.updateEmail" data-wp-class--mission-su__input--error="state.emailError" /></label>
-						<label class="mission-su__field"><span><?php esc_html_e( 'Phone', 'mission-donation-platform' ); ?> <span class="mission-su__optional"><?php esc_html_e( '(optional)', 'mission-donation-platform' ); ?></span></span><input type="tel" autocomplete="tel" data-wp-bind--value="state.phone" data-wp-on--input="actions.updatePhone" /></label>
 						<label class="mission-su__field"><span><?php esc_html_e( 'Password', 'mission-donation-platform' ); ?></span><input type="password" autocomplete="new-password" placeholder="<?php esc_attr_e( 'At least 8 characters', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.password" data-wp-on--input="actions.updatePassword" data-wp-class--mission-su__input--error="state.passwordError" /></label>
 
 						<p class="mission-su__warning" data-wp-bind--hidden="!state.showPasswordWarning">

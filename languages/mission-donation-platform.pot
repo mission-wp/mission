@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-04T14:37:15+00:00\n"
+"POT-Creation-Date: 2026-07-04T15:52:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -473,12 +473,12 @@ msgstr ""
 #: blocks/build/donation-form/index.php:368
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/build/recent-donors/index.php:119
-#: blocks/build/signup-modal/index.php:334
+#: blocks/build/signup-modal/index.php:333
 #: blocks/build/top-donors/index.php:123
 #: blocks/src/donation-form/index.php:368
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/src/recent-donors/index.php:119
-#: blocks/src/signup-modal/index.php:334
+#: blocks/src/signup-modal/index.php:333
 #: blocks/src/top-donors/index.php:123
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/DedicationSection.js:48
@@ -489,12 +489,12 @@ msgstr ""
 #: blocks/build/donation-form/index.php:369
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/build/recent-donors/index.php:118
-#: blocks/build/signup-modal/index.php:335
+#: blocks/build/signup-modal/index.php:334
 #: blocks/build/top-donors/index.php:122
 #: blocks/src/donation-form/index.php:369
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/src/recent-donors/index.php:118
-#: blocks/src/signup-modal/index.php:335
+#: blocks/src/signup-modal/index.php:334
 #: blocks/src/top-donors/index.php:122
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/DedicationSection.js:47
@@ -555,11 +555,9 @@ msgid "Personal Message"
 msgstr ""
 
 #: blocks/build/donation-form/index.php:411
-#: blocks/build/signup-modal/index.php:213
-#: blocks/build/signup-modal/index.php:284
+#: blocks/build/signup-modal/index.php:283
 #: blocks/src/donation-form/index.php:411
-#: blocks/src/signup-modal/index.php:213
-#: blocks/src/signup-modal/index.php:284
+#: blocks/src/signup-modal/index.php:283
 msgid "(optional)"
 msgstr ""
 
@@ -702,11 +700,11 @@ msgstr ""
 #: blocks/build/donation-form/index.php:542
 #: blocks/build/donation-form/index.php:694
 #: blocks/build/signup-modal/index.php:196
-#: blocks/build/signup-modal/index.php:223
+#: blocks/build/signup-modal/index.php:222
 #: blocks/src/donation-form/index.php:542
 #: blocks/src/donation-form/index.php:694
 #: blocks/src/signup-modal/index.php:196
-#: blocks/src/signup-modal/index.php:223
+#: blocks/src/signup-modal/index.php:222
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:591
@@ -720,10 +718,10 @@ msgstr ""
 
 #: blocks/build/donation-form/index.php:557
 #: blocks/build/donation-form/index.php:709
-#: blocks/build/signup-modal/index.php:345
+#: blocks/build/signup-modal/index.php:344
 #: blocks/src/donation-form/index.php:557
 #: blocks/src/donation-form/index.php:709
-#: blocks/src/signup-modal/index.php:345
+#: blocks/src/signup-modal/index.php:344
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:241
@@ -1059,10 +1057,10 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
-#: blocks/build/signup-modal/index.php:214
+#: blocks/build/signup-modal/index.php:213
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
-#: blocks/src/signup-modal/index.php:214
+#: blocks/src/signup-modal/index.php:213
 msgid "Password"
 msgstr ""
 
@@ -1238,9 +1236,9 @@ msgid "Enter a new password for your donor account."
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/auth.php:405
-#: blocks/build/signup-modal/index.php:257
+#: blocks/build/signup-modal/index.php:256
 #: blocks/src/donor-dashboard/parts/auth.php:405
-#: blocks/src/signup-modal/index.php:257
+#: blocks/src/signup-modal/index.php:256
 msgid "New password"
 msgstr ""
 
@@ -1297,9 +1295,9 @@ msgid "View public page"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:70
-#: blocks/build/signup-modal/index.php:357
+#: blocks/build/signup-modal/index.php:356
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:70
-#: blocks/src/signup-modal/index.php:357
+#: blocks/src/signup-modal/index.php:356
 msgid "Copy link"
 msgstr ""
 
@@ -1556,9 +1554,9 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:247
 #: blocks/build/donor-dashboard/parts/team-detail.php:121
-#: blocks/build/signup-modal/index.php:296
+#: blocks/build/signup-modal/index.php:295
 #: blocks/src/donor-dashboard/parts/team-detail.php:121
-#: blocks/src/signup-modal/index.php:296
+#: blocks/src/signup-modal/index.php:295
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/settings/email-templates.js:325
 #: admin/src/pages/settings/email-templates.js:353
@@ -2172,9 +2170,9 @@ msgid "Cancel"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/profile.php:83
-#: blocks/build/signup-modal/index.php:230
+#: blocks/build/signup-modal/index.php:229
 #: blocks/src/donor-dashboard/parts/profile.php:83
-#: blocks/src/signup-modal/index.php:230
+#: blocks/src/signup-modal/index.php:229
 msgid "Change email"
 msgstr ""
 
@@ -2184,9 +2182,7 @@ msgid "Enter new email address"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/profile.php:121
-#: blocks/build/signup-modal/index.php:213
 #: blocks/src/donor-dashboard/parts/profile.php:121
-#: blocks/src/signup-modal/index.php:213
 #: src/Export/ExportService.php:537
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/AddDonorDrawer.js:240
@@ -2484,10 +2480,10 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/team-detail.php:29
 #: blocks/build/donor-dashboard/parts/teams.php:31
-#: blocks/build/signup-modal/index.php:306
+#: blocks/build/signup-modal/index.php:305
 #: blocks/src/donor-dashboard/parts/team-detail.php:29
 #: blocks/src/donor-dashboard/parts/teams.php:31
-#: blocks/src/signup-modal/index.php:306
+#: blocks/src/signup-modal/index.php:305
 msgid "Private"
 msgstr ""
 
@@ -2838,168 +2834,168 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:214
-#: blocks/build/signup-modal/index.php:257
-#: blocks/src/signup-modal/index.php:214
-#: blocks/src/signup-modal/index.php:257
+#: blocks/build/signup-modal/index.php:213
+#: blocks/build/signup-modal/index.php:256
+#: blocks/src/signup-modal/index.php:213
+#: blocks/src/signup-modal/index.php:256
 msgid "At least 8 characters"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:216
+#: blocks/src/signup-modal/index.php:216
+msgid "An account with this email already exists. Enter the correct password or"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:217
 #: blocks/src/signup-modal/index.php:217
-msgid "An account with this email already exists. Enter the correct password or"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:218
-#: blocks/src/signup-modal/index.php:218
 msgid "reset it"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:231
-#: blocks/src/signup-modal/index.php:231
+#: blocks/build/signup-modal/index.php:230
+#: blocks/src/signup-modal/index.php:230
 #: src/Email/templates/account-activation.php:15
 #: src/Email/templates/p2p-otp-code.php:18
 msgid "Verify your email"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:233
-#: blocks/src/signup-modal/index.php:233
+#: blocks/build/signup-modal/index.php:232
+#: blocks/src/signup-modal/index.php:232
 msgid "We sent a 6-digit code to"
 msgstr ""
 
 #. translators: %d: digit position
-#: blocks/build/signup-modal/index.php:238
-#: blocks/src/signup-modal/index.php:238
+#: blocks/build/signup-modal/index.php:237
+#: blocks/src/signup-modal/index.php:237
 msgid "Digit %d"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:243
-#: blocks/src/signup-modal/index.php:243
+#: blocks/build/signup-modal/index.php:242
+#: blocks/src/signup-modal/index.php:242
 msgid "Verify"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:246
+#: blocks/src/signup-modal/index.php:246
+msgid "Didn't get a code?"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:247
 #: blocks/src/signup-modal/index.php:247
-msgid "Didn't get a code?"
+msgid "Resend"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:248
-#: blocks/src/signup-modal/index.php:248
-msgid "Resend"
+#: blocks/build/signup-modal/index.php:254
+#: blocks/src/signup-modal/index.php:254
+msgid "Set a new password"
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:255
 #: blocks/src/signup-modal/index.php:255
-msgid "Set a new password"
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:256
-#: blocks/src/signup-modal/index.php:256
 msgid "Choose a new password for your account."
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:260
-#: blocks/src/signup-modal/index.php:260
+#: blocks/build/signup-modal/index.php:259
+#: blocks/src/signup-modal/index.php:259
 msgid "Save and continue"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:268
-#: blocks/src/signup-modal/index.php:268
+#: blocks/build/signup-modal/index.php:267
+#: blocks/src/signup-modal/index.php:267
 msgid "Set up your fundraiser"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:273
-#: blocks/src/signup-modal/index.php:273
+#: blocks/build/signup-modal/index.php:272
+#: blocks/src/signup-modal/index.php:272
 msgid "Joining as a team member"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:277
-#: blocks/src/signup-modal/index.php:277
+#: blocks/build/signup-modal/index.php:276
+#: blocks/src/signup-modal/index.php:276
 msgid "Join a team"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:279
-#: blocks/src/signup-modal/index.php:279
+#: blocks/build/signup-modal/index.php:278
+#: blocks/src/signup-modal/index.php:278
 msgid "Create a team"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:284
-#: blocks/src/signup-modal/index.php:284
+#: blocks/build/signup-modal/index.php:283
+#: blocks/src/signup-modal/index.php:283
 msgid "Select a team"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:286
-#: blocks/src/signup-modal/index.php:286
+#: blocks/build/signup-modal/index.php:285
+#: blocks/src/signup-modal/index.php:285
 msgid "No team — fundraise on your own"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:291
-#: blocks/src/signup-modal/index.php:291
+#: blocks/build/signup-modal/index.php:290
+#: blocks/src/signup-modal/index.php:290
 msgid "Leave blank to fundraise on your own."
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:298
-#: blocks/src/signup-modal/index.php:298
+#: blocks/build/signup-modal/index.php:297
+#: blocks/src/signup-modal/index.php:297
 msgid "Team access"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:301
-#: blocks/src/signup-modal/index.php:301
+#: blocks/build/signup-modal/index.php:300
+#: blocks/src/signup-modal/index.php:300
 msgid "Make this team private"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:305
-#: blocks/src/signup-modal/index.php:305
+#: blocks/build/signup-modal/index.php:304
+#: blocks/src/signup-modal/index.php:304
 msgid "Public"
+msgstr ""
+
+#: blocks/build/signup-modal/index.php:309
+#: blocks/src/signup-modal/index.php:309
+msgid "Anyone can join your team."
 msgstr ""
 
 #: blocks/build/signup-modal/index.php:310
 #: blocks/src/signup-modal/index.php:310
-msgid "Anyone can join your team."
-msgstr ""
-
-#: blocks/build/signup-modal/index.php:311
-#: blocks/src/signup-modal/index.php:311
 msgid "Only people you invite can join."
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:314
-#: blocks/src/signup-modal/index.php:314
+#: blocks/build/signup-modal/index.php:313
+#: blocks/src/signup-modal/index.php:313
 msgid "You can add a team logo later from your dashboard."
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:320
-#: blocks/src/signup-modal/index.php:320
+#: blocks/build/signup-modal/index.php:319
+#: blocks/src/signup-modal/index.php:319
 msgid "Your fundraising goal"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:326
-#: blocks/src/signup-modal/index.php:326
+#: blocks/build/signup-modal/index.php:325
+#: blocks/src/signup-modal/index.php:325
 msgid "Tell your story"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:330
-#: blocks/src/signup-modal/index.php:330
+#: blocks/build/signup-modal/index.php:329
+#: blocks/src/signup-modal/index.php:329
 msgid "Dedicate this fundraiser in honor or memory of someone"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:337
-#: blocks/src/signup-modal/index.php:337
+#: blocks/build/signup-modal/index.php:336
+#: blocks/src/signup-modal/index.php:336
 msgid "Their name"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:342
-#: blocks/src/signup-modal/index.php:342
+#: blocks/build/signup-modal/index.php:341
+#: blocks/src/signup-modal/index.php:341
 msgid "Create fundraiser"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:359
-#: blocks/src/signup-modal/index.php:359
+#: blocks/build/signup-modal/index.php:358
+#: blocks/src/signup-modal/index.php:358
 msgid "View my page"
 msgstr ""
 
-#: blocks/build/signup-modal/index.php:364
-#: blocks/src/signup-modal/index.php:364
+#: blocks/build/signup-modal/index.php:363
+#: blocks/src/signup-modal/index.php:363
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:241
@@ -5299,12 +5295,12 @@ msgstr ""
 msgid "Displays a single fundraiser page."
 msgstr ""
 
-#: src/P2P/FundraiserRegistrationService.php:187
-#: src/P2P/FundraiserRegistrationService.php:193
+#: src/P2P/FundraiserRegistrationService.php:185
+#: src/P2P/FundraiserRegistrationService.php:191
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr ""
 
-#: src/P2P/FundraiserRegistrationService.php:280
+#: src/P2P/FundraiserRegistrationService.php:278
 msgid "We could not create your fundraising page. Please try again."
 msgstr ""
 
@@ -5832,20 +5828,20 @@ msgstr ""
 msgid "Invalid event: %s"
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:368
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:363
 msgid "Please verify your email to continue."
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:411
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:406
 msgid "This campaign is not accepting fundraisers."
 msgstr ""
 
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:412
 #: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:417
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:422
 msgid "Registration for this campaign is closed."
 msgstr ""
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:452
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:447
 msgid "That code didn't work. Request a new one and try again."
 msgstr ""
 

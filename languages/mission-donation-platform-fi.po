@@ -408,12 +408,12 @@ msgstr "Omista tämä lahjoitus jonkun kunniaksi tai muistoksi"
 #: blocks/build/donation-form/index.php:368
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/build/recent-donors/index.php:119
-#: blocks/build/signup-modal/index.php:334
+#: blocks/build/signup-modal/index.php:333
 #: blocks/build/top-donors/index.php:123
 #: blocks/src/donation-form/index.php:368
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/src/recent-donors/index.php:119
-#: blocks/src/signup-modal/index.php:334
+#: blocks/src/signup-modal/index.php:333
 #: blocks/src/top-donors/index.php:123
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/DedicationSection.js:48
@@ -424,12 +424,12 @@ msgstr "Kunniaksi"
 #: blocks/build/donation-form/index.php:369
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/build/recent-donors/index.php:118
-#: blocks/build/signup-modal/index.php:335
+#: blocks/build/signup-modal/index.php:334
 #: blocks/build/top-donors/index.php:122
 #: blocks/src/donation-form/index.php:369
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/src/recent-donors/index.php:118
-#: blocks/src/signup-modal/index.php:335
+#: blocks/src/signup-modal/index.php:334
 #: blocks/src/top-donors/index.php:122
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/DedicationSection.js:47
@@ -490,11 +490,9 @@ msgid "Personal Message"
 msgstr "Henkilökohtainen viesti"
 
 #: blocks/build/donation-form/index.php:411
-#: blocks/build/signup-modal/index.php:213
-#: blocks/build/signup-modal/index.php:284
+#: blocks/build/signup-modal/index.php:283
 #: blocks/src/donation-form/index.php:411
-#: blocks/src/signup-modal/index.php:213
-#: blocks/src/signup-modal/index.php:284
+#: blocks/src/signup-modal/index.php:283
 msgid "(optional)"
 msgstr "(valinnainen)"
 
@@ -637,11 +635,11 @@ msgstr "Jätä viesti (valinnainen)"
 #: blocks/build/donation-form/index.php:542
 #: blocks/build/donation-form/index.php:694
 #: blocks/build/signup-modal/index.php:196
-#: blocks/build/signup-modal/index.php:223
+#: blocks/build/signup-modal/index.php:222
 #: blocks/src/donation-form/index.php:542
 #: blocks/src/donation-form/index.php:694
 #: blocks/src/signup-modal/index.php:196
-#: blocks/src/signup-modal/index.php:223
+#: blocks/src/signup-modal/index.php:222
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:591
@@ -655,10 +653,10 @@ msgstr "Jatka"
 
 #: blocks/build/donation-form/index.php:557
 #: blocks/build/donation-form/index.php:709
-#: blocks/build/signup-modal/index.php:345
+#: blocks/build/signup-modal/index.php:344
 #: blocks/src/donation-form/index.php:557
 #: blocks/src/donation-form/index.php:709
-#: blocks/src/signup-modal/index.php:345
+#: blocks/src/signup-modal/index.php:344
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:241
@@ -964,10 +962,10 @@ msgstr "Sähköpostiosoite"
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
-#: blocks/build/signup-modal/index.php:214
+#: blocks/build/signup-modal/index.php:213
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
-#: blocks/src/signup-modal/index.php:214
+#: blocks/src/signup-modal/index.php:213
 msgid "Password"
 msgstr "Salasana"
 
@@ -1143,9 +1141,9 @@ msgid "Enter a new password for your donor account."
 msgstr "Anna lahjoittajatilillesi uusi salasana."
 
 #: blocks/build/donor-dashboard/parts/auth.php:405
-#: blocks/build/signup-modal/index.php:257
+#: blocks/build/signup-modal/index.php:256
 #: blocks/src/donor-dashboard/parts/auth.php:405
-#: blocks/src/signup-modal/index.php:257
+#: blocks/src/signup-modal/index.php:256
 msgid "New password"
 msgstr "Uusi salasana"
 
@@ -1578,9 +1576,9 @@ msgid "Cancel"
 msgstr "Peruuta"
 
 #: blocks/build/donor-dashboard/parts/profile.php:83
-#: blocks/build/signup-modal/index.php:230
+#: blocks/build/signup-modal/index.php:229
 #: blocks/src/donor-dashboard/parts/profile.php:83
-#: blocks/src/signup-modal/index.php:230
+#: blocks/src/signup-modal/index.php:229
 msgid "Change email"
 msgstr "Vaihda sähköposti"
 
@@ -1590,9 +1588,7 @@ msgid "Enter new email address"
 msgstr "Anna uusi sähköpostiosoite"
 
 #: blocks/build/donor-dashboard/parts/profile.php:121
-#: blocks/build/signup-modal/index.php:213
 #: blocks/src/donor-dashboard/parts/profile.php:121
-#: blocks/src/signup-modal/index.php:213
 #: src/Export/ExportService.php:537
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/AddDonorDrawer.js:240
@@ -2641,8 +2637,8 @@ msgstr "Toistuva lahjoituksesi on päättynyt"
 msgid "N/A"
 msgstr "Ei saatavilla"
 
-#: blocks/build/signup-modal/index.php:231
-#: blocks/src/signup-modal/index.php:231
+#: blocks/build/signup-modal/index.php:230
+#: blocks/src/signup-modal/index.php:230
 #: src/Email/templates/account-activation.php:15
 #: src/Email/templates/p2p-otp-code.php:18
 msgid "Verify your email"
@@ -5515,8 +5511,8 @@ msgstr "Perusteet"
 msgid "Payments"
 msgstr "Maksut"
 
-#: blocks/build/signup-modal/index.php:364
-#: blocks/src/signup-modal/index.php:364
+#: blocks/build/signup-modal/index.php:363
+#: blocks/src/signup-modal/index.php:363
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:241
@@ -10916,9 +10912,9 @@ msgstr "Lataa tiimin kuva"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:247
 #: blocks/build/donor-dashboard/parts/team-detail.php:121
-#: blocks/build/signup-modal/index.php:296
+#: blocks/build/signup-modal/index.php:295
 #: blocks/src/donor-dashboard/parts/team-detail.php:121
-#: blocks/src/signup-modal/index.php:296
+#: blocks/src/signup-modal/index.php:295
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/settings/email-templates.js:325
 #: admin/src/pages/settings/email-templates.js:353
@@ -11167,172 +11163,172 @@ msgstr "Etunimi"
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: blocks/build/signup-modal/index.php:214
-#: blocks/build/signup-modal/index.php:257
-#: blocks/src/signup-modal/index.php:214
-#: blocks/src/signup-modal/index.php:257
+#: blocks/build/signup-modal/index.php:213
+#: blocks/build/signup-modal/index.php:256
+#: blocks/src/signup-modal/index.php:213
+#: blocks/src/signup-modal/index.php:256
 msgid "At least 8 characters"
 msgstr "Vähintään 8 merkkiä"
 
-#: blocks/build/signup-modal/index.php:217
-#: blocks/src/signup-modal/index.php:217
+#: blocks/build/signup-modal/index.php:216
+#: blocks/src/signup-modal/index.php:216
 msgid "An account with this email already exists. Enter the correct password or"
 msgstr "Tällä sähköpostilla on jo tili. Syötä oikea salasana tai"
 
-#: blocks/build/signup-modal/index.php:218
-#: blocks/src/signup-modal/index.php:218
+#: blocks/build/signup-modal/index.php:217
+#: blocks/src/signup-modal/index.php:217
 msgid "reset it"
 msgstr "nollaa se"
 
-#: blocks/build/signup-modal/index.php:233
-#: blocks/src/signup-modal/index.php:233
+#: blocks/build/signup-modal/index.php:232
+#: blocks/src/signup-modal/index.php:232
 msgid "We sent a 6-digit code to"
 msgstr "Lähetimme 6-numeroisen koodin osoitteeseen"
 
 #. translators: %d: digit position
-#: blocks/build/signup-modal/index.php:238
-#: blocks/src/signup-modal/index.php:238
+#: blocks/build/signup-modal/index.php:237
+#: blocks/src/signup-modal/index.php:237
 msgid "Digit %d"
 msgstr "Numero %d"
 
-#: blocks/build/signup-modal/index.php:243
-#: blocks/src/signup-modal/index.php:243
+#: blocks/build/signup-modal/index.php:242
+#: blocks/src/signup-modal/index.php:242
 msgid "Verify"
 msgstr "Vahvista"
 
-#: blocks/build/signup-modal/index.php:247
-#: blocks/src/signup-modal/index.php:247
+#: blocks/build/signup-modal/index.php:246
+#: blocks/src/signup-modal/index.php:246
 msgid "Didn't get a code?"
 msgstr "Etkö saanut koodia?"
 
-#: blocks/build/signup-modal/index.php:248
-#: blocks/src/signup-modal/index.php:248
+#: blocks/build/signup-modal/index.php:247
+#: blocks/src/signup-modal/index.php:247
 msgid "Resend"
 msgstr "Lähetä uudelleen"
 
-#: blocks/build/signup-modal/index.php:255
-#: blocks/src/signup-modal/index.php:255
+#: blocks/build/signup-modal/index.php:254
+#: blocks/src/signup-modal/index.php:254
 msgid "Set a new password"
 msgstr "Aseta uusi salasana"
 
-#: blocks/build/signup-modal/index.php:256
-#: blocks/src/signup-modal/index.php:256
+#: blocks/build/signup-modal/index.php:255
+#: blocks/src/signup-modal/index.php:255
 msgid "Choose a new password for your account."
 msgstr "Valitse tilillesi uusi salasana."
 
-#: blocks/build/signup-modal/index.php:260
-#: blocks/src/signup-modal/index.php:260
+#: blocks/build/signup-modal/index.php:259
+#: blocks/src/signup-modal/index.php:259
 msgid "Save and continue"
 msgstr "Tallenna ja jatka"
 
-#: blocks/build/signup-modal/index.php:268
-#: blocks/src/signup-modal/index.php:268
+#: blocks/build/signup-modal/index.php:267
+#: blocks/src/signup-modal/index.php:267
 msgid "Set up your fundraiser"
 msgstr "Luo varainkeruusivusi"
 
-#: blocks/build/signup-modal/index.php:273
-#: blocks/src/signup-modal/index.php:273
+#: blocks/build/signup-modal/index.php:272
+#: blocks/src/signup-modal/index.php:272
 msgid "Joining as a team member"
 msgstr "Liityt tiimin jäsenenä"
 
-#: blocks/build/signup-modal/index.php:277
-#: blocks/src/signup-modal/index.php:277
+#: blocks/build/signup-modal/index.php:276
+#: blocks/src/signup-modal/index.php:276
 msgid "Join a team"
 msgstr "Liity tiimiin"
 
-#: blocks/build/signup-modal/index.php:279
-#: blocks/src/signup-modal/index.php:279
+#: blocks/build/signup-modal/index.php:278
+#: blocks/src/signup-modal/index.php:278
 msgid "Create a team"
 msgstr "Luo tiimi"
 
-#: blocks/build/signup-modal/index.php:284
-#: blocks/src/signup-modal/index.php:284
+#: blocks/build/signup-modal/index.php:283
+#: blocks/src/signup-modal/index.php:283
 msgid "Select a team"
 msgstr "Valitse tiimi"
 
-#: blocks/build/signup-modal/index.php:286
-#: blocks/src/signup-modal/index.php:286
+#: blocks/build/signup-modal/index.php:285
+#: blocks/src/signup-modal/index.php:285
 msgid "No team — fundraise on your own"
 msgstr "Ei tiimiä — kerää varoja itsenäisesti"
 
-#: blocks/build/signup-modal/index.php:291
-#: blocks/src/signup-modal/index.php:291
+#: blocks/build/signup-modal/index.php:290
+#: blocks/src/signup-modal/index.php:290
 msgid "Leave blank to fundraise on your own."
 msgstr "Jätä tyhjäksi, jos keräät varoja itsenäisesti."
 
-#: blocks/build/signup-modal/index.php:298
-#: blocks/src/signup-modal/index.php:298
+#: blocks/build/signup-modal/index.php:297
+#: blocks/src/signup-modal/index.php:297
 msgid "Team access"
 msgstr "Tiimiin liittyminen"
 
-#: blocks/build/signup-modal/index.php:301
-#: blocks/src/signup-modal/index.php:301
+#: blocks/build/signup-modal/index.php:300
+#: blocks/src/signup-modal/index.php:300
 msgid "Make this team private"
 msgstr "Tee tiimistä yksityinen"
 
-#: blocks/build/signup-modal/index.php:305
-#: blocks/src/signup-modal/index.php:305
+#: blocks/build/signup-modal/index.php:304
+#: blocks/src/signup-modal/index.php:304
 msgid "Public"
 msgstr "Julkinen"
 
 #: blocks/build/donor-dashboard/parts/team-detail.php:29
 #: blocks/build/donor-dashboard/parts/teams.php:31
-#: blocks/build/signup-modal/index.php:306
+#: blocks/build/signup-modal/index.php:305
 #: blocks/src/donor-dashboard/parts/team-detail.php:29
 #: blocks/src/donor-dashboard/parts/teams.php:31
-#: blocks/src/signup-modal/index.php:306
+#: blocks/src/signup-modal/index.php:305
 msgid "Private"
 msgstr "Yksityinen"
 
-#: blocks/build/signup-modal/index.php:310
-#: blocks/src/signup-modal/index.php:310
+#: blocks/build/signup-modal/index.php:309
+#: blocks/src/signup-modal/index.php:309
 msgid "Anyone can join your team."
 msgstr "Kuka tahansa voi liittyä tiimiisi."
 
-#: blocks/build/signup-modal/index.php:311
-#: blocks/src/signup-modal/index.php:311
+#: blocks/build/signup-modal/index.php:310
+#: blocks/src/signup-modal/index.php:310
 msgid "Only people you invite can join."
 msgstr "Vain kutsumasi henkilöt voivat liittyä."
 
-#: blocks/build/signup-modal/index.php:314
-#: blocks/src/signup-modal/index.php:314
+#: blocks/build/signup-modal/index.php:313
+#: blocks/src/signup-modal/index.php:313
 msgid "You can add a team logo later from your dashboard."
 msgstr "Voit lisätä tiimin logon myöhemmin hallintapaneelistasi."
 
-#: blocks/build/signup-modal/index.php:320
-#: blocks/src/signup-modal/index.php:320
+#: blocks/build/signup-modal/index.php:319
+#: blocks/src/signup-modal/index.php:319
 msgid "Your fundraising goal"
 msgstr "Varainkeruutavoitteesi"
 
-#: blocks/build/signup-modal/index.php:326
-#: blocks/src/signup-modal/index.php:326
+#: blocks/build/signup-modal/index.php:325
+#: blocks/src/signup-modal/index.php:325
 msgid "Tell your story"
 msgstr "Kerro tarinasi"
 
-#: blocks/build/signup-modal/index.php:330
-#: blocks/src/signup-modal/index.php:330
+#: blocks/build/signup-modal/index.php:329
+#: blocks/src/signup-modal/index.php:329
 msgid "Dedicate this fundraiser in honor or memory of someone"
 msgstr "Omista tämä keräys jonkun kunniaksi tai muistoksi"
 
-#: blocks/build/signup-modal/index.php:337
-#: blocks/src/signup-modal/index.php:337
+#: blocks/build/signup-modal/index.php:336
+#: blocks/src/signup-modal/index.php:336
 msgid "Their name"
 msgstr "Henkilön nimi"
 
-#: blocks/build/signup-modal/index.php:342
-#: blocks/src/signup-modal/index.php:342
+#: blocks/build/signup-modal/index.php:341
+#: blocks/src/signup-modal/index.php:341
 msgid "Create fundraiser"
 msgstr "Luo keräyssivu"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:70
-#: blocks/build/signup-modal/index.php:357
+#: blocks/build/signup-modal/index.php:356
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:70
-#: blocks/src/signup-modal/index.php:357
+#: blocks/src/signup-modal/index.php:356
 msgid "Copy link"
 msgstr "Kopioi linkki"
 
-#: blocks/build/signup-modal/index.php:359
-#: blocks/src/signup-modal/index.php:359
+#: blocks/build/signup-modal/index.php:358
+#: blocks/src/signup-modal/index.php:358
 msgid "View my page"
 msgstr "Näytä sivuni"
 
@@ -11802,12 +11798,12 @@ msgstr "Varainkeruusivu"
 msgid "Displays a single fundraiser page."
 msgstr "Näyttää yksittäisen varainkeruusivun."
 
-#: src/P2P/FundraiserRegistrationService.php:187
-#: src/P2P/FundraiserRegistrationService.php:193
+#: src/P2P/FundraiserRegistrationService.php:185
+#: src/P2P/FundraiserRegistrationService.php:191
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr "Tämä palautusistunto on virheellinen tai vanhentunut. Aloita alusta."
 
-#: src/P2P/FundraiserRegistrationService.php:280
+#: src/P2P/FundraiserRegistrationService.php:278
 msgid "We could not create your fundraising page. Please try again."
 msgstr "Varainkeruusivuasi ei voitu luoda. Yritä uudelleen."
 
@@ -11899,20 +11895,20 @@ msgstr "Tämä henkilö on jo tämän kampanjan varainkerääjä."
 msgid "The selected team does not belong to this campaign."
 msgstr "Valittu tiimi ei kuulu tähän kampanjaan."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:368
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:363
 msgid "Please verify your email to continue."
 msgstr "Vahvista sähköpostiosoitteesi jatkaaksesi."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:411
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:406
 msgid "This campaign is not accepting fundraisers."
 msgstr "Tämä kampanja ei ota vastaan varainkerääjiä."
 
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:412
 #: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:417
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:422
 msgid "Registration for this campaign is closed."
 msgstr "Ilmoittautuminen tähän kampanjaan on suljettu."
 
-#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:452
+#: src/Rest/Endpoints/RegisterFundraiserEndpoint.php:447
 msgid "That code didn't work. Request a new one and try again."
 msgstr "Koodi ei toiminut. Pyydä uusi koodi ja yritä uudelleen."
 

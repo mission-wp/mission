@@ -224,7 +224,7 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 		$service = $this->service();
 		$service->resolve_account( 'fresh@example.com', 'longenough1' );
 
-		$donor = $service->complete_signup( 'fresh@example.com', $this->last_code, 'Fresh', 'Start', '', 'longenough1' );
+		$donor = $service->complete_signup( 'fresh@example.com', $this->last_code, 'Fresh', 'Start', 'longenough1' );
 
 		$this->assertNotEmpty( $donor->user_id );
 		$this->assertSame( $donor->user_id, get_current_user_id() );
@@ -242,7 +242,7 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 
 		$service = $this->service();
 		$service->resolve_account( 'donor@example.com', 'longenough1' );
-		$linked = $service->complete_signup( 'donor@example.com', $this->last_code, '', '', '', 'longenough1' );
+		$linked = $service->complete_signup( 'donor@example.com', $this->last_code, '', '', 'longenough1' );
 
 		$this->assertSame( $donor_id, $linked->id );
 		$this->assertNotEmpty( $linked->user_id );
@@ -259,7 +259,7 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 		$bad = '000000' === $this->last_code ? '111111' : '000000';
 
 		$this->expectException( OtpException::class );
-		$service->complete_signup( 'badcode@example.com', $bad, 'A', 'B', '', 'longenough1' );
+		$service->complete_signup( 'badcode@example.com', $bad, 'A', 'B', 'longenough1' );
 	}
 
 	// -------------------------------------------------------------------------

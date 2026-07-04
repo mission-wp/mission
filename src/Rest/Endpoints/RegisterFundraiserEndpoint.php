@@ -127,10 +127,6 @@ class RegisterFundraiserEndpoint {
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					],
-					'phone'      => [
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					],
 					'password'   => [ 'type' => 'string' ],
 				],
 			]
@@ -304,7 +300,6 @@ class RegisterFundraiserEndpoint {
 				$code,
 				(string) $request->get_param( 'first_name' ),
 				(string) $request->get_param( 'last_name' ),
-				(string) $request->get_param( 'phone' ),
 				(string) $request->get_param( 'password' ),
 			);
 

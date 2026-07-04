@@ -133,7 +133,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
     password: '',
     newPassword: '',
     resetGrant: '',
@@ -279,9 +278,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     },
     updateEmail( event ) {
       state.email = event.target.value;
-    },
-    updatePhone( event ) {
-      state.phone = event.target.value;
     },
     updatePassword( event ) {
       state.password = event.target.value;
@@ -454,7 +450,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
               code,
               first_name: state.firstName.trim(),
               last_name: state.lastName.trim(),
-              phone: state.phone.trim(),
               password: state.password,
             };
 
