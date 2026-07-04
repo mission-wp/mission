@@ -306,6 +306,59 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Whether this fundraiser's page is locked because its campaign ended.
+	 *
+	 * A missing campaign locks the page too — there is nothing left to raise for.
+	 *
+	 * @return bool
+	 */
+	public function is_locked(): bool {
+		$campaign = $this->campaign();
+
+		return ! $campaign || $campaign->has_ended();
+	}
+
+	/**
+	 * Get the page dedication, if one was set.
+	 *
+	 * @return array{type: string, name: string}|null Type is 'honor' or 'memory'.
+	 */
+	public function dedication(): ?array {
+		$name = (string) $this->get_meta( 'tribute_name' );
+
+		if ( '' === $name ) {
+			return null;
+		}
+
+		return [
+			'type' => 'memory' === $this->get_meta( 'tribute_type' ) ? 'memory' : 'honor',
+			'name' => $name,
+		];
+	}
+
+	/**
+	 * Set or clear the page dedication.
+	 *
+	 * Mirrors the registration normalization: any type other than 'memory'
+	 * stores 'honor'. An empty type or name clears the dedication.
+	 *
+	 * @param string|null $type Dedication type ('honor' or 'memory'), or null/'' to clear.
+	 * @param string      $name The honoree's name.
+	 */
+	public function set_dedication( ?string $type, string $name ): void {
+		$name = trim( $name );
+
+		if ( null === $type || '' === $type || '' === $name ) {
+			$this->delete_meta( 'tribute_type' );
+			$this->delete_meta( 'tribute_name' );
+			return;
+		}
+
+		$this->update_meta( 'tribute_type', 'memory' === $type ? 'memory' : 'honor' );
+		$this->update_meta( 'tribute_name', $name );
+	}
+
+	/**
 	 * Approve this fundraiser, moving them to the active status.
 	 *
 	 * Idempotent: a fundraiser that is already active is left untouched and no

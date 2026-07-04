@@ -1826,6 +1826,62 @@ class ReportingService {
 	}
 
 	/**
+	 * Recent completed donations across all of a donor's fundraiser pages.
+	 *
+	 * Powers the fundraiser-persona dashboard Overview: the latest gifts made
+	 * through any page this donor owns, newest first, test/live scoped by the
+	 * current mode.
+	 *
+	 * @param int $donor_id Owning donor ID.
+	 * @param int $limit    Maximum rows.
+	 * @return array<int, array{first_name:string, last_name:string, is_anonymous:bool, amount:int, currency:string, date:string, fundraiser_id:int, headline:string}>
+	 */
+	public function donor_pages_recent_donations( int $donor_id, int $limit = 5 ): array {
+		global $wpdb;
+
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$f_table     = $wpdb->prefix . 'missiondp_fundraisers';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
+		$is_test     = (int) $this->is_test_mode();
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.amount, t.currency, t.is_anonymous, t.date_completed,
+						d.first_name, d.last_name, f.id AS fundraiser_id, f.headline
+				 FROM %i AS t
+				 INNER JOIN %i AS f ON t.fundraiser_id = f.id
+				 INNER JOIN %i AS d ON t.donor_id = d.id
+				 WHERE f.donor_id = %d AND t.status = \'completed\' AND t.is_test = %d
+				 ORDER BY t.date_completed DESC
+				 LIMIT %d',
+				$txn_table,
+				$f_table,
+				$donor_table,
+				$donor_id,
+				$is_test,
+				max( 1, $limit )
+			),
+			ARRAY_A
+		);
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$items[] = [
+				'first_name'    => $row['first_name'],
+				'last_name'     => $row['last_name'],
+				'is_anonymous'  => (bool) $row['is_anonymous'],
+				'amount'        => (int) $row['amount'],
+				'currency'      => $row['currency'],
+				'date'          => $row['date_completed'],
+				'fundraiser_id' => (int) $row['fundraiser_id'],
+				'headline'      => $row['headline'] ?? '',
+			];
+		}
+
+		return $items;
+	}
+
+	/**
 	 * Aggregate stats for the Teams admin list.
 	 *
 	 * @return array{total_teams: int, active_count: int, pending_count: int, total_raised: int}
@@ -2031,11 +2087,85 @@ class ReportingService {
 	}
 
 	/**
+	 * A team's leaderboard rank among the active teams in its campaign.
+	 *
+	 * Competition ranking on amount raised (member fundraisers plus direct team
+	 * gifts): rank = 1 + the number of active teams that raised strictly more.
+	 * Private teams count — this powers the owner-facing dashboard, not the
+	 * public leaderboard.
+	 *
+	 * @param int $team_id Team ID.
+	 * @return array{rank: int, total: int} Zeroes when the team does not exist.
+	 */
+	public function team_rank( int $team_id ): array {
+		global $wpdb;
+
+		$t_table  = $wpdb->prefix . 'missiondp_teams';
+		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+
+		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
+		$is_test    = $this->is_test_mode() ? 1 : 0;
+
+		$team = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT t.campaign_id,
+					( SELECT COALESCE(SUM(m.%i), 0) FROM %i AS m WHERE m.team_id = t.id )
+					+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
+						FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d ) AS raised
+				 FROM %i AS t
+				 WHERE t.id = %d",
+				$raised_col,
+				$f_table,
+				$tx_table,
+				$is_test,
+				$t_table,
+				$team_id
+			),
+			ARRAY_A
+		);
+
+		if ( ! $team ) {
+			return [
+				'rank'  => 0,
+				'total' => 0,
+			];
+		}
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(*) AS total,
+					COALESCE(SUM(CASE WHEN
+						( SELECT COALESCE(SUM(m.%i), 0) FROM %i AS m WHERE m.team_id = t.id )
+						+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
+							FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d )
+						> %d THEN 1 ELSE 0 END), 0) AS higher
+				 FROM %i AS t
+				 WHERE t.campaign_id = %d AND t.status = %s",
+				$raised_col,
+				$f_table,
+				$tx_table,
+				$is_test,
+				(int) $team['raised'],
+				$t_table,
+				(int) $team['campaign_id'],
+				\MissionDP\Models\Team::STATUS_ACTIVE
+			),
+			ARRAY_A
+		);
+
+		return [
+			'rank'  => 1 + (int) ( $row['higher'] ?? 0 ),
+			'total' => (int) ( $row['total'] ?? 0 ),
+		];
+	}
+
+	/**
 	 * A team's member fundraisers with per-member progress, ordered by raised.
 	 *
 	 * @param int $team_id Team ID.
 	 * @param int $limit   Maximum members to return.
-	 * @return array<int, array{id:int, post_id:int, name:string, goal:int, raised:int, is_captain:bool}>
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, goal:int, raised:int, is_captain:bool}>
 	 */
 	public function team_members( int $team_id, int $limit = 100 ): array {
 		global $wpdb;
@@ -2047,7 +2177,7 @@ class ReportingService {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT f.id, f.post_id, f.goal, f.is_team_captain, f.%i AS raised,
+				'SELECT f.id, f.post_id, f.donor_id, f.goal, f.is_team_captain, f.%i AS raised,
 						d.first_name, d.last_name
 				 FROM %i AS f
 				 LEFT JOIN %i AS d ON f.donor_id = d.id
@@ -2071,7 +2201,10 @@ class ReportingService {
 			$items[] = [
 				'id'         => (int) $row['id'],
 				'post_id'    => (int) $row['post_id'],
+				'donor_id'   => (int) $row['donor_id'],
 				'name'       => $name ?: __( 'Fundraiser', 'mission-donation-platform' ),
+				'first_name' => (string) ( $row['first_name'] ?? '' ),
+				'last_name'  => (string) ( $row['last_name'] ?? '' ),
 				'goal'       => (int) $row['goal'],
 				'raised'     => (int) $row['raised'],
 				'is_captain' => (bool) (int) $row['is_team_captain'],

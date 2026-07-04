@@ -704,4 +704,33 @@ class TeamTest extends WP_UnitTestCase {
 		$this->assertInstanceOf( \WP_Error::class, $result );
 		$this->assertSame( 'not_a_member', $result->get_error_code() );
 	}
+
+	/**
+	 * Test is_locked() follows the campaign's ended status.
+	 */
+	public function test_is_locked_follows_campaign_status(): void {
+		$campaign = new Campaign(
+			[
+				'title' => 'Drive',
+				'type'  => 'p2p',
+			]
+		);
+		$campaign->save();
+
+		$team = $this->create_team( [ 'campaign_id' => $campaign->id ] );
+		$this->assertFalse( $team->is_locked() );
+
+		$campaign->status = Campaign::STATUS_ENDED;
+		$campaign->save();
+		$this->assertTrue( $team->is_locked() );
+
+		// A team whose campaign row is gone is locked too.
+		$orphan = $this->create_team(
+			[
+				'name'        => 'Orphans',
+				'campaign_id' => 99999,
+			]
+		);
+		$this->assertTrue( $orphan->is_locked() );
+	}
 }

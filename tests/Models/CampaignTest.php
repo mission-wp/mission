@@ -794,4 +794,51 @@ class CampaignTest extends WP_UnitTestCase {
 		// Another campaign's records are untouched.
 		$this->assertNotNull( Fundraiser::find( $other_fundraiser->id ) );
 	}
+
+	// -------------------------------------------------------------------------
+	// Lifecycle helpers.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test has_ended() reflects the ended status only.
+	 */
+	public function test_has_ended_reflects_status(): void {
+		$active = $this->create_campaign();
+		$ended  = $this->create_campaign(
+			[
+				'title'  => 'Done',
+				'status' => Campaign::STATUS_ENDED,
+			]
+		);
+
+		$this->assertFalse( $active->has_ended() );
+		$this->assertTrue( $ended->has_ended() );
+	}
+
+	/**
+	 * Test days_left() counts whole days to the end date.
+	 */
+	public function test_days_left_counts_days_to_end_date(): void {
+		$campaign = $this->create_campaign(
+			[ 'date_end' => wp_date( 'Y-m-d', strtotime( '+10 days' ) ) . ' 00:00:00' ]
+		);
+
+		$this->assertSame( 10, $campaign->days_left() );
+	}
+
+	/**
+	 * Test days_left() is null without an end date and never negative.
+	 */
+	public function test_days_left_null_without_end_date_and_never_negative(): void {
+		$open = $this->create_campaign();
+		$past = $this->create_campaign(
+			[
+				'title'    => 'Past',
+				'date_end' => '2020-01-01 00:00:00',
+			]
+		);
+
+		$this->assertNull( $open->days_left() );
+		$this->assertSame( 0, $past->days_left() );
+	}
 }

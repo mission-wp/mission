@@ -377,6 +377,38 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Whether this campaign has ended.
+	 *
+	 * @return bool
+	 */
+	public function has_ended(): bool {
+		return self::STATUS_ENDED === $this->status;
+	}
+
+	/**
+	 * Whole days from today until the campaign's end date.
+	 *
+	 * Uses the same date-only, site-timezone comparison as the lifecycle
+	 * transitions, so 0 means the campaign ends today.
+	 *
+	 * @return int|null Days remaining (never negative), or null when no end date is set.
+	 */
+	public function days_left(): ?int {
+		if ( ! $this->date_end ) {
+			return null;
+		}
+
+		$end   = strtotime( substr( $this->date_end, 0, 10 ) );
+		$today = strtotime( wp_date( 'Y-m-d' ) );
+
+		if ( false === $end || false === $today ) {
+			return null;
+		}
+
+		return max( 0, (int) round( ( $end - $today ) / DAY_IN_SECONDS ) );
+	}
+
+	/**
 	 * Whether this is a peer-to-peer fundraising campaign.
 	 *
 	 * @return bool

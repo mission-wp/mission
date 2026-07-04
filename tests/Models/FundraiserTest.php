@@ -714,4 +714,75 @@ class FundraiserTest extends WP_UnitTestCase {
 		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = %s", 'missiondp_fundraiser' ) );
 		$this->assertSame( 1, $count );
 	}
+
+	// -------------------------------------------------------------------------
+	// Dedication and locking.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test dedication() round-trips through set_dedication() with type normalization.
+	 */
+	public function test_dedication_round_trip(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$this->assertNull( $fundraiser->dedication() );
+
+		$fundraiser->set_dedication( 'memory', 'Jane Smith' );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'Jane Smith',
+			],
+			$fundraiser->dedication()
+		);
+
+		// Unknown types normalize to honor, matching registration.
+		$fundraiser->set_dedication( 'bogus', 'Jane Smith' );
+		$this->assertSame( 'honor', $fundraiser->dedication()['type'] );
+	}
+
+	/**
+	 * Test set_dedication() clears both metas on an empty type or name.
+	 */
+	public function test_set_dedication_clears_on_empty_type_or_name(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$fundraiser->set_dedication( 'honor', 'Jane Smith' );
+		$fundraiser->set_dedication( '', 'Jane Smith' );
+		$this->assertNull( $fundraiser->dedication() );
+
+		$fundraiser->set_dedication( 'honor', 'Jane Smith' );
+		$fundraiser->set_dedication( 'honor', '  ' );
+		$this->assertNull( $fundraiser->dedication() );
+		$this->assertSame( '', $fundraiser->get_meta( 'tribute_type' ) );
+	}
+
+	/**
+	 * Test is_locked() follows the campaign's ended status.
+	 */
+	public function test_is_locked_follows_campaign_status(): void {
+		$campaign = new Campaign(
+			[
+				'title' => 'Drive',
+				'type'  => 'p2p',
+			]
+		);
+		$campaign->save();
+
+		$fundraiser = $this->create_fundraiser( [ 'campaign_id' => $campaign->id ] );
+		$this->assertFalse( $fundraiser->is_locked() );
+
+		$campaign->status = Campaign::STATUS_ENDED;
+		$campaign->save();
+		$this->assertTrue( $fundraiser->is_locked() );
+
+		// A fundraiser whose campaign row is gone is locked too.
+		$orphan = $this->create_fundraiser(
+			[
+				'campaign_id' => 99999,
+				'donor_id'    => 2,
+			]
+		);
+		$this->assertTrue( $orphan->is_locked() );
+	}
 }

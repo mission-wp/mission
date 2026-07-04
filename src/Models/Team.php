@@ -229,6 +229,17 @@ class Team extends Model {
 	}
 
 	/**
+	 * Whether this team is locked because its campaign ended.
+	 *
+	 * @return bool
+	 */
+	public function is_locked(): bool {
+		$campaign = $this->campaign();
+
+		return ! $campaign || $campaign->has_ended();
+	}
+
+	/**
 	 * Get progress toward the team goal as a percentage (0-100).
 	 *
 	 * @param bool $is_test Whether to use test-mode totals.

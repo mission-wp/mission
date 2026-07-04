@@ -9,6 +9,7 @@ namespace MissionDP\Tests\P2P;
 
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
@@ -432,5 +433,137 @@ class AttributionTest extends WP_UnitTestCase {
 
 		$this->assertSame( $member->id, $members[0]['id'] );
 		$this->assertTrue( $members[1]['is_captain'] );
+	}
+
+	// -------------------------------------------------------------------------
+	// Team rank.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test team_rank() ranks active teams by raised, counting private teams,
+	 * direct gifts, and only the team's own campaign.
+	 */
+	public function test_team_rank_orders_active_teams(): void {
+		$first = new Team( [ 'campaign_id' => 1, 'name' => 'First', 'status' => 'active' ] );
+		$first->save();
+		$second = new Team( [ 'campaign_id' => 1, 'name' => 'Second', 'status' => 'active', 'access' => Team::ACCESS_PRIVATE ] );
+		$second->save();
+		$third = new Team( [ 'campaign_id' => 1, 'name' => 'Third', 'status' => 'active' ] );
+		$third->save();
+
+		// A richer team in another campaign must not affect the ranking.
+		$elsewhere = new Team( [ 'campaign_id' => 2, 'name' => 'Elsewhere', 'status' => 'active' ] );
+		$elsewhere->save();
+		$this->make_completed( [ 'team_id' => $elsewhere->id, 'donor_id' => 5, 'amount' => 99000 ] );
+
+		$member = $this->make_fundraiser( 1, 1, [ 'team_id' => $second->id ] );
+		$this->make_completed( [ 'fundraiser_id' => $member->id, 'amount' => 5000 ] );
+
+		// A direct team gift pushes the leader ahead of the private team.
+		$this->make_completed( [ 'team_id' => $first->id, 'donor_id' => 2, 'amount' => 9000 ] );
+
+		$reporting = new ReportingService();
+
+		$this->assertSame( [ 'rank' => 1, 'total' => 3 ], $reporting->team_rank( $first->id ) );
+		$this->assertSame( [ 'rank' => 2, 'total' => 3 ], $reporting->team_rank( $second->id ) );
+		$this->assertSame( [ 'rank' => 3, 'total' => 3 ], $reporting->team_rank( $third->id ) );
+	}
+
+	/**
+	 * Test tied teams share a rank and non-active teams don't count.
+	 */
+	public function test_team_rank_ties_and_ignores_non_active_teams(): void {
+		$a = new Team( [ 'campaign_id' => 1, 'name' => 'A', 'status' => 'active' ] );
+		$a->save();
+		$b = new Team( [ 'campaign_id' => 1, 'name' => 'B', 'status' => 'active' ] );
+		$b->save();
+		$pending = new Team( [ 'campaign_id' => 1, 'name' => 'Pending', 'status' => 'pending' ] );
+		$pending->save();
+
+		$this->make_completed( [ 'team_id' => $a->id, 'donor_id' => 2, 'amount' => 1000 ] );
+		$this->make_completed( [ 'team_id' => $b->id, 'donor_id' => 3, 'amount' => 1000 ] );
+		$this->make_completed( [ 'team_id' => $pending->id, 'donor_id' => 4, 'amount' => 50000 ] );
+
+		$reporting = new ReportingService();
+
+		$this->assertSame( [ 'rank' => 1, 'total' => 2 ], $reporting->team_rank( $a->id ) );
+		$this->assertSame( [ 'rank' => 1, 'total' => 2 ], $reporting->team_rank( $b->id ) );
+	}
+
+	/**
+	 * Test an unknown team returns zeroes.
+	 */
+	public function test_team_rank_unknown_team_returns_zeroes(): void {
+		$this->assertSame( [ 'rank' => 0, 'total' => 0 ], ( new ReportingService() )->team_rank( 12345 ) );
+	}
+
+	// -------------------------------------------------------------------------
+	// Cross-page recent donations.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test donor_pages_recent_donations() spans only the donor's own pages, newest first.
+	 */
+	public function test_donor_pages_recent_donations_spans_own_pages(): void {
+		$owner = new Donor( [ 'email' => 'owner@example.com', 'first_name' => 'Sarah' ] );
+		$owner->save();
+		$giver = new Donor( [ 'email' => 'giver@example.com', 'first_name' => 'Karen', 'last_name' => 'W' ] );
+		$giver->save();
+		$other_owner = new Donor( [ 'email' => 'other@example.com' ] );
+		$other_owner->save();
+
+		$page_a        = $this->make_fundraiser( 1, $owner->id, [ 'headline' => 'Page A' ] );
+		$page_b        = $this->make_fundraiser( 2, $owner->id, [ 'headline' => 'Page B' ] );
+		$someone_elses = $this->make_fundraiser( 1, $other_owner->id );
+
+		$this->make_completed( [ 'fundraiser_id' => $page_a->id, 'donor_id' => $giver->id, 'amount' => 2500, 'date_completed' => '2026-01-01 00:00:00' ] );
+		$this->make_completed( [ 'fundraiser_id' => $page_b->id, 'donor_id' => $giver->id, 'amount' => 4000, 'date_completed' => '2026-02-01 00:00:00' ] );
+		$this->make_completed( [ 'fundraiser_id' => $someone_elses->id, 'donor_id' => $giver->id, 'amount' => 999 ] );
+
+		// Non-completed gifts to the owner's pages never appear.
+		$pending = new Transaction( [
+			'status'        => Transaction::STATUS_PENDING,
+			'donor_id'      => $giver->id,
+			'fundraiser_id' => $page_a->id,
+			'amount'        => 777,
+		] );
+		$pending->save();
+
+		$items = ( new ReportingService() )->donor_pages_recent_donations( $owner->id );
+
+		$this->assertCount( 2, $items );
+		$this->assertSame( 4000, $items[0]['amount'] );
+		$this->assertSame( 'Page B', $items[0]['headline'] );
+		$this->assertSame( 'Karen', $items[0]['first_name'] );
+		$this->assertSame( $page_b->id, $items[0]['fundraiser_id'] );
+		$this->assertSame( 2500, $items[1]['amount'] );
+	}
+
+	/**
+	 * Test donor_pages_recent_donations() respects the limit.
+	 */
+	public function test_donor_pages_recent_donations_respects_limit(): void {
+		$owner = new Donor( [ 'email' => 'owner@example.com' ] );
+		$owner->save();
+		$giver = new Donor( [ 'email' => 'giver@example.com' ] );
+		$giver->save();
+
+		$page = $this->make_fundraiser( 1, $owner->id );
+
+		foreach ( range( 1, 4 ) as $day ) {
+			$this->make_completed(
+				[
+					'fundraiser_id'  => $page->id,
+					'donor_id'       => $giver->id,
+					'amount'         => 1000 * $day,
+					'date_completed' => sprintf( '2026-03-%02d 00:00:00', $day ),
+				]
+			);
+		}
+
+		$items = ( new ReportingService() )->donor_pages_recent_donations( $owner->id, 2 );
+
+		$this->assertCount( 2, $items );
+		$this->assertSame( 4000, $items[0]['amount'] );
 	}
 }
