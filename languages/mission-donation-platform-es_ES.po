@@ -61,6 +61,9 @@ msgstr "Ver campaña"
 #: blocks/build/campaign/index.php:91
 #: blocks/src/campaign-grid/index.php:140
 #: blocks/src/campaign/index.php:91
+#: src/DonorDashboard/FundraisersContextBuilder.php:325
+#: src/DonorDashboard/FundraisersContextBuilder.php:376
+#: src/DonorDashboard/FundraisersContextBuilder.php:409
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:59
 #: admin/src/pages/campaigns/CampaignList.js:132
@@ -110,18 +113,23 @@ msgid "of %s"
 msgstr "de %s"
 
 #. translators: %s: formatted date
+#. translators: %s: campaign end date
 #: blocks/build/campaign-grid/index.php:172
 #: blocks/build/campaign/index.php:127
 #: blocks/src/campaign-grid/index.php:172
 #: blocks/src/campaign/index.php:127
+#: src/DonorDashboard/FundraisersContextBuilder.php:375
 msgid "Ended %s"
 msgstr "Finalizada el %s"
 
 #. translators: %s: formatted date
+#. translators: %s: campaign end date
 #: blocks/build/campaign-grid/index.php:175
 #: blocks/build/campaign/index.php:130
 #: blocks/src/campaign-grid/index.php:175
 #: blocks/src/campaign/index.php:130
+#: src/DonorDashboard/FundraisersContextBuilder.php:395
+#: src/DonorDashboard/TeamsContextBuilder.php:358
 msgid "Ends %s"
 msgstr "Finaliza el %s"
 
@@ -171,11 +179,11 @@ msgstr "recaudado de la meta de %s"
 #: blocks/build/campaign-progress/index.php:88
 #: blocks/build/fundraiser-progress/index.php:54
 #: blocks/build/team-progress/index.php:44
-#: blocks/build/team-progress/index.php:83
+#: blocks/build/team-progress/index.php:85
 #: blocks/src/campaign-progress/index.php:88
 #: blocks/src/fundraiser-progress/index.php:54
 #: blocks/src/team-progress/index.php:44
-#: blocks/src/team-progress/index.php:83
+#: blocks/src/team-progress/index.php:85
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:428
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:291
@@ -279,6 +287,7 @@ msgstr "Donación principal"
 
 #: blocks/build/campaign-statistics/index.php:74
 #: blocks/src/campaign-statistics/index.php:74
+#: src/DonorDashboard/FundraisersContextBuilder.php:457
 #: src/Export/ExportService.php:819
 #: src/Export/ExportService.php:835
 #: admin/build/mission-admin.js:152
@@ -304,7 +313,7 @@ msgstr "Una vez"
 
 #: blocks/build/donation-form/index.php:68
 #: blocks/src/donation-form/index.php:68
-#: src/DonorDashboard/DashboardContextBuilder.php:77
+#: src/DonorDashboard/DashboardContextBuilder.php:88
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:76
 #: assets/shared/components/FrequencyChips.js:5
@@ -317,7 +326,7 @@ msgstr "Semanal"
 #: blocks/build/donor-wall/index.php:114
 #: blocks/src/donation-form/index.php:69
 #: blocks/src/donor-wall/index.php:114
-#: src/DonorDashboard/DashboardContextBuilder.php:78
+#: src/DonorDashboard/DashboardContextBuilder.php:89
 #: src/Rest/Endpoints/EmailTestEndpoint.php:196
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:77
@@ -333,7 +342,7 @@ msgstr "Mensual"
 #: blocks/build/donor-wall/index.php:115
 #: blocks/src/donation-form/index.php:70
 #: blocks/src/donor-wall/index.php:115
-#: src/DonorDashboard/DashboardContextBuilder.php:79
+#: src/DonorDashboard/DashboardContextBuilder.php:90
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:78
 #: assets/shared/components/FrequencyChips.js:7
@@ -348,7 +357,7 @@ msgstr "Trimestral"
 #: blocks/build/donor-wall/index.php:116
 #: blocks/src/donation-form/index.php:71
 #: blocks/src/donor-wall/index.php:116
-#: src/DonorDashboard/DashboardContextBuilder.php:80
+#: src/DonorDashboard/DashboardContextBuilder.php:91
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:79
 #: assets/shared/components/FrequencyChips.js:8
@@ -412,10 +421,12 @@ msgid "Dedicate this gift in honor or memory of someone"
 msgstr "Dedica este donativo en honor o en memoria de alguien"
 
 #: blocks/build/donation-form/index.php:391
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:127
 #: blocks/build/recent-donors/index.php:134
 #: blocks/build/signup-modal/index.php:334
 #: blocks/build/top-donors/index.php:138
 #: blocks/src/donation-form/index.php:391
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:127
 #: blocks/src/recent-donors/index.php:134
 #: blocks/src/signup-modal/index.php:334
 #: blocks/src/top-donors/index.php:138
@@ -426,10 +437,12 @@ msgid "In honor of"
 msgstr "En honor de"
 
 #: blocks/build/donation-form/index.php:392
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:128
 #: blocks/build/recent-donors/index.php:133
 #: blocks/build/signup-modal/index.php:335
 #: blocks/build/top-donors/index.php:137
 #: blocks/src/donation-form/index.php:392
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:128
 #: blocks/src/recent-donors/index.php:133
 #: blocks/src/signup-modal/index.php:335
 #: blocks/src/top-donors/index.php:137
@@ -894,9 +907,9 @@ msgstr "Este enlace para restablecer la contraseña no es válido o ha caducado.
 msgid "Show password"
 msgstr "Mostrar la contraseña"
 
-#: blocks/build/donor-dashboard/index.php:128
-#: blocks/src/donor-dashboard/index.php:128
-#: src/DonorDashboard/DashboardContextBuilder.php:232
+#: blocks/build/donor-dashboard/index.php:134
+#: blocks/src/donor-dashboard/index.php:134
+#: src/DonorDashboard/DashboardContextBuilder.php:302
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignTabNav.js:4
 #: blocks/build/donor-dashboard/index.js:1
@@ -904,8 +917,8 @@ msgstr "Mostrar la contraseña"
 msgid "Overview"
 msgstr "Resumen"
 
-#: blocks/build/donor-dashboard/index.php:133
-#: blocks/src/donor-dashboard/index.php:133
+#: blocks/build/donor-dashboard/index.php:160
+#: blocks/src/donor-dashboard/index.php:160
 #: admin/build/mission-admin.js:191
 #: admin/src/pages/donors/DonationHistoryTable.js:21
 #: blocks/build/donor-dashboard/index.js:1
@@ -913,8 +926,8 @@ msgstr "Resumen"
 msgid "Donation History"
 msgstr "Historial de donaciones"
 
-#: blocks/build/donor-dashboard/index.php:138
-#: blocks/src/donor-dashboard/index.php:138
+#: blocks/build/donor-dashboard/index.php:166
+#: blocks/src/donor-dashboard/index.php:166
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/tabs/SettingsTab.js:233
 #: blocks/build/donor-dashboard/index.js:1
@@ -922,27 +935,29 @@ msgstr "Historial de donaciones"
 msgid "Recurring Donations"
 msgstr "Donaciones recurrentes"
 
-#: blocks/build/donor-dashboard/index.php:143
-#: blocks/src/donor-dashboard/index.php:143
+#: blocks/build/donor-dashboard/index.php:172
+#: blocks/src/donor-dashboard/index.php:172
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:42
 msgid "Annual Receipts"
 msgstr "Recibos anuales"
 
-#: blocks/build/donor-dashboard/index.php:148
-#: blocks/src/donor-dashboard/index.php:148
+#: blocks/build/donor-dashboard/index.php:178
+#: blocks/src/donor-dashboard/index.php:178
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:45
 msgid "Profile"
 msgstr "Perfil"
 
-#: blocks/build/donor-dashboard/index.php:172
-#: blocks/src/donor-dashboard/index.php:172
+#: blocks/build/donor-dashboard/index.php:145
+#: blocks/build/donor-dashboard/index.php:153
+#: blocks/src/donor-dashboard/index.php:145
+#: blocks/src/donor-dashboard/index.php:153
 msgid "Fundraising"
 msgstr "Recaudación"
 
-#: blocks/build/donor-dashboard/index.php:268
-#: blocks/src/donor-dashboard/index.php:268
+#: blocks/build/donor-dashboard/index.php:295
+#: blocks/src/donor-dashboard/index.php:295
 msgid "Open menu"
 msgstr "Abrir el menú"
 
@@ -1172,13 +1187,15 @@ msgstr "Restablecer contraseña"
 msgid "Resetting..."
 msgstr "Restableciendo..."
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:22
 #: blocks/build/donor-dashboard/parts/fundraising.php:30
-#: blocks/src/donor-dashboard/parts/fundraising.php:30
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:22
 msgid "Your page is awaiting approval. You can edit it now and it will go live once an organizer approves it."
 msgstr "Tu página está pendiente de aprobación. Puedes editarla ahora y se publicará en cuanto un organizador la apruebe."
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
-#: blocks/src/donor-dashboard/parts/fundraising.php:37
+#: src/DonorDashboard/FundraisersContextBuilder.php:247
+#: src/DonorDashboard/TeamsContextBuilder.php:225
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
@@ -1191,8 +1208,6 @@ msgstr "Recaudado"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:41
 #: blocks/build/donor-dashboard/parts/fundraising.php:366
-#: blocks/src/donor-dashboard/parts/fundraising.php:41
-#: blocks/src/donor-dashboard/parts/fundraising.php:366
 #: src/Admin/AdminModule.php:395
 #: src/Admin/AdminModule.php:396
 #: src/Export/ExportService.php:171
@@ -1212,7 +1227,6 @@ msgid "Donors"
 msgstr "Donantes"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:45
-#: blocks/src/donor-dashboard/parts/fundraising.php:45
 #: src/Email/templates/admin-milestone.php:72
 #: src/Export/ExportService.php:161
 #: admin/build/mission-admin.js:152
@@ -1224,8 +1238,9 @@ msgstr "Donantes"
 msgid "Goal"
 msgstr "Meta"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:147
 #: blocks/build/donor-dashboard/parts/fundraising.php:59
-#: blocks/src/donor-dashboard/parts/fundraising.php:59
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:147
 #: blocks/build/fundraiser-image/index.js:1
 #: blocks/build/team-image/index.js:1
 #: blocks/src/fundraiser-image/index.js:20
@@ -1233,45 +1248,53 @@ msgstr "Meta"
 msgid "Cover photo"
 msgstr "Foto de portada"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:155
 #: blocks/build/donor-dashboard/parts/fundraising.php:68
-#: blocks/src/donor-dashboard/parts/fundraising.php:68
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:155
 msgid "No cover photo yet."
 msgstr "Aún no hay foto de portada."
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:171
 #: blocks/build/donor-dashboard/parts/fundraising.php:84
-#: blocks/src/donor-dashboard/parts/fundraising.php:84
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:171
 msgid "Upload photo"
 msgstr "Subir foto"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:80
 #: blocks/build/donor-dashboard/parts/fundraising.php:92
-#: blocks/src/donor-dashboard/parts/fundraising.php:92
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:80
 msgid "Edit your page"
 msgstr "Edita tu página"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:88
 #: blocks/build/donor-dashboard/parts/fundraising.php:99
-#: blocks/src/donor-dashboard/parts/fundraising.php:99
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:88
 msgid "Headline"
 msgstr "Titular"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:101
 #: blocks/build/donor-dashboard/parts/fundraising.php:112
-#: blocks/src/donor-dashboard/parts/fundraising.php:112
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:101
 msgid "Fundraising goal"
 msgstr "Meta de recaudación"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:177
 #: blocks/build/donor-dashboard/parts/fundraising.php:129
-#: blocks/src/donor-dashboard/parts/fundraising.php:129
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:177
 msgid "Your story"
 msgstr "Tu historia"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:200
 #: blocks/build/donor-dashboard/parts/fundraising.php:152
-#: blocks/src/donor-dashboard/parts/fundraising.php:152
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:200
 #: src/Email/templates/p2p-fundraiser-milestone.php:62
 msgid "Share your page"
 msgstr "Comparte tu página"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:205
 #: blocks/build/donor-dashboard/parts/fundraising.php:157
 #: blocks/build/signup-modal/index.php:100
-#: blocks/src/donor-dashboard/parts/fundraising.php:157
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:205
 #: blocks/src/signup-modal/index.php:100
 #: admin/build/mission-admin.js:247
 #: admin/src/pages/tools/WebhookModal.js:412
@@ -1279,58 +1302,60 @@ msgstr "Comparte tu página"
 msgid "Copy"
 msgstr "Copiar"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:214
 #: blocks/build/donor-dashboard/parts/fundraising.php:166
 #: blocks/build/signup-modal/index.php:144
-#: blocks/src/donor-dashboard/parts/fundraising.php:166
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:214
 #: blocks/src/signup-modal/index.php:144
 msgid "Share on Facebook"
 msgstr "Compartir en Facebook"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:218
 #: blocks/build/donor-dashboard/parts/fundraising.php:170
 #: blocks/build/signup-modal/index.php:148
-#: blocks/src/donor-dashboard/parts/fundraising.php:170
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:218
 #: blocks/src/signup-modal/index.php:148
 msgid "Share on X"
 msgstr "Compartir en X"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:186
-#: blocks/src/donor-dashboard/parts/fundraising.php:186
 msgid "Embed code"
 msgstr "Código para insertar"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:190
-#: blocks/src/donor-dashboard/parts/fundraising.php:190
 msgid "Copy embed code"
 msgstr "Copiar código para insertar"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:197
-#: blocks/src/donor-dashboard/parts/fundraising.php:197
 msgid "Your team"
 msgstr "Tu equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:205
-#: blocks/src/donor-dashboard/parts/fundraising.php:205
 msgid "Manage your team"
 msgstr "Gestiona tu equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:208
-#: blocks/src/donor-dashboard/parts/fundraising.php:208
+#: blocks/build/donor-dashboard/parts/team-detail.php:22
+#: blocks/src/donor-dashboard/parts/team-detail.php:22
 msgid "Your team is awaiting approval. You can edit it now and it will go live once an organizer approves it."
 msgstr "Tu equipo está pendiente de aprobación. Puedes editarlo ahora y se activará cuando un organizador lo apruebe."
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:224
-#: blocks/src/donor-dashboard/parts/fundraising.php:224
+#: blocks/build/donor-dashboard/parts/team-detail.php:173
+#: blocks/src/donor-dashboard/parts/team-detail.php:173
 msgid "No team image yet."
 msgstr "Aún no hay imagen del equipo."
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:240
-#: blocks/src/donor-dashboard/parts/fundraising.php:240
+#: blocks/build/donor-dashboard/parts/team-detail.php:189
+#: blocks/src/donor-dashboard/parts/team-detail.php:189
 msgid "Upload team image"
 msgstr "Subir imagen del equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:247
+#: blocks/build/donor-dashboard/parts/team-detail.php:119
 #: blocks/build/signup-modal/index.php:296
-#: blocks/src/donor-dashboard/parts/fundraising.php:247
+#: blocks/src/donor-dashboard/parts/team-detail.php:119
 #: blocks/src/signup-modal/index.php:296
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/settings/email-templates.js:325
@@ -1342,26 +1367,35 @@ msgid "Team name"
 msgstr "Nombre del equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:260
-#: blocks/src/donor-dashboard/parts/fundraising.php:260
+#: blocks/build/donor-dashboard/parts/team-detail.php:132
+#: blocks/src/donor-dashboard/parts/team-detail.php:132
 msgid "Team goal"
 msgstr "Meta del equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:292
-#: blocks/src/donor-dashboard/parts/fundraising.php:292
+#: blocks/build/donor-dashboard/parts/team-detail.php:195
+#: blocks/src/donor-dashboard/parts/team-detail.php:195
 msgid "Team story"
 msgstr "Historia del equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:313
-#: blocks/src/donor-dashboard/parts/fundraising.php:313
+#: blocks/build/donor-dashboard/parts/team-detail.php:50
+#: blocks/build/donor-dashboard/parts/team-detail.php:219
+#: blocks/src/donor-dashboard/parts/team-detail.php:50
+#: blocks/src/donor-dashboard/parts/team-detail.php:219
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/Teams.js:75
 msgid "Members"
 msgstr "Miembros"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:318
+#: blocks/build/donor-dashboard/parts/team-detail.php:227
 #: blocks/build/team-members/index.php:75
-#: blocks/src/donor-dashboard/parts/fundraising.php:318
+#: blocks/src/donor-dashboard/parts/team-detail.php:227
 #: blocks/src/team-members/index.php:75
+#: src/DonorDashboard/FundraisersContextBuilder.php:261
+#: src/DonorDashboard/TeamsContextBuilder.php:204
+#: src/DonorDashboard/TeamsContextBuilder.php:325
 #: src/Email/TeamEmailListener.php:151
 #: src/Email/TeamEmailListener.php:199
 #: src/Email/templates/p2p-team-approved.php:14
@@ -1374,12 +1408,14 @@ msgid "Captain"
 msgstr "Capitán"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:321
-#: blocks/src/donor-dashboard/parts/fundraising.php:321
+#: blocks/build/donor-dashboard/parts/team-detail.php:235
+#: blocks/src/donor-dashboard/parts/team-detail.php:235
 msgid "Make captain"
 msgstr "Hacer capitán"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:322
-#: blocks/src/donor-dashboard/parts/fundraising.php:322
+#: blocks/build/donor-dashboard/parts/team-detail.php:236
+#: blocks/src/donor-dashboard/parts/team-detail.php:236
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:196
@@ -1393,27 +1429,30 @@ msgid "Remove"
 msgstr "Eliminar"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:329
-#: blocks/src/donor-dashboard/parts/fundraising.php:329
 msgid "Invite a member"
 msgstr "Invitar a un miembro"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:330
-#: blocks/src/donor-dashboard/parts/fundraising.php:330
+#: blocks/build/donor-dashboard/parts/team-detail.php:82
+#: blocks/src/donor-dashboard/parts/team-detail.php:82
 msgid "Send an invitation link by email. They can join even if your team is private."
 msgstr "Envía un enlace de invitación por correo electrónico. Podrán unirse aunque tu equipo sea privado."
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:335
-#: blocks/src/donor-dashboard/parts/fundraising.php:335
+#: blocks/build/donor-dashboard/parts/team-detail.php:87
+#: blocks/src/donor-dashboard/parts/team-detail.php:87
 msgid "name@example.com"
 msgstr "nombre@ejemplo.com"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:346
-#: blocks/src/donor-dashboard/parts/fundraising.php:346
+#: blocks/build/donor-dashboard/parts/team-detail.php:98
+#: blocks/src/donor-dashboard/parts/team-detail.php:98
 msgid "Send invite"
 msgstr "Enviar invitación"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:355
-#: blocks/src/donor-dashboard/parts/fundraising.php:355
+#: blocks/build/donor-dashboard/parts/team-detail.php:107
+#: blocks/src/donor-dashboard/parts/team-detail.php:107
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:196
@@ -1437,12 +1476,12 @@ msgid "Pending"
 msgstr "Pendiente"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:363
-#: blocks/src/donor-dashboard/parts/fundraising.php:363
 msgid "Your donors"
 msgstr "Tus donantes"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:369
-#: blocks/src/donor-dashboard/parts/fundraising.php:369
+#: blocks/build/donor-dashboard/parts/overview.php:192
+#: blocks/src/donor-dashboard/parts/overview.php:192
 #: src/Email/templates/admin-new-donation.php:49
 #: src/Email/templates/admin-payment-failed.php:33
 #: src/Email/templates/admin-recurring-renewal.php:33
@@ -1467,10 +1506,11 @@ msgstr "Donante"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:370
 #: blocks/build/donor-dashboard/parts/history.php:61
-#: blocks/build/donor-dashboard/parts/overview.php:36
-#: blocks/src/donor-dashboard/parts/fundraising.php:370
+#: blocks/build/donor-dashboard/parts/overview.php:110
+#: blocks/build/donor-dashboard/parts/overview.php:193
 #: blocks/src/donor-dashboard/parts/history.php:61
-#: blocks/src/donor-dashboard/parts/overview.php:36
+#: blocks/src/donor-dashboard/parts/overview.php:110
+#: blocks/src/donor-dashboard/parts/overview.php:193
 #: src/Email/templates/admin-new-donation.php:60
 #: src/Email/templates/admin-payment-failed.php:44
 #: src/Email/templates/admin-recurring-renewal.php:44
@@ -1508,10 +1548,11 @@ msgstr "Importe"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:371
 #: blocks/build/donor-dashboard/parts/history.php:60
-#: blocks/build/donor-dashboard/parts/overview.php:35
-#: blocks/src/donor-dashboard/parts/fundraising.php:371
+#: blocks/build/donor-dashboard/parts/overview.php:109
+#: blocks/build/donor-dashboard/parts/overview.php:191
 #: blocks/src/donor-dashboard/parts/history.php:60
-#: blocks/src/donor-dashboard/parts/overview.php:35
+#: blocks/src/donor-dashboard/parts/overview.php:109
+#: blocks/src/donor-dashboard/parts/overview.php:191
 #: src/Email/templates/admin-new-donation.php:86
 #: src/Email/templates/admin-payment-failed.php:60
 #: src/Email/templates/admin-recurring-renewal.php:60
@@ -1537,8 +1578,9 @@ msgstr "Importe"
 msgid "Date"
 msgstr "Fecha"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:267
 #: blocks/build/donor-dashboard/parts/fundraising.php:387
-#: blocks/src/donor-dashboard/parts/fundraising.php:387
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:267
 msgid "No donations yet. Share your page to start raising funds."
 msgstr "Aún no hay donaciones. Comparte tu página para empezar a recaudar fondos."
 
@@ -1574,7 +1616,7 @@ msgstr "Todos los tipos"
 
 #: blocks/build/donor-dashboard/parts/history.php:44
 #: blocks/src/donor-dashboard/parts/history.php:44
-#: src/DonorDashboard/DashboardContextBuilder.php:700
+#: src/DonorDashboard/DashboardContextBuilder.php:546
 #: src/Email/templates/admin-new-donation.php:79
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -1592,7 +1634,7 @@ msgstr "Única"
 
 #: blocks/build/donor-dashboard/parts/history.php:45
 #: blocks/src/donor-dashboard/parts/history.php:45
-#: src/DonorDashboard/DashboardContextBuilder.php:700
+#: src/DonorDashboard/DashboardContextBuilder.php:546
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:196
@@ -1622,9 +1664,9 @@ msgid "Donation history"
 msgstr "Historial de donaciones"
 
 #: blocks/build/donor-dashboard/parts/history.php:62
-#: blocks/build/donor-dashboard/parts/overview.php:37
+#: blocks/build/donor-dashboard/parts/overview.php:111
 #: blocks/src/donor-dashboard/parts/history.php:62
-#: blocks/src/donor-dashboard/parts/overview.php:37
+#: blocks/src/donor-dashboard/parts/overview.php:111
 #: src/Campaigns/CampaignPostType.php:233
 #: src/Email/templates/admin-milestone.php:47
 #: src/Email/templates/admin-new-donation.php:95
@@ -1701,9 +1743,9 @@ msgid "Type"
 msgstr "Tipo"
 
 #: blocks/build/donor-dashboard/parts/history.php:64
-#: blocks/build/donor-dashboard/parts/overview.php:38
+#: blocks/build/donor-dashboard/parts/overview.php:112
 #: blocks/src/donor-dashboard/parts/history.php:64
-#: blocks/src/donor-dashboard/parts/overview.php:38
+#: blocks/src/donor-dashboard/parts/overview.php:112
 #: src/Export/ExportService.php:149
 #: src/Export/ExportService.php:176
 #: src/Export/ExportService.php:203
@@ -1743,13 +1785,21 @@ msgstr "Descargar"
 msgid "Download receipt"
 msgstr "Descargar recibo"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:278
 #: blocks/build/donor-dashboard/parts/history.php:116
+#: blocks/build/donor-dashboard/parts/team-detail.php:250
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:278
 #: blocks/src/donor-dashboard/parts/history.php:116
+#: blocks/src/donor-dashboard/parts/team-detail.php:250
 msgid "Previous"
 msgstr "Anterior"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:284
 #: blocks/build/donor-dashboard/parts/history.php:124
+#: blocks/build/donor-dashboard/parts/team-detail.php:256
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:284
 #: blocks/src/donor-dashboard/parts/history.php:124
+#: blocks/src/donor-dashboard/parts/team-detail.php:256
 msgid "Next"
 msgstr "Siguiente"
 
@@ -1758,41 +1808,45 @@ msgstr "Siguiente"
 msgid "No donations match your filters."
 msgstr "Ninguna donación coincide con tus filtros."
 
-#: blocks/build/donor-dashboard/parts/overview.php:24
-#: blocks/src/donor-dashboard/parts/overview.php:24
+#: blocks/build/donor-dashboard/parts/overview.php:98
+#: blocks/src/donor-dashboard/parts/overview.php:98
 #: src/Campaigns/templates/campaign-page-p2p.php:59
 msgid "Recent Donations"
 msgstr "Donaciones recientes"
 
-#: blocks/build/donor-dashboard/parts/overview.php:29
-#: blocks/src/donor-dashboard/parts/overview.php:29
+#: blocks/build/donor-dashboard/parts/overview.php:103
+#: blocks/build/donor-dashboard/parts/overview.php:185
+#: blocks/src/donor-dashboard/parts/overview.php:103
+#: blocks/src/donor-dashboard/parts/overview.php:185
 msgid "View all"
 msgstr "Ver todas"
 
-#: blocks/build/donor-dashboard/parts/overview.php:32
-#: blocks/src/donor-dashboard/parts/overview.php:32
+#: blocks/build/donor-dashboard/parts/overview.php:106
+#: blocks/src/donor-dashboard/parts/overview.php:106
 msgid "Recent donations"
 msgstr "Donaciones recientes"
 
-#: blocks/build/donor-dashboard/parts/overview.php:66
-#: blocks/src/donor-dashboard/parts/overview.php:66
+#: blocks/build/donor-dashboard/parts/overview.php:140
+#: blocks/src/donor-dashboard/parts/overview.php:140
 msgid "No donations yet. Your donation history will appear here once you make your first gift."
 msgstr "Todavía no hay donaciones. Tu historial de donaciones aparecerá aquí cuando hagas tu primer donativo."
 
-#: blocks/build/donor-dashboard/parts/overview.php:73
-#: blocks/src/donor-dashboard/parts/overview.php:73
+#: blocks/build/donor-dashboard/parts/overview.php:147
+#: blocks/src/donor-dashboard/parts/overview.php:147
 msgid "Active Recurring Donation"
 msgstr "Donación recurrente activa"
 
 #. translators: %s: next payment date
-#: blocks/build/donor-dashboard/parts/overview.php:85
-#: blocks/src/donor-dashboard/parts/overview.php:85
+#: blocks/build/donor-dashboard/parts/overview.php:159
+#: blocks/src/donor-dashboard/parts/overview.php:159
 msgid "Next payment: %s"
 msgstr "Próximo pago: %s"
 
-#: blocks/build/donor-dashboard/parts/overview.php:95
+#: blocks/build/donor-dashboard/parts/overview.php:43
+#: blocks/build/donor-dashboard/parts/overview.php:169
 #: blocks/build/donor-dashboard/parts/profile.php:282
-#: blocks/src/donor-dashboard/parts/overview.php:95
+#: blocks/src/donor-dashboard/parts/overview.php:43
+#: blocks/src/donor-dashboard/parts/overview.php:169
 #: blocks/src/donor-dashboard/parts/profile.php:282
 msgid "Manage"
 msgstr "Gestionar"
@@ -2021,8 +2075,8 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: blocks/build/donor-dashboard/parts/recurring.php:30
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
-#: src/DonorDashboard/DashboardContextBuilder.php:394
-#: src/DonorDashboard/DashboardContextBuilder.php:504
+#: src/DonorDashboard/FundraisersContextBuilder.php:328
+#: src/DonorDashboard/TeamsContextBuilder.php:186
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:196
@@ -2164,18 +2218,18 @@ msgstr "Cancelada"
 msgid "Period"
 msgstr "Periodo"
 
-#: blocks/build/donor-dashboard/parts/sidebar.php:30
-#: blocks/src/donor-dashboard/parts/sidebar.php:30
+#: blocks/build/donor-dashboard/parts/sidebar.php:32
+#: blocks/src/donor-dashboard/parts/sidebar.php:32
 msgid "Close menu"
 msgstr "Cerrar menú"
 
-#: blocks/build/donor-dashboard/parts/sidebar.php:45
-#: blocks/src/donor-dashboard/parts/sidebar.php:45
+#: blocks/build/donor-dashboard/parts/sidebar.php:47
+#: blocks/src/donor-dashboard/parts/sidebar.php:47
 msgid "Dashboard navigation"
 msgstr "Navegación del panel"
 
-#: blocks/build/donor-dashboard/parts/sidebar.php:78
-#: blocks/src/donor-dashboard/parts/sidebar.php:78
+#: blocks/build/donor-dashboard/parts/sidebar.php:89
+#: blocks/src/donor-dashboard/parts/sidebar.php:89
 msgid "Log Out"
 msgstr "Cerrar sesión"
 
@@ -2196,12 +2250,15 @@ msgid "Show More Donations"
 msgstr "Mostrar más donaciones"
 
 #. translators: %s: human time diff, e.g. "2 hours"
+#. translators: %s: human-readable time difference (e.g. "3 days")
 #: blocks/build/donor-wall/index.php:111
 #: blocks/build/fundraiser-supporters/index.php:81
 #: blocks/build/recent-donors/index.php:141
 #: blocks/src/donor-wall/index.php:111
 #: blocks/src/fundraiser-supporters/index.php:81
 #: blocks/src/recent-donors/index.php:141
+#: src/DonorDashboard/FundraisersContextBuilder.php:296
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:297
 msgid "%s ago"
 msgstr "hace %s"
 
@@ -2221,13 +2278,14 @@ msgstr "hace %s"
 #: blocks/src/recent-donors/index.php:122
 #: blocks/src/top-donors/index.php:119
 #: blocks/src/top-donors/index.php:126
-#: src/DonorDashboard/DashboardContextBuilder.php:546
+#: src/DonorDashboard/FundraisersContextBuilder.php:291
+#: src/DonorDashboard/FundraisersContextBuilder.php:585
 #: src/Email/AdminNotificationListener.php:458
 #: src/Export/ExportService.php:739
 #: src/Reporting/ReportingService.php:626
 #: src/Reporting/ReportingService.php:760
 #: src/Reporting/ReportingService.php:1591
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:255
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:290
 #: src/Rest/Endpoints/DonorWallEndpoint.php:110
 #: src/Rest/Endpoints/DonorWallEndpoint.php:128
 #: src/Rest/Endpoints/FundraisersEndpoint.php:290
@@ -2291,7 +2349,9 @@ msgstr "¡Sé la primera persona en donar a esta campaña!"
 msgid "A fundraiser"
 msgstr "Un recaudador"
 
+#: blocks/build/donor-dashboard/parts/overview.php:77
 #: blocks/build/fundraiser-progress/index.php:115
+#: blocks/src/donor-dashboard/parts/overview.php:77
 #: blocks/src/fundraiser-progress/index.php:115
 #: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:153
@@ -2312,6 +2372,7 @@ msgstr "Sé el primero en contribuir y animar a este recaudador."
 #. translators: %s: donation count toward goal.
 #: blocks/build/fundraiser-supporters/index.php:55
 #: blocks/src/fundraiser-supporters/index.php:55
+#: src/DonorDashboard/FundraisersContextBuilder.php:240
 #: admin/build/mission-admin.js:164
 #: admin/src/pages/dashboard/ActivityFeed.js:671
 msgid "%s donation"
@@ -2320,20 +2381,24 @@ msgstr[0] "%s donación"
 msgstr[1] ""
 
 #. translators: %s: person being honored
-#: blocks/build/fundraiser-title/index.php:40
-#: blocks/src/fundraiser-title/index.php:40
+#: blocks/build/fundraiser-title/index.php:39
+#: blocks/src/fundraiser-title/index.php:39
+#: src/DonorDashboard/FundraisersContextBuilder.php:359
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:118
 msgid "In memory of %s"
 msgstr "En memoria de %s"
 
 #. translators: %s: person being honored
-#: blocks/build/fundraiser-title/index.php:42
-#: blocks/src/fundraiser-title/index.php:42
+#: blocks/build/fundraiser-title/index.php:41
+#: blocks/src/fundraiser-title/index.php:41
+#: src/DonorDashboard/FundraisersContextBuilder.php:361
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:120
 msgid "In honor of %s"
 msgstr "En honor a %s"
 
 #. translators: 1: fundraiser name, 2: linked campaign title
-#: blocks/build/fundraiser-title/index.php:56
-#: blocks/src/fundraiser-title/index.php:56
+#: blocks/build/fundraiser-title/index.php:55
+#: blocks/src/fundraiser-title/index.php:55
 msgid "%1$s is fundraising for %2$s"
 msgstr "%1$s está recaudando fondos para %2$s"
 
@@ -2550,7 +2615,9 @@ msgstr "Su nombre"
 msgid "Create fundraiser"
 msgstr "Crear recaudación"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:70
 #: blocks/build/signup-modal/index.php:357
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:70
 #: blocks/src/signup-modal/index.php:357
 msgid "Copy link"
 msgstr "Copiar enlace"
@@ -2586,15 +2653,15 @@ msgstr "recaudado de la meta de equipo de %s"
 msgid "members"
 msgstr "miembros"
 
-#: blocks/build/team-progress/index.php:89
-#: blocks/src/team-progress/index.php:89
+#: blocks/build/team-progress/index.php:91
+#: blocks/src/team-progress/index.php:91
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:82
 msgid "Donate to the Team"
 msgstr "Donar al equipo"
 
-#: blocks/build/team-progress/index.php:97
-#: blocks/src/team-progress/index.php:97
+#: blocks/build/team-progress/index.php:99
+#: blocks/src/team-progress/index.php:99
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:85
 msgid "Join this Team"
@@ -2652,7 +2719,9 @@ msgstr "Sé el primer recaudador."
 msgid "Start your own page and rally your friends."
 msgstr "Crea tu propia página y reúne a tus amigos."
 
+#: blocks/build/donor-dashboard/parts/fundraisers.php:48
 #: blocks/build/top-fundraisers/index.php:106
+#: blocks/src/donor-dashboard/parts/fundraisers.php:48
 #: blocks/src/top-fundraisers/index.php:106
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/src/top-fundraisers/edit/Edit.js:202
@@ -2688,6 +2757,7 @@ msgstr "Crear un equipo"
 #. translators: %s: number of team members
 #: blocks/build/top-teams/index.php:109
 #: blocks/src/top-teams/index.php:109
+#: src/DonorDashboard/TeamsContextBuilder.php:229
 #: blocks/build/top-teams/index.js:2
 #: blocks/src/top-teams/edit/Edit.js:219
 msgid "%s member"
@@ -3038,34 +3108,36 @@ msgstr "Gracias por formar parte de nuestra misión. Si no puedes donar en este 
 msgid "Choose an amount to support our mission."
 msgstr "Elige un importe para apoyar nuestra misión."
 
-#: src/DonorDashboard/DashboardContextBuilder.php:70
+#: src/DonorDashboard/DashboardContextBuilder.php:81
 msgid "/ week"
 msgstr " / semana"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:71
+#: src/DonorDashboard/DashboardContextBuilder.php:82
 msgid "/ month"
 msgstr " / mes"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:72
+#: src/DonorDashboard/DashboardContextBuilder.php:83
 msgid "/ quarter"
 msgstr " / trimestre"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:73
+#: src/DonorDashboard/DashboardContextBuilder.php:84
 msgid "/ year"
 msgstr " / año"
 
 #. translators: 1: current page, 2: total pages
-#: src/DonorDashboard/DashboardContextBuilder.php:239
+#: src/DonorDashboard/DashboardContextBuilder.php:309
 msgid "Page %1$d of %2$d"
 msgstr "Página %1$d de %2$d"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:357
+#: src/DonorDashboard/FundraisersContextBuilder.php:118
+#: src/DonorDashboard/TeamsContextBuilder.php:124
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/settings/SaveBar.js:31
 msgid "Save changes"
 msgstr "Guardar cambios"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:358
+#: src/DonorDashboard/FundraisersContextBuilder.php:119
+#: src/DonorDashboard/TeamsContextBuilder.php:125
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:196
@@ -3079,61 +3151,54 @@ msgstr "Guardar cambios"
 msgid "Saving…"
 msgstr "Guardando…"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:359
+#: src/DonorDashboard/FundraisersContextBuilder.php:120
+#: src/DonorDashboard/TeamsContextBuilder.php:126
 msgid "Saved"
 msgstr "Guardado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:360
+#: src/DonorDashboard/FundraisersContextBuilder.php:121
 msgid "Fundraiser updated"
 msgstr "Recaudación actualizada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:361
+#: src/DonorDashboard/FundraisersContextBuilder.php:122
 msgid "Cover photo updated"
 msgstr "Foto de portada actualizada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:362
+#: src/DonorDashboard/FundraisersContextBuilder.php:123
 msgid "Link copied"
 msgstr "Enlace copiado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:363
-msgid "Embed code copied"
-msgstr "Código para insertar copiado"
-
-#: src/DonorDashboard/DashboardContextBuilder.php:364
+#: src/DonorDashboard/TeamsContextBuilder.php:127
 msgid "Team updated"
 msgstr "Equipo actualizado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:365
+#: src/DonorDashboard/TeamsContextBuilder.php:128
 msgid "Team image updated"
 msgstr "Imagen del equipo actualizada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:366
+#: src/DonorDashboard/TeamsContextBuilder.php:129
 msgid "Invitation sent"
 msgstr "Invitación enviada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:367
+#: src/DonorDashboard/TeamsContextBuilder.php:130
 msgid "Member removed"
 msgstr "Miembro eliminado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:368
+#: src/DonorDashboard/TeamsContextBuilder.php:131
 msgid "New captain set"
 msgstr "Nuevo capitán asignado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:369
-msgid "Remove this member from the team?"
-msgstr "¿Eliminar a este miembro del equipo?"
-
-#: src/DonorDashboard/DashboardContextBuilder.php:370
+#: src/DonorDashboard/TeamsContextBuilder.php:137
 msgid "Make this member the captain? You will no longer manage the team."
 msgstr "¿Hacer a este miembro el capitán? Dejarás de gestionar el equipo."
 
-#: src/DonorDashboard/DashboardContextBuilder.php:395
-#: src/DonorDashboard/DashboardContextBuilder.php:505
+#: src/DonorDashboard/FundraisersContextBuilder.php:313
+#: src/DonorDashboard/TeamsContextBuilder.php:187
 msgid "Pending review"
 msgstr "Pendiente de revisión"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:396
-#: src/DonorDashboard/DashboardContextBuilder.php:506
+#: src/DonorDashboard/FundraisersContextBuilder.php:317
+#: src/DonorDashboard/TeamsContextBuilder.php:188
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/src/components/P2PStatusBadge.js:17
@@ -3143,18 +3208,16 @@ msgid "Inactive"
 msgstr "Inactivo"
 
 #. translators: %s: campaign title
-#: src/DonorDashboard/DashboardContextBuilder.php:401
+#: src/DonorDashboard/FundraisersContextBuilder.php:204
 msgid "Support my fundraiser for %s"
 msgstr "Apoya mi recaudación para %s"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:402
+#: src/DonorDashboard/FundraisersContextBuilder.php:205
 #: src/P2P/templates/fundraiser-page.php:42
 msgid "Support my fundraiser"
 msgstr "Apoya mi recaudación"
 
-#. translators: %s: number of donors
 #. translators: %s: donor count toward goal.
-#: src/DonorDashboard/DashboardContextBuilder.php:417
 #: admin/build/mission-admin.js:161
 #: admin/src/pages/dashboard/ActivityFeed.js:665
 msgid "%s donor"
@@ -3163,50 +3226,53 @@ msgstr[0] "%s donante"
 msgstr[1] ""
 
 #. translators: 1: amount raised, 2: goal amount
-#: src/DonorDashboard/DashboardContextBuilder.php:423
+#: src/DonorDashboard/FundraisersContextBuilder.php:341
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:82
 msgid "%1$s raised of %2$s goal"
 msgstr "%1$s recaudados de la meta de %2$s"
 
 #. translators: %s: amount raised
-#: src/DonorDashboard/DashboardContextBuilder.php:425
+#: src/DonorDashboard/FundraisersContextBuilder.php:343
+#: src/DonorDashboard/FundraisersContextBuilder.php:564
+#: src/DonorDashboard/TeamsContextBuilder.php:220
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:84
 msgid "%s raised"
 msgstr "%s recaudados"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:475
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:396
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:445
 msgid "Participant"
 msgstr "Participante"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:593
-#: src/DonorDashboard/DashboardContextBuilder.php:607
-#: src/DonorDashboard/DashboardContextBuilder.php:627
-#: src/DonorDashboard/DashboardContextBuilder.php:676
-#: src/DonorDashboard/DashboardContextBuilder.php:696
+#: src/DonorDashboard/DashboardContextBuilder.php:439
+#: src/DonorDashboard/DashboardContextBuilder.php:453
+#: src/DonorDashboard/DashboardContextBuilder.php:473
+#: src/DonorDashboard/DashboardContextBuilder.php:522
+#: src/DonorDashboard/DashboardContextBuilder.php:542
 #: src/Reporting/ReportingService.php:1480
-#: src/Rest/Traits/DonorDashboardPrepareTrait.php:132
-#: src/Rest/Traits/DonorDashboardPrepareTrait.php:159
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:168
+#: src/Rest/Traits/DonorDashboardPrepareTrait.php:195
 msgid "Deleted Campaign"
 msgstr "Campaña eliminada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:636
+#: src/DonorDashboard/DashboardContextBuilder.php:482
 msgid "Card on file"
 msgstr "Tarjeta guardada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:789
+#: src/DonorDashboard/DashboardContextBuilder.php:635
 msgid "Donation Made"
 msgid_plural "Donations Made"
 msgstr[0] "Donación realizada"
 msgstr[1] "Donaciones realizadas"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:793
+#: src/DonorDashboard/DashboardContextBuilder.php:639
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:69
 msgid "Lifetime Given"
 msgstr "Total donado"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:797
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:47
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:47
+#: src/DonorDashboard/DashboardContextBuilder.php:643
 #: admin/build/mission-admin.js:251
 #: admin/src/pages/Dashboard.js:198
 #: blocks/build/donor-dashboard/index.js:1
@@ -3916,6 +3982,10 @@ msgstr "Nombre"
 msgid "Total Given"
 msgstr "Total donado"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:43
+#: blocks/build/donor-dashboard/parts/team-detail.php:54
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:43
+#: blocks/src/donor-dashboard/parts/team-detail.php:54
 #: src/Export/ExportService.php:112
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -4572,8 +4642,8 @@ msgstr "Este donante ya tiene una cuenta."
 
 #: src/Models/Fundraiser.php:223
 #: src/P2P/FundraiserPostType.php:73
-#: src/Reporting/ReportingService.php:1912
-#: src/Reporting/ReportingService.php:2074
+#: src/Reporting/ReportingService.php:1968
+#: src/Reporting/ReportingService.php:2205
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/Fundraisers.js:35
 msgid "Fundraiser"
@@ -4616,7 +4686,7 @@ msgstr "El servicio de pago devolvió una respuesta inesperada."
 msgid "Team"
 msgstr "Equipo"
 
-#: src/Models/Team.php:326
+#: src/Models/Team.php:337
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:247
 #: admin/src/pages/donors/AddDonorDrawer.js:76
@@ -4625,16 +4695,17 @@ msgstr "Equipo"
 msgid "Please enter a valid email address."
 msgstr "Introduce una dirección de correo electrónico válida."
 
-#: src/Models/Team.php:337
+#: src/Models/Team.php:348
 msgid "That person is already on the team."
 msgstr "Esa persona ya está en el equipo."
 
-#: src/Models/Team.php:392
-#: src/Models/Team.php:435
+#: src/Models/Team.php:403
+#: src/Models/Team.php:446
 msgid "That person is not on this team."
 msgstr "Esa persona no está en este equipo."
 
-#: src/Models/Team.php:396
+#: src/Models/Team.php:407
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:335
 msgid "Promote another member to captain before leaving the team."
 msgstr "Asciende a otro miembro a capitán antes de salir del equipo."
 
@@ -4746,8 +4817,8 @@ msgid "The image could not be saved."
 msgstr "No se ha podido guardar la imagen."
 
 #: src/P2P/FundraiserImageUploader.php:145
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:206
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:208
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:240
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:218
 msgid "No image was uploaded."
 msgstr "No se ha subido ninguna imagen."
 
@@ -4788,6 +4859,8 @@ msgstr "Mi historia"
 msgid "About the Campaign"
 msgstr "Sobre la campaña"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:237
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:237
 #: src/P2P/templates/fundraiser-page.php:36
 msgid "Supporters"
 msgstr "Colaboradores"
@@ -5075,7 +5148,7 @@ msgstr "Dirección de correo electrónico actualizada. Inicia sesión con tu nue
 msgid "Email change cancelled."
 msgstr "Cambio de correo electrónico cancelado."
 
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:290
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:363
 #: src/Rest/RestErrors.php:72
 msgid "Fundraiser not found."
 msgstr "Recaudador no encontrado."
@@ -5102,12 +5175,12 @@ msgstr "El importe de la propina no puede ser negativo."
 msgid "You do not have permission to manage this subscription."
 msgstr "No tienes permiso para gestionar esta suscripción."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:276
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:305
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:296
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:330
 msgid "Member not found."
 msgstr "Miembro no encontrado."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:336
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:361
 msgid "You are not the captain of this team."
 msgstr "No eres el capitán de este equipo."
 
@@ -8052,10 +8125,10 @@ msgstr "Ver perfil"
 
 #: blocks/build/campaign-progress/index.php:94
 #: blocks/build/fundraiser-progress/index.php:82
-#: blocks/build/team-progress/index.php:79
+#: blocks/build/team-progress/index.php:81
 #: blocks/src/campaign-progress/index.php:94
 #: blocks/src/fundraiser-progress/index.php:82
-#: blocks/src/team-progress/index.php:79
+#: blocks/src/team-progress/index.php:81
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/transactions/TransactionDonorCard.js:90
 msgid "donation"
@@ -8088,6 +8161,8 @@ msgstr "Marcando…"
 msgid "Mark as sent"
 msgstr "Marcar como enviada"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:118
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:118
 #: admin/build/mission-admin.js:196
 #: admin/build/mission-admin.js:247
 #: admin/src/pages/transactions/DedicationSection.js:244
@@ -8266,6 +8341,8 @@ msgstr "Cliente de Stripe"
 msgid "Source"
 msgstr "Origen"
 
+#: blocks/build/donor-dashboard/parts/overview.php:69
+#: blocks/src/donor-dashboard/parts/overview.php:69
 #: admin/build/mission-admin.js:196
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:503
 #: admin/src/pages/transactions/TransactionDetailsCard.js:591
@@ -12450,22 +12527,26 @@ msgid "Your team {team_name} has been approved"
 msgstr "Tu equipo {team_name} ha sido aprobado"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:277
-#: blocks/src/donor-dashboard/parts/fundraising.php:277
+#: blocks/build/donor-dashboard/parts/team-detail.php:149
+#: blocks/src/donor-dashboard/parts/team-detail.php:149
 msgid "Team privacy"
 msgstr "Privacidad del equipo"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:285
-#: blocks/src/donor-dashboard/parts/fundraising.php:285
+#: blocks/build/donor-dashboard/parts/team-detail.php:157
+#: blocks/src/donor-dashboard/parts/team-detail.php:157
 msgid "Public — anyone can join"
 msgstr "Público — cualquiera puede unirse"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:286
-#: blocks/src/donor-dashboard/parts/fundraising.php:286
+#: blocks/build/donor-dashboard/parts/team-detail.php:158
+#: blocks/src/donor-dashboard/parts/team-detail.php:158
 msgid "Private — invitation only"
 msgstr "Privado — solo con invitación"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:288
-#: blocks/src/donor-dashboard/parts/fundraising.php:288
+#: blocks/build/donor-dashboard/parts/team-detail.php:160
+#: blocks/src/donor-dashboard/parts/team-detail.php:160
 msgid "Private teams are hidden from the sign-up form; people join through your email invitations."
 msgstr "Los equipos privados no aparecen en el formulario de inscripción; las personas se unen mediante tus invitaciones por correo."
 
@@ -12714,9 +12795,10 @@ msgid_plural "days remaining"
 msgstr[0] "día restante"
 msgstr[1] "días restantes"
 
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:222
 #: blocks/build/donor-dashboard/parts/fundraising.php:174
 #: blocks/build/signup-modal/index.php:152
-#: blocks/src/donor-dashboard/parts/fundraising.php:174
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:222
 #: blocks/src/signup-modal/index.php:152
 msgid "Share on Bluesky"
 msgstr "Compartir en Bluesky"
@@ -12743,7 +12825,11 @@ msgstr "Hacer que este equipo sea privado"
 msgid "Public"
 msgstr "Público"
 
+#: blocks/build/donor-dashboard/parts/team-detail.php:29
+#: blocks/build/donor-dashboard/parts/teams.php:31
 #: blocks/build/signup-modal/index.php:306
+#: blocks/src/donor-dashboard/parts/team-detail.php:29
+#: blocks/src/donor-dashboard/parts/teams.php:31
 #: blocks/src/signup-modal/index.php:306
 msgid "Private"
 msgstr "Privado"
@@ -12758,8 +12844,8 @@ msgstr "Cualquiera puede unirse a tu equipo."
 msgid "Only people you invite can join."
 msgstr "Solo pueden unirse las personas que invites."
 
-#: blocks/build/team-progress/index.php:75
-#: blocks/src/team-progress/index.php:75
+#: blocks/build/team-progress/index.php:77
+#: blocks/src/team-progress/index.php:77
 msgid "member"
 msgid_plural "members"
 msgstr[0] "miembro"
@@ -12795,3 +12881,276 @@ msgstr "Se muestra cuando un recaudador aún no ha escrito su historia."
 #: blocks/src/team-story/index.js:21
 msgid "Shown when a team has not written a story yet."
 msgstr "Se muestra cuando un equipo aún no ha escrito su historia."
+
+#: blocks/build/donor-dashboard/index.php:143
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:17
+#: blocks/src/donor-dashboard/index.php:143
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:17
+msgid "My Fundraisers"
+msgstr "Mis recaudaciones"
+
+#: blocks/build/donor-dashboard/index.php:151
+#: blocks/build/donor-dashboard/parts/team-detail.php:17
+#: blocks/src/donor-dashboard/index.php:151
+#: blocks/src/donor-dashboard/parts/team-detail.php:17
+msgid "My Teams"
+msgstr "Mis equipos"
+
+#: blocks/build/donor-dashboard/index.php:162
+#: blocks/build/donor-dashboard/index.php:168
+#: blocks/build/donor-dashboard/index.php:174
+#: blocks/src/donor-dashboard/index.php:162
+#: blocks/src/donor-dashboard/index.php:168
+#: blocks/src/donor-dashboard/index.php:174
+msgid "Giving"
+msgstr "Donaciones"
+
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:61
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:61
+msgid "View public page"
+msgstr "Ver página pública"
+
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:74
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:74
+msgid "This campaign has ended, so this page is read-only."
+msgstr ""
+"Esta campaña ha finalizado, por lo que esta página es de solo lectura."
+
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:81
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:81
+msgid "Changes appear on your public fundraising page right away."
+msgstr ""
+"Los cambios aparecen inmediatamente en tu página pública de recaudación."
+
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:126
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:126
+msgid "No dedication"
+msgstr "Sin dedicatoria"
+
+#: blocks/build/donor-dashboard/parts/fundraiser-detail.php:133
+#: blocks/src/donor-dashboard/parts/fundraiser-detail.php:133
+msgid "Dedication name"
+msgstr "Nombre de la dedicatoria"
+
+#: blocks/build/donor-dashboard/parts/overview.php:38
+#: blocks/src/donor-dashboard/parts/overview.php:38
+msgid "Your Fundraising"
+msgstr "Tu recaudación"
+
+#: blocks/build/donor-dashboard/parts/overview.php:81
+#: blocks/src/donor-dashboard/parts/overview.php:81
+msgid "Also active:"
+msgstr "También activa:"
+
+#: blocks/build/donor-dashboard/parts/overview.php:180
+#: blocks/src/donor-dashboard/parts/overview.php:180
+msgid "Recent Donations to Your Pages"
+msgstr "Donaciones recientes a tus páginas"
+
+#: blocks/build/donor-dashboard/parts/overview.php:188
+#: blocks/src/donor-dashboard/parts/overview.php:188
+msgid "Recent donations to your pages"
+msgstr "Donaciones recientes a tus páginas"
+
+#: blocks/build/donor-dashboard/parts/overview.php:194
+#: blocks/src/donor-dashboard/parts/overview.php:194
+msgid "Page"
+msgstr "Página"
+
+#: blocks/build/donor-dashboard/parts/overview.php:212
+#: blocks/src/donor-dashboard/parts/overview.php:212
+msgid "No donations to your pages yet. Share your fundraiser to start raising funds."
+msgstr ""
+"Todavía no hay donaciones a tus páginas. Comparte tu recaudación para empezar "
+"a recaudar fondos."
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:68
+#: blocks/src/donor-dashboard/parts/team-detail.php:68
+msgid "View team page"
+msgstr "Ver página del equipo"
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:81
+#: blocks/src/donor-dashboard/parts/team-detail.php:81
+msgid "Invite members"
+msgstr "Invitar miembros"
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:115
+#: blocks/src/donor-dashboard/parts/team-detail.php:115
+msgid "Edit team"
+msgstr "Editar equipo"
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:116
+#: blocks/src/donor-dashboard/parts/team-detail.php:116
+msgid "Changes appear on your public team page right away."
+msgstr ""
+"Los cambios aparecen inmediatamente en la página pública de tu equipo."
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:165
+#: blocks/src/donor-dashboard/parts/team-detail.php:165
+msgid "Team image"
+msgstr "Imagen del equipo"
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:268
+#: blocks/src/donor-dashboard/parts/team-detail.php:268
+msgid "Leave this team"
+msgstr "Abandonar este equipo"
+
+#: blocks/build/donor-dashboard/parts/team-detail.php:269
+#: blocks/src/donor-dashboard/parts/team-detail.php:269
+msgid "Your fundraiser page stays active. It will just no longer count toward the team total."
+msgstr ""
+"Tu página de recaudación sigue activa. Simplemente ya no contará para el "
+"total del equipo."
+
+#: blocks/build/donor-dashboard/parts/teams.php:49
+#: blocks/src/donor-dashboard/parts/teams.php:49
+msgid "You are not on a team for any current campaign."
+msgstr "No formas parte de ningún equipo en una campaña actual."
+
+#: blocks/build/donor-dashboard/parts/teams.php:53
+#: blocks/src/donor-dashboard/parts/teams.php:53
+msgid "Past Teams"
+msgstr "Equipos anteriores"
+
+#. translators: %s: number of active fundraising pages
+#: src/DonorDashboard/FundraisersContextBuilder.php:87
+msgid "Active (%s)"
+msgstr "Activas (%s)"
+
+#. translators: %s: number of ended fundraising pages
+#: src/DonorDashboard/FundraisersContextBuilder.php:92
+msgid "Ended (%s)"
+msgstr "Finalizadas (%s)"
+
+#. translators: 1: first row number, 2: last row number, 3: total rows
+#: src/DonorDashboard/FundraisersContextBuilder.php:125
+#: src/DonorDashboard/TeamsContextBuilder.php:140
+msgid "%1$s–%2$s of %3$s"
+msgstr "%1$s–%2$s de %3$s"
+
+#. translators: %s: goal amount
+#: src/DonorDashboard/FundraisersContextBuilder.php:246
+msgid "Raised of %s"
+msgstr "Recaudado de %s"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:261
+#: src/DonorDashboard/TeamsContextBuilder.php:133
+#: src/DonorDashboard/TeamsContextBuilder.php:204
+#: src/DonorDashboard/TeamsContextBuilder.php:326
+msgid "Member"
+msgstr "Miembro"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:321
+msgid "Goal met"
+msgstr "Meta alcanzada"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:386
+#: src/DonorDashboard/TeamsContextBuilder.php:349
+msgid "Ends today"
+msgstr "Termina hoy"
+
+#. translators: %s: number of days
+#: src/DonorDashboard/FundraisersContextBuilder.php:391
+#: src/DonorDashboard/TeamsContextBuilder.php:354
+msgid "%s day left"
+msgid_plural "%s days left"
+msgstr[0] "Queda %s día"
+msgstr[1] "Quedan %s días"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:416
+msgid "No End Date"
+msgstr "Sin fecha de fin"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:422
+msgid "Day Left"
+msgid_plural "Days Left"
+msgstr[0] "Día restante"
+msgstr[1] "Días restantes"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:428
+msgid "Campaign Ends"
+msgstr "Fin de campaña"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:461
+msgid "Donation Received"
+msgid_plural "Donations Received"
+msgstr[0] "Donación recibida"
+msgstr[1] "Donaciones recibidas"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:465
+msgid "Active Fundraiser"
+msgid_plural "Active Fundraisers"
+msgstr[0] "Recaudación activa"
+msgstr[1] "Recaudaciones activas"
+
+#. translators: 1: amount raised, 2: team goal
+#: src/DonorDashboard/FundraisersContextBuilder.php:562
+#: src/DonorDashboard/TeamsContextBuilder.php:218
+msgid "%1$s of %2$s team goal"
+msgstr "%1$s de %2$s de la meta del equipo"
+
+#: src/DonorDashboard/TeamsContextBuilder.php:132
+msgid "You left the team"
+msgstr "Has abandonado el equipo"
+
+#. translators: %s: team captain's name
+#: src/DonorDashboard/TeamsContextBuilder.php:135
+#: src/DonorDashboard/TeamsContextBuilder.php:208
+msgid "Captain: %s"
+msgstr "Capitán: %s"
+
+#: src/DonorDashboard/TeamsContextBuilder.php:136
+msgid "Remove this member from the team? Their fundraiser page stays active but will no longer count toward the team total."
+msgstr ""
+"¿Eliminar a este miembro del equipo? Su página de recaudación sigue activa "
+"pero ya no contará para el total del equipo."
+
+#: src/DonorDashboard/TeamsContextBuilder.php:138
+msgid "Leave this team? Your fundraiser page stays active. It will just no longer count toward the team total."
+msgstr ""
+"¿Abandonar este equipo? Tu página de recaudación sigue activa. Simplemente ya "
+"no contará para el total del equipo."
+
+#. translators: 1: this team's rank, 2: number of teams
+#: src/DonorDashboard/TeamsContextBuilder.php:173
+msgid "Rank #%1$s of %2$s teams"
+msgstr "Puesto n.º %1$s de %2$s equipos"
+
+#. translators: %s: team goal
+#: src/DonorDashboard/TeamsContextBuilder.php:224
+msgid "Of %s Goal"
+msgstr "De la meta de %s"
+
+#. translators: %s: number of teams
+#: src/DonorDashboard/TeamsContextBuilder.php:239
+msgid "Of %s Teams"
+msgstr "De %s equipos"
+
+#. translators: 1: amount raised, 2: personal goal
+#: src/DonorDashboard/TeamsContextBuilder.php:283
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:454
+msgid "%1$s of %2$s"
+msgstr "%1$s de %2$s"
+
+#. translators: %s: amount the team raised
+#: src/DonorDashboard/TeamsContextBuilder.php:329
+msgid "team raised %s"
+msgstr "el equipo recaudó %s"
+
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:331
+msgid "You are not on a team."
+msgstr "No formas parte de un equipo."
+
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:339
+msgid "We could not remove you from the team. Please try again."
+msgstr "No hemos podido eliminarte del equipo. Inténtalo de nuevo."
+
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:384
+msgid "This campaign has ended, so the page can no longer be edited."
+msgstr ""
+"Esta campaña ha finalizado, por lo que la página ya no se puede editar."
+
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:382
+msgid "This campaign has ended, so the team can no longer be edited."
+msgstr ""
+"Esta campaña ha finalizado, por lo que el equipo ya no se puede editar."
