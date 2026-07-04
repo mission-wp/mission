@@ -238,9 +238,16 @@ test.describe( 'Campaigns Page', () => {
     await page.getByRole( 'button', { name: 'Add Campaign' } ).click();
 
     const modal = page.getByRole( 'dialog' );
-
-    // Step 1: Next should be disabled without title.
     const continueButton = modal.getByRole( 'button', { name: 'Continue' } );
+
+    // Step 1: campaign type — a default is preselected, so Continue is enabled.
+    await expect(
+      modal.getByText( 'What kind of campaign is this?' )
+    ).toBeVisible();
+    await expect( continueButton ).toBeEnabled();
+    await continueButton.click();
+
+    // Step 2: Continue should be disabled without a title.
     await expect( continueButton ).toBeDisabled();
 
     // Fill title and proceed.
@@ -250,7 +257,7 @@ test.describe( 'Campaigns Page', () => {
     await expect( continueButton ).toBeEnabled();
     await continueButton.click();
 
-    // Step 2: Should see Goal Amount field.
+    // Step 3: Should see Goal Amount field.
     await expect(
       modal.getByRole( 'spinbutton', { name: /Fundraising Goal/ } )
     ).toBeVisible();
@@ -261,12 +268,12 @@ test.describe( 'Campaigns Page', () => {
       .fill( '1000' );
     await continueButton.click();
 
-    // Step 3: Should see Create Campaign button.
+    // Step 4: Should see Create Campaign button.
     await expect(
       modal.getByRole( 'button', { name: 'Create Campaign' } )
     ).toBeVisible();
 
-    // Back button should go to step 2.
+    // Back button should go to step 3.
     await modal.getByRole( 'button', { name: 'Back' } ).click();
     await expect(
       modal.getByRole( 'spinbutton', { name: /Fundraising Goal/ } )
@@ -284,13 +291,16 @@ test.describe( 'Campaigns Page', () => {
 
     const modal = page.getByRole( 'dialog' );
 
-    // Step 1.
+    // Step 1 — keep the default campaign type.
+    await modal.getByRole( 'button', { name: 'Continue' } ).click();
+
+    // Step 2 — title.
     await modal
       .getByRole( 'textbox', { name: 'Campaign Name' } )
       .fill( 'New Test Campaign' );
     await modal.getByRole( 'button', { name: 'Continue' } ).click();
 
-    // Step 2 — fill goal and continue.
+    // Step 3 — fill goal and continue.
     await modal
       .getByRole( 'spinbutton', { name: /Fundraising Goal/ } )
       .fill( '5000' );
