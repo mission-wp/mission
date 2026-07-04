@@ -430,6 +430,40 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The captain can remove the team image.
+	 */
+	public function test_captain_can_remove_photo(): void {
+		$this->team->cover_image = 'https://example.com/team.jpg';
+		$this->team->save();
+
+		$response = $this->dispatch(
+			'DELETE',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/photo"
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '', $response->get_data()['cover_image_url'] );
+		$this->assertSame( '', (string) Team::find( $this->team->id )->cover_image );
+	}
+
+	/**
+	 * A plain member cannot remove the team image.
+	 */
+	public function test_non_captain_cannot_remove_photo(): void {
+		$this->team->cover_image = 'https://example.com/team.jpg';
+		$this->team->save();
+		$this->act_as_member();
+
+		$response = $this->dispatch(
+			'DELETE',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/photo"
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( 'https://example.com/team.jpg', Team::find( $this->team->id )->cover_image );
+	}
+
+	/**
 	 * A logged-in user without the donor role gets 403, not 401.
 	 */
 	public function test_logged_in_without_donor_role_gets_403(): void {

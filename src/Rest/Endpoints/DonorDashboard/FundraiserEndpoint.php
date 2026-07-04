@@ -86,9 +86,16 @@ class FundraiserEndpoint {
 			RestModule::NAMESPACE,
 			'/donor-dashboard/fundraisers/(?P<id>\d+)/photo',
 			[
-				'methods'             => 'POST',
-				'callback'            => [ $this, 'upload_photo' ],
-				'permission_callback' => [ $this, 'check_donor_permission' ],
+				[
+					'methods'             => 'POST',
+					'callback'            => [ $this, 'upload_photo' ],
+					'permission_callback' => [ $this, 'check_donor_permission' ],
+				],
+				[
+					'methods'             => 'DELETE',
+					'callback'            => [ $this, 'remove_photo' ],
+					'permission_callback' => [ $this, 'check_donor_permission' ],
+				],
 			]
 		);
 
@@ -257,6 +264,39 @@ class FundraiserEndpoint {
 			[
 				'cover_image'     => (int) $attachment_id,
 				'cover_image_url' => wp_get_attachment_image_url( $attachment_id, 'large' ) ?: '',
+			]
+		);
+	}
+
+	/**
+	 * DELETE /donor-dashboard/fundraisers/{id}/photo
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function remove_photo( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$fundraiser = $this->resolve_owned_fundraiser( $request );
+
+		if ( is_wp_error( $fundraiser ) ) {
+			return $fundraiser;
+		}
+
+		$locked = $this->check_not_locked( $fundraiser );
+		if ( $locked ) {
+			return $locked;
+		}
+
+		$previous = (string) $fundraiser->cover_image;
+
+		$fundraiser->cover_image = '';
+		$fundraiser->save();
+
+		$this->uploader->cleanup_replaced_image( $previous );
+
+		return new WP_REST_Response(
+			[
+				'cover_image'     => 0,
+				'cover_image_url' => '',
 			]
 		);
 	}

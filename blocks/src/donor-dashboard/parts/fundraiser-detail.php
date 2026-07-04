@@ -144,34 +144,51 @@ defined( 'ABSPATH' ) || exit;
 				>
 			</div>
 
-			<!-- Cover photo -->
+			<!-- Cover photo (staged locally; uploaded on save) -->
 			<div class="mission-dd-profile-group mission-dd-profile-group-full mission-dd-cover">
 				<span class="mission-dd-profile-label"><?php esc_html_e( 'Cover photo', 'mission-donation-platform' ); ?></span>
 				<img
 					class="mission-dd-cover-preview"
 					alt=""
-					data-wp-bind--src="context.fundraisers.detail.coverImageUrl"
-					data-wp-bind--hidden="!context.fundraisers.detail.hasCover"
+					data-wp-bind--src="state.fundraiserCoverSrc"
+					data-wp-bind--hidden="!state.fundraiserHasCover"
 				>
-				<div class="mission-dd-cover-placeholder" data-wp-bind--hidden="context.fundraisers.detail.hasCover">
+				<div class="mission-dd-cover-placeholder" data-wp-bind--hidden="state.fundraiserHasCover">
 					<?php esc_html_e( 'No cover photo yet.', 'mission-donation-platform' ); ?>
 				</div>
 				<input
 					type="file"
 					class="mission-dd-cover-input"
 					accept="image/jpeg,image/png,image/gif,image/webp"
-					data-wp-on--change="actions.uploadPhoto"
+					data-wp-on--change="actions.selectPhoto"
 					hidden
 				>
-				<button
-					type="button"
-					class="mission-dd-btn-secondary"
-					data-wp-on--click="actions.triggerPhotoUpload"
-					data-wp-bind--disabled="context.fundraisers.uploading"
-				>
-					<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
-					<?php esc_html_e( 'Upload photo', 'mission-donation-platform' ); ?>
-				</button>
+				<span class="mission-dd-cover-buttons">
+					<button
+						type="button"
+						class="mission-dd-btn-secondary"
+						data-wp-on--click="actions.triggerPhotoUpload"
+						data-wp-bind--disabled="context.fundraisers.edit.saving"
+					>
+						<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
+						<?php esc_html_e( 'Choose photo', 'mission-donation-platform' ); ?>
+					</button>
+					<button
+						type="button"
+						class="mission-dd-btn-secondary"
+						data-wp-on--click="actions.removePhoto"
+						data-wp-bind--hidden="!state.fundraiserHasCover"
+						data-wp-bind--disabled="context.fundraisers.edit.saving"
+					>
+						<?php esc_html_e( 'Remove photo', 'mission-donation-platform' ); ?>
+					</button>
+				</span>
+				<span class="mission-dd-profile-hint" data-wp-bind--hidden="!context.fundraisers.photoPreviewUrl">
+					<?php esc_html_e( 'The new photo will be uploaded when you save your changes.', 'mission-donation-platform' ); ?>
+				</span>
+				<span class="mission-dd-profile-hint" data-wp-bind--hidden="!context.fundraisers.photoRemoved">
+					<?php esc_html_e( 'The photo will be removed when you save your changes.', 'mission-donation-platform' ); ?>
+				</span>
 				<span class="mission-dd-field-error" data-wp-bind--hidden="!context.fundraisers.uploadError" data-wp-text="context.fundraisers.uploadError"></span>
 			</div>
 

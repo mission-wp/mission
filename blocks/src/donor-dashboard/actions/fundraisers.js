@@ -9,6 +9,23 @@ import { showToast } from '../utils/toast';
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
 
+// Cover photo staged for upload on save. A File can't live in the reactive
+// context, so it's held here; only its preview URL goes in context.
+let stagedPhoto = null;
+
+/**
+ * Discard the staged cover photo and its local preview.
+ *
+ * @param {Object} fr Fundraisers context.
+ */
+function clearStagedPhoto( fr ) {
+  if ( fr.photoPreviewUrl ) {
+    URL.revokeObjectURL( fr.photoPreviewUrl );
+  }
+  stagedPhoto = null;
+  fr.photoPreviewUrl = '';
+}
+
 /**
  * Find a fundraiser card by ID across the Active and Ended lists.
  *
@@ -50,6 +67,8 @@ export function syncFundraiserDetail( ctx, id ) {
   fr.edit.saved = false;
   fr.edit.error = '';
   fr.uploadError = '';
+  fr.photoRemoved = false;
+  clearStagedPhoto( fr );
 
   fr.supporters.items = card.supporters || [];
   fr.supporters.page = 1;
@@ -142,6 +161,20 @@ export const fundraisersState = {
   get fundraisersSaveDisabled() {
     return !! getContext().fundraisers?.edit?.saving;
   },
+  get fundraiserCoverSrc() {
+    const fr = getContext().fundraisers;
+    if ( fr?.photoPreviewUrl ) {
+      return fr.photoPreviewUrl;
+    }
+    return fr?.photoRemoved ? '' : fr?.detail?.coverImageUrl || '';
+  },
+  get fundraiserHasCover() {
+    const fr = getContext().fundraisers;
+    return !! (
+      fr?.photoPreviewUrl ||
+      ( fr?.detail?.hasCover && ! fr?.photoRemoved )
+    );
+  },
 
   // ── Supporters pagination ──
   get supportersNotEmpty() {
@@ -230,6 +263,57 @@ export const fundraisersActions = {
     fr.edit.error = '';
 
     try {
+      // Upload the staged cover photo first; a failure aborts the save so
+      // the donor can fix the photo and try again.
+      if ( stagedPhoto ) {
+        const body = new FormData();
+        body.append( 'file', stagedPhoto );
+
+        const photoResponse = yield fetch(
+          `${ ctx.restUrl }donor-dashboard/fundraisers/${ card.id }/photo`,
+          {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'X-WP-Nonce': ctx.nonce },
+            body,
+          }
+        );
+
+        if ( ! photoResponse.ok ) {
+          const data = yield photoResponse.json();
+          fr.edit.error =
+            data.message || 'Could not upload the image. Please try again.';
+          fr.edit.saving = false;
+          return;
+        }
+
+        const photoData = yield photoResponse.json();
+        card.coverImageUrl = photoData.cover_image_url;
+        card.hasCover = !! photoData.cover_image_url;
+        clearStagedPhoto( fr );
+      } else if ( fr.photoRemoved && card.hasCover ) {
+        const photoResponse = yield fetch(
+          `${ ctx.restUrl }donor-dashboard/fundraisers/${ card.id }/photo`,
+          {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: { 'X-WP-Nonce': ctx.nonce },
+          }
+        );
+
+        if ( ! photoResponse.ok ) {
+          const data = yield photoResponse.json();
+          fr.edit.error =
+            data.message || 'Could not remove the image. Please try again.';
+          fr.edit.saving = false;
+          return;
+        }
+
+        card.coverImageUrl = '';
+        card.hasCover = false;
+        fr.photoRemoved = false;
+      }
+
       const response = yield fetch(
         `${ ctx.restUrl }donor-dashboard/fundraisers/${ card.id }`,
         {
@@ -300,54 +384,48 @@ export const fundraisersActions = {
     }
   },
 
-  *uploadPhoto( event ) {
-    const ctx = getContext();
-    const fr = ctx.fundraisers;
-    const card = fr.detail;
+  /**
+   * Stage a selected cover photo for upload on save, previewing it locally.
+   *
+   * @param {Event} event Change event from the file input.
+   */
+  selectPhoto( event ) {
+    const fr = getContext().fundraisers;
     const file = event?.target?.files?.[ 0 ];
-    if ( ! card || ! file ) {
+
+    // Reset the input so the same file can be re-selected.
+    if ( event?.target ) {
+      event.target.value = '';
+    }
+
+    if ( ! fr?.detail || ! file ) {
       return;
     }
 
-    fr.uploading = true;
-    fr.uploadError = '';
-
-    const body = new FormData();
-    body.append( 'file', file );
-
-    try {
-      const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/fundraisers/${ card.id }/photo`,
-        {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'X-WP-Nonce': ctx.nonce },
-          body,
-        }
-      );
-
-      if ( ! response.ok ) {
-        const data = yield response.json();
-        fr.uploadError =
-          data.message || 'Could not upload the image. Please try again.';
-        fr.uploading = false;
-        return;
-      }
-
-      const data = yield response.json();
-      card.coverImageUrl = data.cover_image_url;
-      card.hasCover = !! data.cover_image_url;
-      fr.uploading = false;
-      showToast( ctx, fr.i18n?.photoToast || 'Cover photo updated' );
-    } catch {
-      fr.uploadError = GENERIC_ERROR;
-      fr.uploading = false;
-    } finally {
-      // Reset the input so the same file can be re-selected.
-      if ( event?.target ) {
-        event.target.value = '';
-      }
+    if ( fr.maxPhotoBytes && file.size > fr.maxPhotoBytes ) {
+      fr.uploadError = fr.i18n?.photoTooLarge || 'The image is too large.';
+      return;
     }
+
+    clearStagedPhoto( fr );
+    fr.uploadError = '';
+    fr.photoRemoved = false;
+    stagedPhoto = file;
+    fr.photoPreviewUrl = URL.createObjectURL( file );
+  },
+
+  /**
+   * Stage removal of the cover photo; applied on save. With only a staged
+   * photo (no saved cover), this just discards the staged photo.
+   */
+  removePhoto() {
+    const fr = getContext().fundraisers;
+    if ( ! fr?.detail ) {
+      return;
+    }
+    clearStagedPhoto( fr );
+    fr.uploadError = '';
+    fr.photoRemoved = !! fr.detail.hasCover;
   },
 
   /**

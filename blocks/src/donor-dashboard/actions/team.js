@@ -11,6 +11,23 @@ import { findFundraiserCard } from './fundraisers';
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
 
+// Team image staged for upload on save. A File can't live in the reactive
+// context, so it's held here; only its preview URL goes in context.
+let stagedTeamPhoto = null;
+
+/**
+ * Discard the staged team image and its local preview.
+ *
+ * @param {Object} teams Teams context.
+ */
+function clearStagedTeamPhoto( teams ) {
+  if ( teams.photoPreviewUrl ) {
+    URL.revokeObjectURL( teams.photoPreviewUrl );
+  }
+  stagedTeamPhoto = null;
+  teams.photoPreviewUrl = '';
+}
+
 /**
  * Find a current-team card by ID.
  *
@@ -48,6 +65,8 @@ export function syncTeamDetail( ctx, id ) {
   teams.invite.sending = false;
   teams.membersPage = 1;
   teams.uploadError = '';
+  teams.photoRemoved = false;
+  clearStagedTeamPhoto( teams );
 }
 
 /**
@@ -102,6 +121,20 @@ export const teamState = {
   },
   get teamSaveDisabled() {
     return !! getContext().teams?.edit?.saving;
+  },
+  get teamCoverSrc() {
+    const teams = getContext().teams;
+    if ( teams?.photoPreviewUrl ) {
+      return teams.photoPreviewUrl;
+    }
+    return teams?.photoRemoved ? '' : teams?.detail?.coverImageUrl || '';
+  },
+  get teamHasCover() {
+    const teams = getContext().teams;
+    return !! (
+      teams?.photoPreviewUrl ||
+      ( teams?.detail?.hasCover && ! teams?.photoRemoved )
+    );
   },
   get hasInvitations() {
     return ( getContext().teams?.detail?.invitations?.length || 0 ) > 0;
@@ -205,6 +238,57 @@ export const teamActions = {
     teams.edit.error = '';
 
     try {
+      // Upload the staged team image first; a failure aborts the save so
+      // the captain can fix the image and try again.
+      if ( stagedTeamPhoto ) {
+        const body = new FormData();
+        body.append( 'file', stagedTeamPhoto );
+
+        const photoResponse = yield fetch(
+          `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/photo`,
+          {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'X-WP-Nonce': ctx.nonce },
+            body,
+          }
+        );
+
+        if ( ! photoResponse.ok ) {
+          const data = yield photoResponse.json();
+          teams.edit.error =
+            data.message || 'Could not upload the image. Please try again.';
+          teams.edit.saving = false;
+          return;
+        }
+
+        const photoData = yield photoResponse.json();
+        card.coverImageUrl = photoData.cover_image_url;
+        card.hasCover = !! photoData.cover_image_url;
+        clearStagedTeamPhoto( teams );
+      } else if ( teams.photoRemoved && card.hasCover ) {
+        const photoResponse = yield fetch(
+          `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/photo`,
+          {
+            method: 'DELETE',
+            credentials: 'same-origin',
+            headers: { 'X-WP-Nonce': ctx.nonce },
+          }
+        );
+
+        if ( ! photoResponse.ok ) {
+          const data = yield photoResponse.json();
+          teams.edit.error =
+            data.message || 'Could not remove the image. Please try again.';
+          teams.edit.saving = false;
+          return;
+        }
+
+        card.coverImageUrl = '';
+        card.hasCover = false;
+        teams.photoRemoved = false;
+      }
+
       const response = yield fetch(
         `${ ctx.restUrl }donor-dashboard/teams/${ card.id }`,
         {
@@ -271,53 +355,49 @@ export const teamActions = {
     }
   },
 
-  *uploadTeamPhoto( event ) {
-    const ctx = getContext();
-    const teams = ctx.teams;
-    const card = teams.detail;
+  /**
+   * Stage a selected team image for upload on save, previewing it locally.
+   *
+   * @param {Event} event Change event from the file input.
+   */
+  selectTeamPhoto( event ) {
+    const teams = getContext().teams;
     const file = event?.target?.files?.[ 0 ];
-    if ( ! card || ! file ) {
+
+    // Reset the input so the same file can be re-selected.
+    if ( event?.target ) {
+      event.target.value = '';
+    }
+
+    if ( ! teams?.detail || ! file ) {
       return;
     }
 
-    teams.uploading = true;
-    teams.uploadError = '';
-
-    const body = new FormData();
-    body.append( 'file', file );
-
-    try {
-      const response = yield fetch(
-        `${ ctx.restUrl }donor-dashboard/teams/${ card.id }/photo`,
-        {
-          method: 'POST',
-          credentials: 'same-origin',
-          headers: { 'X-WP-Nonce': ctx.nonce },
-          body,
-        }
-      );
-
-      if ( ! response.ok ) {
-        const data = yield response.json();
-        teams.uploadError =
-          data.message || 'Could not upload the image. Please try again.';
-        teams.uploading = false;
-        return;
-      }
-
-      const data = yield response.json();
-      card.coverImageUrl = data.cover_image_url;
-      card.hasCover = !! data.cover_image_url;
-      teams.uploading = false;
-      showToast( ctx, teams.i18n?.teamPhoto || 'Team image updated' );
-    } catch {
-      teams.uploadError = GENERIC_ERROR;
-      teams.uploading = false;
-    } finally {
-      if ( event?.target ) {
-        event.target.value = '';
-      }
+    if ( teams.maxPhotoBytes && file.size > teams.maxPhotoBytes ) {
+      teams.uploadError =
+        teams.i18n?.photoTooLarge || 'The image is too large.';
+      return;
     }
+
+    clearStagedTeamPhoto( teams );
+    teams.uploadError = '';
+    teams.photoRemoved = false;
+    stagedTeamPhoto = file;
+    teams.photoPreviewUrl = URL.createObjectURL( file );
+  },
+
+  /**
+   * Stage removal of the team image; applied on save. With only a staged
+   * image (no saved one), this just discards the staged image.
+   */
+  removeTeamPhoto() {
+    const teams = getContext().teams;
+    if ( ! teams?.detail ) {
+      return;
+    }
+    clearStagedTeamPhoto( teams );
+    teams.uploadError = '';
+    teams.photoRemoved = !! teams.detail.hasCover;
   },
 
   *inviteMember() {

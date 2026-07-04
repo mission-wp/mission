@@ -13,6 +13,7 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\TeamInvitation;
+use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
@@ -93,13 +94,13 @@ class TeamsContextBuilder {
 		$detail = $current[0] ?? null;
 
 		return [
-			'ids'            => array_map( static fn( array $card ): int => $card['id'], $current ),
-			'current'        => $current,
-			'past'           => $past,
-			'hasCurrent'     => ! empty( $current ),
-			'hasPast'        => ! empty( $past ),
-			'detail'         => $detail,
-			'edit'           => [
+			'ids'             => array_map( static fn( array $card ): int => $card['id'], $current ),
+			'current'         => $current,
+			'past'            => $past,
+			'hasCurrent'      => ! empty( $current ),
+			'hasPast'         => ! empty( $past ),
+			'detail'          => $detail,
+			'edit'            => [
 				'name'        => $detail['name'] ?? '',
 				'goal'        => $detail['goalMajor'] ?? '',
 				'access'      => $detail['access'] ?? Team::ACCESS_PUBLIC,
@@ -108,24 +109,30 @@ class TeamsContextBuilder {
 				'saved'       => false,
 				'error'       => '',
 			],
-			'invite'         => [
+			'invite'          => [
 				'email'   => '',
 				'error'   => '',
 				'sending' => false,
 			],
-			'membersPage'    => 1,
-			'membersPerPage' => self::MEMBERS_PER_PAGE,
-			'leaving'        => false,
-			'uploading'      => false,
-			'uploadError'    => '',
-			'donorId'        => (int) $this->donor->id,
-			'currencySymbol' => Currency::get_symbol( $this->currency ),
-			'i18n'           => [
+			'membersPage'     => 1,
+			'membersPerPage'  => self::MEMBERS_PER_PAGE,
+			'leaving'         => false,
+			'photoPreviewUrl' => '',
+			'photoRemoved'    => false,
+			'uploadError'     => '',
+			'maxPhotoBytes'   => FundraiserImageUploader::max_size(),
+			'donorId'         => (int) $this->donor->id,
+			'currencySymbol'  => Currency::get_symbol( $this->currency ),
+			'i18n'            => [
 				'save'           => __( 'Save changes', 'mission-donation-platform' ),
 				'saving'         => __( 'Saving…', 'mission-donation-platform' ),
 				'saved'          => __( 'Saved', 'mission-donation-platform' ),
 				'teamToast'      => __( 'Team updated', 'mission-donation-platform' ),
-				'teamPhoto'      => __( 'Team image updated', 'mission-donation-platform' ),
+				'photoTooLarge'  => sprintf(
+					/* translators: %s: maximum allowed file size, e.g. "5 MB". */
+					__( 'The image is too large. Please upload a file under %s.', 'mission-donation-platform' ),
+					size_format( FundraiserImageUploader::max_size() )
+				),
 				'inviteToast'    => __( 'Invitation sent', 'mission-donation-platform' ),
 				'removeToast'    => __( 'Member removed', 'mission-donation-platform' ),
 				'promoteToast'   => __( 'New captain set', 'mission-donation-platform' ),

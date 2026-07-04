@@ -162,34 +162,51 @@ defined( 'ABSPATH' ) || exit;
 					<span class="mission-dd-profile-hint"><?php esc_html_e( 'Private teams are hidden from the sign-up form; people join through your email invitations.', 'mission-donation-platform' ); ?></span>
 				</div>
 
-				<!-- Team image -->
+				<!-- Team image (staged locally; uploaded on save) -->
 				<div class="mission-dd-profile-group mission-dd-profile-group-full mission-dd-cover">
 					<span class="mission-dd-profile-label"><?php esc_html_e( 'Team image', 'mission-donation-platform' ); ?></span>
 					<img
 						class="mission-dd-cover-preview"
 						alt=""
-						data-wp-bind--src="context.teams.detail.coverImageUrl"
-						data-wp-bind--hidden="!context.teams.detail.hasCover"
+						data-wp-bind--src="state.teamCoverSrc"
+						data-wp-bind--hidden="!state.teamHasCover"
 					>
-					<div class="mission-dd-cover-placeholder" data-wp-bind--hidden="context.teams.detail.hasCover">
+					<div class="mission-dd-cover-placeholder" data-wp-bind--hidden="state.teamHasCover">
 						<?php esc_html_e( 'No team image yet.', 'mission-donation-platform' ); ?>
 					</div>
 					<input
 						type="file"
 						class="mission-dd-cover-input"
 						accept="image/jpeg,image/png,image/gif,image/webp"
-						data-wp-on--change="actions.uploadTeamPhoto"
+						data-wp-on--change="actions.selectTeamPhoto"
 						hidden
 					>
-					<button
-						type="button"
-						class="mission-dd-btn-secondary"
-						data-wp-on--click="actions.triggerTeamPhotoUpload"
-						data-wp-bind--disabled="context.teams.uploading"
-					>
-						<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
-						<?php esc_html_e( 'Upload team image', 'mission-donation-platform' ); ?>
-					</button>
+					<span class="mission-dd-cover-buttons">
+						<button
+							type="button"
+							class="mission-dd-btn-secondary"
+							data-wp-on--click="actions.triggerTeamPhotoUpload"
+							data-wp-bind--disabled="context.teams.edit.saving"
+						>
+							<span class="mission-dd-icon mission-dd-icon-upload" aria-hidden="true"></span>
+							<?php esc_html_e( 'Choose team image', 'mission-donation-platform' ); ?>
+						</button>
+						<button
+							type="button"
+							class="mission-dd-btn-secondary"
+							data-wp-on--click="actions.removeTeamPhoto"
+							data-wp-bind--hidden="!state.teamHasCover"
+							data-wp-bind--disabled="context.teams.edit.saving"
+						>
+							<?php esc_html_e( 'Remove image', 'mission-donation-platform' ); ?>
+						</button>
+					</span>
+					<span class="mission-dd-profile-hint" data-wp-bind--hidden="!context.teams.photoPreviewUrl">
+						<?php esc_html_e( 'The new image will be uploaded when you save your changes.', 'mission-donation-platform' ); ?>
+					</span>
+					<span class="mission-dd-profile-hint" data-wp-bind--hidden="!context.teams.photoRemoved">
+						<?php esc_html_e( 'The image will be removed when you save your changes.', 'mission-donation-platform' ); ?>
+					</span>
 					<span class="mission-dd-field-error" data-wp-bind--hidden="!context.teams.uploadError" data-wp-text="context.teams.uploadError"></span>
 				</div>
 

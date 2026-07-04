@@ -77,9 +77,16 @@ class TeamEndpoint {
 			RestModule::NAMESPACE,
 			'/donor-dashboard/teams/(?P<id>\d+)/photo',
 			[
-				'methods'             => 'POST',
-				'callback'            => [ $this, 'upload_photo' ],
-				'permission_callback' => [ $this, 'check_donor_permission' ],
+				[
+					'methods'             => 'POST',
+					'callback'            => [ $this, 'upload_photo' ],
+					'permission_callback' => [ $this, 'check_donor_permission' ],
+				],
+				[
+					'methods'             => 'DELETE',
+					'callback'            => [ $this, 'remove_photo' ],
+					'permission_callback' => [ $this, 'check_donor_permission' ],
+				],
 			]
 		);
 
@@ -235,6 +242,39 @@ class TeamEndpoint {
 			[
 				'cover_image'     => (int) $attachment_id,
 				'cover_image_url' => wp_get_attachment_image_url( $attachment_id, 'large' ) ?: '',
+			]
+		);
+	}
+
+	/**
+	 * DELETE /donor-dashboard/teams/{id}/photo
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function remove_photo( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$team = $this->resolve_captained_team( $request );
+
+		if ( is_wp_error( $team ) ) {
+			return $team;
+		}
+
+		$locked = $this->check_not_locked( $team );
+		if ( $locked ) {
+			return $locked;
+		}
+
+		$previous = (string) $team->cover_image;
+
+		$team->cover_image = '';
+		$team->save();
+
+		$this->uploader->cleanup_replaced_image( $previous );
+
+		return new WP_REST_Response(
+			[
+				'cover_image'     => 0,
+				'cover_image_url' => '',
 			]
 		);
 	}

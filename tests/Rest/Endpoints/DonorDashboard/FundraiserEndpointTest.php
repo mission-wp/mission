@@ -492,6 +492,48 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * DELETE /photo clears the cover image.
+	 */
+	public function test_remove_photo_clears_cover(): void {
+		$fundraiser = $this->create_fundraiser( [ 'cover_image' => 'https://example.com/cover.jpg' ] );
+
+		$response = $this->server->dispatch(
+			new WP_REST_Request( 'DELETE', "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}/photo" )
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '', $response->get_data()['cover_image_url'] );
+		$this->assertSame( '', (string) Fundraiser::find( $fundraiser->id )->cover_image );
+	}
+
+	/**
+	 * DELETE /photo is rejected when the campaign has ended.
+	 */
+	public function test_remove_photo_rejected_when_campaign_ended(): void {
+		$ended = new Campaign(
+			[
+				'title'  => 'Last Year',
+				'type'   => Campaign::TYPE_P2P,
+				'status' => Campaign::STATUS_ENDED,
+			]
+		);
+		$ended->save();
+		$fundraiser = $this->create_fundraiser(
+			[
+				'campaign_id' => $ended->id,
+				'cover_image' => 'https://example.com/cover.jpg',
+			]
+		);
+
+		$response = $this->server->dispatch(
+			new WP_REST_Request( 'DELETE', "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}/photo" )
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+		$this->assertSame( 'https://example.com/cover.jpg', Fundraiser::find( $fundraiser->id )->cover_image );
+	}
+
+	/**
 	 * A member can leave their team; the page itself stays untouched.
 	 */
 	public function test_leave_team_detaches_member(): void {

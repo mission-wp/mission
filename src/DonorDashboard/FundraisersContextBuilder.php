@@ -12,6 +12,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
@@ -111,18 +112,24 @@ class FundraisersContextBuilder {
 				'totalPages' => (int) ceil( $detail['supportersTotal'] / self::SUPPORTERS_PER_PAGE ),
 				'loading'    => false,
 			],
-			'uploading'        => false,
+			'photoPreviewUrl'  => '',
+			'photoRemoved'     => false,
 			'uploadError'      => '',
+			'maxPhotoBytes'    => FundraiserImageUploader::max_size(),
 			'currencySymbol'   => Currency::get_symbol( $this->currency ),
 			'i18n'             => [
-				'save'       => __( 'Save changes', 'mission-donation-platform' ),
-				'saving'     => __( 'Saving…', 'mission-donation-platform' ),
-				'saved'      => __( 'Saved', 'mission-donation-platform' ),
-				'savedToast' => __( 'Fundraiser updated', 'mission-donation-platform' ),
-				'photoToast' => __( 'Cover photo updated', 'mission-donation-platform' ),
-				'copied'     => __( 'Link copied', 'mission-donation-platform' ),
+				'save'          => __( 'Save changes', 'mission-donation-platform' ),
+				'saving'        => __( 'Saving…', 'mission-donation-platform' ),
+				'saved'         => __( 'Saved', 'mission-donation-platform' ),
+				'savedToast'    => __( 'Fundraiser updated', 'mission-donation-platform' ),
+				'photoTooLarge' => sprintf(
+					/* translators: %s: maximum allowed file size, e.g. "5 MB". */
+					__( 'The image is too large. Please upload a file under %s.', 'mission-donation-platform' ),
+					size_format( FundraiserImageUploader::max_size() )
+				),
+				'copied'        => __( 'Link copied', 'mission-donation-platform' ),
 				/* translators: 1: first row number, 2: last row number, 3: total rows */
-				'range'      => __( '%1$s–%2$s of %3$s', 'mission-donation-platform' ),
+				'range'         => __( '%1$s–%2$s of %3$s', 'mission-donation-platform' ),
 			],
 		];
 	}

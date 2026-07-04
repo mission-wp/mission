@@ -487,6 +487,12 @@
   gap: 12px;
 }
 
+:where(.mission-dd-cover-buttons) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 :where(.mission-dd-cover-preview) {
   display: block;
   width: 100%;
