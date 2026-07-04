@@ -123,15 +123,21 @@ class FundraiserImageUploader {
 	/**
 	 * Maximum upload size in bytes.
 	 *
+	 * Public so the dashboard can validate client-side before the upload.
+	 *
 	 * @return int
 	 */
-	private function max_size(): int {
+	public static function max_size(): int {
+		// wp_max_upload_size() can be 0 when the server limits are unparseable.
+		$server_max = wp_max_upload_size();
+		$default    = $server_max > 0 ? min( 5 * MB_IN_BYTES, $server_max ) : 5 * MB_IN_BYTES;
+
 		/**
 		 * Filters the maximum fundraiser photo size in bytes.
 		 *
-		 * @param int $bytes Default 5 MB.
+		 * @param int $bytes Default 5 MB, capped at the server upload limit.
 		 */
-		return (int) apply_filters( 'mission_fundraiser_photo_max_size', 5 * MB_IN_BYTES );
+		return (int) apply_filters( 'mission_fundraiser_photo_max_size', $default );
 	}
 
 	/**
@@ -147,11 +153,16 @@ class FundraiserImageUploader {
 
 		// Measure the file on disk; the request's size field is client-supplied.
 		$size = file_exists( $file['tmp_name'] ) ? (int) filesize( $file['tmp_name'] ) : 0;
+		$max  = self::max_size();
 
-		if ( $size > $this->max_size() ) {
+		if ( $size > $max ) {
 			return new WP_Error(
 				'file_too_large',
-				__( 'The image is too large. Please upload a file under 5 MB.', 'mission-donation-platform' ),
+				sprintf(
+					/* translators: %s: maximum allowed file size, e.g. "5 MB". */
+					__( 'The image is too large. Please upload a file under %s.', 'mission-donation-platform' ),
+					size_format( $max )
+				),
 				[ 'status' => 400 ]
 			);
 		}
