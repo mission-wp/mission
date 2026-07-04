@@ -143,6 +143,29 @@ class BlockRenderTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the team-progress join button shows for public teams only.
+	 */
+	public function test_team_progress_hides_join_on_private_teams(): void {
+		$this->require_block( 'mission-donation-platform/team-progress' );
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$public = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Open Crew', 'status' => 'active', 'access' => Team::ACCESS_PUBLIC ] );
+		$public->save();
+		$private = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Closed Crew', 'status' => 'active', 'access' => Team::ACCESS_PRIVATE ] );
+		$private->save();
+
+		$public_html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/team-progress {"teamId":%d} /-->', $public->id ) );
+		$this->assertStringContainsString( 'Join this Team', $public_html );
+
+		// Uninvited visitors can't join a private team, so no join CTA; the
+		// donate button stays.
+		$private_html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/team-progress {"teamId":%d} /-->', $private->id ) );
+		$this->assertStringNotContainsString( 'Join this Team', $private_html );
+		$this->assertStringContainsString( 'Donate to the Team', $private_html );
+	}
+
+	/**
 	 * Test the team-members block lists the team's members.
 	 */
 	public function test_team_members_renders(): void {
