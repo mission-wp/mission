@@ -6,6 +6,7 @@
  * lock), so the client state is presentation only.
  */
 import { getContext } from '@wordpress/interactivity';
+import { resizeImageFile } from '@shared/image-resize';
 import { showToast } from '../utils/toast';
 import { findFundraiserCard } from './fundraisers';
 
@@ -357,21 +358,26 @@ export const teamActions = {
 
   /**
    * Stage a selected team image for upload on save, previewing it locally.
+   * Large images are downscaled in the browser so they fit the upload limit.
    *
    * @param {Event} event Change event from the file input.
    */
-  selectTeamPhoto( event ) {
+  *selectTeamPhoto( event ) {
     const teams = getContext().teams;
-    const file = event?.target?.files?.[ 0 ];
+    const original = event?.target?.files?.[ 0 ];
 
     // Reset the input so the same file can be re-selected.
     if ( event?.target ) {
       event.target.value = '';
     }
 
-    if ( ! teams?.detail || ! file ) {
+    if ( ! teams?.detail || ! original ) {
       return;
     }
+
+    const file = yield resizeImageFile( original, {
+      maxBytes: teams.maxPhotoBytes,
+    } );
 
     if ( teams.maxPhotoBytes && file.size > teams.maxPhotoBytes ) {
       teams.uploadError =

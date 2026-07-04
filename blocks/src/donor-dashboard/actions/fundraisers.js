@@ -5,6 +5,7 @@
  * ownership (and that the campaign is still live) on every request.
  */
 import { getContext } from '@wordpress/interactivity';
+import { resizeImageFile } from '@shared/image-resize';
 import { showToast } from '../utils/toast';
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
@@ -386,21 +387,26 @@ export const fundraisersActions = {
 
   /**
    * Stage a selected cover photo for upload on save, previewing it locally.
+   * Large photos are downscaled in the browser so they fit the upload limit.
    *
    * @param {Event} event Change event from the file input.
    */
-  selectPhoto( event ) {
+  *selectPhoto( event ) {
     const fr = getContext().fundraisers;
-    const file = event?.target?.files?.[ 0 ];
+    const original = event?.target?.files?.[ 0 ];
 
     // Reset the input so the same file can be re-selected.
     if ( event?.target ) {
       event.target.value = '';
     }
 
-    if ( ! fr?.detail || ! file ) {
+    if ( ! fr?.detail || ! original ) {
       return;
     }
+
+    const file = yield resizeImageFile( original, {
+      maxBytes: fr.maxPhotoBytes,
+    } );
 
     if ( fr.maxPhotoBytes && file.size > fr.maxPhotoBytes ) {
       fr.uploadError = fr.i18n?.photoTooLarge || 'The image is too large.';
