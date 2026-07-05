@@ -625,15 +625,4 @@ class CreatePaymentIntentEndpoint {
 
 		return $this->settings->get_default_stripe_account();
 	}
-
-	/**
-	 * Get the client IP address.
-	 *
-	 * @return string
-	 */
-	private function get_client_ip(): string {
-		$ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
-
-		return sanitize_text_field( $ip );
-	}
 }

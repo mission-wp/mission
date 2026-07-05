@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Traits;
 
+use MissionDP\Helpers\ClientIp;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -63,35 +64,13 @@ trait RateLimitTrait {
 	/**
 	 * Get the client IP address.
 	 *
-	 * Proxy headers are trivially spoofable by a direct client, so only
-	 * REMOTE_ADDR is trusted by default. Sites behind a proxy/CDN opt in to
-	 * their proxy's header via the filter.
+	 * Cloudflare's CF-Connecting-IP header is trusted automatically when the
+	 * request comes from a Cloudflare address; other proxies opt in via the
+	 * `mission_trusted_proxy_headers` filter (see ClientIp).
 	 *
 	 * @return string Client IP.
 	 */
 	private function get_client_ip(): string {
-		/**
-		 * Filters the proxy headers trusted for the client IP.
-		 *
-		 * Empty by default. A site behind a proxy/CDN that sets a client-IP
-		 * header should return it here, e.g. [ 'HTTP_CF_CONNECTING_IP' ] on
-		 * Cloudflare or [ 'HTTP_X_FORWARDED_FOR' ] behind a load balancer.
-		 *
-		 * @param string[] $headers $_SERVER keys to consult before REMOTE_ADDR.
-		 */
-		$trusted = (array) apply_filters( 'mission_trusted_proxy_headers', [] );
-
-		foreach ( array_merge( $trusted, [ 'REMOTE_ADDR' ] ) as $header ) {
-			if ( ! empty( $_SERVER[ $header ] ) ) {
-				// X-Forwarded-For can contain multiple IPs; use the first.
-				$ip = strtok( sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ), ',' );
-				$ip = trim( $ip );
-				if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-					return $ip;
-				}
-			}
-		}
-
-		return '0.0.0.0';
+		return ClientIp::get();
 	}
 }

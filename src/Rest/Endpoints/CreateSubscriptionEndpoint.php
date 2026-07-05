@@ -478,7 +478,7 @@ class CreateSubscriptionEndpoint {
 				'gateway_subscription_id' => $body['subscription_id'] ?? null,
 				'is_anonymous'            => $request->get_param( 'is_anonymous' ),
 				'is_test'                 => $is_test,
-				'donor_ip'                => sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ),
+				'donor_ip'                => $this->get_client_ip(),
 			]
 		);
 
