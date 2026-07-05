@@ -135,6 +135,14 @@ trait HasShellPost {
 				return;
 			}
 
+			// An externally trashed post stays in the trash (writing a status
+			// here would silently restore it), and a deleted post stays gone.
+			// ShellPostStatusGuard deactivates the row in both cases.
+			$post_status = get_post_status( $this->post_id );
+			if ( ! $post_status || 'trash' === $post_status ) {
+				return;
+			}
+
 			wp_update_post(
 				[
 					'ID'          => $this->post_id,
@@ -152,11 +160,20 @@ trait HasShellPost {
 	/**
 	 * Trash the shell post and delete the custom table row.
 	 *
+	 * The syncing flag tells ShellPostStatusGuard this removal is the model's
+	 * own, so its external-trash listener doesn't touch the row being deleted.
+	 *
 	 * @return bool
 	 */
 	public function trash(): bool {
 		if ( $this->post_id ) {
-			wp_trash_post( $this->post_id );
+			self::$syncing_shell_post = true;
+
+			try {
+				wp_trash_post( $this->post_id );
+			} finally {
+				self::$syncing_shell_post = false;
+			}
 		}
 
 		return parent::delete();
@@ -165,11 +182,20 @@ trait HasShellPost {
 	/**
 	 * Delete the shell post (permanently) and the custom table row.
 	 *
+	 * The syncing flag tells ShellPostStatusGuard this removal is the model's
+	 * own, so its external-delete listener doesn't touch the row being deleted.
+	 *
 	 * @return bool
 	 */
 	public function delete(): bool {
 		if ( $this->post_id ) {
-			wp_delete_post( $this->post_id, true );
+			self::$syncing_shell_post = true;
+
+			try {
+				wp_delete_post( $this->post_id, true );
+			} finally {
+				self::$syncing_shell_post = false;
+			}
 		}
 
 		return parent::delete();
