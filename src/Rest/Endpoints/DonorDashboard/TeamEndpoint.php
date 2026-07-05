@@ -497,6 +497,9 @@ class TeamEndpoint {
 			},
 			$team->members(
 				[
+					// Match the SSR roster (ReportingService::team_members),
+					// which only lists active members.
+					'status'   => Fundraiser::STATUS_ACTIVE,
 					'orderby'  => 'total_raised',
 					'order'    => 'DESC',
 					'per_page' => -1,

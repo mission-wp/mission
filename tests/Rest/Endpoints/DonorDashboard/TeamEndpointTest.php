@@ -211,6 +211,32 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The roster excludes deactivated and pending members, matching the
+	 * SSR roster (ReportingService::team_members).
+	 */
+	public function test_roster_excludes_inactive_and_pending_members(): void {
+		$active   = $this->add_member( 'active@example.com' );
+		$inactive = $this->add_member( 'inactive@example.com' );
+		$inactive->deactivate();
+
+		$pending = $this->add_member( 'pending@example.com' );
+		$pending->status = Fundraiser::STATUS_PENDING;
+		$pending->save();
+
+		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+
+		$ids = array_column( $data['members'], 'fundraiser_id' );
+		$this->assertContains( $active->id, $ids );
+		$this->assertNotContains( $inactive->id, $ids );
+		$this->assertNotContains( $pending->id, $ids );
+		// Captain + the one active member.
+		$this->assertCount( 2, $data['members'] );
+	}
+
+	/**
 	 * A member who is not the captain gets a 403.
 	 */
 	public function test_member_who_is_not_captain_gets_403(): void {
