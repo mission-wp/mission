@@ -78,7 +78,7 @@
 
   &:hover {
     color: inherit;
-    text-decoration: none;
+    text-decoration: underline;
   }
 }
 
@@ -91,4 +91,53 @@
   &:hover {
     background-color: #f9f9f9;
   }
+}
+
+// Inline row actions (e.g. team member management links).
+
+.mission-row-action {
+  padding: 0;
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2fa36b;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &--danger {
+    color: #b85c5c;
+  }
+}
+
+// Hover row-actions under a member's name (WP-admin style). The cell is a
+// vertically centered column with a fixed min-height: the name alone sits
+// centered, and when the actions appear on hover the name + actions block
+// re-centers together without changing the row height.
+
+.mission-member-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 40px;
+}
+
+.mission-member-cell__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mission-row-actions {
+  display: none;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.mission-detail-table tbody tr:hover .mission-row-actions {
+  display: flex;
 }

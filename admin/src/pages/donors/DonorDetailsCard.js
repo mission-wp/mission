@@ -1,28 +1,8 @@
 import { formatDate } from '@shared/date';
 import { __ } from '@wordpress/i18n';
 import { COUNTRIES } from '@shared/address';
-
-function DetailRow( { label, value, addLabel, onAdd, isLast } ) {
-  return (
-    <div
-      className="mission-detail-row"
-      style={ isLast ? { borderBottom: 'none' } : undefined }
-    >
-      <span className="mission-detail-row__label">{ label }</span>
-      { value ? (
-        <span className="mission-detail-row__value">{ value }</span>
-      ) : (
-        <button
-          type="button"
-          className="mission-detail-row__add"
-          onClick={ onAdd }
-        >
-          { addLabel }
-        </button>
-      ) }
-    </div>
-  );
-}
+import DetailCard from '../../components/DetailCard';
+import { DetailRow } from '../shared/DetailComponents';
 
 export default function DonorDetailsCard( { donor, onEdit } ) {
   const fullName = [ donor.first_name, donor.last_name ]
@@ -46,13 +26,7 @@ export default function DonorDetailsCard( { donor, onEdit } ) {
     : '';
 
   return (
-    <div className="mission-card" style={ { padding: 0 } }>
-      <h2
-        className="mission-settings-section__title"
-        style={ { padding: '20px 16px 10px', margin: 0 } }
-      >
-        { __( 'Details', 'mission-donation-platform' ) }
-      </h2>
+    <DetailCard title={ __( 'Details', 'mission-donation-platform' ) }>
       <div className="mission-detail-list">
         <DetailRow
           label={ __( 'Full name', 'mission-donation-platform' ) }
@@ -90,6 +64,6 @@ export default function DonorDetailsCard( { donor, onEdit } ) {
           isLast
         />
       </div>
-    </div>
+    </DetailCard>
   );
 }

@@ -1,9 +1,7 @@
-import { useState, useEffect } from '@wordpress/element';
-import { Spinner } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDateTime } from '@shared/date';
+import ActivityTimelineCard from '../../components/ActivityTimelineCard';
 
 const EVENT_LABELS = {
   payment_initiated: __( 'Payment initiated', 'mission-donation-platform' ),
@@ -117,19 +115,6 @@ function getEventSubtitle( entry, currency ) {
   }
 }
 
-function TimelineItem( { title, subtitle, date, dotClass } ) {
-  return (
-    <div className="mission-timeline__item is-reached">
-      <div className={ `mission-timeline__dot ${ dotClass }` } />
-      <div className="mission-timeline__title">{ title }</div>
-      <div className="mission-timeline__date">{ date }</div>
-      { subtitle && (
-        <div className="mission-timeline__subtitle">{ subtitle }</div>
-      ) }
-    </div>
-  );
-}
-
 function deriveFallbackEvents( transaction ) {
   const events = [];
 
@@ -162,34 +147,15 @@ export default function TransactionActivityCard( {
   transaction,
   transactionId,
 } ) {
-  const [ entries, setEntries ] = useState( null );
-  const [ isLoading, setIsLoading ] = useState( true );
-
   const id = transactionId || transaction?.id;
   const currency = transaction?.currency || 'usd';
 
-  useEffect( () => {
-    if ( ! id ) {
-      setIsLoading( false );
-      return;
-    }
-
-    apiFetch( {
-      path: `/mission-donation-platform/v1/transactions/${ id }/history`,
-    } )
-      .then( ( data ) => {
-        setEntries( data );
-      } )
-      .catch( () => {
-        setEntries( null );
-      } )
-      .finally( () => setIsLoading( false ) );
-  }, [ id ] );
-
-  const useFallback = ! isLoading && ( ! entries || entries.length === 0 );
-  const events = useFallback
-    ? deriveFallbackEvents( transaction )
-    : ( entries || [] ).map( ( entry ) => ( {
+  return (
+    <ActivityTimelineCard
+      path={
+        id ? `/mission-donation-platform/v1/transactions/${ id }/history` : null
+      }
+      mapEntry={ ( entry ) => ( {
         title: getEventLabel( entry ),
         subtitle: getEventSubtitle( entry, currency ),
         date: formatDateTime( entry.created_at ),
@@ -197,30 +163,8 @@ export default function TransactionActivityCard( {
           entry.event_type === 'status_changed'
             ? STATUS_DOT_CLASSES[ entry.context?.new_status ] || ''
             : DOT_CLASSES[ entry.event_type ] || '',
-      } ) );
-
-  return (
-    <div className="mission-card" style={ { padding: 0 } }>
-      <h2 className="mission-card__heading">
-        { __( 'Activity', 'mission-donation-platform' ) }
-      </h2>
-      { isLoading ? (
-        <div style={ { padding: '24px', textAlign: 'center' } }>
-          <Spinner />
-        </div>
-      ) : (
-        <div className="mission-timeline">
-          { events.map( ( event, index ) => (
-            <TimelineItem
-              key={ index }
-              title={ event.title }
-              subtitle={ event.subtitle }
-              date={ event.date }
-              dotClass={ event.dotClass }
-            />
-          ) ) }
-        </div>
-      ) }
-    </div>
+      } ) }
+      fallbackEvents={ deriveFallbackEvents( transaction ) }
+    />
   );
 }
