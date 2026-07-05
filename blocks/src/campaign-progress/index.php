@@ -110,51 +110,53 @@ $context = [
 	'donateAction' => $donate_action,
 ];
 
-// Build the output.
+// Build the output. The legacy mission-campaign-progress/mission-cp-* classes
+// carry no plugin styles; they're kept so user CSS overrides written against
+// shipped releases keep applying.
 ob_start();
 ?>
 <div
-	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress' ] ) ); ?>
+	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress mission-campaign-progress' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/campaign-progress"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
 	style="<?php echo esc_attr( $color_style ); ?>"
 >
-	<div class="mission-progress__header">
-		<span class="mission-progress__raised"><?php echo esc_html( $progress_text ); ?></span>
-		<span class="mission-progress__goal"><?php echo esc_html( $goal_text ); ?></span>
+	<div class="mission-progress__header mission-cp-header">
+		<span class="mission-progress__raised mission-cp-raised"><?php echo esc_html( $progress_text ); ?></span>
+		<span class="mission-progress__goal mission-cp-goal"><?php echo esc_html( $goal_text ); ?></span>
 		<?php if ( $has_goal ) : ?>
-			<span class="mission-progress__percentage"><?php echo esc_html( $real_percent . '%' ); ?></span>
+			<span class="mission-progress__percentage mission-cp-percentage"><?php echo esc_html( $real_percent . '%' ); ?></span>
 		<?php endif; ?>
 	</div>
 
 	<?php if ( $has_goal ) : ?>
-		<div class="mission-progress__bar" data-wp-init="callbacks.animateBar">
-			<div class="mission-progress__bar-fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
+		<div class="mission-progress__bar mission-cp-bar" data-wp-init="callbacks.animateBar">
+			<div class="mission-progress__bar-fill mission-cp-bar__fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
 		</div>
 	<?php endif; ?>
 
 	<?php if ( $show_donors || $show_days_remaining || $is_p2p ) : ?>
-		<div class="mission-progress__stats">
+		<div class="mission-progress__stats mission-cp-stats">
 			<?php if ( $show_donors ) : ?>
-				<div class="mission-progress__stat">
-					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'donor', 'donors', $donor_count, 'mission-donation-platform' ) ); ?></span>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'donor', 'donors', $donor_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $is_p2p ) : ?>
-				<div class="mission-progress__stat">
-					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'fundraiser', 'fundraisers', $fundraiser_count, 'mission-donation-platform' ) ); ?></span>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'fundraiser', 'fundraisers', $fundraiser_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
-				<div class="mission-progress__stat">
-					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'team', 'teams', $team_count, 'mission-donation-platform' ) ); ?></span>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'team', 'teams', $team_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
-				<div class="mission-progress__stat">
-					<span class="mission-progress__stat-value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
-					<span class="mission-progress__stat-label"><?php echo esc_html( _n( 'day remaining', 'days remaining', $days_remaining, 'mission-donation-platform' ) ); ?></span>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'day remaining', 'days remaining', $days_remaining, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>
@@ -168,7 +170,7 @@ ob_start();
 				</button>
 			<?php endif; ?>
 			<?php if ( $show_button ) : ?>
-				<?php $donate_btn_class = $show_become ? 'mission-progress__btn mission-progress__btn--secondary' : 'mission-progress__btn'; ?>
+				<?php $donate_btn_class = ( $show_become ? 'mission-progress__btn mission-progress__btn--secondary' : 'mission-progress__btn' ) . ' mission-cp-donate-btn'; ?>
 				<?php if ( 'scroll' === $donate_action ) : ?>
 					<button
 						type="button"
