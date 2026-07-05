@@ -160,19 +160,23 @@ class P2PRewrites {
 	/**
 	 * Build a nested URL under a campaign's permalink.
 	 *
+	 * Returns null (callers fall back to the CPT's own query-var permalink)
+	 * when nested paths can't work: plain permalinks have no rewrite rules,
+	 * and an unpublished campaign page has no public URL to nest under.
+	 *
 	 * @param int    $campaign_id Parent campaign ID.
 	 * @param string $segment     Path segment (fundraiser/team).
 	 * @param string $slug        The shell post slug.
 	 * @return string|null Null when the campaign or its permalink can't be resolved.
 	 */
 	private function build_nested_url( int $campaign_id, string $segment, string $slug ): ?string {
-		if ( ! $campaign_id || '' === $slug ) {
+		if ( ! $campaign_id || '' === $slug || ! get_option( 'permalink_structure' ) ) {
 			return null;
 		}
 
 		$campaign = \MissionDP\Models\Campaign::find( $campaign_id );
 
-		if ( ! $campaign || ! $campaign->post_id ) {
+		if ( ! $campaign || ! $campaign->post_id || 'publish' !== get_post_status( $campaign->post_id ) ) {
 			return null;
 		}
 

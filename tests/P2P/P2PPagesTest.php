@@ -160,6 +160,52 @@ class P2PPagesTest extends WP_UnitTestCase {
 		remove_all_filters( 'mission_fundraiser_url_segment' );
 	}
 
+	/**
+	 * Test plain permalinks fall back to the resolvable query-var URL.
+	 *
+	 * There are no rewrite rules without a permalink structure, so a nested
+	 * path would 404; the CPT's own query-var URL works everywhere.
+	 */
+	public function test_plain_permalinks_use_query_var_url(): void {
+		$campaign   = $this->create_campaign();
+		$fundraiser = $this->create_fundraiser( $campaign->id );
+
+		$this->set_permalink_structure( '' );
+
+		$url = get_permalink( $fundraiser->post_id );
+
+		$this->assertStringContainsString( Fundraiser::POST_TYPE . '=', $url );
+		$this->assertStringNotContainsString( '/fundraiser/', $url );
+
+		$this->go_to( $url );
+		$this->assertTrue( is_singular( Fundraiser::POST_TYPE ) );
+		$this->assertSame( $fundraiser->post_id, get_queried_object_id() );
+	}
+
+	/**
+	 * Test shell permalinks fall back to query-var URLs when the campaign page is disabled.
+	 *
+	 * A drafted campaign post has no public URL to nest under, so nesting
+	 * would emit a dead link in share buttons and emails.
+	 */
+	public function test_disabled_campaign_page_uses_query_var_url(): void {
+		$campaign   = $this->create_campaign();
+		$fundraiser = $this->create_fundraiser( $campaign->id );
+		$team       = $this->create_team( $campaign->id );
+
+		$campaign->set_campaign_page_enabled( false );
+
+		$fundraiser_url = get_permalink( $fundraiser->post_id );
+		$team_url       = get_permalink( $team->post_id );
+
+		$this->assertStringContainsString( Fundraiser::POST_TYPE . '=', $fundraiser_url );
+		$this->assertStringContainsString( Team::POST_TYPE . '=', $team_url );
+
+		$this->go_to( $fundraiser_url );
+		$this->assertTrue( is_singular( Fundraiser::POST_TYPE ) );
+		$this->assertSame( $fundraiser->post_id, get_queried_object_id() );
+	}
+
 	// -------------------------------------------------------------------------
 	// URL resolution.
 	// -------------------------------------------------------------------------
