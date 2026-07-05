@@ -653,9 +653,11 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       navigator.clipboard.writeText( shareUrl() ).catch( () => {} );
       state.copied = true;
       state.copyLabel = i18n( 'copied', 'Copied' );
+      // Read the reset label now: getContext() is unavailable in the timer.
+      const idleLabel = i18n( 'copy', 'Copy' );
       setTimeout( () => {
         state.copied = false;
-        state.copyLabel = i18n( 'copy', 'Copy' );
+        state.copyLabel = idleLabel;
       }, 2000 );
     },
   },
