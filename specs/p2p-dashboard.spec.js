@@ -159,6 +159,62 @@ test.describe( 'P2P fundraiser dashboard', () => {
     ).toBeVisible();
     await expect( page ).toHaveURL( /#fundraisers$/ );
   } );
+
+  test( 'progress bars are driven by the --bar-width custom property', async ( {
+    page,
+  } ) => {
+    const { email, password, dashboardUrl, ids } = seed;
+
+    // A supporter's donation gives the fundraiser nonzero progress. The
+    // pending -> completed transition fires the total_raised rollups, and
+    // is_test must match the site's mode or the dashboard reads the other
+    // column.
+    const out = wpEval(
+      `$is_test = ! empty( get_option( "missiondp_settings", [] )["test_mode"] );` +
+        ` $s = new \\MissionDP\\Models\\Donor( [ "email" => "supporter+${ Date.now() }@example.com", "first_name" => "Sup", "last_name" => "Porter" ] ); $s->save();` +
+        ` $t = new \\MissionDP\\Models\\Transaction( [ "status" => "pending", "donor_id" => $s->id, "campaign_id" => ${ ids.campaign }, "fundraiser_id" => ${ ids.fundraiser }, "amount" => 12500, "is_test" => $is_test ] ); $t->save();` +
+        ` $t->status = "completed"; $t->save();` +
+        ` echo $s->id . "|" . $t->id;`
+    )
+      .split( '\n' )
+      .pop()
+      .trim();
+    const [ supporterId, txnId ] = out.split( '|' );
+
+    try {
+      await page.goto( dashboardUrl );
+      await dashboardLogin( page, email, password );
+
+      await page
+        .locator( '.mission-dd-nav-link[data-panel="fundraisers"]' )
+        .click();
+
+      const fill = page
+        .locator( '.mission-dd-panel.active .mission-dd-progress-fill' )
+        .first();
+      await expect( fill ).toBeVisible();
+
+      // The fill's width must come from the --bar-width custom property via
+      // the stylesheet (not an inline width), so users can restyle it with
+      // plain CSS.
+      await expect( fill ).toHaveAttribute(
+        'style',
+        /--bar-width:\s*\d+(\.\d+)?%/
+      );
+      await expect
+        .poll( () =>
+          fill.evaluate( ( el ) =>
+            parseFloat( window.getComputedStyle( el ).width )
+          )
+        )
+        .toBeGreaterThan( 0 );
+    } finally {
+      wpEval(
+        `$t = \\MissionDP\\Models\\Transaction::find( ${ txnId } ); if ( $t ) { $t->delete(); }` +
+          ` $s = \\MissionDP\\Models\\Donor::find( ${ supporterId } ); if ( $s ) { $s->delete(); }`
+      );
+    }
+  } );
 } );
 
 /**

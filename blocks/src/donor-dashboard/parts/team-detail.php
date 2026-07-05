@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit;
 			<span class="mission-dd-team-chip" data-wp-bind--hidden="!context.teams.detail.captainChipLabel" data-wp-text="context.teams.detail.captainChipLabel"></span>
 		</div>
 		<div class="mission-dd-progress-track" data-wp-bind--hidden="!context.teams.detail.hasGoal">
-			<div class="mission-dd-progress-fill" data-wp-style--width="context.teams.detail.barWidth"></div>
+			<div class="mission-dd-progress-fill" data-wp-style----bar-width="context.teams.detail.barWidth"></div>
 		</div>
 		<div class="mission-dd-detail-stats">
 			<div>
@@ -250,7 +250,7 @@ defined( 'ABSPATH' ) || exit;
 							<span class="mission-dd-role-badge mission-dd-role-badge-captain" data-wp-bind--hidden="!context.member.isCaptain"><?php esc_html_e( 'Captain', 'mission-donation-platform' ); ?></span>
 						</span>
 						<span class="mission-dd-member-bar">
-							<span class="mission-dd-member-bar-fill" data-wp-style--width="context.member.barWidth"></span>
+							<span class="mission-dd-member-bar-fill" data-wp-style----bar-width="context.member.barWidth"></span>
 						</span>
 						<span class="mission-dd-person-sub" data-wp-text="context.member.raisedOfGoalLabel"></span>
 					</span>

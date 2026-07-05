@@ -33,7 +33,7 @@ defined( 'ABSPATH' ) || exit;
 					<span class="mission-dd-team-chip" data-wp-bind--hidden="!context.card.captainChipLabel" data-wp-text="context.card.captainChipLabel"></span>
 				</span>
 				<span class="mission-dd-progress-track" data-wp-bind--hidden="!context.card.hasGoal">
-					<span class="mission-dd-progress-fill" data-wp-style--width="context.card.barWidth"></span>
+					<span class="mission-dd-progress-fill" data-wp-style----bar-width="context.card.barWidth"></span>
 				</span>
 				<span class="mission-dd-progress-meta">
 					<span data-wp-text="context.card.progressLabel"></span>

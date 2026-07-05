@@ -45,7 +45,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="mission-dd-fr-campaign" data-wp-text="context.overview.spotlight.campaignTitle"></div>
 		<div class="mission-dd-fr-title" data-wp-text="context.overview.spotlight.headline"></div>
 		<div class="mission-dd-progress-track">
-			<div class="mission-dd-progress-fill" data-wp-style--width="context.overview.spotlight.barWidth"></div>
+			<div class="mission-dd-progress-fill" data-wp-style----bar-width="context.overview.spotlight.barWidth"></div>
 		</div>
 		<p class="mission-dd-progress-meta">
 			<span data-wp-text="context.overview.spotlight.progressLabel"></span>

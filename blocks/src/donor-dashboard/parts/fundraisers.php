@@ -29,7 +29,7 @@ $mission_dd_fr_card = static function ( string $list ): void {
 			<span class="mission-dd-fr-title" data-wp-text="context.card.headline"></span>
 			<span class="mission-dd-fr-tribute" data-wp-bind--hidden="!context.card.dedicationLabel" data-wp-text="context.card.dedicationLabel"></span>
 			<span class="mission-dd-progress-track" data-wp-bind--hidden="!context.card.hasGoal">
-				<span class="mission-dd-progress-fill" data-wp-class--is-ended="context.card.isEnded" data-wp-style--width="context.card.barWidth"></span>
+				<span class="mission-dd-progress-fill" data-wp-class--is-ended="context.card.isEnded" data-wp-style----bar-width="context.card.barWidth"></span>
 			</span>
 			<span class="mission-dd-progress-meta">
 				<span data-wp-text="context.card.progressLabel"></span>

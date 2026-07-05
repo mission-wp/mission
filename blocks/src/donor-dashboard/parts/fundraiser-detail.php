@@ -31,7 +31,7 @@ defined( 'ABSPATH' ) || exit;
 		<div class="mission-dd-fr-title" data-wp-text="context.fundraisers.detail.headline"></div>
 		<div class="mission-dd-fr-tribute" data-wp-bind--hidden="!context.fundraisers.detail.dedicationLabel" data-wp-text="context.fundraisers.detail.dedicationLabel"></div>
 		<div class="mission-dd-progress-track" data-wp-bind--hidden="!context.fundraisers.detail.hasGoal">
-			<div class="mission-dd-progress-fill" data-wp-class--is-ended="context.fundraisers.detail.isEnded" data-wp-style--width="context.fundraisers.detail.barWidth"></div>
+			<div class="mission-dd-progress-fill" data-wp-class--is-ended="context.fundraisers.detail.isEnded" data-wp-style----bar-width="context.fundraisers.detail.barWidth"></div>
 		</div>
 		<div class="mission-dd-detail-stats">
 			<div>
