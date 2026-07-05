@@ -204,6 +204,39 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Move this fundraiser to a different team, or off teams entirely.
+	 *
+	 * Routes the change through leave_team()/join_team() so the left/joined
+	 * events fire, and vacates the captaincy on the team being left so its
+	 * captain_id never points at a non-member. No-op when the team is
+	 * unchanged.
+	 *
+	 * @param Team|null $team Destination team, or null to leave teams.
+	 * @return bool True on success.
+	 */
+	public function move_to_team( ?Team $team ): bool {
+		if ( ( $this->team_id ?: null ) === ( $team?->id ?: null ) ) {
+			return true;
+		}
+
+		$old_team = $this->team();
+
+		if ( $old_team && (int) $old_team->captain_id === (int) $this->id && ! $old_team->clear_captain() ) {
+			return false;
+		}
+
+		if ( ! $team ) {
+			return $this->leave_team();
+		}
+
+		if ( $this->team_id && ! $this->leave_team() ) {
+			return false;
+		}
+
+		return $this->join_team( $team );
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected function shell_post_type(): string {

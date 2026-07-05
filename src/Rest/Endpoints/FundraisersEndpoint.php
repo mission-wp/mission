@@ -171,9 +171,9 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			);
 		}
 
-		if ( $team_id ) {
-			$fundraiser->team_id = (int) $team_id;
-			$fundraiser->save();
+		$team = $team_id ? Team::find( (int) $team_id ) : null;
+		if ( $team ) {
+			$fundraiser->join_team( $team );
 		}
 
 		return new WP_REST_Response( $this->prepare_item( $fundraiser ), 201 );
@@ -198,7 +198,9 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			if ( $team_error ) {
 				return $team_error;
 			}
-			$fundraiser->team_id = $team_id ? (int) $team_id : null;
+			// Route through the model so captain bookkeeping and the
+			// joined/left events stay consistent.
+			$fundraiser->move_to_team( $team_id ? Team::find( (int) $team_id ) : null );
 		}
 
 		if ( null !== $request->get_param( 'goal' ) ) {

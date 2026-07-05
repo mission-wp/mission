@@ -10,6 +10,7 @@ namespace MissionDP\Tests\Rest\Endpoints;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use WP_REST_Request;
 use WP_UnitTestCase;
 
@@ -484,6 +485,91 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 'New headline', $data['headline'] );
 		$this->assertSame( 90000, $data['goal'] );
+	}
+
+	/**
+	 * Test PUT team change vacates the old team's captaincy and clears the flag.
+	 */
+	public function test_update_team_change_vacates_old_captaincy(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+
+		$team_a = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A' ] );
+		$team_a->save();
+		$team_b = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team B' ] );
+		$team_b->save();
+
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+		$fundraiser->join_team( $team_a, true );
+		$team_a->set_captain( $fundraiser );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [ 'team_id' => $team_b->id ] );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( $team_b->id, $data['team_id'] );
+		$this->assertFalse( $data['is_team_captain'] );
+
+		// The old team must not keep a captain who is no longer a member.
+		$this->assertNull( Team::find( $team_a->id )->captain_id );
+		$this->assertFalse( Fundraiser::find( $fundraiser->id )->is_team_captain );
+	}
+
+	/**
+	 * Test PUT with a null team_id removes the fundraiser from its team.
+	 */
+	public function test_update_null_team_removes_from_team(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A' ] );
+		$team->save();
+
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+		$fundraiser->join_team( $team, true );
+		$team->set_captain( $fundraiser );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [ 'team_id' => null ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertNull( $response->get_data()['team_id'] );
+		$this->assertNull( Fundraiser::find( $fundraiser->id )->team_id );
+		$this->assertNull( Team::find( $team->id )->captain_id );
+	}
+
+	/**
+	 * Test POST with a team fires the joined event like a self-serve signup.
+	 */
+	public function test_create_with_team_fires_joined_event(): void {
+		$campaign = $this->create_p2p_campaign();
+		$donor    = $this->create_donor( 'jane@example.com' );
+
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A' ] );
+		$team->save();
+
+		$joined   = [];
+		$callback = function ( $fundraiser, $joined_team ) use ( &$joined ) {
+			$joined = [ $fundraiser->id, $joined_team->id ];
+		};
+		add_action( 'mission_team_joined', $callback, 10, 2 );
+		$this->hooks_to_remove[] = [ 'mission_team_joined', $callback, 10 ];
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'donor_id'    => $donor->id,
+			'team_id'     => $team->id,
+		] );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( $team->id, $data['team_id'] );
+		$this->assertSame( [ $data['id'], $team->id ], $joined );
 	}
 
 	/**

@@ -287,6 +287,114 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertSame( [ $fundraiser->id, $team->id ], $fired );
 	}
 
+	/**
+	 * Test move_to_team() vacates the old team's captaincy and fires both events.
+	 */
+	public function test_move_to_team_vacates_old_captaincy_and_fires_events(): void {
+		$team_a = new Team( [ 'campaign_id' => 1, 'name' => 'Team A' ] );
+		$team_a->save();
+		$team_b = new Team( [ 'campaign_id' => 1, 'name' => 'Team B' ] );
+		$team_b->save();
+
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+		$fundraiser->join_team( $team_a, true );
+		$team_a->set_captain( $fundraiser );
+
+		$left = [];
+		add_action(
+			'mission_team_left',
+			function ( $fundraiser, $team ) use ( &$left ) {
+				$left = [ $fundraiser->id, $team->id ];
+			},
+			10,
+			2
+		);
+
+		$joined = [];
+		add_action(
+			'mission_team_joined',
+			function ( $fundraiser, $team ) use ( &$joined ) {
+				$joined = [ $fundraiser->id, $team->id ];
+			},
+			10,
+			2
+		);
+
+		$this->assertTrue( $fundraiser->move_to_team( $team_b ) );
+
+		$this->assertSame( $team_b->id, $fundraiser->team_id );
+		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertNull( Team::find( $team_a->id )->captain_id );
+		$this->assertSame( [ $fundraiser->id, $team_a->id ], $left );
+		$this->assertSame( [ $fundraiser->id, $team_b->id ], $joined );
+	}
+
+	/**
+	 * Test move_to_team( null ) leaves the team and vacates the captaincy.
+	 */
+	public function test_move_to_team_null_leaves_team_and_vacates_captaincy(): void {
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
+		$team->save();
+
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+		$fundraiser->join_team( $team, true );
+		$team->set_captain( $fundraiser );
+
+		$this->assertTrue( $fundraiser->move_to_team( null ) );
+
+		$this->assertNull( $fundraiser->team_id );
+		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertNull( Fundraiser::find( $fundraiser->id )->team_id );
+		$this->assertNull( Team::find( $team->id )->captain_id );
+	}
+
+	/**
+	 * Test move_to_team() is a no-op when the team is unchanged.
+	 */
+	public function test_move_to_team_noop_when_unchanged(): void {
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
+		$team->save();
+
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+		$fundraiser->join_team( $team, true );
+		$team->set_captain( $fundraiser );
+
+		$left   = did_action( 'mission_team_left' );
+		$joined = did_action( 'mission_team_joined' );
+
+		$this->assertTrue( $fundraiser->move_to_team( $team ) );
+
+		$this->assertSame( $team->id, $fundraiser->team_id );
+		$this->assertTrue( $fundraiser->is_team_captain );
+		$this->assertSame( $fundraiser->id, Team::find( $team->id )->captain_id );
+		$this->assertSame( $left, did_action( 'mission_team_left' ) );
+		$this->assertSame( $joined, did_action( 'mission_team_joined' ) );
+	}
+
+	/**
+	 * Test move_to_team() leaves the old team's captain untouched for a
+	 * non-captain member.
+	 */
+	public function test_move_to_team_non_captain_keeps_old_team_captain(): void {
+		$team_a = new Team( [ 'campaign_id' => 1, 'name' => 'Team A' ] );
+		$team_a->save();
+		$team_b = new Team( [ 'campaign_id' => 1, 'name' => 'Team B' ] );
+		$team_b->save();
+
+		$captain = Fundraiser::register( 1, 1, 25000 );
+		$captain->join_team( $team_a, true );
+		$team_a->set_captain( $captain );
+
+		$member = Fundraiser::register( 1, 2, 25000 );
+		$member->join_team( $team_a );
+
+		$this->assertTrue( $member->move_to_team( $team_b ) );
+
+		$this->assertSame( $team_b->id, $member->team_id );
+		$this->assertSame( $captain->id, Team::find( $team_a->id )->captain_id );
+		$this->assertTrue( Fundraiser::find( $captain->id )->is_team_captain );
+	}
+
 	// -------------------------------------------------------------------------
 	// query() / count() tests.
 	// -------------------------------------------------------------------------
