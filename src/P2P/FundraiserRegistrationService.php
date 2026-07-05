@@ -233,25 +233,36 @@ class FundraiserRegistrationService {
 				$invitation   = TeamInvitation::find_by_token( $token );
 				$invited_team = $invitation && $invitation->is_pending() ? Team::find( (int) $invitation->team_id ) : null;
 
-				if ( $invited_team && $invited_team->campaign_id === $campaign->id ) {
-					$team = $this->resolve_team(
-						$campaign,
-						$fundraiser,
-						array_merge(
-							$input,
-							[
-								'team_mode' => 'join',
-								'team_id'   => $invited_team->id,
-							]
-						),
-						$settings
-					);
-
-					return $this->result( $fundraiser, $team ?? $fundraiser->team() );
+				if ( ! $invited_team || $invited_team->campaign_id !== $campaign->id ) {
+					return $this->invitation_error();
 				}
+
+				$join_input = array_merge(
+					$input,
+					[
+						'team_mode' => 'join',
+						'team_id'   => $invited_team->id,
+					]
+				);
+
+				$team_error = $this->validate_team_choice( $campaign, $donor, $join_input, $settings );
+				if ( $team_error ) {
+					return $team_error;
+				}
+
+				$team = $this->resolve_team( $campaign, $fundraiser, $join_input, $settings );
+
+				return $this->result( $fundraiser, $team ?? $fundraiser->team() );
 			}
 
 			return $this->result( $fundraiser, $fundraiser->team() );
+		}
+
+		// Validate the team choice before creating anything, so a failed join
+		// or create never silently produces a solo page the user didn't want.
+		$team_error = $this->validate_team_choice( $campaign, $donor, $input, $settings );
+		if ( $team_error ) {
+			return $team_error;
 		}
 
 		$status = empty( $settings['approval_required'] ) ? Fundraiser::STATUS_ACTIVE : Fundraiser::STATUS_PENDING;
@@ -301,7 +312,66 @@ class FundraiserRegistrationService {
 	}
 
 	/**
+	 * Check whether a requested team join/create can succeed, without side effects.
+	 *
+	 * Run before the fundraiser row is created: when the user explicitly asked
+	 * for a team, a doomed request must fail with a clear error instead of
+	 * completing as a solo registration.
+	 *
+	 * @param Campaign $campaign Parent campaign.
+	 * @param Donor    $donor    The registering donor.
+	 * @param array    $input    Setup fields.
+	 * @param array    $settings Campaign P2P settings.
+	 * @return WP_Error|null An error when the requested team action can't succeed.
+	 */
+	private function validate_team_choice( Campaign $campaign, Donor $donor, array $input, array $settings ): ?WP_Error {
+		$mode = $input['team_mode'] ?? '';
+
+		if ( 'create' === $mode ) {
+			if ( empty( $settings['teams_enabled'] ) || empty( $settings['team_creation_enabled'] ) ) {
+				return new WP_Error( 'team_creation_disabled', __( 'Team creation is not available for this campaign.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+			}
+
+			if ( '' === trim( (string) ( $input['team_name'] ?? '' ) ) ) {
+				return new WP_Error( 'team_name_required', __( 'Please enter a team name.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+			}
+
+			return null;
+		}
+
+		$team_id = (int) ( $input['team_id'] ?? 0 );
+
+		// No team requested: a solo registration is the intent, not a failure.
+		if ( $team_id <= 0 ) {
+			return null;
+		}
+
+		if ( empty( $settings['teams_enabled'] ) ) {
+			return new WP_Error( 'teams_disabled', __( 'Teams are not available for this campaign.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		$team = Team::find( $team_id );
+
+		if ( ! $team || $team->campaign_id !== $campaign->id || Team::STATUS_ACTIVE !== $team->status ) {
+			return new WP_Error( 'team_unavailable', __( 'This team is no longer accepting new members.', 'mission-donation-platform' ), [ 'status' => 400 ] );
+		}
+
+		if ( Team::ACCESS_PUBLIC !== $team->access ) {
+			$invitation = $this->locate_invitation( $team, $donor, (string) ( $input['invite_token'] ?? '' ) );
+
+			if ( $invitation instanceof WP_Error ) {
+				return $invitation;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Attach the fundraiser to a team per the chosen mode (or fundraise solo).
+	 *
+	 * Inputs are pre-checked by validate_team_choice(); the guards here remain
+	 * as backstops for state that changed mid-request.
 	 *
 	 * @param Campaign   $campaign   Parent campaign.
 	 * @param Fundraiser $fundraiser The just-created fundraiser.
@@ -360,32 +430,15 @@ class FundraiserRegistrationService {
 	/**
 	 * Validate an invitation token and mark it accepted.
 	 *
-	 * The token is the only trusted input: the matching row supplies the team and
-	 * email, never the client. A pending invite past its TTL is retired as expired.
-	 *
 	 * @param Team       $team  The team being joined.
 	 * @param Donor|null $donor The accepting donor.
 	 * @param string     $token The bearer token from the invite link.
 	 * @return bool True when the invitation is valid for this team and donor.
 	 */
 	private function accept_invitation( Team $team, ?Donor $donor, string $token ): bool {
-		if ( ! $donor || '' === $token ) {
-			return false;
-		}
+		$invitation = $this->locate_invitation( $team, $donor, $token );
 
-		$invitation = TeamInvitation::find_by_token( $token );
-
-		if ( ! $invitation || ! $invitation->is_pending() || (int) $invitation->team_id !== (int) $team->id ) {
-			return false;
-		}
-
-		if ( $invitation->is_expired() ) {
-			$invitation->status = TeamInvitation::STATUS_EXPIRED;
-			$invitation->save();
-			return false;
-		}
-
-		if ( strtolower( $invitation->email ) !== strtolower( (string) $donor->email ) ) {
+		if ( $invitation instanceof WP_Error ) {
 			return false;
 		}
 
@@ -393,6 +446,58 @@ class FundraiserRegistrationService {
 		$invitation->save();
 
 		return true;
+	}
+
+	/**
+	 * Resolve an invitation token to a usable pending invitation.
+	 *
+	 * The token is the only trusted input: the matching row supplies the team and
+	 * email, never the client. A pending invite past its TTL is retired as expired.
+	 *
+	 * @param Team       $team  The team being joined.
+	 * @param Donor|null $donor The accepting donor.
+	 * @param string     $token The bearer token from the invite link.
+	 * @return TeamInvitation|WP_Error The invitation, or why it can't be used.
+	 */
+	private function locate_invitation( Team $team, ?Donor $donor, string $token ): TeamInvitation|WP_Error {
+		if ( ! $donor || '' === $token ) {
+			return $this->invitation_error();
+		}
+
+		$invitation = TeamInvitation::find_by_token( $token );
+
+		if ( ! $invitation || ! $invitation->is_pending() || (int) $invitation->team_id !== (int) $team->id ) {
+			return $this->invitation_error();
+		}
+
+		if ( $invitation->is_expired() ) {
+			$invitation->status = TeamInvitation::STATUS_EXPIRED;
+			$invitation->save();
+			return $this->invitation_error();
+		}
+
+		if ( strtolower( $invitation->email ) !== strtolower( (string) $donor->email ) ) {
+			return new WP_Error(
+				'invitation_email_mismatch',
+				__( 'This invitation was sent to a different email address. Please sign up with the address that received it.', 'mission-donation-platform' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		return $invitation;
+	}
+
+	/**
+	 * The generic unusable-invitation error.
+	 *
+	 * @return WP_Error
+	 */
+	private function invitation_error(): WP_Error {
+		return new WP_Error(
+			'invitation_invalid',
+			__( 'This invitation is invalid or has expired. Please ask your team captain to send a new one.', 'mission-donation-platform' ),
+			[ 'status' => 400 ]
+		);
 	}
 
 	/**

@@ -419,7 +419,8 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test team creation falls back to solo when creation is disabled.
+	 * Test team creation errors when creation is disabled, without creating a
+	 * solo page the user didn't ask for.
 	 */
 	public function test_register_fundraiser_create_blocked_when_disabled(): void {
 		$campaign = $this->create_campaign( [ 'teams_enabled' => true, 'team_creation_enabled' => false ] );
@@ -428,7 +429,60 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 
 		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'create', 'team_name' => 'Nope', 'goal' => 10000 ] );
 
-		$this->assertNull( $result['team'] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'team_creation_disabled', $result->get_error_code() );
+		$this->assertSame( 0, Fundraiser::count( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
+	 * Test team creation errors without a team name.
+	 */
+	public function test_register_fundraiser_create_requires_name(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true, 'team_creation_enabled' => true ] );
+		$donor    = new Donor( [ 'email' => 'nameless@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'create', 'team_name' => '  ', 'goal' => 10000 ] );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'team_name_required', $result->get_error_code() );
+		$this->assertSame( 0, Fundraiser::count( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
+	 * Test joining a missing or inactive team errors instead of registering solo.
+	 */
+	public function test_register_fundraiser_rejects_unavailable_team(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$pending  = Team::register( $campaign->id, 'Unapproved', 100000, Team::ACCESS_PUBLIC, Team::STATUS_PENDING );
+		$donor    = new Donor( [ 'email' => 'lost@example.com' ] );
+		$donor->save();
+
+		$service = $this->service();
+
+		$missing = $service->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'join', 'team_id' => 99999, 'goal' => 10000 ] );
+		$this->assertInstanceOf( \WP_Error::class, $missing );
+		$this->assertSame( 'team_unavailable', $missing->get_error_code() );
+
+		$inactive = $service->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'join', 'team_id' => $pending->id, 'goal' => 10000 ] );
+		$this->assertInstanceOf( \WP_Error::class, $inactive );
+		$this->assertSame( 'team_unavailable', $inactive->get_error_code() );
+
+		$this->assertSame( 0, Fundraiser::count( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
+	 * Test a join request errors when teams are disabled for the campaign.
+	 */
+	public function test_register_fundraiser_rejects_join_when_teams_disabled(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => false ] );
+		$donor    = new Donor( [ 'email' => 'noteams@example.com' ] );
+		$donor->save();
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'join', 'team_id' => 123, 'goal' => 10000 ] );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'teams_disabled', $result->get_error_code() );
 	}
 
 	/**
@@ -462,8 +516,9 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 
 		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000 ] );
 
-		$this->assertNull( $result['team'] );
-		$this->assertNull( Fundraiser::find( $result['fundraiser']['id'] )->team_id );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invitation_invalid', $result->get_error_code() );
+		$this->assertSame( 0, Fundraiser::count( [ 'campaign_id' => $campaign->id ] ) );
 	}
 
 	/**
@@ -505,7 +560,8 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
 		);
 
-		$this->assertNull( $result['team'] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invitation_email_mismatch', $result->get_error_code() );
 	}
 
 	/**
@@ -526,7 +582,8 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
 		);
 
-		$this->assertNull( $result['team'] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invitation_invalid', $result->get_error_code() );
 	}
 
 	/**
@@ -549,8 +606,50 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 			[ 'team_mode' => 'join', 'team_id' => $team->id, 'goal' => 10000, 'invite_token' => $invite->token ]
 		);
 
-		$this->assertNull( $result['team'] );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invitation_invalid', $result->get_error_code() );
 		$this->assertSame( \MissionDP\Models\TeamInvitation::STATUS_EXPIRED, \MissionDP\Models\TeamInvitation::find( $invite->id )->status );
+		$this->assertSame( 0, Fundraiser::count( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
+	 * Test a re-submission with a valid invite token joins the team.
+	 */
+	public function test_register_fundraiser_resubmit_with_valid_token_joins(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
+		$donor    = new Donor( [ 'email' => 'latecomer@example.com' ] );
+		$donor->save();
+
+		$service = $this->service();
+		$first   = $service->register_fundraiser( $donor, $campaign, [ 'goal' => 10000 ] );
+		$this->assertNull( $first['team'] );
+
+		$invite = $team->invite( 'latecomer@example.com' );
+		$second = $service->register_fundraiser( $donor, $campaign, [ 'goal' => 10000, 'invite_token' => $invite->token ] );
+
+		$this->assertSame( $first['fundraiser']['id'], $second['fundraiser']['id'] );
+		$this->assertSame( $team->id, $second['team']['id'] );
+		$this->assertSame( $team->id, Fundraiser::find( $first['fundraiser']['id'] )->team_id );
+	}
+
+	/**
+	 * Test a re-submission with an unusable token errors instead of quietly
+	 * returning the solo page.
+	 */
+	public function test_register_fundraiser_resubmit_with_invalid_token_errors(): void {
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true ] );
+		$donor    = new Donor( [ 'email' => 'stale@example.com' ] );
+		$donor->save();
+
+		$service = $this->service();
+		$first   = $service->register_fundraiser( $donor, $campaign, [ 'goal' => 10000 ] );
+
+		$result = $service->register_fundraiser( $donor, $campaign, [ 'goal' => 10000, 'invite_token' => 'junk-token' ] );
+
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( 'invitation_invalid', $result->get_error_code() );
+		$this->assertNull( Fundraiser::find( $first['fundraiser']['id'] )->team_id );
 	}
 
 	/**
