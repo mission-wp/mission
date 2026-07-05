@@ -385,7 +385,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     // Step 1 (branch b): send a reset code.
     *startReset() {
       const ctx = getContext();
-      state.otpPurpose = 'reset';
+      state.formError = '';
       state.otpError = '';
       state.loading = true;
       try {
@@ -394,6 +394,13 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           purpose: 'reset',
         } );
         const data = yield res.json();
+
+        if ( ! res.ok ) {
+          state.formError = ( data && data.message ) || genericError();
+          return;
+        }
+
+        state.otpPurpose = 'reset';
         state.step1View = 'otp';
         startCooldown( ( data && data.cooldown ) || 30 );
       } catch ( e ) {
@@ -408,15 +415,22 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         return;
       }
       const ctx = getContext();
+      state.otpError = '';
       try {
         const res = yield post( ctx, 'p2p/send-code', {
           email: state.email.trim(),
           purpose: state.otpPurpose,
         } );
         const data = yield res.json();
+
+        if ( ! res.ok ) {
+          state.otpError = ( data && data.message ) || genericError();
+          return;
+        }
+
         startCooldown( ( data && data.cooldown ) || 30 );
       } catch ( e ) {
-        // Resend failures are non-fatal; the user can try again.
+        state.otpError = genericError();
       }
     },
 
