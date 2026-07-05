@@ -1313,4 +1313,28 @@ class ReportingServiceTest extends WP_UnitTestCase {
 		$this->assertSame( 3000, $stats['total_raised'] );
 		$this->assertSame( 1, $stats['donation_count'] );
 	}
+
+	// =========================================================================
+	// fundraiser_donations_query(): totals match returned rows
+	// =========================================================================
+
+	/**
+	 * Test fundraiser_donations_query keeps donations whose donor row was deleted.
+	 */
+	public function test_fundraiser_donations_query_includes_orphaned_donor_rows(): void {
+		$deleted_donor = $this->create_donor();
+
+		$this->create_transaction( [ 'fundraiser_id' => 42, 'date_completed' => '2026-07-01 00:00:00' ] );
+		$this->create_transaction( [ 'fundraiser_id' => 42, 'donor_id' => $deleted_donor->id, 'date_completed' => '2026-07-02 00:00:00' ] );
+
+		$deleted_donor->delete();
+
+		$result = $this->make_service()->fundraiser_donations_query( 42 );
+
+		$this->assertSame( 2, $result['total'] );
+		$this->assertCount( 2, $result['items'] );
+		$this->assertNull( $result['items'][0]['first_name'] );
+		$this->assertNull( $result['items'][0]['last_name'] );
+		$this->assertSame( 'Jane', $result['items'][1]['first_name'] );
+	}
 }

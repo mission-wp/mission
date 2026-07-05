@@ -1806,12 +1806,14 @@ class ReportingService {
 			];
 		}
 
+		// LEFT JOIN so rows match the un-joined COUNT above even if a donor row
+		// was deleted; consumers render the missing name as "Anonymous".
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,
 						t.date_completed, t.currency, d.first_name, d.last_name
 				 FROM %i AS t
-				 INNER JOIN %i AS d ON t.donor_id = d.id
+				 LEFT JOIN %i AS d ON t.donor_id = d.id
 				 WHERE t.fundraiser_id = %d AND t.status = \'completed\' AND t.is_test = %d
 				 ORDER BY t.date_completed DESC
 				 LIMIT %d OFFSET %d',
