@@ -749,7 +749,7 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 	}
 
 	// =========================================================================
-	// PATCH /transactions/{id} — 2 tests
+	// PATCH /transactions/{id} — 5 tests
 	// =========================================================================
 
 	/**
@@ -779,6 +779,95 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$updated = Transaction::find( $transaction->id );
 		$this->assertTrue( $updated->is_anonymous );
 		$this->assertSame( $campaign2->id, $updated->campaign_id );
+	}
+
+	/**
+	 * Test PATCH campaign re-assignment clears stale fundraiser attribution and
+	 * rebuilds the old fundraiser's stored totals.
+	 */
+	public function test_patch_campaign_reassign_clears_fundraiser_attribution(): void {
+		$campaign2 = new Campaign( [ 'title' => 'Building Fund', 'goal_amount' => 50000 ] );
+		$campaign2->save();
+
+		$fundraiser = new Fundraiser( [
+			'campaign_id' => $this->campaign->id,
+			'donor_id'    => $this->donor->id,
+			'status'      => Fundraiser::STATUS_ACTIVE,
+			'goal'        => 50000,
+		] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [ 'fundraiser_id' => $fundraiser->id ] );
+		$this->assertSame( 5000, $fundraiser->fresh()->total_raised );
+
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/transactions/{$transaction->id}", [
+			'campaign_id' => $campaign2->id,
+		] );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		$updated = Transaction::find( $transaction->id );
+		$this->assertSame( $campaign2->id, $updated->campaign_id );
+		$this->assertNull( $updated->fundraiser_id );
+
+		// The fundraiser no longer counts money its campaign doesn't have.
+		$fresh = $fundraiser->fresh();
+		$this->assertSame( 0, $fresh->total_raised );
+		$this->assertSame( 0, $fresh->transaction_count );
+	}
+
+	/**
+	 * Test PATCH campaign re-assignment clears stale team attribution.
+	 */
+	public function test_patch_campaign_reassign_clears_team_attribution(): void {
+		$campaign2 = new Campaign( [ 'title' => 'Building Fund', 'goal_amount' => 50000 ] );
+		$campaign2->save();
+
+		$team = new Team( [
+			'campaign_id' => $this->campaign->id,
+			'name'        => 'Pawsitive Vibes',
+			'status'      => Team::STATUS_ACTIVE,
+			'goal'        => 100000,
+		] );
+		$team->save();
+
+		$transaction = $this->create_transaction( [ 'team_id' => $team->id ] );
+
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/transactions/{$transaction->id}", [
+			'campaign_id' => $campaign2->id,
+		] );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		$updated = Transaction::find( $transaction->id );
+		$this->assertSame( $campaign2->id, $updated->campaign_id );
+		$this->assertNull( $updated->team_id );
+	}
+
+	/**
+	 * Test PATCH with the same campaign_id keeps fundraiser attribution intact.
+	 */
+	public function test_patch_same_campaign_keeps_attribution(): void {
+		$fundraiser = new Fundraiser( [
+			'campaign_id' => $this->campaign->id,
+			'donor_id'    => $this->donor->id,
+			'status'      => Fundraiser::STATUS_ACTIVE,
+			'goal'        => 50000,
+		] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [ 'fundraiser_id' => $fundraiser->id ] );
+
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/transactions/{$transaction->id}", [
+			'campaign_id'  => $this->campaign->id,
+			'is_anonymous' => true,
+		] );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		$updated = Transaction::find( $transaction->id );
+		$this->assertSame( $fundraiser->id, $updated->fundraiser_id );
+		$this->assertSame( 5000, $fundraiser->fresh()->total_raised );
 	}
 
 	/**

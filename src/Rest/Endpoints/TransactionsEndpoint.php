@@ -266,8 +266,8 @@ class TransactionsEndpoint {
 		}
 
 		if ( $request->has_param( 'campaign_id' ) ) {
-			$campaign_id              = $request->get_param( 'campaign_id' );
-			$transaction->campaign_id = $campaign_id ? (int) $campaign_id : null;
+			$campaign_id = $request->get_param( 'campaign_id' );
+			$transaction->set_campaign( $campaign_id ? (int) $campaign_id : null );
 		}
 
 		$transaction->save();

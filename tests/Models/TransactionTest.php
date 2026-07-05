@@ -576,4 +576,98 @@ class TransactionTest extends WP_UnitTestCase {
 		$direct = $this->create_transaction();
 		$this->assertNull( $direct->team() );
 	}
+
+	// -------------------------------------------------------------------------
+	// set_campaign() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test set_campaign() clears fundraiser attribution from another campaign.
+	 */
+	public function test_set_campaign_clears_fundraiser_from_other_campaign(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( 2 );
+
+		$this->assertSame( 2, $transaction->campaign_id );
+		$this->assertNull( $transaction->fundraiser_id );
+	}
+
+	/**
+	 * Test set_campaign() clears team attribution from another campaign.
+	 */
+	public function test_set_campaign_clears_team_from_other_campaign(): void {
+		$team = new \MissionDP\Models\Team( [ 'campaign_id' => 1, 'name' => 'Team Test' ] );
+		$team->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id' => 1,
+			'team_id'     => $team->id,
+		] );
+
+		$transaction->set_campaign( 2 );
+
+		$this->assertSame( 2, $transaction->campaign_id );
+		$this->assertNull( $transaction->team_id );
+	}
+
+	/**
+	 * Test set_campaign() keeps attribution when the campaign is unchanged.
+	 */
+	public function test_set_campaign_keeps_attribution_when_unchanged(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( 1 );
+
+		$this->assertSame( 1, $transaction->campaign_id );
+		$this->assertSame( $fundraiser->id, $transaction->fundraiser_id );
+	}
+
+	/**
+	 * Test set_campaign() keeps attribution that belongs to the new campaign.
+	 */
+	public function test_set_campaign_keeps_attribution_matching_new_campaign(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 2, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( 2 );
+
+		$this->assertSame( 2, $transaction->campaign_id );
+		$this->assertSame( $fundraiser->id, $transaction->fundraiser_id );
+	}
+
+	/**
+	 * Test set_campaign( null ) unassigns the campaign and clears attribution.
+	 */
+	public function test_set_campaign_null_clears_attribution(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( null );
+
+		$this->assertNull( $transaction->campaign_id );
+		$this->assertNull( $transaction->fundraiser_id );
+	}
 }

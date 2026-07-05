@@ -181,6 +181,36 @@ class Transaction extends Model {
 	}
 
 	/**
+	 * Re-assign this transaction to a different campaign.
+	 *
+	 * A fundraiser or team is authoritative for its campaign (see
+	 * DonationAttribution), so attribution that doesn't belong to the new
+	 * campaign is cleared rather than left crediting a fundraiser or team on
+	 * the old campaign. The data store rebuilds the previous fundraiser's
+	 * stored totals when the change is saved.
+	 *
+	 * @param int|null $campaign_id New campaign ID, or null to unassign.
+	 * @return void
+	 */
+	public function set_campaign( ?int $campaign_id ): void {
+		$campaign_id = $campaign_id ?: null;
+
+		if ( ( $this->campaign_id ?: null ) === $campaign_id ) {
+			return;
+		}
+
+		$this->campaign_id = $campaign_id;
+
+		if ( $this->fundraiser_id && $this->fundraiser()?->campaign_id !== $campaign_id ) {
+			$this->fundraiser_id = null;
+		}
+
+		if ( $this->team_id && $this->team()?->campaign_id !== $campaign_id ) {
+			$this->team_id = null;
+		}
+	}
+
+	/**
 	 * Get the donor for this transaction.
 	 *
 	 * @return Donor|null
