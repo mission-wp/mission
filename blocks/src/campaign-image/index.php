@@ -10,25 +10,13 @@
  * @var WP_Block $block      Block instance.
  */
 
-use MissionDP\Campaigns\CampaignPostType;
-use MissionDP\Models\Campaign;
 use MissionDP\P2P\BlockSupport;
 
 defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes, $content, $block ): void {
-// Resolve the campaign.
-$campaign = null;
-
-if ( ! empty( $attributes['campaignId'] ) ) {
-	$campaign = Campaign::find( (int) $attributes['campaignId'] );
-} else {
-	$current_post = get_post();
-	if ( $current_post && CampaignPostType::POST_TYPE === $current_post->post_type ) {
-		$campaign = Campaign::find_by_post_id( $current_post->ID );
-	}
-}
+$campaign = BlockSupport::resolve_campaign( $attributes );
 
 if ( ! $campaign ) {
 	return;

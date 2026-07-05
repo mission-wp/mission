@@ -10,36 +10,22 @@
  * @var WP_Block $block      Block instance.
  */
 
-use MissionDP\Campaigns\CampaignPostType;
-use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
 
 defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes ): void {
-	// Resolve the campaign. On a fundraiser/team page it is the parent campaign;
-	// the "learn more" link only makes sense from that child context.
-	$campaign   = null;
-	$is_child   = false;
+	$campaign = BlockSupport::resolve_campaign( $attributes );
 
-	if ( ! empty( $attributes['campaignId'] ) ) {
-		$campaign = Campaign::find( (int) $attributes['campaignId'] );
-	} else {
-		$current_post = get_post();
-		$post_type    = $current_post->post_type ?? '';
-
-		if ( Fundraiser::POST_TYPE === $post_type ) {
-			$campaign = Fundraiser::find_by_post_id( $current_post->ID )?->campaign();
-			$is_child = true;
-		} elseif ( Team::POST_TYPE === $post_type ) {
-			$campaign = Team::find_by_post_id( $current_post->ID )?->campaign();
-			$is_child = true;
-		} elseif ( CampaignPostType::POST_TYPE === $post_type ) {
-			$campaign = Campaign::find_by_post_id( $current_post->ID );
-		}
-	}
+	// The "learn more" link only makes sense when the campaign was resolved
+	// from a fundraiser/team page; on the campaign's own page it would be
+	// self-referential.
+	$post_type = get_post()->post_type ?? '';
+	$is_child  = empty( $attributes['campaignId'] )
+		&& in_array( $post_type, [ Fundraiser::POST_TYPE, Team::POST_TYPE ], true );
 
 	if ( ! $campaign ) {
 		return;

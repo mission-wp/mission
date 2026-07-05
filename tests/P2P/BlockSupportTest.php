@@ -7,6 +7,10 @@
 
 namespace MissionDP\Tests\P2P;
 
+use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
 use WP_UnitTestCase;
 
@@ -14,6 +18,110 @@ use WP_UnitTestCase;
  * BlockSupport helper test class.
  */
 class BlockSupportTest extends WP_UnitTestCase {
+
+	/**
+	 * Recreate the P2P tables so they carry the current schema.
+	 */
+	public static function set_up_before_class(): void {
+		parent::set_up_before_class();
+
+		global $wpdb;
+		foreach ( [ 'fundraisers', 'fundraisermeta', 'teams', 'teammeta' ] as $table ) {
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_{$table}" ); // phpcs:ignore WordPress.DB
+		}
+
+		DatabaseModule::create_tables();
+	}
+
+	/**
+	 * Clean up after each test.
+	 */
+	public function tear_down(): void {
+		global $wpdb;
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery
+
+		unset( $GLOBALS['post'] );
+
+		parent::tear_down();
+	}
+
+	/**
+	 * Create a p2p campaign.
+	 *
+	 * @return Campaign
+	 */
+	private function create_campaign(): Campaign {
+		$campaign = new Campaign( [ 'title' => 'Winter Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+
+		return $campaign;
+	}
+
+	/**
+	 * An explicit campaignId attribute wins regardless of the queried post.
+	 */
+	public function test_resolve_campaign_from_attribute(): void {
+		$campaign = $this->create_campaign();
+
+		$resolved = BlockSupport::resolve_campaign( [ 'campaignId' => $campaign->id ] );
+
+		$this->assertSame( $campaign->id, $resolved->id );
+	}
+
+	/**
+	 * A queried campaign page resolves to its campaign.
+	 */
+	public function test_resolve_campaign_from_campaign_post(): void {
+		$campaign         = $this->create_campaign();
+		$GLOBALS['post'] = get_post( $campaign->post_id );
+
+		$resolved = BlockSupport::resolve_campaign( [] );
+
+		$this->assertSame( $campaign->id, $resolved->id );
+	}
+
+	/**
+	 * A queried fundraiser shell page resolves to the parent campaign.
+	 */
+	public function test_resolve_campaign_from_fundraiser_shell_post(): void {
+		$campaign   = $this->create_campaign();
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1, 'status' => 'active' ] );
+		$fundraiser->save();
+		$GLOBALS['post'] = get_post( $fundraiser->post_id );
+
+		$resolved = BlockSupport::resolve_campaign( [] );
+
+		$this->assertSame( $campaign->id, $resolved->id );
+	}
+
+	/**
+	 * A queried team shell page resolves to the parent campaign.
+	 */
+	public function test_resolve_campaign_from_team_shell_post(): void {
+		$campaign = $this->create_campaign();
+		$team     = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Trail Blazers', 'status' => 'active' ] );
+		$team->save();
+		$GLOBALS['post'] = get_post( $team->post_id );
+
+		$resolved = BlockSupport::resolve_campaign( [] );
+
+		$this->assertSame( $campaign->id, $resolved->id );
+	}
+
+	/**
+	 * An unrelated queried post resolves to nothing.
+	 */
+	public function test_resolve_campaign_null_on_unrelated_post(): void {
+		$this->create_campaign();
+		$GLOBALS['post'] = get_post( self::factory()->post->create() );
+
+		$this->assertNull( BlockSupport::resolve_campaign( [] ) );
+	}
 
 	/**
 	 * Empty attributes produce no inline style.

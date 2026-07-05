@@ -10,10 +10,10 @@
  * @var WP_Block $block      Block instance.
  */
 
-use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Settings\SettingsService;
 
@@ -21,22 +21,9 @@ defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes, $content, $block ): void {
-// Resolve the campaign.
-$campaign    = null;
-$campaign_id = 0;
-
-if ( ! empty( $attributes['campaignId'] ) ) {
-	$campaign = Campaign::find( (int) $attributes['campaignId'] );
-} else {
-	$current_post = get_post();
-	if ( $current_post && CampaignPostType::POST_TYPE === $current_post->post_type ) {
-		$campaign = Campaign::find_by_post_id( $current_post->ID );
-	}
-}
-
-if ( $campaign ) {
-	$campaign_id = $campaign->id;
-}
+// Resolve the campaign (0 shows donors across all campaigns).
+$campaign    = BlockSupport::resolve_campaign( $attributes );
+$campaign_id = $campaign->id ?? 0;
 
 if ( ! $campaign_id ) {
 	return;

@@ -63,8 +63,9 @@ class BlockSupport {
 	}
 
 	/**
-	 * Resolve the campaign a block should render, from the block attribute or
-	 * the queried campaign page.
+	 * Resolve the campaign a block should render, from the block attribute, the
+	 * queried campaign page, or the parent campaign of a queried fundraiser/team
+	 * shell page.
 	 *
 	 * @param array $attributes Block attributes.
 	 * @return Campaign|null
@@ -75,8 +76,20 @@ class BlockSupport {
 		}
 
 		$current_post = get_post();
-		if ( $current_post && CampaignPostType::POST_TYPE === $current_post->post_type ) {
+		if ( ! $current_post ) {
+			return null;
+		}
+
+		if ( CampaignPostType::POST_TYPE === $current_post->post_type ) {
 			return Campaign::find_by_post_id( $current_post->ID );
+		}
+
+		if ( Fundraiser::POST_TYPE === $current_post->post_type ) {
+			return Fundraiser::find_by_post_id( $current_post->ID )?->campaign();
+		}
+
+		if ( Team::POST_TYPE === $current_post->post_type ) {
+			return Team::find_by_post_id( $current_post->ID )?->campaign();
 		}
 
 		return null;
