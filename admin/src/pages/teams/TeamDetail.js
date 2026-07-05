@@ -99,6 +99,7 @@ export default function TeamDetail( { id } ) {
     if ( ! hasLoaded.current ) {
       setIsLoading( true );
     }
+    setError( null );
     try {
       const [ teamData, memberData, txnData ] = await Promise.all( [
         apiFetch( { path: `/mission-donation-platform/v1/teams/${ id }` } ),
@@ -112,15 +113,20 @@ export default function TeamDetail( { id } ) {
       setTeam( teamData );
       setMembers( memberData );
       setTransactions( txnData );
+      hasLoaded.current = true;
     } catch ( err ) {
-      setError(
-        err.message || __( 'Failed to load team.', 'mission-donation-platform' )
-      );
+      const message =
+        err.message ||
+        __( 'Failed to load team.', 'mission-donation-platform' );
+      if ( hasLoaded.current ) {
+        showToast( 'error', message );
+      } else {
+        setError( message );
+      }
     } finally {
       setIsLoading( false );
-      hasLoaded.current = true;
     }
-  }, [ id ] );
+  }, [ id, showToast ] );
 
   useEffect( () => {
     fetchData();

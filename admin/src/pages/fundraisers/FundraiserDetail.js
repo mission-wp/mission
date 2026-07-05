@@ -88,6 +88,7 @@ export default function FundraiserDetail( { id } ) {
     if ( ! hasLoaded.current ) {
       setIsLoading( true );
     }
+    setError( null );
     try {
       const [ fundraiserData, txnData ] = await Promise.all( [
         apiFetch( {
@@ -99,16 +100,20 @@ export default function FundraiserDetail( { id } ) {
       ] );
       setFundraiser( fundraiserData );
       setTransactions( txnData );
+      hasLoaded.current = true;
     } catch ( err ) {
-      setError(
+      const message =
         err.message ||
-          __( 'Failed to load fundraiser.', 'mission-donation-platform' )
-      );
+        __( 'Failed to load fundraiser.', 'mission-donation-platform' );
+      if ( hasLoaded.current ) {
+        showToast( 'error', message );
+      } else {
+        setError( message );
+      }
     } finally {
       setIsLoading( false );
-      hasLoaded.current = true;
     }
-  }, [ id ] );
+  }, [ id, showToast ] );
 
   useEffect( () => {
     fetchData();
