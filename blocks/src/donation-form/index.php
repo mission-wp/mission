@@ -21,13 +21,15 @@ defined( 'ABSPATH' ) || exit;
 ( static function ( $attributes, $content, $block ): void {
 $settings = DonationFormSettings::resolve( $attributes );
 
-// Bind the form to a fundraiser or team — explicitly via a block attribute, or
+// Bind the form to a fundraiser or team, explicitly via a block attribute, or
 // implicitly when the form is rendered on a fundraiser/team shell page. The
 // bound record is authoritative for its campaign, so align the form's campaign.
+// A form configured with its own campaignId is never rebound by the page it
+// happens to render on (e.g. a footer form on a shell page keeps its campaign).
 $fundraiser_id = isset( $attributes['fundraiserId'] ) ? (int) $attributes['fundraiserId'] : 0;
 $team_id       = isset( $attributes['teamId'] ) ? (int) $attributes['teamId'] : 0;
 
-if ( ! $fundraiser_id && ! $team_id ) {
+if ( ! $fundraiser_id && ! $team_id && empty( $attributes['campaignId'] ) ) {
 	$queried = get_queried_object();
 
 	if ( $queried instanceof \WP_Post && Fundraiser::POST_TYPE === $queried->post_type ) {

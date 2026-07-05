@@ -271,6 +271,56 @@ class P2PPagesTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test an attribute-less donation form auto-binds to the shell page's fundraiser.
+	 */
+	public function test_donation_form_auto_binds_on_fundraiser_page(): void {
+		$campaign   = $this->create_campaign();
+		$fundraiser = $this->create_fundraiser( $campaign->id );
+
+		$this->go_to( get_permalink( $fundraiser->post_id ) );
+		$context = $this->get_form_context( do_blocks( '<!-- wp:mission-donation-platform/donation-form /-->' ) );
+
+		$this->assertSame( $fundraiser->id, $context['fundraiserId'] );
+		$this->assertSame( $campaign->id, $context['campaignId'] );
+	}
+
+	/**
+	 * Test a form with an explicit campaignId is not rebound on a shell page.
+	 *
+	 * A "General Fund" form in a footer template part must keep its configured
+	 * campaign and receive no fundraiser/team attribution when the page it
+	 * renders on happens to be a fundraiser page.
+	 */
+	public function test_explicit_campaign_form_is_not_rebound_on_shell_page(): void {
+		$campaign   = $this->create_campaign();
+		$fundraiser = $this->create_fundraiser( $campaign->id );
+		$general    = $this->create_campaign( 'General Fund' );
+
+		$this->go_to( get_permalink( $fundraiser->post_id ) );
+		$context = $this->get_form_context(
+			do_blocks( sprintf( '<!-- wp:mission-donation-platform/donation-form {"campaignId":%d} /-->', $general->id ) )
+		);
+
+		$this->assertSame( $general->id, $context['campaignId'] );
+		$this->assertSame( 0, $context['fundraiserId'] );
+		$this->assertSame( 0, $context['teamId'] );
+	}
+
+	/**
+	 * Extract the donation form's root Interactivity context from rendered markup.
+	 *
+	 * @param string $html Rendered block markup.
+	 * @return array<string, mixed>
+	 */
+	private function get_form_context( string $html ): array {
+		// The root <section> context is the first data-wp-context in the markup.
+		preg_match( "/data-wp-context='([^']*)'/", $html, $matches );
+		$this->assertNotEmpty( $matches, 'No data-wp-context found in rendered form.' );
+
+		return json_decode( html_entity_decode( $matches[1], ENT_QUOTES ), true ) ?: [];
+	}
+
+	/**
 	 * Test the fundraiser and team pages are registered as editable Site Editor templates.
 	 */
 	public function test_block_templates_are_registered(): void {
