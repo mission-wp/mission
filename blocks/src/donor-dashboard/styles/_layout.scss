@@ -6,6 +6,12 @@
   box-sizing: border-box;
 }
 
+// Derived here rather than inlined from PHP: kses strips function values
+// from inline custom properties.
+.mission-donor-dashboard {
+  --mission-primary-light: color-mix(in srgb, var(--mission-primary, #2fa36b) 10%, transparent);
+}
+
 :where(.mission-donor-dashboard) [hidden] {
   display: none;
 }
@@ -226,7 +232,7 @@
   }
 
   &.active {
-    background: var(--mission-primary-light, color-mix(in srgb, #2fa36b 10%, transparent));
+    background: var(--mission-primary-light);
     color: var(--mission-primary, #2fa36b);
     font-weight: 550;
   }

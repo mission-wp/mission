@@ -40,7 +40,6 @@ export function computePrimaryColorVars( color ) {
   return {
     '--mission-primary': color,
     '--mission-primary-hover': darkenColor( color, 12 ),
-    '--mission-primary-light': `rgba(${ r }, ${ g }, ${ b }, 0.08)`,
     '--mission-primary-text': luminance > 0.5 ? '#1e1e1e' : '#ffffff',
     '--mission-primary-text-on-light':
       luminance > 0.5 ? darkenColor( color, 45 ) : color,

@@ -27,9 +27,9 @@ describe( 'computePrimaryColorVars', () => {
     expect( vars[ '--mission-primary-text' ] ).toBe( '#ffffff' );
     expect( vars[ '--mission-primary-text-on-light' ] ).toBe( '#2fa36b' );
     expect( vars[ '--mission-primary-hover' ] ).toBe( '#298f5e' );
-    expect( vars[ '--mission-primary-light' ] ).toBe(
-      'rgba(47, 163, 107, 0.08)'
-    );
+    // Stylesheets derive --mission-primary-light with color-mix; it must not
+    // be emitted inline where kses would strip function values.
+    expect( vars ).not.toHaveProperty( '--mission-primary-light' );
   } );
 
   it( 'gives light colors dark text and a darkened on-light variant', () => {

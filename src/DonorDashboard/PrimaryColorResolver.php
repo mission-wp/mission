@@ -45,19 +45,12 @@ class PrimaryColorResolver {
 		$primary_text          = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
 		$primary_text_on_light = $luminance > 0.5 ? $darken( $hex, 45 ) : $hex;
 
-		// 10% primary blended into white, precomputed as a solid hex: kses strips
-		// function values (color-mix, rgba) from custom properties.
-		$light = sprintf(
-			'#%02x%02x%02x',
-			(int) round( $r * 0.1 + 255 * 0.9 ),
-			(int) round( $g * 0.1 + 255 * 0.9 ),
-			(int) round( $b * 0.1 + 255 * 0.9 )
-		);
-
+		// --mission-primary-light is deliberately absent: kses strips function
+		// values (color-mix, rgba) from inline custom properties, so stylesheets
+		// derive it from --mission-primary with color-mix instead.
 		return [
 			'--mission-primary'               => $hex,
 			'--mission-primary-hover'         => $darken( $hex, 12 ),
-			'--mission-primary-light'         => $light,
 			'--mission-primary-text'          => $primary_text,
 			'--mission-primary-text-on-light' => $primary_text_on_light,
 		];

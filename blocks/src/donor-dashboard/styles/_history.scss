@@ -58,7 +58,7 @@
   transition: color 0.15s, background 0.15s;
 
   &:hover:not(:disabled) {
-    background: var(--mission-primary-light, color-mix(in srgb, #2fa36b 10%, transparent));
+    background: var(--mission-primary-light);
     color: var(--mission-primary, #2fa36b);
   }
 
