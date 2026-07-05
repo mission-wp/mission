@@ -43,6 +43,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		'missiondp_dashboard_page_id',
 		'missiondp_installed_at',
 		'missiondp_migration_lock',
+		'missiondp_db_migrating',
 		'missiondp_flush_rewrite_rules',
 	];
 

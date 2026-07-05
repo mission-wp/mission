@@ -29,6 +29,13 @@ class DatabaseModule {
 	public const DB_VERSION_OPTION = 'missiondp_db_version';
 
 	/**
+	 * Option name used as a mutex while migrations run.
+	 *
+	 * @var string
+	 */
+	public const MIGRATION_LOCK_OPTION = 'missiondp_db_migrating';
+
+	/**
 	 * Schema instance.
 	 *
 	 * @var Schema|null
@@ -64,16 +71,20 @@ class DatabaseModule {
 
 		$this->schema = new Schema();
 
-		// Run migrations on admin_init (after post types register on init, so the
-		// shell-post backfill creates properly-slugged posts) and only in the
-		// admin to avoid frontend overhead.
-		if ( is_admin() ) {
-			add_action( 'admin_init', [ $this, 'maybe_run_migrations' ] );
-		}
+		// Run migrations on every request type (frontend, REST, cron, admin), not
+		// just wp-admin: plugin updates via cron/auto-update don't fire the
+		// activation hook, and donation writes must never hit a stale schema
+		// while waiting for an admin visit. Priority 20 so post types have
+		// registered (init 10) and the shell-post backfill creates
+		// properly-slugged posts. The version check is a cheap autoloaded
+		// get_option on up-to-date sites.
+		add_action( 'init', [ $this, 'maybe_run_migrations' ], 20 );
 	}
 
 	/**
 	 * Check if migrations need to run and execute them if needed.
+	 *
+	 * A lock option prevents concurrent requests from migrating twice.
 	 *
 	 * @return void
 	 */
@@ -84,13 +95,46 @@ class DatabaseModule {
 			return;
 		}
 
-		// Data migrations that must run before dbDelta applies the new schema.
-		if ( version_compare( $installed_version, '1.4.2', '<' ) ) {
-			$this->migrate_142_shell_posts();
+		if ( ! $this->acquire_migration_lock() ) {
+			return;
 		}
 
-		self::create_tables();
-		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
+		try {
+			// Data migrations that must run before dbDelta applies the new schema.
+			if ( version_compare( $installed_version, '1.4.2', '<' ) ) {
+				$this->migrate_142_shell_posts();
+			}
+
+			self::create_tables();
+			update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
+		} finally {
+			delete_option( self::MIGRATION_LOCK_OPTION );
+		}
+	}
+
+	/**
+	 * Try to acquire the migration lock.
+	 *
+	 * add_option() is a no-op when the option already exists, which makes it a
+	 * cheap mutex. A crashed migration must not block forever, so locks older
+	 * than five minutes are stolen.
+	 *
+	 * @return bool Whether this request may run migrations.
+	 */
+	private function acquire_migration_lock(): bool {
+		if ( add_option( self::MIGRATION_LOCK_OPTION, (string) time(), '', false ) ) {
+			return true;
+		}
+
+		$locked_at = (int) get_option( self::MIGRATION_LOCK_OPTION );
+
+		if ( time() - $locked_at < 5 * MINUTE_IN_SECONDS ) {
+			return false;
+		}
+
+		update_option( self::MIGRATION_LOCK_OPTION, (string) time(), false );
+
+		return true;
 	}
 
 	/**

@@ -21,6 +21,7 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 	 */
 	public function tear_down(): void {
 		delete_option( DatabaseModule::DB_VERSION_OPTION );
+		delete_option( DatabaseModule::MIGRATION_LOCK_OPTION );
 
 		parent::tear_down();
 	}
@@ -60,30 +61,22 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 
 	/**
 	 * Test that migration updates version option when outdated.
-	 *
-	 * Requires is_admin() to return true.
 	 */
 	public function test_migration_updates_version_when_outdated(): void {
 		// Set an outdated version.
 		update_option( DatabaseModule::DB_VERSION_OPTION, '0.0.0' );
 
-		// Set current screen so is_admin() returns true.
-		set_current_screen( 'dashboard' );
-
 		$module = new DatabaseModule();
 		$module->init();
 
-		// Migrations are registered on admin_init; invoke directly to avoid
-		// firing unrelated core admin_init hooks in the CLI test context.
+		// Migrations are registered on init; invoke directly to avoid firing
+		// unrelated core init hooks in the CLI test context.
 		$module->maybe_run_migrations();
 
 		$this->assertSame(
 			DatabaseModule::DB_VERSION,
 			get_option( DatabaseModule::DB_VERSION_OPTION )
 		);
-
-		// Reset current screen.
-		set_current_screen( 'front' );
 	}
 
 	/**
@@ -105,8 +98,6 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}missiondp_teams" );
 		// phpcs:enable
 
-		set_current_screen( 'dashboard' );
-
 		$module = new DatabaseModule();
 		$module->init();
 
@@ -123,25 +114,62 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 			$wpdb->prefix . 'missiondp_fundraisers',
 			$wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'missiondp_fundraisers' ) )
 		);
-
-		set_current_screen( 'front' );
 	}
 
 	/**
-	 * Test that migration skips on frontend (is_admin() false).
+	 * Test that migrations are hooked on init for every request type, so a
+	 * frontend/REST request after a cron plugin update migrates the schema
+	 * before any donation write (is_admin() is false by default in tests).
 	 */
-	public function test_migration_skips_on_frontend(): void {
-		// Set an outdated version.
+	public function test_migration_runs_on_frontend_requests(): void {
 		update_option( DatabaseModule::DB_VERSION_OPTION, '0.0.0' );
 
-		// is_admin() is false by default in tests.
 		$module = new DatabaseModule();
 		$module->init();
 
-		// Version should remain outdated since migration was skipped.
+		$this->assertSame( 20, has_action( 'init', [ $module, 'maybe_run_migrations' ] ) );
+
+		$module->maybe_run_migrations();
+
+		$this->assertSame(
+			DatabaseModule::DB_VERSION,
+			get_option( DatabaseModule::DB_VERSION_OPTION )
+		);
+	}
+
+	/**
+	 * Test that a concurrent request holding the migration lock is respected.
+	 */
+	public function test_migration_respects_active_lock(): void {
+		update_option( DatabaseModule::DB_VERSION_OPTION, '0.0.0' );
+		add_option( DatabaseModule::MIGRATION_LOCK_OPTION, (string) time(), '', false );
+
+		$module = new DatabaseModule();
+		$module->init();
+		$module->maybe_run_migrations();
+
+		// Version should remain outdated since another request holds the lock.
 		$this->assertSame(
 			'0.0.0',
 			get_option( DatabaseModule::DB_VERSION_OPTION )
 		);
+	}
+
+	/**
+	 * Test that a stale lock (crashed migration) is stolen and released.
+	 */
+	public function test_migration_steals_stale_lock(): void {
+		update_option( DatabaseModule::DB_VERSION_OPTION, '0.0.0' );
+		add_option( DatabaseModule::MIGRATION_LOCK_OPTION, (string) ( time() - 10 * MINUTE_IN_SECONDS ), '', false );
+
+		$module = new DatabaseModule();
+		$module->init();
+		$module->maybe_run_migrations();
+
+		$this->assertSame(
+			DatabaseModule::DB_VERSION,
+			get_option( DatabaseModule::DB_VERSION_OPTION )
+		);
+		$this->assertFalse( get_option( DatabaseModule::MIGRATION_LOCK_OPTION ) );
 	}
 }
