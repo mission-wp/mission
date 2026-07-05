@@ -26,6 +26,7 @@ use MissionDP\Export\ExportService;
 use MissionDP\Rest\Endpoints\DonorsEndpoint;
 use MissionDP\Rest\Endpoints\FundraisersEndpoint;
 use MissionDP\Rest\Endpoints\RegisterFundraiserEndpoint;
+use MissionDP\Rest\Endpoints\TeamMembersEndpoint;
 use MissionDP\Rest\Endpoints\TeamsEndpoint;
 use MissionDP\Rest\Endpoints\ExportEndpoint;
 use MissionDP\Rest\Endpoints\ImportEndpoint;
@@ -117,6 +118,7 @@ class RestModule {
 		( new DonorsEndpoint( $reporting, $settings ) )->register();
 		( new FundraisersEndpoint( $reporting, $settings ) )->register();
 		( new TeamsEndpoint( $reporting, $settings ) )->register();
+		( new TeamMembersEndpoint() )->register();
 		$signup_auth = new DonorAuthService( $this->email );
 		( new RegisterFundraiserEndpoint( $signup_auth, new FundraiserRegistrationService( $signup_auth, new OtpService( $this->email ) ) ) )->register();
 		( new NotesEndpoint() )->register();

@@ -215,6 +215,13 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 
 		$fundraiser->save();
 
+		if ( $request->has_param( 'dedication_type' ) || $request->has_param( 'dedication_name' ) ) {
+			$fundraiser->set_dedication(
+				$request->get_param( 'dedication_type' ),
+				sanitize_text_field( (string) ( $request->get_param( 'dedication_name' ) ?? '' ) )
+			);
+		}
+
 		$this->apply_status_transition( $fundraiser, $request->get_param( 'status' ) );
 
 		return new WP_REST_Response( $this->prepare_item( $fundraiser ), 200 );
@@ -283,26 +290,31 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 		$team     = $item->team();
 
 		return [
-			'id'              => (int) $item->id,
-			'campaign_id'     => $item->campaign_id,
-			'campaign_title'  => $campaign?->title ?? '',
-			'donor_id'        => $item->donor_id,
-			'donor_name'      => $donor?->full_name() ?: __( 'Anonymous', 'mission-donation-platform' ),
-			'donor_email'     => $donor?->email ?? '',
-			'team_id'         => $item->team_id,
-			'team_name'       => $team?->name ?? '',
-			'goal'            => $item->goal,
-			'headline'        => $item->headline,
-			'story'           => $item->story,
-			'status'          => $item->status,
-			'is_team_captain' => $item->is_team_captain,
-			'raised'          => $item->amount_raised( $is_test ),
-			'donor_count'     => $is_test ? $item->test_donor_count : $item->donor_count,
-			'progress'        => $item->progress( $is_test ),
-			'cover_image'     => $item->cover_image,
-			'profile_image'   => $item->profile_image,
-			'date_created'    => $item->date_created,
-			'date_modified'   => $item->date_modified,
+			'id'                 => (int) $item->id,
+			'campaign_id'        => $item->campaign_id,
+			'campaign_title'     => $campaign?->title ?? '',
+			'campaign_end_date'  => $campaign?->date_end,
+			'campaign_days_left' => $campaign?->days_left(),
+			'donor_id'           => $item->donor_id,
+			'donor_name'         => $donor?->full_name() ?: __( 'Anonymous', 'mission-donation-platform' ),
+			'donor_email'        => $donor?->email ?? '',
+			'team_id'            => $item->team_id,
+			'team_name'          => $team?->name ?? '',
+			'goal'               => $item->goal,
+			'headline'           => $item->headline,
+			'story'              => $item->story,
+			'status'             => $item->status,
+			'is_team_captain'    => $item->is_team_captain,
+			'raised'             => $item->amount_raised( $is_test ),
+			'donor_count'        => $is_test ? $item->test_donor_count : $item->donor_count,
+			'transaction_count'  => $is_test ? $item->test_transaction_count : $item->transaction_count,
+			'progress'           => $item->progress( $is_test ),
+			'dedication'         => $item->dedication(),
+			'page_url'           => $item->get_url() ?? '',
+			'cover_image'        => $item->cover_image,
+			'profile_image'      => $item->profile_image,
+			'date_created'       => $item->date_created,
+			'date_modified'      => $item->date_modified,
 		];
 	}
 
@@ -334,17 +346,19 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 	 */
 	protected function get_update_params(): array {
 		return [
-			'id'       => Args::id(),
-			'team_id'  => [
+			'id'              => Args::id(),
+			'team_id'         => [
 				'type' => [ 'integer', 'null' ],
 			],
-			'goal'     => Args::integer(),
-			'headline' => Args::string(),
-			'story'    => [
+			'goal'            => Args::integer(),
+			'headline'        => Args::string(),
+			'story'           => [
 				'type'              => 'string',
 				'sanitize_callback' => 'wp_kses_post',
 			],
-			'status'   => Args::enum( Fundraiser::STATUSES ),
+			'status'          => Args::enum( Fundraiser::STATUSES ),
+			'dedication_type' => Args::enum( [ 'honor', 'memory', '' ] ),
+			'dedication_name' => Args::string(),
 		];
 	}
 }

@@ -189,7 +189,6 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 			[ 'POST', $base, [ 'campaign_id' => $campaign->id, 'donor_id' => $donor->id ] ],
 			[ 'PUT', "$base/{$fundraiser->id}", [ 'headline' => 'Hijacked' ] ],
 			[ 'POST', "$base/{$fundraiser->id}/approve", [] ],
-			[ 'POST', "$base/bulk", [ 'action' => 'approve', 'ids' => [ $fundraiser->id ] ] ],
 			[ 'GET', "$base/summary", [] ],
 			[ 'DELETE', "$base/{$fundraiser->id}", [] ],
 		];
@@ -227,6 +226,7 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 		$this->assertCount( 1, $data );
 		$this->assertSame( 'Jane Doe', $data[0]['donor_name'] );
 		$this->assertSame( 'Marathon', $data[0]['campaign_title'] );
+		$this->assertSame( 0, $data[0]['transaction_count'] );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 	}
 
@@ -283,6 +283,63 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 
 		$missing = $this->server->dispatch( new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers/999999' ) );
 		$this->assertSame( 404, $missing->get_status() );
+	}
+
+	/**
+	 * Test GET single includes the detail-page fields.
+	 */
+	public function test_get_single_includes_detail_fields(): void {
+		$end_date   = gmdate( 'Y-m-d H:i:s', strtotime( '+10 days' ) );
+		$campaign   = $this->create_p2p_campaign( [ 'date_end' => $end_date ] );
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 0, $data['transaction_count'] );
+		$this->assertNull( $data['dedication'] );
+		$this->assertStringContainsString( 'fundraiser', $data['page_url'] );
+		$this->assertSame( $end_date, $data['campaign_end_date'] );
+		$this->assertIsInt( $data['campaign_days_left'] );
+	}
+
+	/**
+	 * Test PUT sets and clears the dedication.
+	 */
+	public function test_update_sets_and_clears_dedication(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [
+			'dedication_type' => 'memory',
+			'dedication_name' => 'Jane Smith',
+		] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'Jane Smith',
+			],
+			$response->get_data()['dedication']
+		);
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [
+			'dedication_type' => '',
+			'dedication_name' => '',
+		] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertNull( $response->get_data()['dedication'] );
+		$this->assertNull( Fundraiser::find( $fundraiser->id )->dedication() );
 	}
 
 	/**
@@ -486,50 +543,6 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'active', $response->get_data()['status'] );
 		$this->assertTrue( $fired );
 		$this->assertSame( 'active', Fundraiser::find( $fundraiser->id )->status );
-	}
-
-	/**
-	 * Test bulk approve activates multiple pending fundraisers.
-	 */
-	public function test_bulk_approve(): void {
-		$campaign = $this->create_p2p_campaign();
-		$ids      = [];
-		foreach ( [ 'a', 'b', 'c' ] as $i => $letter ) {
-			$donor = $this->create_donor( "$letter@example.com" );
-			$ids[] = $this->create_fundraiser( $campaign->id, $donor->id, [ 'status' => Fundraiser::STATUS_PENDING ] )->id;
-		}
-
-		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers/bulk' );
-		$request->set_body_params( [ 'action' => 'approve', 'ids' => $ids ] );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertCount( 3, $data['updated'] );
-		$this->assertEmpty( $data['errors'] );
-
-		foreach ( $ids as $id ) {
-			$this->assertSame( 'active', Fundraiser::find( $id )->status );
-		}
-	}
-
-	/**
-	 * Test bulk deactivate sets fundraisers inactive and reports missing IDs.
-	 */
-	public function test_bulk_deactivate_reports_missing(): void {
-		$campaign   = $this->create_p2p_campaign();
-		$donor      = $this->create_donor( 'jane@example.com' );
-		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
-
-		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/fundraisers/bulk' );
-		$request->set_body_params( [ 'action' => 'deactivate', 'ids' => [ $fundraiser->id, 999999 ] ] );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertContains( $fundraiser->id, $data['updated'] );
-		$this->assertContains( 999999, $data['errors'] );
-		$this->assertSame( 'inactive', Fundraiser::find( $fundraiser->id )->status );
 	}
 
 	/**

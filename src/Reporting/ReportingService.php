@@ -496,7 +496,7 @@ class ReportingService {
 	/**
 	 * Get transactions with donor names for listings.
 	 *
-	 * @param array<string, mixed> $args Query args: status, campaign_id, donor_id, search, orderby, order, per_page, page.
+	 * @param array<string, mixed> $args Query args: status, campaign_id, donor_id, fundraiser_id, team_id, search, orderby, order, per_page, page.
 	 * @return array{items: array, total: int}
 	 */
 	public function transactions_with_donors( array $args = [] ): array {
@@ -505,6 +505,7 @@ class ReportingService {
 		$txn_table     = $wpdb->prefix . 'missiondp_transactions';
 		$donor_table   = $wpdb->prefix . 'missiondp_donors';
 		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
+		$fr_table      = $wpdb->prefix . 'missiondp_fundraisers';
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
@@ -521,6 +522,11 @@ class ReportingService {
 		$campaign_id  = $has_campaign ? (int) $args['campaign_id'] : 0;
 		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
 		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
+
+		$has_fundraiser = ! empty( $args['fundraiser_id'] ) ? 1 : 0;
+		$fundraiser_id  = $has_fundraiser ? (int) $args['fundraiser_id'] : 0;
+		$has_team       = ! empty( $args['team_id'] ) ? 1 : 0;
+		$team_id        = $has_team ? (int) $args['team_id'] : 0;
 
 		// Build the search WHERE fragment. The helper produces a multi-token
 		// AND-of-OR clause across name/email columns; we OR an exact match on
@@ -556,7 +562,11 @@ class ReportingService {
 		$where = 'WHERE t.is_test = %d
 				   AND ( %d = 0 OR t.status = %s )
 				   AND ( %d = 0 OR t.campaign_id = %d )
-				   AND ( %d = 0 OR t.donor_id = %d )' . $search_where_sql . '
+				   AND ( %d = 0 OR t.donor_id = %d )
+				   AND ( %d = 0 OR t.fundraiser_id = %d )
+				   AND ( %d = 0 OR t.team_id = %d OR t.fundraiser_id IN (
+						SELECT f.id FROM %i AS f WHERE f.team_id = %d
+					) )' . $search_where_sql . '
 				   AND ( %d = 0 OR EXISTS (
 						SELECT 1 FROM %i AS tr
 						WHERE tr.transaction_id = t.id
@@ -569,6 +579,7 @@ class ReportingService {
 		// into the position the search fragment occupies in the WHERE string.
 		$where_args = array_merge(
 			[ $is_test, $has_status, $status, $has_campaign, $campaign_id, $has_donor, $donor_id ],
+			[ $has_fundraiser, $fundraiser_id, $has_team, $team_id, $fr_table, $team_id ],
 			$search_params,
 			[ $has_dedication, $tribute_table, $is_mail_pending, $is_mail_sent, $is_email_sent ]
 		);
@@ -617,21 +628,28 @@ class ReportingService {
 			}
 		}
 
+		$fundraiser_map = $this->batch_fetch_fundraiser_names(
+			array_unique( array_filter( array_column( $rows ?: [], 'fundraiser_id' ) ) )
+		);
+
 		$items = [];
 		foreach ( $rows ?: [] as $row ) {
 			$donor_name = trim( ( $row['donor_first_name'] ?? '' ) . ' ' . ( $row['donor_last_name'] ?? '' ) );
 
 			$items[] = [
-				'id'             => (int) $row['id'],
-				'donor_name'     => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
-				'donor_email'    => $row['donor_email'] ?? '',
-				'amount'         => (int) $row['amount'],
-				'currency'       => $row['currency'],
-				'status'         => $row['status'],
-				'type'           => $row['type'],
-				'campaign_id'    => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
-				'campaign_title' => $campaign_map[ $row['campaign_id'] ?? 0 ] ?? '',
-				'date_created'   => $row['date_created'],
+				'id'              => (int) $row['id'],
+				'donor_id'        => $row['donor_id'] ? (int) $row['donor_id'] : null,
+				'donor_name'      => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
+				'donor_email'     => $row['donor_email'] ?? '',
+				'amount'          => (int) $row['amount'],
+				'currency'        => $row['currency'],
+				'status'          => $row['status'],
+				'type'            => $row['type'],
+				'campaign_id'     => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
+				'campaign_title'  => $campaign_map[ $row['campaign_id'] ?? 0 ] ?? '',
+				'fundraiser_id'   => $row['fundraiser_id'] ? (int) $row['fundraiser_id'] : null,
+				'fundraiser_name' => $fundraiser_map[ $row['fundraiser_id'] ?? 0 ] ?? '',
+				'date_created'    => $row['date_created'],
 			];
 		}
 
@@ -639,6 +657,41 @@ class ReportingService {
 			'items' => $items,
 			'total' => $total,
 		];
+	}
+
+	/**
+	 * Batch-fetch fundraiser display names (their donor's name) keyed by fundraiser ID.
+	 *
+	 * @param array<int|string> $fundraiser_ids Fundraiser IDs.
+	 * @return array<int, string> Map of fundraiser ID to donor name.
+	 */
+	private function batch_fetch_fundraiser_names( array $fundraiser_ids ): array {
+		global $wpdb;
+
+		if ( ! $fundraiser_ids ) {
+			return [];
+		}
+
+		$fundraiser_ids = array_map( 'intval', $fundraiser_ids );
+		$placeholders   = implode( ', ', array_fill( 0, count( $fundraiser_ids ), '%d' ) );
+		$sql            = "SELECT f.id, d.first_name, d.last_name
+			 FROM %i AS f
+			 LEFT JOIN %i AS d ON f.donor_id = d.id
+			 WHERE f.id IN ( {$placeholders} )";
+		$prepare_args   = array_merge(
+			[ $wpdb->prefix . 'missiondp_fundraisers', $wpdb->prefix . 'missiondp_donors' ],
+			$fundraiser_ids
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- tables via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$map[ (int) $row['id'] ] = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
+		}
+
+		return $map;
 	}
 
 	/**
@@ -1511,6 +1564,7 @@ class ReportingService {
 
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 		$dcount_col = $this->is_test_mode() ? 'test_donor_count' : 'donor_count';
+		$tcount_col = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
@@ -1563,7 +1617,7 @@ class ReportingService {
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT f.id, f.campaign_id, f.team_id, f.goal, f.status, f.is_team_captain, f.date_created,
-						f.%i AS raised, f.%i AS donor_count,
+						f.%i AS raised, f.%i AS donor_count, f.%i AS transaction_count,
 						d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email,
 						c.title AS campaign_title, tm.name AS team_name
 				 FROM %i AS f
@@ -1574,7 +1628,7 @@ class ReportingService {
 				 ORDER BY f.%i {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
-					[ $raised_col, $dcount_col, $f_table, $d_table, $c_table, $t_table ],
+					[ $raised_col, $dcount_col, $tcount_col, $f_table, $d_table, $c_table, $t_table ],
 					$where_args,
 					[ $orderby, $per_page, $offset ]
 				)
@@ -1587,19 +1641,20 @@ class ReportingService {
 			$donor_name = trim( ( $row['donor_first_name'] ?? '' ) . ' ' . ( $row['donor_last_name'] ?? '' ) );
 
 			$items[] = [
-				'id'              => (int) $row['id'],
-				'donor_name'      => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
-				'donor_email'     => $row['donor_email'] ?? '',
-				'campaign_id'     => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
-				'campaign_title'  => $row['campaign_title'] ?? '',
-				'team_id'         => $row['team_id'] ? (int) $row['team_id'] : null,
-				'team_name'       => $row['team_name'] ?? '',
-				'goal'            => (int) $row['goal'],
-				'raised'          => (int) $row['raised'],
-				'donor_count'     => (int) $row['donor_count'],
-				'status'          => $row['status'],
-				'is_team_captain' => (bool) (int) $row['is_team_captain'],
-				'date_created'    => $row['date_created'],
+				'id'                => (int) $row['id'],
+				'donor_name'        => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
+				'donor_email'       => $row['donor_email'] ?? '',
+				'campaign_id'       => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
+				'campaign_title'    => $row['campaign_title'] ?? '',
+				'team_id'           => $row['team_id'] ? (int) $row['team_id'] : null,
+				'team_name'         => $row['team_name'] ?? '',
+				'goal'              => (int) $row['goal'],
+				'raised'            => (int) $row['raised'],
+				'donor_count'       => (int) $row['donor_count'],
+				'transaction_count' => (int) $row['transaction_count'],
+				'status'            => $row['status'],
+				'is_team_captain'   => (bool) (int) $row['is_team_captain'],
+				'date_created'      => $row['date_created'],
 			];
 		}
 

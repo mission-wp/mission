@@ -10,6 +10,8 @@ namespace MissionDP\Tests\Rest\Endpoints;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
 use MissionDP\Settings\SettingsService;
 use WP_REST_Request;
@@ -141,6 +143,10 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisermeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teammeta" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 
 		delete_option( SettingsService::OPTION_NAME );
 
@@ -353,6 +359,90 @@ class TransactionsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
 		$this->assertSame( 'Bob Smith', $response->get_data()[0]['donor_name'] );
+	}
+
+	/**
+	 * Test GET list filters by fundraiser_id and includes fundraiser fields.
+	 */
+	public function test_get_list_filters_by_fundraiser_id(): void {
+		$participant = new Donor( [
+			'email'      => 'sarah@example.com',
+			'first_name' => 'Sarah',
+			'last_name'  => 'Mitchell',
+		] );
+		$participant->save();
+
+		$fundraiser = new Fundraiser( [
+			'campaign_id' => $this->campaign->id,
+			'donor_id'    => $participant->id,
+			'status'      => Fundraiser::STATUS_ACTIVE,
+			'goal'        => 50000,
+		] );
+		$fundraiser->save();
+
+		$attributed = $this->create_transaction( [ 'fundraiser_id' => $fundraiser->id ] );
+		$this->create_transaction();
+
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'fundraiser_id' => $fundraiser->id ] );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
+		$this->assertSame( $attributed->id, $data[0]['id'] );
+		$this->assertSame( $fundraiser->id, $data[0]['fundraiser_id'] );
+		$this->assertSame( 'Sarah Mitchell', $data[0]['fundraiser_name'] );
+		$this->assertSame( $this->donor->id, $data[0]['donor_id'] );
+	}
+
+	/**
+	 * Test GET list team_id filter includes member fundraiser gifts and direct team gifts.
+	 */
+	public function test_get_list_filters_by_team_id(): void {
+		$participant = new Donor( [
+			'email'      => 'sarah@example.com',
+			'first_name' => 'Sarah',
+			'last_name'  => 'Mitchell',
+		] );
+		$participant->save();
+
+		$team = new Team( [
+			'campaign_id' => $this->campaign->id,
+			'name'        => 'Pawsitive Vibes',
+			'status'      => Team::STATUS_ACTIVE,
+			'goal'        => 100000,
+		] );
+		$team->save();
+
+		$member = new Fundraiser( [
+			'campaign_id' => $this->campaign->id,
+			'donor_id'    => $participant->id,
+			'team_id'     => $team->id,
+			'status'      => Fundraiser::STATUS_ACTIVE,
+			'goal'        => 50000,
+		] );
+		$member->save();
+
+		$member_gift = $this->create_transaction( [ 'fundraiser_id' => $member->id ] );
+		$direct_gift = $this->create_transaction( [ 'team_id' => $team->id ] );
+		$this->create_transaction();
+
+		$response = $this->dispatch_get( '/mission-donation-platform/v1/transactions', [ 'team_id' => $team->id ] );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( '2', $response->get_headers()['X-WP-Total'] );
+
+		$ids = array_column( $data, 'id' );
+		$this->assertContains( $member_gift->id, $ids );
+		$this->assertContains( $direct_gift->id, $ids );
+
+		// The direct team gift has no fundraiser attribution.
+		foreach ( $data as $item ) {
+			if ( $item['id'] === $direct_gift->id ) {
+				$this->assertNull( $item['fundraiser_id'] );
+				$this->assertSame( '', $item['fundraiser_name'] );
+			}
+		}
 	}
 
 	/**

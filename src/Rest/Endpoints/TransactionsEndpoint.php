@@ -194,15 +194,17 @@ class TransactionsEndpoint {
 
 		$result = $this->reporting->transactions_with_donors(
 			[
-				'per_page'    => $per_page,
-				'page'        => $request->get_param( 'page' ) ?? 1,
-				'orderby'     => $request->get_param( 'orderby' ) ?? 'date_created',
-				'order'       => $request->get_param( 'order' ) ?? 'DESC',
-				'status'      => $request->get_param( 'status' ),
-				'campaign_id' => $request->get_param( 'campaign_id' ),
-				'donor_id'    => $request->get_param( 'donor_id' ),
-				'search'      => $request->get_param( 'search' ),
-				'dedication'  => $request->get_param( 'dedication' ),
+				'per_page'      => $per_page,
+				'page'          => $request->get_param( 'page' ) ?? 1,
+				'orderby'       => $request->get_param( 'orderby' ) ?? 'date_created',
+				'order'         => $request->get_param( 'order' ) ?? 'DESC',
+				'status'        => $request->get_param( 'status' ),
+				'campaign_id'   => $request->get_param( 'campaign_id' ),
+				'donor_id'      => $request->get_param( 'donor_id' ),
+				'fundraiser_id' => $request->get_param( 'fundraiser_id' ),
+				'team_id'       => $request->get_param( 'team_id' ),
+				'search'        => $request->get_param( 'search' ),
+				'dedication'    => $request->get_param( 'dedication' ),
 			]
 		);
 
@@ -556,10 +558,12 @@ class TransactionsEndpoint {
 		return array_merge(
 			CollectionParams::base( orderby: [ 'date_created', 'amount' ], default_orderby: 'date_created' ),
 			[
-				'status'      => Args::enum( Transaction::STATUSES ),
-				'campaign_id' => Args::integer(),
-				'donor_id'    => Args::integer(),
-				'dedication'  => Args::enum( [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ] ),
+				'status'        => Args::enum( Transaction::STATUSES ),
+				'campaign_id'   => Args::integer(),
+				'donor_id'      => Args::integer(),
+				'fundraiser_id' => Args::integer(),
+				'team_id'       => Args::integer(),
+				'dedication'    => Args::enum( [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ] ),
 			]
 		);
 	}

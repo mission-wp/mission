@@ -239,27 +239,38 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 	 */
 	protected function prepare_item( object $item ): array {
 		/** @var Team $item */
-		$is_test  = (bool) $this->settings->get( 'test_mode' );
 		$campaign = $item->campaign();
 		$captain  = $item->captain();
 
+		// Live totals and rank in one pass each; rank counts active teams only,
+		// so the "#N of M" label reads "of M active teams".
+		$totals   = $this->reporting->team_totals( (int) $item->id );
+		$rank     = $this->reporting->team_rank( (int) $item->id );
+		$progress = $item->goal > 0 ? min( 100.0, round( $totals['raised'] / $item->goal * 100, 2 ) ) : 0.0;
+
 		return [
-			'id'             => (int) $item->id,
-			'campaign_id'    => $item->campaign_id,
-			'campaign_title' => $campaign?->title ?? '',
-			'name'           => $item->name,
-			'description'    => $item->description,
-			'goal'           => $item->goal,
-			'status'         => $item->status,
-			'access'         => $item->access,
-			'captain_id'     => $item->captain_id,
-			'captain_name'   => $captain?->donor()?->full_name() ?? '',
-			'member_count'   => $item->member_count(),
-			'raised'         => $item->amount_raised( $is_test ),
-			'progress'       => $item->progress( $is_test ),
-			'cover_image'    => $item->cover_image,
-			'date_created'   => $item->date_created,
-			'date_modified'  => $item->date_modified,
+			'id'                 => (int) $item->id,
+			'campaign_id'        => $item->campaign_id,
+			'campaign_title'     => $campaign?->title ?? '',
+			'campaign_end_date'  => $campaign?->date_end,
+			'campaign_days_left' => $campaign?->days_left(),
+			'name'               => $item->name,
+			'description'        => $item->description,
+			'goal'               => $item->goal,
+			'status'             => $item->status,
+			'access'             => $item->access,
+			'captain_id'         => $item->captain_id,
+			'captain_name'       => $captain?->donor()?->full_name() ?? '',
+			'member_count'       => $totals['member_count'],
+			'raised'             => $totals['raised'],
+			'donation_count'     => $totals['donations'],
+			'progress'           => $progress,
+			'rank'               => $rank['rank'],
+			'rank_total'         => $rank['total'],
+			'page_url'           => $item->get_url() ?? '',
+			'cover_image'        => $item->cover_image,
+			'date_created'       => $item->date_created,
+			'date_modified'      => $item->date_modified,
 		];
 	}
 

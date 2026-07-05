@@ -199,7 +199,6 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 			[ 'POST', $base, [ 'campaign_id' => $campaign->id, 'name' => 'Intruders' ] ],
 			[ 'PUT', "$base/{$team->id}", [ 'name' => 'Hijacked' ] ],
 			[ 'POST', "$base/{$team->id}/approve", [] ],
-			[ 'POST', "$base/bulk", [ 'action' => 'approve', 'ids' => [ $team->id ] ] ],
 			[ 'GET', "$base/summary", [] ],
 			[ 'DELETE', "$base/{$team->id}", [] ],
 		];
@@ -300,6 +299,50 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 
 		$missing = $this->server->dispatch( new WP_REST_Request( 'GET', '/mission-donation-platform/v1/teams/999999' ) );
 		$this->assertSame( 404, $missing->get_status() );
+	}
+
+	/**
+	 * Test GET single includes live totals, leaderboard rank, and page URL.
+	 */
+	public function test_get_single_includes_detail_fields(): void {
+		$campaign = $this->create_p2p_campaign();
+		$leader   = $this->create_team( $campaign->id, [ 'name' => 'Leaders' ] );
+		$team     = $this->create_team( $campaign->id, [ 'name' => 'Runners-up' ] );
+
+		// Leader: one member with 60000 raised. Team under test: one member with
+		// 20000 raised across 2 gifts, plus a 10000 direct team gift.
+		$this->create_member( $campaign->id, [ 'team_id' => $leader->id, 'total_raised' => 60000 ] );
+		$this->create_member(
+			$campaign->id,
+			[
+				'team_id'                => $team->id,
+				'total_raised'           => 20000,
+				'transaction_count'      => 2,
+				'test_transaction_count' => 2,
+			]
+		);
+		// Mirrored live/test so the assertions hold in either mode.
+		foreach ( [ false, true ] as $is_test ) {
+			( new Transaction( [
+				'status'   => Transaction::STATUS_COMPLETED,
+				'donor_id' => 99,
+				'team_id'  => $team->id,
+				'amount'   => 10000,
+				'is_test'  => $is_test,
+			] ) )->save();
+		}
+
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/teams/' . $team->id );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 30000, $data['raised'] );
+		$this->assertSame( 3, $data['donation_count'] );
+		$this->assertSame( 1, $data['member_count'] );
+		$this->assertSame( 2, $data['rank'] );
+		$this->assertSame( 2, $data['rank_total'] );
+		$this->assertStringContainsString( 'team', $data['page_url'] );
 	}
 
 	/**
@@ -515,47 +558,6 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( 'active', $response->get_data()['status'] );
 		$this->assertTrue( $fired );
-	}
-
-	/**
-	 * Test bulk approve activates multiple pending teams.
-	 */
-	public function test_bulk_approve(): void {
-		$campaign = $this->create_p2p_campaign();
-		$ids      = [];
-		foreach ( range( 1, 3 ) as $i ) {
-			$ids[] = $this->create_team( $campaign->id, [ 'name' => "Team $i", 'status' => Team::STATUS_PENDING ] )->id;
-		}
-
-		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/teams/bulk' );
-		$request->set_body_params( [ 'action' => 'approve', 'ids' => $ids ] );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertCount( 3, $data['updated'] );
-
-		foreach ( $ids as $id ) {
-			$this->assertSame( 'active', Team::find( $id )->status );
-		}
-	}
-
-	/**
-	 * Test bulk deactivate sets teams inactive and reports missing IDs.
-	 */
-	public function test_bulk_deactivate_reports_missing(): void {
-		$campaign = $this->create_p2p_campaign();
-		$team     = $this->create_team( $campaign->id );
-
-		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/teams/bulk' );
-		$request->set_body_params( [ 'action' => 'deactivate', 'ids' => [ $team->id, 999999 ] ] );
-		$response = $this->server->dispatch( $request );
-		$data     = $response->get_data();
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertContains( $team->id, $data['updated'] );
-		$this->assertContains( 999999, $data['errors'] );
-		$this->assertSame( 'inactive', Team::find( $team->id )->status );
 	}
 
 	/**
