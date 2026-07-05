@@ -602,6 +602,33 @@ class TeamTest extends WP_UnitTestCase {
 		$this->assertSame( $fired_before + 1, did_action( 'mission_team_invitation_created' ) );
 	}
 
+	/**
+	 * Test re-inviting after the invitation expired refreshes the token in place.
+	 */
+	public function test_invite_refreshes_expired_invitation(): void {
+		$team   = $this->create_team();
+		$invite = $team->invite( 'invitee@example.com' );
+
+		// Age the invitation past its 14-day TTL, with the email long since sent.
+		$invite->date_created = gmdate( 'Y-m-d H:i:s', time() - 15 * DAY_IN_SECONDS );
+		$invite->sent_at      = $invite->date_created;
+		$invite->save();
+		$old_token = $invite->token;
+
+		$fired_before = did_action( 'mission_team_invitation_created' );
+		$refreshed    = $team->invite( 'invitee@example.com' );
+
+		$this->assertSame( $invite->id, $refreshed->id );
+		$this->assertNotSame( $old_token, $refreshed->token );
+		$this->assertSame( TeamInvitation::STATUS_PENDING, $refreshed->status );
+		$this->assertFalse( $refreshed->is_expired() );
+		$this->assertSame( $fired_before + 1, did_action( 'mission_team_invitation_created' ) );
+
+		// The refresh persisted: the stale token is dead, the new one resolves.
+		$this->assertNull( TeamInvitation::find_by_token( $old_token ) );
+		$this->assertSame( $invite->id, TeamInvitation::find_by_token( $refreshed->token )->id );
+	}
+
 	// -------------------------------------------------------------------------
 	// Captain management: remove_member().
 	// -------------------------------------------------------------------------

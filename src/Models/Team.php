@@ -324,8 +324,9 @@ class Team extends Model {
 	 *
 	 * Idempotent per (team, email): an outstanding pending invite is returned
 	 * as-is, and only re-emailed after a cooldown so the invite flow can't be
-	 * used to spam an address. The bearer token is a fresh CSPRNG value; the
-	 * email and sent_at stamp are handled by the email listener, not here.
+	 * used to spam an address. An expired pending invite is refreshed in place
+	 * with a new token and lifetime. The bearer token is a fresh CSPRNG value;
+	 * the email and sent_at stamp are handled by the email listener, not here.
 	 *
 	 * @param string $email The invitee's email address.
 	 * @return TeamInvitation|WP_Error The invitation, or an error.
@@ -359,6 +360,15 @@ class Team extends Model {
 		);
 		if ( $existing ) {
 			$invitation = $existing[0];
+
+			// An expired pending row would re-send a token that is dead on
+			// arrival; refresh it in place so the invitee gets a working link.
+			if ( $invitation->is_expired() ) {
+				$invitation->token        = bin2hex( random_bytes( 16 ) );
+				$invitation->date_created = current_time( 'mysql', true );
+				$invitation->sent_at      = null;
+				$invitation->save();
+			}
 
 			/**
 			 * Filters how long to wait before an outstanding invitation may be re-emailed.
