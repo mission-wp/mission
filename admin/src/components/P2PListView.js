@@ -38,7 +38,7 @@ const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
  * @param {Object}      props.defaultView    Default DataViews view.
  * @param {string[]}    props.filterFields   view.filters fields to pass as query params.
  * @param {boolean}     props.withTeamFilter Whether to prefetch teams for a team filter.
- * @param {Function}    props.renderStats    (summary) => stat card nodes.
+ * @param {Function}    props.renderStats    (summary, summaryFailed) => stat card nodes.
  * @param {JSX.Element} props.emptyIcon      Empty-state icon.
  * @param {string}      props.emptyText      Empty-state heading.
  * @param {string}      props.emptyHint      Empty-state hint.
@@ -67,6 +67,7 @@ export default function P2PListView( {
     { path: listPath, view, filterFields }
   );
   const [ summary, setSummary ] = useState( null );
+  const [ summaryFailed, setSummaryFailed ] = useState( false );
   const [ campaignElements, setCampaignElements ] = useState( [] );
   const [ teamElements, setTeamElements ] = useState( [] );
   const [ toast, setToast ] = useState( null );
@@ -79,9 +80,21 @@ export default function P2PListView( {
 
   const fetchSummary = useCallback( () => {
     apiFetch( { path: summaryPath } )
-      .then( setSummary )
-      .catch( () => {} );
-  }, [ summaryPath ] );
+      .then( ( result ) => {
+        setSummary( result );
+        setSummaryFailed( false );
+      } )
+      .catch( () => {
+        setSummaryFailed( true );
+        showToast(
+          'error',
+          __(
+            'The summary stats could not be loaded.',
+            'mission-donation-platform'
+          )
+        );
+      } );
+  }, [ summaryPath, showToast ] );
 
   useEffect( () => {
     fetchSummary();
@@ -153,7 +166,7 @@ export default function P2PListView( {
         </VStack>
 
         <div className="mission-stats-row mission-stats-row--4">
-          { renderStats( summary ) }
+          { renderStats( summary, summaryFailed ) }
         </div>
 
         { showEmptyState ? (

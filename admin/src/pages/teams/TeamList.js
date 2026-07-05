@@ -166,28 +166,30 @@ const DEFAULT_VIEW = {
   layout: {},
 };
 
-function renderStats( summary ) {
+function renderStats( summary, summaryFailed ) {
+  const placeholder = summaryFailed ? '–' : '';
+  const isLoading = ! summary && ! summaryFailed;
   return (
     <>
       <StatCard
         label={ __( 'Total Teams', 'mission-donation-platform' ) }
-        value={ summary ? summary.total_teams.toLocaleString() : '' }
-        isLoading={ ! summary }
+        value={ summary ? summary.total_teams.toLocaleString() : placeholder }
+        isLoading={ isLoading }
       />
       <StatCard
         label={ __( 'Active', 'mission-donation-platform' ) }
-        value={ summary ? summary.active_count.toLocaleString() : '' }
-        isLoading={ ! summary }
+        value={ summary ? summary.active_count.toLocaleString() : placeholder }
+        isLoading={ isLoading }
       />
       <StatCard
         label={ __( 'Pending Approval', 'mission-donation-platform' ) }
-        value={ summary ? summary.pending_count.toLocaleString() : '' }
-        isLoading={ ! summary }
+        value={ summary ? summary.pending_count.toLocaleString() : placeholder }
+        isLoading={ isLoading }
       />
       <StatCard
         label={ __( 'Total Raised', 'mission-donation-platform' ) }
-        value={ summary ? formatAmount( summary.total_raised ) : '' }
-        isLoading={ ! summary }
+        value={ summary ? formatAmount( summary.total_raised ) : placeholder }
+        isLoading={ isLoading }
       />
     </>
   );
