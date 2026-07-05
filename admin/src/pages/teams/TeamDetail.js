@@ -186,6 +186,7 @@ export default function TeamDetail( { id } ) {
   };
 
   const handleApprove = async () => {
+    const isReactivation = team.status !== P2P_STATUS.PENDING;
     try {
       const updated = await apiFetch( {
         path: `/mission-donation-platform/v1/teams/${ id }/approve`,
@@ -194,13 +195,17 @@ export default function TeamDetail( { id } ) {
       setTeam( updated );
       showToast(
         'success',
-        __( 'Team approved.', 'mission-donation-platform' )
+        isReactivation
+          ? __( 'Team reactivated.', 'mission-donation-platform' )
+          : __( 'Team approved.', 'mission-donation-platform' )
       );
     } catch ( err ) {
       showToast(
         'error',
         err.message ||
-          __( 'Failed to approve team.', 'mission-donation-platform' )
+          ( isReactivation
+            ? __( 'Failed to reactivate team.', 'mission-donation-platform' )
+            : __( 'Failed to approve team.', 'mission-donation-platform' ) )
       );
     }
   };

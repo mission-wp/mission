@@ -178,6 +178,7 @@ export default function FundraiserDetail( { id } ) {
   };
 
   const handleApprove = async () => {
+    const isReactivation = fundraiser.status !== P2P_STATUS.PENDING;
     try {
       const updated = await apiFetch( {
         path: `/mission-donation-platform/v1/fundraisers/${ id }/approve`,
@@ -186,13 +187,23 @@ export default function FundraiserDetail( { id } ) {
       setFundraiser( updated );
       showToast(
         'success',
-        __( 'Fundraiser approved.', 'mission-donation-platform' )
+        isReactivation
+          ? __( 'Fundraiser reactivated.', 'mission-donation-platform' )
+          : __( 'Fundraiser approved.', 'mission-donation-platform' )
       );
     } catch ( err ) {
       showToast(
         'error',
         err.message ||
-          __( 'Failed to approve fundraiser.', 'mission-donation-platform' )
+          ( isReactivation
+            ? __(
+                'Failed to reactivate fundraiser.',
+                'mission-donation-platform'
+              )
+            : __(
+                'Failed to approve fundraiser.',
+                'mission-donation-platform'
+              ) )
       );
     }
   };
