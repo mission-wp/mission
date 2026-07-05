@@ -1,19 +1,17 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import {
-  Button,
   Card,
   CardBody,
-  Modal,
   __experimentalHeading as Heading,
   __experimentalVStack as VStack,
-  __experimentalHStack as HStack,
   __experimentalText as Text,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
 import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
+import ClickableRows from '@shared/components/ClickableRows';
 import EmptyState from './EmptyState';
 import Toast from './Toast';
 
@@ -25,16 +23,16 @@ const SKELETON_ROWS = Array.from( { length: 10 }, ( _, i ) => ( {
 /**
  * Shared scaffold for the Fundraisers and Teams admin list pages.
  *
- * Owns the persisted view, paginated fetch, summary fetch, the P2P campaign
- * filter elements, and the row + bulk approve/deactivate actions. Each page
- * supplies its columns (via buildFields) and stat cards (via renderStats).
+ * Owns the persisted view, paginated fetch, summary fetch, and the P2P
+ * campaign filter elements. Rows link through to the detail pages, where
+ * approve/deactivate live. Each page supplies its columns (via buildFields)
+ * and stat cards (via renderStats).
  *
  * @param {Object}      props
  * @param {string}      props.title          Page heading.
  * @param {string}      props.description    Sub-heading copy.
  * @param {string}      props.listPath       REST collection path.
  * @param {string}      props.summaryPath    REST summary path.
- * @param {string}      props.bulkPath       REST bulk-action path.
  * @param {string}      props.storageKey     usePersistedView storage key.
  * @param {Function}    props.buildFields    (campaignElements, teamElements) => DataViews fields.
  * @param {Object}      props.defaultView    Default DataViews view.
@@ -51,7 +49,6 @@ export default function P2PListView( {
   description,
   listPath,
   summaryPath,
-  bulkPath,
   storageKey,
   buildFields,
   defaultView,
@@ -66,15 +63,14 @@ export default function P2PListView( {
     storageKey,
     defaultView
   );
-  const { data, totalItems, totalPages, isLoading, error, refresh } =
-    usePaginatedFetch( { path: listPath, view, filterFields } );
+  const { data, totalItems, totalPages, isLoading, error } = usePaginatedFetch(
+    { path: listPath, view, filterFields }
+  );
   const [ summary, setSummary ] = useState( null );
-  const [ selection, setSelection ] = useState( [] );
   const [ campaignElements, setCampaignElements ] = useState( [] );
   const [ teamElements, setTeamElements ] = useState( [] );
   const [ toast, setToast ] = useState( null );
   const [ toastKey, setToastKey ] = useState( 0 );
-  const [ confirmItems, setConfirmItems ] = useState( null );
 
   const showToast = useCallback( ( type, message ) => {
     setToast( { type, message } );
@@ -101,8 +97,8 @@ export default function P2PListView( {
     }
   }, [ error, showToast ] );
 
-  // Bulk-deactivating a full last page can strand the view past the new
-  // total; clamp back once the refreshed totals arrive.
+  // Deleting the last record on the final page (via a detail page) can
+  // strand the view past the new total; clamp back once totals arrive.
   useEffect( () => {
     if ( ! isLoading && totalPages > 0 && view.page > totalPages ) {
       setView( { ...view, page: totalPages } );
@@ -144,74 +140,6 @@ export default function P2PListView( {
       .catch( () => {} );
   }, [ withTeamFilter ] );
 
-  const runBulk = useCallback(
-    async ( action, items ) => {
-      const ids = items.map( ( item ) => item.id );
-      try {
-        const result = await apiFetch( {
-          path: bulkPath,
-          method: 'POST',
-          data: { action, ids },
-        } );
-
-        const updated = Array.isArray( result?.updated )
-          ? result.updated.length
-          : ids.length;
-        const failed = ( result?.errors || [] ).length;
-
-        if ( failed ) {
-          showToast(
-            'error',
-            sprintf(
-              /* translators: 1: number updated, 2: number failed */
-              __( '%1$d updated, %2$d failed.', 'mission-donation-platform' ),
-              updated,
-              failed
-            )
-          );
-        } else {
-          showToast(
-            'success',
-            sprintf(
-              /* translators: %d: number of records updated */
-              __( '%d updated.', 'mission-donation-platform' ),
-              updated
-            )
-          );
-        }
-      } catch ( err ) {
-        showToast(
-          'error',
-          err?.message ||
-            __( 'The bulk action failed.', 'mission-donation-platform' )
-        );
-      } finally {
-        setSelection( [] );
-        refresh();
-        fetchSummary();
-      }
-    },
-    [ bulkPath, refresh, fetchSummary, showToast ]
-  );
-
-  const actions = [
-    {
-      id: 'approve',
-      label: __( 'Approve', 'mission-donation-platform' ),
-      isPrimary: true,
-      supportsBulk: true,
-      isEligible: ( item ) => ! item._isSkeleton && item.status !== 'active',
-      callback: ( items ) => runBulk( 'approve', items ),
-    },
-    {
-      id: 'deactivate',
-      label: __( 'Deactivate', 'mission-donation-platform' ),
-      supportsBulk: true,
-      isEligible: ( item ) => ! item._isSkeleton && item.status !== 'inactive',
-      callback: ( items ) => setConfirmItems( items ),
-    },
-  ];
-
   const fields = buildFields( campaignElements, teamElements );
 
   const hasNoFilters = ! view.filters || view.filters.length === 0;
@@ -241,64 +169,23 @@ export default function P2PListView( {
             </CardBody>
           </Card>
         ) : (
-          <DataViews
-            data={ isLoading ? SKELETON_ROWS : data }
-            fields={ fields }
-            view={ view }
-            onChangeView={ setView }
-            onReset={ isModified ? resetToDefault : false }
-            actions={ actions }
-            selection={ selection }
-            onChangeSelection={ setSelection }
-            getItemId={ ( item ) => String( item.id ) }
-            isItemClickable={ () => false }
-            paginationInfo={ {
-              totalItems: isLoading ? 0 : totalItems,
-              totalPages: isLoading ? 0 : totalPages,
-            } }
-            defaultLayouts={ { table: {} } }
-          />
+          <ClickableRows>
+            <DataViews
+              data={ isLoading ? SKELETON_ROWS : data }
+              fields={ fields }
+              view={ view }
+              onChangeView={ setView }
+              onReset={ isModified ? resetToDefault : false }
+              getItemId={ ( item ) => String( item.id ) }
+              paginationInfo={ {
+                totalItems: isLoading ? 0 : totalItems,
+                totalPages: isLoading ? 0 : totalPages,
+              } }
+              defaultLayouts={ { table: {} } }
+            />
+          </ClickableRows>
         ) }
       </VStack>
-
-      { confirmItems && (
-        <Modal
-          title={ __( 'Deactivate?', 'mission-donation-platform' ) }
-          onRequestClose={ () => setConfirmItems( null ) }
-          size="small"
-        >
-          <VStack spacing={ 4 }>
-            <Text>
-              { sprintf(
-                /* translators: %d: number of selected records */
-                __(
-                  'Deactivating hides the selected pages from the site. %d selected.',
-                  'mission-donation-platform'
-                ),
-                confirmItems.length
-              ) }
-            </Text>
-            <HStack justify="flex-end">
-              <Button
-                variant="tertiary"
-                onClick={ () => setConfirmItems( null ) }
-              >
-                { __( 'Cancel', 'mission-donation-platform' ) }
-              </Button>
-              <Button
-                variant="primary"
-                isDestructive
-                onClick={ () => {
-                  runBulk( 'deactivate', confirmItems );
-                  setConfirmItems( null );
-                } }
-              >
-                { __( 'Deactivate', 'mission-donation-platform' ) }
-              </Button>
-            </HStack>
-          </VStack>
-        </Modal>
-      ) }
 
       <Toast
         key={ toastKey }
