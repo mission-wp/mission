@@ -408,6 +408,8 @@ class SubscriptionDataStore implements DataStoreInterface {
 			'donor_id'                => $model->donor_id,
 			'source_post_id'          => $model->source_post_id,
 			'campaign_id'             => $model->campaign_id,
+			'fundraiser_id'           => $model->fundraiser_id,
+			'team_id'                 => $model->team_id,
 			'initial_transaction_id'  => $model->initial_transaction_id,
 			'amount'                  => $model->amount,
 			'fee_amount'              => $model->fee_amount,

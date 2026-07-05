@@ -437,6 +437,8 @@ class CreateSubscriptionEndpoint {
 				'donor_id'                => $donor->id,
 				'source_post_id'          => $request->get_param( 'source_post_id' ),
 				'campaign_id'             => $campaign_id,
+				'fundraiser_id'           => $attribution['fundraiser_id'],
+				'team_id'                 => $attribution['team_id'],
 				'amount'                  => $req_donation_amount - $req_fee_amount,
 				'fee_amount'              => $req_fee_amount,
 				'tip_amount'              => $req_tip_amount,

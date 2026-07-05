@@ -297,4 +297,53 @@ class SubscriptionDataStoreTest extends WP_UnitTestCase {
 		$this->assertSame( 2, $reloaded->renewal_count );
 		$this->assertSame( 5000, $reloaded->total_renewed );
 	}
+
+	/**
+	 * Test fundraiser/team attribution persists through create and read.
+	 */
+	public function test_attribution_roundtrip(): void {
+		$sub = $this->make_subscription(
+			array(
+				'campaign_id'   => 7,
+				'fundraiser_id' => 12,
+				'team_id'       => 34,
+			)
+		);
+		$id  = $this->store->create( $sub );
+
+		$read = $this->store->read( $id );
+		$this->assertSame( 7, $read->campaign_id );
+		$this->assertSame( 12, $read->fundraiser_id );
+		$this->assertSame( 34, $read->team_id );
+	}
+
+	/**
+	 * Test renewal transactions inherit the subscription's fundraiser/team
+	 * attribution, not just the campaign.
+	 */
+	public function test_renewal_carries_attribution(): void {
+		$donor_id = $this->create_donor();
+
+		$sub = $this->make_subscription(
+			array(
+				'donor_id'      => $donor_id,
+				'status'        => 'active',
+				'campaign_id'   => 7,
+				'fundraiser_id' => 12,
+				'team_id'       => 34,
+			)
+		);
+		$this->store->create( $sub );
+
+		$transaction = $sub->record_renewal();
+
+		$this->assertSame( 7, $transaction->campaign_id );
+		$this->assertSame( 12, $transaction->fundraiser_id );
+		$this->assertSame( 34, $transaction->team_id );
+
+		// The persisted row carries the attribution too.
+		$reloaded = \MissionDP\Models\Transaction::find( $transaction->id );
+		$this->assertSame( 12, $reloaded->fundraiser_id );
+		$this->assertSame( 34, $reloaded->team_id );
+	}
 }
