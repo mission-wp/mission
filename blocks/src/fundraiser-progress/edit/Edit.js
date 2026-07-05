@@ -34,13 +34,8 @@ const SAMPLE = {
 };
 
 export default function Edit( { attributes, setAttributes } ) {
-  const {
-    donateButtonAction,
-    donateButtonUrl,
-    showDonations,
-    showDonors,
-    showShare,
-  } = attributes;
+  const { donateButtonAction, donateButtonUrl, showDonations, showDonors } =
+    attributes;
 
   const primaryColorVars = useMemo( () => {
     const color = window.missiondpBlockEditor?.primaryColor || '#2fa36b';
@@ -79,11 +74,6 @@ export default function Edit( { attributes, setAttributes } ) {
             label={ __( 'Show donors', 'mission-donation-platform' ) }
             checked={ showDonors }
             onChange={ ( val ) => setAttributes( { showDonors: val } ) }
-          />
-          <ToggleControl
-            label={ __( 'Show share button', 'mission-donation-platform' ) }
-            checked={ showShare }
-            onChange={ ( val ) => setAttributes( { showShare: val } ) }
           />
         </PanelBody>
       </InspectorControls>
@@ -134,24 +124,11 @@ export default function Edit( { attributes, setAttributes } ) {
               ) }
             </div>
           ) }
-          { ( showDonate || showShare ) && (
+          { showDonate && (
             <div className="mission-progress__actions">
-              { showDonate && (
-                <span className="mission-progress__btn">
-                  { __( 'Donate Now', 'mission-donation-platform' ) }
-                </span>
-              ) }
-              { showShare && (
-                <span
-                  className={
-                    showDonate
-                      ? 'mission-progress__btn mission-progress__btn--secondary'
-                      : 'mission-progress__btn'
-                  }
-                >
-                  { __( 'Share', 'mission-donation-platform' ) }
-                </span>
-              ) }
+              <span className="mission-progress__btn">
+                { __( 'Donate Now', 'mission-donation-platform' ) }
+              </span>
             </div>
           ) }
         </div>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Block Name: Fundraiser Progress
- * Description: A fundraiser's progress bar, stats, and donate/share buttons.
+ * Description: A fundraiser's progress bar, stats, and donate button.
  *
  * @package MissionDP
  *
@@ -36,12 +36,10 @@ defined( 'ABSPATH' ) || exit;
 	$percentage = BlockSupport::progress_percent( $raised, $goal );
 	$donors     = $is_test ? $fundraiser->test_donor_count : $fundraiser->donor_count;
 	$donations  = $is_test ? $fundraiser->test_transaction_count : $fundraiser->transaction_count;
-	$share_url  = $fundraiser->get_url() ?? '';
 
 	// Attributes.
 	$show_donations = $attributes['showDonations'] ?? true;
 	$show_donors    = $attributes['showDonors'] ?? true;
-	$show_share     = ( $attributes['showShare'] ?? true ) && '' !== $share_url;
 	$donate_action  = $attributes['donateButtonAction'] ?? 'scroll';
 	$donate_url     = $attributes['donateButtonUrl'] ?? '';
 	$show_donate    = 'hide' !== $donate_action;
@@ -91,29 +89,16 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		<?php endif; ?>
 
-		<?php if ( $show_donate || $show_share ) : ?>
+		<?php if ( $show_donate ) : ?>
 			<div class="mission-progress__actions">
-				<?php if ( $show_donate ) : ?>
-					<?php if ( 'scroll' === $donate_action ) : ?>
-						<button type="button" class="mission-progress__btn" data-wp-on--click="actions.scrollToForm">
-							<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
-						</button>
-					<?php else : ?>
-						<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-progress__btn">
-							<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
-						</a>
-					<?php endif; ?>
-				<?php endif; ?>
-				<?php if ( $show_share ) : ?>
-					<?php $share_class = $show_donate ? 'mission-progress__btn mission-progress__btn--secondary' : 'mission-progress__btn'; ?>
-					<button
-						type="button"
-						class="<?php echo esc_attr( $share_class ); ?>"
-						data-wp-on--click="actions.share"
-						data-share-url="<?php echo esc_url( $share_url ); ?>"
-					>
-						<?php esc_html_e( 'Share', 'mission-donation-platform' ); ?>
+				<?php if ( 'scroll' === $donate_action ) : ?>
+					<button type="button" class="mission-progress__btn" data-wp-on--click="actions.scrollToForm">
+						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
 					</button>
+				<?php else : ?>
+					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-progress__btn">
+						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+					</a>
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>

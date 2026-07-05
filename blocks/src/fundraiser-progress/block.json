@@ -6,7 +6,7 @@
 	"title": "Fundraiser Progress",
 	"category": "mission-donation-platform",
 	"icon": "chart-bar",
-	"description": "Display a fundraiser's progress with a progress bar, stats, and donate/share buttons.",
+	"description": "Display a fundraiser's progress with a progress bar, stats, and a donate button.",
 	"supports": {
 		"html": false,
 		"interactivity": true,
@@ -33,10 +33,6 @@
 			"default": true
 		},
 		"showDonors": {
-			"type": "boolean",
-			"default": true
-		},
-		"showShare": {
 			"type": "boolean",
 			"default": true
 		}
