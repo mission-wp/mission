@@ -106,29 +106,32 @@ function loadSupportersPage( ctx, id, page ) {
       if ( ! response.ok ) {
         throw new Error( 'request_failed' );
       }
-      supporters.total = Number( response.headers.get( 'X-WP-Total' ) ) || 0;
-      supporters.totalPages =
+      const total = Number( response.headers.get( 'X-WP-Total' ) ) || 0;
+      const totalPages =
         Number( response.headers.get( 'X-WP-TotalPages' ) ) || 0;
-      return response.json();
-    } )
-    .then( ( rows ) => {
-      // Ignore stale responses after the user switched fundraisers.
-      if ( ctx.fundraisers.detail?.id !== id ) {
-        return;
-      }
-      supporters.items = rows.map( ( row ) => ( {
-        name: row.name,
-        initials: row.initials,
-        amount: row.amount,
-        timeAgo: row.time_ago,
-        comment: row.comment || '',
-        hasComment: !! row.comment,
-      } ) );
-      supporters.page = page;
-      supporters.loading = false;
+      return response.json().then( ( rows ) => {
+        // Ignore stale responses after the user switched fundraisers.
+        if ( ctx.fundraisers.detail?.id !== id ) {
+          return;
+        }
+        supporters.total = total;
+        supporters.totalPages = totalPages;
+        supporters.items = rows.map( ( row ) => ( {
+          name: row.name,
+          initials: row.initials,
+          amount: row.amount,
+          timeAgo: row.time_ago,
+          comment: row.comment || '',
+          hasComment: !! row.comment,
+        } ) );
+        supporters.page = page;
+        supporters.loading = false;
+      } );
     } )
     .catch( () => {
-      supporters.loading = false;
+      if ( ctx.fundraisers.detail?.id === id ) {
+        supporters.loading = false;
+      }
     } );
 }
 
