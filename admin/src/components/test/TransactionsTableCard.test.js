@@ -58,4 +58,29 @@ describe( 'TransactionsTableCard', () => {
     expect( screen.getAllByRole( 'row' ) ).toHaveLength( 11 ); // header + 10
     expect( screen.queryByText( /Show all/ ) ).toBeNull();
   } );
+
+  it( 'clamps the page when the transactions prop shrinks', () => {
+    const { rerender } = render(
+      <TransactionsTableCard
+        title="Donations"
+        transactions={ makeTxns( 25 ) }
+        columns={ [ 'date', 'donor', 'amount' ] }
+      />
+    );
+
+    fireEvent.click( screen.getByRole( 'button', { name: '3' } ) );
+    expect( screen.getByText( 'Donor 21' ) ).toBeTruthy();
+
+    // A background refetch shrinks the list to a single page.
+    rerender(
+      <TransactionsTableCard
+        title="Donations"
+        transactions={ makeTxns( 8 ) }
+        columns={ [ 'date', 'donor', 'amount' ] }
+      />
+    );
+
+    expect( screen.getAllByRole( 'row' ) ).toHaveLength( 9 ); // header + 8
+    expect( screen.getByText( 'Donor 1' ) ).toBeTruthy();
+  } );
 } );

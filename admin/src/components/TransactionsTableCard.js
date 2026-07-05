@@ -138,8 +138,11 @@ export default function TransactionsTableCard( {
   const [ isExpanded, setIsExpanded ] = useState( ! collapsedCount );
 
   const isCollapsed = ! isExpanded && transactions.length > collapsedCount;
-  const totalPages = Math.ceil( transactions.length / PER_PAGE );
-  const startIndex = ( currentPage - 1 ) * PER_PAGE;
+  const totalPages = Math.max( 1, Math.ceil( transactions.length / PER_PAGE ) );
+  // A background refetch can shrink the list below the current page; clamp
+  // so the pager never strands past the last page.
+  const page = Math.min( currentPage, totalPages );
+  const startIndex = ( page - 1 ) * PER_PAGE;
   const visibleTxns = isCollapsed
     ? transactions.slice( 0, collapsedCount )
     : transactions.slice( startIndex, startIndex + PER_PAGE );
@@ -204,7 +207,7 @@ export default function TransactionsTableCard( {
           </ClickableRows>
           { ! isCollapsed && totalPages > 1 && (
             <Pagination
-              currentPage={ currentPage }
+              currentPage={ page }
               totalPages={ totalPages }
               totalItems={ transactions.length }
               perPage={ PER_PAGE }
