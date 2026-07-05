@@ -16,6 +16,9 @@
 			"Ended": [
 				"Finalizada"
 			],
+			"Ends %s": [
+				"Finaliza el %s"
+			],
 			"donors": [
 				"donantes"
 			],
@@ -112,17 +115,26 @@
 			"Goal": [
 				"Meta"
 			],
+			"Headline": [
+				"Titular"
+			],
 			"Copy": [
 				"Copiar"
 			],
 			"Team name": [
 				"Nombre del equipo"
 			],
+			"Team goal": [
+				"Meta del equipo"
+			],
 			"Members": [
 				"Miembros"
 			],
 			"Captain": [
 				"Capitán"
+			],
+			"Make captain": [
+				"Hacer capitán"
 			],
 			"Remove": [
 				"Eliminar"
@@ -159,6 +171,9 @@
 			],
 			"Status": [
 				"Estado"
+			],
+			"Recent Donations": [
+				"Donaciones recientes"
 			],
 			"Cancel": [
 				"Cancelar"
@@ -199,8 +214,17 @@
 			"%s donation": [
 				"%s donación"
 			],
+			"In memory of %s": [
+				"En memoria de %s"
+			],
+			"In honor of %s": [
+				"En honor a %s"
+			],
 			"Close": [
 				"Cerrar"
+			],
+			"Team fundraising for %s": [
+				"Equipo recaudando fondos para %s"
 			],
 			"No teams yet.": [
 				"Aún no hay equipos."
@@ -225,6 +249,9 @@
 			],
 			"Tools": [
 				"Herramientas"
+			],
+			"Leaderboard": [
+				"Clasificación"
 			],
 			"Save changes": [
 				"Guardar cambios"
@@ -1281,9 +1308,6 @@
 			],
 			"Approve": [
 				"Aprobar"
-			],
-			"Deactivate": [
-				"Desactivar"
 			],
 			"Total Fundraisers": [
 				"Total de recaudadores"
@@ -3389,23 +3413,260 @@
 			"Team captain changed": [
 				"Cambio de capitán del equipo"
 			],
-			"%1$d updated, %2$d failed.": [
-				"%1$d actualizados, %2$d fallidos."
-			],
-			"%d updated.": [
-				"%d actualizados."
-			],
-			"The bulk action failed.": [
-				"La acción en lote falló."
-			],
-			"Deactivate?": [
-				"¿Desactivar?"
-			],
-			"Deactivating hides the selected pages from the site. %d selected.": [
-				"Al desactivar se ocultan las páginas seleccionadas del sitio. %d seleccionados."
-			],
 			"The list could not be loaded.": [
 				"No se ha podido cargar la lista."
+			],
+			"Public": [
+				"Público"
+			],
+			"Private": [
+				"Privado"
+			],
+			"Member": [
+				"Miembro"
+			],
+			"%1$s of %2$s": [
+				"%1$s de %2$s"
+			],
+			"Direct to team": [
+				"Directo al equipo"
+			],
+			"Show all %d donations": [
+				"Mostrar las %d donaciones"
+			],
+			"of %1$s %2$s": [
+				"de %1$s de la %2$s"
+			],
+			"goal": [
+				"meta"
+			],
+			"%d%% of goal": [
+				"%d%% de la meta"
+			],
+			"%d days left": [
+				"Quedan %d días"
+			],
+			"Page URL": [
+				"URL de la página"
+			],
+			"Story": [
+				"Historia"
+			],
+			"Failed to save the story.": [
+				"No se pudo guardar la historia."
+			],
+			"Save Story": [
+				"Guardar historia"
+			],
+			"Edit Fundraiser": [
+				"Editar recaudador"
+			],
+			"Failed to update the fundraiser.": [
+				"No se pudo actualizar el recaudador."
+			],
+			"None": [
+				"Ninguna"
+			],
+			"Fundraiser registered": [
+				"Recaudador registrado"
+			],
+			"Fundraiser reactivated": [
+				"Recaudador reactivado"
+			],
+			"Reached %d%% of goal": [
+				"Alcanzó el %d%% de la meta"
+			],
+			"Failed to load fundraiser.": [
+				"No se pudo cargar el recaudador."
+			],
+			"Back to Fundraisers": [
+				"Volver a recaudadores"
+			],
+			"Copy Page URL": [
+				"Copiar URL de la página"
+			],
+			"Page URL copied.": [
+				"URL de la página copiada."
+			],
+			"Could not copy the URL.": [
+				"No se pudo copiar la URL."
+			],
+			"Unpublish Page": [
+				"Despublicar página"
+			],
+			"Fundraiser page unpublished.": [
+				"Página del recaudador despublicada."
+			],
+			"Failed to unpublish page.": [
+				"No se pudo despublicar la página."
+			],
+			"Reactivate Page": [
+				"Reactivar página"
+			],
+			"Fundraiser approved.": [
+				"Recaudador aprobado."
+			],
+			"Failed to approve fundraiser.": [
+				"No se pudo aprobar el recaudador."
+			],
+			"Delete Page": [
+				"Eliminar página"
+			],
+			"View Public Page": [
+				"Ver página pública"
+			],
+			"Captain · %s": [
+				"Capitán · %s"
+			],
+			"Avg. gift": [
+				"Donación media"
+			],
+			"%d donations": [
+				"%d donaciones"
+			],
+			"Story saved.": [
+				"Historia guardada."
+			],
+			"Fundraiser created": [
+				"Recaudador creado"
+			],
+			"Fundraiser updated.": [
+				"Recaudador actualizado."
+			],
+			"Delete Fundraiser Page": [
+				"Eliminar página del recaudador"
+			],
+			"Are you sure you want to delete the fundraising page for %s? Donations already received are kept, but the page and its progress are removed. This action cannot be undone.": [
+				"¿Seguro que quieres eliminar la página de recaudación de %s? Las donaciones ya recibidas se conservan, pero la página y su progreso se eliminarán. Esta acción no se puede deshacer."
+			],
+			"Failed to delete fundraiser.": [
+				"No se pudo eliminar el recaudador."
+			],
+			"Team URL": [
+				"URL del equipo"
+			],
+			"#%1$d of %2$d teams": [
+				"N.º %1$d de %2$d equipos"
+			],
+			"%d fundraisers": [
+				"%d recaudadores"
+			],
+			"Joined": [
+				"Se unió"
+			],
+			"No members yet.": [
+				"Todavía no hay miembros."
+			],
+			"Remove Team Member": [
+				"Quitar miembro del equipo"
+			],
+			"Remove %s from this team? Their fundraising page stays active, but their totals no longer count toward the team.": [
+				"¿Quitar a %s de este equipo? Su página de recaudación seguirá activa, pero sus totales dejarán de contar para el equipo."
+			],
+			"Edit Team": [
+				"Editar equipo"
+			],
+			"Failed to update the team.": [
+				"No se pudo actualizar el equipo."
+			],
+			"A team name is required.": [
+				"Se requiere un nombre de equipo."
+			],
+			"No captain": [
+				"Sin capitán"
+			],
+			"Team created": [
+				"Equipo creado"
+			],
+			"Team reactivated": [
+				"Equipo reactivado"
+			],
+			"%s joined the team": [
+				"%s se unió al equipo"
+			],
+			"A fundraiser joined the team": [
+				"Un recaudador se unió al equipo"
+			],
+			"%s was invited": [
+				"Se invitó a %s"
+			],
+			"An invitation was sent": [
+				"Se envió una invitación"
+			],
+			"%s became captain": [
+				"%s pasó a ser capitán"
+			],
+			"A new captain was promoted": [
+				"Se nombró a un nuevo capitán"
+			],
+			"Failed to load team.": [
+				"No se pudo cargar el equipo."
+			],
+			"Back to Teams": [
+				"Volver a equipos"
+			],
+			"Copy Team URL": [
+				"Copiar URL del equipo"
+			],
+			"Team URL copied.": [
+				"URL del equipo copiada."
+			],
+			"Deactivate Team": [
+				"Desactivar equipo"
+			],
+			"Team deactivated.": [
+				"Equipo desactivado."
+			],
+			"Failed to deactivate team.": [
+				"No se pudo desactivar el equipo."
+			],
+			"Reactivate Team": [
+				"Reactivar equipo"
+			],
+			"Team approved.": [
+				"Equipo aprobado."
+			],
+			"Failed to approve team.": [
+				"No se pudo aprobar el equipo."
+			],
+			"Disband Team": [
+				"Disolver equipo"
+			],
+			"Rank #%1$d of %2$d teams": [
+				"Puesto %1$d de %2$d equipos"
+			],
+			"team goal": [
+				"meta del equipo"
+			],
+			"%s is now the team captain.": [
+				"%s ahora es el capitán del equipo."
+			],
+			"Failed to promote member.": [
+				"No se pudo ascender al miembro."
+			],
+			"%s was removed from the team.": [
+				"Se quitó a %s del equipo."
+			],
+			"Failed to remove member.": [
+				"No se pudo quitar al miembro."
+			],
+			"Team updated.": [
+				"Equipo actualizado."
+			],
+			"Are you sure you want to disband %s? Members keep their individual fundraising pages, but the team page and its combined progress are removed. This action cannot be undone.": [
+				"¿Seguro que quieres disolver %s? Los miembros conservan sus páginas de recaudación individuales, pero la página del equipo y su progreso conjunto se eliminarán. Esta acción no se puede deshacer."
+			],
+			"Failed to disband team.": [
+				"No se pudo disolver el equipo."
+			],
+			"Make Team Captain": [
+				"Hacer capitán del equipo"
+			],
+			"Make %s the team captain? The current captain becomes a regular member.": [
+				"¿Hacer a %s capitán del equipo? El capitán actual pasará a ser un miembro normal."
+			],
+			"Make Captain": [
+				"Hacer capitán"
 			]
 		}
 	}

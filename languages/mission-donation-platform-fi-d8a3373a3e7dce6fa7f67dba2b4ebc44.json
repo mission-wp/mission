@@ -16,6 +16,9 @@
 			"Ended": [
 				"Päättynyt"
 			],
+			"Ends %s": [
+				"Päättyy %s"
+			],
 			"donors": [
 				"lahjoittajaa"
 			],
@@ -129,6 +132,9 @@
 			],
 			"Status": [
 				"Tila"
+			],
+			"Recent Donations": [
+				"Viimeaikaiset lahjoitukset"
 			],
 			"Cancel": [
 				"Peruuta"
@@ -3128,14 +3134,38 @@
 			"Donation Form": [
 				"Lahjoituslomake"
 			],
+			"Headline": [
+				"Otsikko"
+			],
 			"Team name": [
 				"Tiimin nimi"
+			],
+			"Team goal": [
+				"Tiimin tavoite"
 			],
 			"Members": [
 				"Jäsenet"
 			],
 			"Captain": [
 				"Kapteeni"
+			],
+			"Make captain": [
+				"Tee kapteeniksi"
+			],
+			"In memory of %s": [
+				"Henkilön %s muistoksi"
+			],
+			"In honor of %s": [
+				"Henkilön %s kunniaksi"
+			],
+			"Public": [
+				"Julkinen"
+			],
+			"Private": [
+				"Yksityinen"
+			],
+			"Team fundraising for %s": [
+				"Tiimivarainkeruu kampanjalle %s"
 			],
 			"No teams yet.": [
 				"Ei vielä tiimejä."
@@ -3145,6 +3175,9 @@
 			],
 			"Teams": [
 				"Tiimit"
+			],
+			"Leaderboard": [
+				"Tulostaulu"
 			],
 			"Inactive": [
 				"Ei aktiivinen"
@@ -3302,26 +3335,8 @@
 			"The list could not be loaded.": [
 				"Listaa ei voitu ladata."
 			],
-			"%1$d updated, %2$d failed.": [
-				"%1$d päivitetty, %2$d epäonnistui."
-			],
-			"%d updated.": [
-				"%d päivitetty."
-			],
-			"The bulk action failed.": [
-				"Massatoiminto epäonnistui."
-			],
 			"Approve": [
 				"Hyväksy"
-			],
-			"Deactivate": [
-				"Poista käytöstä"
-			],
-			"Deactivate?": [
-				"Poistetaanko käytöstä?"
-			],
-			"Deactivating hides the selected pages from the site. %d selected.": [
-				"Käytöstä poistaminen piilottaa valitut sivut sivustolta. %d valittu."
 			],
 			"Total Fundraisers": [
 				"Varainkerääjiä yhteensä"
@@ -3406,6 +3421,252 @@
 			],
 			"Teams appear here once supporters create or are added to one.": [
 				"Tiimit näkyvät täällä, kun tukijat luovat tiimin tai heidät lisätään sellaiseen."
+			],
+			"Member": [
+				"Jäsen"
+			],
+			"%1$s of %2$s": [
+				"%1$s / %2$s"
+			],
+			"Direct to team": [
+				"Suoraan tiimille"
+			],
+			"Show all %d donations": [
+				"Näytä kaikki %d lahjoitusta"
+			],
+			"of %1$s %2$s": [
+				"/ %1$s (%2$s)"
+			],
+			"goal": [
+				"tavoite"
+			],
+			"%d%% of goal": [
+				"%d %% tavoitteesta"
+			],
+			"%d days left": [
+				"%d päivää jäljellä"
+			],
+			"Page URL": [
+				"Sivun URL"
+			],
+			"Story": [
+				"Tarina"
+			],
+			"Failed to save the story.": [
+				"Tarinan tallennus epäonnistui."
+			],
+			"Save Story": [
+				"Tallenna tarina"
+			],
+			"Edit Fundraiser": [
+				"Muokkaa varainkerääjää"
+			],
+			"Failed to update the fundraiser.": [
+				"Varainkerääjän päivitys epäonnistui."
+			],
+			"None": [
+				"Ei mitään"
+			],
+			"Fundraiser registered": [
+				"Varainkerääjä rekisteröity"
+			],
+			"Fundraiser reactivated": [
+				"Varainkerääjä aktivoitu uudelleen"
+			],
+			"Reached %d%% of goal": [
+				"Saavutti %d %% tavoitteesta"
+			],
+			"Failed to load fundraiser.": [
+				"Varainkerääjän lataus epäonnistui."
+			],
+			"Back to Fundraisers": [
+				"Takaisin varainkerääjiin"
+			],
+			"Copy Page URL": [
+				"Kopioi sivun URL"
+			],
+			"Page URL copied.": [
+				"Sivun URL kopioitu."
+			],
+			"Could not copy the URL.": [
+				"URL:n kopiointi epäonnistui."
+			],
+			"Unpublish Page": [
+				"Piilota sivu"
+			],
+			"Fundraiser page unpublished.": [
+				"Varainkerääjän sivu piilotettu."
+			],
+			"Failed to unpublish page.": [
+				"Sivun piilottaminen epäonnistui."
+			],
+			"Reactivate Page": [
+				"Aktivoi sivu uudelleen"
+			],
+			"Fundraiser approved.": [
+				"Varainkerääjä hyväksytty."
+			],
+			"Failed to approve fundraiser.": [
+				"Varainkerääjän hyväksyntä epäonnistui."
+			],
+			"Delete Page": [
+				"Poista sivu"
+			],
+			"View Public Page": [
+				"Näytä julkinen sivu"
+			],
+			"Captain · %s": [
+				"Kapteeni · %s"
+			],
+			"Avg. gift": [
+				"Keskim. lahjoitus"
+			],
+			"%d donations": [
+				"%d lahjoitusta"
+			],
+			"Story saved.": [
+				"Tarina tallennettu."
+			],
+			"Fundraiser created": [
+				"Varainkerääjä luotu"
+			],
+			"Fundraiser updated.": [
+				"Varainkerääjä päivitetty."
+			],
+			"Delete Fundraiser Page": [
+				"Poista varainkerääjän sivu"
+			],
+			"Are you sure you want to delete the fundraising page for %s? Donations already received are kept, but the page and its progress are removed. This action cannot be undone.": [
+				"Haluatko varmasti poistaa henkilön %s varainkeruusivun? Jo vastaanotetut lahjoitukset säilyvät, mutta sivu ja sen edistyminen poistetaan. Tätä toimintoa ei voi perua."
+			],
+			"Failed to delete fundraiser.": [
+				"Varainkerääjän poisto epäonnistui."
+			],
+			"Team URL": [
+				"Tiimin URL"
+			],
+			"#%1$d of %2$d teams": [
+				"Sija %1$d / %2$d tiimiä"
+			],
+			"%d fundraisers": [
+				"%d varainkerääjää"
+			],
+			"Joined": [
+				"Liittyi"
+			],
+			"No members yet.": [
+				"Ei vielä jäseniä."
+			],
+			"Remove Team Member": [
+				"Poista tiimin jäsen"
+			],
+			"Remove %s from this team? Their fundraising page stays active, but their totals no longer count toward the team.": [
+				"Poistetaanko %s tästä tiimistä? Hänen varainkeruusivunsa pysyy aktiivisena, mutta hänen keräämiään summia ei enää lasketa tiimin tulokseen."
+			],
+			"Edit Team": [
+				"Muokkaa tiimiä"
+			],
+			"Failed to update the team.": [
+				"Tiimin päivitys epäonnistui."
+			],
+			"A team name is required.": [
+				"Tiimin nimi vaaditaan."
+			],
+			"No captain": [
+				"Ei kapteenia"
+			],
+			"Team created": [
+				"Tiimi luotu"
+			],
+			"Team reactivated": [
+				"Tiimi aktivoitu uudelleen"
+			],
+			"%s joined the team": [
+				"%s liittyi tiimiin"
+			],
+			"A fundraiser joined the team": [
+				"Varainkerääjä liittyi tiimiin"
+			],
+			"%s was invited": [
+				"%s kutsuttiin"
+			],
+			"An invitation was sent": [
+				"Kutsu lähetettiin"
+			],
+			"%s became captain": [
+				"%s nimettiin kapteeniksi"
+			],
+			"A new captain was promoted": [
+				"Uusi kapteeni nimettiin"
+			],
+			"Failed to load team.": [
+				"Tiimin lataus epäonnistui."
+			],
+			"Back to Teams": [
+				"Takaisin tiimeihin"
+			],
+			"Copy Team URL": [
+				"Kopioi tiimin URL"
+			],
+			"Team URL copied.": [
+				"Tiimin URL kopioitu."
+			],
+			"Deactivate Team": [
+				"Poista tiimi käytöstä"
+			],
+			"Team deactivated.": [
+				"Tiimi poistettu käytöstä."
+			],
+			"Failed to deactivate team.": [
+				"Tiimin poistaminen käytöstä epäonnistui."
+			],
+			"Reactivate Team": [
+				"Aktivoi tiimi uudelleen"
+			],
+			"Team approved.": [
+				"Tiimi hyväksytty."
+			],
+			"Failed to approve team.": [
+				"Tiimin hyväksyntä epäonnistui."
+			],
+			"Disband Team": [
+				"Hajota tiimi"
+			],
+			"Rank #%1$d of %2$d teams": [
+				"Sija %1$d / %2$d tiimiä"
+			],
+			"team goal": [
+				"tiimin tavoite"
+			],
+			"%s is now the team captain.": [
+				"%s on nyt tiimin kapteeni."
+			],
+			"Failed to promote member.": [
+				"Jäsenen ylennys epäonnistui."
+			],
+			"%s was removed from the team.": [
+				"%s poistettiin tiimistä."
+			],
+			"Failed to remove member.": [
+				"Jäsenen poisto epäonnistui."
+			],
+			"Team updated.": [
+				"Tiimi päivitetty."
+			],
+			"Are you sure you want to disband %s? Members keep their individual fundraising pages, but the team page and its combined progress are removed. This action cannot be undone.": [
+				"Haluatko varmasti hajottaa tiimin %s? Jäsenet säilyttävät omat varainkeruusivunsa, mutta tiimin sivu ja sen yhteinen edistyminen poistetaan. Tätä toimintoa ei voi perua."
+			],
+			"Failed to disband team.": [
+				"Tiimin hajottaminen epäonnistui."
+			],
+			"Make Team Captain": [
+				"Tee tiimin kapteeniksi"
+			],
+			"Make %s the team captain? The current captain becomes a regular member.": [
+				"Tehdäänkö jäsenestä %s tiimin kapteeni? Nykyisestä kapteenista tulee tavallinen jäsen."
+			],
+			"Make Captain": [
+				"Tee kapteeniksi"
 			]
 		}
 	}
