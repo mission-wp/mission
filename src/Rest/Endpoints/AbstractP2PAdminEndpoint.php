@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Base class for the Fundraisers and Teams admin endpoints.
  *
- * Owns the identical route shape, the list/single/delete/approve/bulk
+ * Owns the identical route shape, the list/single/delete/approve
  * handlers, and the shared param definitions. Concrete endpoints supply the
  * model class, route slug, response shaping, and the create/update handlers.
  */
@@ -197,17 +197,6 @@ abstract class AbstractP2PAdminEndpoint {
 
 		register_rest_route(
 			RestModule::NAMESPACE,
-			"/{$base}/bulk",
-			[
-				'methods'             => 'POST',
-				'callback'            => [ $this, 'bulk_action' ],
-				'permission_callback' => [ $this, 'check_admin_permission' ],
-				'args'                => $this->get_bulk_params(),
-			]
-		);
-
-		register_rest_route(
-			RestModule::NAMESPACE,
 			"/{$base}/(?P<id>\d+)",
 			[
 				[
@@ -348,44 +337,6 @@ abstract class AbstractP2PAdminEndpoint {
 		return new WP_REST_Response( $this->prepare_item( $item ), 200 );
 	}
 
-	/**
-	 * POST handler — bulk approve or deactivate items.
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response
-	 */
-	public function bulk_action( WP_REST_Request $request ): WP_REST_Response {
-		$action  = $request->get_param( 'action' );
-		$ids     = $request->get_param( 'ids' );
-		$updated = [];
-		$errors  = [];
-
-		foreach ( $ids as $id ) {
-			$item = $this->find_item( (int) $id );
-
-			if ( ! $item ) {
-				$errors[] = $id;
-				continue;
-			}
-
-			$result = 'approve' === $action ? $item->approve() : $item->deactivate();
-
-			if ( $result ) {
-				$updated[] = $id;
-			} else {
-				$errors[] = $id;
-			}
-		}
-
-		return new WP_REST_Response(
-			[
-				'updated' => $updated,
-				'errors'  => $errors,
-			],
-			200
-		);
-	}
-
 	// -----
 	// Shared helpers.
 	// -----
@@ -500,22 +451,5 @@ abstract class AbstractP2PAdminEndpoint {
 			],
 			$this->extra_collection_params()
 		);
-	}
-
-	/**
-	 * Bulk-action endpoint parameters.
-	 *
-	 * @return array<string, array<string, mixed>>
-	 */
-	protected function get_bulk_params(): array {
-		return [
-			'action' => Args::enum( [ 'approve', 'deactivate' ], [ 'required' => true ] ),
-			'ids'    => [
-				'type'              => 'array',
-				'required'          => true,
-				'items'             => [ 'type' => 'integer' ],
-				'sanitize_callback' => static fn( $ids ) => array_map( 'absint', (array) $ids ),
-			],
-		];
 	}
 }
