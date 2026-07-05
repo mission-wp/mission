@@ -827,9 +827,9 @@ class CampaignTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test days_left() is null without an end date and never negative.
+	 * Test days_left() is null without an end date or once the end date has passed.
 	 */
-	public function test_days_left_null_without_end_date_and_never_negative(): void {
+	public function test_days_left_null_without_end_date_or_after_end(): void {
 		$open = $this->create_campaign();
 		$past = $this->create_campaign(
 			[
@@ -837,8 +837,15 @@ class CampaignTest extends WP_UnitTestCase {
 				'date_end' => '2020-01-01 00:00:00',
 			]
 		);
+		$today = $this->create_campaign(
+			[
+				'title'    => 'Ends today',
+				'date_end' => wp_date( 'Y-m-d' ) . ' 23:59:59',
+			]
+		);
 
 		$this->assertNull( $open->days_left() );
-		$this->assertSame( 0, $past->days_left() );
+		$this->assertNull( $past->days_left() );
+		$this->assertSame( 0, $today->days_left() );
 	}
 }

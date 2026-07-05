@@ -390,7 +390,7 @@ class Campaign extends Model {
 	 * Uses the same date-only, site-timezone comparison as the lifecycle
 	 * transitions, so 0 means the campaign ends today.
 	 *
-	 * @return int|null Days remaining (never negative), or null when no end date is set.
+	 * @return int|null Days remaining, or null when no end date is set or the end date has passed.
 	 */
 	public function days_left(): ?int {
 		if ( ! $this->date_end ) {
@@ -404,7 +404,9 @@ class Campaign extends Model {
 			return null;
 		}
 
-		return max( 0, (int) round( ( $end - $today ) / DAY_IN_SECONDS ) );
+		$days = (int) round( ( $end - $today ) / DAY_IN_SECONDS );
+
+		return $days < 0 ? null : $days;
 	}
 
 	/**
