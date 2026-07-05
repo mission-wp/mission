@@ -120,7 +120,18 @@ function restoreFocus() {
   lastFocused = null;
 }
 
-const { state } = store( 'mission-donation-platform/p2p-signup', {
+/**
+ * Record that the visitor authenticated mid-flow, so Back and reopen behave
+ * as they do for donors who arrived signed in.
+ */
+function markSignedIn() {
+  state.signedIn = true;
+  state.donorName =
+    `${ state.firstName.trim() } ${ state.lastName.trim() }`.trim();
+  state.donorEmail = state.email.trim();
+}
+
+const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
   state: {
     isOpen: false,
     currentStep: 1,
@@ -221,9 +232,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     },
     onKeydown( event ) {
       if ( event.key === 'Escape' ) {
-        state.isOpen = false;
-        document.body.style.overflow = '';
-        restoreFocus();
+        actions.close();
         return;
       }
 
@@ -319,6 +328,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     },
     back() {
       state.currentStep = 1;
+      state.step1View = state.signedIn ? 'signedin' : 'form';
     },
     continueSignedIn() {
       state.currentStep = 2;
@@ -483,6 +493,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           if ( data.nonce ) {
             ctx.nonce = data.nonce;
           }
+          markSignedIn();
           state.currentStep = 2;
         }
       } catch ( e ) {
@@ -517,6 +528,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         if ( data.nonce ) {
           ctx.nonce = data.nonce;
         }
+        markSignedIn();
         state.currentStep = 2;
       } catch ( e ) {
         state.formError = genericError();
@@ -670,11 +682,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       const token = params.get( 'team_invite' );
       if ( token ) {
         state.inviteToken = token;
-        state.isOpen = true;
-        state.currentStep = 1;
-        state.step1View = ctx.signedIn ? 'signedin' : 'form';
-        document.body.style.overflow = 'hidden';
-        focusIntoDialog();
+        actions.open();
       }
     },
   },
