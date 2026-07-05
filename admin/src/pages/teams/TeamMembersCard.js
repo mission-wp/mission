@@ -6,7 +6,7 @@ import {
   __experimentalVStack as VStack,
   __experimentalText as Text,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatDate } from '@shared/date';
 import { formatAmount } from '@shared/currency';
 import ClickableRows from '@shared/components/ClickableRows';
@@ -81,7 +81,12 @@ export default function TeamMembersCard( { members, onPromote, onRemove } ) {
       title={ __( 'Members', 'mission-donation-platform' ) }
       badge={ sprintf(
         /* translators: %d: number of team members */
-        __( '%d fundraisers', 'mission-donation-platform' ),
+        _n(
+          '%d fundraiser',
+          '%d fundraisers',
+          members.length,
+          'mission-donation-platform'
+        ),
         members.length
       ) }
     >

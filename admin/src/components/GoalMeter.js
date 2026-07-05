@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDate } from '@shared/date';
 
@@ -75,7 +75,12 @@ export default function GoalMeter( {
             <span>
               { sprintf(
                 /* translators: %d: number of days remaining */
-                __( '%d days left', 'mission-donation-platform' ),
+                _n(
+                  '%d day left',
+                  '%d days left',
+                  remaining,
+                  'mission-donation-platform'
+                ),
                 remaining
               ) }
             </span>

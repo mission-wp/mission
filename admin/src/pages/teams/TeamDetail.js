@@ -7,7 +7,7 @@ import {
   __experimentalText as Text,
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDateTime } from '@shared/date';
 import SkeletonBar from '@shared/components/SkeletonBar';
@@ -418,7 +418,12 @@ export default function TeamDetail( { id } ) {
               title={ __( 'Recent Donations', 'mission-donation-platform' ) }
               badge={ sprintf(
                 /* translators: %d: number of donations */
-                __( '%d donations', 'mission-donation-platform' ),
+                _n(
+                  '%d donation',
+                  '%d donations',
+                  transactions.length,
+                  'mission-donation-platform'
+                ),
                 transactions.length
               ) }
               transactions={ transactions }

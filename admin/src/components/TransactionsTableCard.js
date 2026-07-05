@@ -1,5 +1,5 @@
 import { useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatDate } from '@shared/date';
 import { formatAmount } from '@shared/currency';
 import ClickableRows from '@shared/components/ClickableRows';
@@ -159,7 +159,12 @@ export default function TransactionsTableCard( {
           >
             { sprintf(
               /* translators: %d: total number of donations */
-              __( 'Show all %d donations', 'mission-donation-platform' ),
+              _n(
+                'Show all %d donation',
+                'Show all %d donations',
+                transactions.length,
+                'mission-donation-platform'
+              ),
               transactions.length
             ) }
           </button>
