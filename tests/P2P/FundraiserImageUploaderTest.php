@@ -169,12 +169,13 @@ class FundraiserImageUploaderTest extends WP_UnitTestCase {
 		$this->assertIsInt( $result );
 		$this->assertTrue( wp_attachment_is_image( $result ) );
 		$this->assertSame( 'image/gif', get_post_mime_type( $result ) );
+		$this->assertNotEmpty( get_post_meta( $result, FundraiserImageUploader::UPLOAD_MARKER_META, true ) );
 
 		wp_delete_attachment( $result, true );
 	}
 
 	/**
-	 * A replaced attachment nothing references anymore is deleted.
+	 * A replaced plugin-uploaded attachment nothing references anymore is deleted.
 	 */
 	public function test_cleanup_deletes_unreferenced_attachment(): void {
 		$attachment_id = self::factory()->attachment->create_object(
@@ -183,10 +184,27 @@ class FundraiserImageUploaderTest extends WP_UnitTestCase {
 				'post_mime_type' => 'image/gif',
 			]
 		);
+		update_post_meta( $attachment_id, FundraiserImageUploader::UPLOAD_MARKER_META, 1 );
 
 		$this->uploader->cleanup_replaced_image( (string) $attachment_id );
 
 		$this->assertNull( get_post( $attachment_id ) );
+	}
+
+	/**
+	 * An attachment the uploader didn't create is never deleted, even unreferenced.
+	 */
+	public function test_cleanup_keeps_unmarked_library_attachment(): void {
+		$attachment_id = self::factory()->attachment->create_object(
+			[
+				'file'           => 'library-image.gif',
+				'post_mime_type' => 'image/gif',
+			]
+		);
+
+		$this->uploader->cleanup_replaced_image( (string) $attachment_id );
+
+		$this->assertNotNull( get_post( $attachment_id ) );
 	}
 
 	/**
@@ -199,6 +217,7 @@ class FundraiserImageUploaderTest extends WP_UnitTestCase {
 				'post_mime_type' => 'image/gif',
 			]
 		);
+		update_post_meta( $attachment_id, FundraiserImageUploader::UPLOAD_MARKER_META, 1 );
 
 		$other = new Fundraiser(
 			[

@@ -69,6 +69,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->posts} WHERE post_type = %s", $post_type ) );
 	}
 
+	// P2P upload markers live on attachment posts, not plugin CPTs.
+	$wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = '_missiondp_p2p_upload'" );
+
 	// -------------------------------------------------------------------------
 	// Custom tables
 	// -------------------------------------------------------------------------

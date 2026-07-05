@@ -23,6 +23,14 @@ defined( 'ABSPATH' ) || exit;
 class FundraiserImageUploader {
 
 	/**
+	 * Meta key marking attachments created by this uploader.
+	 *
+	 * Only marked attachments are eligible for cleanup_replaced_image(), so
+	 * admin-assigned media library images are never deleted by the plugin.
+	 */
+	public const UPLOAD_MARKER_META = '_missiondp_p2p_upload';
+
+	/**
 	 * Image mime types accepted for fundraiser photos.
 	 *
 	 * @var array<string, string>
@@ -93,15 +101,19 @@ class FundraiserImageUploader {
 		$metadata = wp_generate_attachment_metadata( $attachment_id, $uploaded['file'] );
 		wp_update_attachment_metadata( $attachment_id, $metadata );
 
+		update_post_meta( $attachment_id, self::UPLOAD_MARKER_META, 1 );
+
 		return (int) $attachment_id;
 	}
 
 	/**
 	 * Delete a replaced cover photo unless another record still references it.
 	 *
-	 * Dashboard uploads create a dedicated attachment per photo, but an admin
-	 * can point multiple records at one media-library image, so the attachment
-	 * is only removed once nothing references it.
+	 * Only attachments this uploader created (carrying the marker meta) are
+	 * eligible: an admin can point a record at any media-library image, and
+	 * those may be used in posts or elsewhere, so the plugin never deletes
+	 * them. Marked attachments are removed once no fundraiser or team
+	 * references them.
 	 *
 	 * @param string $old_value Previous cover_image value (attachment ID or URL).
 	 */
@@ -111,12 +123,18 @@ class FundraiserImageUploader {
 			return;
 		}
 
+		$attachment_id = (int) $old_value;
+
+		if ( ! get_post_meta( $attachment_id, self::UPLOAD_MARKER_META, true ) ) {
+			return;
+		}
+
 		$referenced = Fundraiser::count( [ 'cover_image' => $old_value ] ) > 0
 			|| Fundraiser::count( [ 'profile_image' => $old_value ] ) > 0
 			|| Team::count( [ 'cover_image' => $old_value ] ) > 0;
 
-		if ( ! $referenced && wp_attachment_is_image( (int) $old_value ) ) {
-			wp_delete_attachment( (int) $old_value, true );
+		if ( ! $referenced && wp_attachment_is_image( $attachment_id ) ) {
+			wp_delete_attachment( $attachment_id, true );
 		}
 	}
 
