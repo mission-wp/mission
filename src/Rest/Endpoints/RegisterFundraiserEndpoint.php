@@ -376,7 +376,6 @@ class RegisterFundraiserEndpoint {
 				'team_id'      => (int) $request->get_param( 'team_id' ),
 				'team_name'    => (string) $request->get_param( 'team_name' ),
 				'team_access'  => (string) $request->get_param( 'team_access' ),
-				// Goal arrives in major units (what the participant entered); convert here.
 				'goal'         => Currency::major_to_minor( (float) $request->get_param( 'goal' ), $campaign->currency ),
 				'story'        => (string) $request->get_param( 'story' ),
 				'dedicate'     => (bool) $request->get_param( 'dedicate' ),

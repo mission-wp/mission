@@ -139,85 +139,65 @@ class Plugin {
 		$this->campaign_post_type = new Campaigns\CampaignPostType();
 		$this->campaign_post_type->init();
 
-		// Initialize peer-to-peer module (fundraiser/team shell post types).
 		$this->p2p_module = new P2P\P2PModule();
 		$this->p2p_module->init();
 
-		// Initialize milestone tracker for campaigns.
 		$milestone_tracker = new Campaigns\MilestoneTracker();
 		$milestone_tracker->init();
 
-		// Initialize milestone tracker for P2P fundraisers.
 		$fundraiser_milestone_tracker = new P2P\FundraiserMilestoneTracker();
 		$fundraiser_milestone_tracker->init();
 
-		// Initialize blocks module (registers custom blocks).
 		$this->blocks_module = new Blocks\BlocksModule();
 		$this->blocks_module->init();
 
-		// Initialize shortcodes module (page-builder equivalents of the blocks).
 		$shortcodes_module = new Shortcodes\ShortcodesModule();
 		$shortcodes_module->init();
 
-		// Initialize admin module.
 		$this->admin_module = new Admin\AdminModule();
 		$this->admin_module->init();
 
-		// Initialize activity feed module.
 		$this->activity_feed_module = new ActivityFeed\ActivityFeedModule();
 		$this->activity_feed_module->init();
 
-		// Initialize outgoing webhook module.
 		$this->outgoing_webhook_module = new OutgoingWebhooks\OutgoingWebhookModule();
 		$this->outgoing_webhook_module->init();
 
-		// Initialize campaign lifecycle module (status transitions and end-of-campaign actions).
 		$this->campaign_lifecycle_module = new Campaigns\CampaignLifecycleModule();
 		$this->campaign_lifecycle_module->init();
 
-		// Initialize transaction history module.
 		$this->transaction_history_module = new TransactionHistory\TransactionHistoryModule();
 		$this->transaction_history_module->init();
 
-		// Initialize email module (before REST, which injects it into endpoints).
 		$this->email_module = new Email\EmailModule();
 		$this->email_module->init();
 
-		// Initialize REST module.
 		$this->rest_module = new Rest\RestModule( $this->email_module );
 		$this->rest_module->init();
 
-		// Initialize subscription email listener.
 		$subscription_email_listener = new Email\SubscriptionEmailListener();
 		$subscription_email_listener->init( $this->email_module );
 
-		// Initialize donation email listener (one-time donation receipts).
 		$donation_email_listener = new Email\DonationEmailListener();
 		$donation_email_listener->init( $this->email_module );
 
-		// Initialize fundraiser email listener (P2P approved + received-donation).
 		$fundraiser_email_listener = new Email\FundraiserEmailListener();
 		$fundraiser_email_listener->init( $this->email_module );
 
-		// Initialize team email listener (P2P invitation + member joined + approved).
 		$team_email_listener = new Email\TeamEmailListener();
 		$team_email_listener->init( $this->email_module );
 
-		// Initialize admin notification listener.
 		$admin_notifier                    = new Email\AdminNotifier( $this->email_module, new Settings\SettingsService() );
 		$this->admin_notification_listener = new Email\AdminNotificationListener();
 		$this->admin_notification_listener->init( $admin_notifier, $this->email_module );
 
-		// Initialize subscription reconciler (cron safety net).
 		$subscription_reconciler = new Subscriptions\SubscriptionReconciler();
 		$subscription_reconciler->init();
 
-		// Initialize donor dashboard module (donor auth, wp-admin redirect).
 		$this->donor_dashboard_module = new DonorDashboard\DonorDashboardModule();
 		$this->donor_dashboard_module->init();
 
-		// Register the import job handler on every request so Action Scheduler
-		// workers can fire it (not just rest_api_init).
+		// Job handlers register on every request so Action Scheduler workers can fire them.
 		$import_export  = new Export\ExportService( new Settings\SettingsService() );
 		$import_service = new Import\ImportService(
 			$import_export,
@@ -227,7 +207,6 @@ class Plugin {
 		( new Import\ImportJobHandler( $import_service ) )->register();
 		( new Import\ImportCleanup( $import_service ) )->register();
 
-		// Same deal for the migration job handler.
 		$migration_service = new Migration\MigrationService( new Migration\MigratorRegistry() );
 		( new Migration\MigrationJobHandler( $migration_service ) )->register();
 		( new Migration\MigrationCleanup() )->register();

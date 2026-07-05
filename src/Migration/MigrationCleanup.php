@@ -45,7 +45,6 @@ class MigrationCleanup {
 		$store = MigrationPhase::store();
 		$store->prune_terminal( $cutoff );
 
-		// Break a lock whose job no longer has active phase rows (e.g. crash).
 		if ( get_option( MigrationService::LOCK_OPTION ) && null === MigrationPhase::find_active_job_id() ) {
 			delete_option( MigrationService::LOCK_OPTION );
 		}

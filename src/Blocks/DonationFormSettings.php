@@ -67,7 +67,6 @@ class DonationFormSettings {
 		$settings    = [];
 
 		foreach ( self::DEFAULTS as $key => $default ) {
-			// Block attribute wins if explicitly set, otherwise use default.
 			if ( isset( $attributes[ $key ] ) ) {
 				$settings[ $key ] = $attributes[ $key ];
 			} else {
@@ -103,12 +102,10 @@ class DonationFormSettings {
 	 * @return int Campaign table ID, or 0 if none.
 	 */
 	private static function resolve_campaign_id( array $attributes ): int {
-		// Explicit campaignId attribute (campaign table ID).
 		if ( ! empty( $attributes['campaignId'] ) ) {
 			return (int) $attributes['campaignId'];
 		}
 
-		// Auto-detect: if this block is rendered on a campaign post, look up the table ID.
 		$post = get_post();
 		if ( $post && CampaignPostType::POST_TYPE === $post->post_type ) {
 			$campaign = Campaign::find_by_post_id( $post->ID );

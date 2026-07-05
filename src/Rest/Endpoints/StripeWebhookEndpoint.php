@@ -55,9 +55,8 @@ class StripeWebhookEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
-				// Public — called by Stripe (no WordPress credentials available).
-				// Authentication happens inside handle() via Stripe's webhook
-				// signature verification using the stored webhook secret.
+				// Public — Stripe can't send WordPress credentials; handle()
+				// authenticates via webhook signature verification instead.
 				'permission_callback' => '__return_true',
 			]
 		);
@@ -145,8 +144,6 @@ class StripeWebhookEndpoint {
 			}
 		}
 
-		// Try every connected account — covers payloads without account_id and
-		// guards against the account_id mismatch case.
 		foreach ( $this->settings->get_stripe_accounts() as $account ) {
 			$secret = (string) ( $account['webhook_secret'] ?? '' );
 			if ( '' !== $secret && ! in_array( $secret, $secrets, true ) ) {
@@ -154,7 +151,6 @@ class StripeWebhookEndpoint {
 			}
 		}
 
-		// Legacy single-account secret — kept for one release of backward compat.
 		$legacy = (string) $this->settings->get( 'stripe_webhook_secret', '' );
 		if ( '' !== $legacy && ! in_array( $legacy, $secrets, true ) ) {
 			$secrets[] = $legacy;
@@ -279,25 +275,21 @@ class StripeWebhookEndpoint {
 
 		$transaction = $transactions[0];
 
-		// Idempotency: skip if already fully refunded.
 		if ( Transaction::STATUS_REFUNDED === $transaction->status ) {
 			return;
 		}
 
 		$stripe_refunded = (int) ( $data['amount_refunded'] ?? 0 );
 
-		// Cap at total_amount to avoid over-refunding.
 		$new_refunded = min( $stripe_refunded, $transaction->total_amount );
 		$refund_delta = $new_refunded - $transaction->amount_refunded;
 
-		// Idempotency: skip if no new refund amount.
 		if ( $refund_delta <= 0 ) {
 			return;
 		}
 
 		$transaction->amount_refunded = $new_refunded;
 
-		// Mark as fully refunded when the entire amount has been returned.
 		if ( $new_refunded >= $transaction->total_amount ) {
 			$transaction->status        = Transaction::STATUS_REFUNDED;
 			$transaction->date_refunded = current_time( 'mysql', true );

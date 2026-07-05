@@ -15,8 +15,6 @@ import metadata from './block.json';
 import './style.scss';
 import './editor.scss';
 
-// Placeholder rows showing the ranked-list layout only — no real members exist
-// while editing.
 const ROWS = [
   { captain: true, raised: 168000, goal: 200000 },
   { captain: false, raised: 92000, goal: 200000 },

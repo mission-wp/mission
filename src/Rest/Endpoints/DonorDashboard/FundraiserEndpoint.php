@@ -180,7 +180,6 @@ class FundraiserEndpoint {
 		}
 
 		if ( null !== $request->get_param( 'goal' ) ) {
-			// The goal arrives in major units (what the fundraiser entered); convert here.
 			$currency         = $fundraiser->campaign()?->currency ?: 'USD';
 			$fundraiser->goal = Currency::major_to_minor( max( 0, (float) $request->get_param( 'goal' ) ), $currency );
 		}
@@ -197,7 +196,6 @@ class FundraiserEndpoint {
 		$tribute_name = $request->get_param( 'tribute_name' );
 
 		if ( null !== $tribute_type || null !== $tribute_name ) {
-			// Partial updates keep the other half of the dedication intact.
 			$existing = $fundraiser->dedication();
 
 			$fundraiser->set_dedication(

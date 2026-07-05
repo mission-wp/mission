@@ -16,8 +16,6 @@ import metadata from './block.json';
 import './style.scss';
 import './editor.scss';
 
-// Placeholder rows showing the list layout only — no real supporters exist
-// while editing.
 const ROWS = [
   { amount: 10000, showComment: true },
   { amount: 5000, showComment: false },

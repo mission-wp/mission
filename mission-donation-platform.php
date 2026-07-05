@@ -18,9 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// PHP version check. Must run before the autoloader is required, since the
-// plugin's source uses PHP 8.0+ syntax that would fatal during parsing on
-// older versions. Keep this block 7.x-safe.
+// Must run before the autoloader: the plugin source uses PHP 8.0+ syntax. Keep this block 7.x-safe.
 if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	add_action(
 		'admin_notices',
@@ -54,7 +52,6 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 	return;
 }
 
-// Plugin constants.
 define( 'MISSIONDP_VERSION', '1.3.2' );
 define( 'MISSIONDP_FILE', __FILE__ );
 define( 'MISSIONDP_PATH', plugin_dir_path( __FILE__ ) );
@@ -63,21 +60,17 @@ define( 'MISSIONDP_BASENAME', plugin_basename( __FILE__ ) );
 define( 'MISSIONDP_STRIPE_PK_TEST', 'pk_test_51T5DwoQLFYekpV0FSkXZtgzDJ9c1NxnIT0yXWzueakHgSaQyW5xSBwnIt6ysjmXMTlsHAQ0aX9KUTSk6h27PeonZ00kW2hnLQF' );
 define( 'MISSIONDP_STRIPE_PK_LIVE', 'pk_live_51T5DwoQLFYekpV0Fmd9UBolXWaoBAnSvLud40NTmdRBkJlHgbhBbzEhIeXlDMrNe7KosZTskGSTY7KI1RejfBuRn00pnVlZyia' );
 
-// Load Composer autoloader.
 $missiondp_autoloader = __DIR__ . '/vendor/autoload.php';
 if ( file_exists( $missiondp_autoloader ) ) {
 	require_once $missiondp_autoloader;
 
-	// Bootstrap Action Scheduler. Its loader picks the highest version if multiple
-	// plugins ship it (e.g. WooCommerce), so this is safe to call directly.
-	// Skipped in PHPUnit: the suite relies on the synchronous fallbacks and
-	// fires scheduling hooks manually.
+	// Action Scheduler's loader handles multiple plugins shipping it. Skipped in
+	// PHPUnit: the suite relies on synchronous fallbacks and fires hooks manually.
 	$missiondp_action_scheduler = __DIR__ . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
 	if ( file_exists( $missiondp_action_scheduler ) && ! defined( 'MISSIONDP_TESTING' ) ) {
 		require_once $missiondp_action_scheduler;
 	}
 } else {
-	// If Composer dependencies haven't been installed, show an admin notice.
 	add_action(
 		'admin_notices',
 		static function () {
@@ -97,13 +90,9 @@ if ( file_exists( $missiondp_autoloader ) ) {
 // Register custom meta tables with $wpdb early so they're available during activation.
 \MissionDP\Database\DatabaseModule::register_meta_tables();
 
-// Activation hook.
 register_activation_hook( __FILE__, [ '\MissionDP\Activator', 'activate' ] );
-
-// Deactivation hook.
 register_deactivation_hook( __FILE__, [ '\MissionDP\Deactivator', 'deactivate' ] );
 
-// Bootstrap the plugin.
 if ( class_exists( '\MissionDP\Plugin' ) ) {
 	\MissionDP\Plugin::instance()->init();
 }

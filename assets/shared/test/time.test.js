@@ -4,7 +4,6 @@ import { timeAgo } from '../time';
 
 describe( 'timeAgo', () => {
   beforeEach( () => {
-    // Fix "now" to 2026-03-13T12:00:00Z.
     jest
       .spyOn( Date, 'now' )
       .mockReturnValue( new Date( '2026-03-13T12:00:00Z' ).getTime() );

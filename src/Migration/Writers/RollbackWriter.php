@@ -43,7 +43,6 @@ class RollbackWriter extends AbstractWriter {
 		$count = 0;
 		$after = 0;
 
-		// Walk the meta cursor; created sets are bounded by what one run wrote.
 		do {
 			$ids    = $this->model_class( $entity )::find_ids_with_meta( self::CREATED_META_KEY, $this->job_id, 500, $after );
 			$count += count( $ids );

@@ -137,8 +137,6 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 			);
 		}
 
-		// The captain joins through the model path so their team_id and captain
-		// flag stay in sync with the team's captain_id.
 		if ( $captain_id ) {
 			$captain = Fundraiser::find( (int) $captain_id );
 			$captain->join_team( $team, true );
@@ -183,8 +181,6 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 
 		$team->save();
 
-		// Captain changes go through the model so both sides of the association
-		// stay in sync (captain_id and the members' is_team_captain flags).
 		if ( $request->has_param( 'captain_id' ) ) {
 			$captain_id = $request->get_param( 'captain_id' );
 
@@ -242,8 +238,6 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 		$campaign = $item->campaign();
 		$captain  = $item->captain();
 
-		// Live totals and rank in one pass each; rank counts active teams only,
-		// so the "#N of M" label reads "of M active teams".
 		$totals   = $this->reporting->team_totals( (int) $item->id );
 		$rank     = $this->reporting->team_rank( (int) $item->id );
 		$progress = $item->goal > 0 ? min( 100.0, round( $totals['raised'] / $item->goal * 100, 2 ) ) : 0.0;

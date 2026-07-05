@@ -45,7 +45,6 @@ export default function Edit( {
   const [ pluginDefaults, setPluginDefaults ] = useState( null );
   const [ editorView, setEditorView ] = useState( 'form' );
 
-  // Get the current post context for auto-detect.
   const {
     currentPostType,
     currentPostId,
@@ -76,7 +75,6 @@ export default function Edit( {
 
   const isActive = isSelected || hasSelectedInnerBlock;
 
-  // Fetch campaigns for the combobox.
   useEffect( () => {
     apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( response ) => {
@@ -92,7 +90,6 @@ export default function Edit( {
       .catch( () => {} );
   }, [] );
 
-  // Auto-generate a persistent form ID on first insert.
   useEffect( () => {
     if ( ! attributes.formId ) {
       const bytes = new Uint8Array( 4 );
@@ -104,14 +101,12 @@ export default function Edit( {
     }
   }, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Reset to form view when block is fully deselected.
   useEffect( () => {
     if ( ! isActive ) {
       setEditorView( 'form' );
     }
   }, [ isActive ] );
 
-  // Auto-detect campaign when on a campaign post and no explicit ID set.
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
@@ -123,7 +118,6 @@ export default function Edit( {
     effectiveId = match?.id || 0;
   }
 
-  // Campaign options filtered by the combobox input.
   const campaignOptions = campaigns
     .filter( ( c ) => {
       if ( ! filterValue ) {

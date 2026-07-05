@@ -66,7 +66,6 @@ class DeliveryHandler {
 
 		$body = $delivery->request_body;
 
-		// Build headers.
 		$signature = hash_hmac( 'sha256', $body, $webhook->secret );
 
 		$headers = [
@@ -180,12 +179,10 @@ class DeliveryHandler {
 			$webhook->health = 'failing';
 		}
 
-		// Track when failures started.
 		if ( 'healthy' === $previous_health && $webhook->failure_count >= self::FAILING_THRESHOLD ) {
 			$webhook->failing_since = current_time( 'mysql', true );
 		}
 
-		// Auto-pause after prolonged continuous failure.
 		if ( $webhook->failing_since ) {
 			$failing_duration = time() - strtotime( $webhook->failing_since . ' UTC' );
 
@@ -229,7 +226,6 @@ class DeliveryHandler {
 			return;
 		}
 
-		// Without Action Scheduler there is no way to schedule a delayed retry.
 		if ( ! function_exists( 'as_schedule_single_action' ) ) {
 			return;
 		}

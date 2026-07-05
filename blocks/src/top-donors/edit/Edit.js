@@ -85,7 +85,6 @@ export default function Edit( { attributes, setAttributes } ) {
       .finally( () => setIsLoadingList( false ) );
   }, [] );
 
-  // Resolve effective campaign ID.
   let effectiveId = campaignId;
   if (
     ! effectiveId &&

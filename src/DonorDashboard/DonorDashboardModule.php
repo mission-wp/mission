@@ -179,7 +179,6 @@ class DonorDashboardModule {
 			return;
 		}
 
-		// Only act if the email actually changed.
 		if ( $user->user_email === $old_user_data->user_email ) {
 			return;
 		}

@@ -239,8 +239,6 @@ export const teamActions = {
     teams.edit.error = '';
 
     try {
-      // Upload the staged team image first; a failure aborts the save so
-      // the captain can fix the image and try again.
       if ( stagedTeamPhoto ) {
         const body = new FormData();
         body.append( 'file', stagedTeamPhoto );
@@ -526,7 +524,6 @@ export const teamActions = {
 
       const data = yield response.json();
 
-      // The acting donor is no longer captain; the management tools drop away.
       card.isCaptain = false;
       card.roleLabel = teams.i18n?.memberRole || 'Member';
       card.captainName = member.name;
@@ -576,7 +573,6 @@ export const teamActions = {
         return;
       }
 
-      // Drop the team from the list and detach it from the fundraiser card.
       const index = teams.current.findIndex( ( row ) => row.id === card.id );
       if ( index > -1 ) {
         teams.current.splice( index, 1 );

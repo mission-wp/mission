@@ -45,9 +45,8 @@ class PrimaryColorResolver {
 		$primary_text          = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
 		$primary_text_on_light = $luminance > 0.5 ? $darken( $hex, 45 ) : $hex;
 
-		// 10% primary blended into white, precomputed as a solid hex: kses
-		// strips function values (color-mix, rgba) from custom properties
-		// when block output is sanitized.
+		// 10% primary blended into white, precomputed as a solid hex: kses strips
+		// function values (color-mix, rgba) from custom properties.
 		$light = sprintf(
 			'#%02x%02x%02x',
 			(int) round( $r * 0.1 + 255 * 0.9 ),

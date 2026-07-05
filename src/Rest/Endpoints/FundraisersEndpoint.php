@@ -134,7 +134,6 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			return RestErrors::donor_not_found();
 		}
 
-		// One fundraiser record per person per campaign.
 		if ( $this->find_existing( $campaign->id, $donor->id ) ) {
 			return $this->duplicate_error();
 		}
@@ -198,8 +197,6 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			if ( $team_error ) {
 				return $team_error;
 			}
-			// Route through the model so captain bookkeeping and the
-			// joined/left events stay consistent.
 			$fundraiser->move_to_team( $team_id ? Team::find( (int) $team_id ) : null );
 		}
 

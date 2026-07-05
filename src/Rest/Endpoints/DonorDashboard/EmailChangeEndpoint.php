@@ -118,7 +118,6 @@ class EmailChangeEndpoint {
 
 		$new_email = $request->get_param( 'new_email' );
 
-		// Validate the new email is different.
 		if ( $new_email === $donor->email ) {
 			return new WP_Error(
 				'email_unchanged',
@@ -127,7 +126,6 @@ class EmailChangeEndpoint {
 			);
 		}
 
-		// Check the new email is not used by another donor.
 		$existing_donor = Donor::find_by_email( $new_email );
 		if ( $existing_donor && $existing_donor->id !== $donor->id ) {
 			return new WP_Error(
@@ -137,7 +135,6 @@ class EmailChangeEndpoint {
 			);
 		}
 
-		// Check the new email is not used by another WP user.
 		$existing_user_id = email_exists( $new_email );
 		if ( $existing_user_id && $existing_user_id !== $donor->user_id ) {
 			return new WP_Error(
@@ -147,7 +144,6 @@ class EmailChangeEndpoint {
 			);
 		}
 
-		// Generate token and store pending change.
 		$token      = wp_generate_password( 32, false );
 		$token_hash = wp_hash_password( $token );
 
@@ -158,7 +154,6 @@ class EmailChangeEndpoint {
 			gmdate( 'Y-m-d H:i:s', time() + self::TOKEN_EXPIRY_HOURS * HOUR_IN_SECONDS )
 		);
 
-		// Build verification URL.
 		$verification_url = add_query_arg(
 			[
 				'action' => 'verify-email',
@@ -168,7 +163,6 @@ class EmailChangeEndpoint {
 			$this->get_dashboard_url()
 		);
 
-		// Send verification email to the new address.
 		$email_module = $this->email;
 
 		if ( ! $email_module->is_email_enabled( 'email_change_verification' ) ) {

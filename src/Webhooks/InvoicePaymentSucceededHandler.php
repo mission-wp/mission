@@ -49,7 +49,6 @@ class InvoicePaymentSucceededHandler {
 			return;
 		}
 
-		// Find the subscription.
 		$subscriptions = Subscription::query(
 			[
 				'gateway_subscription_id' => $stripe_subscription_id,
@@ -71,7 +70,6 @@ class InvoicePaymentSucceededHandler {
 			]
 		);
 
-		// Store card details on the renewal transaction if provided.
 		$payment_method = $data['payment_method'] ?? [];
 		$brand          = $payment_method['brand'] ?? '';
 		$last4          = $payment_method['last4'] ?? '';
@@ -83,7 +81,6 @@ class InvoicePaymentSucceededHandler {
 			$transaction->update_meta( 'payment_method_last4', $last4 );
 		}
 
-		// Keep subscription-level card details current.
 		if ( $brand || $last4 ) {
 			if ( $brand ) {
 				$subscription->update_meta( 'payment_method_brand', $brand );

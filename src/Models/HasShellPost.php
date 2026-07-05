@@ -135,9 +135,8 @@ trait HasShellPost {
 				return;
 			}
 
-			// An externally trashed post stays in the trash (writing a status
-			// here would silently restore it), and a deleted post stays gone.
-			// ShellPostStatusGuard deactivates the row in both cases.
+			// Don't write to a trashed post (it would silently restore it) or a
+			// deleted one; ShellPostStatusGuard deactivates the row in both cases.
 			$post_status = get_post_status( $this->post_id );
 			if ( ! $post_status || 'trash' === $post_status ) {
 				return;

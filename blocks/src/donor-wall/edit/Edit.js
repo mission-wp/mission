@@ -304,7 +304,6 @@ export default function Edit( { attributes, setAttributes } ) {
       .finally( () => setIsLoadingList( false ) );
   }, [] );
 
-  // Resolve effective campaign ID.
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
@@ -339,7 +338,6 @@ export default function Edit( { attributes, setAttributes } ) {
     [ setAttributes ]
   );
 
-  // Filter, sort, and paginate sample data to match settings.
   const filteredDonors = SAMPLE_DONORS.filter(
     ( d ) => showAnonymous || ! d.is_anonymous
   );
@@ -350,7 +348,6 @@ export default function Edit( { attributes, setAttributes } ) {
     if ( defaultSort === 'earliest' ) {
       return b.hoursAgo - a.hoursAgo;
     }
-    // recent (default): smallest hoursAgo first.
     return a.hoursAgo - b.hoursAgo;
   } );
   const totalDonors = sortedDonors.length;

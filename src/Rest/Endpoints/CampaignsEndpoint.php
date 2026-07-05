@@ -234,18 +234,15 @@ class CampaignsEndpoint {
 			);
 		}
 
-		// Seed the moderation/goal defaults so the P2P settings panel opens populated.
 		if ( $campaign->is_p2p() ) {
 			$campaign->apply_p2p_default_settings();
 		}
 
-		// Save campaign image to campaign meta.
 		$image = $request->get_param( 'image' );
 		if ( $image ) {
 			$campaign->set_image( $image );
 		}
 
-		// Save meta fields to campaign_meta table.
 		foreach ( self::CREATABLE_META as $key ) {
 			$value = $request->get_param( $key );
 			if ( null !== $value ) {
@@ -517,7 +514,6 @@ class CampaignsEndpoint {
 
 		$goal_changed = false;
 
-		// Update goal type.
 		if ( null !== $request->get_param( 'goal_type' ) ) {
 			$new_type = $request->get_param( 'goal_type' );
 			if ( $campaign->goal_type !== $new_type ) {
@@ -526,7 +522,6 @@ class CampaignsEndpoint {
 			$campaign->goal_type = $new_type;
 		}
 
-		// Update table fields.
 		if ( null !== $request->get_param( 'goal_amount' ) ) {
 			$raw_goal = (int) $request->get_param( 'goal_amount' );
 			if ( $raw_goal < 0 ) {
@@ -556,7 +551,6 @@ class CampaignsEndpoint {
 
 		$campaign->save();
 
-		// Update campaign image.
 		if ( $request->has_param( 'image' ) ) {
 			$image = $request->get_param( 'image' );
 			if ( $image ) {
@@ -566,12 +560,10 @@ class CampaignsEndpoint {
 			}
 		}
 
-		// Toggle campaign page visibility.
 		if ( $request->has_param( 'has_campaign_page' ) ) {
 			$campaign->set_campaign_page_enabled( (bool) $request->get_param( 'has_campaign_page' ) );
 		}
 
-		// Toggle show in listings.
 		if ( $request->has_param( 'show_in_listings' ) ) {
 			$campaign->show_in_listings = (bool) $request->get_param( 'show_in_listings' );
 			$campaign->save();
@@ -588,7 +580,6 @@ class CampaignsEndpoint {
 			);
 		}
 
-		// Update meta fields.
 		foreach ( self::UPDATABLE_META as $key ) {
 			$value = $request->get_param( $key );
 			if ( null !== $value ) {
@@ -596,7 +587,6 @@ class CampaignsEndpoint {
 			}
 		}
 
-		// Persist P2P settings only for P2P campaigns, casting to native types.
 		if ( $campaign->is_p2p() ) {
 			foreach ( self::P2P_META as $key => $cast ) {
 				$value = $request->get_param( $key );

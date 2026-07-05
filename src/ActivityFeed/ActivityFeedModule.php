@@ -73,33 +73,25 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	private function register_event_listeners(): void {
-		// Donation completed (via status transition or created directly as completed).
 		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
 		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
-		// Donation refunded.
 		add_action( 'mission_transaction_status_completed_to_refunded', [ $this, 'on_donation_refunded' ] );
 
-		// Subscription created.
 		add_action( 'mission_subscription_created', [ $this, 'on_subscription_created' ] );
 
-		// Subscription cancelled.
 		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
-		// Subscription failed.
 		add_action( 'mission_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
 		add_action( 'mission_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
 
-		// Subscription amount changed.
 		add_action( 'mission_subscription_amount_changed', [ $this, 'on_subscription_amount_changed' ], 10, 3 );
 
-		// Campaign created.
 		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
 
-		// Peer-to-peer fundraisers and teams.
 		add_action( 'mission_fundraiser_created', [ $this, 'on_fundraiser_registered' ] );
 		add_action( 'mission_fundraiser_approved', [ $this, 'on_fundraiser_approved' ] );
 		add_action( 'mission_fundraiser_reactivated', [ $this, 'on_fundraiser_reactivated' ] );
@@ -110,60 +102,44 @@ class ActivityFeedModule {
 		add_action( 'mission_team_invitation_created', [ $this, 'on_team_invited' ] );
 		add_action( 'mission_team_captain_promoted', [ $this, 'on_team_captain_promoted' ], 10, 3 );
 
-		// Campaign milestone reached.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
 		add_action( 'mission_fundraiser_milestone_reached', [ $this, 'on_fundraiser_milestone_reached' ], 10, 3 );
 
-		// Plugin updated.
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_complete' ], 10, 2 );
 
-		// Plugin deactivated.
 		add_action( 'mission_plugin_deactivating', [ $this, 'on_plugin_deactivating' ] );
 
-		// Admin notification sent.
 		add_action( 'mission_admin_notification_sent', [ $this, 'on_admin_notification_sent' ], 10, 3 );
 
-		// Payment failed.
 		add_action( 'mission_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
 
-		// Webhook processed.
 		add_action( 'mission_webhook_event_processed', [ $this, 'on_webhook_processed' ], 10, 3 );
 
-		// Email sent / failed.
 		add_action( 'mission_email_sent', [ $this, 'on_email_sent' ], 10, 2 );
 		add_action( 'mission_email_failed', [ $this, 'on_email_failed' ], 10, 2 );
 
-		// Settings updated.
 		add_action( 'mission_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
 
-		// Stripe account fallback (form requested a disconnected account, used default instead).
 		add_action( 'mission_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
 
-		// Outgoing webhooks.
 		add_action( 'mission_outgoing_webhook_created', [ $this, 'on_outgoing_webhook_created' ] );
 		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ], 10, 2 );
 		add_action( 'mission_outgoing_webhook_auto_paused', [ $this, 'on_outgoing_webhook_auto_paused' ] );
 
-		// Migration runs.
 		add_action( 'mission_migration_completed', [ $this, 'on_migration_completed' ], 10, 2 );
 		add_action( 'mission_migration_rolled_back', [ $this, 'on_migration_rolled_back' ], 10, 2 );
 		add_action( 'mission_migration_failed', [ $this, 'on_migration_failed' ], 10, 3 );
 
-		// Mission API call failures.
 		add_action( 'mission_subscription_api_call_failed', [ $this, 'on_subscription_api_failed' ], 10, 4 );
 		add_action( 'mission_refund_api_call_failed', [ $this, 'on_refund_api_failed' ], 10, 3 );
 
-		// Campaign status transitions.
 		add_action( 'mission_campaign_status_changed', [ $this, 'on_campaign_status_changed' ], 10, 3 );
 
-		// Data import / export.
 		add_action( 'mission_import_completed', [ $this, 'on_import_completed' ] );
 		add_action( 'mission_data_exported', [ $this, 'on_data_exported' ], 10, 3 );
 
-		// Cleanup operations.
 		add_action( 'mission_cleanup_performed', [ $this, 'on_cleanup_performed' ], 10, 2 );
 
-		// Donor auth email failures (suppressed to prevent email enumeration).
 		add_action( 'mission_donor_activation_email_suppressed', [ $this, 'on_donor_activation_suppressed' ], 10, 2 );
 		add_action( 'mission_donor_password_reset_email_suppressed', [ $this, 'on_donor_password_reset_suppressed' ], 10, 2 );
 	}
@@ -369,7 +345,6 @@ class ActivityFeedModule {
 	private function register_pruning(): void {
 		add_action( 'missiondp_daily_cleanup', [ $this, 'run_prune' ] );
 
-		// Ensure the cron is scheduled.
 		add_action( 'init', [ $this, 'ensure_cron_scheduled' ] );
 	}
 
@@ -721,9 +696,8 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	public function on_team_joined( object $fundraiser, object $team ): void {
-		// The captain's founding join is not a "member joined" event; that
-		// creation is already logged as team_created. (captain_id isn't set yet
-		// at this point in registration, so key off the captain flag.)
+		// Skip the captain's founding join; it's already logged as team_created.
+		// (captain_id isn't set yet during registration, so key off the flag.)
 		if ( $fundraiser->is_team_captain ) {
 			return;
 		}
@@ -1202,14 +1176,10 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	public function on_import_completed( object $job ): void {
-		// Nothing was written (e.g. an update run where every row was unchanged
-		// or skipped), so there is nothing worth recording.
 		if ( 0 === $job->imported && 0 === $job->updated ) {
 			return;
 		}
 
-		// The import runs in a background job, so there's no current user to
-		// attribute it to. Resolve the importer from the job and store the name.
 		$this->log(
 			'data_imported',
 			$job->type,

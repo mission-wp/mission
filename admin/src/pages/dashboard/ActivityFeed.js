@@ -335,7 +335,6 @@ function campaignLink( title, id ) {
   );
 }
 
-// [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
 const importTypeLabels = {
   donors: [ 'donor', 'donors' ],
   transactions: [ 'transaction', 'transactions' ],
@@ -927,7 +926,7 @@ function getEventText( event ) {
     const imported = Number( data.imported ) || 0;
     const updated = Number( data.updated ) || 0;
 
-    // Nothing was written — don't show this activity at all.
+    // Nothing was written; don't show this activity at all.
     if ( imported === 0 && updated === 0 ) {
       return null;
     }
@@ -935,7 +934,6 @@ function getEventText( event ) {
     const actor = data.actor_name;
     // The trailing noun agrees with the last count shown.
     const noun = importNoun( data.type, updated > 0 ? updated : imported );
-    // Capitalize the leading verb only when there's no actor prefix.
     const lead = actor ? 'imported' : 'Imported';
 
     let body;
@@ -1106,7 +1104,6 @@ function getEventText( event ) {
     );
   }
 
-  // Fallback: humanize the event name.
   return eventType
     .replace( /_/g, ' ' )
     .replace( /\b\w/g, ( c ) => c.toUpperCase() );

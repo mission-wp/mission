@@ -37,11 +37,8 @@ class Kses {
 
 		$allowed = wp_kses_allowed_html( 'post' );
 
-		// Common attributes that should be allowed on every interactive tag,
-		// including Interactivity API directives and ARIA attributes. `class`,
-		// `id`, and `style` are listed explicitly because WordPress's `post`
-		// allowlist omits some tags entirely (e.g. `input`), in which case
-		// those tags would lose their styling hooks during kses.
+		// `class`, `id`, and `style` are listed explicitly because WordPress's
+		// `post` allowlist omits some tags entirely (e.g. `input`).
 		$shared_attrs = [
 			'class'                 => true,
 			'id'                    => true,
@@ -91,9 +88,7 @@ class Kses {
 			'data-wp-router-region' => true,
 		];
 
-		// Tags that appear in our block templates and may carry Interactivity
-		// API directives, custom data-* attrs, or ARIA attrs. `template` is
-		// load-bearing: data-wp-each renders nothing without it.
+		// `template` is load-bearing: data-wp-each renders nothing without it.
 		$interactive_tags = [
 			'template',
 			'div',
@@ -136,7 +131,6 @@ class Kses {
 			$allowed[ $tag ] = array_merge( $allowed[ $tag ], $shared_attrs );
 		}
 
-		// Inputs and form controls need a baseline of attrs.
 		$form_attrs = [
 			'name'         => true,
 			'type'         => true,
@@ -170,7 +164,6 @@ class Kses {
 			$allowed[ $tag ] = array_merge( $allowed[ $tag ] ?? [], $form_attrs );
 		}
 
-		// SVG and friends — used for medal/star/icon rendering in blocks.
 		$svg_attrs = array_merge(
 			$shared_attrs,
 			[

@@ -19,7 +19,6 @@ export default function HtmlCodeEditor( { value, onChange, visible } ) {
     onChangeRef.current = onChange;
   }, [ onChange ] );
 
-  // Initialize CodeMirror once.
   useEffect( () => {
     const textarea = textareaRef.current;
     if ( ! textarea ) {
@@ -58,7 +57,6 @@ export default function HtmlCodeEditor( { value, onChange, visible } ) {
     };
   }, [] ); // eslint-disable-line react-hooks/exhaustive-deps -- Intentionally run once on mount.
 
-  // Sync external value changes into CodeMirror (e.g. reset to default).
   useEffect( () => {
     const cm = editorRef.current;
     if ( cm && cm.getValue() !== value ) {

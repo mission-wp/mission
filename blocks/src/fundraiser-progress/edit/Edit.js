@@ -26,7 +26,6 @@ const DONATE_BUTTON_OPTIONS = [
   { label: __( 'Hide', 'mission-donation-platform' ), value: 'hide' },
 ];
 
-// Representative figures for the editor preview only.
 const SAMPLE = {
   raised: 125000,
   goal: 200000,

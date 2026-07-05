@@ -181,7 +181,6 @@ class AdminModule {
 			$asset['version']
 		);
 
-		// Enqueue block editor assets when viewing a campaign detail page.
 		$this->maybe_enqueue_block_editor( $screen );
 
 		$settings         = get_option( 'missiondp_settings', [] );
@@ -241,27 +240,22 @@ class AdminModule {
 			return;
 		}
 
-		// Only load on the campaign detail view (has ?campaign=ID).
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check for page context.
 		$campaign_id = isset( $_GET['campaign'] ) ? absint( $_GET['campaign'] ) : 0;
 		if ( ! $campaign_id ) {
 			return;
 		}
 
-		// Enqueue block editor UI, editor chrome, and block-level styles
-		// (core-registered handles; suffix built at runtime so this file
-		// doesn't read as declaring `wp-`-prefixed identifiers itself).
+		// Suffix built at runtime so this file doesn't read as declaring
+		// `wp-`-prefixed identifiers itself.
 		$core_prefix = 'wp-';
 		foreach ( [ 'block-editor', 'editor', 'edit-blocks', 'format-library' ] as $suffix ) {
 			wp_enqueue_style( $core_prefix . $suffix );
 		}
 
-		// Fire the block editor assets action so registered blocks
-		// get their editor scripts/styles enqueued.
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Invoking WordPress core action to load block editor assets on our custom admin page.
 		do_action( 'enqueue_block_editor_assets' );
 
-		// Build editor settings and inline them for the JS block editor.
 		$block_editor_context = new \WP_Block_Editor_Context( [ 'name' => 'mission-donation-platform/campaign-editor' ] );
 		$editor_settings      = get_block_editor_settings(
 			[],
@@ -274,9 +268,8 @@ class AdminModule {
 			'before'
 		);
 
-		// Register the "mission-donation-platform" block category in the JS store before block
-		// scripts run. Without this, registerBlockType() warns about an
-		// invalid category because BlockEditorProvider hasn't mounted yet.
+		// Register the block category before block scripts run, or
+		// registerBlockType() warns about an invalid category.
 		wp_add_inline_script(
 			'wp-blocks',
 			'( function() {' .
@@ -288,8 +281,6 @@ class AdminModule {
 			'after'
 		);
 
-		// Bootstrap server-side block definitions so registerBlockType()
-		// calls in block scripts can merge the full metadata (title, category, etc.).
 		$block_definitions = get_block_editor_server_block_settings();
 		wp_add_inline_script(
 			'wp-blocks',
@@ -399,7 +390,6 @@ class AdminModule {
 			[ $this->pages['donors'], 'render' ]
 		);
 
-		// Fundraisers and Teams appear only once a peer-to-peer campaign exists.
 		if ( $this->has_p2p_campaigns() ) {
 			add_submenu_page(
 				self::MENU_SLUG,

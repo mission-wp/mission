@@ -168,7 +168,6 @@ class StripeConnectEndpoint {
 
 		$this->settings->add_stripe_account( $account );
 
-		// Only switch out of test mode on the first successful connection.
 		$updates = [ 'test_mode' => false ];
 
 		if ( ! empty( $body['default_currency'] ) && 1 === count( $this->settings->get_stripe_accounts() ) ) {
@@ -233,7 +232,6 @@ class StripeConnectEndpoint {
 		$account_id = (string) $request->get_param( 'account_id' );
 
 		if ( '' === $account_id ) {
-			// Backward-compat: no account_id means disconnect everything.
 			foreach ( $this->settings->get_stripe_accounts() as $account ) {
 				$this->notify_api_disconnect( (string) ( $account['site_token'] ?? '' ) );
 			}
@@ -303,15 +301,12 @@ class StripeConnectEndpoint {
 	private function build_response_payload(): array {
 		$all = $this->settings->get_all();
 
-		// Replace the raw accounts (with tokens) with the public/sanitized list.
 		$all['stripe_accounts'] = $this->settings->get_stripe_accounts_public();
 
-		// Strip legacy token from response.
 		unset( $all['stripe_site_token'] );
 		unset( $all['stripe_webhook_secret'] );
 
-		// Derive top-level connection flags from the default account so the
-		// rest of the settings UI keeps working without a full rewrite.
+		// Legacy top-level connection flags; the settings UI still reads them.
 		$default = $this->settings->get_default_stripe_account();
 		if ( $default ) {
 			$all['stripe_connection_status'] = $default['connection_status'] ?? 'connected';

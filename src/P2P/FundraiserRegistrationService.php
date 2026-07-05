@@ -93,9 +93,8 @@ class FundraiserRegistrationService {
 	 */
 	public function send_code( string $email, string $purpose ): void {
 		if ( self::PURPOSE_RESET === $purpose ) {
-			// Only mail a reset code to a donor-role account; silent otherwise so
-			// responses don't reveal whether (or what kind of) an account exists.
-			// Privileged users who also donated must use core's reset flow.
+			// Silently skip non-donor accounts so responses never reveal whether an
+			// account exists; privileged users who donated must use core's reset flow.
 			$donor = Donor::find_by_email( $email );
 			if ( ! $donor || ! $donor->user_id || ! $this->auth->is_donor_user( $donor->user_id ) ) {
 				return;
@@ -125,8 +124,7 @@ class FundraiserRegistrationService {
 		$donor = Donor::find_by_email( $email );
 
 		// Reject a bad password BEFORE burning the one-time code, so a failed
-		// attempt doesn't consume the code (new accounts only; an already-linked
-		// account proved email ownership and just logs in below).
+		// attempt doesn't consume the code.
 		if ( ! $donor || ! $donor->user_id ) {
 			$this->auth->validate_password( $password );
 		}
@@ -223,10 +221,8 @@ class FundraiserRegistrationService {
 		if ( $existing ) {
 			$fundraiser = $existing[0];
 
-			// An existing, team-less participant can still accept a team
-			// invitation — but only a token that maps to a real pending invite
-			// on this campaign re-runs team resolution. A junk token must not
-			// let a re-submission create or join a team via team_mode.
+			// Only a token mapping to a real pending invite on this campaign re-runs
+			// team resolution; a junk token must not create or join a team via team_mode.
 			$token = (string) ( $input['invite_token'] ?? '' );
 
 			if ( ! $fundraiser->team_id && '' !== $token ) {
@@ -341,7 +337,6 @@ class FundraiserRegistrationService {
 
 		$team_id = (int) ( $input['team_id'] ?? 0 );
 
-		// No team requested: a solo registration is the intent, not a failure.
 		if ( $team_id <= 0 ) {
 			return null;
 		}
@@ -416,7 +411,6 @@ class FundraiserRegistrationService {
 			return null;
 		}
 
-		// Public teams are open to anyone; private teams need a valid invitation.
 		if ( Team::ACCESS_PUBLIC !== $team->access
 			&& ! $this->accept_invitation( $team, $fundraiser->donor(), (string) ( $input['invite_token'] ?? '' ) ) ) {
 			return null;

@@ -72,7 +72,6 @@ function getProgressDisplay( campaign ) {
     };
   }
 
-  // donations or donors goal type.
   const count = goalProgress.toLocaleString();
   const label = goalType === 'donations' ? 'donations' : 'donors';
   return {
@@ -119,7 +118,6 @@ export default function Edit( { attributes, setAttributes } ) {
       .finally( () => setIsLoadingList( false ) );
   }, [] );
 
-  // Resolve effective campaign ID.
   let effectiveId = campaignId;
   if (
     ! effectiveId &&

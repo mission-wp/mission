@@ -142,7 +142,6 @@ export const authCallbacks = {
     const ctx = getContext();
     const SERVER_VIEWS = [ 'set-password', 'reset-password' ];
 
-    // Server-set views (from URL params) take priority over hash.
     if ( ! SERVER_VIEWS.includes( ctx.authView ) ) {
       ctx.authView = authViewFromHash();
 
@@ -151,7 +150,6 @@ export const authCallbacks = {
       }
     }
 
-    // Listen for hash changes (back/forward button).
     window.addEventListener( 'hashchange', () => {
       if ( SERVER_VIEWS.includes( ctx.authView ) ) {
         return;
@@ -175,7 +173,6 @@ export const authActions = {
     const ctx = getContext();
     ctx.authPassword = event.target.value;
 
-    // Recalculate strength for views with password creation.
     if (
       ctx.authView === 'activate' ||
       ctx.authView === 'set-password' ||
@@ -242,7 +239,6 @@ export const authActions = {
         return;
       }
 
-      // Reload to show the dashboard.
       window.location.reload();
     } catch {
       ctx.authError = 'Something went wrong. Please try again.';
@@ -340,7 +336,6 @@ export const authActions = {
         return;
       }
 
-      // Strip the token params from the URL before reloading.
       const url = new URL( window.location.href );
       url.searchParams.delete( 'activation_token' );
       url.searchParams.delete( 'email' );
@@ -442,7 +437,6 @@ export const authActions = {
         return;
       }
 
-      // Strip the reset params from the URL before reloading.
       const url = new URL( window.location.href );
       url.searchParams.delete( 'action' );
       url.searchParams.delete( 'key' );

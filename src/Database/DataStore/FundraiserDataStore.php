@@ -184,9 +184,8 @@ class FundraiserDataStore implements DataStoreInterface {
 
 		$stats = $wpdb->get_row(
 			$wpdb->prepare(
-				// total_raised nets the donation portion of partial refunds
-				// (LEAST(amount_refunded, amount)) so it matches the campaign's
-				// live total; counts still include partially-refunded donations.
+				// LEAST clamps refunds so total_raised nets only the donation portion
+				// of partial refunds; counts still include partially-refunded gifts.
 				"SELECT
 					COALESCE(SUM(CASE WHEN is_test = 0 THEN amount - LEAST(amount_refunded, amount) END), 0) AS total_raised,
 					COALESCE(SUM(CASE WHEN is_test = 0 THEN 1 END), 0)                                       AS transaction_count,
@@ -291,7 +290,6 @@ class FundraiserDataStore implements DataStoreInterface {
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		// Bounded by default; -1 means "all" for full-set consumers (cascades, flushes).
 		$per_page = (int) ( $args['per_page'] ?? 100 );
 		$per_page = $per_page < 1 ? PHP_INT_MAX : $per_page;
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );

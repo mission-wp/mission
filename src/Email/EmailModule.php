@@ -112,7 +112,6 @@ class EmailModule {
 		$header      = $this->render_partial( 'header', $header_data );
 		$footer      = $this->render_partial( 'footer', $data );
 
-		// Check for custom body in settings.
 		$settings_key = str_replace( '-', '_', $template );
 		$custom_body  = $this->get_custom_body( $settings_key );
 

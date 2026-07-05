@@ -100,13 +100,11 @@ class TributeEndpoint {
 		}
 
 		if ( $tribute ) {
-			// Update existing.
 			foreach ( $data as $key => $value ) {
 				$tribute->$key = $value;
 			}
 			$tribute->save();
 		} else {
-			// Create new.
 			$tribute = new Tribute( $data );
 			$tribute->save();
 		}

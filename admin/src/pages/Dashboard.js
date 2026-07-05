@@ -78,12 +78,10 @@ export default function Dashboard() {
     [ period ]
   );
 
-  // Initial fetch and refetch on period change.
   useEffect( () => {
     fetchData( true );
   }, [ fetchData ] );
 
-  // Polling with visibility-aware pause/resume.
   useEffect( () => {
     function startPolling() {
       stopPolling();
@@ -118,7 +116,6 @@ export default function Dashboard() {
     };
   }, [ fetchData ] );
 
-  // Sync feed card height to left column.
   useEffect( () => {
     function syncHeight() {
       if ( ! leftRef.current || ! feedRef.current ) {

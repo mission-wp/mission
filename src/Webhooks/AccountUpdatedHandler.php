@@ -34,9 +34,7 @@ class AccountUpdatedHandler {
 		$settings        = new SettingsService();
 		$charges_enabled = (bool) $data['charges_enabled'];
 
-		// Resolve which connected account the event targets. Prefer the
-		// account_id from the payload; for single-account installs (or older
-		// API forwards that omit it) fall back to the only connected account.
+		// Older API forwards may omit account_id; fall back to the only connected account.
 		$target = '' !== $account_id ? $settings->get_stripe_account_by_id( $account_id ) : null;
 
 		if ( ! $target ) {

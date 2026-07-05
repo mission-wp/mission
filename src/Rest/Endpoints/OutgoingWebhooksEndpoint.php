@@ -34,7 +34,6 @@ class OutgoingWebhooksEndpoint {
 	 * @return void
 	 */
 	public function register(): void {
-		// Collection routes.
 		register_rest_route(
 			RestModule::NAMESPACE,
 			'/outgoing-webhooks',
@@ -54,7 +53,6 @@ class OutgoingWebhooksEndpoint {
 			]
 		);
 
-		// Single item routes.
 		register_rest_route(
 			RestModule::NAMESPACE,
 			'/outgoing-webhooks/(?P<id>\d+)',
@@ -78,7 +76,6 @@ class OutgoingWebhooksEndpoint {
 			]
 		);
 
-		// Available events.
 		register_rest_route(
 			RestModule::NAMESPACE,
 			'/outgoing-webhooks/events',
@@ -89,7 +86,6 @@ class OutgoingWebhooksEndpoint {
 			]
 		);
 
-		// Delivery log for a webhook.
 		register_rest_route(
 			RestModule::NAMESPACE,
 			'/outgoing-webhooks/(?P<id>\d+)/deliveries',
@@ -101,7 +97,6 @@ class OutgoingWebhooksEndpoint {
 			]
 		);
 
-		// Ping (test delivery).
 		register_rest_route(
 			RestModule::NAMESPACE,
 			'/outgoing-webhooks/(?P<id>\d+)/ping',
@@ -243,12 +238,10 @@ class OutgoingWebhooksEndpoint {
 		}
 
 		if ( isset( $params['status'] ) && in_array( $params['status'], [ 'active', 'paused' ], true ) ) {
-			// Cancel pending deliveries when pausing.
 			if ( 'paused' === $params['status'] && 'active' === $webhook->status && function_exists( 'as_unschedule_all_actions' ) ) {
 				as_unschedule_all_actions( 'missiondp_deliver_webhook', [], 'mission-webhook-' . $webhook->id );
 			}
 
-			// Reset failure tracking when reactivating.
 			if ( 'active' === $params['status'] && 'paused' === $webhook->status ) {
 				$webhook->failure_count = 0;
 				$webhook->health        = 'healthy';
@@ -281,7 +274,6 @@ class OutgoingWebhooksEndpoint {
 			return RestErrors::webhook_not_found();
 		}
 
-		// Cancel any pending Action Scheduler actions for this webhook.
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( 'missiondp_deliver_webhook', [], 'mission-webhook-' . $webhook->id );
 		}
@@ -380,7 +372,6 @@ class OutgoingWebhooksEndpoint {
 		$handler = new DeliveryHandler();
 		$handler->deliver( $delivery->id );
 
-		// Reload after delivery.
 		$delivery = WebhookDelivery::find( $delivery->id );
 
 		return new WP_REST_Response( $this->prepare_delivery( $delivery ), 200 );

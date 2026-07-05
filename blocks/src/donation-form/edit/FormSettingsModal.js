@@ -362,7 +362,6 @@ export default function FormSettingsModal( {
   const updateField = useCallback( ( field, value ) => {
     setLocalState( ( prev ) => {
       const next = { ...prev, [ field ]: value };
-      // Clear label validation error when custom fields are edited.
       if ( field === 'customFields' && prev._customFieldLabelError ) {
         next._customFieldLabelError = false;
       }
@@ -371,7 +370,6 @@ export default function FormSettingsModal( {
   }, [] );
 
   const handleSave = () => {
-    // Validate custom fields — all must have labels.
     const badField = findEmptyLabelField( localState.customFields );
     if ( badField ) {
       setActiveTab( 'custom-fields' );

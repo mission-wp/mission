@@ -32,8 +32,6 @@ class ShellPostStatusGuard {
 	public function init(): void {
 		add_filter( 'wp_insert_post_data', [ $this, 'enforce_mapped_status' ], 10, 2 );
 		add_action( 'transition_post_status', [ $this, 'reassert_after_direct_write' ], 10, 3 );
-		// after_delete_post (not deleted_post) so the post cache is already
-		// cleaned and the row's own save can't act on a stale cached post.
 		add_action( 'trashed_post', [ $this, 'deactivate_row_on_trash' ] );
 		add_action( 'after_delete_post', [ $this, 'deactivate_row_on_delete' ], 10, 2 );
 	}

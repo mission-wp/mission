@@ -38,7 +38,6 @@ export default function SettingsTab( {
     }
   };
 
-  // Fetch other campaigns for the redirect dropdown.
   const fetchCampaigns = useCallback( async () => {
     try {
       const items = await apiFetch( {

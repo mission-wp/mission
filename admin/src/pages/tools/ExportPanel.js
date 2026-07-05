@@ -49,7 +49,6 @@ export default function ExportPanel() {
   const typeLabel =
     DATA_TYPES.find( ( t ) => t.value === dataType )?.label ?? '';
 
-  // Fetch count and preview when filters change.
   const fetchData = useCallback( () => {
     setIsLoadingCount( true );
     setIsLoadingPreview( true );
@@ -77,7 +76,6 @@ export default function ExportPanel() {
     fetchData();
   }, [ fetchData ] );
 
-  // Clear type-specific filters when switching data types.
   const handleTypeChange = ( newType ) => {
     if ( newType !== dataType ) {
       setDateFrom( '' );
@@ -115,7 +113,6 @@ export default function ExportPanel() {
     );
   };
 
-  // Skeleton widths per column for visual variety.
   const skeletonWidths = [ '50%', '65%', '40%', '55%', '45%', '60%' ];
 
   return (

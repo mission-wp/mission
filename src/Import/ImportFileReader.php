@@ -133,7 +133,6 @@ class ImportFileReader {
 
 		$headers = array_map( static fn( $h ) => is_string( $h ) ? trim( $h ) : '', $headers );
 
-		// Skip past previously processed rows.
 		for ( $i = 0; $i < $offset; $i++ ) {
 			$skip = fgetcsv( $handle );
 			if ( false === $skip ) {

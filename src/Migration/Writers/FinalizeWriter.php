@@ -94,7 +94,6 @@ class FinalizeWriter extends AbstractWriter {
 			]
 		);
 
-		// The initial (signup) payment is not a renewal; every other completed one is.
 		$renewal_count = 0;
 		$total_renewed = 0;
 		foreach ( $transactions as $transaction ) {

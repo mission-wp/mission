@@ -82,13 +82,11 @@ class MilestoneTracker {
 			],
 		];
 
-		// First donation milestone.
 		$first_donation = [
 			'id'      => 'first-donation',
 			'reached' => $txn_count > 0,
 		];
 
-		// Percentage thresholds (only relevant if there's a goal).
 		$thresholds           = [ 25, 50, 75, 100 ];
 		$threshold_milestones = [];
 
@@ -102,7 +100,6 @@ class MilestoneTracker {
 			}
 		}
 
-		// If we need dates, query transactions.
 		$has_reached_thresholds = array_filter( $threshold_milestones, fn( $m ) => $m['reached'] );
 		$needs_dates            = $first_donation['reached'] || $has_reached_thresholds;
 
@@ -119,7 +116,6 @@ class MilestoneTracker {
 			$milestones[] = $tm;
 		}
 
-		// Detect newly-reached milestones before saving.
 		$old_milestones = $campaign->get_meta( 'milestones' ) ?: [];
 		$old_reached    = [];
 		foreach ( $old_milestones as $m ) {
@@ -130,7 +126,6 @@ class MilestoneTracker {
 
 		$campaign->update_meta( 'milestones', $milestones );
 
-		// Fire an action for each milestone that just transitioned to reached.
 		foreach ( $milestones as $m ) {
 			if ( ! empty( $m['reached'] ) && empty( $old_reached[ $m['id'] ] ) ) {
 				/**
@@ -172,12 +167,10 @@ class MilestoneTracker {
 			];
 		}
 
-		// First donation date.
 		if ( $first_donation['reached'] ) {
 			$first_donation['date'] = $transactions[0]->date_completed;
 		}
 
-		// Walk transactions with running total to find threshold dates.
 		if ( ! empty( $threshold_milestones ) ) {
 			$running_total   = 0;
 			$seen_donors     = [];

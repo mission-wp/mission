@@ -199,7 +199,6 @@ class DonationEmailListener {
 		$html = $this->email->render_template( 'tribute-notification', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $tribute->notify_email, $subject, $html );
 
-		// Mark notification as sent.
 		$tribute->notification_sent_at = current_time( 'mysql', true );
 		$tribute->save();
 	}

@@ -144,15 +144,12 @@ export default function AddDonationDrawer( {
   const [ error, setError ] = useState( '' );
   const [ fieldErrors, setFieldErrors ] = useState( {} );
 
-  // Donor selection state.
   const [ donorMode, setDonorMode ] = useState( 'search' ); // 'search' | 'new'
   const [ selectedDonor, setSelectedDonor ] = useState( null );
   const [ donorOptions, setDonorOptions ] = useState( [] );
   const [ donorSearch, setDonorSearch ] = useState( '' );
-  // Cache the full donor objects returned from the API.
   const donorCacheRef = useRef( {} );
 
-  // Country-aware address config.
   const regionConfig = useMemo(
     () => getRegionConfig( form.country ),
     [ form.country ]
@@ -162,7 +159,6 @@ export default function AddDonationDrawer( {
     setForm( ( prev ) => ( { ...prev, country: value, state: '' } ) );
   }
 
-  // Fetch donors as the user types in the combobox.
   const fetchDonors = useCallback( ( query ) => {
     if ( searchTimer.current ) {
       clearTimeout( searchTimer.current );
@@ -182,7 +178,6 @@ export default function AddDonationDrawer( {
         } );
 
         const options = donors.map( ( d ) => {
-          // Cache the donor data so we can retrieve it on selection.
           donorCacheRef.current[ String( d.id ) ] = d;
 
           const name = [ d.first_name, d.last_name ]
@@ -201,7 +196,6 @@ export default function AddDonationDrawer( {
     }, 300 );
   }, [] );
 
-  // Clean up timer on unmount.
   useEffect( () => {
     return () => {
       if ( searchTimer.current ) {

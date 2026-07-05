@@ -52,8 +52,6 @@ class CampaignPostType {
 			return;
 		}
 
-		// The admin UI posts the full settings object, so key presence
-		// alone doesn't mean the slug changed.
 		if ( ( $previous['campaign_url_slug'] ?? CampaignSlug::DEFAULT_SLUG ) === $changed['campaign_url_slug'] ) {
 			return;
 		}

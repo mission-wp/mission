@@ -26,7 +26,6 @@ const ChartLineIcon = () => (
  * @param {string} dateStr Date string in Y-m-d or HH:00 format.
  */
 function formatDateLabel( dateStr ) {
-  // Hourly format: "HH:00".
   if ( dateStr.includes( ':' ) ) {
     const hour = parseInt( dateStr.split( ':' )[ 0 ], 10 );
     if ( hour === 0 ) {
@@ -67,7 +66,6 @@ function drawChart( canvas, data, currencySymbol, hoverIndex ) {
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
 
-  // Need at least 2 points to draw a chart.
   if ( data.length < 2 ) {
     return;
   }
@@ -186,12 +184,10 @@ function drawChart( canvas, data, currencySymbol, hoverIndex ) {
     const tooltipH = 32;
     const tooltipRadius = 8;
 
-    // Position above the point; flip below if clipped at top.
     let tx = p.x - tooltipW / 2;
     const gap = 12;
     const ty = p.y - tooltipH - gap >= 0 ? p.y - tooltipH - gap : p.y + gap;
 
-    // Clamp horizontally.
     if ( tx < pad.left ) {
       tx = pad.left;
     }
@@ -199,13 +195,11 @@ function drawChart( canvas, data, currencySymbol, hoverIndex ) {
       tx = w - pad.right - tooltipW;
     }
 
-    // Tooltip background.
     ctx.fillStyle = '#1e1e1e';
     ctx.beginPath();
     ctx.roundRect( tx, ty, tooltipW, tooltipH, tooltipRadius );
     ctx.fill();
 
-    // Tooltip text.
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.fillText( label, tx + tooltipW / 2, ty + tooltipH / 2 + 4.5 );
@@ -251,11 +245,9 @@ export default function DonationsChart( {
     // Draw after a frame to ensure layout is settled.
     const raf = window.requestAnimationFrame( () => redraw() );
 
-    // Redraw on resize.
     const observer = new window.ResizeObserver( () => redraw() );
     observer.observe( canvas.parentElement );
 
-    // Mouse interaction.
     const handleMouseMove = ( e ) => {
       if ( ! chartData || chartData.length < 2 ) {
         return;
@@ -266,7 +258,6 @@ export default function DonationsChart( {
       const pad = { left: 52, right: 20 };
       const chartW = rect.width - pad.left - pad.right;
 
-      // Find nearest data point by X position.
       let nearest = null;
       let nearestDist = Infinity;
 
@@ -279,7 +270,6 @@ export default function DonationsChart( {
         }
       }
 
-      // Only show tooltip when mouse is within the chart area.
       if ( mouseX < pad.left - 10 || mouseX > rect.width - pad.right + 10 ) {
         nearest = null;
       }

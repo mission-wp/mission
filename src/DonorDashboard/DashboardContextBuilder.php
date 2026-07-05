@@ -149,7 +149,6 @@ class DashboardContextBuilder {
 		$history_campaigns       = $this->reporting->donor_transaction_campaigns( $donor->id, $this->is_test );
 		$has_giving              = $this->has_giving();
 
-		// Batch-load all campaigns (avoids N+1 queries).
 		$this->preload_campaigns(
 			$recent_transactions,
 			$active_subscriptions,

@@ -94,7 +94,6 @@ function AdminEmailRow( {
       e.preventDefault();
       handleAddRecipient();
     }
-    // Backspace on empty input removes last recipient.
     if (
       e.key === 'Backspace' &&
       inputValue === '' &&

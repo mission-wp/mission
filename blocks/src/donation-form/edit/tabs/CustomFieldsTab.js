@@ -328,7 +328,6 @@ export default function CustomFieldsTab( { localState, updateField } ) {
 
   const showLabelError = !! localState._customFieldLabelError;
 
-  // Track which field card is expanded — only one at a time.
   const expandedFieldId = localState._expandedFieldId || null;
 
   const setExpandedFieldId = useCallback(
@@ -360,7 +359,6 @@ export default function CustomFieldsTab( { localState, updateField } ) {
         options: [],
       },
     ] );
-    // Auto-expand the newly added field.
     setExpandedFieldId( id );
   }, [ fields, setFields, setExpandedFieldId ] );
 
@@ -374,7 +372,6 @@ export default function CustomFieldsTab( { localState, updateField } ) {
   const removeField = useCallback(
     ( id ) => {
       setFields( fields.filter( ( f ) => f.id !== id ) );
-      // Collapse if the removed field was expanded.
       if ( expandedFieldId === id ) {
         setExpandedFieldId( null );
       }

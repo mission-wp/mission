@@ -11,7 +11,6 @@ import { useMemo } from '@wordpress/element';
 import { computePrimaryColorVars } from '@shared/color';
 import { formatAmount } from '@shared/currency';
 
-// Representative figures for the editor preview only.
 const SAMPLE = {
   raised: 842000,
   goal: 1000000,

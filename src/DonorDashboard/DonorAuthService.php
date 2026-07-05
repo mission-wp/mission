@@ -62,7 +62,6 @@ class DonorAuthService {
 			throw new \RuntimeException( esc_html__( 'An account already exists for this email. Please log in instead.', 'mission-donation-platform' ) );
 		}
 
-		// Generate a secure random token and store its hash.
 		$token      = wp_generate_password( 32, false );
 		$token_hash = wp_hash_password( $token );
 
@@ -72,7 +71,6 @@ class DonorAuthService {
 			gmdate( 'Y-m-d H:i:s', time() + self::TOKEN_EXPIRY_HOURS * HOUR_IN_SECONDS )
 		);
 
-		// Build the verification URL.
 		$dashboard_url    = $this->get_dashboard_url();
 		$verification_url = add_query_arg(
 			[
@@ -142,12 +140,10 @@ class DonorAuthService {
 			return null;
 		}
 
-		// Check expiration.
 		if ( strtotime( $expires ) < time() ) {
 			return null;
 		}
 
-		// Verify the token hash.
 		if ( ! wp_check_password( $token, $stored_hash ) ) {
 			return null;
 		}
@@ -180,7 +176,6 @@ class DonorAuthService {
 
 		$user_id = $donor->create_user_account( $password );
 
-		// Clean up token meta.
 		$donor->delete_meta( 'activation_token' );
 		$donor->delete_meta( 'activation_token_expires' );
 
@@ -503,7 +498,7 @@ class DonorAuthService {
 			throw new \RuntimeException( esc_html__( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
-		// Set the new password (destroys all existing sessions).
+		// wp_set_password() destroys all existing sessions, which is intended.
 		wp_set_password( $new_password, $user->ID );
 
 		wp_signon(

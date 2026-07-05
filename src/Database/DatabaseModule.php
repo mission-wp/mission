@@ -71,13 +71,8 @@ class DatabaseModule {
 
 		$this->schema = new Schema();
 
-		// Run migrations on every request type (frontend, REST, cron, admin), not
-		// just wp-admin: plugin updates via cron/auto-update don't fire the
-		// activation hook, and donation writes must never hit a stale schema
-		// while waiting for an admin visit. Priority 20 so post types have
-		// registered (init 10) and the shell-post backfill creates
-		// properly-slugged posts. The version check is a cheap autoloaded
-		// get_option on up-to-date sites.
+		// Priority 20 so post types are registered (init 10) before the shell-post
+		// backfill creates properly-slugged posts.
 		add_action( 'init', [ $this, 'maybe_run_migrations' ], 20 );
 	}
 
@@ -153,13 +148,9 @@ class DatabaseModule {
 
 		$fundraisers_table = $wpdb->prefix . 'missiondp_fundraisers';
 
-		// P2P rewrite rules are new in this version; flush on the next init.
 		update_option( 'missiondp_flush_rewrite_rules', 1 );
 
-		// A pre-1.4 install has no P2P tables yet (create_tables() runs right
-		// after this and builds them with the UNIQUE index already in place),
-		// so there are no legacy rows to migrate and the queries below would
-		// only log table-not-found errors.
+		// A pre-1.4 install has no P2P tables yet, so there is nothing to migrate.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $fundraisers_table ) ) !== $fundraisers_table ) {
 			return;

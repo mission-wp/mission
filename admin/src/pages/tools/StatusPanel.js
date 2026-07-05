@@ -589,7 +589,6 @@ function buildPlainTextReport( data ) {
     report += `--- ${ section.title } ---\n`;
 
     for ( const row of section.rows ) {
-      // Extract text content from React elements.
       const valueText = extractText( row.value );
       report += `${ row.label }: ${ valueText }\n`;
     }

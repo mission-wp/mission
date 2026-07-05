@@ -42,7 +42,6 @@ class SubscriptionDeletedHandler {
 
 		$subscription = $subscriptions[0];
 
-		// Idempotency: skip if already cancelled.
 		if ( Subscription::STATUS_CANCELLED === $subscription->status ) {
 			return;
 		}

@@ -8,7 +8,6 @@
  * @package MissionDP
  */
 
-// Exit if not called by WordPress.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
@@ -75,7 +74,6 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	// -------------------------------------------------------------------------
 	// Custom tables
 	// -------------------------------------------------------------------------
-	// Load the Schema class to get table names dynamically.
 	$autoloader = __DIR__ . '/vendor/autoload.php';
 	if ( file_exists( $autoloader ) ) {
 		require_once $autoloader;
@@ -106,7 +104,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	// -------------------------------------------------------------------------
 	// Donor role (plugin-defined)
 	// -------------------------------------------------------------------------
-	// Donor user accounts are intentionally preserved — site owners may have repurposed them or other plugins may reference them.
+	// Donor user accounts are intentionally preserved; other plugins may reference them.
 	remove_role( 'missiondp_donor' );
 
 	// -------------------------------------------------------------------------
@@ -121,13 +119,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	wp_clear_scheduled_hook( 'missiondp_check_recurring_payments' );
 	wp_clear_scheduled_hook( 'missiondp_campaign_lifecycle' );
 
-	// Action Scheduler actions.
 	if ( function_exists( 'as_unschedule_all_actions' ) ) {
 		as_unschedule_all_actions( 'missiondp_import_tick' );
 		as_unschedule_all_actions( 'missiondp_migration_tick' );
 		as_unschedule_all_actions( 'missiondp_deliver_webhook' );
 	}
 
-	// Clear the cache to ensure stale data isn't served.
 	wp_cache_flush();
 } )();

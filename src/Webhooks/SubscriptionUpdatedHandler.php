@@ -62,7 +62,6 @@ class SubscriptionUpdatedHandler {
 
 		$subscription = $subscriptions[0];
 
-		// Skip if already in this status.
 		if ( $subscription->status === $local_status ) {
 			return;
 		}

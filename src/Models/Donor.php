@@ -133,7 +133,6 @@ class Donor extends Model {
 			throw new \RuntimeException( esc_html__( 'This donor already has an account.', 'mission-donation-platform' ) );
 		}
 
-		// Use the donor email as the username.
 		$user_id = wp_insert_user(
 			[
 				'user_login' => $this->email,

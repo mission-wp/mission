@@ -28,7 +28,6 @@ export default function LogsFilterBar( {
   const [ searchValue, setSearchValue ] = useState( filters.search || '' );
   const debounceRef = useRef( null );
 
-  // Debounce search input.
   useEffect( () => {
     clearTimeout( debounceRef.current );
     debounceRef.current = setTimeout( () => {

@@ -86,7 +86,6 @@ class FundraiserPostType {
 				'has_archive'        => false,
 				'hierarchical'       => false,
 				'query_var'          => true,
-				// Custom nested rewrite rules are registered in P2PRewrites.
 				'rewrite'            => false,
 				'supports'           => [ 'title' ],
 			]

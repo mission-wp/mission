@@ -46,7 +46,6 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $prefix . 'activity_log' )
 		);
 
-		// Log files.
 		$log_dir         = $this->get_log_dir();
 		$log_files_size  = 0;
 		$log_files_count = 0;
@@ -61,7 +60,6 @@ class CleanupService {
 			}
 		}
 
-		// Test data counts.
 		$test_transaction_count = (int) $wpdb->get_var(
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 		);
@@ -70,7 +68,6 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
 		);
 
-		// Donors that have only test transactions (no live ones).
 		$test_donor_count = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i WHERE transaction_count = 0 AND test_transaction_count > 0',
@@ -78,7 +75,6 @@ class CleanupService {
 			)
 		);
 
-		// Webhook delivery count.
 		$webhook_delivery_count = (int) $wpdb->get_var(
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $prefix . 'webhook_deliveries' )
 		);
@@ -233,7 +229,6 @@ class CleanupService {
 
 		$prefix = $wpdb->prefix . 'missiondp_';
 
-		// Get IDs first for cascade cleanup.
 		$ids = $wpdb->get_col(
 			$wpdb->prepare( 'SELECT id FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 		);
@@ -247,7 +242,6 @@ class CleanupService {
 			$by_txn_sql   = "DELETE FROM %i WHERE transaction_id IN ( {$placeholders} )";
 			$notes_sql    = "DELETE FROM %i WHERE object_type = %s AND object_id IN ( {$placeholders} )";
 
-			// Cascade: meta, history, notes, tributes.
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
 			$wpdb->query( $wpdb->prepare( $meta_sql, array_merge( [ $prefix . 'transactionmeta' ], $ids ) ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
@@ -257,12 +251,10 @@ class CleanupService {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
 			$wpdb->query( $wpdb->prepare( $by_txn_sql, array_merge( [ $prefix . 'tributes' ], $ids ) ) );
 
-			// Delete the transactions.
 			$wpdb->query(
 				$wpdb->prepare( 'DELETE FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 			);
 
-			// Reset test aggregate columns on donors and campaigns.
 			$wpdb->query(
 				$wpdb->prepare(
 					'UPDATE %i SET
@@ -303,7 +295,6 @@ class CleanupService {
 
 		$prefix = $wpdb->prefix . 'missiondp_';
 
-		// Donors with zero live and zero test transactions remaining.
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
 				'SELECT id FROM %i WHERE transaction_count = 0 AND test_transaction_count = 0',
@@ -425,13 +416,11 @@ class CleanupService {
 	public function delete_all_data(): array {
 		global $wpdb;
 
-		// Truncate all custom tables.
 		$schema = new Schema();
 		foreach ( $schema->get_table_names() as $table ) {
 			$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 		}
 
-		// Delete campaign CPT posts and meta.
 		$wpdb->query(
 			$wpdb->prepare(
 				'DELETE meta FROM %i meta
@@ -450,7 +439,6 @@ class CleanupService {
 			)
 		);
 
-		// Reset settings to defaults.
 		update_option( 'missiondp_settings', $this->settings->get_defaults() );
 		delete_option( 'missiondp_default_campaign' );
 

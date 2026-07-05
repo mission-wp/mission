@@ -264,8 +264,6 @@ export const fundraisersActions = {
     fr.edit.error = '';
 
     try {
-      // Upload the staged cover photo first; a failure aborts the save so
-      // the donor can fix the photo and try again.
       if ( stagedPhoto ) {
         const body = new FormData();
         body.append( 'file', stagedPhoto );

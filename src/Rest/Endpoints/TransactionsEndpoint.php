@@ -310,7 +310,6 @@ class TransactionsEndpoint {
 			);
 		}
 
-		// Upsert donor.
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor ) {
@@ -349,7 +348,6 @@ class TransactionsEndpoint {
 
 		$transaction->save();
 
-		// Store optional meta.
 		$notes = $request->get_param( 'notes' );
 		if ( $notes ) {
 			$transaction->add_meta( 'notes', $notes );
@@ -359,7 +357,6 @@ class TransactionsEndpoint {
 			$transaction->add_meta( 'skip_receipt', '1' );
 		}
 
-		// Store billing address on transaction meta and update donor record.
 		$address_fields = [ 'address_1', 'address_2', 'city', 'state', 'zip', 'country' ];
 
 		foreach ( $address_fields as $field ) {
@@ -369,7 +366,6 @@ class TransactionsEndpoint {
 			}
 		}
 
-		// Update donor address if any address fields were provided.
 		$has_address = false;
 		foreach ( $address_fields as $field ) {
 			$value = $request->get_param( $field );
@@ -400,7 +396,6 @@ class TransactionsEndpoint {
 			return $fallback;
 		}
 
-		// Bare date like "2026-03-05" — append current time.
 		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
 			return $date . ' ' . gmdate( 'H:i:s' );
 		}

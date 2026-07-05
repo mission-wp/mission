@@ -73,8 +73,6 @@ class FundraisersContextBuilder {
 		$active = array_values( array_filter( $cards, static fn( array $card ): bool => ! $card['isEnded'] ) );
 		$ended  = array_values( array_filter( $cards, static fn( array $card ): bool => $card['isEnded'] ) );
 
-		// The detail working object starts on the most relevant card; drilling
-		// in from a card (or a deep link) re-syncs it client-side.
 		$detail = $active[0] ?? $ended[0];
 
 		return [

@@ -124,7 +124,6 @@ class OutgoingWebhookDataStore implements DataStoreInterface {
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
 		if ( false !== $result ) {
-			// Clean up associated deliveries.
 			( new WebhookDeliveryDataStore() )->delete_by_webhook( $id );
 
 			/**

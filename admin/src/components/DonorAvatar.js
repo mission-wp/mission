@@ -15,7 +15,6 @@ export default function DonorAvatar( {
   const sizeClass = size ? `mission-donor-avatar--${ size }` : '';
   const baseClass = `mission-donor-avatar ${ sizeClass }`.trim();
 
-  // An explicit image (e.g. a fundraiser profile photo) wins over gravatar.
   const src = imageUrl
     ? imageUrl
     : gravatarHash &&

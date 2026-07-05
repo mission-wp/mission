@@ -139,11 +139,9 @@ class EmailTemplateEndpoint {
 		$template     = self::TEMPLATE_MAP[ $type ];
 		$subject      = $this->default_subjects()[ $type ] ?? '';
 
-		// Build data where values ARE the merge tag strings.
 		$data            = $this->build_tag_data( $type );
 		$data['subject'] = $subject;
 
-		// Render body, header, and footer separately.
 		$body   = $email_module->render_template_body( $template, $data );
 		$header = $email_module->render_partial( 'header', $data );
 		$footer = $email_module->render_partial( 'footer', $data );
@@ -166,7 +164,6 @@ class EmailTemplateEndpoint {
 	 * @return array<string, mixed>
 	 */
 	private function build_tag_data( string $type ): array {
-		// Create a fake donor with merge tag as first_name.
 		$donor = new Donor(
 			[
 				'id'         => 0,
@@ -186,7 +183,6 @@ class EmailTemplateEndpoint {
 			'subject'                => $this->default_subjects()[ $type ] ?? '',
 		];
 
-		// Add type-specific tag data.
 		switch ( $type ) {
 			case 'renewal_receipt':
 			case 'donation_receipt':

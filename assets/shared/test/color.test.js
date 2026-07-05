@@ -4,7 +4,6 @@ import { darkenColor, computePrimaryColorVars } from '../color';
 
 describe( 'darkenColor', () => {
   it( 'darkens each channel by the given percentage', () => {
-    // 0x2f=47 -> 41, 0xa3=163 -> 143, 0x6b=107 -> 94.
     expect( darkenColor( '#2fa36b', 12 ) ).toBe( '#298f5e' );
   } );
 
@@ -40,7 +39,6 @@ describe( 'computePrimaryColorVars', () => {
   } );
 
   it( 'flips text color at the luminance threshold', () => {
-    // 128/255 is just above 0.5; 127/255 just below.
     expect(
       computePrimaryColorVars( '#808080' )[ '--mission-primary-text' ]
     ).toBe( '#1e1e1e' );

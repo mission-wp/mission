@@ -237,7 +237,6 @@ class Campaign extends Model {
 	public function save(): int|bool {
 		$is_new = ! $this->id && ! $this->post_id;
 
-		// New campaign without a post — create one.
 		if ( $is_new ) {
 			$post_id = wp_insert_post(
 				[
@@ -258,7 +257,7 @@ class Campaign extends Model {
 
 		$result = parent::save();
 
-		// Set default page content for new campaigns (needs $this->id from the insert).
+		// Runs after parent::save() because the page template needs $this->id.
 		if ( $is_new && $result ) {
 			wp_update_post(
 				[

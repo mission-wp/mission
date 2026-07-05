@@ -216,7 +216,6 @@ store( 'mission-donation-platform/donor-dashboard', {
       ctx.activePanel = panelFromHash( ctx );
       syncDetailFromPanel( ctx );
 
-      // Handle email change verification link.
       const params = new URLSearchParams( window.location.search );
       if (
         params.get( 'action' ) === 'verify-email' &&
@@ -270,7 +269,6 @@ store( 'mission-donation-platform/donor-dashboard', {
             );
           } );
 
-        // Clean the URL.
         const cleanUrl = window.location.pathname + '#profile';
         window.history.replaceState( null, '', cleanUrl );
       }
@@ -350,13 +348,11 @@ store( 'mission-donation-platform/donor-dashboard', {
 
       const ctx = getContext();
 
-      // Close subscription modals first.
       if ( getOpenModal( ctx ) ) {
         closeAnyModal( ctx );
         return;
       }
 
-      // Close mobile sidebar drawer.
       if ( ctx.sidebarOpen ) {
         ctx.sidebarOpen = false;
         const toggle = document.querySelector( '.mission-dd-mobile-toggle' );

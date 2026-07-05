@@ -95,7 +95,6 @@ function deriveFallbackEvents( subscription ) {
     } );
   }
 
-  // Add completed transaction events.
   const transactions = subscription.transactions || [];
   transactions.forEach( ( txn ) => {
     if ( txn.status === TRANSACTION_STATUS.COMPLETED && txn.date_completed ) {

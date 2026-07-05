@@ -62,7 +62,6 @@ class TransactionDataStore implements DataStoreInterface {
 		 */
 		do_action( 'mission_transaction_created', $model );
 
-		// Update donor/campaign aggregates if created with a completed status.
 		if ( Transaction::STATUS_COMPLETED === $model->status ) {
 			$this->increment_aggregates( $model );
 			$this->recompute_fundraiser_aggregates( $model->fundraiser_id, (bool) $model->is_test );
@@ -247,15 +246,12 @@ class TransactionDataStore implements DataStoreInterface {
 			$this->adjust_aggregates_for_refund( $model, $refund_delta );
 		}
 
-		// Fire status transition hooks and update aggregates.
 		if ( $old->status !== $model->status ) {
 			$this->handle_status_transition( $model, $old->status, $model->status );
 		}
 
-		// Rebuild the fundraiser's stored totals once the row reflects its final
-		// state (a refund, status change, or re-credit to a different fundraiser
-		// can move what counts toward "raised"). On a re-credit, both the old and
-		// new fundraiser need their totals rebuilt.
+		// Rebuild fundraiser totals only after the row reflects its final state;
+		// a re-credit must rebuild both the old and new fundraiser.
 		$recredited = (int) $old->fundraiser_id !== (int) $model->fundraiser_id;
 
 		if ( $recredited || $model->amount_refunded > $old->amount_refunded || $old->status !== $model->status ) {
@@ -319,18 +315,15 @@ class TransactionDataStore implements DataStoreInterface {
 	public function delete( int $id ): bool {
 		global $wpdb;
 
-		// Decrement aggregates before deleting if the transaction was completed.
 		$transaction = $this->read( $id );
 		if ( $transaction && Transaction::STATUS_COMPLETED === $transaction->status ) {
 			$this->decrement_aggregates( $transaction );
 		}
 
-		// Delete associated notes, history, and tribute first.
 		( new NoteDataStore() )->delete_by_object( 'transaction', $id );
 		( new TransactionHistoryDataStore() )->delete_by_transaction( $id );
 		( new TributeDataStore() )->delete_by_transaction( $id );
 
-		// Delete associated meta.
 		$wpdb->query(
 			$wpdb->prepare(
 				'DELETE FROM %i WHERE missiondp_transaction_id = %d',
@@ -642,13 +635,10 @@ class TransactionDataStore implements DataStoreInterface {
 		 */
 		do_action( "mission_transaction_status_{$old_status}_to_{$new_status}", $transaction );
 
-		// Update donor and campaign aggregates.
 		if ( Transaction::STATUS_COMPLETED === $new_status ) {
 			$this->increment_aggregates( $transaction );
 		} elseif ( Transaction::STATUS_COMPLETED === $old_status && in_array( $new_status, [ Transaction::STATUS_REFUNDED, Transaction::STATUS_CANCELLED, Transaction::STATUS_FAILED ], true ) ) {
 			if ( Transaction::STATUS_REFUNDED === $new_status && $transaction->amount_refunded > 0 ) {
-				// Dollar amounts already adjusted by adjust_aggregates_for_refund().
-				// Only decrement counts.
 				$this->decrement_counts( $transaction );
 			} else {
 				$this->decrement_aggregates( $transaction );
@@ -732,7 +722,6 @@ class TransactionDataStore implements DataStoreInterface {
 				)
 			);
 
-			// Increment donor_count if this is the donor's first completed transaction for this campaign.
 			if ( $transaction->donor_id ) {
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
@@ -840,7 +829,6 @@ class TransactionDataStore implements DataStoreInterface {
 				)
 			);
 
-			// Decrement donor_count if the donor has no remaining completed transactions for this campaign.
 			if ( $transaction->donor_id ) {
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
@@ -894,7 +882,6 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$now = current_time( 'mysql', true );
 
-		// Attribute the refund to the donation first, then any excess to the tip.
 		$previous_refunded          = $transaction->amount_refunded - $refund_delta;
 		$previous_donation_refunded = min( $previous_refunded, $transaction->amount );
 		$current_donation_refunded  = min( $transaction->amount_refunded, $transaction->amount );
@@ -1012,7 +999,6 @@ class TransactionDataStore implements DataStoreInterface {
 				)
 			);
 
-			// Decrement donor_count if the donor has no remaining completed transactions for this campaign.
 			if ( $transaction->donor_id ) {
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;

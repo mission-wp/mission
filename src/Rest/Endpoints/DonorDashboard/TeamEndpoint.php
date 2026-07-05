@@ -174,7 +174,6 @@ class TeamEndpoint {
 		}
 
 		if ( null !== $request->get_param( 'goal' ) ) {
-			// The goal arrives in major units (what the captain entered); convert here.
 			$currency   = $team->campaign()?->currency ?: 'USD';
 			$team->goal = Currency::major_to_minor( max( 0, (float) $request->get_param( 'goal' ) ), $currency );
 		}
@@ -497,8 +496,6 @@ class TeamEndpoint {
 			},
 			$team->members(
 				[
-					// Match the SSR roster (ReportingService::team_members),
-					// which only lists active members.
 					'status'   => Fundraiser::STATUS_ACTIVE,
 					'orderby'  => 'total_raised',
 					'order'    => 'DESC',

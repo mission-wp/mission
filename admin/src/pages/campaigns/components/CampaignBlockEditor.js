@@ -32,7 +32,6 @@ let blocksRegistered = false;
 export default function CampaignBlockEditor( { postId, editUrl } ) {
   const [ isReady, setIsReady ] = useState( false );
 
-  // Register core blocks once.
   useEffect( () => {
     if ( ! blocksRegistered ) {
       registerCoreBlocks();

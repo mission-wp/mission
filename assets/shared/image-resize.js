@@ -11,7 +11,6 @@
 // WordPress' own "big image" threshold; it scales anything larger anyway.
 const DEFAULT_MAX_EDGE = 2560;
 
-// Files at or under this size upload as-is.
 const DEFAULT_RECODE_BYTES = 2 * 1024 * 1024;
 
 const ENCODE_QUALITY = 0.82;

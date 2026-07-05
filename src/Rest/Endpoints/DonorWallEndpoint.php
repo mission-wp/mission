@@ -48,9 +48,7 @@ class DonorWallEndpoint {
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'handle' ],
-				// Public — the Donor Wall block is rendered on public pages and
-				// returns only the donor data the site owner has chosen to expose
-				// (name, optional message, donation amount). No private fields.
+				// Intentionally public: returns only sanitized donor data, no private fields.
 				'permission_callback' => '__return_true',
 				'args'                => array_merge(
 					CollectionParams::base(
@@ -85,7 +83,6 @@ class DonorWallEndpoint {
 			show_anonymous: (bool) $request->get_param( 'show_anonymous' ),
 		);
 
-		// Sanitize items for public consumption.
 		$items = array_map( [ $this, 'sanitize_item' ], $result['items'] );
 
 		return new WP_REST_Response(

@@ -24,7 +24,6 @@ function buildFormState( campaign ) {
 
   const goalType = campaign.goal_type || 'amount';
 
-  // Convert goal from cents to display value for amount goals; use raw value otherwise.
   let goalDisplay = '';
   if ( campaign.goal_amount ) {
     goalDisplay =
@@ -137,7 +136,6 @@ export default function CampaignDetail( { id } ) {
   const { saveEditedEntityRecord, invalidateResolution } =
     useDispatch( coreStore );
 
-  // Detect unsaved block editor changes.
   const hasBlockEdits = useSelect(
     ( select ) => {
       if ( ! campaign?.post_id ) {
@@ -152,7 +150,6 @@ export default function CampaignDetail( { id } ) {
     [ campaign?.post_id ]
   );
 
-  // Detect unsaved form field changes.
   const isFormDirty =
     !! formState &&
     !! savedFormState.current &&
@@ -228,7 +225,6 @@ export default function CampaignDetail( { id } ) {
       recurring_redirect_campaign: formState.recurring_redirect_campaign,
     };
 
-    // P2P settings are only persisted for peer-to-peer campaigns.
     if ( campaign?.type === 'p2p' ) {
       const fundraiserGoal = Number(
         String( formState.default_fundraiser_goal ).replace( /,/g, '' )
@@ -251,7 +247,6 @@ export default function CampaignDetail( { id } ) {
     }
 
     try {
-      // Save block editor content via the WP entity system.
       if ( campaign?.post_id ) {
         await saveEditedEntityRecord(
           'postType',

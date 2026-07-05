@@ -43,17 +43,10 @@ class CampaignLifecycleModule {
 	 * @return void
 	 */
 	public function init(): void {
-		// Cron: hourly scan for date-based transitions.
 		add_action( self::CRON_HOOK, [ $this, 'process_transitions' ] );
 		add_action( 'init', [ $this, 'ensure_cron_scheduled' ] );
-
-		// Close-on-goal: synchronous check when campaign aggregates change.
 		add_action( 'mission_campaign_aggregates_updated', [ $this, 'check_close_on_goal' ] );
-
-		// Recompute status when campaign is updated via REST (date changes).
 		add_action( 'mission_campaign_updated', [ $this, 'maybe_update_status_on_save' ], 10, 2 );
-
-		// Set initial status on new campaigns.
 		add_action( 'mission_campaign_created', [ $this, 'set_initial_status' ] );
 	}
 
@@ -190,7 +183,6 @@ class CampaignLifecycleModule {
 				break;
 
 			case Campaign::STATUS_ENDED:
-				// Allow reopening: if end date is cleared or moved to the future.
 				if ( ! $end || $end >= $today ) {
 					$new_status = ( $start && $start > $today ) ? Campaign::STATUS_SCHEDULED : Campaign::STATUS_ACTIVE;
 				}
@@ -227,19 +219,17 @@ class CampaignLifecycleModule {
 	 * @return void
 	 */
 	private function execute_end_actions( Campaign $campaign ): void {
-		// Draft the campaign page if stop_donations_on_end is enabled (default true).
+		// stop_donations_on_end defaults to enabled when the meta is missing.
 		$stop_donations = $campaign->get_meta( 'stop_donations_on_end' );
 		if ( '' === $stop_donations || $stop_donations ) {
 			$campaign->set_campaign_page_enabled( false );
 		}
 
-		// Remove from listings if configured.
 		if ( $campaign->get_meta( 'remove_from_listings_on_end' ) ) {
 			$campaign->show_in_listings = false;
 			$campaign->save();
 		}
 
-		// Handle recurring subscriptions.
 		$behavior = $campaign->get_meta( 'recurring_end_behavior' ) ?: 'keep';
 		if ( 'keep' === $behavior ) {
 			return;

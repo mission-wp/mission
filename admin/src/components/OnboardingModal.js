@@ -100,7 +100,6 @@ export default function OnboardingModal( { onComplete } ) {
         saveDraft( next, step );
         return next;
       } );
-      // Clear errors for fields being updated.
       setErrors( ( prev ) => {
         const next = { ...prev };
         for ( const key of Object.keys( updates ) ) {
@@ -112,7 +111,6 @@ export default function OnboardingModal( { onComplete } ) {
     [ step ]
   );
 
-  // Fetch current settings on mount to pre-fill.
   useEffect( () => {
     apiFetch( {
       path: '/mission-donation-platform/v1/settings',
@@ -172,14 +170,12 @@ export default function OnboardingModal( { onComplete } ) {
 
     const chargesEnabled = params.get( 'charges_enabled' );
 
-    // Clean URL.
     const url = new URL( window.location.href );
     url.searchParams.delete( 'setup_code' );
     url.searchParams.delete( 'site_id' );
     url.searchParams.delete( 'charges_enabled' );
     window.history.replaceState( {}, '', url.toString() );
 
-    // Finalize Stripe connection.
     apiFetch( {
       path: '/mission-donation-platform/v1/stripe/connect',
       method: 'POST',
@@ -201,7 +197,6 @@ export default function OnboardingModal( { onComplete } ) {
             )
           );
         }
-        // Jump to step 3 to show the connected state.
         if ( step !== 3 ) {
           goToStep( 3, step < 3 ? 'forward' : 'backward' );
         }
@@ -211,7 +206,6 @@ export default function OnboardingModal( { onComplete } ) {
       } );
   }, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Lock body scroll.
   useEffect( () => {
     document.body.classList.add( 'mission-onboarding-open' );
     return () => {
@@ -219,7 +213,6 @@ export default function OnboardingModal( { onComplete } ) {
     };
   }, [] );
 
-  // Set initial height.
   useEffect( () => {
     window.requestAnimationFrame( () => {
       const activePanel = stepsWrapRef.current?.querySelector(
@@ -288,18 +281,15 @@ export default function OnboardingModal( { onComplete } ) {
       return;
     }
 
-    // Measure target height.
     targetPanel.classList.add( 'is-measuring' );
     const targetHeight = targetPanel.offsetHeight;
     targetPanel.classList.remove( 'is-measuring' );
 
-    // Slide out current.
     currentPanel.classList.remove( 'is-visible' );
     currentPanel.classList.add(
       direction === 'forward' ? 'is-slide-out-left' : 'is-slide-out-right'
     );
 
-    // Animate wrapper height.
     wrap.style.height = targetHeight + 'px';
 
     setTimeout( () => {
@@ -374,7 +364,6 @@ export default function OnboardingModal( { onComplete } ) {
     setIsSaving( true );
 
     try {
-      // Save settings.
       await apiFetch( {
         path: '/mission-donation-platform/v1/settings',
         method: 'POST',
@@ -393,7 +382,6 @@ export default function OnboardingModal( { onComplete } ) {
         },
       } );
 
-      // Create campaign if filled.
       const campaignName = data.campaign_name.trim();
       const goalNum = parseFloat(
         data.campaign_goal.toString().replace( /,/g, '' )
@@ -448,7 +436,6 @@ export default function OnboardingModal( { onComplete } ) {
     saveAndClose();
   }
 
-  // Escape key.
   useEffect( () => {
     function onKeyDown( e ) {
       if ( e.key === 'Escape' ) {

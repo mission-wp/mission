@@ -118,7 +118,6 @@ class FundraiserImageUploader {
 	 * @param string $old_value Previous cover_image value (attachment ID or URL).
 	 */
 	public function cleanup_replaced_image( string $old_value ): void {
-		// URLs and empty values aren't attachments this plugin manages.
 		if ( '' === $old_value || ! ctype_digit( $old_value ) ) {
 			return;
 		}

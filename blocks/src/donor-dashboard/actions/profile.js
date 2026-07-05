@@ -278,7 +278,6 @@ export const profileActions = {
         return;
       }
 
-      // Update sidebar donor display.
       ctx.donor.firstName = ctx.profile.firstName;
       ctx.donor.lastName = ctx.profile.lastName;
       ctx.donor.email = ctx.profile.email;
@@ -291,7 +290,6 @@ export const profileActions = {
 
       showToast( ctx, 'Profile updated' );
 
-      // Reset "Saved" label after 2 seconds.
       setTimeout( () => {
         ctx.profile.saved = false;
       }, 2000 );

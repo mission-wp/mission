@@ -46,7 +46,6 @@ class TeamInvitationDataStore implements DataStoreInterface {
 
 		$data['date_created'] = $data['date_created'] ?: $now;
 
-		// Every invitation needs a unique bearer token (the column is UNIQUE).
 		if ( empty( $data['token'] ) ) {
 			$data['token'] = bin2hex( random_bytes( 16 ) );
 			$model->token  = $data['token'];
@@ -165,7 +164,6 @@ class TeamInvitationDataStore implements DataStoreInterface {
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
 		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
-		// Bounded by default; -1 means "all" for full-set consumers (cascades, flushes).
 		$per_page = (int) ( $args['per_page'] ?? 100 );
 		$per_page = $per_page < 1 ? PHP_INT_MAX : $per_page;
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );

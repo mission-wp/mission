@@ -210,7 +210,6 @@ store( 'mission-donation-platform/donation-form', {
     selectOngoing() {
       const ctx = getContext();
       ctx.isOngoing = true;
-      // Prefer monthly when switching to ongoing, fall back to first available.
       const freq = ctx.recurringFrequencies.includes( 'monthly' )
         ? 'monthly'
         : ctx.recurringFrequencies[ 0 ] || 'monthly';
@@ -268,7 +267,6 @@ store( 'mission-donation-platform/donation-form', {
         return;
       }
 
-      // Step 1 → validate amount + tribute.
       if ( ctx.currentStep === 1 ) {
         const amount = getEffectiveAmount( ctx );
         const minimum = ctx.settings.minimumAmount || 0;
@@ -276,7 +274,6 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Validate tribute fields.
         if ( ctx.tributeChecked ) {
           ctx.honoreeNameError = ! ctx.honoreeName.trim();
           if ( ctx.notifyEnabled ) {
@@ -301,7 +298,6 @@ store( 'mission-donation-platform/donation-form', {
         }
       }
 
-      // Step 2 (custom fields) → validate required fields.
       if ( ctx.currentStep === 2 && ctx.hasCustomFields ) {
         if ( ! validateCustomFields( ctx ) ) {
           const { ref } = getElement();
@@ -400,7 +396,6 @@ store( 'mission-donation-platform/donation-form', {
       event.stopPropagation();
       const ctx = getContext();
       ctx.isCustomTip = true;
-      // Pre-fill at 15% of donation amount.
       const amount = getEffectiveAmount( ctx );
       ctx.customTipAmount = calculateTip( amount, 15, ctx.settings.currency );
       ctx.selectedTipPercent = 0;
@@ -522,7 +517,6 @@ store( 'mission-donation-platform/donation-form', {
       } else {
         ctx.customFieldValues[ fieldId ] = event.target.value;
       }
-      // Clear error on interaction.
       if ( ctx.customFieldErrors?.[ fieldId ] ) {
         const errors = { ...ctx.customFieldErrors };
         delete errors[ fieldId ];
@@ -554,7 +548,6 @@ store( 'mission-donation-platform/donation-form', {
       } else {
         ctx.customFieldValues[ fieldId ] = [ ...current, optionValue ];
       }
-      // Clear error on interaction.
       if ( ctx.customFieldErrors?.[ fieldId ] ) {
         const errors = { ...ctx.customFieldErrors };
         delete errors[ fieldId ];
@@ -567,7 +560,6 @@ store( 'mission-donation-platform/donation-form', {
     *submit() {
       const ctx = getContext();
 
-      // Prevent double-submit.
       if ( ctx.isSubmitting ) {
         return;
       }
@@ -583,7 +575,6 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Validate all fields at once — our own and Stripe's.
         if ( ! ctx.settings.collectAddress ) {
           ctx.firstNameError = ! ctx.firstName;
           ctx.lastNameError = ! ctx.lastName;
@@ -612,7 +603,6 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Calculate amounts (tip first — fee depends on it).
         const donationAmount = getEffectiveAmount( ctx );
         const tipAmount = getTipAmount( ctx, donationAmount );
         const { rate, fixed } = getFeeParams( ctx );
@@ -632,7 +622,6 @@ store( 'mission-donation-platform/donation-form', {
           ? 'donations/create-subscription'
           : 'donations/create-payment-intent';
 
-        // Step 2: Create PaymentIntent (one-time) or Subscription (recurring).
         const intentResponse = yield fetch(
           `${ ctx.restUrl }${ createEndpoint }`,
           {
@@ -726,8 +715,8 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Step 3: Confirm payment (works identically for subscriptions —
-        // the first invoice's PaymentIntent is a regular PaymentIntent).
+        // Confirming works identically for subscriptions: the first
+        // invoice's PaymentIntent is a regular PaymentIntent.
         const { error } = yield stripeInstance.confirmPayment( {
           elements: elementsInstance,
           clientSecret: intentData.client_secret,
@@ -751,12 +740,8 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Step 4: Confirm the donation. The server verifies PaymentIntent
-        // status with Stripe and transitions the transaction synchronously
-        // in the common case. If the server returns 202 (still processing),
-        // the webhook will complete the transaction asynchronously — we
-        // show the success UI either way because Stripe.js has already
-        // confirmed the payment client-side.
+        // On 202 (still processing) the webhook completes the transaction;
+        // success UI shows either way since Stripe.js already confirmed.
         const confirmEndpoint = isRecurring
           ? 'donations/confirm-subscription'
           : 'donations/confirm';
@@ -791,7 +776,6 @@ store( 'mission-donation-platform/donation-form', {
           );
         }
 
-        // Step 5: Handle confirmation — redirect or show success state.
         if (
           ctx.confirmationType === 'redirect' &&
           ctx.confirmationRedirectUrl
@@ -1125,7 +1109,6 @@ store( 'mission-donation-platform/donation-form', {
 
       paymentElement.mount( ref );
 
-      // Mount Address Element for full billing address collection.
       if ( ctx.settings.collectAddress ) {
         const addressContainer = document.getElementById(
           ref.id.replace( 'payment-element', 'address-element' )
@@ -1141,7 +1124,6 @@ store( 'mission-donation-platform/donation-form', {
             if ( event.value ) {
               ctx.firstName = event.value.firstName || '';
               ctx.lastName = event.value.lastName || '';
-              // Capture billing address.
               const addr = event.value.address || {};
               ctx.addressLine1 = addr.line1 || '';
               ctx.addressLine2 = addr.line2 || '';

@@ -22,7 +22,6 @@ export default function EmailEditor( {
   const [ loadingDefault, setLoadingDefault ] = useState( false );
   const [ testState, setTestState ] = useState( 'idle' ); // idle | sending | sent | error
 
-  // Fetch default template parts from API when editor opens.
   useEffect( () => {
     if ( ! email ) {
       return;
@@ -92,11 +91,9 @@ export default function EmailEditor( {
     return null;
   }
 
-  // The body to display: custom body if set, otherwise the API-fetched default.
   const displayBody = body || defaultBody;
   const hasCustomBody = !! body;
 
-  // Full email preview: header + body (with highlighted tags) + footer.
   const previewHtml =
     emailHeader + highlightMergeTags( displayBody ) + emailFooter;
 

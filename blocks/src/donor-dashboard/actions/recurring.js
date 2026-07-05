@@ -106,7 +106,6 @@ function setupModalFocusTrap( subscriptionEl, modalSelector ) {
 
     focusTrapCleanup = trapFocus( content );
 
-    // Focus the first focusable element in the modal.
     const firstFocusable = content.querySelector( FOCUSABLE );
     if ( firstFocusable ) {
       firstFocusable.focus();
@@ -459,7 +458,6 @@ export const recurringActions = {
         return;
       }
 
-      // The endpoint returns the resulting status; don't assume it here.
       sub.status = data.status;
       sub.pauseLoading = false;
       showToast( ctx, 'Subscription paused' );
@@ -497,7 +495,6 @@ export const recurringActions = {
         return;
       }
 
-      // The endpoint returns the resulting status; don't assume it here.
       sub.status = data.status;
       sub.pauseLoading = false;
       showToast( ctx, 'Subscription resumed' );
@@ -518,11 +515,9 @@ export const recurringActions = {
     sub.changeAmountInput = String( minorToMajor( sub.amount, sub.currency ) );
     sub.changeError = '';
 
-    // Fee recovery: default to checked if subscription has a non-zero fee_amount.
     sub.changeFeeRecoveryChecked = sub.feeAmount > 0;
     sub.changeFeeDetailsOpen = false;
 
-    // Tip: initialize from current tip amount.
     sub.changeTipMenuOpen = false;
     sub.changeIsCustomTip = false;
 
@@ -530,7 +525,6 @@ export const recurringActions = {
       sub.changeSelectedTipPercent = 0;
       sub.changeCustomTipAmount = 0;
     } else {
-      // Reverse-engineer current tip percent, snap to standard options.
       const currentTipPercent =
         sub.amount > 0
           ? Math.round( ( sub.tipAmount / sub.amount ) * 100 )
@@ -670,7 +664,6 @@ export const recurringActions = {
 
     const baseAmountMinor = majorToMinor( baseAmount, sub.currency );
 
-    // Calculate fee recovery.
     const feeRate = ( sub.stripeFeePercent ?? 2.9 ) / 100;
     const feeFixed = sub.stripeFeeFixed ?? defaultFixedFee( sub.currency );
     const platformRate = sub.feeModeFlat ? PLATFORM_FEE_RATE : 0;
@@ -684,10 +677,8 @@ export const recurringActions = {
         )
       : 0;
 
-    // Fee rolls into donation_amount (same as donation form).
     const donationAmount = baseAmountMinor + feeAmount;
 
-    // Calculate tip.
     let tipAmount = 0;
     if ( ! sub.feeModeFlat ) {
       if ( sub.changeIsCustomTip ) {
@@ -732,7 +723,6 @@ export const recurringActions = {
         return;
       }
 
-      // Update local state with new amounts.
       sub.amount = donationAmount;
       sub.tipAmount = tipAmount;
       sub.feeAmount = feeAmount;
@@ -766,7 +756,6 @@ export const recurringActions = {
     }
 
     try {
-      // Create a SetupIntent via the WP REST proxy.
       const response = yield fetch(
         `${ ctx.restUrl }donor-dashboard/subscriptions/${ sub.id }/setup-intent`,
         {
@@ -788,15 +777,12 @@ export const recurringActions = {
 
       const intentData = yield response.json();
 
-      // Initialize Stripe with the connected account.
       stripeInstance = window.Stripe( ctx.stripePublishableKey, {
         stripeAccount: intentData.connected_account_id,
       } );
 
-      // Store client secret in module scope (not on reactive context).
       clientSecret = intentData.client_secret;
 
-      // Create Elements using the SetupIntent's client secret.
       elementsInstance = stripeInstance.elements( {
         clientSecret,
         appearance: {
@@ -814,7 +800,6 @@ export const recurringActions = {
         },
       } );
 
-      // Create and mount the PaymentElement.
       paymentElement = elementsInstance.create( 'payment', {
         layout: 'tabs',
         wallets: { link: 'never' },
@@ -828,7 +813,6 @@ export const recurringActions = {
         paymentElement.mount( container );
       }
 
-      // Track when the card form is complete.
       paymentElement.on( 'change', ( event ) => {
         sub.updatePaymentReady = event.complete;
         if ( event.error ) {
@@ -838,7 +822,6 @@ export const recurringActions = {
         }
       } );
 
-      // Trap focus in the modal.
       const card = ref.closest( '.mission-dd-subscription' );
       if ( card ) {
         setupModalFocusTrap( card, '.mission-dd-modal:not([hidden])' );
@@ -868,7 +851,6 @@ export const recurringActions = {
     sub.updatePaymentError = '';
 
     try {
-      // Confirm the SetupIntent with Stripe.
       const { error, setupIntent } = yield stripeInstance.confirmSetup( {
         elements: elementsInstance,
         confirmParams: {
@@ -883,7 +865,6 @@ export const recurringActions = {
         return;
       }
 
-      // Send the payment method ID to the WP REST endpoint.
       const response = yield fetch(
         `${ ctx.restUrl }donor-dashboard/subscriptions/${ sub.id }/payment-method`,
         {
@@ -909,13 +890,11 @@ export const recurringActions = {
 
       const pmData = yield response.json();
 
-      // Update the subscription card's payment method display.
       const brand = pmData.brand
         ? pmData.brand.charAt( 0 ).toUpperCase() + pmData.brand.slice( 1 )
         : 'Card';
       sub.paymentMethod = `${ brand } ending in ${ pmData.last4 }`;
 
-      // Update the profile panel if this is the first active subscription.
       if (
         ctx.recurring.activeSubscriptions.length > 0 &&
         ctx.recurring.activeSubscriptions[ 0 ].id === sub.id
@@ -928,7 +907,6 @@ export const recurringActions = {
         };
       }
 
-      // Close modal and clean up.
       sub.updatePaymentOpen = false;
       sub.updatePaymentLoading = false;
       cleanupStripe();

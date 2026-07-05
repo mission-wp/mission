@@ -61,7 +61,6 @@ function Edit( { attributes, setAttributes } ) {
   const [ isLoadingList, setIsLoadingList ] = useState( true );
   const [ filterValue, setFilterValue ] = useState( '' );
 
-  // Get the current post context for auto-detect.
   const { currentPostType, currentPostId } = useSelect( ( select ) => {
     const editor = select( 'core/editor' );
     return {
@@ -70,7 +69,6 @@ function Edit( { attributes, setAttributes } ) {
     };
   }, [] );
 
-  // Fetch campaigns for the combobox.
   useEffect( () => {
     apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( response ) => {
@@ -80,25 +78,21 @@ function Edit( { attributes, setAttributes } ) {
       .finally( () => setIsLoadingList( false ) );
   }, [] );
 
-  // Determine the effective campaign ID for preview.
   const preloaded = window.missiondpCampaignImage || null;
   let effectiveId = campaignId;
   if ( ! effectiveId ) {
     if ( preloaded?.campaignId ) {
-      // Use preloaded campaign ID (campaign post edit or admin detail page).
       effectiveId = preloaded.campaignId;
     } else if (
       currentPostType === 'missiondp_campaign' &&
       currentPostId &&
       ! isLoadingList
     ) {
-      // Fall back to matching by post ID from the campaigns list.
       const match = campaigns.find( ( c ) => c.post_id === currentPostId );
       effectiveId = match?.id || 0;
     }
   }
 
-  // Use preloaded image URLs when they match, otherwise fall back to API data.
   let imageSizes = {};
   if ( preloaded?.campaignId && preloaded.campaignId === effectiveId ) {
     imageSizes = preloaded.imageUrls || {};
@@ -111,7 +105,6 @@ function Edit( { attributes, setAttributes } ) {
   const imageUrl =
     imageSizes[ resolution || 'large' ] || imageSizes.full || null;
 
-  // Campaign options filtered by the combobox input.
   const campaignOptions = campaigns
     .filter( ( c ) => {
       if ( ! filterValue ) {
@@ -131,7 +124,6 @@ function Edit( { attributes, setAttributes } ) {
     [ setAttributes ]
   );
 
-  // Build inline styles for the img element (matching core/image pattern).
   const wideAligned = isWideAligned( align );
   const scaleVisible = showScaleControl( attributes, align );
   const imgStyle = computeImageStyles( attributes, align );

@@ -82,7 +82,6 @@ class ReviewBannerEndpoint {
 
 		update_user_meta( get_current_user_id(), 'missiondp_review_banner_dismissed', 1 );
 
-		// Send rating to Mission API (non-blocking).
 		wp_remote_post(
 			'https://api.missionwp.com/v1/review-rating',
 			[

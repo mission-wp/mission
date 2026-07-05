@@ -87,7 +87,6 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		// Previous month comparison.
 		$now            = new \DateTimeImmutable( 'now', wp_timezone() );
 		$prev_start     = $now->modify( 'first day of last month' )->format( 'Y-m-d 00:00:00' );
 		$prev_end       = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
@@ -528,9 +527,6 @@ class ReportingService {
 		$has_team       = ! empty( $args['team_id'] ) ? 1 : 0;
 		$team_id        = $has_team ? (int) $args['team_id'] : 0;
 
-		// Build the search WHERE fragment. The helper produces a multi-token
-		// AND-of-OR clause across name/email columns; we OR an exact match on
-		// the transaction ID so numeric searches still hit t.id directly.
 		$search_clause = SearchClauseBuilder::build_like_clause(
 			(string) ( $args['search'] ?? '' ),
 			[ 'd.first_name', 'd.last_name', 'd.email' ]
@@ -545,7 +541,6 @@ class ReportingService {
 			$search_where_sql = '';
 		}
 
-		// Dedication mode flags — at most one is set to 1.
 		$dedication      = $args['dedication'] ?? '';
 		$has_dedication  = '' !== $dedication ? 1 : 0;
 		$is_mail_pending = 'mail_pending' === $dedication ? 1 : 0;
@@ -554,11 +549,8 @@ class ReportingService {
 
 		$offset = ( $page - 1 ) * $per_page;
 
-		// Shared WHERE clause body. Search fragment is spliced in as already-
-		// validated SQL (the helper emits only %s placeholders + trusted column
-		// names; the t.id branch uses an int-cast value). The dedication filter
-		// uses an EXISTS subquery so the LEFT JOIN to donors does not multiply
-		// rows when a transaction has multiple tributes.
+		// The spliced search fragment is safe SQL: the helper emits only %s
+		// placeholders and trusted column names, and the t.id branch is int-cast.
 		$where = 'WHERE t.is_test = %d
 				   AND ( %d = 0 OR t.status = %s )
 				   AND ( %d = 0 OR t.campaign_id = %d )
@@ -575,8 +567,7 @@ class ReportingService {
 						  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
 					) )';
 
-		// Args that align with placeholders inside $where. Search params slot
-		// into the position the search fragment occupies in the WHERE string.
+		// Order must match the placeholders in $where, with search params at the splice point.
 		$where_args = array_merge(
 			[ $is_test, $has_status, $status, $has_campaign, $campaign_id, $has_donor, $donor_id ],
 			[ $has_fundraiser, $fundraiser_id, $has_team, $team_id, $fr_table, $team_id ],
@@ -584,7 +575,6 @@ class ReportingService {
 			[ $has_dedication, $tribute_table, $is_mail_pending, $is_mail_sent, $is_email_sent ]
 		);
 
-		// Count total.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS t
@@ -594,7 +584,6 @@ class ReportingService {
 			)
 		);
 
-		// Fetch rows.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
@@ -612,7 +601,6 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		// Batch-fetch campaign titles from the campaigns table.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
@@ -722,9 +710,6 @@ class ReportingService {
 		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
 		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
 
-		// Build the search WHERE fragment. Multi-token AND across name/email
-		// columns, plus a LIKE on the gateway subscription ID so partial
-		// matches like "sub_1abc" still resolve.
 		$search_clause = SearchClauseBuilder::build_like_clause(
 			(string) ( $args['search'] ?? '' ),
 			[ 'd.first_name', 'd.last_name', 'd.email', 's.gateway_subscription_id' ]
@@ -749,7 +734,6 @@ class ReportingService {
 			$search_params
 		);
 
-		// Count total.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS s
@@ -759,7 +743,6 @@ class ReportingService {
 			)
 		);
 
-		// Fetch rows.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
@@ -777,7 +760,6 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		// Batch-fetch campaign titles.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
@@ -837,7 +819,6 @@ class ReportingService {
 		$now         = new \DateTimeImmutable( 'now', wp_timezone() );
 		$month_start = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
 
-		// MRR: sum of active subscriptions normalized to monthly.
 		$mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COALESCE(SUM(CASE frequency
@@ -854,7 +835,6 @@ class ReportingService {
 			)
 		);
 
-		// Previous MRR: subscriptions that were active at start of current month.
 		$prev_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COALESCE(SUM(CASE frequency
@@ -875,7 +855,6 @@ class ReportingService {
 			)
 		);
 
-		// Active count.
 		$active = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i WHERE status = \'active\' AND is_test = %d',
@@ -884,7 +863,6 @@ class ReportingService {
 			)
 		);
 
-		// New this month: active subscriptions created since first of month.
 		$new_this_month = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i
@@ -895,7 +873,6 @@ class ReportingService {
 			)
 		);
 
-		// Churned: subscriptions cancelled this month.
 		$churned = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i
@@ -906,7 +883,6 @@ class ReportingService {
 			)
 		);
 
-		// Churned MRR: normalized monthly amount lost from churned subscriptions.
 		$churned_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COALESCE(SUM(CASE frequency
@@ -1022,7 +998,6 @@ class ReportingService {
 			return [];
 		}
 
-		// Batch-fetch tributes: get the most recent transaction per donor, then load tributes.
 		$donor_ids   = array_column( $rows, 'donor_id' );
 		$tribute_map = $this->batch_fetch_tributes_for_donors( $donor_ids, $campaign_id );
 
@@ -1080,7 +1055,6 @@ class ReportingService {
 			return [];
 		}
 
-		// Batch-fetch tributes for the transaction IDs.
 		$txn_ids     = array_column( $rows, 'transaction_id' );
 		$tribute_map = $this->batch_fetch_tributes_by_transaction( $txn_ids );
 
@@ -1139,7 +1113,6 @@ class ReportingService {
 
 		$prepare_args = array_merge( [ $txn_table ], $donor_ids, [ $campaign_id, $is_test, $tribute_table ] );
 
-		// Get the most recent transaction ID per donor, then join tributes.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
 		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
@@ -1212,7 +1185,6 @@ class ReportingService {
 		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$offset      = ( $page - 1 ) * $per_page;
 
-		// Validate orderby.
 		$allowed_orderby = [ 'date_completed', 'amount' ];
 		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_completed';
 		$order_asc       = 'ASC' === strtoupper( $order );
@@ -1221,7 +1193,6 @@ class ReportingService {
 		$has_campaign = $campaign_id > 0 ? 1 : 0;
 		$exclude_anon = $show_anonymous ? 0 : 1;
 
-		// Count query.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS t
@@ -1237,7 +1208,6 @@ class ReportingService {
 			)
 		);
 
-		// Main query.
 		if ( $order_asc ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
@@ -1297,7 +1267,6 @@ class ReportingService {
 			];
 		}
 
-		// Batch-fetch donor comments from transaction meta.
 		$txn_ids     = array_column( $rows, 'transaction_id' );
 		$comment_map = $this->batch_fetch_donor_comments( $txn_ids );
 

@@ -8,10 +8,8 @@
  * team, signed-in donor) is read from this block's own context.
  */
 /* global navigator */
-// Note: this is a script module, where @wordpress/i18n can't be imported (same
-// as donation-form/view.js). User-facing copy is translated server-side and
-// passed through the block context (ctx.i18n); the literals here are
-// English-only fallbacks.
+// Script modules can't import @wordpress/i18n; copy is translated server-side
+// and passed via ctx.i18n, so the literals here are English-only fallbacks.
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
 let cooldownTimer = null;
@@ -79,7 +77,6 @@ function shareUrl() {
   return state.successUrl || window.location.href;
 }
 
-// The element focused before the modal opened, restored on close.
 let lastFocused = null;
 
 const FOCUSABLE_SELECTOR =
@@ -230,7 +227,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         return;
       }
 
-      // Trap Tab inside the dialog while the modal is open.
       if ( event.key === 'Tab' ) {
         const dialog = dialogElement();
         const focusables = dialog ? focusablesIn( dialog ) : [];
@@ -250,7 +246,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         return;
       }
 
-      // Enter submits the active step, except from the story textarea.
       if ( event.key !== 'Enter' || event.target.tagName === 'TEXTAREA' ) {
         return;
       }
@@ -329,7 +324,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.currentStep = 2;
     },
 
-    // Step 1: resolve the account branch.
     *continueAccount() {
       state.firstNameError = ! state.firstName.trim();
       state.lastNameError = ! state.lastName.trim();
@@ -382,7 +376,6 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       }
     },
 
-    // Step 1 (branch b): send a reset code.
     *startReset() {
       const ctx = getContext();
       state.formError = '';
@@ -672,8 +665,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         state.teamId = String( ctx.preselectedTeamId );
       }
 
-      // An invite link (?team_invite=<token>) carries the invitation token and
-      // opens the modal straight away so the invitee can accept.
+      // Invite links (?team_invite=<token>) open the modal straight away.
       const params = new URLSearchParams( window.location.search );
       const token = params.get( 'team_invite' );
       if ( token ) {

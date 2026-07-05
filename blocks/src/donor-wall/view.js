@@ -146,7 +146,6 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
   callbacks: {
     init() {
       const ctx = getContext();
-      // Enrich server-rendered items with computed properties.
       if ( ctx.items && ctx.items.length && ! ctx.items[ 0 ].formattedAmount ) {
         const currency = ctx.items[ 0 ]?.currency || 'USD';
         ctx.items = enrichItems( ctx.items, currency, 0, ctx.commentLength );
@@ -227,7 +226,6 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
         return;
       }
 
-      // Toggle between truncated and full comment.
       if ( donor.displayComment === donor.comment ) {
         donor.displayComment =
           donor.comment.substring( 0, ctx.commentLength ) + '\u2026';

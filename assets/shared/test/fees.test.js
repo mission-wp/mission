@@ -54,8 +54,6 @@ describe( 'maxFixedFee', () => {
 
 describe( 'calculateFee', () => {
   it( 'covers the Stripe fee on the grossed-up charge', () => {
-    // fee = round((5000 + estimate) * 0.029 + 30) with the estimate solved
-    // algebraically; the donor covers the fee on donation + fee.
     const fee = calculateFee( 5000, 0.029, 30 );
     expect( fee ).toBe( Math.round( ( 5000 + fee ) * 0.029 + 30 ) );
   } );
@@ -80,7 +78,7 @@ describe( 'calculateTip', () => {
   } );
 
   it( 'rounds to the nearest minor unit', () => {
-    expect( calculateTip( 333, 15 ) ).toBe( 50 ); // 49.95 → 50
+    expect( calculateTip( 333, 15 ) ).toBe( 50 );
   } );
 
   it( 'returns 0 for a 0% tip', () => {
@@ -88,10 +86,7 @@ describe( 'calculateTip', () => {
   } );
 
   it( 'rounds to whole units for ISK and UGX', () => {
-    // 15% of 500 ISK (50000 minor) = 75.00 ISK — already whole.
     expect( calculateTip( 50000, 15 ) % 1 ).toBe( 0 );
-    // 15% of 5.55 ISK-style input would be fractional; result must be
-    // a multiple of 100 minor units.
     expect( calculateTip( 555, 15, 'ISK' ) % 100 ).toBe( 0 );
     expect( calculateTip( 33333, 10, 'UGX' ) % 100 ).toBe( 0 );
   } );

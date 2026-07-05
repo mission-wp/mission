@@ -68,10 +68,8 @@ class CreateSubscriptionEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
-				// Public — donors are unauthenticated when starting a recurring
-				// donation. Abuse is mitigated by rate limiting, input validation,
-				// and the fact that subscription creation happens server-side via
-				// the Mission API (a malicious caller cannot mint usable Stripe state).
+				// Intentionally public: donors are unauthenticated. Abuse is mitigated
+				// by rate limiting and server-side subscription creation via the Mission API.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'donation_amount'      => [
@@ -283,15 +281,12 @@ class CreateSubscriptionEndpoint {
 		$fee_amount      = $request->get_param( 'fee_amount' );
 		$fee_mode        = $request->get_param( 'fee_mode' );
 
-		// Charges are always denominated in the site currency; a client-supplied
-		// currency is never trusted.
+		// Charges are always in the site currency; a client-supplied currency is never trusted.
 		$currency = strtolower( (string) $this->settings->get( 'currency', 'USD' ) );
 
-		// Preserve the original donation amount (before fee inclusion) for the description.
 		$original_donation = $donation_amount - $fee_amount;
 
-		// Validate the donor's chosen donation, before fee recovery and fee
-		// absorption inflate it.
+		// Validate the donor's chosen donation before fee recovery and absorption inflate it.
 		$minimum_check = $this->validate_minimum_amount(
 			$original_donation,
 			$request->get_param( 'source_post_id' ),
@@ -303,8 +298,6 @@ class CreateSubscriptionEndpoint {
 			return $minimum_check;
 		}
 
-		// Mission absorbs the Stripe fee on its own tip so the nonprofit never
-		// pays higher fees because of our tip.
 		[ $fee_rate, $fee_fixed ] = TipCalculator::get_fee_params_from_settings( $this->settings );
 		TipCalculator::absorb_fee( $donation_amount, $tip_amount, $fee_rate, $fee_fixed, $currency );
 
@@ -381,7 +374,6 @@ class CreateSubscriptionEndpoint {
 
 		$connected_account_id = (string) $body['connected_account_id'];
 
-		// Upsert donor.
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor ) {
@@ -411,11 +403,8 @@ class CreateSubscriptionEndpoint {
 
 		$donor->save();
 
-		// Extract the PaymentIntent ID from the client secret.
 		$payment_intent_id = explode( '_secret_', $body['client_secret'] )[0];
 
-		// Resolve campaign/fundraiser/team attribution (campaign is derived from
-		// the fundraiser/team when one is given).
 		$attribution = DonationAttribution::resolve(
 			(int) $request->get_param( 'campaign_id' ),
 			(int) $request->get_param( 'fundraiser_id' ),
@@ -430,7 +419,6 @@ class CreateSubscriptionEndpoint {
 		$total_amount        = $req_donation_amount + $req_tip_amount;
 		$is_test             = (bool) $this->settings->get( 'test_mode' );
 
-		// Create subscription record.
 		$subscription = new Subscription(
 			[
 				'status'                  => Subscription::STATUS_PENDING,
@@ -454,10 +442,8 @@ class CreateSubscriptionEndpoint {
 
 		$subscription->save();
 
-		// Record which Stripe account this subscription was created against.
 		$subscription->add_meta( 'stripe_account_id', $connected_account_id );
 
-		// Create pending transaction for the initial payment.
 		$transaction = new Transaction(
 			[
 				'status'                  => Transaction::STATUS_PENDING,
@@ -484,18 +470,14 @@ class CreateSubscriptionEndpoint {
 
 		$transaction->save();
 
-		// Record which Stripe account this transaction was charged against.
 		$transaction->add_meta( 'stripe_account_id', $connected_account_id );
 
-		// Store fee rates at time of transaction.
 		$transaction->add_meta( 'stripe_fee_percent', (string) $this->settings->get( 'stripe_fee_percent', 2.9 ) );
 		$transaction->add_meta( 'stripe_fee_fixed', (string) $fee_fixed );
 
-		// Store the platform fee mode so historical records are accurate.
 		$transaction->add_meta( 'fee_mode', $fee_mode );
 		$subscription->add_meta( 'fee_mode', $fee_mode );
 
-		// Store tribute if provided.
 		$tribute_type = $request->get_param( 'tribute_type' );
 		if ( ! empty( $tribute_type ) ) {
 			$tribute = new Tribute(
@@ -517,13 +499,11 @@ class CreateSubscriptionEndpoint {
 			$tribute->save();
 		}
 
-		// Store donor comment.
 		$comment = $request->get_param( 'comment' );
 		if ( ! empty( $comment ) ) {
 			$transaction->add_meta( 'donor_comment', $comment );
 		}
 
-		// Store billing address snapshot.
 		$address_meta = [
 			'address_1' => $request->get_param( 'address_1' ),
 			'address_2' => $request->get_param( 'address_2' ),
@@ -539,7 +519,6 @@ class CreateSubscriptionEndpoint {
 			}
 		}
 
-		// Store custom field responses.
 		$custom_fields = $request->get_param( 'custom_fields' );
 		$custom_config = $request->get_param( 'custom_fields_config' );
 

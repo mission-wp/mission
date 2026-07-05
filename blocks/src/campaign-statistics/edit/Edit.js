@@ -180,7 +180,6 @@ export default function Edit( { attributes, setAttributes } ) {
       .finally( () => setIsLoadingList( false ) );
   }, [] );
 
-  // Resolve effective campaign ID.
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
@@ -220,7 +219,6 @@ export default function Edit( { attributes, setAttributes } ) {
       const oldDefault = STAT_DEFAULTS[ prevStatType.current ]?.heading || '';
       const updates = { statType: newType };
 
-      // Auto-update heading if it still matches the previous default.
       if ( heading === oldDefault ) {
         updates.heading = STAT_DEFAULTS[ newType ]?.heading || newType;
       }
@@ -233,7 +231,6 @@ export default function Edit( { attributes, setAttributes } ) {
 
   const stat = STAT_DEFAULTS[ statType ] || STAT_DEFAULTS.total_raised;
 
-  // Pass heading styles as CSS custom properties on the wrapper.
   const customProperties = {};
   if ( headingFontSize ) {
     customProperties[ '--mission-cs-heading-size' ] = headingFontSize;

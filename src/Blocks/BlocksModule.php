@@ -89,7 +89,6 @@ class BlocksModule {
 		$campaign = null;
 
 		if ( CampaignPostType::POST_TYPE === $screen->post_type ) {
-			// Standard campaign post edit screen.
 			$post_id = get_the_ID();
 			if ( $post_id ) {
 				$campaign = Campaign::find_by_post_id( $post_id );

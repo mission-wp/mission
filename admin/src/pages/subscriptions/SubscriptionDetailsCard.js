@@ -221,7 +221,6 @@ export default function SubscriptionDetailsCard( {
 
   const freqSuffix = FREQUENCY_SUFFIXES[ s.frequency ] || '';
 
-  // Payment history calculations.
   const completedTxns = ( s.transactions || [] ).filter(
     ( t ) => t.status === TRANSACTION_STATUS.COMPLETED
   );
@@ -230,7 +229,6 @@ export default function SubscriptionDetailsCard( {
     0
   );
 
-  // Fee summary calculations (mirrors transaction Payment Breakdown).
   const totalDonation = completedTxns.reduce(
     ( sum, t ) => sum + ( t.amount || 0 ),
     0

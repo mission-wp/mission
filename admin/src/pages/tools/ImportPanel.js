@@ -228,7 +228,6 @@ export default function ImportPanel() {
     };
   }, [ dataType ] );
 
-  // Poll status while a job is in flight.
   const jobStatusStatus = jobStatus?.status;
   useEffect( () => {
     if ( ! jobId ) {
@@ -311,7 +310,6 @@ export default function ImportPanel() {
       } else if ( IMPORT_JOB_STATUS.FAILED === jobStatusStatus ) {
         setUploadState( 'failed' );
       } else if ( IMPORT_JOB_STATUS.CANCELLED === jobStatusStatus ) {
-        // After cancel, drop back to upload so the user can try again.
         resetToUpload();
       }
     }, wait );
@@ -1212,7 +1210,6 @@ export default function ImportPanel() {
       jobStatus && TERMINAL_STATUSES.includes( jobStatus.status )
         ? 'finalizing'
         : 'determinate';
-    // Stroke-dasharray fraction for the ring (circumference of r=52).
     const circumference = 2 * Math.PI * 52;
     const dashOffset = circumference * ( 1 - displayedPercent / 100 );
 

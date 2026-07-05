@@ -23,10 +23,8 @@ class CsvFormatter implements FormatterInterface {
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- In-memory temp stream.
 		$handle = fopen( 'php://temp', 'r+' );
 
-		// Header row.
 		fputcsv( $handle, array_column( $columns, 'label' ) );
 
-		// Data rows.
 		foreach ( $rows as $row ) {
 			$csv_row = [];
 

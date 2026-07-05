@@ -53,7 +53,6 @@ describe( 'getEffectiveAmount', () => {
       selectedAmount: 0,
       settings: { currency: 'JPY' },
     };
-    // 500 JPY in minor units is 500 (zero-decimal).
     expect( getEffectiveAmount( ctx ) ).toBe( 500 );
   } );
 
@@ -227,14 +226,12 @@ describe( 'calculateFee', () => {
   } );
 
   it( 'fee is self-consistent with Stripe pricing', () => {
-    // Stripe's fee on (donation + fee) should equal the fee itself.
     const fee = calculateFee( 5000, rate, fixed );
     const stripeFee = Math.round( ( 5000 + fee ) * rate + fixed );
     expect( fee ).toBe( stripeFee );
   } );
 
   it( 'defaults platformRate to 0 (no platform fee)', () => {
-    // Calling without platformRate should match calling with 0 explicitly.
     expect( calculateFee( 5000, rate, fixed ) ).toBe(
       calculateFee( 5000, rate, fixed, 0 )
     );
@@ -248,7 +245,6 @@ describe( 'calculateFee', () => {
       const total = 10000 + fee;
       const stripeFee = Math.round( total * rate + fixed );
       const platformFee = Math.round( total * platformRate );
-      // Nonprofit should net the original donation amount.
       expect( total - stripeFee - platformFee ).toBe( 10000 );
     } );
 
@@ -292,7 +288,6 @@ describe( 'calculateTip', () => {
   } );
 
   it( 'rounds correctly for odd amounts', () => {
-    // 15% of 3333 = 499.95 → rounds to 500.
     expect( calculateTip( 3333, 15 ) ).toBe( 500 );
   } );
 
@@ -437,7 +432,7 @@ describe( 'total calculation (amount + fee + tip)', () => {
   it( 'computes correct total for a typical donation', () => {
     const ctx = {
       isCustomAmount: false,
-      selectedAmount: 5000, // $50
+      selectedAmount: 5000,
       settings: { currency: 'USD' },
     };
     const amount = getEffectiveAmount( ctx );

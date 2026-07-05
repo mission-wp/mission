@@ -105,9 +105,8 @@ export default function P2PListView( {
     }
   }, [ isLoading, totalPages, view, setView ] );
 
-  // Prefetch P2P campaigns for the campaign filter dropdown. Deliberately
-  // capped at the first 100 (newest first) — beyond that the dropdown becomes
-  // unusable anyway and the list is still reachable via search.
+  // Filter options are deliberately capped at the first 100 (newest first);
+  // beyond that the dropdown is unusable anyway and search still works.
   useEffect( () => {
     apiFetch( {
       path: '/mission-donation-platform/v1/campaigns?per_page=100&type=p2p',
@@ -123,7 +122,6 @@ export default function P2PListView( {
       .catch( () => {} );
   }, [] );
 
-  // Prefetch teams for the team filter dropdown (Fundraisers page only).
   useEffect( () => {
     if ( ! withTeamFilter ) {
       return;

@@ -670,7 +670,6 @@ class Subscription extends Model {
 
 		$transaction->save();
 
-		// Copy platform fee mode from subscription to renewal transaction.
 		$fee_mode = $this->get_meta( 'fee_mode' );
 		if ( $fee_mode ) {
 			$transaction->add_meta( 'fee_mode', $fee_mode );

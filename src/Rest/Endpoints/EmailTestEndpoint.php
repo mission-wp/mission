@@ -137,7 +137,6 @@ class EmailTestEndpoint {
 		$data         = $this->build_sample_data( $email_type, $to );
 		$template     = self::TEMPLATE_MAP[ $email_type ];
 
-		// Build subject.
 		$subject        = $this->get_default_subject( $email_type, $data );
 		$custom_subject = $email_module->get_custom_subject( $email_type );
 
@@ -197,7 +196,6 @@ class EmailTestEndpoint {
 			'next_renewal_formatted' => wp_date( get_option( 'date_format' ), strtotime( '+1 month' ) ),
 		];
 
-		// Add type-specific sample data.
 		switch ( $email_type ) {
 			case 'account_activation':
 				$base['verification_url'] = home_url( '/?action=activate&token=sample-test-token' );

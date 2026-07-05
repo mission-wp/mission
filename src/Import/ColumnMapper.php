@@ -78,9 +78,8 @@ class ColumnMapper {
 		$unmatched = [];
 
 		foreach ( $headers as $header ) {
-			// Pass `meta:*` headers straight through so their values reach the
-			// model as meta. normalize() would strip the colon, so they have to
-			// be handled before the alias lookup.
+			// normalize() would strip the colon from `meta:*` headers, so they
+			// have to be handled before the alias lookup.
 			$meta_key = self::meta_key_from_header( $header );
 
 			if ( null !== $meta_key ) {

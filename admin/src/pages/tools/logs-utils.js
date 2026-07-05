@@ -21,7 +21,7 @@ export const CATEGORY_OPTIONS = [
   { value: 'system', label: __( 'System', 'mission-donation-platform' ) },
 ];
 
-// [ singular, plural ] display labels per import type ('tributes' shows as 'dedications').
+// [ singular, plural ] display labels per import type.
 const importTypeLabels = {
   donors: [ 'donor', 'donors' ],
   transactions: [ 'transaction', 'transactions' ],
@@ -520,7 +520,6 @@ export function buildDetailRows( entry ) {
       break;
 
     default:
-      // Show all data keys for unknown events.
       Object.entries( data ).forEach( ( [ key, value ] ) => {
         push(
           key.replace( /_/g, ' ' ),

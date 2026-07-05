@@ -338,7 +338,6 @@ class Team extends Model {
 			return new WP_Error( 'invalid_email', __( 'Please enter a valid email address.', 'mission-donation-platform' ) );
 		}
 
-		// Already a member of this team? Nothing to invite.
 		$donor = Donor::find_by_email( $email );
 		if ( $donor && Fundraiser::count(
 			[
@@ -349,7 +348,6 @@ class Team extends Model {
 			return new WP_Error( 'already_member', __( 'That person is already on the team.', 'mission-donation-platform' ) );
 		}
 
-		// Reuse an outstanding pending invite rather than minting duplicates.
 		$existing = TeamInvitation::query(
 			[
 				'team_id'  => $this->id,
@@ -361,8 +359,6 @@ class Team extends Model {
 		if ( $existing ) {
 			$invitation = $existing[0];
 
-			// An expired pending row would re-send a token that is dead on
-			// arrival; refresh it in place so the invitee gets a working link.
 			if ( $invitation->is_expired() ) {
 				$invitation->token        = bin2hex( random_bytes( 16 ) );
 				$invitation->date_created = current_time( 'mysql', true );

@@ -110,9 +110,8 @@ class TeamEmailListener {
 	 * @return void
 	 */
 	public function on_member_joined( Fundraiser $fundraiser, Team $team ): void {
-		// The captain creating the team is not a "new member" to notify about.
-		// captain_id isn't set yet at this point in registration, so key off
-		// the captain flag on the joining fundraiser.
+		// Don't notify about the captain themselves; captain_id isn't set yet
+		// during registration, so key off the joining fundraiser's captain flag.
 		if ( $fundraiser->is_team_captain || (int) $fundraiser->id === (int) $team->captain_id ) {
 			return;
 		}
