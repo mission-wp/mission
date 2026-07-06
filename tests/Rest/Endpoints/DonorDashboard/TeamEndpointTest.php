@@ -228,7 +228,7 @@ class TeamEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 
-		$ids = array_column( $data['members'], 'fundraiser_id' );
+		$ids = array_column( $data['members'], 'fundraiserId' );
 		$this->assertContains( $active->id, $ids );
 		$this->assertNotContains( $inactive->id, $ids );
 		$this->assertNotContains( $pending->id, $ids );
@@ -566,15 +566,15 @@ class TeamEndpointTest extends WP_UnitTestCase {
 
 		$data = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" )->get_data();
 
-		$rows = array_values( array_filter( $data['members'], static fn( array $row ) => $row['fundraiser_id'] === $member->id ) );
+		$rows = array_values( array_filter( $data['members'], static fn( array $row ) => $row['fundraiserId'] === $member->id ) );
 		$this->assertCount( 1, $rows );
 
 		$row = $rows[0];
 		$this->assertSame( 'MB', $row['initials'] );
-		$this->assertSame( (int) $member->donor_id, $row['donor_id'] );
-		$this->assertSame( 100000, $row['goal'] );
-		$this->assertSame( 25000, $row['raised_minor'] );
+		$this->assertFalse( $row['isSelf'] );
+		$this->assertFalse( $row['isCaptain'] );
 		$this->assertSame( 25.0, $row['progress'] );
-		$this->assertSame( '$250.00 of $1,000.00', $row['raised_of_goal_label'] );
+		$this->assertSame( '25%', $row['barWidth'] );
+		$this->assertSame( '$250.00 of $1,000.00', $row['raisedOfGoalLabel'] );
 	}
 }

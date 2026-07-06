@@ -222,6 +222,27 @@ class Team extends Model {
 	}
 
 	/**
+	 * The team's pending invitations as dashboard summary rows.
+	 *
+	 * @return array<int, array{id: int, email: string, sent: bool}>
+	 */
+	public function pending_invitation_summaries(): array {
+		return array_map(
+			static fn( TeamInvitation $invitation ): array => [
+				'id'    => (int) $invitation->id,
+				'email' => $invitation->email,
+				'sent'  => ! empty( $invitation->sent_at ),
+			],
+			$this->invitations(
+				[
+					'status'   => TeamInvitation::STATUS_PENDING,
+					'per_page' => -1,
+				]
+			)
+		);
+	}
+
+	/**
 	 * Count the team's member fundraisers.
 	 *
 	 * @return int

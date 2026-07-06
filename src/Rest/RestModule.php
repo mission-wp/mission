@@ -139,7 +139,7 @@ class RestModule {
 		( new DashboardSubscriptionsEndpoint( $settings ) )->register();
 		( new DashboardProfileEndpoint() )->register();
 		( new DashboardFundraiserEndpoint( $reporting, $settings, new FundraiserImageUploader() ) )->register();
-		( new DashboardTeamEndpoint( $settings, new FundraiserImageUploader() ) )->register();
+		( new DashboardTeamEndpoint( $reporting, $settings, new FundraiserImageUploader() ) )->register();
 		( new DashboardEmailChangeEndpoint( $this->email ) )->register();
 		( new EmailTestEndpoint( $settings, $this->email ) )->register();
 		( new EmailTemplateEndpoint( $this->email ) )->register();

@@ -71,29 +71,6 @@ export function syncTeamDetail( ctx, id ) {
 }
 
 /**
- * Map a member row from a REST response into the context shape.
- *
- * @param {Object} row Member row from the team endpoints.
- * @param {Object} ctx Interactivity context.
- * @return {Object} Member for the context.
- */
-function mapMember( row, ctx ) {
-  const progress = Math.min( 100, Math.round( row.progress || 0 ) );
-
-  return {
-    fundraiserId: row.fundraiser_id,
-    donorId: row.donor_id,
-    name: row.name,
-    initials: row.initials,
-    isCaptain: row.is_captain,
-    isSelf: row.donor_id === ctx.teams?.donorId,
-    progress: row.progress || 0,
-    barWidth: `${ progress }%`,
-    raisedOfGoalLabel: row.raised_of_goal_label,
-  };
-}
-
-/**
  * Translated strings, read from context so the script module needs no
  * translation import.
  *
@@ -480,9 +457,7 @@ export const teamActions = {
       }
 
       const data = yield response.json();
-      card.members = ( data.members || [] ).map( ( row ) =>
-        mapMember( row, ctx )
-      );
+      card.members = data.members || [];
       card.memberCount = card.members.length;
       teams.membersPage = 1;
       showToast( ctx, teams.i18n?.removeToast || 'Member removed' );
@@ -530,9 +505,7 @@ export const teamActions = {
       card.captainChipLabel = (
         teams.i18n?.captainChip || 'Captain: %s'
       ).replace( '%s', member.name );
-      card.members = ( data.members || [] ).map( ( row ) =>
-        mapMember( row, ctx )
-      );
+      card.members = data.members || [];
       card.invitations = [];
       showToast( ctx, teams.i18n?.promoteToast || 'New captain set' );
     } catch {

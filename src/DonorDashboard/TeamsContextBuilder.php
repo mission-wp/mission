@@ -12,7 +12,6 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
-use MissionDP\Models\TeamInvitation;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 
@@ -121,7 +120,6 @@ class TeamsContextBuilder {
 			'photoRemoved'    => false,
 			'uploadError'     => '',
 			'maxPhotoBytes'   => FundraiserImageUploader::max_size(),
-			'donorId'         => (int) $this->donor->id,
 			'currencySymbol'  => Currency::get_symbol( $this->currency ),
 			'i18n'            => [
 				'save'           => __( 'Save changes', 'mission-donation-platform' ),
@@ -163,7 +161,10 @@ class TeamsContextBuilder {
 		$goal_display   = $team->goal > 0 ? Currency::format_amount( $team->goal, $this->currency ) : '';
 		$progress       = $team->goal > 0 ? min( 100.0, round( $totals['raised'] / $team->goal * 100, 2 ) ) : 0.0;
 		$is_captain     = $membership->is_captain();
-		$members        = array_map( [ $this, 'prepare_member' ], $this->reporting->team_members( (int) $team->id ) );
+		$members        = array_map(
+			fn( array $row ): array => TeamRoster::member_row( $row, $this->currency, (int) $this->donor->id ),
+			$this->reporting->team_members( (int) $team->id )
+		);
 		$cover_url      = DashboardLabels::cover_image_url( $team->cover_image );
 
 		$rank_label = '';
@@ -248,7 +249,7 @@ class TeamsContextBuilder {
 			'hasCover'         => '' !== $cover_url,
 			'myFundraiserId'   => (int) $membership->id,
 			'members'          => $members,
-			'invitations'      => $is_captain ? $this->prepare_invitations( $team ) : [],
+			'invitations'      => $is_captain ? $team->pending_invitation_summaries() : [],
 		];
 
 		/**
@@ -258,55 +259,6 @@ class TeamsContextBuilder {
 		 * @param Team  $team The team model.
 		 */
 		return apply_filters( 'mission_donor_dashboard_team_card', $card, $team );
-	}
-
-	/**
-	 * Prepare one member row for the team detail list.
-	 *
-	 * @param array<string, mixed> $row Row from ReportingService::team_members().
-	 * @return array<string, mixed>
-	 */
-	private function prepare_member( array $row ): array {
-		$raised_display = Currency::format_amount( $row['raised'], $this->currency );
-		$goal_display   = $row['goal'] > 0 ? Currency::format_amount( $row['goal'], $this->currency ) : '';
-		$progress       = $row['goal'] > 0 ? min( 100.0, round( $row['raised'] / $row['goal'] * 100, 2 ) ) : 0.0;
-
-		return [
-			'fundraiserId'      => $row['id'],
-			'donorId'           => $row['donor_id'],
-			'name'              => $row['name'],
-			'initials'          => DashboardLabels::person_initials( $row['first_name'], $row['last_name'] ),
-			'isCaptain'         => $row['is_captain'],
-			'isSelf'            => $row['donor_id'] === (int) $this->donor->id,
-			'progress'          => $progress,
-			'barWidth'          => min( 100, (int) round( $progress ) ) . '%',
-			'raisedOfGoalLabel' => $goal_display
-				/* translators: 1: amount raised, 2: personal goal */
-				? sprintf( __( '%1$s of %2$s', 'mission-donation-platform' ), $raised_display, $goal_display )
-				: $raised_display,
-		];
-	}
-
-	/**
-	 * Prepare a team's pending invitations (captain view).
-	 *
-	 * @param Team $team Team model.
-	 * @return array<int, array<string, mixed>>
-	 */
-	private function prepare_invitations( Team $team ): array {
-		return array_map(
-			static fn( TeamInvitation $invitation ): array => [
-				'id'    => (int) $invitation->id,
-				'email' => $invitation->email,
-				'sent'  => ! empty( $invitation->sent_at ),
-			],
-			$team->invitations(
-				[
-					'status'   => TeamInvitation::STATUS_PENDING,
-					'per_page' => -1,
-				]
-			)
-		);
 	}
 
 	/**

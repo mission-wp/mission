@@ -9,10 +9,11 @@ namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
 use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\DashboardLabels;
+use MissionDP\DonorDashboard\TeamRoster;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
-use MissionDP\Models\TeamInvitation;
 use MissionDP\P2P\FundraiserImageUploader;
+use MissionDP\Reporting\ReportingService;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
@@ -42,10 +43,12 @@ class TeamEndpoint {
 	/**
 	 * Constructor.
 	 *
-	 * @param SettingsService         $settings Settings service (test-mode aware totals).
-	 * @param FundraiserImageUploader $uploader Server-side cover image uploader.
+	 * @param ReportingService        $reporting Reporting service (roster query).
+	 * @param SettingsService         $settings  Settings service (test-mode aware totals).
+	 * @param FundraiserImageUploader $uploader  Server-side cover image uploader.
 	 */
 	public function __construct(
+		private ReportingService $reporting,
 		private SettingsService $settings,
 		private FundraiserImageUploader $uploader,
 	) {}
@@ -309,7 +312,7 @@ class TeamEndpoint {
 			return $result;
 		}
 
-		return new WP_REST_Response( [ 'invitations' => $this->prepare_invitations( $team ) ], 201 );
+		return new WP_REST_Response( [ 'invitations' => $team->pending_invitation_summaries() ], 201 );
 	}
 
 	/**
@@ -435,6 +438,8 @@ class TeamEndpoint {
 		$currency = $this->dashboard_currency();
 		$cover    = $team->cover_image;
 		$raised   = $team->amount_raised( $is_test );
+		$donor    = $this->resolve_donor();
+		$self_id  = is_wp_error( $donor ) ? 0 : (int) $donor->id;
 
 		$goal_display   = $team->goal > 0 ? Currency::format_amount( $team->goal, $currency ) : '';
 		$raised_display = Currency::format_amount( $raised, $currency );
@@ -456,76 +461,12 @@ class TeamEndpoint {
 			'cover_image'     => DashboardLabels::cover_image_id( $cover ),
 			'cover_image_url' => DashboardLabels::cover_image_url( $cover ),
 			'url'             => $team->get_url() ?? '',
-			'members'         => $this->prepare_members( $team, $is_test, $currency ),
-			'invitations'     => $this->prepare_invitations( $team ),
+			'members'         => array_map(
+				fn( array $row ): array => TeamRoster::member_row( $row, $currency, $self_id ),
+				$this->reporting->team_members( (int) $team->id )
+			),
+			'invitations'     => $team->pending_invitation_summaries(),
 		];
-	}
-
-	/**
-	 * Prepare a team's member list.
-	 *
-	 * @param Team   $team     Team model.
-	 * @param bool   $is_test  Whether to use test-mode totals.
-	 * @param string $currency Currency code for formatting.
-	 * @return array<int, array<string, mixed>>
-	 */
-	private function prepare_members( Team $team, bool $is_test, string $currency ): array {
-		return array_map(
-			function ( Fundraiser $member ) use ( $is_test, $currency ): array {
-				$donor  = $member->donor();
-				$name   = trim( (string) ( $donor?->full_name() ?? '' ) );
-				$raised = $member->amount_raised( $is_test );
-
-				$raised_display = Currency::format_amount( $raised, $currency );
-				$goal_display   = $member->goal > 0 ? Currency::format_amount( $member->goal, $currency ) : '';
-
-				return [
-					'fundraiser_id'        => (int) $member->id,
-					'donor_id'             => (int) $member->donor_id,
-					'name'                 => '' !== $name ? $name : __( 'Participant', 'mission-donation-platform' ),
-					'initials'             => DashboardLabels::person_initials( (string) ( $donor?->first_name ?? '' ), (string) ( $donor?->last_name ?? '' ) ),
-					'is_captain'           => (bool) $member->is_team_captain,
-					'raised'               => $raised_display,
-					'raised_minor'         => $raised,
-					'goal'                 => $member->goal,
-					'progress'             => $member->progress( $is_test ),
-					'raised_of_goal_label' => $goal_display
-						/* translators: 1: amount raised, 2: personal goal */
-						? sprintf( __( '%1$s of %2$s', 'mission-donation-platform' ), $raised_display, $goal_display )
-						: $raised_display,
-				];
-			},
-			$team->members(
-				[
-					'status'   => Fundraiser::STATUS_ACTIVE,
-					'orderby'  => 'total_raised',
-					'order'    => 'DESC',
-					'per_page' => -1,
-				]
-			)
-		);
-	}
-
-	/**
-	 * Prepare a team's pending invitations.
-	 *
-	 * @param Team $team Team model.
-	 * @return array<int, array<string, mixed>>
-	 */
-	private function prepare_invitations( Team $team ): array {
-		return array_map(
-			static fn( TeamInvitation $invitation ): array => [
-				'id'    => (int) $invitation->id,
-				'email' => $invitation->email,
-				'sent'  => ! empty( $invitation->sent_at ),
-			],
-			$team->invitations(
-				[
-					'status'   => TeamInvitation::STATUS_PENDING,
-					'per_page' => -1,
-				]
-			)
-		);
 	}
 
 	/**
