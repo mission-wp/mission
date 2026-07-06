@@ -352,7 +352,7 @@ class Fundraiser extends Model {
 	 * @return bool
 	 */
 	public function is_captain(): bool {
-		return null !== $this->team_id && (int) $this->id === (int) ( $this->team()?->captain_id ?? 0 );
+		return null !== $this->team_id && (int) ( $this->team()?->captain_id ?? 0 ) === (int) $this->id;
 	}
 
 	/**
