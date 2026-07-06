@@ -8,6 +8,7 @@
 namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\TeamInvitation;
@@ -451,9 +452,9 @@ class TeamEndpoint {
 			'raised'          => $raised,
 			'raised_display'  => $raised_display,
 			'progress'        => $team->progress( $is_test ),
-			'progress_label'  => $this->progress_label( $raised_display, $goal_display ),
-			'cover_image'     => $this->cover_image_id( $cover ),
-			'cover_image_url' => $this->cover_image_url( $cover ),
+			'progress_label'  => DashboardLabels::progress_label( $raised_display, $goal_display ),
+			'cover_image'     => DashboardLabels::cover_image_id( $cover ),
+			'cover_image_url' => DashboardLabels::cover_image_url( $cover ),
 			'url'             => $team->get_url() ?? '',
 			'members'         => $this->prepare_members( $team, $is_test, $currency ),
 			'invitations'     => $this->prepare_invitations( $team ),
@@ -482,7 +483,7 @@ class TeamEndpoint {
 					'fundraiser_id'        => (int) $member->id,
 					'donor_id'             => (int) $member->donor_id,
 					'name'                 => '' !== $name ? $name : __( 'Participant', 'mission-donation-platform' ),
-					'initials'             => $this->person_initials( (string) ( $donor?->first_name ?? '' ), (string) ( $donor?->last_name ?? '' ) ),
+					'initials'             => DashboardLabels::person_initials( (string) ( $donor?->first_name ?? '' ), (string) ( $donor?->last_name ?? '' ) ),
 					'is_captain'           => (bool) $member->is_team_captain,
 					'raised'               => $raised_display,
 					'raised_minor'         => $raised,

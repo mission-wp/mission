@@ -197,9 +197,7 @@ class FundraisersContextBuilder {
 		$progress       = $fundraiser->progress( $this->is_test );
 		$dedication     = $fundraiser->dedication();
 		$url            = $fundraiser->get_url() ?? '';
-		$cover_url      = ctype_digit( $fundraiser->cover_image )
-			? ( wp_get_attachment_image_url( (int) $fundraiser->cover_image, 'large' ) ?: '' )
-			: $fundraiser->cover_image;
+		$cover_url      = DashboardLabels::cover_image_url( $fundraiser->cover_image );
 
 		[ $badge_type, $status_label ]         = $this->badge( $fundraiser, $is_ended, $raised );
 		[ $time_stat_value, $time_stat_label ] = $this->time_stat( $campaign, $is_ended );
@@ -222,7 +220,7 @@ class FundraisersContextBuilder {
 			'campaignTitle'      => $campaign?->title ?? '',
 			'headline'           => $fundraiser->headline,
 			'story'              => $is_ended ? '' : $fundraiser->story,
-			'dedicationLabel'    => $this->dedication_label( $dedication ),
+			'dedicationLabel'    => $fundraiser->dedication_label(),
 			'tributeType'        => $dedication['type'] ?? '',
 			'tributeName'        => $dedication['name'] ?? '',
 			'status'             => $fundraiser->status,
@@ -237,7 +235,7 @@ class FundraisersContextBuilder {
 			'goalMajor'          => (string) Currency::minor_to_major( $fundraiser->goal, $this->currency ),
 			'progress'           => $progress,
 			'barWidth'           => min( 100, (int) round( $progress ) ) . '%',
-			'progressLabel'      => $this->progress_label( $raised_display, $goal_display ),
+			'progressLabel'      => DashboardLabels::progress_label( $raised_display, $goal_display ),
 			'percentLabel'       => $fundraiser->goal > 0 ? min( 100, (int) round( $progress ) ) . '%' : '',
 			'donationCount'      => $donation_count,
 			'donationCountLabel' => sprintf(
@@ -250,7 +248,7 @@ class FundraisersContextBuilder {
 				/* translators: %s: goal amount */
 				? sprintf( __( 'Raised of %s', 'mission-donation-platform' ), $goal_display )
 				: __( 'Raised', 'mission-donation-platform' ),
-			'timeLabel'          => $this->time_label( $campaign, $is_ended ),
+			'timeLabel'          => DashboardLabels::time_label( $campaign, $is_ended ),
 			'timeStatValue'      => $time_stat_value,
 			'timeStatLabel'      => $time_stat_label,
 			'url'                => $url,
@@ -290,11 +288,10 @@ class FundraisersContextBuilder {
 	private function prepare_supporter( array $row ): array {
 		$name         = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
 		$is_anonymous = (bool) $row['is_anonymous'];
-		$initials     = $is_anonymous ? '?' : strtoupper( mb_substr( (string) ( $row['first_name'] ?? '' ), 0, 1 ) . mb_substr( (string) ( $row['last_name'] ?? '' ), 0, 1 ) );
 
 		return [
 			'name'       => $is_anonymous || '' === $name ? __( 'Anonymous', 'mission-donation-platform' ) : $name,
-			'initials'   => '' === trim( $initials ) ? '?' : $initials,
+			'initials'   => DashboardLabels::person_initials( (string) ( $row['first_name'] ?? '' ), (string) ( $row['last_name'] ?? '' ), $is_anonymous ),
 			'amount'     => Currency::format_amount( $row['amount'], $this->currency ),
 			'timeAgo'    => $row['date']
 				/* translators: %s: human-readable time difference (e.g. "3 days") */
@@ -331,73 +328,6 @@ class FundraisersContextBuilder {
 		}
 
 		return [ 'active', __( 'Active', 'mission-donation-platform' ) ];
-	}
-
-	/**
-	 * Human progress label ("$480 raised of $1,000 goal").
-	 *
-	 * @param string $raised_display Formatted amount raised.
-	 * @param string $goal_display   Formatted goal, or '' when no goal.
-	 * @return string
-	 */
-	private function progress_label( string $raised_display, string $goal_display ): string {
-		return $goal_display
-			/* translators: 1: amount raised, 2: goal amount */
-			? sprintf( __( '%1$s raised of %2$s goal', 'mission-donation-platform' ), $raised_display, $goal_display )
-			/* translators: %s: amount raised */
-			: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_display );
-	}
-
-	/**
-	 * Human dedication label for a card, or '' when none.
-	 *
-	 * @param array{type: string, name: string}|null $dedication From Fundraiser::dedication().
-	 * @return string
-	 */
-	private function dedication_label( ?array $dedication ): string {
-		if ( ! $dedication ) {
-			return '';
-		}
-
-		return 'memory' === $dedication['type']
-			/* translators: %s: person being honored */
-			? sprintf( __( 'In memory of %s', 'mission-donation-platform' ), $dedication['name'] )
-			/* translators: %s: person being honored */
-			: sprintf( __( 'In honor of %s', 'mission-donation-platform' ), $dedication['name'] );
-	}
-
-	/**
-	 * The card meta-line time label ("24 days left" / "Ends Sep 12, 2026" / "Ended Jul 12, 2025").
-	 *
-	 * @param Campaign|null $campaign The campaign, if it still exists.
-	 * @param bool          $is_ended Whether the campaign has ended.
-	 * @return string
-	 */
-	private function time_label( ?Campaign $campaign, bool $is_ended ): string {
-		if ( $is_ended ) {
-			return $campaign && $campaign->date_end
-				/* translators: %s: campaign end date */
-				? sprintf( __( 'Ended %s', 'mission-donation-platform' ), date_i18n( 'M j, Y', strtotime( $campaign->date_end ) ) )
-				: __( 'Ended', 'mission-donation-platform' );
-		}
-
-		$days = $campaign?->days_left();
-
-		if ( null === $days ) {
-			return '';
-		}
-
-		if ( 0 === $days ) {
-			return __( 'Ends today', 'mission-donation-platform' );
-		}
-
-		if ( $days <= 30 ) {
-			/* translators: %s: number of days */
-			return sprintf( _n( '%s day left', '%s days left', $days, 'mission-donation-platform' ), number_format_i18n( $days ) );
-		}
-
-		/* translators: %s: campaign end date */
-		return sprintf( __( 'Ends %s', 'mission-donation-platform' ), date_i18n( 'M j, Y', strtotime( (string) $campaign->date_end ) ) );
 	}
 
 	/**
@@ -560,13 +490,10 @@ class FundraisersContextBuilder {
 			return '';
 		}
 
-		$raised_display = Currency::format_amount( $this->reporting->team_totals( (int) $team->id )['raised'], $this->currency );
-
-		return $team->goal > 0
-			/* translators: 1: amount raised, 2: team goal */
-			? sprintf( __( '%1$s of %2$s team goal', 'mission-donation-platform' ), $raised_display, Currency::format_amount( $team->goal, $this->currency ) )
-			/* translators: %s: amount raised */
-			: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_display );
+		return DashboardLabels::team_progress_label(
+			Currency::format_amount( $this->reporting->team_totals( (int) $team->id )['raised'], $this->currency ),
+			$team->goal > 0 ? Currency::format_amount( $team->goal, $this->currency ) : ''
+		);
 	}
 
 	/**

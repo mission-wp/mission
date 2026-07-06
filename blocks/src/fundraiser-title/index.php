@@ -31,16 +31,7 @@ defined( 'ABSPATH' ) || exit;
 	$campaign_url = $campaign ? $campaign->get_url() : null;
 	$headline     = $fundraiser->headline;
 
-	// Optional page dedication.
-	$dedication   = $fundraiser->dedication();
-	$tribute_text = '';
-	if ( $dedication ) {
-		$tribute_text = 'memory' === $dedication['type']
-			/* translators: %s: person being honored */
-			? sprintf( __( 'In memory of %s', 'mission-donation-platform' ), $dedication['name'] )
-			/* translators: %s: person being honored */
-			: sprintf( __( 'In honor of %s', 'mission-donation-platform' ), $dedication['name'] );
-	}
+	$tribute_text = $fundraiser->dedication_label();
 
 	ob_start();
 	?>

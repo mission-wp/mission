@@ -164,9 +164,7 @@ class TeamsContextBuilder {
 		$progress       = $team->goal > 0 ? min( 100.0, round( $totals['raised'] / $team->goal * 100, 2 ) ) : 0.0;
 		$is_captain     = $membership->is_captain();
 		$members        = array_map( [ $this, 'prepare_member' ], $this->reporting->team_members( (int) $team->id ) );
-		$cover_url      = ctype_digit( $team->cover_image )
-			? ( wp_get_attachment_image_url( (int) $team->cover_image, 'large' ) ?: '' )
-			: $team->cover_image;
+		$cover_url      = DashboardLabels::cover_image_url( $team->cover_image );
 
 		$rank_label = '';
 		$rank       = [
@@ -222,11 +220,7 @@ class TeamsContextBuilder {
 			'goalMajor'        => (string) Currency::minor_to_major( $team->goal, $this->currency ),
 			'progress'         => $progress,
 			'barWidth'         => min( 100, (int) round( $progress ) ) . '%',
-			'progressLabel'    => $goal_display
-				/* translators: 1: amount raised, 2: team goal */
-				? sprintf( __( '%1$s of %2$s team goal', 'mission-donation-platform' ), $raised_display, $goal_display )
-				/* translators: %s: amount raised */
-				: sprintf( __( '%s raised', 'mission-donation-platform' ), $raised_display ),
+			'progressLabel'    => DashboardLabels::team_progress_label( $raised_display, $goal_display ),
 			'percentLabel'     => $team->goal > 0 ? min( 100, (int) round( $progress ) ) . '%' : '',
 			'goalStatLabel'    => $goal_display
 				/* translators: %s: team goal */
@@ -247,7 +241,7 @@ class TeamsContextBuilder {
 				/* translators: %s: number of teams */
 				? sprintf( __( 'Of %s Teams', 'mission-donation-platform' ), number_format_i18n( $rank['total'] ) )
 				: '',
-			'timeLabel'        => $this->time_label( $campaign ),
+			'timeLabel'        => DashboardLabels::time_label( $campaign, false ),
 			'url'              => $url ?? '',
 			'hasUrl'           => null !== $url,
 			'coverImageUrl'    => $cover_url,
@@ -276,13 +270,12 @@ class TeamsContextBuilder {
 		$raised_display = Currency::format_amount( $row['raised'], $this->currency );
 		$goal_display   = $row['goal'] > 0 ? Currency::format_amount( $row['goal'], $this->currency ) : '';
 		$progress       = $row['goal'] > 0 ? min( 100.0, round( $row['raised'] / $row['goal'] * 100, 2 ) ) : 0.0;
-		$initials       = strtoupper( mb_substr( $row['first_name'], 0, 1 ) . mb_substr( $row['last_name'], 0, 1 ) );
 
 		return [
 			'fundraiserId'      => $row['id'],
 			'donorId'           => $row['donor_id'],
 			'name'              => $row['name'],
-			'initials'          => '' === trim( $initials ) ? '?' : $initials,
+			'initials'          => DashboardLabels::person_initials( $row['first_name'], $row['last_name'] ),
 			'isCaptain'         => $row['is_captain'],
 			'isSelf'            => $row['donor_id'] === (int) $this->donor->id,
 			'progress'          => $progress,
@@ -339,31 +332,5 @@ class TeamsContextBuilder {
 				Currency::format_amount( $raised, $this->currency )
 			),
 		];
-	}
-
-	/**
-	 * The card meta-line time label for a live campaign.
-	 *
-	 * @param Campaign $campaign The campaign.
-	 * @return string
-	 */
-	private function time_label( Campaign $campaign ): string {
-		$days = $campaign->days_left();
-
-		if ( null === $days ) {
-			return '';
-		}
-
-		if ( 0 === $days ) {
-			return __( 'Ends today', 'mission-donation-platform' );
-		}
-
-		if ( $days <= 30 ) {
-			/* translators: %s: number of days */
-			return sprintf( _n( '%s day left', '%s days left', $days, 'mission-donation-platform' ), number_format_i18n( $days ) );
-		}
-
-		/* translators: %s: campaign end date */
-		return sprintf( __( 'Ends %s', 'mission-donation-platform' ), date_i18n( 'M j, Y', strtotime( (string) $campaign->date_end ) ) );
 	}
 }

@@ -8,6 +8,7 @@
 namespace MissionDP\Rest\Endpoints\DonorDashboard;
 
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\Models\Fundraiser;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
@@ -327,7 +328,7 @@ class FundraiserEndpoint {
 					'name'     => $is_anonymous || '' === $name
 						? __( 'Anonymous', 'mission-donation-platform' )
 						: $name,
-					'initials' => $this->person_initials( (string) ( $row['first_name'] ?? '' ), (string) ( $row['last_name'] ?? '' ), $is_anonymous ),
+					'initials' => DashboardLabels::person_initials( (string) ( $row['first_name'] ?? '' ), (string) ( $row['last_name'] ?? '' ), $is_anonymous ),
 					'amount'   => Currency::format_amount( $row['amount'], $currency ),
 					'date'     => $row['date'] ? date_i18n( 'M j, Y', strtotime( $row['date'] ) ) : '',
 					'time_ago' => $row['date']
@@ -455,14 +456,14 @@ class FundraiserEndpoint {
 			'is_locked'        => ! $campaign || $campaign->has_ended(),
 			'tribute_type'     => $dedication['type'] ?? '',
 			'tribute_name'     => $dedication['name'] ?? '',
-			'dedication_label' => $this->dedication_label( $dedication ),
+			'dedication_label' => $fundraiser->dedication_label(),
 			'raised'           => $raised,
 			'raised_display'   => $raised_display,
 			'donor_count'      => $is_test ? $fundraiser->test_donor_count : $fundraiser->donor_count,
 			'progress'         => $fundraiser->progress( $is_test ),
-			'progress_label'   => $this->progress_label( $raised_display, $goal_display ),
-			'cover_image'      => $this->cover_image_id( $cover ),
-			'cover_image_url'  => $this->cover_image_url( $cover ),
+			'progress_label'   => DashboardLabels::progress_label( $raised_display, $goal_display ),
+			'cover_image'      => DashboardLabels::cover_image_id( $cover ),
+			'cover_image_url'  => DashboardLabels::cover_image_url( $cover ),
 			'url'              => $fundraiser->get_url() ?? '',
 			'team_id'          => $fundraiser->team_id,
 			'team_name'        => $team?->name ?? '',

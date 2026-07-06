@@ -384,6 +384,25 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Human-readable dedication label for the page.
+	 *
+	 * @return string "In memory of …" / "In honor of …", or an empty string when none.
+	 */
+	public function dedication_label(): string {
+		$dedication = $this->dedication();
+
+		if ( ! $dedication ) {
+			return '';
+		}
+
+		return 'memory' === $dedication['type']
+			/* translators: %s: person being honored */
+			? sprintf( __( 'In memory of %s', 'mission-donation-platform' ), $dedication['name'] )
+			/* translators: %s: person being honored */
+			: sprintf( __( 'In honor of %s', 'mission-donation-platform' ), $dedication['name'] );
+	}
+
+	/**
 	 * Set or clear the page dedication.
 	 *
 	 * Mirrors the registration normalization: any type other than 'memory'
