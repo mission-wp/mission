@@ -465,7 +465,7 @@ class ReportingService {
 				'SELECT c.id, c.title, c.%i AS raised, c.goal_amount, c.goal_type,
 					c.%i AS txn_count, c.%i AS dn_count
 				FROM %i c
-				ORDER BY c.%i DESC
+				ORDER BY c.%i DESC, c.id ASC
 				LIMIT %d',
 				$raised_col,
 				$txn_count_col,
@@ -602,7 +602,7 @@ class ReportingService {
 				 FROM %i AS t
 				 LEFT JOIN %i AS d ON t.donor_id = d.id
 				 ' . $where . "
-				 ORDER BY t.%i {$direction}
+				 ORDER BY t.%i {$direction}, t.id {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
 					[ $txn_table, $donor_table ],
@@ -761,7 +761,7 @@ class ReportingService {
 				 FROM %i AS s
 				 LEFT JOIN %i AS d ON s.donor_id = d.id
 				 ' . $where . "
-				 ORDER BY s.%i {$direction}
+				 ORDER BY s.%i {$direction}, s.id {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
 					[ $sub_table, $donor_table ],
@@ -1052,7 +1052,7 @@ class ReportingService {
 				FROM %i AS t
 				INNER JOIN %i AS d ON t.donor_id = d.id
 				WHERE t.campaign_id = %d AND t.status = \'completed\' AND t.is_test = %d
-				ORDER BY t.date_created DESC
+				ORDER BY t.date_created DESC, t.id DESC
 				LIMIT %d',
 				$txn_table,
 				$donor_table,
@@ -1231,7 +1231,7 @@ class ReportingService {
 					   AND t.is_test = %d
 					   AND ( %d = 0 OR t.campaign_id = %d )
 					   AND ( %d = 0 OR t.is_anonymous = 0 )
-					 ORDER BY t.%i ASC
+					 ORDER BY t.%i ASC, t.id ASC
 					 LIMIT %d OFFSET %d',
 					$txn_table,
 					$donor_table,
@@ -1256,7 +1256,7 @@ class ReportingService {
 					   AND t.is_test = %d
 					   AND ( %d = 0 OR t.campaign_id = %d )
 					   AND ( %d = 0 OR t.is_anonymous = 0 )
-					 ORDER BY t.%i DESC
+					 ORDER BY t.%i DESC, t.id DESC
 					 LIMIT %d OFFSET %d',
 					$txn_table,
 					$donor_table,
@@ -1607,7 +1607,7 @@ class ReportingService {
 				 LEFT JOIN %i AS c ON f.campaign_id = c.id
 				 LEFT JOIN %i AS tm ON f.team_id = tm.id
 				 ' . $where . "
-				 ORDER BY f.%i {$direction}
+				 ORDER BY f.%i {$direction}, f.id {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
 					[ $raised_col, $dcount_col, $tcount_col, $f_table, $d_table, $c_table, $t_table ],
@@ -1717,7 +1717,7 @@ class ReportingService {
 				 LEFT JOIN %i AS cap ON t.captain_id = cap.id
 				 LEFT JOIN %i AS cd ON cap.donor_id = cd.id
 				 " . $where . "
-				 ORDER BY t.%i {$direction}
+				 ORDER BY t.%i {$direction}, t.id {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
 					[ $f_table ],
@@ -1825,7 +1825,7 @@ class ReportingService {
 				 FROM %i AS t
 				 LEFT JOIN %i AS d ON t.donor_id = d.id
 				 WHERE t.fundraiser_id = %d AND t.status = \'completed\' AND t.is_test = %d
-				 ORDER BY t.date_completed DESC
+				 ORDER BY t.date_completed DESC, t.id DESC
 				 LIMIT %d OFFSET %d',
 				$txn_table,
 				$donor_table,
@@ -1888,7 +1888,7 @@ class ReportingService {
 				 INNER JOIN %i AS f ON t.fundraiser_id = f.id
 				 INNER JOIN %i AS d ON t.donor_id = d.id
 				 WHERE f.donor_id = %d AND t.status = \'completed\' AND t.is_test = %d
-				 ORDER BY t.date_completed DESC
+				 ORDER BY t.date_completed DESC, t.id DESC
 				 LIMIT %d',
 				$txn_table,
 				$f_table,

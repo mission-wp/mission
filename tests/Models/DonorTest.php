@@ -282,6 +282,22 @@ class DonorTest extends WP_UnitTestCase {
 		$this->assertNull( Donor::find( 99999 ) );
 	}
 
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$first  = $this->create_donor( [ 'email' => 'first@example.com' ] );
+		$second = $this->create_donor( [ 'email' => 'second@example.com' ] );
+		$third  = $this->create_donor( [ 'email' => 'third@example.com' ] );
+
+		$found = Donor::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
+	}
+
 	// -------------------------------------------------------------------------
 	// delete() tests.
 	// -------------------------------------------------------------------------

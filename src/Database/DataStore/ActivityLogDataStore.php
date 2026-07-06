@@ -166,7 +166,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 					   AND ( %d = 0 OR level = %s )
 					   AND ( %d = 0 OR category = %s )
 					   AND ( %d = 0 OR event LIKE %s OR data LIKE %s )
-					 ORDER BY %i ASC
+					 ORDER BY %i ASC, id ASC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_object_type,
@@ -204,7 +204,7 @@ class ActivityLogDataStore implements DataStoreInterface {
 					   AND ( %d = 0 OR level = %s )
 					   AND ( %d = 0 OR category = %s )
 					   AND ( %d = 0 OR event LIKE %s OR data LIKE %s )
-					 ORDER BY %i DESC
+					 ORDER BY %i DESC, id DESC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_object_type,

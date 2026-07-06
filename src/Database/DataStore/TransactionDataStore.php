@@ -362,7 +362,7 @@ class TransactionDataStore implements DataStoreInterface {
 	 *
 	 * Supported filters: status, type, type__not, donor_id, campaign_id,
 	 * fundraiser_id, team_id, subscription_id, gateway_transaction_id, is_test,
-	 * date_after, date_before.
+	 * date_after, date_before, id__in.
 	 * Pagination/order: orderby, order, per_page, page.
 	 *
 	 * @param array<string, mixed> $args Query arguments.
@@ -408,113 +408,66 @@ class TransactionDataStore implements DataStoreInterface {
 		$date_before     = (string) ( $args['date_before'] ?? '' );
 		$has_date_before = '' !== $date_before ? 1 : 0;
 
+		$id__in       = ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ? array_values( array_map( 'intval', $args['id__in'] ) ) : [];
+		$id_in_clause = $id__in ? ' AND id IN ( ' . implode( ', ', array_fill( 0, count( $id__in ), '%d' ) ) . ' )' : '';
+
 		$allowed_orderby = [ 'id', 'date_created', 'date_completed', 'date_modified', 'total_amount', 'status' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
 		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		if ( $order_asc ) {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR status = %s )
-					   AND ( %d = 0 OR type = %s )
-					   AND ( %d = 0 OR type != %s )
-					   AND ( %d = 0 OR donor_id = %d )
-					   AND ( %d = 0 OR campaign_id = %d )
-					   AND ( %d = 0 OR fundraiser_id = %d )
-					   AND ( %d = 0 OR team_id = %d )
-					   AND ( %d = 0 OR subscription_id = %d )
-					   AND ( %d = 0 OR gateway_transaction_id = %s )
-					   AND ( %d = 0 OR is_test = %d )
-					   AND ( %d = 0 OR date_created >= %s )
-					   AND ( %d = 0 OR date_created <= %s )
-					 ORDER BY %i ASC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_status,
-					$status,
-					$has_type,
-					$type,
-					$has_type_not,
-					$type_not,
-					$has_donor,
-					$donor_id,
-					$has_campaign,
-					$campaign_id,
-					$has_fundraiser,
-					$fundraiser_id,
-					$has_team,
-					$team_id,
-					$has_subscription,
-					$subscription_id,
-					$has_gateway_txn_id,
-					$gateway_txn_id,
-					$has_is_test,
-					$is_test_val,
-					$has_date_after,
-					$date_after,
-					$has_date_before,
-					$date_before,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR status = %s )
-					   AND ( %d = 0 OR type = %s )
-					   AND ( %d = 0 OR type != %s )
-					   AND ( %d = 0 OR donor_id = %d )
-					   AND ( %d = 0 OR campaign_id = %d )
-					   AND ( %d = 0 OR fundraiser_id = %d )
-					   AND ( %d = 0 OR team_id = %d )
-					   AND ( %d = 0 OR subscription_id = %d )
-					   AND ( %d = 0 OR gateway_transaction_id = %s )
-					   AND ( %d = 0 OR is_test = %d )
-					   AND ( %d = 0 OR date_created >= %s )
-					   AND ( %d = 0 OR date_created <= %s )
-					 ORDER BY %i DESC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_status,
-					$status,
-					$has_type,
-					$type,
-					$has_type_not,
-					$type_not,
-					$has_donor,
-					$donor_id,
-					$has_campaign,
-					$campaign_id,
-					$has_fundraiser,
-					$fundraiser_id,
-					$has_team,
-					$team_id,
-					$has_subscription,
-					$subscription_id,
-					$has_gateway_txn_id,
-					$gateway_txn_id,
-					$has_is_test,
-					$is_test_val,
-					$has_date_after,
-					$date_after,
-					$has_date_before,
-					$date_before,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		}
+		$sql          = 'SELECT * FROM %i
+			 WHERE ( %d = 0 OR status = %s )
+			   AND ( %d = 0 OR type = %s )
+			   AND ( %d = 0 OR type != %s )
+			   AND ( %d = 0 OR donor_id = %d )
+			   AND ( %d = 0 OR campaign_id = %d )
+			   AND ( %d = 0 OR fundraiser_id = %d )
+			   AND ( %d = 0 OR team_id = %d )
+			   AND ( %d = 0 OR subscription_id = %d )
+			   AND ( %d = 0 OR gateway_transaction_id = %s )
+			   AND ( %d = 0 OR is_test = %d )
+			   AND ( %d = 0 OR date_created >= %s )
+			   AND ( %d = 0 OR date_created <= %s )' . $id_in_clause . "
+			 ORDER BY %i {$order}, id {$order}
+			 LIMIT %d OFFSET %d";
+		$prepare_args = array_merge(
+			[
+				$this->get_table_name(),
+				$has_status,
+				$status,
+				$has_type,
+				$type,
+				$has_type_not,
+				$type_not,
+				$has_donor,
+				$donor_id,
+				$has_campaign,
+				$campaign_id,
+				$has_fundraiser,
+				$fundraiser_id,
+				$has_team,
+				$team_id,
+				$has_subscription,
+				$subscription_id,
+				$has_gateway_txn_id,
+				$gateway_txn_id,
+				$has_is_test,
+				$is_test_val,
+				$has_date_after,
+				$date_after,
+				$has_date_before,
+				$date_before,
+			],
+			$id__in,
+			[ $orderby, $per_page, $offset ]
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via literal placeholders, id__in via %d placeholders built from a counted array, direction whitelisted.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -522,7 +475,7 @@ class TransactionDataStore implements DataStoreInterface {
 	/**
 	 * Count transactions matching filters.
 	 *
-	 * Supported filters mirror query() (excluding pagination/order).
+	 * Supported filters mirror query() (excluding pagination/order and id__in).
 	 *
 	 * @param array<string, mixed> $args Query arguments.
 	 *

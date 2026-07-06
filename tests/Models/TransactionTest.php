@@ -412,6 +412,23 @@ class TransactionTest extends WP_UnitTestCase {
 		$this->assertEmpty( array_intersect( $page1_ids, $page2_ids ) );
 	}
 
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$donor  = $this->create_donor();
+		$first  = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+		$second = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+		$third  = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+
+		$found = Transaction::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
+	}
+
 	// -------------------------------------------------------------------------
 	// Hook tests.
 	// -------------------------------------------------------------------------

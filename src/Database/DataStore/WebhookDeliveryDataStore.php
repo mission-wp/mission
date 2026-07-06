@@ -142,7 +142,7 @@ class WebhookDeliveryDataStore implements DataStoreInterface {
 					   AND ( %d = 0 OR event = %s )
 					   AND ( %d = 0 OR event_id = %s )
 					   AND ( %d = 0 OR status = %s )
-					 ORDER BY %i ASC
+					 ORDER BY %i ASC, id ASC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_webhook_id,
@@ -167,7 +167,7 @@ class WebhookDeliveryDataStore implements DataStoreInterface {
 					   AND ( %d = 0 OR event = %s )
 					   AND ( %d = 0 OR event_id = %s )
 					   AND ( %d = 0 OR status = %s )
-					 ORDER BY %i DESC
+					 ORDER BY %i DESC, id DESC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_webhook_id,

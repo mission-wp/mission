@@ -333,7 +333,7 @@ class CampaignDataStore implements DataStoreInterface {
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order} LIMIT %d OFFSET %d";
+		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order}, id {$order} LIMIT %d OFFSET %d";
 		$prepare_args = array_merge( [ $this->get_table_name() ], $values, [ $orderby, $per_page, $offset ] );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via placeholders built from counted arrays, direction whitelisted.
@@ -383,6 +383,12 @@ class CampaignDataStore implements DataStoreInterface {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['type__in'] ), '%s' ) );
 			$clauses[]    = "type IN ( {$placeholders} )";
 			$values       = array_merge( $values, array_map( 'strval', $args['type__in'] ) );
+		}
+
+		if ( ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['id__in'] ), '%d' ) );
+			$clauses[]    = "id IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'intval', $args['id__in'] ) );
 		}
 
 		if ( isset( $args['show_in_listings'] ) ) {

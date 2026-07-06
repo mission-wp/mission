@@ -158,10 +158,12 @@ class FundraisersContextBuilderTest extends WP_UnitTestCase {
 			]
 		);
 
-		$this->create_fundraiser( $live->id, $donor->id, [ 'headline' => 'Current page' ] );
+		// Explicit creation dates: the query orders newest-first, and same-second
+		// fixtures would leave the expected ids order up to the clock.
+		$this->create_fundraiser( $live->id, $donor->id, [ 'headline' => 'Current page', 'date_created' => '2026-02-01 00:00:00' ] );
 
 		// Goal met on the ended campaign: raised >= goal.
-		$met = $this->create_fundraiser( $ended->id, $donor->id, [ 'headline' => 'Winner', 'goal' => 5000 ] );
+		$met = $this->create_fundraiser( $ended->id, $donor->id, [ 'headline' => 'Winner', 'goal' => 5000, 'date_created' => '2026-01-01 00:00:00' ] );
 		$txn = new Transaction(
 			[
 				'status'        => Transaction::STATUS_COMPLETED,

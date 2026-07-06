@@ -374,6 +374,22 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertNull( Campaign::find_by_post_id( 99999 ) );
 	}
 
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$first  = $this->create_campaign( [ 'title' => 'First' ] );
+		$second = $this->create_campaign( [ 'title' => 'Second' ] );
+		$third  = $this->create_campaign( [ 'title' => 'Third' ] );
+
+		$found = Campaign::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
+	}
+
 	// -------------------------------------------------------------------------
 	// __get() proxy tests.
 	// -------------------------------------------------------------------------

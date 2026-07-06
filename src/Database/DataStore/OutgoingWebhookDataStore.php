@@ -172,7 +172,7 @@ class OutgoingWebhookDataStore implements DataStoreInterface {
 					 WHERE ( %d = 0 OR status = %s )
 					   AND ( %d = 0 OR health = %s )
 					   AND ( %d = 0 OR name LIKE %s OR url LIKE %s )
-					 ORDER BY %i ASC
+					 ORDER BY %i ASC, id ASC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_status,
@@ -195,7 +195,7 @@ class OutgoingWebhookDataStore implements DataStoreInterface {
 					 WHERE ( %d = 0 OR status = %s )
 					   AND ( %d = 0 OR health = %s )
 					   AND ( %d = 0 OR name LIKE %s OR url LIKE %s )
-					 ORDER BY %i DESC
+					 ORDER BY %i DESC, id DESC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_status,
