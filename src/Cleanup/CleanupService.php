@@ -70,10 +70,16 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
 		);
 
+		// Mirrors the delete_test_donors() exclusions: fundraiser owners and
+		// account holders are live registrations, never test data.
 		$test_donor_count = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT COUNT(*) FROM %i WHERE transaction_count = 0 AND test_transaction_count > 0',
-				$prefix . 'donors'
+				'SELECT COUNT(*) FROM %i d
+				 WHERE d.transaction_count = 0 AND d.test_transaction_count > 0
+				 AND ( d.user_id IS NULL OR d.user_id = 0 )
+				 AND NOT EXISTS ( SELECT 1 FROM %i f WHERE f.donor_id = d.id )',
+				$prefix . 'donors',
+				$prefix . 'fundraisers'
 			)
 		);
 
@@ -303,6 +309,9 @@ class CleanupService {
 	 * Delete donors that only had test transactions (no live ones).
 	 *
 	 * Should be called after delete_test_transactions() so aggregates are reset.
+	 * Donors who own a fundraiser page or have a linked WordPress account are
+	 * live registrations, not test data, so they are excluded even when they
+	 * have no transactions yet.
 	 *
 	 * @return array{deleted: int}
 	 */
@@ -313,8 +322,12 @@ class CleanupService {
 
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
-				'SELECT id FROM %i WHERE transaction_count = 0 AND test_transaction_count = 0',
-				$prefix . 'donors'
+				'SELECT d.id FROM %i d
+				 WHERE d.transaction_count = 0 AND d.test_transaction_count = 0
+				 AND ( d.user_id IS NULL OR d.user_id = 0 )
+				 AND NOT EXISTS ( SELECT 1 FROM %i f WHERE f.donor_id = d.id )',
+				$prefix . 'donors',
+				$prefix . 'fundraisers'
 			)
 		);
 

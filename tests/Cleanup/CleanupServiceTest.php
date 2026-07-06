@@ -218,6 +218,35 @@ class CleanupServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test delete_test_donors keeps fundraiser owners and account holders even
+	 * when they have no transactions yet (a P2P registrant awaiting their
+	 * first donation must survive the cleanup).
+	 */
+	public function test_delete_test_donors_keeps_fundraiser_owners_and_account_holders(): void {
+		$fundraiser_donor = $this->create_donor( 'fundraiser-owner' );
+		$account_donor    = $this->create_donor( 'account-holder' );
+		$orphan_donor     = $this->create_donor( 'deletable' );
+
+		$fundraiser = new Fundraiser(
+			[
+				'campaign_id' => 1,
+				'donor_id'    => $fundraiser_donor->id,
+			]
+		);
+		$fundraiser->save();
+
+		$account_donor->user_id = self::factory()->user->create();
+		$account_donor->save();
+
+		$this->cleanup->delete_test_donors();
+
+		$this->assertNotNull( Donor::find( $fundraiser_donor->id ) );
+		$this->assertNotNull( Fundraiser::find( $fundraiser->id ) );
+		$this->assertNotNull( Donor::find( $account_donor->id ) );
+		$this->assertNull( Donor::find( $orphan_donor->id ) );
+	}
+
+	/**
 	 * Test delete_test_subscriptions removes test subscriptions and their meta, keeps live ones.
 	 */
 	public function test_delete_test_subscriptions_cascades_and_keeps_live_rows(): void {
