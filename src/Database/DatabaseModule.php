@@ -137,7 +137,8 @@ class DatabaseModule {
 	 *
 	 * add_option() is a no-op when the option already exists, which makes it a
 	 * cheap mutex. A crashed migration must not block forever, so locks older
-	 * than five minutes are stolen.
+	 * than five minutes are stolen by deleting and re-adding: only one of the
+	 * concurrent stealers wins the add (same pattern as WP_Upgrader::create_lock).
 	 *
 	 * @return bool Whether this request may run migrations.
 	 */
@@ -152,9 +153,9 @@ class DatabaseModule {
 			return false;
 		}
 
-		update_option( self::MIGRATION_LOCK_OPTION, (string) time(), false );
+		delete_option( self::MIGRATION_LOCK_OPTION );
 
-		return true;
+		return add_option( self::MIGRATION_LOCK_OPTION, (string) time(), '', false );
 	}
 
 	/**
@@ -203,7 +204,8 @@ class DatabaseModule {
 
 		foreach ( $ids as $id ) {
 			$model = $model_class::find( (int) $id );
-			if ( $model ) {
+			// Re-check per row: a concurrent run may have backfilled it already.
+			if ( $model && ! $model->post_id ) {
 				$model->save();
 			}
 		}
@@ -220,10 +222,15 @@ class DatabaseModule {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery
-		$index = $wpdb->get_row( $wpdb->prepare( 'SHOW INDEX FROM %i WHERE Key_name = %s', $table, 'post_id' ), ARRAY_A );
+		// Filtered in PHP rather than with WHERE: the SQLite translator ignores
+		// WHERE clauses on SHOW statements.
+		$indexes = $wpdb->get_results( $wpdb->prepare( 'SHOW INDEX FROM %i', $table ), ARRAY_A );
 
-		if ( $index && '1' === (string) ( $index['Non_unique'] ?? '' ) ) {
-			$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP INDEX post_id', $table ) );
+		foreach ( $indexes as $index ) {
+			if ( 'post_id' === ( $index['Key_name'] ?? '' ) && '1' === (string) ( $index['Non_unique'] ?? '' ) ) {
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP INDEX post_id', $table ) );
+				break;
+			}
 		}
 		// phpcs:enable WordPress.DB.DirectDatabaseQuery
 	}

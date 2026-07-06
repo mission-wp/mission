@@ -8,7 +8,10 @@
 namespace MissionDP\Tests\Database;
 
 use MissionDP\Database\DatabaseModule;
+use MissionDP\Database\DataStore\FundraiserDataStore;
 use MissionDP\Database\Schema;
+use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
 use WP_UnitTestCase;
 
 /**
@@ -20,8 +23,15 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 	 * Clean up after each test.
 	 */
 	public function tear_down(): void {
+		global $wpdb;
+
 		delete_option( DatabaseModule::DB_VERSION_OPTION );
 		delete_option( DatabaseModule::MIGRATION_LOCK_OPTION );
+
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery
 
 		parent::tear_down();
 	}
@@ -153,6 +163,44 @@ class DatabaseModuleTest extends WP_UnitTestCase {
 			'0.0.0',
 			get_option( DatabaseModule::DB_VERSION_OPTION )
 		);
+	}
+
+	/**
+	 * The 1.4.2 backfill creates a shell post for legacy rows (post_id 0) and
+	 * leaves rows that already have one untouched.
+	 */
+	public function test_142_backfill_targets_only_legacy_rows(): void {
+		global $wpdb;
+
+		$campaign = new Campaign( [ 'title' => 'Backfill Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+
+		$legacy = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1, 'status' => 'active' ] );
+		$legacy->save();
+		$linked = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 2, 'status' => 'active' ] );
+		$linked->save();
+		$linked_post_id = $linked->post_id;
+
+		// Simulate a pre-1.4.2 beta row: detach first so the shell-post guard
+		// can't touch the row when its post is deleted.
+		$legacy_post_id = $legacy->post_id;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->update( $wpdb->prefix . 'missiondp_fundraisers', [ 'post_id' => 0 ], [ 'id' => $legacy->id ] );
+		wp_delete_post( $legacy_post_id, true );
+		wp_cache_flush_group( FundraiserDataStore::CACHE_GROUP );
+
+		update_option( DatabaseModule::DB_VERSION_OPTION, '1.4.0' );
+
+		$module = new DatabaseModule();
+		$module->init();
+		$module->maybe_run_migrations();
+
+		$backfilled = Fundraiser::find( $legacy->id );
+		$this->assertGreaterThan( 0, $backfilled->post_id );
+		$this->assertSame( 'publish', get_post_status( $backfilled->post_id ) );
+
+		// The already-linked row kept its original shell post.
+		$this->assertSame( $linked_post_id, Fundraiser::find( $linked->id )->post_id );
 	}
 
 	/**
