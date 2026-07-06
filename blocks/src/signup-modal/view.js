@@ -255,7 +255,12 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
         return;
       }
 
-      if ( event.key !== 'Enter' || event.target.tagName === 'TEXTAREA' ) {
+      // Enter acts as implicit submit only from plain fields; interactive
+      // controls (links, toggles, close, select) keep native activation.
+      if (
+        event.key !== 'Enter' ||
+        event.target.closest( 'button, a, select, textarea, [role="button"]' )
+      ) {
         return;
       }
       const root = event.target.closest( '.mission-su' );
