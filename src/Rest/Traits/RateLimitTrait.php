@@ -7,6 +7,7 @@
 
 namespace MissionDP\Rest\Traits;
 
+use MissionDP\Helpers\AttemptCounter;
 use MissionDP\Helpers\ClientIp;
 use WP_Error;
 
@@ -43,20 +44,17 @@ trait RateLimitTrait {
 		 */
 		$window = (int) apply_filters( 'mission_rate_window', $window, $action );
 
-		$ip  = $this->get_client_ip();
-		$key = 'missiondp_rl_' . $action . '_' . md5( $ip );
+		$ip = $this->get_client_ip();
 
-		$attempts = (int) get_transient( $key );
-
-		if ( $attempts >= $limit ) {
+		// Atomic claim: parallel requests cannot race past the cap the way a
+		// transient read-modify-write counter could.
+		if ( ! AttemptCounter::claim( 'rl_' . $action . '_' . md5( $ip ), $limit, $window ) ) {
 			return new WP_Error(
 				'rate_limited',
 				__( 'Too many attempts. Please try again in a few minutes.', 'mission-donation-platform' ),
 				[ 'status' => 429 ]
 			);
 		}
-
-		set_transient( $key, $attempts + 1, $window );
 
 		return null;
 	}

@@ -181,6 +181,58 @@ class OtpServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a successful verify clears the guess-counter rows.
+	 */
+	public function test_verify_success_clears_attempt_counter(): void {
+		global $wpdb;
+
+		$service = $this->service();
+		$email   = 'clean@example.com';
+		$service->send( $email, 'signup' );
+
+		// One wrong guess creates the counter row.
+		try {
+			$service->verify( $email, 'signup', '000000' === $this->last_code ? '111111' : '000000' );
+		} catch ( OtpException $e ) {
+			$this->assertSame( OtpException::INVALID, $e->reason );
+		}
+
+		$counter = 'missiondp_attempts_otp_attempts_' . md5( $email . '|signup' );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- asserting on the raw counter row.
+		$this->assertNotNull( $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $counter ) ) );
+
+		$this->assertTrue( $service->verify( $email, 'signup', $this->last_code ) );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- asserting on the raw counter row.
+		$this->assertNull( $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $counter ) ) );
+	}
+
+	/**
+	 * Test a newly sent code gets a fresh guess allowance after exhaustion.
+	 */
+	public function test_new_code_resets_guess_allowance(): void {
+		$service = $this->service();
+		$email   = 'again@example.com';
+		$service->send( $email, 'signup' );
+
+		$bad = '000000' === $this->last_code ? '111111' : '000000';
+
+		// Burn through the whole allowance for the first code.
+		for ( $i = 0; $i < 6; $i++ ) {
+			try {
+				$service->verify( $email, 'signup', $bad );
+			} catch ( OtpException $e ) {
+				continue;
+			}
+		}
+
+		delete_transient( 'missiondp_otp_cooldown_' . md5( $email . '|signup' ) );
+		$service->send( $email, 'signup' );
+
+		$this->assertTrue( $service->verify( $email, 'signup', $this->last_code ) );
+	}
+
+	/**
 	 * Test the sixth code request within the hour is throttled.
 	 */
 	public function test_send_throttled_after_hourly_cap(): void {

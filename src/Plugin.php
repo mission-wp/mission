@@ -210,6 +210,8 @@ class Plugin {
 		$migration_service = new Migration\MigrationService( new Migration\MigratorRegistry() );
 		( new Migration\MigrationJobHandler( $migration_service ) )->register();
 		( new Migration\MigrationCleanup() )->register();
+
+		add_action( 'missiondp_daily_cleanup', [ Helpers\AttemptCounter::class, 'purge_expired' ] );
 	}
 
 	/**

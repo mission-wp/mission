@@ -5,7 +5,8 @@
  * Sends and verifies 6-digit email verification codes for the peer-to-peer
  * signup flow (verifying a donor's email before creating an account, and the
  * inline password-reset path). Codes live in transients keyed by a hash of the
- * email so the flow works before any donor row exists.
+ * email so the flow works before any donor row exists; the guess and send caps
+ * live in AttemptCounter rows so concurrent requests cannot race past them.
  *
  * @package MissionDP
  */
@@ -13,6 +14,7 @@
 namespace MissionDP\DonorDashboard;
 
 use MissionDP\Email\EmailModule;
+use MissionDP\Helpers\AttemptCounter;
 use MissionDP\Models\Donor;
 use MissionDP\Settings\SettingsService;
 
@@ -74,9 +76,7 @@ class OtpService {
 			throw $error;
 		}
 
-		$count_key = $this->key( $email, $purpose, 'count' );
-		$count     = (int) get_transient( $count_key );
-		if ( $count >= self::HOURLY_CAP ) {
+		if ( ! AttemptCounter::claim( $this->counter_key( $email, $purpose, 'count' ), self::HOURLY_CAP, HOUR_IN_SECONDS ) ) {
 			$error = OtpException::throttled( self::RESEND_COOLDOWN );
 			throw $error;
 		}
@@ -86,15 +86,16 @@ class OtpService {
 		set_transient(
 			$this->key( $email, $purpose, 'code' ),
 			[
-				'hash'     => wp_hash_password( $code ),
-				'attempts' => 0,
-				'expires'  => time() + self::CODE_EXPIRY,
+				'hash'    => wp_hash_password( $code ),
+				'expires' => time() + self::CODE_EXPIRY,
 			],
 			self::CODE_EXPIRY
 		);
 
+		// A fresh code starts with a clean guess allowance.
+		AttemptCounter::reset( $this->counter_key( $email, $purpose, 'attempts' ) );
+
 		set_transient( $this->key( $email, $purpose, 'cooldown' ), time() + self::RESEND_COOLDOWN, self::RESEND_COOLDOWN );
-		set_transient( $count_key, $count + 1, HOUR_IN_SECONDS );
 
 		$this->send_code_email( $email, $code );
 	}
@@ -118,20 +119,21 @@ class OtpService {
 			throw OtpException::expired();
 		}
 
-		++$data['attempts'];
-
-		if ( $data['attempts'] > self::MAX_ATTEMPTS ) {
+		// Claim a guess slot before the hash check; the claim is an atomic
+		// conditional UPDATE, so parallel requests cannot exceed the cap.
+		$attempts_key = $this->counter_key( $email, $purpose, 'attempts' );
+		if ( ! AttemptCounter::claim( $attempts_key, self::MAX_ATTEMPTS, self::CODE_EXPIRY ) ) {
 			delete_transient( $code_key );
+			AttemptCounter::reset( $attempts_key );
 			throw OtpException::exhausted();
 		}
 
 		if ( ! wp_check_password( $code, $data['hash'] ) ) {
-			$ttl = max( 1, (int) $data['expires'] - time() );
-			set_transient( $code_key, $data, $ttl );
 			throw OtpException::invalid();
 		}
 
 		delete_transient( $code_key );
+		AttemptCounter::reset( $attempts_key );
 
 		return true;
 	}
@@ -239,11 +241,23 @@ class OtpService {
 	 *
 	 * @param string $email   Email address.
 	 * @param string $purpose Code purpose.
-	 * @param string $kind    Value kind (code/cooldown/count).
+	 * @param string $kind    Value kind (code/cooldown).
 	 * @return string
 	 */
 	private function key( string $email, string $purpose, string $kind ): string {
 		return 'missiondp_otp_' . $kind . '_' . md5( strtolower( trim( $email ) ) . '|' . $purpose );
+	}
+
+	/**
+	 * AttemptCounter key for an OTP counter.
+	 *
+	 * @param string $email   Email address.
+	 * @param string $purpose Code purpose.
+	 * @param string $kind    Counter kind (count = hourly sends, attempts = guesses).
+	 * @return string
+	 */
+	private function counter_key( string $email, string $purpose, string $kind ): string {
+		return 'otp_' . $kind . '_' . md5( strtolower( trim( $email ) ) . '|' . $purpose );
 	}
 
 	/**

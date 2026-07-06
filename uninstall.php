@@ -59,6 +59,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		OR option_name LIKE '_transient_timeout_missiondp_%'"
 	);
 
+	// Atomic attempt-counter rows (OTP guess caps, REST rate limits).
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'missiondp_attempts_%'" );
+
 	// -------------------------------------------------------------------------
 	// Plugin CPT posts and meta (campaigns + P2P fundraiser/team shell posts)
 	// -------------------------------------------------------------------------
