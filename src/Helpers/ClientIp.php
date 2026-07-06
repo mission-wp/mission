@@ -67,7 +67,9 @@ class ClientIp {
 		 * Defaults to CF-Connecting-IP when the request demonstrably comes
 		 * from a Cloudflare address, empty otherwise. A site behind another
 		 * proxy/CDN that sets a client-IP header should return it here, e.g.
-		 * [ 'HTTP_X_FORWARDED_FOR' ] behind a load balancer.
+		 * [ 'HTTP_X_FORWARDED_FOR' ] behind a load balancer. Multi-value
+		 * headers resolve to the last (proxy-appended) entry, so values a
+		 * client prepends cannot spoof the result.
 		 *
 		 * @param string[] $headers     $_SERVER keys to consult before REMOTE_ADDR.
 		 * @param string   $remote_addr The connecting address.
@@ -123,7 +125,12 @@ class ClientIp {
 	}
 
 	/**
-	 * Pull the first valid IP out of a raw header value.
+	 * Pull a valid IP out of a raw header value.
+	 *
+	 * Multi-value headers (X-Forwarded-For) are resolved right to left:
+	 * proxies append the address they saw, so the rightmost entry is the one
+	 * written by the trusted proxy while earlier entries are client-supplied
+	 * and spoofable.
 	 *
 	 * @param mixed $value Raw $_SERVER value (may hold a comma-separated list).
 	 * @return string Valid IP, or empty string.
@@ -133,10 +140,17 @@ class ClientIp {
 			return '';
 		}
 
-		// X-Forwarded-For can contain multiple IPs; use the first.
-		$ip = trim( (string) strtok( sanitize_text_field( wp_unslash( $value ) ), ',' ) );
+		$entries = explode( ',', sanitize_text_field( wp_unslash( $value ) ) );
 
-		return filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
+		foreach ( array_reverse( $entries ) as $entry ) {
+			$ip = trim( $entry );
+
+			if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				return $ip;
+			}
+		}
+
+		return '';
 	}
 
 	/**

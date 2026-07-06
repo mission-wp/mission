@@ -108,13 +108,45 @@ class ClientIpTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the mission_trusted_proxy_headers filter opts in other proxies and
-	 * that the first IP of a comma-separated list is used.
+	 * Test the mission_trusted_proxy_headers filter opts in other proxies.
 	 */
 	public function test_filter_trusts_custom_proxy_header(): void {
 		$_SERVER['REMOTE_ADDR']          = '10.0.0.2';
-		$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.5, 10.0.0.2';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.5';
 
+		$ip = $this->get_with_xff_trusted();
+
+		$this->assertSame( '203.0.113.5', $ip );
+	}
+
+	/**
+	 * Test a client-prepended X-Forwarded-For entry cannot spoof the result:
+	 * the last (proxy-appended) entry wins.
+	 */
+	public function test_xff_spoofed_first_entry_loses_to_proxy_appended_entry(): void {
+		$_SERVER['REMOTE_ADDR']          = '10.0.0.2';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '6.6.6.6, 203.0.113.9';
+
+		$this->assertSame( '203.0.113.9', $this->get_with_xff_trusted() );
+	}
+
+	/**
+	 * Test an invalid trailing X-Forwarded-For entry is skipped and the walk
+	 * continues leftward to the nearest valid IP.
+	 */
+	public function test_xff_invalid_trailing_entry_is_skipped(): void {
+		$_SERVER['REMOTE_ADDR']          = '10.0.0.2';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '203.0.113.9, unknown';
+
+		$this->assertSame( '203.0.113.9', $this->get_with_xff_trusted() );
+	}
+
+	/**
+	 * Resolve the client IP with X-Forwarded-For opted in as a trusted header.
+	 *
+	 * @return string
+	 */
+	private function get_with_xff_trusted(): string {
 		$filter = static fn(): array => [ 'HTTP_X_FORWARDED_FOR' ];
 		add_filter( 'mission_trusted_proxy_headers', $filter );
 
@@ -122,7 +154,7 @@ class ClientIpTest extends WP_UnitTestCase {
 
 		remove_filter( 'mission_trusted_proxy_headers', $filter );
 
-		$this->assertSame( '203.0.113.5', $ip );
+		return $ip;
 	}
 
 	/**
