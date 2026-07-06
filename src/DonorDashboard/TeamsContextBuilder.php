@@ -195,6 +195,8 @@ class TeamsContextBuilder {
 			Team::STATUS_INACTIVE => __( 'Inactive', 'mission-donation-platform' ),
 		];
 
+		$url = $team->get_url();
+
 		$card = [
 			'id'               => (int) $team->id,
 			'name'             => $team->name,
@@ -246,8 +248,8 @@ class TeamsContextBuilder {
 				? sprintf( __( 'Of %s Teams', 'mission-donation-platform' ), number_format_i18n( $rank['total'] ) )
 				: '',
 			'timeLabel'        => $this->time_label( $campaign ),
-			'url'              => $team->get_url() ?? '',
-			'hasUrl'           => null !== $team->get_url(),
+			'url'              => $url ?? '',
+			'hasUrl'           => null !== $url,
 			'coverImageUrl'    => $cover_url,
 			'hasCover'         => '' !== $cover_url,
 			'myFundraiserId'   => (int) $membership->id,

@@ -22,7 +22,20 @@ defined( 'ABSPATH' ) || exit;
  */
 class CampaignDataStore implements DataStoreInterface {
 
+	use CachesRows;
 	use MetaTrait;
+
+	/**
+	 * Non-persistent cache group for memoized campaign rows.
+	 */
+	public const CACHE_GROUP = 'missiondp_campaigns';
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function cache_group(): string {
+		return self::CACHE_GROUP;
+	}
 
 	/**
 	 * Get the fully-prefixed table name.
@@ -85,10 +98,18 @@ class CampaignDataStore implements DataStoreInterface {
 	public function read( int $id ): ?Campaign {
 		global $wpdb;
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
-			ARRAY_A
-		);
+		$row = $this->cached_row( $id );
+
+		if ( null === $row ) {
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
+				ARRAY_A
+			);
+
+			if ( $row ) {
+				$this->prime_row_cache( $row );
+			}
+		}
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -103,10 +124,22 @@ class CampaignDataStore implements DataStoreInterface {
 	public function find_by_post_id( int $post_id ): ?Campaign {
 		global $wpdb;
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
-			ARRAY_A
-		);
+		if ( $post_id <= 0 ) {
+			return null;
+		}
+
+		$row = $this->cached_row_by_post_id( $post_id );
+
+		if ( null === $row ) {
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
+				ARRAY_A
+			);
+
+			if ( $row ) {
+				$this->prime_row_cache( $row );
+			}
+		}
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -191,6 +224,8 @@ class CampaignDataStore implements DataStoreInterface {
 			[ '%d' ]
 		);
 
+		$this->forget_cached_row( $model->id, $old->post_id );
+
 		return false !== $result;
 	}
 
@@ -272,6 +307,8 @@ class CampaignDataStore implements DataStoreInterface {
 		global $wpdb;
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
+
+		$this->forget_cached_row( $id );
 
 		return false !== $result;
 	}

@@ -24,11 +24,12 @@ defined( 'ABSPATH' ) || exit;
 		return;
 	}
 
-	$donor    = $fundraiser->donor();
-	$name     = $donor ? trim( $donor->first_name . ' ' . $donor->last_name ) : '';
-	$name     = $name ?: __( 'A fundraiser', 'mission-donation-platform' );
-	$campaign = $fundraiser->campaign();
-	$headline = $fundraiser->headline;
+	$donor        = $fundraiser->donor();
+	$name         = $donor ? trim( $donor->first_name . ' ' . $donor->last_name ) : '';
+	$name         = $name ?: __( 'A fundraiser', 'mission-donation-platform' );
+	$campaign     = $fundraiser->campaign();
+	$campaign_url = $campaign ? $campaign->get_url() : null;
+	$headline     = $fundraiser->headline;
 
 	// Optional page dedication.
 	$dedication   = $fundraiser->dedication();
@@ -49,12 +50,12 @@ defined( 'ABSPATH' ) || exit;
 	>
 		<h1 class="mission-ft-title__heading">
 			<?php
-			if ( $campaign && $campaign->get_url() ) {
+			if ( $campaign_url ) {
 				printf(
 					/* translators: 1: fundraiser name, 2: linked campaign title */
 					esc_html__( '%1$s is fundraising for %2$s', 'mission-donation-platform' ),
 					esc_html( $name ),
-					'<a href="' . esc_url( $campaign->get_url() ) . '">' . esc_html( $campaign->title ) . '</a>'
+					'<a href="' . esc_url( $campaign_url ) . '">' . esc_html( $campaign->title ) . '</a>'
 				);
 			} else {
 				echo esc_html( $name );

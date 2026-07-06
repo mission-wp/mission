@@ -7,6 +7,7 @@
 
 namespace MissionDP\Cleanup;
 
+use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Database\Schema;
 use MissionDP\Settings\SettingsService;
 
@@ -276,6 +277,9 @@ class CleanupService {
 					$prefix . 'campaigns'
 				)
 			);
+
+			// The bulk UPDATE bypasses CampaignDataStore, so drop its row memo.
+			wp_cache_flush_group( CampaignDataStore::CACHE_GROUP );
 		}
 
 		$this->announce_cleanup( 'test_transactions_deleted', [ 'count' => $count ] );

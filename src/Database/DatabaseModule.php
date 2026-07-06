@@ -7,6 +7,10 @@
 
 namespace MissionDP\Database;
 
+use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Database\DataStore\FundraiserDataStore;
+use MissionDP\Database\DataStore\TeamDataStore;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -68,6 +72,27 @@ class DatabaseModule {
 	 */
 	public function init(): void {
 		self::register_meta_tables();
+
+		// The row memo must stay per-request: a persistent drop-in (Redis,
+		// Memcached) would otherwise serve rows across requests with no
+		// cross-server invalidation.
+		wp_cache_add_non_persistent_groups(
+			[
+				FundraiserDataStore::CACHE_GROUP,
+				TeamDataStore::CACHE_GROUP,
+				CampaignDataStore::CACHE_GROUP,
+			]
+		);
+
+		// Campaign aggregates are also written by raw SQL in the transaction
+		// flow; every write site fires this action, so one listener keeps the
+		// row memo coherent.
+		add_action(
+			'mission_campaign_aggregates_updated',
+			static function ( int $campaign_id ): void {
+				wp_cache_delete( 'id:' . $campaign_id, CampaignDataStore::CACHE_GROUP );
+			}
+		);
 
 		$this->schema = new Schema();
 

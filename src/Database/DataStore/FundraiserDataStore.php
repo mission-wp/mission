@@ -22,7 +22,20 @@ defined( 'ABSPATH' ) || exit;
  */
 class FundraiserDataStore implements DataStoreInterface {
 
+	use CachesRows;
 	use MetaTrait;
+
+	/**
+	 * Non-persistent cache group for memoized fundraiser rows.
+	 */
+	public const CACHE_GROUP = 'missiondp_fundraisers';
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function cache_group(): string {
+		return self::CACHE_GROUP;
+	}
 
 	/**
 	 * Get the fully-prefixed table name.
@@ -101,10 +114,18 @@ class FundraiserDataStore implements DataStoreInterface {
 	public function read( int $id ): ?Fundraiser {
 		global $wpdb;
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
-			ARRAY_A
-		);
+		$row = $this->cached_row( $id );
+
+		if ( null === $row ) {
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
+				ARRAY_A
+			);
+
+			if ( $row ) {
+				$this->prime_row_cache( $row );
+			}
+		}
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -123,10 +144,18 @@ class FundraiserDataStore implements DataStoreInterface {
 			return null;
 		}
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
-			ARRAY_A
-		);
+		$row = $this->cached_row_by_post_id( $post_id );
+
+		if ( null === $row ) {
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
+				ARRAY_A
+			);
+
+			if ( $row ) {
+				$this->prime_row_cache( $row );
+			}
+		}
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -157,6 +186,8 @@ class FundraiserDataStore implements DataStoreInterface {
 			null,
 			[ '%d' ]
 		);
+
+		$this->forget_cached_row( $model->id, $old->post_id );
 
 		return false !== $result;
 	}
@@ -222,6 +253,8 @@ class FundraiserDataStore implements DataStoreInterface {
 		);
 
 		if ( $updated ) {
+			$this->forget_cached_row( $fundraiser_id );
+
 			/**
 			 * Fires when a fundraiser's aggregate columns are recomputed.
 			 *
@@ -253,13 +286,17 @@ class FundraiserDataStore implements DataStoreInterface {
 			[ '%d' ],
 			[ '%d' ]
 		);
-		$wpdb->update(
+		$detached_teams = $wpdb->update(
 			$wpdb->prefix . 'missiondp_teams',
 			[ 'captain_id' => null ],
 			[ 'captain_id' => $id ],
 			[ '%d' ],
 			[ '%d' ]
 		);
+
+		if ( $detached_teams ) {
+			wp_cache_flush_group( TeamDataStore::CACHE_GROUP );
+		}
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -270,6 +307,8 @@ class FundraiserDataStore implements DataStoreInterface {
 		);
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
+
+		$this->forget_cached_row( $id );
 
 		return false !== $result;
 	}

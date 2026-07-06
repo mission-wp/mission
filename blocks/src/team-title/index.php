@@ -24,7 +24,8 @@ defined( 'ABSPATH' ) || exit;
 		return;
 	}
 
-	$campaign = $team->campaign();
+	$campaign     = $team->campaign();
+	$campaign_url = $campaign ? $campaign->get_url() : null;
 
 	ob_start();
 	?>
@@ -35,11 +36,11 @@ defined( 'ABSPATH' ) || exit;
 		<h1 class="mission-tt-title__heading"><?php echo esc_html( $team->name ); ?></h1>
 		<p class="mission-tt-title__subtitle">
 			<?php
-			if ( $campaign && $campaign->get_url() ) {
+			if ( $campaign_url ) {
 				printf(
 					/* translators: %s: linked campaign title */
 					esc_html__( 'Team fundraising for %s', 'mission-donation-platform' ),
-					'<a href="' . esc_url( $campaign->get_url() ) . '">' . esc_html( $campaign->title ) . '</a>'
+					'<a href="' . esc_url( $campaign_url ) . '">' . esc_html( $campaign->title ) . '</a>'
 				);
 			} else {
 				esc_html_e( 'Team fundraising', 'mission-donation-platform' );
