@@ -299,8 +299,8 @@ class SubscriptionsEndpoint {
 		}
 
 		if ( $request->has_param( 'campaign_id' ) ) {
-			$campaign_id               = $request->get_param( 'campaign_id' );
-			$subscription->campaign_id = $campaign_id ? (int) $campaign_id : null;
+			$campaign_id = $request->get_param( 'campaign_id' );
+			$subscription->set_campaign( $campaign_id ? (int) $campaign_id : null );
 		}
 
 		$subscription->save();
