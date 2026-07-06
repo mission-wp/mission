@@ -2138,36 +2138,18 @@ class ReportingService {
 	 * Private teams count — this powers the owner-facing dashboard, not the
 	 * public leaderboard.
 	 *
+	 * The team's own raised comes from team_totals() (memoized; both call
+	 * sites resolve it just before ranking), and the campaign-wide comparison
+	 * is a single pass over pre-grouped per-team sums rather than correlated
+	 * subqueries per team.
+	 *
 	 * @param int $team_id Team ID.
 	 * @return array{rank: int, total: int} Zeroes when the team does not exist.
 	 */
 	public function team_rank( int $team_id ): array {
 		global $wpdb;
 
-		$t_table  = $wpdb->prefix . 'missiondp_teams';
-		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
-		$tx_table = $wpdb->prefix . 'missiondp_transactions';
-
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
-		$is_test    = $this->is_test_mode() ? 1 : 0;
-
-		$team = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT t.campaign_id,
-					( SELECT COALESCE(SUM(m.%i), 0) FROM %i AS m WHERE m.team_id = t.id )
-					+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
-						FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d ) AS raised
-				 FROM %i AS t
-				 WHERE t.id = %d",
-				$raised_col,
-				$f_table,
-				$tx_table,
-				$is_test,
-				$t_table,
-				$team_id
-			),
-			ARRAY_A
-		);
+		$team = \MissionDP\Models\Team::find( $team_id );
 
 		if ( ! $team ) {
 			return [
@@ -2176,23 +2158,31 @@ class ReportingService {
 			];
 		}
 
+		$t_table  = $wpdb->prefix . 'missiondp_teams';
+		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+
+		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
+		$is_test    = $this->is_test_mode() ? 1 : 0;
+		$raised     = $this->team_totals( $team_id )['raised'];
+
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT COUNT(*) AS total,
-					COALESCE(SUM(CASE WHEN
-						( SELECT COALESCE(SUM(m.%i), 0) FROM %i AS m WHERE m.team_id = t.id )
-						+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
-							FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d )
-						> %d THEN 1 ELSE 0 END), 0) AS higher
+					COALESCE(SUM(CASE WHEN COALESCE(f.raised, 0) + COALESCE(x.raised, 0) > %d THEN 1 ELSE 0 END), 0) AS higher
 				 FROM %i AS t
+				 LEFT JOIN ( SELECT team_id, SUM(%i) AS raised
+					FROM %i WHERE team_id IS NOT NULL GROUP BY team_id ) AS f ON f.team_id = t.id
+				 LEFT JOIN ( SELECT team_id, SUM(amount - LEAST(amount_refunded, amount)) AS raised
+					FROM %i WHERE team_id IS NOT NULL AND status = 'completed' AND is_test = %d GROUP BY team_id ) AS x ON x.team_id = t.id
 				 WHERE t.campaign_id = %d AND t.status = %s",
+				$raised,
+				$t_table,
 				$raised_col,
 				$f_table,
 				$tx_table,
 				$is_test,
-				(int) $team['raised'],
-				$t_table,
-				(int) $team['campaign_id'],
+				$team->campaign_id,
 				\MissionDP\Models\Team::STATUS_ACTIVE
 			),
 			ARRAY_A

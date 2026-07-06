@@ -540,6 +540,28 @@ class AttributionTest extends WP_UnitTestCase {
 		$this->assertSame( [ 'rank' => 0, 'total' => 0 ], ( new ReportingService() )->team_rank( 12345 ) );
 	}
 
+	/**
+	 * Test team_rank() runs a single query once the team row and totals memo
+	 * are primed, as they are at both call sites.
+	 */
+	public function test_team_rank_single_query_when_primed(): void {
+		global $wpdb;
+
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Rangers', 'status' => 'active' ] );
+		$team->save();
+		$this->make_completed( [ 'team_id' => $team->id, 'donor_id' => 2, 'amount' => 2500 ] );
+
+		$reporting = new ReportingService();
+		Team::find( $team->id );
+		$reporting->team_totals( $team->id );
+
+		$before = $wpdb->num_queries;
+		$rank   = $reporting->team_rank( $team->id );
+
+		$this->assertSame( 1, $wpdb->num_queries - $before );
+		$this->assertSame( [ 'rank' => 1, 'total' => 1 ], $rank );
+	}
+
 	// -------------------------------------------------------------------------
 	// Cross-page recent donations.
 	// -------------------------------------------------------------------------
