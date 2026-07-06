@@ -269,8 +269,9 @@ class FundraiserDataStore implements DataStoreInterface {
 	 * Delete a fundraiser by ID, including its meta.
 	 *
 	 * Detaches references first so nothing points at the deleted row: attributed
-	 * donations become plain campaign donations (their campaign_id stays), and a
-	 * team captained by this fundraiser is left captainless for re-promotion.
+	 * donations and subscriptions become plain campaign giving (their campaign_id
+	 * stays), and a team captained by this fundraiser is left captainless for
+	 * re-promotion.
 	 *
 	 * @param int $id Fundraiser ID.
 	 *
@@ -281,6 +282,13 @@ class FundraiserDataStore implements DataStoreInterface {
 
 		$wpdb->update(
 			$wpdb->prefix . 'missiondp_transactions',
+			[ 'fundraiser_id' => null ],
+			[ 'fundraiser_id' => $id ],
+			[ '%d' ],
+			[ '%d' ]
+		);
+		$wpdb->update(
+			$wpdb->prefix . 'missiondp_subscriptions',
 			[ 'fundraiser_id' => null ],
 			[ 'fundraiser_id' => $id ],
 			[ '%d' ],

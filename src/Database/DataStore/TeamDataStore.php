@@ -187,8 +187,9 @@ class TeamDataStore implements DataStoreInterface {
 	 * Delete a team by ID, including its meta and invitations.
 	 *
 	 * Detaches references first so nothing points at the deleted row: members
-	 * become solo fundraisers, direct team gifts become plain campaign donations
-	 * (their campaign_id stays), and outstanding invitation tokens are destroyed.
+	 * become solo fundraisers, direct team gifts and subscriptions become plain
+	 * campaign giving (their campaign_id stays), and outstanding invitation
+	 * tokens are destroyed.
 	 *
 	 * @param int $id Team ID.
 	 *
@@ -210,6 +211,13 @@ class TeamDataStore implements DataStoreInterface {
 		}
 		$wpdb->update(
 			$wpdb->prefix . 'missiondp_transactions',
+			[ 'team_id' => null ],
+			[ 'team_id' => $id ],
+			[ '%d' ],
+			[ '%d' ]
+		);
+		$wpdb->update(
+			$wpdb->prefix . 'missiondp_subscriptions',
 			[ 'team_id' => null ],
 			[ 'team_id' => $id ],
 			[ '%d' ],

@@ -10,6 +10,7 @@ namespace MissionDP\Tests\Models;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Subscription;
 use MissionDP\Models\Team;
 use MissionDP\Models\TeamInvitation;
 use MissionDP\Models\Transaction;
@@ -40,6 +41,7 @@ class TeamTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
 
@@ -577,6 +579,32 @@ class TeamTest extends WP_UnitTestCase {
 		$this->assertNull( $member->team_id );
 		$this->assertFalse( $member->is_captain() );
 		$this->assertNull( Transaction::find( $gift->id )->team_id );
+	}
+
+	/**
+	 * Test deleting a team detaches it from active subscriptions.
+	 */
+	public function test_delete_detaches_subscriptions(): void {
+		$team = $this->create_team();
+
+		$subscription = new Subscription( [
+			'status'          => 'active',
+			'donor_id'        => 1,
+			'campaign_id'     => 1,
+			'team_id'         => $team->id,
+			'amount'          => 2500,
+			'total_amount'    => 2500,
+			'frequency'       => 'monthly',
+			'payment_gateway' => 'stripe',
+		] );
+		$subscription->save();
+
+		$team->delete();
+
+		// Renewals become plain campaign donations; nothing points at the deleted row.
+		$subscription = Subscription::find( $subscription->id );
+		$this->assertNull( $subscription->team_id );
+		$this->assertSame( 1, $subscription->campaign_id );
 	}
 
 	/**

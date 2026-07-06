@@ -11,6 +11,7 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Subscription;
 use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
@@ -36,6 +37,7 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisermeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
@@ -800,6 +802,32 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertTrue( $fundraiser->delete() );
 		$this->assertNull( get_post( $post_id ) );
 		$this->assertNull( Fundraiser::find( $id ) );
+	}
+
+	/**
+	 * Test deleting a fundraiser detaches it from active subscriptions.
+	 */
+	public function test_delete_detaches_subscriptions(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$subscription = new Subscription( [
+			'status'          => 'active',
+			'donor_id'        => 1,
+			'campaign_id'     => 1,
+			'fundraiser_id'   => $fundraiser->id,
+			'amount'          => 2500,
+			'total_amount'    => 2500,
+			'frequency'       => 'monthly',
+			'payment_gateway' => 'stripe',
+		] );
+		$subscription->save();
+
+		$fundraiser->delete();
+
+		// Renewals become plain campaign donations; nothing points at the deleted row.
+		$subscription = Subscription::find( $subscription->id );
+		$this->assertNull( $subscription->fundraiser_id );
+		$this->assertSame( 1, $subscription->campaign_id );
 	}
 
 	/**
