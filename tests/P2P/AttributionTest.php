@@ -312,6 +312,49 @@ class AttributionTest extends WP_UnitTestCase {
 		$this->assertSame( 1, $totals['donations'] );
 	}
 
+	/**
+	 * Test team_totals() is memoized per instance, with fresh instances re-querying.
+	 */
+	public function test_team_totals_memoized_per_instance(): void {
+		global $wpdb;
+
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Rangers', 'status' => 'active' ] );
+		$team->save();
+		$this->make_completed( [ 'team_id' => $team->id, 'donor_id' => 2, 'amount' => 2500 ] );
+
+		$reporting = new ReportingService();
+		$first     = $reporting->team_totals( $team->id );
+
+		$before = $wpdb->num_queries;
+		$second = $reporting->team_totals( $team->id );
+
+		$this->assertSame( 0, $wpdb->num_queries - $before );
+		$this->assertSame( $first, $second );
+
+		// The memo is per instance, so a new one sees later donations.
+		$this->make_completed( [ 'team_id' => $team->id, 'donor_id' => 3, 'amount' => 1000 ] );
+
+		$this->assertSame( 3500, ( new ReportingService() )->team_totals( $team->id )['raised'] );
+	}
+
+	/**
+	 * Test the team_totals() memo is keyed by test mode.
+	 */
+	public function test_team_totals_memo_keyed_by_test_mode(): void {
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Rangers', 'status' => 'active' ] );
+		$team->save();
+		$this->make_completed( [ 'team_id' => $team->id, 'donor_id' => 2, 'amount' => 2500 ] );
+
+		$reporting = new ReportingService();
+
+		$this->assertSame( 2500, $reporting->team_totals( $team->id )['raised'] );
+
+		update_option( 'missiondp_settings', [ 'test_mode' => true ] );
+
+		// The live-mode memo entry must not answer for test mode.
+		$this->assertSame( 0, $reporting->team_totals( $team->id )['raised'] );
+	}
+
 	// -------------------------------------------------------------------------
 	// DonationAttribution resolver.
 	// -------------------------------------------------------------------------

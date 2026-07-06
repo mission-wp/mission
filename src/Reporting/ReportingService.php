@@ -31,6 +31,13 @@ class ReportingService {
 	private SettingsService $settings;
 
 	/**
+	 * Per-instance memo of team_totals() results, keyed by "{team_id}:{is_test}".
+	 *
+	 * @var array<string, array{raised:int, donations:int, member_count:int}>
+	 */
+	private array $team_totals_memo = [];
+
+	/**
 	 * Constructor.
 	 *
 	 * @param SettingsService|null $settings Settings service.
@@ -2065,6 +2072,9 @@ class ReportingService {
 	/**
 	 * Live totals for a single team page (member fundraisers + direct gifts).
 	 *
+	 * Memoized per instance: dashboard context builders resolve the same
+	 * team's totals several times in one request.
+	 *
 	 * @param int $team_id Team ID.
 	 * @return array{raised:int, donations:int, member_count:int}
 	 */
@@ -2077,6 +2087,12 @@ class ReportingService {
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 		$tcount_col = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
 		$is_test    = $this->is_test_mode() ? 1 : 0;
+
+		$memo_key = $team_id . ':' . $is_test;
+
+		if ( isset( $this->team_totals_memo[ $memo_key ] ) ) {
+			return $this->team_totals_memo[ $memo_key ];
+		}
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -2105,11 +2121,13 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		return [
+		$this->team_totals_memo[ $memo_key ] = [
 			'raised'       => (int) ( $row['raised'] ?? 0 ),
 			'donations'    => (int) ( $row['donations'] ?? 0 ),
 			'member_count' => (int) ( $row['member_count'] ?? 0 ),
 		];
+
+		return $this->team_totals_memo[ $memo_key ];
 	}
 
 	/**
