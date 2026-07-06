@@ -576,6 +576,55 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a PUT rejected for a nonexistent captain commits no field changes.
+	 */
+	public function test_update_with_nonexistent_captain_makes_no_partial_write(): void {
+		$campaign = $this->create_p2p_campaign();
+		$team     = $this->create_team( $campaign->id, [ 'name' => 'Old Name', 'goal' => 200000 ] );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
+		$request->set_body_params( [
+			'name'       => 'New Name',
+			'goal'       => 5000,
+			'captain_id' => 999999,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'invalid_captain', $response->get_data()['code'] );
+
+		$fresh = Team::find( $team->id );
+		$this->assertSame( 'Old Name', $fresh->name );
+		$this->assertSame( 200000, $fresh->goal );
+	}
+
+	/**
+	 * Test a PUT rejected for a non-member captain commits no field changes.
+	 */
+	public function test_update_with_non_member_captain_makes_no_partial_write(): void {
+		$campaign = $this->create_p2p_campaign();
+		$team     = $this->create_team( $campaign->id, [ 'name' => 'Old Name', 'goal' => 200000 ] );
+		$outsider = $this->create_member( $campaign->id );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
+		$request->set_body_params( [
+			'name'       => 'New Name',
+			'goal'       => 5000,
+			'captain_id' => $outsider->id,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'not_a_member', $response->get_data()['code'] );
+
+		$fresh = Team::find( $team->id );
+		$this->assertSame( 'Old Name', $fresh->name );
+		$this->assertSame( 200000, $fresh->goal );
+	}
+
+	/**
 	 * Test approving via PUT fires the approval event like the /approve route.
 	 */
 	public function test_update_team_status_fires_approval_event(): void {

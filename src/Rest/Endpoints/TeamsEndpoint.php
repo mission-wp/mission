@@ -168,28 +168,8 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 			return RestErrors::team_not_found();
 		}
 
-		if ( null !== $request->get_param( 'name' ) ) {
-			$team->name = sanitize_text_field( $request->get_param( 'name' ) );
-		}
-
-		if ( null !== $request->get_param( 'description' ) ) {
-			$team->description = wp_kses_post( $request->get_param( 'description' ) );
-		}
-
-		if ( null !== $request->get_param( 'goal' ) ) {
-			$team->goal = max( 0, (int) $request->get_param( 'goal' ) );
-		}
-
-		if ( null !== $request->get_param( 'access' ) ) {
-			$team->access = $request->get_param( 'access' );
-		}
-
-		if ( null !== $request->get_param( 'cover_image' ) ) {
-			$team->cover_image = sanitize_text_field( $request->get_param( 'cover_image' ) );
-		}
-
-		$team->save();
-
+		// Handle the captain first: a rejected captain must not leave the other
+		// field changes committed.
 		if ( $request->has_param( 'captain_id' ) ) {
 			$captain_id = $request->get_param( 'captain_id' );
 
@@ -213,6 +193,28 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 				}
 			}
 		}
+
+		if ( null !== $request->get_param( 'name' ) ) {
+			$team->name = sanitize_text_field( $request->get_param( 'name' ) );
+		}
+
+		if ( null !== $request->get_param( 'description' ) ) {
+			$team->description = wp_kses_post( $request->get_param( 'description' ) );
+		}
+
+		if ( null !== $request->get_param( 'goal' ) ) {
+			$team->goal = max( 0, (int) $request->get_param( 'goal' ) );
+		}
+
+		if ( null !== $request->get_param( 'access' ) ) {
+			$team->access = $request->get_param( 'access' );
+		}
+
+		if ( null !== $request->get_param( 'cover_image' ) ) {
+			$team->cover_image = sanitize_text_field( $request->get_param( 'cover_image' ) );
+		}
+
+		$team->save();
 
 		$this->apply_status_transition( $team, $request->get_param( 'status' ) );
 
