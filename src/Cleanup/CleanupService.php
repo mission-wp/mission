@@ -7,9 +7,13 @@
 
 namespace MissionDP\Cleanup;
 
+use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Database\DataStore\FundraiserDataStore;
 use MissionDP\Database\Schema;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
+use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -450,21 +454,37 @@ class CleanupService {
 			$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 		}
 
+		// Campaign posts plus the P2P fundraiser/team shell posts; mirrors the
+		// post-type list in uninstall.php (kept literal there — it must work
+		// without the autoloader).
+		$post_types = [ CampaignPostType::POST_TYPE, Fundraiser::POST_TYPE, Team::POST_TYPE ];
+
+		foreach ( $post_types as $post_type ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE meta FROM %i meta
+					 INNER JOIN %i posts ON posts.ID = meta.post_id
+					 WHERE posts.post_type = %s',
+					$wpdb->postmeta,
+					$wpdb->posts,
+					$post_type
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE post_type = %s',
+					$wpdb->posts,
+					$post_type
+				)
+			);
+		}
+
+		// P2P upload markers live on attachment posts, not plugin CPTs.
 		$wpdb->query(
 			$wpdb->prepare(
-				'DELETE meta FROM %i meta
-				 INNER JOIN %i posts ON posts.ID = meta.post_id
-				 WHERE posts.post_type = %s',
+				'DELETE FROM %i WHERE meta_key = %s',
 				$wpdb->postmeta,
-				$wpdb->posts,
-				'missiondp_campaign'
-			)
-		);
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM %i WHERE post_type = %s',
-				$wpdb->posts,
-				'missiondp_campaign'
+				FundraiserImageUploader::UPLOAD_MARKER_META
 			)
 		);
 

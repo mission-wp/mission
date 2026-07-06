@@ -282,6 +282,40 @@ class CleanupServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test delete_all_data removes campaign, fundraiser, and team shell posts
+	 * (with their meta) and the P2P upload markers, matching uninstall.php.
+	 */
+	public function test_delete_all_data_removes_shell_posts_and_upload_markers(): void {
+		$post_ids = [];
+
+		foreach ( [ 'missiondp_campaign', 'missiondp_fundraiser', 'missiondp_team' ] as $post_type ) {
+			$post_ids[ $post_type ] = self::factory()->post->create(
+				[
+					'post_type'   => $post_type,
+					'post_status' => 'publish',
+				]
+			);
+			update_post_meta( $post_ids[ $post_type ], 'probe_key', 'probe' );
+		}
+
+		$attachment_id = self::factory()->attachment->create();
+		update_post_meta( $attachment_id, '_missiondp_p2p_upload', 1 );
+
+		$this->cleanup->delete_all_data();
+
+		foreach ( $post_ids as $post_type => $post_id ) {
+			$this->assertNull( get_post( $post_id ), "{$post_type} shell post should be deleted." );
+			$this->assertSame( '', get_post_meta( $post_id, 'probe_key', true ) );
+		}
+
+		$this->assertSame( '', get_post_meta( $attachment_id, '_missiondp_p2p_upload', true ) );
+
+		// The TRUNCATEs in delete_all_data() commit the test transaction, so
+		// the attachment post won't roll back; remove it explicitly.
+		wp_delete_post( $attachment_id, true );
+	}
+
+	/**
 	 * Create a webhook delivery row.
 	 *
 	 * @param string $event_id Unique event ID.
