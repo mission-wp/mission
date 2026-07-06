@@ -176,37 +176,6 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The list route returns only the current donor's fundraisers.
-	 */
-	public function test_list_returns_only_own_fundraisers(): void {
-		$this->create_fundraiser();
-
-		$other_donor = new Donor( [ 'email' => 'bob@example.com', 'first_name' => 'Bob' ] );
-		$other_donor->save();
-		$this->create_fundraiser( [ 'donor_id' => $other_donor->id ] );
-
-		$response = $this->get( '/mission-donation-platform/v1/donor-dashboard/fundraisers' );
-		$data     = $response->get_data();
-
-		$this->assertSame( 200, $response->get_status() );
-		$this->assertCount( 1, $data );
-		$this->assertSame( 'Help me help', $data[0]['headline'] );
-	}
-
-	/**
-	 * Fetching an unowned fundraiser returns 404.
-	 */
-	public function test_get_rejects_unowned_fundraiser(): void {
-		$other_donor = new Donor( [ 'email' => 'bob@example.com' ] );
-		$other_donor->save();
-		$other = $this->create_fundraiser( [ 'donor_id' => $other_donor->id ] );
-
-		$response = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$other->id}" );
-
-		$this->assertSame( 404, $response->get_status() );
-	}
-
-	/**
 	 * PUT updates the editable fields.
 	 */
 	public function test_put_updates_editable_fields(): void {
@@ -289,7 +258,10 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 		$fundraiser = $this->create_fundraiser();
 		wp_set_current_user( 0 );
 
-		$response = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}" );
+		$response = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'headline' => 'Anonymous edit' ]
+		);
 
 		$this->assertSame( 401, $response->get_status() );
 	}
@@ -302,7 +274,10 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 		$subscriber = self::factory()->user->create( [ 'role' => 'subscriber' ] );
 		wp_set_current_user( $subscriber );
 
-		$response = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}" );
+		$response = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'headline' => 'Subscriber edit' ]
+		);
 
 		$this->assertSame( 403, $response->get_status() );
 	}
@@ -321,9 +296,9 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Another fundraiser's session gets 404 reading or editing this one's page.
+	 * Another fundraiser's session gets 404 editing this one's page.
 	 */
-	public function test_other_fundraiser_session_cannot_read_or_edit(): void {
+	public function test_other_fundraiser_session_cannot_edit(): void {
 		$fundraiser = $this->create_fundraiser( [ 'headline' => 'Original' ] );
 
 		// Fundraiser B: a different donor with their own session and page.
@@ -338,9 +313,6 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 		$other_donor->save();
 		$this->create_fundraiser( [ 'donor_id' => $other_donor->id ] );
 		wp_set_current_user( $other_user );
-
-		$get = $this->get( "/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}" );
-		$this->assertSame( 404, $get->get_status() );
 
 		$put = $this->put(
 			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",

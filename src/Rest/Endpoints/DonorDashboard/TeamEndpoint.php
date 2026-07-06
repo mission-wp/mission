@@ -63,17 +63,10 @@ class TeamEndpoint {
 			RestModule::NAMESPACE,
 			'/donor-dashboard/teams/(?P<id>\d+)',
 			[
-				[
-					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_team' ],
-					'permission_callback' => [ $this, 'check_donor_permission' ],
-				],
-				[
-					'methods'             => 'PUT',
-					'callback'            => [ $this, 'update_team' ],
-					'permission_callback' => [ $this, 'check_donor_permission' ],
-					'args'                => $this->get_update_params(),
-				],
+				'methods'             => 'PUT',
+				'callback'            => [ $this, 'update_team' ],
+				'permission_callback' => [ $this, 'check_donor_permission' ],
+				'args'                => $this->get_update_params(),
 			]
 		);
 
@@ -130,22 +123,6 @@ class TeamEndpoint {
 				'permission_callback' => [ $this, 'check_donor_permission' ],
 			]
 		);
-	}
-
-	/**
-	 * GET /donor-dashboard/teams/{id}
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function get_team( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$team = $this->resolve_captained_team( $request );
-
-		if ( is_wp_error( $team ) ) {
-			return $team;
-		}
-
-		return new WP_REST_Response( $this->prepare_team( $team ) );
 	}
 
 	/**

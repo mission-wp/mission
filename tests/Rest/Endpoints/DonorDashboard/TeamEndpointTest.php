@@ -197,12 +197,16 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * GET returns the captain's team with members and invitations.
+	 * The update response carries the captain's full team payload with members.
 	 */
-	public function test_get_returns_team_for_captain(): void {
+	public function test_update_response_includes_members(): void {
 		$this->add_member( 'm1@example.com' );
 
-		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Runners' ]
+		);
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -223,7 +227,11 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$pending->status = Fundraiser::STATUS_PENDING;
 		$pending->save();
 
-		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Runners' ]
+		);
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
@@ -234,24 +242,6 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$this->assertNotContains( $pending->id, $ids );
 		// Captain + the one active member.
 		$this->assertCount( 2, $data['members'] );
-	}
-
-	/**
-	 * A member who is not the captain gets a 403.
-	 */
-	public function test_member_who_is_not_captain_gets_403(): void {
-		$member = $this->add_member( 'plain@example.com' );
-		$user   = self::factory()->user->create( [ 'role' => 'missiondp_donor', 'user_email' => 'plain2@example.com' ] );
-
-		// Link the member's donor to a WP user and act as them.
-		$member_donor          = $member->donor();
-		$member_donor->user_id = $user;
-		$member_donor->save();
-		wp_set_current_user( $user );
-
-		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
-
-		$this->assertSame( 403, $response->get_status() );
 	}
 
 	/**
@@ -371,8 +361,12 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( $member->id, Team::find( $this->team->id )->captain_id );
 
-		// The original captain (still the current user) is no longer captain.
-		$after = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+		// The original captain (still the current user) can no longer edit.
+		$after = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Still mine' ]
+		);
 		$this->assertSame( 403, $after->get_status() );
 	}
 
@@ -496,7 +490,11 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$subscriber = self::factory()->user->create( [ 'role' => 'subscriber' ] );
 		wp_set_current_user( $subscriber );
 
-		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Subscriber edit' ]
+		);
 
 		$this->assertSame( 403, $response->get_status() );
 	}
@@ -507,13 +505,17 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	public function test_requires_login(): void {
 		wp_set_current_user( 0 );
 
-		$response = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" );
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Anonymous edit' ]
+		);
 
 		$this->assertSame( 401, $response->get_status() );
 	}
 
 	/**
-	 * Every write route is rejected once the campaign has ended; reads stay open.
+	 * Every write route is rejected once the campaign has ended.
 	 */
 	public function test_writes_rejected_when_campaign_ended(): void {
 		$member = $this->add_member( 'member@example.com' );
@@ -538,9 +540,6 @@ class TeamEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 'Runners', Team::find( $this->team->id )->name );
 		$this->assertSame( $this->team->id, Fundraiser::find( $member->id )->team_id );
-
-		$response = $this->dispatch( 'GET', $base );
-		$this->assertSame( 200, $response->get_status() );
 	}
 
 	/**
@@ -564,7 +563,11 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		);
 		$txn->save();
 
-		$data = $this->dispatch( 'GET', "/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}" )->get_data();
+		$data = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Runners' ]
+		)->get_data();
 
 		$rows = array_values( array_filter( $data['members'], static fn( array $row ) => $row['fundraiserId'] === $member->id ) );
 		$this->assertCount( 1, $rows );

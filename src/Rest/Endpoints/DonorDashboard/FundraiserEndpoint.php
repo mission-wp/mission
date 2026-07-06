@@ -57,29 +57,12 @@ class FundraiserEndpoint {
 	public function register(): void {
 		register_rest_route(
 			RestModule::NAMESPACE,
-			'/donor-dashboard/fundraisers',
-			[
-				'methods'             => 'GET',
-				'callback'            => [ $this, 'get_fundraisers' ],
-				'permission_callback' => [ $this, 'check_donor_permission' ],
-			]
-		);
-
-		register_rest_route(
-			RestModule::NAMESPACE,
 			'/donor-dashboard/fundraisers/(?P<id>\d+)',
 			[
-				[
-					'methods'             => 'GET',
-					'callback'            => [ $this, 'get_fundraiser' ],
-					'permission_callback' => [ $this, 'check_donor_permission' ],
-				],
-				[
-					'methods'             => 'PUT',
-					'callback'            => [ $this, 'update_fundraiser' ],
-					'permission_callback' => [ $this, 'check_donor_permission' ],
-					'args'                => $this->get_update_params(),
-				],
+				'methods'             => 'PUT',
+				'callback'            => [ $this, 'update_fundraiser' ],
+				'permission_callback' => [ $this, 'check_donor_permission' ],
+				'args'                => $this->get_update_params(),
 			]
 		);
 
@@ -119,47 +102,6 @@ class FundraiserEndpoint {
 				'permission_callback' => [ $this, 'check_donor_permission' ],
 			]
 		);
-	}
-
-	/**
-	 * GET /donor-dashboard/fundraisers
-	 *
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function get_fundraisers(): WP_REST_Response|WP_Error {
-		$donor = $this->resolve_donor();
-
-		if ( is_wp_error( $donor ) ) {
-			return $donor;
-		}
-
-		$items = array_map(
-			[ $this, 'prepare_fundraiser' ],
-			$donor->fundraisers(
-				[
-					'orderby' => 'date_created',
-					'order'   => 'DESC',
-				]
-			)
-		);
-
-		return new WP_REST_Response( $items );
-	}
-
-	/**
-	 * GET /donor-dashboard/fundraisers/{id}
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function get_fundraiser( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$fundraiser = $this->resolve_owned_fundraiser( $request );
-
-		if ( is_wp_error( $fundraiser ) ) {
-			return $fundraiser;
-		}
-
-		return new WP_REST_Response( $this->prepare_fundraiser( $fundraiser ) );
 	}
 
 	/**
