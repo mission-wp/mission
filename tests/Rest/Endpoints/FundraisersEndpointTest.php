@@ -344,6 +344,43 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test PUT with only one dedication field merges the stored value.
+	 */
+	public function test_update_partial_dedication_keeps_other_field(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$fundraiser->set_dedication( 'honor', 'Jane Smith' );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [ 'dedication_type' => 'memory' ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'Jane Smith',
+			],
+			$response->get_data()['dedication']
+		);
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [ 'dedication_name' => 'John Smith' ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'John Smith',
+			],
+			Fundraiser::find( $fundraiser->id )->dedication()
+		);
+	}
+
+	/**
 	 * Test POST creates a fundraiser.
 	 */
 	public function test_create_fundraiser(): void {

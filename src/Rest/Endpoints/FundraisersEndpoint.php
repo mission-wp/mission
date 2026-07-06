@@ -215,9 +215,17 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 		$fundraiser->save();
 
 		if ( $request->has_param( 'dedication_type' ) || $request->has_param( 'dedication_name' ) ) {
+			// Merge the stored dedication so a partial update changes one
+			// field instead of clearing both (matches the donor dashboard).
+			$existing = $fundraiser->dedication();
+
 			$fundraiser->set_dedication(
-				$request->get_param( 'dedication_type' ),
-				sanitize_text_field( (string) ( $request->get_param( 'dedication_name' ) ?? '' ) )
+				$request->has_param( 'dedication_type' )
+					? $request->get_param( 'dedication_type' )
+					: ( $existing['type'] ?? '' ),
+				$request->has_param( 'dedication_name' )
+					? sanitize_text_field( (string) $request->get_param( 'dedication_name' ) )
+					: ( $existing['name'] ?? '' )
 			);
 		}
 
