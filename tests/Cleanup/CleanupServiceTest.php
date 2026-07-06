@@ -12,6 +12,7 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Database\DataStore\DonorDataStore;
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
@@ -55,7 +56,7 @@ class CleanupServiceTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		foreach ( [ 'transactionmeta', 'transactions', 'tributes', 'transaction_history', 'subscriptionmeta', 'subscriptions', 'donormeta', 'donors', 'notes', 'webhook_deliveries', 'activity_log' ] as $table ) {
+		foreach ( [ 'transactionmeta', 'transactions', 'tributes', 'transaction_history', 'subscriptionmeta', 'subscriptions', 'donormeta', 'donors', 'fundraisers', 'notes', 'webhook_deliveries', 'activity_log' ] as $table ) {
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_{$table}" );
 		}
 		// phpcs:enable
@@ -151,6 +152,48 @@ class CleanupServiceTest extends WP_UnitTestCase {
 
 		$this->assertNotNull( Tribute::find_by_transaction_id( $live_txn->id ) );
 		$this->assertNull( Tribute::find_by_transaction_id( $test_txn->id ) );
+	}
+
+	/**
+	 * Test delete_test_transactions resets fundraiser test aggregates but keeps live ones.
+	 */
+	public function test_delete_test_transactions_resets_fundraiser_test_totals(): void {
+		$donor      = $this->create_donor( 'p2p' );
+		$fundraiser = new Fundraiser(
+			[
+				'campaign_id' => 1,
+				'donor_id'    => $donor->id,
+			]
+		);
+		$fundraiser->save();
+
+		// One live and one test donation, completed through the lifecycle so
+		// the fundraiser aggregates recompute.
+		foreach ( [ false, true ] as $is_test ) {
+			$transaction = new Transaction(
+				[
+					'status'        => 'pending',
+					'donor_id'      => $donor->id,
+					'fundraiser_id' => $fundraiser->id,
+					'amount'        => $is_test ? 2000 : 3000,
+					'is_test'       => $is_test,
+				]
+			);
+			$transaction->save();
+			$transaction->status = 'completed';
+			$transaction->save();
+		}
+
+		$this->assertSame( 2000, Fundraiser::find( $fundraiser->id )->test_total_raised );
+
+		$this->cleanup->delete_test_transactions();
+
+		$fresh = Fundraiser::find( $fundraiser->id );
+
+		$this->assertSame( 0, $fresh->test_total_raised );
+		$this->assertSame( 0, $fresh->test_transaction_count );
+		$this->assertSame( 0, $fresh->test_donor_count );
+		$this->assertSame( 3000, $fresh->total_raised );
 	}
 
 	/**

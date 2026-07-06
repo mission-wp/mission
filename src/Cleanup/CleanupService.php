@@ -8,6 +8,7 @@
 namespace MissionDP\Cleanup;
 
 use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Database\DataStore\FundraiserDataStore;
 use MissionDP\Database\Schema;
 use MissionDP\Settings\SettingsService;
 
@@ -278,8 +279,19 @@ class CleanupService {
 				)
 			);
 
-			// The bulk UPDATE bypasses CampaignDataStore, so drop its row memo.
+			$wpdb->query(
+				$wpdb->prepare(
+					'UPDATE %i SET
+						test_total_raised = 0,
+						test_donor_count = 0,
+						test_transaction_count = 0',
+					$prefix . 'fundraisers'
+				)
+			);
+
+			// The bulk UPDATEs bypass the DataStores, so drop their row memos.
 			wp_cache_flush_group( CampaignDataStore::CACHE_GROUP );
+			wp_cache_flush_group( FundraiserDataStore::CACHE_GROUP );
 		}
 
 		$this->announce_cleanup( 'test_transactions_deleted', [ 'count' => $count ] );
