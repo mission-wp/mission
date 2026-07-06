@@ -336,6 +336,9 @@ export const teamActions = {
       const data = yield response.json();
       card.members = data.members || [];
       card.memberCount = card.members.length;
+      if ( data.member_count_label ) {
+        card.memberCountLabel = data.member_count_label;
+      }
       teams.membersPage = 1;
       showToast( ctx, teams.i18n?.removeToast || 'Member removed' );
     } catch {

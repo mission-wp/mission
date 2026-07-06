@@ -228,11 +228,7 @@ class TeamsContextBuilder {
 				? sprintf( __( 'Of %s Goal', 'mission-donation-platform' ), $goal_display )
 				: __( 'Raised', 'mission-donation-platform' ),
 			'memberCount'      => $totals['member_count'],
-			'memberCountLabel' => sprintf(
-				/* translators: %s: number of team members */
-				_n( '%s member', '%s members', $totals['member_count'], 'mission-donation-platform' ),
-				number_format_i18n( $totals['member_count'] )
-			),
+			'memberCountLabel' => DashboardLabels::member_count_label( $totals['member_count'] ),
 			'donationCount'    => $totals['donations'],
 			'rank'             => $rank['rank'],
 			'rankTotal'        => $rank['total'],

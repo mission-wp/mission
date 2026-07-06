@@ -317,7 +317,7 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Remove detaches the member from the team.
+	 * Remove detaches the member from the team and reports the new member count.
 	 */
 	public function test_remove_member(): void {
 		$member = $this->add_member( 'gone@example.com' );
@@ -329,6 +329,10 @@ class TeamEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertNull( Fundraiser::find( $member->id )->team_id );
+
+		$data = $response->get_data();
+		$this->assertSame( '1 member', $data['member_count_label'] );
+		$this->assertCount( 1, $data['members'] );
 	}
 
 	/**

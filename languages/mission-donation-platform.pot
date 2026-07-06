@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-06T22:25:54+00:00\n"
+"POT-Creation-Date: 2026-07-06T22:41:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -68,7 +68,7 @@ msgstr ""
 #: blocks/build/campaign/index.php:82
 #: blocks/src/campaign-grid/index.php:125
 #: blocks/src/campaign/index.php:82
-#: src/DonorDashboard/DashboardLabels.php:106
+#: src/DonorDashboard/DashboardLabels.php:120
 #: src/DonorDashboard/FundraisersContextBuilder.php:328
 #: src/DonorDashboard/FundraisersContextBuilder.php:345
 #: admin/build/mission-admin.js:152
@@ -125,7 +125,7 @@ msgstr ""
 #: blocks/build/campaign/index.php:118
 #: blocks/src/campaign-grid/index.php:157
 #: blocks/src/campaign/index.php:118
-#: src/DonorDashboard/DashboardLabels.php:105
+#: src/DonorDashboard/DashboardLabels.php:119
 msgid "Ended %s"
 msgstr ""
 
@@ -136,7 +136,7 @@ msgstr ""
 #: blocks/build/campaign/index.php:121
 #: blocks/src/campaign-grid/index.php:160
 #: blocks/src/campaign/index.php:121
-#: src/DonorDashboard/DashboardLabels.php:125
+#: src/DonorDashboard/DashboardLabels.php:139
 #: admin/build/mission-admin.js:198
 #: admin/src/components/GoalMeter.js:92
 msgid "Ends %s"
@@ -1664,7 +1664,7 @@ msgstr ""
 #: blocks/src/team-members/index.php:83
 #: src/DonorDashboard/FundraisersContextBuilder.php:265
 #: src/DonorDashboard/TeamsContextBuilder.php:212
-#: src/DonorDashboard/TeamsContextBuilder.php:279
+#: src/DonorDashboard/TeamsContextBuilder.php:275
 #: src/Email/TeamEmailListener.php:149
 #: src/Email/TeamEmailListener.php:197
 #: src/Email/templates/p2p-team-approved.php:14
@@ -3209,7 +3209,7 @@ msgstr ""
 #. translators: %s: number of team members
 #: blocks/build/top-teams/index.php:117
 #: blocks/src/top-teams/index.php:117
-#: src/DonorDashboard/TeamsContextBuilder.php:233
+#: src/DonorDashboard/DashboardLabels.php:59
 #: blocks/build/top-teams/index.js:2
 #: blocks/src/top-teams/edit/Edit.js:218
 msgid "%s member"
@@ -3630,12 +3630,12 @@ msgstr ""
 msgid "%1$s of %2$s team goal"
 msgstr ""
 
-#: src/DonorDashboard/DashboardLabels.php:116
+#: src/DonorDashboard/DashboardLabels.php:130
 msgid "Ends today"
 msgstr ""
 
 #. translators: %s: number of days
-#: src/DonorDashboard/DashboardLabels.php:121
+#: src/DonorDashboard/DashboardLabels.php:135
 msgid "%s day left"
 msgid_plural "%s days left"
 msgstr[0] ""
@@ -3816,7 +3816,7 @@ msgstr ""
 #: src/DonorDashboard/FundraisersContextBuilder.php:265
 #: src/DonorDashboard/TeamsContextBuilder.php:138
 #: src/DonorDashboard/TeamsContextBuilder.php:212
-#: src/DonorDashboard/TeamsContextBuilder.php:280
+#: src/DonorDashboard/TeamsContextBuilder.php:276
 #: admin/build/mission-admin.js:209
 #: admin/src/pages/teams/TeamMembersCard.js:103
 msgid "Member"
@@ -3946,12 +3946,12 @@ msgid "Of %s Goal"
 msgstr ""
 
 #. translators: %s: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:243
+#: src/DonorDashboard/TeamsContextBuilder.php:239
 msgid "Of %s Teams"
 msgstr ""
 
 #. translators: %s: amount the team raised
-#: src/DonorDashboard/TeamsContextBuilder.php:283
+#: src/DonorDashboard/TeamsContextBuilder.php:279
 msgid "team raised %s"
 msgstr ""
 

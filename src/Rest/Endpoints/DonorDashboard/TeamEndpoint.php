@@ -421,28 +421,31 @@ class TeamEndpoint {
 		$goal_display   = $team->goal > 0 ? Currency::format_amount( $team->goal, $currency ) : '';
 		$raised_display = Currency::format_amount( $raised, $currency );
 
+		$members = array_map(
+			fn( array $row ): array => TeamRoster::member_row( $row, $currency, $self_id ),
+			$this->reporting->team_members( (int) $team->id )
+		);
+
 		return [
-			'id'              => (int) $team->id,
-			'campaign_id'     => $team->campaign_id,
-			'name'            => $team->name,
-			'description'     => $team->description,
-			'goal'            => $team->goal,
-			'goal_major'      => (string) Currency::minor_to_major( $team->goal, $currency ),
-			'goal_display'    => $goal_display,
-			'status'          => $team->status,
-			'access'          => $team->access,
-			'raised'          => $raised,
-			'raised_display'  => $raised_display,
-			'progress'        => $team->progress( $is_test ),
-			'progress_label'  => DashboardLabels::progress_label( $raised_display, $goal_display ),
-			'cover_image'     => DashboardLabels::cover_image_id( $cover ),
-			'cover_image_url' => DashboardLabels::cover_image_url( $cover ),
-			'url'             => $team->get_url() ?? '',
-			'members'         => array_map(
-				fn( array $row ): array => TeamRoster::member_row( $row, $currency, $self_id ),
-				$this->reporting->team_members( (int) $team->id )
-			),
-			'invitations'     => $team->pending_invitation_summaries(),
+			'id'                 => (int) $team->id,
+			'campaign_id'        => $team->campaign_id,
+			'name'               => $team->name,
+			'description'        => $team->description,
+			'goal'               => $team->goal,
+			'goal_major'         => (string) Currency::minor_to_major( $team->goal, $currency ),
+			'goal_display'       => $goal_display,
+			'status'             => $team->status,
+			'access'             => $team->access,
+			'raised'             => $raised,
+			'raised_display'     => $raised_display,
+			'progress'           => $team->progress( $is_test ),
+			'progress_label'     => DashboardLabels::progress_label( $raised_display, $goal_display ),
+			'cover_image'        => DashboardLabels::cover_image_id( $cover ),
+			'cover_image_url'    => DashboardLabels::cover_image_url( $cover ),
+			'url'                => $team->get_url() ?? '',
+			'members'            => $members,
+			'member_count_label' => DashboardLabels::member_count_label( count( $members ) ),
+			'invitations'        => $team->pending_invitation_summaries(),
 		];
 	}
 

@@ -48,6 +48,20 @@ class DashboardLabels {
 	}
 
 	/**
+	 * Human-readable member-count label for a team ("4 members").
+	 *
+	 * @param int $count Number of team members.
+	 * @return string
+	 */
+	public static function member_count_label( int $count ): string {
+		return sprintf(
+			/* translators: %s: number of team members */
+			_n( '%s member', '%s members', $count, 'mission-donation-platform' ),
+			number_format_i18n( $count )
+		);
+	}
+
+	/**
 	 * Initials for a person's avatar, with a placeholder for anonymous or unnamed people.
 	 *
 	 * @param string $first        First name.
