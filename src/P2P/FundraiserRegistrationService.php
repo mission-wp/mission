@@ -393,6 +393,12 @@ class FundraiserRegistrationService {
 				: Team::ACCESS_PUBLIC;
 			$team        = Team::register( $campaign->id, $name, (int) $settings['default_team_goal'], $team_access, $team_status );
 
+			// A failed insert leaves the team without an ID; complete the
+			// registration solo instead of attaching a phantom team.
+			if ( ! $team->id ) {
+				return null;
+			}
+
 			$fundraiser->join_team( $team, true );
 
 			return $team;

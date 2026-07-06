@@ -260,6 +260,29 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test join_team() refuses a team that never persisted.
+	 */
+	public function test_join_team_refuses_unsaved_team(): void {
+		$team       = new Team( [ 'campaign_id' => 1, 'name' => 'Ghosts' ] );
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+
+		$fired = false;
+		add_action(
+			'mission_team_joined',
+			function () use ( &$fired ) {
+				$fired = true;
+			}
+		);
+
+		$this->assertFalse( $fundraiser->join_team( $team, true ) );
+
+		$this->assertNull( $fundraiser->team_id );
+		$this->assertNull( Fundraiser::find( $fundraiser->id )->team_id );
+		$this->assertCount( 0, Team::query( [ 'campaign_id' => 1 ] ) );
+		$this->assertFalse( $fired );
+	}
+
+	/**
 	 * Test leave_team() clears the team, vacates the captaincy, and fires mission_team_left.
 	 */
 	public function test_leave_team_clears_team_and_fires_event(): void {

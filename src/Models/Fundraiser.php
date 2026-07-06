@@ -169,6 +169,12 @@ class Fundraiser extends Model {
 	 * @return bool True on success.
 	 */
 	public function join_team( Team $team, bool $as_captain = false ): bool {
+		// An unsaved team (failed insert) must not be joined: team_id 0 would
+		// read as "on a team" and set_captain() would re-enter the create path.
+		if ( ! $team->id ) {
+			return false;
+		}
+
 		$this->team_id = $team->id;
 
 		if ( ! $this->save() ) {

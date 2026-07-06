@@ -405,6 +405,40 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a failed team insert completes the registration solo, with no
+	 * phantom team attached and no stray team rows.
+	 */
+	public function test_register_fundraiser_failed_team_insert_falls_back_to_solo(): void {
+		global $wpdb;
+
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true, 'team_creation_enabled' => true ] );
+		$donor    = new Donor( [ 'email' => 'doomed-captain@example.com' ] );
+		$donor->save();
+
+		// Sabotage team inserts so Team::register() fails mid-request.
+		$break_inserts = function ( $query ) use ( $wpdb ) {
+			if ( str_starts_with( $query, 'INSERT' ) && str_contains( $query, "{$wpdb->prefix}missiondp_teams" ) ) {
+				return "INSERT INTO {$wpdb->prefix}missiondp_nonexistent (id) VALUES (0)";
+			}
+			return $query;
+		};
+		add_filter( 'query', $break_inserts );
+		$suppress = $wpdb->suppress_errors( true );
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'create', 'team_name' => 'Doomed Squad', 'goal' => 10000 ] );
+
+		$wpdb->suppress_errors( $suppress );
+		remove_filter( 'query', $break_inserts );
+
+		$this->assertIsArray( $result );
+		$this->assertNull( $result['team'] );
+
+		$fundraiser = Fundraiser::find( $result['fundraiser']['id'] );
+		$this->assertNull( $fundraiser->team_id );
+		$this->assertCount( 0, Team::query( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
 	 * Test an unknown team access value falls back to a public team.
 	 */
 	public function test_register_fundraiser_rejects_unknown_team_access(): void {
