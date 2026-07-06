@@ -298,6 +298,80 @@ class RowCacheTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test warm_by_post_ids() serves later fundraiser post-ID lookups from the memo.
+	 */
+	public function test_warm_by_post_ids_serves_fundraiser_lookups(): void {
+		$fundraisers = [
+			$this->create_fundraiser( [ 'donor_id' => 1 ] ),
+			$this->create_fundraiser( [ 'donor_id' => 2 ] ),
+			$this->create_fundraiser( [ 'donor_id' => 3 ] ),
+		];
+
+		$post_ids = wp_list_pluck( $fundraisers, 'post_id' );
+
+		wp_cache_flush();
+		Fundraiser::warm_by_post_ids( $post_ids );
+
+		$found   = [];
+		$queries = $this->count_queries(
+			function () use ( $post_ids, &$found ): void {
+				foreach ( $post_ids as $post_id ) {
+					$found[] = Fundraiser::find_by_post_id( $post_id );
+				}
+			}
+		);
+
+		$this->assertSame( 0, $queries );
+		$this->assertSame( wp_list_pluck( $fundraisers, 'id' ), wp_list_pluck( $found, 'id' ) );
+	}
+
+	/**
+	 * Test warm_by_post_ids() serves later team post-ID lookups from the memo.
+	 */
+	public function test_warm_by_post_ids_serves_team_lookups(): void {
+		$teams = [];
+
+		foreach ( [ 'Alpha', 'Bravo', 'Charlie' ] as $name ) {
+			$team = new Team(
+				[
+					'campaign_id' => 1,
+					'name'        => $name,
+				]
+			);
+			$team->save();
+			$teams[] = $team;
+		}
+
+		$post_ids = wp_list_pluck( $teams, 'post_id' );
+
+		wp_cache_flush();
+		Team::warm_by_post_ids( $post_ids );
+
+		$found   = [];
+		$queries = $this->count_queries(
+			function () use ( $post_ids, &$found ): void {
+				foreach ( $post_ids as $post_id ) {
+					$found[] = Team::find_by_post_id( $post_id );
+				}
+			}
+		);
+
+		$this->assertSame( 0, $queries );
+		$this->assertSame( wp_list_pluck( $teams, 'id' ), wp_list_pluck( $found, 'id' ) );
+	}
+
+	/**
+	 * Test warm_by_post_ids() with no valid post IDs runs no queries.
+	 */
+	public function test_warm_by_post_ids_empty_is_a_no_op(): void {
+		$queries = $this->count_queries(
+			fn() => Fundraiser::warm_by_post_ids( [ 0, -5 ] )
+		);
+
+		$this->assertSame( 0, $queries );
+	}
+
+	/**
 	 * Test the entity groups are isolated from each other.
 	 */
 	public function test_cache_isolation_between_entity_types(): void {

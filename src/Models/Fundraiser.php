@@ -115,6 +115,20 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Warm the row memo for a set of shell post IDs in one query.
+	 *
+	 * Call before a loop of find_by_post_id() lookups (e.g. leaderboard
+	 * permalinks) so each lookup is served from the memo.
+	 *
+	 * @param int[] $post_ids WP post IDs.
+	 */
+	public static function warm_by_post_ids( array $post_ids ): void {
+		/** @var FundraiserDataStore $store */
+		$store = static::store();
+		$store->warm_rows_by_post_ids( $post_ids );
+	}
+
+	/**
 	 * Create a new fundraiser (and its shell post) during registration.
 	 *
 	 * Always created without a team; attaching to a team (including as the

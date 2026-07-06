@@ -12,6 +12,7 @@
 
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
 use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
 
@@ -42,6 +43,13 @@ defined( 'ABSPATH' ) || exit;
 	// Query top fundraisers.
 	$reporting   = new ReportingService();
 	$fundraisers = $reporting->top_fundraisers( $campaign->id, $limit );
+
+	// Batch-warm the post and fundraiser caches so per-row get_permalink() calls run no queries.
+	if ( $fundraisers ) {
+		$post_ids = array_column( $fundraisers, 'post_id' );
+		_prime_post_caches( $post_ids, false, false );
+		Fundraiser::warm_by_post_ids( $post_ids );
+	}
 
 	$registration_open = $campaign->is_p2p() && ! empty( $campaign->p2p_settings()['registration_open'] );
 

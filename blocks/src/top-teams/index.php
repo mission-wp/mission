@@ -12,6 +12,7 @@
 
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
 
@@ -43,6 +44,13 @@ defined( 'ABSPATH' ) || exit;
 	// Query top teams.
 	$reporting = new ReportingService();
 	$teams     = $reporting->top_teams( $campaign->id, $limit );
+
+	// Batch-warm the post and team caches so per-row get_permalink() calls run no queries.
+	if ( $teams ) {
+		$post_ids = array_column( $teams, 'post_id' );
+		_prime_post_caches( $post_ids, false, false );
+		Team::warm_by_post_ids( $post_ids );
+	}
 
 	$registration_open = $campaign->is_p2p() && ! empty( $campaign->p2p_settings()['registration_open'] );
 

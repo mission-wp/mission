@@ -11,6 +11,7 @@
  */
 
 use MissionDP\Currency\Currency;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
@@ -31,6 +32,13 @@ defined( 'ABSPATH' ) || exit;
 
 	$members = ( new ReportingService() )->team_members( $team->id );
 	$count   = count( $members );
+
+	// Batch-warm the post and fundraiser caches so per-row get_permalink() calls run no queries.
+	if ( $members ) {
+		$post_ids = array_column( $members, 'post_id' );
+		_prime_post_caches( $post_ids, false, false );
+		Fundraiser::warm_by_post_ids( $post_ids );
+	}
 
 	ob_start();
 	?>

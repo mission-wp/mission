@@ -112,6 +112,20 @@ class Team extends Model {
 	}
 
 	/**
+	 * Warm the row memo for a set of shell post IDs in one query.
+	 *
+	 * Call before a loop of find_by_post_id() lookups (e.g. leaderboard
+	 * permalinks) so each lookup is served from the memo.
+	 *
+	 * @param int[] $post_ids WP post IDs.
+	 */
+	public static function warm_by_post_ids( array $post_ids ): void {
+		/** @var TeamDataStore $store */
+		$store = static::store();
+		$store->warm_rows_by_post_ids( $post_ids );
+	}
+
+	/**
 	 * Create a new team (and its shell post) during registration.
 	 *
 	 * The captain is set separately via set_captain() once the captain

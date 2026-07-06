@@ -28,6 +28,13 @@ trait CachesRows {
 	abstract protected function cache_group(): string;
 
 	/**
+	 * The fully-prefixed table name for this store.
+	 *
+	 * @return string
+	 */
+	abstract public function get_table_name(): string;
+
+	/**
 	 * Get the memoized raw row for a row ID.
 	 *
 	 * @param int $id Row ID.
@@ -79,6 +86,43 @@ trait CachesRows {
 
 		if ( $post_id > 0 ) {
 			wp_cache_set( 'post:' . $post_id, $id, $this->cache_group() );
+		}
+	}
+
+	/**
+	 * Warm the row memo for a set of shell post IDs in one query.
+	 *
+	 * Batch consumers (e.g. leaderboard blocks) call this before a loop of
+	 * find_by_post_id() lookups so each lookup hits the memo instead of
+	 * running its own query.
+	 *
+	 * @param int[] $post_ids WP post IDs.
+	 */
+	public function warm_rows_by_post_ids( array $post_ids ): void {
+		global $wpdb;
+
+		$post_ids = array_values(
+			array_unique(
+				array_filter(
+					array_map( 'intval', $post_ids ),
+					static fn( int $post_id ): bool => $post_id > 0
+				)
+			)
+		);
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		$placeholders = implode( ', ', array_fill( 0, count( $post_ids ), '%d' ) );
+		$sql          = "SELECT * FROM %i WHERE post_id IN ( {$placeholders} )";
+		$prepare_args = array_merge( [ $this->get_table_name() ], $post_ids );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Custom-table read that primes the memo; table via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		foreach ( $rows ?: [] as $row ) {
+			$this->prime_row_cache( $row );
 		}
 	}
 
