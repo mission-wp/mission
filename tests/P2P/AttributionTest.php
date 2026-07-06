@@ -466,8 +466,9 @@ class AttributionTest extends WP_UnitTestCase {
 	public function test_team_members_lists_by_raised(): void {
 		$team    = new Team( [ 'campaign_id' => 1, 'name' => 'Rangers', 'status' => 'active' ] );
 		$team->save();
-		$captain = $this->make_fundraiser( 1, 1, [ 'team_id' => $team->id, 'is_team_captain' => true ] );
+		$captain = $this->make_fundraiser( 1, 1, [ 'team_id' => $team->id ] );
 		$member  = $this->make_fundraiser( 1, 2, [ 'team_id' => $team->id ] );
+		$team->set_captain( $captain );
 
 		$this->make_completed( [ 'fundraiser_id' => $member->id, 'donor_id' => 2, 'amount' => 8000 ] );
 		$this->make_completed( [ 'fundraiser_id' => $captain->id, 'amount' => 2000 ] );

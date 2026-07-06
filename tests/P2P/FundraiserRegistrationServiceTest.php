@@ -387,7 +387,7 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 		$this->assertSame( 'New Squad', $team->name );
 		$this->assertSame( $fundraiser->id, $team->captain_id );
 		$this->assertSame( $team->id, $fundraiser->team_id );
-		$this->assertTrue( $fundraiser->is_team_captain );
+		$this->assertTrue( $fundraiser->is_captain() );
 	}
 
 	/**

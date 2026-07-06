@@ -81,7 +81,6 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertSame( 0, $fundraiser->donor_id );
 		$this->assertNull( $fundraiser->team_id );
 		$this->assertSame( 0, $fundraiser->post_id );
-		$this->assertFalse( $fundraiser->is_team_captain );
 		$this->assertSame( 'pending', $fundraiser->status );
 		$this->assertSame( 0, $fundraiser->goal );
 		$this->assertSame( 0, $fundraiser->total_raised );
@@ -93,20 +92,18 @@ class FundraiserTest extends WP_UnitTestCase {
 	 */
 	public function test_full_construction_from_array(): void {
 		$fundraiser = new Fundraiser( [
-			'id'              => 7,
-			'campaign_id'     => 3,
-			'donor_id'        => 12,
-			'team_id'         => 4,
-			'is_team_captain' => 1,
-			'goal'            => 50000,
-			'status'          => 'active',
+			'id'          => 7,
+			'campaign_id' => 3,
+			'donor_id'    => 12,
+			'team_id'     => 4,
+			'goal'        => 50000,
+			'status'      => 'active',
 		] );
 
 		$this->assertSame( 7, $fundraiser->id );
 		$this->assertSame( 3, $fundraiser->campaign_id );
 		$this->assertSame( 12, $fundraiser->donor_id );
 		$this->assertSame( 4, $fundraiser->team_id );
-		$this->assertTrue( $fundraiser->is_team_captain );
 		$this->assertSame( 50000, $fundraiser->goal );
 		$this->assertSame( 'active', $fundraiser->status );
 	}
@@ -226,7 +223,7 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$this->assertNotNull( $fundraiser->id );
 		$this->assertNull( $fundraiser->team_id );
-		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertFalse( $fundraiser->is_captain() );
 		$this->assertSame( 'active', $fundraiser->status );
 		$this->assertSame( 25000, $fundraiser->goal );
 		$this->assertSame( 'My story', $fundraiser->story );
@@ -234,7 +231,7 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test join_team() sets the team, captain flag, and fires mission_team_joined.
+	 * Test join_team() sets the team, records captaincy, and fires mission_team_joined.
 	 */
 	public function test_join_team_sets_team_and_fires_event(): void {
 		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
@@ -254,13 +251,14 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertTrue( $fundraiser->join_team( $team, true ) );
 
 		$this->assertSame( $team->id, $fundraiser->team_id );
-		$this->assertTrue( $fundraiser->is_team_captain );
+		$this->assertTrue( $fundraiser->is_captain() );
+		$this->assertSame( $fundraiser->id, Team::find( $team->id )->captain_id );
 		$this->assertSame( $team->id, Fundraiser::find( $fundraiser->id )->team_id );
 		$this->assertSame( [ $fundraiser->id, $team->id ], $fired );
 	}
 
 	/**
-	 * Test leave_team() clears the team, captain flag, and fires mission_team_left.
+	 * Test leave_team() clears the team, vacates the captaincy, and fires mission_team_left.
 	 */
 	public function test_leave_team_clears_team_and_fires_event(): void {
 		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
@@ -282,7 +280,8 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertTrue( $fundraiser->leave_team() );
 
 		$this->assertNull( $fundraiser->team_id );
-		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertFalse( $fundraiser->is_captain() );
+		$this->assertNull( Team::find( $team->id )->captain_id );
 		$this->assertNull( Fundraiser::find( $fundraiser->id )->team_id );
 		$this->assertSame( [ $fundraiser->id, $team->id ], $fired );
 	}
@@ -298,7 +297,6 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$fundraiser = Fundraiser::register( 1, 1, 25000 );
 		$fundraiser->join_team( $team_a, true );
-		$team_a->set_captain( $fundraiser );
 
 		$left = [];
 		add_action(
@@ -323,7 +321,7 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertTrue( $fundraiser->move_to_team( $team_b ) );
 
 		$this->assertSame( $team_b->id, $fundraiser->team_id );
-		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertFalse( $fundraiser->is_captain() );
 		$this->assertNull( Team::find( $team_a->id )->captain_id );
 		$this->assertSame( [ $fundraiser->id, $team_a->id ], $left );
 		$this->assertSame( [ $fundraiser->id, $team_b->id ], $joined );
@@ -338,12 +336,11 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$fundraiser = Fundraiser::register( 1, 1, 25000 );
 		$fundraiser->join_team( $team, true );
-		$team->set_captain( $fundraiser );
 
 		$this->assertTrue( $fundraiser->move_to_team( null ) );
 
 		$this->assertNull( $fundraiser->team_id );
-		$this->assertFalse( $fundraiser->is_team_captain );
+		$this->assertFalse( $fundraiser->is_captain() );
 		$this->assertNull( Fundraiser::find( $fundraiser->id )->team_id );
 		$this->assertNull( Team::find( $team->id )->captain_id );
 	}
@@ -357,7 +354,6 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$fundraiser = Fundraiser::register( 1, 1, 25000 );
 		$fundraiser->join_team( $team, true );
-		$team->set_captain( $fundraiser );
 
 		$left   = did_action( 'mission_team_left' );
 		$joined = did_action( 'mission_team_joined' );
@@ -365,7 +361,7 @@ class FundraiserTest extends WP_UnitTestCase {
 		$this->assertTrue( $fundraiser->move_to_team( $team ) );
 
 		$this->assertSame( $team->id, $fundraiser->team_id );
-		$this->assertTrue( $fundraiser->is_team_captain );
+		$this->assertTrue( $fundraiser->is_captain() );
 		$this->assertSame( $fundraiser->id, Team::find( $team->id )->captain_id );
 		$this->assertSame( $left, did_action( 'mission_team_left' ) );
 		$this->assertSame( $joined, did_action( 'mission_team_joined' ) );
@@ -383,7 +379,6 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$captain = Fundraiser::register( 1, 1, 25000 );
 		$captain->join_team( $team_a, true );
-		$team_a->set_captain( $captain );
 
 		$member = Fundraiser::register( 1, 2, 25000 );
 		$member->join_team( $team_a );
@@ -392,7 +387,7 @@ class FundraiserTest extends WP_UnitTestCase {
 
 		$this->assertSame( $team_b->id, $member->team_id );
 		$this->assertSame( $captain->id, Team::find( $team_a->id )->captain_id );
-		$this->assertTrue( Fundraiser::find( $captain->id )->is_team_captain );
+		$this->assertTrue( Fundraiser::find( $captain->id )->is_captain() );
 	}
 
 	// -------------------------------------------------------------------------
@@ -639,11 +634,16 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test is_captain reflects the is_team_captain flag.
+	 * Test is_captain derives from the team's captain_id.
 	 */
 	public function test_is_captain(): void {
-		$captain = $this->create_fundraiser( [ 'donor_id' => 1, 'is_team_captain' => true ] );
-		$member  = $this->create_fundraiser( [ 'donor_id' => 2, 'is_team_captain' => false ] );
+		$team = new Team( [ 'campaign_id' => 1, 'name' => 'Runners' ] );
+		$team->save();
+
+		$captain = $this->create_fundraiser( [ 'donor_id' => 1 ] );
+		$member  = $this->create_fundraiser( [ 'donor_id' => 2 ] );
+		$captain->join_team( $team, true );
+		$member->join_team( $team );
 
 		$this->assertTrue( $captain->is_captain() );
 		$this->assertFalse( $member->is_captain() );

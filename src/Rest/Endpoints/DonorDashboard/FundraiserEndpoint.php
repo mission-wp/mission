@@ -312,7 +312,7 @@ class FundraiserEndpoint {
 			return new WP_Error( 'not_on_team', __( 'You are not on a team.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		if ( $fundraiser->is_team_captain ) {
+		if ( $fundraiser->is_captain() ) {
 			return new WP_Error( 'captain_cannot_leave', __( 'Promote another member to captain before leaving the team.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 

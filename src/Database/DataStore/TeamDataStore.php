@@ -199,12 +199,9 @@ class TeamDataStore implements DataStoreInterface {
 
 		$detached_members = $wpdb->update(
 			$wpdb->prefix . 'missiondp_fundraisers',
-			[
-				'team_id'         => null,
-				'is_team_captain' => 0,
-			],
+			[ 'team_id' => null ],
 			[ 'team_id' => $id ],
-			[ '%d', '%d' ],
+			[ '%d' ],
 			[ '%d' ]
 		);
 

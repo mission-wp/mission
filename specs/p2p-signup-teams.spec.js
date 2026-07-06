@@ -142,7 +142,7 @@ test.describe( 'Peer-to-peer team sign-up', () => {
       `foreach ( \\MissionDP\\Models\\Team::query( [ "campaign_id" => ${ campaign.id }, "per_page" => 100 ] ) as $t ) {` +
         ` if ( "${ newTeam }" === $t->name ) {` +
         ' $cap = $t->captain();' +
-        ' echo $t->name . "|" . ( $cap ? $cap->donor()->email : "" ) . "|" . ( $cap && $cap->is_team_captain ? "1" : "0" );' +
+        ' echo $t->name . "|" . ( $cap ? $cap->donor()->email : "" ) . "|" . ( $cap && $cap->is_captain() ? "1" : "0" );' +
         ' } }'
     );
     expect( out.split( '\n' ).pop().trim() ).toBe(

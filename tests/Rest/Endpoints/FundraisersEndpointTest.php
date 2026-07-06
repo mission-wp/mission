@@ -501,7 +501,6 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 
 		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
 		$fundraiser->join_team( $team_a, true );
-		$team_a->set_captain( $fundraiser );
 
 		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
 		$request->set_body_params( [ 'team_id' => $team_b->id ] );
@@ -514,7 +513,7 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 
 		// The old team must not keep a captain who is no longer a member.
 		$this->assertNull( Team::find( $team_a->id )->captain_id );
-		$this->assertFalse( Fundraiser::find( $fundraiser->id )->is_team_captain );
+		$this->assertFalse( Fundraiser::find( $fundraiser->id )->is_captain() );
 	}
 
 	/**

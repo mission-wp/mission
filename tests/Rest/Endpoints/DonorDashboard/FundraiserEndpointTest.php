@@ -542,12 +542,7 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 			]
 		);
 		$team->save();
-		$captain = $this->create_fundraiser(
-			[
-				'team_id'         => $team->id,
-				'is_team_captain' => true,
-			]
-		);
+		$captain = $this->create_fundraiser( [ 'team_id' => $team->id ] );
 		$team->set_captain( $captain );
 
 		$response = $this->server->dispatch(

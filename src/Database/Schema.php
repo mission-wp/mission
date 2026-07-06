@@ -243,7 +243,6 @@ class Schema {
   donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
   team_id bigint(20) unsigned DEFAULT NULL,
   post_id bigint(20) unsigned NOT NULL DEFAULT 0,
-  is_team_captain tinyint(1) NOT NULL DEFAULT 0,
   status varchar(20) NOT NULL DEFAULT 'pending',
   goal bigint(20) unsigned NOT NULL DEFAULT 0,
   headline varchar(255) NOT NULL DEFAULT '',

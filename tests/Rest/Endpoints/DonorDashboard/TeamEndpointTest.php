@@ -119,11 +119,10 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$this->team = Team::register( $this->campaign->id, 'Runners', 100000 );
 		$captain    = new Fundraiser(
 			[
-				'campaign_id'     => $this->campaign->id,
-				'donor_id'        => $this->captain_donor->id,
-				'team_id'         => $this->team->id,
-				'is_team_captain' => true,
-				'status'          => Fundraiser::STATUS_ACTIVE,
+				'campaign_id' => $this->campaign->id,
+				'donor_id'    => $this->captain_donor->id,
+				'team_id'     => $this->team->id,
+				'status'      => Fundraiser::STATUS_ACTIVE,
 			]
 		);
 		$captain->save();
@@ -432,7 +431,7 @@ class TeamEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 403, $response->get_status() );
 		$this->assertSame( $captain_id, Team::find( $this->team->id )->captain_id );
-		$this->assertFalse( Fundraiser::find( $member->id )->is_team_captain );
+		$this->assertFalse( Fundraiser::find( $member->id )->is_captain() );
 	}
 
 	/**

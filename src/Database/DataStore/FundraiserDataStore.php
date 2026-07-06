@@ -453,7 +453,6 @@ class FundraiserDataStore implements DataStoreInterface {
 			'donor_id'               => $model->donor_id,
 			'team_id'                => $model->team_id,
 			'post_id'                => $model->post_id,
-			'is_team_captain'        => (int) $model->is_team_captain,
 			'status'                 => $model->status,
 			'goal'                   => $model->goal,
 			'headline'               => $model->headline,

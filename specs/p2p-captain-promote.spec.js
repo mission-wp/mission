@@ -27,7 +27,7 @@ function seedPromoteTeam() {
     ` $d = new \\MissionDP\\Models\\Donor( [ "email" => "${ captainEmail }", "first_name" => "Cap", "last_name" => "Tain" ] ); $d->save();` +
     ` $uid = $d->create_user_account( "${ password }" );` +
     ` $t = \\MissionDP\\Models\\Team::register( $c->id, "${ teamName }", 100000 );` +
-    ` $cap = new \\MissionDP\\Models\\Fundraiser( [ "campaign_id" => $c->id, "donor_id" => $d->id, "team_id" => $t->id, "is_team_captain" => true, "status" => "active", "goal" => 50000 ] ); $cap->save();` +
+    ` $cap = new \\MissionDP\\Models\\Fundraiser( [ "campaign_id" => $c->id, "donor_id" => $d->id, "team_id" => $t->id, "status" => "active", "goal" => 50000 ] ); $cap->save();` +
     ` $t->set_captain( $cap );` +
     ` $md = new \\MissionDP\\Models\\Donor( [ "email" => "${ memberEmail }", "first_name" => "Mem", "last_name" => "Ber" ] ); $md->save();` +
     ` $muid = $md->create_user_account( "${ password }" );` +

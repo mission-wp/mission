@@ -1597,7 +1597,8 @@ class ReportingService {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT f.id, f.campaign_id, f.team_id, f.goal, f.status, f.is_team_captain, f.date_created,
+				'SELECT f.id, f.campaign_id, f.team_id, f.goal, f.status, f.date_created,
+						CASE WHEN f.id = tm.captain_id THEN 1 ELSE 0 END AS is_team_captain,
 						f.%i AS raised, f.%i AS donor_count, f.%i AS transaction_count,
 						d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email,
 						c.title AS campaign_title, tm.name AS team_name
@@ -1963,7 +1964,8 @@ class ReportingService {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT f.id, f.post_id, f.goal, f.is_team_captain, f.%i AS raised,
+				'SELECT f.id, f.post_id, f.goal, f.%i AS raised,
+						CASE WHEN f.id = tm.captain_id THEN 1 ELSE 0 END AS is_team_captain,
 						d.first_name, d.last_name, tm.name AS team_name
 				 FROM %i AS f
 				 LEFT JOIN %i AS d ON f.donor_id = d.id
@@ -2234,16 +2236,19 @@ class ReportingService {
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT f.id, f.post_id, f.donor_id, f.goal, f.is_team_captain, f.%i AS raised,
+				'SELECT f.id, f.post_id, f.donor_id, f.goal, f.%i AS raised,
+						CASE WHEN f.id = t.captain_id THEN 1 ELSE 0 END AS is_team_captain,
 						d.first_name, d.last_name
 				 FROM %i AS f
 				 LEFT JOIN %i AS d ON f.donor_id = d.id
+				 LEFT JOIN %i AS t ON f.team_id = t.id
 				 WHERE f.team_id = %d AND f.status = %s
 				 ORDER BY raised DESC, f.id ASC
 				 LIMIT %d',
 				$raised_col,
 				$f_table,
 				$d_table,
+				$wpdb->prefix . 'missiondp_teams',
 				$team_id,
 				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
 				max( 1, $limit )

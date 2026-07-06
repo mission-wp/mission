@@ -383,7 +383,7 @@ class FundraisersContextBuilderTest extends WP_UnitTestCase {
 		);
 		$team->save();
 
-		$fundraiser = $this->create_fundraiser( $live->id, $donor->id, [ 'team_id' => $team->id, 'is_team_captain' => true ] );
+		$fundraiser = $this->create_fundraiser( $live->id, $donor->id, [ 'team_id' => $team->id ] );
 		$team->set_captain( $fundraiser );
 
 		$extras = $this->build( $donor )['builder']->overview_extras( true );

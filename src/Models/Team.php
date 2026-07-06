@@ -454,19 +454,9 @@ class Team extends Model {
 	/**
 	 * Clear the team's captain, leaving it captainless.
 	 *
-	 * Updates both sides of the association: the old captain's flag is cleared
-	 * along with the team's captain_id.
-	 *
 	 * @return bool True on success.
 	 */
 	public function clear_captain(): bool {
-		$old_captain = $this->captain();
-
-		if ( $old_captain ) {
-			$old_captain->is_team_captain = false;
-			$old_captain->save();
-		}
-
 		$this->captain_id = null;
 
 		return (bool) $this->save();
@@ -475,9 +465,8 @@ class Team extends Model {
 	/**
 	 * Promote a member to captain, demoting the current captain.
 	 *
-	 * Updates both sides of the circular captain/team association: the old
-	 * captain's flag is cleared, the new captain's flag is set, and the team's
-	 * captain_id is repointed.
+	 * captain_id is the single source of captaincy, so repointing it is the
+	 * whole promotion.
 	 *
 	 * @param Fundraiser $fundraiser The member to promote.
 	 * @return bool|WP_Error True on success, or an error.
@@ -492,14 +481,6 @@ class Team extends Model {
 		}
 
 		$old_captain = $this->captain();
-
-		if ( $old_captain ) {
-			$old_captain->is_team_captain = false;
-			$old_captain->save();
-		}
-
-		$fundraiser->is_team_captain = true;
-		$fundraiser->save();
 
 		$this->captain_id = (int) $fundraiser->id;
 		if ( ! $this->save() ) {

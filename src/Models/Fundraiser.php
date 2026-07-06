@@ -51,7 +51,6 @@ class Fundraiser extends Model {
 	public int $donor_id;
 	public ?int $team_id;
 	public int $post_id;
-	public bool $is_team_captain;
 	public string $status;
 	public int $goal;
 	public string $headline;
@@ -78,7 +77,6 @@ class Fundraiser extends Model {
 		$this->donor_id               = (int) ( $data['donor_id'] ?? 0 );
 		$this->team_id                = isset( $data['team_id'] ) ? (int) $data['team_id'] : null;
 		$this->post_id                = (int) ( $data['post_id'] ?? 0 );
-		$this->is_team_captain        = (bool) ( $data['is_team_captain'] ?? false );
 		$this->status                 = $data['status'] ?? self::STATUS_PENDING;
 		$this->goal                   = (int) ( $data['goal'] ?? 0 );
 		$this->headline               = $data['headline'] ?? '';
@@ -163,15 +161,21 @@ class Fundraiser extends Model {
 	/**
 	 * Attach this fundraiser to a team and fire the joined event.
 	 *
+	 * Joining as captain records the captaincy on the team before the joined
+	 * event fires, so listeners always see a consistent captain_id.
+	 *
 	 * @param Team $team       The team to join.
 	 * @param bool $as_captain Whether this fundraiser leads the team.
 	 * @return bool True on success.
 	 */
 	public function join_team( Team $team, bool $as_captain = false ): bool {
-		$this->team_id         = $team->id;
-		$this->is_team_captain = $as_captain;
+		$this->team_id = $team->id;
 
 		if ( ! $this->save() ) {
+			return false;
+		}
+
+		if ( $as_captain && ! $team->set_captain( $this ) ) {
 			return false;
 		}
 
@@ -189,16 +193,20 @@ class Fundraiser extends Model {
 	/**
 	 * Detach this fundraiser from its team and fire the left event.
 	 *
-	 * Clears both the team association and the captain flag. Safe to call on a
-	 * fundraiser with no team (a no-op that still reports success).
+	 * A departing captain vacates the captaincy, so the team's captain_id
+	 * never points at a non-member. Safe to call on a fundraiser with no
+	 * team (a no-op that still reports success).
 	 *
 	 * @return bool True on success.
 	 */
 	public function leave_team(): bool {
 		$team = $this->team();
 
-		$this->team_id         = null;
-		$this->is_team_captain = false;
+		if ( $team && (int) $team->captain_id === (int) $this->id && ! $team->clear_captain() ) {
+			return false;
+		}
+
+		$this->team_id = null;
 
 		if ( ! $this->save() ) {
 			return false;
@@ -221,9 +229,8 @@ class Fundraiser extends Model {
 	 * Move this fundraiser to a different team, or off teams entirely.
 	 *
 	 * Routes the change through leave_team()/join_team() so the left/joined
-	 * events fire, and vacates the captaincy on the team being left so its
-	 * captain_id never points at a non-member. No-op when the team is
-	 * unchanged.
+	 * events fire and a departing captain vacates the captaincy. No-op when
+	 * the team is unchanged.
 	 *
 	 * @param Team|null $team Destination team, or null to leave teams.
 	 * @return bool True on success.
@@ -231,12 +238,6 @@ class Fundraiser extends Model {
 	public function move_to_team( ?Team $team ): bool {
 		if ( ( $this->team_id ?: null ) === ( $team?->id ?: null ) ) {
 			return true;
-		}
-
-		$old_team = $this->team();
-
-		if ( $old_team && (int) $old_team->captain_id === (int) $this->id && ! $old_team->clear_captain() ) {
-			return false;
 		}
 
 		if ( ! $team ) {
@@ -346,10 +347,12 @@ class Fundraiser extends Model {
 	/**
 	 * Whether this fundraiser is the captain of their team.
 	 *
+	 * Derived from the team's captain_id, the single source of captaincy.
+	 *
 	 * @return bool
 	 */
 	public function is_captain(): bool {
-		return $this->is_team_captain;
+		return null !== $this->team_id && (int) $this->id === (int) ( $this->team()?->captain_id ?? 0 );
 	}
 
 	/**

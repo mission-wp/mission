@@ -234,7 +234,7 @@ function seedMemberWithEndedPage() {
     ` $ended = new \\MissionDP\\Models\\Campaign( [ "title" => "Ended E2E ${ stamp }", "type" => "p2p", "status" => "ended" ] ); $ended->save();` +
     ` $t = \\MissionDP\\Models\\Team::register( $c->id, "${ teamName }", 100000 );` +
     ` $cd = new \\MissionDP\\Models\\Donor( [ "email" => "cap+${ stamp }@example.com", "first_name" => "Cap", "last_name" => "Tain" ] ); $cd->save();` +
-    ` $cap = new \\MissionDP\\Models\\Fundraiser( [ "campaign_id" => $c->id, "donor_id" => $cd->id, "team_id" => $t->id, "is_team_captain" => true, "status" => "active" ] ); $cap->save();` +
+    ` $cap = new \\MissionDP\\Models\\Fundraiser( [ "campaign_id" => $c->id, "donor_id" => $cd->id, "team_id" => $t->id, "status" => "active" ] ); $cap->save();` +
     ` $t->set_captain( $cap );` +
     ` $d = new \\MissionDP\\Models\\Donor( [ "email" => "${ email }", "first_name" => "Mem", "last_name" => "Ber" ] ); $d->save();` +
     ` $uid = $d->create_user_account( "${ password }" );` +

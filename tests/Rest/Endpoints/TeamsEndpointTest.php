@@ -258,7 +258,7 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 	public function test_list_includes_captain_name(): void {
 		$campaign = $this->create_p2p_campaign();
 		$team     = $this->create_team( $campaign->id );
-		$captain  = $this->create_member( $campaign->id, [ 'team_id' => $team->id, 'is_team_captain' => true ] );
+		$captain          = $this->create_member( $campaign->id, [ 'team_id' => $team->id ] );
 		$team->captain_id = $captain->id;
 		$team->save();
 
@@ -469,13 +469,13 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test changing the captain via PUT keeps both sides of the association in
-	 * sync and rejects non-members.
+	 * Test changing the captain via PUT repoints captain_id and rejects
+	 * non-members.
 	 */
 	public function test_update_team_captain_syncs_member_flags(): void {
 		$campaign = $this->create_p2p_campaign();
 		$team     = $this->create_team( $campaign->id );
-		$old      = $this->create_member( $campaign->id, [ 'team_id' => $team->id, 'is_team_captain' => true ] );
+		$old      = $this->create_member( $campaign->id, [ 'team_id' => $team->id ] );
 		$new      = $this->create_member( $campaign->id, [ 'team_id' => $team->id ] );
 		$outsider = $this->create_member( $campaign->id );
 
@@ -487,22 +487,22 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 		$request->set_body_params( [ 'captain_id' => $outsider->id ] );
 		$this->assertSame( 400, $this->server->dispatch( $request )->get_status() );
 
-		// Promoting a member repoints captain_id and swaps both flags.
+		// Promoting a member repoints captain_id.
 		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
 		$request->set_body_params( [ 'captain_id' => $new->id ] );
 		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
 
 		$this->assertSame( $new->id, Team::find( $team->id )->captain_id );
-		$this->assertTrue( Fundraiser::find( $new->id )->is_team_captain );
-		$this->assertFalse( Fundraiser::find( $old->id )->is_team_captain );
+		$this->assertTrue( Fundraiser::find( $new->id )->is_captain() );
+		$this->assertFalse( Fundraiser::find( $old->id )->is_captain() );
 
-		// Clearing the captain clears the flag too.
+		// Clearing the captain leaves the team captainless.
 		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/teams/' . $team->id );
 		$request->set_body_params( [ 'captain_id' => 0 ] );
 		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
 
 		$this->assertNull( Team::find( $team->id )->captain_id );
-		$this->assertFalse( Fundraiser::find( $new->id )->is_team_captain );
+		$this->assertFalse( Fundraiser::find( $new->id )->is_captain() );
 	}
 
 	/**

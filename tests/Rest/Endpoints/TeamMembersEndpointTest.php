@@ -167,7 +167,7 @@ class TeamMembersEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test promote repoints the captaincy and flips both captain flags.
+	 * Test promote repoints the captaincy.
 	 */
 	public function test_promote_member_repoints_captain(): void {
 		$team    = $this->create_team();
@@ -180,8 +180,8 @@ class TeamMembersEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertTrue( $response->get_data()['success'] );
 		$this->assertSame( $member->id, Team::find( $team->id )->captain_id );
-		$this->assertTrue( Fundraiser::find( $member->id )->is_team_captain );
-		$this->assertFalse( Fundraiser::find( $captain->id )->is_team_captain );
+		$this->assertTrue( Fundraiser::find( $member->id )->is_captain() );
+		$this->assertFalse( Fundraiser::find( $captain->id )->is_captain() );
 	}
 
 	/**

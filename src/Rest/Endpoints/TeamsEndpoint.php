@@ -140,7 +140,6 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 		if ( $captain_id ) {
 			$captain = Fundraiser::find( (int) $captain_id );
 			$captain->join_team( $team, true );
-			$team->set_captain( $captain );
 		}
 
 		return new WP_REST_Response( $this->prepare_item( $team ), 201 );

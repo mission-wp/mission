@@ -157,7 +157,7 @@ class TeamTest extends WP_UnitTestCase {
 	 */
 	public function test_set_captain_backfills_captain_id(): void {
 		$team    = Team::register( 1, 'Captained', 50000 );
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 
 		$this->assertTrue( $team->set_captain( $captain ) );
 		$this->assertSame( $captain->id, $team->captain_id );
@@ -225,7 +225,7 @@ class TeamTest extends WP_UnitTestCase {
 		$campaign->save();
 
 		$team    = $this->create_team( [ 'campaign_id' => $campaign->id ] );
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 
 		$team->captain_id = $captain->id;
 		$team->save();
@@ -551,7 +551,7 @@ class TeamTest extends WP_UnitTestCase {
 	 */
 	public function test_delete_detaches_members_gifts_and_invitations(): void {
 		$team    = $this->create_team();
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 
 		$team->captain_id = $captain->id;
 		$team->save();
@@ -575,7 +575,7 @@ class TeamTest extends WP_UnitTestCase {
 		// Members become solo fundraisers; the direct gift stays with the campaign.
 		$member = Fundraiser::find( $captain->id );
 		$this->assertNull( $member->team_id );
-		$this->assertFalse( $member->is_team_captain );
+		$this->assertFalse( $member->is_captain() );
 		$this->assertNull( Transaction::find( $gift->id )->team_id );
 	}
 
@@ -638,7 +638,7 @@ class TeamTest extends WP_UnitTestCase {
 	 */
 	public function test_remove_member_clears_team(): void {
 		$team    = $this->create_team();
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 		$team->set_captain( $captain );
 		$member = $this->create_member( $team->id, 2 );
 
@@ -652,7 +652,7 @@ class TeamTest extends WP_UnitTestCase {
 	 */
 	public function test_remove_member_refuses_captain(): void {
 		$team    = $this->create_team();
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 		$team->set_captain( $captain );
 
 		$result = $team->remove_member( $captain );
@@ -681,19 +681,19 @@ class TeamTest extends WP_UnitTestCase {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Test promote_captain() swaps the flag on both fundraisers and the team FK.
+	 * Test promote_captain() repoints the team's captain_id.
 	 */
 	public function test_promote_captain_updates_both_sides(): void {
 		$team    = $this->create_team();
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 		$team->set_captain( $captain );
 		$member = $this->create_member( $team->id, 2 );
 
 		$this->assertTrue( $team->promote_captain( $member ) );
 
 		$this->assertSame( $member->id, Team::find( $team->id )->captain_id );
-		$this->assertTrue( Fundraiser::find( $member->id )->is_team_captain );
-		$this->assertFalse( Fundraiser::find( $captain->id )->is_team_captain );
+		$this->assertTrue( Fundraiser::find( $member->id )->is_captain() );
+		$this->assertFalse( Fundraiser::find( $captain->id )->is_captain() );
 	}
 
 	/**
@@ -709,7 +709,7 @@ class TeamTest extends WP_UnitTestCase {
 		);
 
 		$team    = $this->create_team();
-		$captain = $this->create_member( $team->id, 1, [ 'is_team_captain' => true ] );
+		$captain = $this->create_member( $team->id, 1 );
 		$team->set_captain( $captain );
 		$member = $this->create_member( $team->id, 2 );
 

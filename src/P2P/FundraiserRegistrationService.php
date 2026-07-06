@@ -393,9 +393,7 @@ class FundraiserRegistrationService {
 				: Team::ACCESS_PUBLIC;
 			$team        = Team::register( $campaign->id, $name, (int) $settings['default_team_goal'], $team_access, $team_status );
 
-			// Circular FK: fundraiser joins as captain, then the team records it.
 			$fundraiser->join_team( $team, true );
-			$team->set_captain( $fundraiser );
 
 			return $team;
 		}

@@ -697,8 +697,7 @@ class ActivityFeedModule {
 	 */
 	public function on_team_joined( object $fundraiser, object $team ): void {
 		// Skip the captain's founding join; it's already logged as team_created.
-		// (captain_id isn't set yet during registration, so key off the flag.)
-		if ( $fundraiser->is_team_captain ) {
+		if ( (int) $fundraiser->id === (int) $team->captain_id ) {
 			return;
 		}
 
@@ -709,11 +708,10 @@ class ActivityFeedModule {
 			'team',
 			(int) $team->id,
 			[
-				'team_name'       => $team->name,
-				'fundraiser_id'   => (int) $fundraiser->id,
-				'donor_id'        => $fundraiser->donor_id,
-				'donor_name'      => $donor?->full_name() ?: '',
-				'is_team_captain' => $fundraiser->is_team_captain,
+				'team_name'     => $team->name,
+				'fundraiser_id' => (int) $fundraiser->id,
+				'donor_id'      => $fundraiser->donor_id,
+				'donor_name'    => $donor?->full_name() ?: '',
 			]
 		);
 	}

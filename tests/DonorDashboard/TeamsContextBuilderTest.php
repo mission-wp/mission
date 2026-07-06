@@ -110,12 +110,11 @@ class TeamsContextBuilderTest extends WP_UnitTestCase {
 
 		$fundraiser = new Fundraiser(
 			[
-				'campaign_id'     => $campaign->id,
-				'donor_id'        => $donor->id,
-				'team_id'         => $team->id,
-				'is_team_captain' => $as_captain,
-				'status'          => Fundraiser::STATUS_ACTIVE,
-				'goal'            => 100000,
+				'campaign_id' => $campaign->id,
+				'donor_id'    => $donor->id,
+				'team_id'     => $team->id,
+				'status'      => Fundraiser::STATUS_ACTIVE,
+				'goal'        => 100000,
 			]
 		);
 		$fundraiser->save();
@@ -186,11 +185,10 @@ class TeamsContextBuilderTest extends WP_UnitTestCase {
 
 		$captain_fundraiser = new Fundraiser(
 			[
-				'campaign_id'     => $membership['campaign']->id,
-				'donor_id'        => $captain->id,
-				'team_id'         => $membership['team']->id,
-				'is_team_captain' => true,
-				'status'          => Fundraiser::STATUS_ACTIVE,
+				'campaign_id' => $membership['campaign']->id,
+				'donor_id'    => $captain->id,
+				'team_id'     => $membership['team']->id,
+				'status'      => Fundraiser::STATUS_ACTIVE,
 			]
 		);
 		$captain_fundraiser->save();

@@ -303,7 +303,7 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			'headline'           => $item->headline,
 			'story'              => $item->story,
 			'status'             => $item->status,
-			'is_team_captain'    => $item->is_team_captain,
+			'is_team_captain'    => $item->is_captain(),
 			'raised'             => $item->amount_raised( $is_test ),
 			'donor_count'        => $is_test ? $item->test_donor_count : $item->donor_count,
 			'transaction_count'  => $is_test ? $item->test_transaction_count : $item->transaction_count,

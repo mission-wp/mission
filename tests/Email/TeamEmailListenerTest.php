@@ -129,10 +129,9 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 		$team    = Team::register( $campaign->id, 'Runners', 100000 );
 		$captain = new Fundraiser(
 			[
-				'campaign_id'     => $campaign->id,
-				'donor_id'        => $donor->id,
-				'team_id'         => $team->id,
-				'is_team_captain' => true,
+				'campaign_id' => $campaign->id,
+				'donor_id'    => $donor->id,
+				'team_id'     => $team->id,
 			]
 		);
 		$captain->save();
