@@ -655,15 +655,25 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       if ( ! navigator.clipboard ) {
         return;
       }
-      navigator.clipboard.writeText( shareUrl() ).catch( () => {} );
-      state.copied = true;
-      state.copyLabel = i18n( 'copied', 'Copied' );
-      // Read the reset label now: getContext() is unavailable in the timer.
+      // Read all labels now: getContext() is unavailable in async callbacks.
+      const copiedLabel = i18n( 'copied', 'Copied' );
+      const failedLabel = i18n( 'copyFailed', 'Copy failed' );
       const idleLabel = i18n( 'copy', 'Copy' );
-      setTimeout( () => {
-        state.copied = false;
-        state.copyLabel = idleLabel;
-      }, 2000 );
+      return navigator.clipboard
+        .writeText( shareUrl() )
+        .then( () => {
+          state.copied = true;
+          state.copyLabel = copiedLabel;
+        } )
+        .catch( () => {
+          state.copyLabel = failedLabel;
+        } )
+        .then( () => {
+          setTimeout( () => {
+            state.copied = false;
+            state.copyLabel = idleLabel;
+          }, 2000 );
+        } );
     },
   },
 

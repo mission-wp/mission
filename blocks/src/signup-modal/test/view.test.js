@@ -98,3 +98,51 @@ describe( 'onKeydown Enter handling', () => {
     expect( primary.click ).not.toHaveBeenCalled();
   } );
 } );
+
+describe( 'copyLink', () => {
+  let writeText;
+
+  beforeEach( () => {
+    jest.useFakeTimers();
+    writeText = jest.fn();
+    Object.defineProperty( window.navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    } );
+    storeDef.state.copied = false;
+    storeDef.state.copyLabel = 'Copy';
+  } );
+
+  afterEach( () => {
+    jest.useRealTimers();
+    delete window.navigator.clipboard;
+  } );
+
+  it( 'confirms only after the clipboard write resolves', async () => {
+    writeText.mockReturnValue( Promise.resolve() );
+
+    const pending = storeDef.actions.copyLink();
+
+    expect( storeDef.state.copied ).toBe( false );
+    await pending;
+
+    expect( storeDef.state.copied ).toBe( true );
+    expect( storeDef.state.copyLabel ).toBe( 'Copied' );
+
+    jest.advanceTimersByTime( 2000 );
+    expect( storeDef.state.copied ).toBe( false );
+    expect( storeDef.state.copyLabel ).toBe( 'Copy' );
+  } );
+
+  it( 'reports failure when the clipboard write rejects', async () => {
+    writeText.mockReturnValue( Promise.reject( new Error( 'denied' ) ) );
+
+    await storeDef.actions.copyLink();
+
+    expect( storeDef.state.copied ).toBe( false );
+    expect( storeDef.state.copyLabel ).toBe( 'Copy failed' );
+
+    jest.advanceTimersByTime( 2000 );
+    expect( storeDef.state.copyLabel ).toBe( 'Copy' );
+  } );
+} );

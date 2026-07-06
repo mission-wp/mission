@@ -95,6 +95,7 @@ defined( 'ABSPATH' ) || exit;
 			'genericError'     => __( 'Something went wrong. Please try again.', 'mission-donation-platform' ),
 			'copy'             => __( 'Copy', 'mission-donation-platform' ),
 			'copied'           => __( 'Copied', 'mission-donation-platform' ),
+			'copyFailed'       => __( 'Copy failed', 'mission-donation-platform' ),
 			'enterCode'        => __( 'Enter the 6-digit code.', 'mission-donation-platform' ),
 			'enterNewPassword' => __( 'Enter a new password.', 'mission-donation-platform' ),
 		],
