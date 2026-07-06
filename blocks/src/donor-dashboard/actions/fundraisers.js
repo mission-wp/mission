@@ -116,6 +116,12 @@ function loadSupportersPage( ctx, id, page ) {
     .catch( () => {
       if ( ctx.fundraisers.detail?.id === id ) {
         supporters.loading = false;
+        showToast(
+          ctx,
+          ctx.fundraisers?.i18n?.supportersError ||
+            "Couldn't load supporters. Please try again.",
+          'error'
+        );
       }
     } );
 }

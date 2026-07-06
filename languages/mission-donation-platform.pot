@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-06T22:04:50+00:00\n"
+"POT-Creation-Date: 2026-07-06T22:25:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -69,8 +69,8 @@ msgstr ""
 #: blocks/src/campaign-grid/index.php:125
 #: blocks/src/campaign/index.php:82
 #: src/DonorDashboard/DashboardLabels.php:106
-#: src/DonorDashboard/FundraisersContextBuilder.php:327
-#: src/DonorDashboard/FundraisersContextBuilder.php:344
+#: src/DonorDashboard/FundraisersContextBuilder.php:328
+#: src/DonorDashboard/FundraisersContextBuilder.php:345
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:59
 #: admin/src/pages/campaigns/CampaignList.js:132
@@ -338,7 +338,7 @@ msgstr ""
 
 #: blocks/build/campaign-statistics/index.php:64
 #: blocks/src/campaign-statistics/index.php:64
-#: src/DonorDashboard/FundraisersContextBuilder.php:392
+#: src/DonorDashboard/FundraisersContextBuilder.php:393
 #: src/Export/ExportService.php:807
 #: src/Export/ExportService.php:823
 #: admin/build/mission-admin.js:152
@@ -1500,7 +1500,7 @@ msgid "Individual fundraiser"
 msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
-#: src/DonorDashboard/FundraisersContextBuilder.php:250
+#: src/DonorDashboard/FundraisersContextBuilder.php:251
 #: src/DonorDashboard/TeamsContextBuilder.php:229
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
@@ -1662,7 +1662,7 @@ msgstr ""
 #: blocks/build/team-members/index.php:83
 #: blocks/src/donor-dashboard/parts/team-detail.php:250
 #: blocks/src/team-members/index.php:83
-#: src/DonorDashboard/FundraisersContextBuilder.php:264
+#: src/DonorDashboard/FundraisersContextBuilder.php:265
 #: src/DonorDashboard/TeamsContextBuilder.php:212
 #: src/DonorDashboard/TeamsContextBuilder.php:279
 #: src/Email/TeamEmailListener.php:149
@@ -2395,7 +2395,7 @@ msgstr ""
 #: blocks/build/donor-dashboard/parts/recurring.php:30
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
-#: src/DonorDashboard/FundraisersContextBuilder.php:330
+#: src/DonorDashboard/FundraisersContextBuilder.php:331
 #: src/DonorDashboard/TeamsContextBuilder.php:192
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
@@ -2655,7 +2655,7 @@ msgstr ""
 #: blocks/src/donor-wall/index.php:99
 #: blocks/src/fundraiser-supporters/index.php:80
 #: blocks/src/recent-donors/index.php:116
-#: src/DonorDashboard/FundraisersContextBuilder.php:298
+#: src/DonorDashboard/FundraisersContextBuilder.php:299
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:278
 msgid "%s ago"
 msgstr ""
@@ -2676,8 +2676,8 @@ msgstr ""
 #: blocks/src/recent-donors/index.php:97
 #: blocks/src/top-donors/index.php:99
 #: blocks/src/top-donors/index.php:103
-#: src/DonorDashboard/FundraisersContextBuilder.php:293
-#: src/DonorDashboard/FundraisersContextBuilder.php:517
+#: src/DonorDashboard/FundraisersContextBuilder.php:294
+#: src/DonorDashboard/FundraisersContextBuilder.php:518
 #: src/Email/AdminNotificationListener.php:449
 #: src/Export/ExportService.php:727
 #: src/Reporting/ReportingService.php:642
@@ -2770,7 +2770,7 @@ msgstr ""
 #. translators: %s: donation count toward goal.
 #: blocks/build/fundraiser-supporters/index.php:56
 #: blocks/src/fundraiser-supporters/index.php:56
-#: src/DonorDashboard/FundraisersContextBuilder.php:243
+#: src/DonorDashboard/FundraisersContextBuilder.php:244
 #: admin/build/mission-admin.js:164
 #: admin/src/pages/dashboard/ActivityFeed.js:670
 msgid "%s donation"
@@ -3794,22 +3794,26 @@ msgstr ""
 msgid "%1$s–%2$s of %3$s"
 msgstr ""
 
+#: src/DonorDashboard/FundraisersContextBuilder.php:131
+msgid "Couldn't load supporters. Please try again."
+msgstr ""
+
 #. translators: %s: campaign title
-#: src/DonorDashboard/FundraisersContextBuilder.php:207
+#: src/DonorDashboard/FundraisersContextBuilder.php:208
 msgid "Support my fundraiser for %s"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:208
+#: src/DonorDashboard/FundraisersContextBuilder.php:209
 #: src/P2P/templates/fundraiser-page.php:42
 msgid "Support my fundraiser"
 msgstr ""
 
 #. translators: %s: goal amount
-#: src/DonorDashboard/FundraisersContextBuilder.php:249
+#: src/DonorDashboard/FundraisersContextBuilder.php:250
 msgid "Raised of %s"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:264
+#: src/DonorDashboard/FundraisersContextBuilder.php:265
 #: src/DonorDashboard/TeamsContextBuilder.php:138
 #: src/DonorDashboard/TeamsContextBuilder.php:212
 #: src/DonorDashboard/TeamsContextBuilder.php:280
@@ -3818,12 +3822,12 @@ msgstr ""
 msgid "Member"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:315
+#: src/DonorDashboard/FundraisersContextBuilder.php:316
 #: src/DonorDashboard/TeamsContextBuilder.php:193
 msgid "Pending review"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:319
+#: src/DonorDashboard/FundraisersContextBuilder.php:320
 #: src/DonorDashboard/TeamsContextBuilder.php:194
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:173
@@ -3831,31 +3835,31 @@ msgstr ""
 msgid "Inactive"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:323
+#: src/DonorDashboard/FundraisersContextBuilder.php:324
 msgid "Goal met"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:351
+#: src/DonorDashboard/FundraisersContextBuilder.php:352
 msgid "No End Date"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:357
+#: src/DonorDashboard/FundraisersContextBuilder.php:358
 msgid "Day Left"
 msgid_plural "Days Left"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:363
+#: src/DonorDashboard/FundraisersContextBuilder.php:364
 msgid "Campaign Ends"
 msgstr ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:396
+#: src/DonorDashboard/FundraisersContextBuilder.php:397
 msgid "Donation Received"
 msgid_plural "Donations Received"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:400
+#: src/DonorDashboard/FundraisersContextBuilder.php:401
 msgid "Active Fundraiser"
 msgid_plural "Active Fundraisers"
 msgstr[0] ""

@@ -62,8 +62,8 @@ msgstr "Ver campaña"
 #: blocks/src/campaign-grid/index.php:125
 #: blocks/src/campaign/index.php:82
 #: src/DonorDashboard/DashboardLabels.php:106
-#: src/DonorDashboard/FundraisersContextBuilder.php:327
-#: src/DonorDashboard/FundraisersContextBuilder.php:344
+#: src/DonorDashboard/FundraisersContextBuilder.php:328
+#: src/DonorDashboard/FundraisersContextBuilder.php:345
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignList.js:59
 #: admin/src/pages/campaigns/CampaignList.js:132
@@ -287,7 +287,7 @@ msgstr "Donación principal"
 
 #: blocks/build/campaign-statistics/index.php:64
 #: blocks/src/campaign-statistics/index.php:64
-#: src/DonorDashboard/FundraisersContextBuilder.php:392
+#: src/DonorDashboard/FundraisersContextBuilder.php:393
 #: src/Export/ExportService.php:807
 #: src/Export/ExportService.php:823
 #: admin/build/mission-admin.js:152
@@ -1206,7 +1206,7 @@ msgid "Your page is awaiting approval. You can edit it now and it will go live o
 msgstr "Tu página está pendiente de aprobación. Puedes editarla ahora y se publicará en cuanto un organizador la apruebe."
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
-#: src/DonorDashboard/FundraisersContextBuilder.php:250
+#: src/DonorDashboard/FundraisersContextBuilder.php:251
 #: src/DonorDashboard/TeamsContextBuilder.php:229
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
@@ -1420,7 +1420,7 @@ msgstr "Miembros"
 #: blocks/build/team-members/index.php:83
 #: blocks/src/donor-dashboard/parts/team-detail.php:250
 #: blocks/src/team-members/index.php:83
-#: src/DonorDashboard/FundraisersContextBuilder.php:264
+#: src/DonorDashboard/FundraisersContextBuilder.php:265
 #: src/DonorDashboard/TeamsContextBuilder.php:212
 #: src/DonorDashboard/TeamsContextBuilder.php:279
 #: src/Email/TeamEmailListener.php:149
@@ -2134,7 +2134,7 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: blocks/build/donor-dashboard/parts/recurring.php:30
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
-#: src/DonorDashboard/FundraisersContextBuilder.php:330
+#: src/DonorDashboard/FundraisersContextBuilder.php:331
 #: src/DonorDashboard/TeamsContextBuilder.php:192
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
@@ -2314,7 +2314,7 @@ msgstr "Mostrar más donaciones"
 #: blocks/src/donor-wall/index.php:99
 #: blocks/src/fundraiser-supporters/index.php:80
 #: blocks/src/recent-donors/index.php:116
-#: src/DonorDashboard/FundraisersContextBuilder.php:298
+#: src/DonorDashboard/FundraisersContextBuilder.php:299
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:278
 msgid "%s ago"
 msgstr "hace %s"
@@ -2335,8 +2335,8 @@ msgstr "hace %s"
 #: blocks/src/recent-donors/index.php:97
 #: blocks/src/top-donors/index.php:99
 #: blocks/src/top-donors/index.php:103
-#: src/DonorDashboard/FundraisersContextBuilder.php:293
-#: src/DonorDashboard/FundraisersContextBuilder.php:517
+#: src/DonorDashboard/FundraisersContextBuilder.php:294
+#: src/DonorDashboard/FundraisersContextBuilder.php:518
 #: src/Email/AdminNotificationListener.php:449
 #: src/Export/ExportService.php:727
 #: src/Reporting/ReportingService.php:642
@@ -2427,7 +2427,7 @@ msgstr "Sé el primero en contribuir y animar a este recaudador."
 #. translators: %s: donation count toward goal.
 #: blocks/build/fundraiser-supporters/index.php:56
 #: blocks/src/fundraiser-supporters/index.php:56
-#: src/DonorDashboard/FundraisersContextBuilder.php:243
+#: src/DonorDashboard/FundraisersContextBuilder.php:244
 #: admin/build/mission-admin.js:164
 #: admin/src/pages/dashboard/ActivityFeed.js:670
 msgid "%s donation"
@@ -3244,12 +3244,12 @@ msgstr "Nuevo capitán asignado"
 msgid "Make this member the captain? You will no longer manage the team."
 msgstr "¿Hacer a este miembro el capitán? Dejarás de gestionar el equipo."
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:315
+#: src/DonorDashboard/FundraisersContextBuilder.php:316
 #: src/DonorDashboard/TeamsContextBuilder.php:193
 msgid "Pending review"
 msgstr "Pendiente de revisión"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:319
+#: src/DonorDashboard/FundraisersContextBuilder.php:320
 #: src/DonorDashboard/TeamsContextBuilder.php:194
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:173
@@ -3258,11 +3258,11 @@ msgid "Inactive"
 msgstr "Inactivo"
 
 #. translators: %s: campaign title
-#: src/DonorDashboard/FundraisersContextBuilder.php:207
+#: src/DonorDashboard/FundraisersContextBuilder.php:208
 msgid "Support my fundraiser for %s"
 msgstr "Apoya mi recaudación para %s"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:208
+#: src/DonorDashboard/FundraisersContextBuilder.php:209
 #: src/P2P/templates/fundraiser-page.php:42
 msgid "Support my fundraiser"
 msgstr "Apoya mi recaudación"
@@ -13070,11 +13070,11 @@ msgid "%1$s–%2$s of %3$s"
 msgstr "%1$s–%2$s de %3$s"
 
 #. translators: %s: goal amount
-#: src/DonorDashboard/FundraisersContextBuilder.php:249
+#: src/DonorDashboard/FundraisersContextBuilder.php:250
 msgid "Raised of %s"
 msgstr "Recaudado de %s"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:264
+#: src/DonorDashboard/FundraisersContextBuilder.php:265
 #: src/DonorDashboard/TeamsContextBuilder.php:138
 #: src/DonorDashboard/TeamsContextBuilder.php:212
 #: src/DonorDashboard/TeamsContextBuilder.php:280
@@ -13083,7 +13083,7 @@ msgstr "Recaudado de %s"
 msgid "Member"
 msgstr "Miembro"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:323
+#: src/DonorDashboard/FundraisersContextBuilder.php:324
 msgid "Goal met"
 msgstr "Meta alcanzada"
 
@@ -13098,27 +13098,27 @@ msgid_plural "%s days left"
 msgstr[0] "Queda %s día"
 msgstr[1] "Quedan %s días"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:351
+#: src/DonorDashboard/FundraisersContextBuilder.php:352
 msgid "No End Date"
 msgstr "Sin fecha de fin"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:357
+#: src/DonorDashboard/FundraisersContextBuilder.php:358
 msgid "Day Left"
 msgid_plural "Days Left"
 msgstr[0] "Día restante"
 msgstr[1] "Días restantes"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:363
+#: src/DonorDashboard/FundraisersContextBuilder.php:364
 msgid "Campaign Ends"
 msgstr "Fin de campaña"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:396
+#: src/DonorDashboard/FundraisersContextBuilder.php:397
 msgid "Donation Received"
 msgid_plural "Donations Received"
 msgstr[0] "Donación recibida"
 msgstr[1] "Donaciones recibidas"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:400
+#: src/DonorDashboard/FundraisersContextBuilder.php:401
 msgid "Active Fundraiser"
 msgid_plural "Active Fundraisers"
 msgstr[0] "Recaudación activa"
@@ -13755,3 +13755,7 @@ msgstr "Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el 
 #: blocks/src/signup-modal/index.php:98
 msgid "Copy failed"
 msgstr "Error al copiar"
+
+#: src/DonorDashboard/FundraisersContextBuilder.php:131
+msgid "Couldn't load supporters. Please try again."
+msgstr "No se han podido cargar los colaboradores. Inténtalo de nuevo."
