@@ -24,6 +24,11 @@ defined( 'ABSPATH' ) || exit;
 class ReportingService {
 
 	/**
+	 * SQL expression netting refunds out of a transaction's amount.
+	 */
+	private const TX_NET_AMOUNT_SQL = 'amount - LEAST(amount_refunded, amount)';
+
+	/**
 	 * Settings service.
 	 *
 	 * @var SettingsService
@@ -1657,8 +1662,6 @@ class ReportingService {
 		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
 		$d_table = $wpdb->prefix . 'missiondp_donors';
 
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
-
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
 		$offset   = ( $page - 1 ) * $per_page;
@@ -1699,8 +1702,7 @@ class ReportingService {
 			)
 		);
 
-		$tx_table = $wpdb->prefix . 'missiondp_transactions';
-		$is_test  = $this->is_test_mode() ? 1 : 0;
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( 't.id', $this->is_test_mode() );
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
@@ -1708,9 +1710,7 @@ class ReportingService {
 						c.title AS campaign_title,
 						cd.first_name AS captain_first_name, cd.last_name AS captain_last_name,
 						( SELECT COUNT(*) FROM %i AS m WHERE m.team_id = t.id ) AS member_count,
-						( SELECT COALESCE(SUM(m2.%i), 0) FROM %i AS m2 WHERE m2.team_id = t.id )
-						+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
-							FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d ) AS raised
+						{$raised_sql} AS raised
 				 FROM %i AS t
 				 LEFT JOIN %i AS c ON t.campaign_id = c.id
 				 LEFT JOIN %i AS cap ON t.captain_id = cap.id
@@ -1719,7 +1719,9 @@ class ReportingService {
 				 ORDER BY t.%i {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
-					[ $f_table, $raised_col, $f_table, $tx_table, $is_test, $t_table, $c_table, $f_table, $d_table ],
+					[ $f_table ],
+					$raised_args,
+					[ $t_table, $c_table, $f_table, $d_table ],
 					$where_args,
 					[ $orderby, $per_page, $offset ]
 				)
@@ -1922,26 +1924,15 @@ class ReportingService {
 	public function team_summary(): array {
 		global $wpdb;
 
-		$t_table    = $wpdb->prefix . 'missiondp_teams';
-		$f_table    = $wpdb->prefix . 'missiondp_fundraisers';
-		$tx_table   = $wpdb->prefix . 'missiondp_transactions';
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
-		$is_test    = $this->is_test_mode() ? 1 : 0;
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( 'any', $this->is_test_mode() );
 
 		$total   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $t_table ) );
 		$active  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $t_table, \MissionDP\Models\Team::STATUS_ACTIVE ) );
 		$pending = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $t_table, \MissionDP\Models\Team::STATUS_PENDING ) );
-		$raised  = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT ( SELECT COALESCE(SUM(%i), 0) FROM %i WHERE team_id IS NOT NULL )
-					+ ( SELECT COALESCE(SUM(amount - LEAST(amount_refunded, amount)), 0)
-						FROM %i WHERE team_id IS NOT NULL AND status = 'completed' AND is_test = %d )",
-				$raised_col,
-				$f_table,
-				$tx_table,
-				$is_test
-			)
-		);
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- the fragment is literal SQL whose %i/%d placeholders are matched by $raised_args.
+		$raised = (int) $wpdb->get_var( $wpdb->prepare( "SELECT {$raised_sql}", $raised_args ) );
 
 		return [
 			'total_teams'   => $total,
@@ -2022,34 +2013,31 @@ class ReportingService {
 	public function top_teams( int $campaign_id, int $limit = 10 ): array {
 		global $wpdb;
 
-		$t_table  = $wpdb->prefix . 'missiondp_teams';
-		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
-		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
 
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
-		$is_test    = $this->is_test_mode() ? 1 : 0;
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( 't.id', $this->is_test_mode() );
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.id, t.post_id, t.name, t.goal,
-						( SELECT COALESCE(SUM(m.%i), 0) FROM %i AS m WHERE m.team_id = t.id )
-						+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
-							FROM %i AS tx WHERE tx.team_id = t.id AND tx.status = 'completed' AND tx.is_test = %d ) AS raised,
+						{$raised_sql} AS raised,
 						( SELECT COUNT(*) FROM %i AS m2 WHERE m2.team_id = t.id ) AS member_count
 				 FROM %i AS t
 				 WHERE t.campaign_id = %d AND t.status = %s AND t.access = %s
 				 ORDER BY raised DESC, t.id ASC
 				 LIMIT %d",
-				$raised_col,
-				$f_table,
-				$tx_table,
-				$is_test,
-				$f_table,
-				$t_table,
-				$campaign_id,
-				\MissionDP\Models\Team::STATUS_ACTIVE,
-				\MissionDP\Models\Team::ACCESS_PUBLIC,
-				$limit
+				array_merge(
+					$raised_args,
+					[
+						$f_table,
+						$t_table,
+						$campaign_id,
+						\MissionDP\Models\Team::STATUS_ACTIVE,
+						\MissionDP\Models\Team::ACCESS_PUBLIC,
+						$limit,
+					]
+				)
 			),
 			ARRAY_A
 		);
@@ -2070,6 +2058,43 @@ class ReportingService {
 	}
 
 	/**
+	 * SQL fragment (and its prepare() args) for a team's raised total.
+	 *
+	 * The single definition of the team roll-up rule: member fundraisers'
+	 * stored aggregate totals plus completed direct team gifts netted for
+	 * refunds. Static so TeamDataStore::sum_amount_raised() shares it.
+	 *
+	 * @param int|string $team    Team scope: a team ID, a trusted outer-column
+	 *                            reference like 't.id' (correlated per row), or
+	 *                            'any' for all teams (team_id IS NOT NULL).
+	 * @param bool       $is_test Whether to sum test-mode amounts.
+	 * @return array{0: string, 1: array} Fragment with %i/%d placeholders and
+	 *                                    the args to merge into prepare().
+	 */
+	public static function team_raised_sql( int|string $team, bool $is_test ): array {
+		global $wpdb;
+
+		$f_table    = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table   = $wpdb->prefix . 'missiondp_transactions';
+		$raised_col = $is_test ? 'test_total_raised' : 'total_raised';
+		$net        = self::TX_NET_AMOUNT_SQL;
+
+		if ( is_int( $team ) ) {
+			$match = '= %d';
+			$args  = [ $raised_col, $f_table, $team, $tx_table, $team, $is_test ? 1 : 0 ];
+		} else {
+			$match = 'any' === $team ? 'IS NOT NULL' : "= {$team}";
+			$args  = [ $raised_col, $f_table, $tx_table, $is_test ? 1 : 0 ];
+		}
+
+		$sql = "( SELECT COALESCE(SUM(fr.%i), 0) FROM %i AS fr WHERE fr.team_id {$match} )
+			+ ( SELECT COALESCE(SUM({$net}), 0)
+				FROM %i AS tg WHERE tg.team_id {$match} AND tg.status = 'completed' AND tg.is_test = %d )";
+
+		return [ $sql, $args ];
+	}
+
+	/**
 	 * Live totals for a single team page (member fundraisers + direct gifts).
 	 *
 	 * Memoized per instance: dashboard context builders resolve the same
@@ -2084,7 +2109,6 @@ class ReportingService {
 		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
 		$tx_table = $wpdb->prefix . 'missiondp_transactions';
 
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 		$tcount_col = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
 		$is_test    = $this->is_test_mode() ? 1 : 0;
 
@@ -2094,29 +2118,28 @@ class ReportingService {
 			return $this->team_totals_memo[ $memo_key ];
 		}
 
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( $team_id, $this->is_test_mode() );
+
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT
-					( SELECT COALESCE(SUM(m.%i), 0) FROM %i AS m WHERE m.team_id = %d )
-					+ ( SELECT COALESCE(SUM(tx.amount - LEAST(tx.amount_refunded, tx.amount)), 0)
-						FROM %i AS tx WHERE tx.team_id = %d AND tx.status = 'completed' AND tx.is_test = %d ) AS raised,
+					{$raised_sql} AS raised,
 					( SELECT COALESCE(SUM(m2.%i), 0) FROM %i AS m2 WHERE m2.team_id = %d )
 					+ ( SELECT COUNT(*) FROM %i AS tx2 WHERE tx2.team_id = %d AND tx2.status = 'completed' AND tx2.is_test = %d ) AS donations,
 					( SELECT COUNT(*) FROM %i AS m3 WHERE m3.team_id = %d ) AS member_count",
-				$raised_col,
-				$f_table,
-				$team_id,
-				$tx_table,
-				$team_id,
-				$is_test,
-				$tcount_col,
-				$f_table,
-				$team_id,
-				$tx_table,
-				$team_id,
-				$is_test,
-				$f_table,
-				$team_id
+				array_merge(
+					$raised_args,
+					[
+						$tcount_col,
+						$f_table,
+						$team_id,
+						$tx_table,
+						$team_id,
+						$is_test,
+						$f_table,
+						$team_id,
+					]
+				)
 			),
 			ARRAY_A
 		);
@@ -2168,12 +2191,12 @@ class ReportingService {
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT COUNT(*) AS total,
+				'SELECT COUNT(*) AS total,
 					COALESCE(SUM(CASE WHEN COALESCE(f.raised, 0) + COALESCE(x.raised, 0) > %d THEN 1 ELSE 0 END), 0) AS higher
 				 FROM %i AS t
 				 LEFT JOIN ( SELECT team_id, SUM(%i) AS raised
 					FROM %i WHERE team_id IS NOT NULL GROUP BY team_id ) AS f ON f.team_id = t.id
-				 LEFT JOIN ( SELECT team_id, SUM(amount - LEAST(amount_refunded, amount)) AS raised
+				 LEFT JOIN ( SELECT team_id, SUM(' . self::TX_NET_AMOUNT_SQL . ") AS raised
 					FROM %i WHERE team_id IS NOT NULL AND status = 'completed' AND is_test = %d GROUP BY team_id ) AS x ON x.team_id = t.id
 				 WHERE t.campaign_id = %d AND t.status = %s",
 				$raised,

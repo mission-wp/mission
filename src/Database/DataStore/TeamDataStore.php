@@ -10,6 +10,7 @@ namespace MissionDP\Database\DataStore;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom-table layer; direct $wpdb is required. Identifiers use %i and values use %s/%d throughout.
 
 use MissionDP\Models\Team;
+use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -241,9 +242,8 @@ class TeamDataStore implements DataStoreInterface {
 	/**
 	 * Sum the amount raised by a team: member fundraisers plus direct team gifts.
 	 *
-	 * Members are read from their stored aggregate columns (consistent with what
-	 * each fundraiser page displays); direct gifts are completed transactions with
-	 * this team_id, netted for refunds, matching ReportingService::team_totals().
+	 * The roll-up rule (stored member aggregates plus refund-netted direct
+	 * gifts) is defined once in ReportingService::team_raised_sql().
 	 *
 	 * @param int  $team_id Team ID.
 	 * @param bool $is_test Whether to sum test-mode amounts.
@@ -257,25 +257,10 @@ class TeamDataStore implements DataStoreInterface {
 			return 0;
 		}
 
-		$fundraisers_table  = $wpdb->prefix . 'missiondp_fundraisers';
-		$transactions_table = $wpdb->prefix . 'missiondp_transactions';
-		$column             = $is_test ? 'test_total_raised' : 'total_raised';
+		[ $raised_sql, $raised_args ] = ReportingService::team_raised_sql( $team_id, $is_test );
 
-		$total = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT ( SELECT COALESCE(SUM(%i), 0) FROM %i WHERE team_id = %d )
-					+ ( SELECT COALESCE(SUM(amount - LEAST(amount_refunded, amount)), 0)
-						FROM %i WHERE team_id = %d AND status = 'completed' AND is_test = %d )",
-				$column,
-				$fundraisers_table,
-				$team_id,
-				$transactions_table,
-				$team_id,
-				$is_test ? 1 : 0
-			)
-		);
-
-		return (int) $total;
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- the fragment is literal SQL whose %i/%d placeholders are matched by $raised_args.
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT {$raised_sql}", $raised_args ) );
 	}
 
 	/**
