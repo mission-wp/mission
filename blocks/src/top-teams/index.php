@@ -52,7 +52,7 @@ defined( 'ABSPATH' ) || exit;
 		Team::warm_by_post_ids( $post_ids );
 	}
 
-	$registration_open = $campaign->is_p2p() && ! empty( $campaign->p2p_settings()['registration_open'] );
+	$registration_open = $campaign->is_registration_open();
 
 	ob_start();
 	?>

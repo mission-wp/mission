@@ -47,15 +47,11 @@ defined( 'ABSPATH' ) || exit;
 		}
 	}
 
-	if ( ! $campaign || ! $campaign->is_p2p() ) {
+	if ( ! $campaign || ! $campaign->is_registration_open() ) {
 		return;
 	}
 
 	$settings = $campaign->p2p_settings();
-
-	if ( empty( $settings['registration_open'] ) ) {
-		return;
-	}
 
 	$teams_enabled     = ! empty( $settings['teams_enabled'] );
 	$creation_enabled  = $teams_enabled && ! empty( $settings['team_creation_enabled'] );

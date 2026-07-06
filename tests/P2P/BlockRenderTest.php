@@ -213,4 +213,25 @@ class BlockRenderTest extends WP_UnitTestCase {
 
 		$this->assertStringNotContainsString( 'mission-su__overlay', $html );
 	}
+
+	/**
+	 * Test the sign-up modal renders nothing on a scheduled campaign even with the toggle on.
+	 */
+	public function test_signup_modal_hidden_when_campaign_not_active(): void {
+		$this->require_block( 'mission-donation-platform/signup-modal' );
+
+		$campaign = new Campaign(
+			[
+				'title'  => 'Drive',
+				'type'   => 'p2p',
+				'status' => Campaign::STATUS_SCHEDULED,
+			]
+		);
+		$campaign->save();
+		$campaign->update_meta( 'registration_open', true );
+
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/signup-modal {"campaignId":%d} /-->', $campaign->id ) );
+
+		$this->assertStringNotContainsString( 'mission-su__overlay', $html );
+	}
 }

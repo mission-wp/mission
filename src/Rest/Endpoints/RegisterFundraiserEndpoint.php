@@ -405,14 +405,7 @@ class RegisterFundraiserEndpoint {
 			return new WP_Error( 'invalid_campaign', __( 'This campaign is not accepting fundraisers.', 'mission-donation-platform' ), [ 'status' => 404 ] );
 		}
 
-		// registration_open alone isn't enough: scheduled or ended campaigns
-		// must not accept sign-ups regardless of the toggle.
-		if ( Campaign::STATUS_ACTIVE !== $campaign->status ) {
-			return new WP_Error( 'registration_closed', __( 'Registration for this campaign is closed.', 'mission-donation-platform' ), [ 'status' => 403 ] );
-		}
-
-		$settings = $campaign->p2p_settings();
-		if ( empty( $settings['registration_open'] ) ) {
+		if ( ! $campaign->is_registration_open() ) {
 			return new WP_Error( 'registration_closed', __( 'Registration for this campaign is closed.', 'mission-donation-platform' ), [ 'status' => 403 ] );
 		}
 

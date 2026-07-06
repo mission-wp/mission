@@ -832,6 +832,37 @@ class CampaignTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test is_registration_open() requires an active P2P campaign with the toggle on.
+	 */
+	public function test_is_registration_open_requires_active_p2p_with_toggle(): void {
+		$active = $this->create_campaign( [ 'type' => Campaign::TYPE_P2P ] );
+		$this->assertTrue( $active->is_registration_open() );
+
+		$toggled_off = $this->create_campaign( [ 'type' => Campaign::TYPE_P2P ] );
+		$toggled_off->update_meta( 'registration_open', '0' );
+		$this->assertFalse( $toggled_off->is_registration_open() );
+
+		$scheduled = $this->create_campaign(
+			[
+				'type'   => Campaign::TYPE_P2P,
+				'status' => Campaign::STATUS_SCHEDULED,
+			]
+		);
+		$this->assertFalse( $scheduled->is_registration_open() );
+
+		$ended = $this->create_campaign(
+			[
+				'type'   => Campaign::TYPE_P2P,
+				'status' => Campaign::STATUS_ENDED,
+			]
+		);
+		$this->assertFalse( $ended->is_registration_open() );
+
+		$standard = $this->create_campaign();
+		$this->assertFalse( $standard->is_registration_open() );
+	}
+
+	/**
 	 * Test days_left() counts whole days to the end date.
 	 */
 	public function test_days_left_counts_days_to_end_date(): void {

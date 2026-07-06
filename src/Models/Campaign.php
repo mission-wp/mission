@@ -428,6 +428,21 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Whether this campaign is accepting new fundraiser sign-ups.
+	 *
+	 * The single registration gate: an active P2P campaign with the
+	 * registration toggle on. Scheduled and ended campaigns never accept
+	 * sign-ups regardless of the toggle.
+	 *
+	 * @return bool
+	 */
+	public function is_registration_open(): bool {
+		return $this->is_p2p()
+			&& self::STATUS_ACTIVE === $this->status
+			&& ! empty( $this->p2p_settings()['registration_open'] );
+	}
+
+	/**
 	 * Get the fundraisers for this campaign (peer-to-peer only).
 	 *
 	 * @param array<string, mixed> $args Additional query args.

@@ -181,6 +181,28 @@ class RegisterFundraiserEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test registration is rejected on a scheduled campaign even with the toggle on.
+	 */
+	public function test_lookup_rejected_when_campaign_not_active(): void {
+		$campaign = new Campaign(
+			[
+				'title'  => 'Strut',
+				'type'   => 'p2p',
+				'status' => Campaign::STATUS_SCHEDULED,
+			]
+		);
+		$campaign->save();
+		$campaign->update_meta( 'registration_open', '1' );
+
+		$response = $this->post(
+			'p2p/account-lookup',
+			[ 'campaign_id' => $campaign->id, 'email' => 'a@example.com', 'password' => 'longenough1' ]
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
 	 * Test send-code then verify-code creates the account and logs the donor in.
 	 */
 	public function test_send_and_verify_code_signup_flow(): void {

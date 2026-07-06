@@ -47,8 +47,7 @@ defined( 'ABSPATH' ) || exit;
 	// button would silently no-op without this gate (campaign-progress does the
 	// same). Private teams hide it too: uninvited visitors can't join, and
 	// invitees arrive through the invite link, which opens the modal itself.
-	$p2p_settings = $team->campaign()?->p2p_settings() ?? [];
-	$show_join    = ! empty( $p2p_settings['registration_open'] ) && Team::ACCESS_PUBLIC === $team->access;
+	$show_join = true === $team->campaign()?->is_registration_open() && Team::ACCESS_PUBLIC === $team->access;
 
 	ob_start();
 	?>
