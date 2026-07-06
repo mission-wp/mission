@@ -427,6 +427,76 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test POST with a captain who already captains another team vacates the
+	 * old captaincy instead of leaving it pointing at a non-member.
+	 */
+	public function test_create_with_captain_vacates_previous_captaincy(): void {
+		$campaign = $this->create_p2p_campaign();
+		$old_team = $this->create_team( $campaign->id, [ 'name' => 'Old Guard' ] );
+		$captain  = $this->create_member( $campaign->id, [ 'team_id' => $old_team->id ] );
+
+		$old_team->captain_id = $captain->id;
+		$old_team->save();
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/teams' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'name'        => 'New Horizons',
+			'captain_id'  => $captain->id,
+		] );
+
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 201, $response->get_status() );
+		$this->assertSame( $captain->id, $data['captain_id'] );
+
+		$new_team = Team::find( $data['id'] );
+		$this->assertSame( $captain->id, $new_team->captain_id );
+		$this->assertSame( $new_team->id, Fundraiser::find( $captain->id )->team_id );
+		$this->assertNull( Team::find( $old_team->id )->captain_id );
+	}
+
+	/**
+	 * Test POST rolls back the created team when the captain assignment fails.
+	 */
+	public function test_create_rolls_back_team_when_captain_assignment_fails(): void {
+		global $wpdb;
+
+		$campaign = $this->create_p2p_campaign();
+		$captain  = $this->create_member( $campaign->id );
+
+		// Sabotage fundraiser updates so join_team()'s save fails mid-request.
+		$break_updates = function ( $query ) use ( $wpdb ) {
+			if ( str_starts_with( $query, 'UPDATE' ) && str_contains( $query, "{$wpdb->prefix}missiondp_fundraisers" ) ) {
+				return "UPDATE {$wpdb->prefix}missiondp_nonexistent SET id = 0";
+			}
+			return $query;
+		};
+		add_filter( 'query', $break_updates );
+		$suppress = $wpdb->suppress_errors( true );
+
+		$request = new WP_REST_Request( 'POST', '/mission-donation-platform/v1/teams' );
+		$request->set_body_params( [
+			'campaign_id' => $campaign->id,
+			'name'        => 'Doomed Team',
+			'captain_id'  => $captain->id,
+		] );
+
+		$response = $this->server->dispatch( $request );
+
+		$wpdb->suppress_errors( $suppress );
+		remove_filter( 'query', $break_updates );
+
+		$this->assertSame( 500, $response->get_status() );
+		$this->assertSame( 'rest_cannot_create', $response->get_data()['code'] );
+
+		// The half-created team was rolled back and the captain is untouched.
+		$this->assertCount( 0, Team::query( [ 'campaign_id' => $campaign->id ] ) );
+		$this->assertNull( Fundraiser::find( $captain->id )->team_id );
+	}
+
+	/**
 	 * Test POST fires the team_created action.
 	 */
 	public function test_create_fires_created_action(): void {

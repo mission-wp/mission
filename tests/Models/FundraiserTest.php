@@ -330,6 +330,26 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test move_to_team( $team, true ) vacates the old captaincy and claims the new one.
+	 */
+	public function test_move_to_team_as_captain_vacates_old_and_claims_new(): void {
+		$team_a = new Team( [ 'campaign_id' => 1, 'name' => 'Team A' ] );
+		$team_a->save();
+		$team_b = new Team( [ 'campaign_id' => 1, 'name' => 'Team B' ] );
+		$team_b->save();
+
+		$fundraiser = Fundraiser::register( 1, 1, 25000 );
+		$fundraiser->join_team( $team_a, true );
+
+		$this->assertTrue( $fundraiser->move_to_team( $team_b, true ) );
+
+		$this->assertSame( $team_b->id, $fundraiser->team_id );
+		$this->assertTrue( $fundraiser->is_captain() );
+		$this->assertNull( Team::find( $team_a->id )->captain_id );
+		$this->assertSame( $fundraiser->id, Team::find( $team_b->id )->captain_id );
+	}
+
+	/**
 	 * Test move_to_team( null ) leaves the team and vacates the captaincy.
 	 */
 	public function test_move_to_team_null_leaves_team_and_vacates_captaincy(): void {

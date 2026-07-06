@@ -139,7 +139,17 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 
 		if ( $captain_id ) {
 			$captain = Fundraiser::find( (int) $captain_id );
-			$captain->join_team( $team, true );
+
+			// move_to_team() vacates any previous captaincy before joining.
+			if ( ! $captain->move_to_team( $team, true ) ) {
+				$team->delete();
+
+				return new WP_Error(
+					'rest_cannot_create',
+					__( 'The team could not be created.', 'mission-donation-platform' ),
+					[ 'status' => 500 ]
+				);
+			}
 		}
 
 		return new WP_REST_Response( $this->prepare_item( $team ), 201 );

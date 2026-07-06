@@ -230,12 +230,13 @@ class Fundraiser extends Model {
 	 *
 	 * Routes the change through leave_team()/join_team() so the left/joined
 	 * events fire and a departing captain vacates the captaincy. No-op when
-	 * the team is unchanged.
+	 * the team is unchanged; $as_captain only applies when actually joining.
 	 *
-	 * @param Team|null $team Destination team, or null to leave teams.
+	 * @param Team|null $team       Destination team, or null to leave teams.
+	 * @param bool      $as_captain Whether this fundraiser leads the destination team.
 	 * @return bool True on success.
 	 */
-	public function move_to_team( ?Team $team ): bool {
+	public function move_to_team( ?Team $team, bool $as_captain = false ): bool {
 		if ( ( $this->team_id ?: null ) === ( $team?->id ?: null ) ) {
 			return true;
 		}
@@ -248,7 +249,7 @@ class Fundraiser extends Model {
 			return false;
 		}
 
-		return $this->join_team( $team );
+		return $this->join_team( $team, $as_captain );
 	}
 
 	/**
