@@ -417,7 +417,7 @@ msgstr "Omista tämä lahjoitus jonkun kunniaksi tai muistoksi"
 #: blocks/src/top-donors/index.php:111
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:153
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:203
 #: admin/src/pages/transactions/DedicationSection.js:48
 #: admin/src/pages/transactions/DedicationSection.js:330
 msgid "In honor of"
@@ -435,7 +435,7 @@ msgstr "Kunniaksi"
 #: blocks/src/top-donors/index.php:110
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:157
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:207
 #: admin/src/pages/transactions/DedicationSection.js:47
 #: admin/src/pages/transactions/DedicationSection.js:333
 msgid "In memory of"
@@ -445,7 +445,7 @@ msgstr "Muistoksi"
 #: blocks/src/donation-form/index.php:377
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:202
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:166
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:216
 #: admin/src/pages/settings/email-templates.js:174
 msgid "Honoree name"
 msgstr "Kunnianosoituksen saajan nimi"
@@ -1438,7 +1438,7 @@ msgstr "Tyyppi"
 #: admin/src/pages/campaigns/CampaignList.js:118
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:195
 #: admin/src/pages/donors/DonorSubscriptionsCard.js:23
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:134
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:156
 #: admin/src/pages/fundraisers/FundraiserList.js:108
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:144
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:328
@@ -1588,7 +1588,7 @@ msgstr "Vahvistus lähetetty osoitteeseen"
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:88
 #: admin/src/pages/donors/AddDonorDrawer.js:159
 #: admin/src/pages/donors/EditDonorDrawer.js:189
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:97
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:119
 #: admin/src/pages/fundraisers/FundraiserDetail.js:466
 #: admin/src/pages/Settings.js:459
 #: admin/src/pages/Settings.js:526
@@ -2763,7 +2763,7 @@ msgstr "Kerätty yhteensä"
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:206
 #: admin/src/pages/campaigns/CampaignList.js:155
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:125
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:147
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:95
 #: admin/src/pages/fundraisers/FundraiserList.js:84
 #: admin/src/pages/teams/TeamList.js:95
@@ -5018,7 +5018,7 @@ msgstr "Muutokset tallennettu"
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/campaigns/tabs/EditPageTab.js:284
 #: admin/src/pages/donors/EditDonorDrawer.js:202
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:106
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:128
 #: admin/src/pages/teams/EditTeamDrawer.js:109
 #: admin/src/pages/tools/WebhookModal.js:445
 #: admin/src/pages/transactions/DedicationSection.js:581
@@ -6937,7 +6937,7 @@ msgstr "Merkitse lähetetyksi"
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:269
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:144
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:194
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:99
 #: admin/src/pages/transactions/DedicationSection.js:244
 #: admin/src/pages/transactions/TransactionList.js:259
@@ -10910,7 +10910,7 @@ msgstr "Muokkaa sivuasi"
 #: blocks/build/donor-dashboard/parts/fundraising.php:99
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:90
 #: admin/build/mission-admin.js:198
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:118
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:140
 msgid "Headline"
 msgstr "Otsikko"
 
@@ -11858,6 +11858,7 @@ msgstr "Varainkerääjä"
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:206
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:167
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:59
 #: admin/src/pages/fundraisers/FundraiserList.js:69
 #: admin/src/pages/teams/TeamList.js:36
@@ -13285,18 +13286,18 @@ msgstr "Tallenna tarina"
 
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:199
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:93
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:115
 #: admin/src/pages/fundraisers/FundraiserDetail.js:304
 msgid "Edit Fundraiser"
 msgstr "Muokkaa varainkerääjää"
 
 #: admin/build/mission-admin.js:198
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:82
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:104
 msgid "Failed to update the fundraiser."
 msgstr "Varainkerääjän päivitys epäonnistui."
 
 #: admin/build/mission-admin.js:198
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:149
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:199
 msgid "None"
 msgstr "Ei mitään"
 
@@ -13672,15 +13673,11 @@ msgstr "Tämä tiimi ei enää ota vastaan uusia jäseniä."
 
 #: src/P2P/FundraiserRegistrationService.php:474
 msgid "This invitation was sent to a different email address. Please sign up with the address that received it."
-msgstr ""
-"Tämä kutsu lähetettiin eri sähköpostiosoitteeseen. Ilmoittaudu sillä "
-"osoitteella, johon kutsu saapui."
+msgstr "Tämä kutsu lähetettiin eri sähköpostiosoitteeseen. Ilmoittaudu sillä osoitteella, johon kutsu saapui."
 
 #: src/P2P/FundraiserRegistrationService.php:490
 msgid "This invitation is invalid or has expired. Please ask your team captain to send a new one."
-msgstr ""
-"Tämä kutsu on virheellinen tai vanhentunut. Pyydä tiimisi kapteenia "
-"lähettämään uusi kutsu."
+msgstr "Tämä kutsu on virheellinen tai vanhentunut. Pyydä tiimisi kapteenia lähettämään uusi kutsu."
 
 #. translators: %d: total number of donations
 #: admin/build/mission-admin.js:192
@@ -13743,6 +13740,14 @@ msgstr[1] "%s merkintää"
 #: blocks/src/fundraiser-progress/block.json
 msgctxt "block description"
 msgid "Display a fundraiser's progress with a progress bar, stats, and a donate button."
-msgstr ""
-"Näyttää varainkerääjän edistymisen edistymispalkilla, tilastoilla ja "
-"lahjoita-painikkeella."
+msgstr "Näyttää varainkerääjän edistymisen edistymispalkilla, tilastoilla ja lahjoita-painikkeella."
+
+#: admin/build/mission-admin.js:198
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:172
+msgid "No team"
+msgstr "Ei tiimiä"
+
+#: admin/build/mission-admin.js:198
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:183
+msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
+msgstr "Tämä varainkerääjä on tiiminsä kapteeni. Tiimin vaihtaminen jättää kapteenin paikan avoimeksi."

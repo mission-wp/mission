@@ -3684,6 +3684,12 @@
 			"%s entry": [
 				"%s entrada",
 				"%s entradas"
+			],
+			"No team": [
+				"Sin equipo"
+			],
+			"This fundraiser is their team’s captain. Changing their team leaves the captain role vacant.": [
+				"Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el puesto de capitán quedará vacante."
 			]
 		}
 	}

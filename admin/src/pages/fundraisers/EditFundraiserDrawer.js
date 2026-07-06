@@ -20,13 +20,14 @@ function fundraiserToForm( fundraiser, currency ) {
       ? String( minorToMajor( fundraiser.goal, currency ) )
       : '',
     status: fundraiser?.status || 'active',
+    teamId: fundraiser?.team_id ? String( fundraiser.team_id ) : '',
     dedicationType: fundraiser?.dedication?.type || '',
     dedicationName: fundraiser?.dedication?.name || '',
   };
 }
 
 /**
- * Drawer for editing a fundraiser's headline, goal, status, and dedication.
+ * Drawer for editing a fundraiser's headline, goal, status, team, and dedication.
  *
  * @param {Object}   props            Component props.
  * @param {boolean}  props.isOpen     Whether the drawer is open.
@@ -45,6 +46,7 @@ export default function EditFundraiserDrawer( {
   const [ form, setForm ] = useState( () =>
     fundraiserToForm( fundraiser, currency )
   );
+  const [ teams, setTeams ] = useState( [] );
   const [ isSaving, setIsSaving ] = useState( false );
   const [ error, setError ] = useState( '' );
 
@@ -55,8 +57,27 @@ export default function EditFundraiserDrawer( {
     }
   }, [ isOpen, fundraiser, currency ] );
 
+  useEffect( () => {
+    if ( ! fundraiser?.campaign_id ) {
+      return;
+    }
+    apiFetch( {
+      path: `/mission-donation-platform/v1/teams?campaign_id=${ fundraiser.campaign_id }&per_page=100&orderby=name&order=ASC`,
+    } )
+      .then( ( items ) => setTeams( items || [] ) )
+      .catch( () => {} );
+  }, [ fundraiser?.campaign_id ] );
+
   const setField = ( field ) => ( value ) =>
     setForm( ( prev ) => ( { ...prev, [ field ]: value } ) );
+
+  // Ensure the current team is always selectable, even before the
+  // team list has loaded or if it falls outside the first page.
+  const teamOptions =
+    fundraiser?.team_id &&
+    ! teams.some( ( team ) => team.id === fundraiser.team_id )
+      ? [ { id: fundraiser.team_id, name: fundraiser.team_name }, ...teams ]
+      : teams;
 
   const save = async () => {
     setIsSaving( true );
@@ -71,6 +92,7 @@ export default function EditFundraiserDrawer( {
             ? majorToMinor( parseFloat( form.goal ), currency )
             : 0,
           status: form.status,
+          team_id: form.teamId ? parseInt( form.teamId, 10 ) : null,
           dedication_type: form.dedicationType,
           dedication_name: form.dedicationName,
         },
@@ -140,6 +162,34 @@ export default function EditFundraiserDrawer( {
           __next40pxDefaultSize
           __nextHasNoMarginBottom
         />
+        { teamOptions.length > 0 && (
+          <SelectControl
+            label={ __( 'Team', 'mission-donation-platform' ) }
+            value={ form.teamId }
+            options={ [
+              {
+                value: '',
+                label: __( 'No team', 'mission-donation-platform' ),
+              },
+              ...teamOptions.map( ( team ) => ( {
+                value: String( team.id ),
+                label: team.name,
+              } ) ),
+            ] }
+            onChange={ setField( 'teamId' ) }
+            help={
+              fundraiser?.is_team_captain &&
+              form.teamId !== String( fundraiser?.team_id || '' )
+                ? __(
+                    'This fundraiser is their team’s captain. Changing their team leaves the captain role vacant.',
+                    'mission-donation-platform'
+                  )
+                : undefined
+            }
+            __next40pxDefaultSize
+            __nextHasNoMarginBottom
+          />
+        ) }
         <SelectControl
           label={ __( 'Dedication', 'mission-donation-platform' ) }
           value={ form.dedicationType }

@@ -3684,6 +3684,12 @@
 			"%s entry": [
 				"%s merkintä",
 				"%s merkintää"
+			],
+			"No team": [
+				"Ei tiimiä"
+			],
+			"This fundraiser is their team’s captain. Changing their team leaves the captain role vacant.": [
+				"Tämä varainkerääjä on tiiminsä kapteeni. Tiimin vaihtaminen jättää kapteenin paikan avoimeksi."
 			]
 		}
 	}

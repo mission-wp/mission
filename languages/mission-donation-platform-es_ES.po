@@ -432,7 +432,7 @@ msgstr "Dedica este donativo en honor o en memoria de alguien"
 #: blocks/src/top-donors/index.php:111
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:153
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:203
 #: admin/src/pages/transactions/DedicationSection.js:48
 #: admin/src/pages/transactions/DedicationSection.js:330
 msgid "In honor of"
@@ -450,7 +450,7 @@ msgstr "En honor de"
 #: blocks/src/top-donors/index.php:110
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:157
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:207
 #: admin/src/pages/transactions/DedicationSection.js:47
 #: admin/src/pages/transactions/DedicationSection.js:333
 msgid "In memory of"
@@ -460,7 +460,7 @@ msgstr "En memoria de"
 #: blocks/src/donation-form/index.php:377
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:202
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:166
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:216
 #: admin/src/pages/settings/email-templates.js:174
 msgid "Honoree name"
 msgstr "Nombre del homenajeado"
@@ -1250,7 +1250,7 @@ msgstr "Donantes"
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:206
 #: admin/src/pages/campaigns/CampaignList.js:155
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:125
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:147
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:95
 #: admin/src/pages/fundraisers/FundraiserList.js:84
 #: admin/src/pages/teams/TeamList.js:95
@@ -1287,7 +1287,7 @@ msgstr "Edita tu página"
 #: blocks/build/donor-dashboard/parts/fundraising.php:99
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:90
 #: admin/build/mission-admin.js:198
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:118
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:140
 msgid "Headline"
 msgstr "Titular"
 
@@ -1808,7 +1808,7 @@ msgstr "Tipo"
 #: admin/src/pages/campaigns/CampaignList.js:118
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:195
 #: admin/src/pages/donors/DonorSubscriptionsCard.js:23
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:134
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:156
 #: admin/src/pages/fundraisers/FundraiserList.js:108
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:144
 #: admin/src/pages/subscriptions/SubscriptionDetailsCard.js:328
@@ -1958,7 +1958,7 @@ msgstr "Verificación enviada a"
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:88
 #: admin/src/pages/donors/AddDonorDrawer.js:159
 #: admin/src/pages/donors/EditDonorDrawer.js:189
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:97
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:119
 #: admin/src/pages/fundraisers/FundraiserDetail.js:466
 #: admin/src/pages/Settings.js:459
 #: admin/src/pages/Settings.js:526
@@ -4736,6 +4736,7 @@ msgstr "El servicio de pago devolvió una respuesta inesperada."
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:206
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:167
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:59
 #: admin/src/pages/fundraisers/FundraiserList.js:69
 #: admin/src/pages/teams/TeamList.js:36
@@ -6186,7 +6187,7 @@ msgstr "Cambios guardados"
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/campaigns/tabs/EditPageTab.js:284
 #: admin/src/pages/donors/EditDonorDrawer.js:202
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:106
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:128
 #: admin/src/pages/teams/EditTeamDrawer.js:109
 #: admin/src/pages/tools/WebhookModal.js:445
 #: admin/src/pages/transactions/DedicationSection.js:581
@@ -8249,7 +8250,7 @@ msgstr "Marcar como enviada"
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:269
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:144
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:194
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:99
 #: admin/src/pages/transactions/DedicationSection.js:244
 #: admin/src/pages/transactions/TransactionList.js:259
@@ -13285,18 +13286,18 @@ msgstr "Guardar historia"
 
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:199
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:93
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:115
 #: admin/src/pages/fundraisers/FundraiserDetail.js:304
 msgid "Edit Fundraiser"
 msgstr "Editar recaudador"
 
 #: admin/build/mission-admin.js:198
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:82
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:104
 msgid "Failed to update the fundraiser."
 msgstr "No se pudo actualizar el recaudador."
 
 #: admin/build/mission-admin.js:198
-#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:149
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:199
 msgid "None"
 msgstr "Ninguna"
 
@@ -13672,15 +13673,11 @@ msgstr "Este equipo ya no acepta nuevos miembros."
 
 #: src/P2P/FundraiserRegistrationService.php:474
 msgid "This invitation was sent to a different email address. Please sign up with the address that received it."
-msgstr ""
-"Esta invitación se envió a otra dirección de correo electrónico. Inscríbete "
-"con la dirección que la recibió."
+msgstr "Esta invitación se envió a otra dirección de correo electrónico. Inscríbete con la dirección que la recibió."
 
 #: src/P2P/FundraiserRegistrationService.php:490
 msgid "This invitation is invalid or has expired. Please ask your team captain to send a new one."
-msgstr ""
-"Esta invitación no es válida o ha caducado. Pide al capitán de tu equipo "
-"que envíe una nueva."
+msgstr "Esta invitación no es válida o ha caducado. Pide al capitán de tu equipo que envíe una nueva."
 
 #. translators: %d: total number of donations
 #: admin/build/mission-admin.js:192
@@ -13743,6 +13740,14 @@ msgstr[1] "%s entradas"
 #: blocks/src/fundraiser-progress/block.json
 msgctxt "block description"
 msgid "Display a fundraiser's progress with a progress bar, stats, and a donate button."
-msgstr ""
-"Muestra el progreso de un recaudador con una barra de progreso, "
-"estadísticas y un botón de donar."
+msgstr "Muestra el progreso de un recaudador con una barra de progreso, estadísticas y un botón de donar."
+
+#: admin/build/mission-admin.js:198
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:172
+msgid "No team"
+msgstr "Sin equipo"
+
+#: admin/build/mission-admin.js:198
+#: admin/src/pages/fundraisers/EditFundraiserDrawer.js:183
+msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
+msgstr "Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el puesto de capitán quedará vacante."
