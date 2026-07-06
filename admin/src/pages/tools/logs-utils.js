@@ -35,11 +35,11 @@ const importTypeLabels = {
  *
  * @param {string} type  Internal import type.
  * @param {number} count Number the noun agrees with.
- * @return {string} e.g. "transactions".
+ * @return {string} HTML-escaped noun, e.g. "transactions".
  */
 function importNoun( type, count ) {
   const labels = importTypeLabels[ type ] || [ type, type ];
-  return count === 1 ? labels[ 0 ] : labels[ 1 ];
+  return esc( count === 1 ? labels[ 0 ] : labels[ 1 ] );
 }
 
 const migrationSourceNames = {
@@ -52,10 +52,10 @@ const migrationSourceNames = {
  * Display name for a migration source slug.
  *
  * @param {string} source Source slug (e.g. 'givewp').
- * @return {string} e.g. "GiveWP".
+ * @return {string} HTML-escaped name, e.g. "GiveWP".
  */
 function migrationSourceName( source ) {
-  return migrationSourceNames[ source ] || source || 'another plugin';
+  return esc( migrationSourceNames[ source ] || source || 'another plugin' );
 }
 
 /**
@@ -89,7 +89,7 @@ export function buildLogMessage( entry ) {
   switch ( event ) {
     case 'donation_completed': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
-      const name = data.donor_name || 'a donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'a donor';
       return amt
         ? `Payment of <strong>${ amt }</strong> completed for ${ name }`
         : 'Donation completed';
@@ -98,7 +98,7 @@ export function buildLogMessage( entry ) {
     case 'recurring_donation_processed': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
       const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
-      const name = data.donor_name || 'a donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'a donor';
       return amt
         ? `Recurring donation of <strong>${ amt }${ suffix }</strong> renewed for ${ name }`
         : 'Recurring donation processed';
@@ -106,7 +106,7 @@ export function buildLogMessage( entry ) {
 
     case 'donation_refunded': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
-      const name = data.donor_name || 'a donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'a donor';
       return amt
         ? `Refund of <strong>${ amt }</strong> processed for ${ name }`
         : 'Refund processed';
@@ -114,7 +114,7 @@ export function buildLogMessage( entry ) {
 
     case 'payment_failed': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
-      const name = data.donor_name || 'a donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'a donor';
       return amt
         ? `Payment of <strong>${ amt }</strong> failed for ${ name }`
         : 'Payment failed';
@@ -123,26 +123,26 @@ export function buildLogMessage( entry ) {
     case 'subscription_created': {
       const amt = data.amount ? formatAmount( data.amount ) : '';
       const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
-      const name = data.donor_name || 'a donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'a donor';
       return amt
         ? `New <strong>${ amt }${ suffix }</strong> recurring donation started by ${ name }`
         : 'New recurring donation started';
     }
 
     case 'subscription_cancelled': {
-      const name = data.donor_name || 'A donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'A donor';
       return `Subscription <strong>cancelled</strong> by ${ name }`;
     }
 
     case 'subscription_failed': {
-      const name = data.donor_name || 'a donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'a donor';
       return `Recurring donation <strong>failed</strong> for ${ name }`;
     }
 
     case 'subscription_amount_increased': {
       const amt = data.new_amount ? formatAmount( data.new_amount ) : '';
       const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
-      const name = data.donor_name || 'A donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'A donor';
       return amt
         ? `${ name } increased recurring donation to <strong>${ amt }${ suffix }</strong>`
         : 'Recurring donation amount increased';
@@ -151,29 +151,31 @@ export function buildLogMessage( entry ) {
     case 'subscription_amount_decreased': {
       const amt = data.new_amount ? formatAmount( data.new_amount ) : '';
       const suffix = FREQUENCY_SUFFIXES[ data.frequency ] || '';
-      const name = data.donor_name || 'A donor';
+      const name = data.donor_name ? esc( data.donor_name ) : 'A donor';
       return amt
         ? `${ name } decreased recurring donation to <strong>${ amt }${ suffix }</strong>`
         : 'Recurring donation amount decreased';
     }
 
     case 'webhook_received': {
-      const type = data.stripe_event_type || 'unknown';
+      const type = data.stripe_event_type
+        ? esc( data.stripe_event_type )
+        : 'unknown';
       return `Webhook received: <strong>${ type }</strong>`;
     }
 
     case 'email_sent': {
-      const to = data.recipient || 'unknown';
+      const to = data.recipient ? esc( data.recipient ) : 'unknown';
       return `Email sent to <strong>${ to }</strong>`;
     }
 
     case 'email_failed': {
-      const to = data.recipient || 'unknown';
+      const to = data.recipient ? esc( data.recipient ) : 'unknown';
       return `Failed to send email to <strong>${ to }</strong>`;
     }
 
     case 'admin_notification_sent': {
-      const type = ( data.notification_type || '' ).replace( /_/g, ' ' );
+      const type = esc( ( data.notification_type || '' ).replace( /_/g, ' ' ) );
       const count = data.recipient_count || 0;
       return `Admin notification <strong>${ type }</strong> sent to ${ count } recipient${
         count !== 1 ? 's' : ''
@@ -181,20 +183,20 @@ export function buildLogMessage( entry ) {
     }
 
     case 'campaign_created': {
-      const title = data.title || 'Untitled';
+      const title = data.title ? esc( data.title ) : 'Untitled';
       return `New campaign <strong>${ title }</strong> created`;
     }
 
     case 'campaign_milestone_reached': {
-      const title = data.title || 'A campaign';
-      const pct = data.percentage || '';
+      const title = data.title ? esc( data.title ) : 'A campaign';
+      const pct = data.percentage ? esc( data.percentage ) : '';
       return pct
         ? `<strong>${ title }</strong> reached ${ pct }% of its goal`
         : `<strong>${ title }</strong> reached a milestone`;
     }
 
     case 'campaign_goal_reached': {
-      const title = data.title || 'A campaign';
+      const title = data.title ? esc( data.title ) : 'A campaign';
       return `<strong>${ title }</strong> reached its goal`;
     }
 
@@ -222,7 +224,7 @@ export function buildLogMessage( entry ) {
 
     case 'fundraiser_milestone': {
       const name = data.donor_name ? esc( data.donor_name ) : 'A fundraiser';
-      const pct = data.percentage || '';
+      const pct = data.percentage ? esc( data.percentage ) : '';
       return pct
         ? `<strong>${ name }</strong> reached ${ pct }% of their fundraising goal`
         : `<strong>${ name }</strong> reached a fundraising milestone`;
@@ -280,7 +282,7 @@ export function buildLogMessage( entry ) {
     }
 
     case 'plugin_updated': {
-      const version = data.new_version || '';
+      const version = data.new_version ? esc( data.new_version ) : '';
       return version
         ? `Mission plugin updated to <strong>${ version }</strong>`
         : 'Mission plugin updated';
@@ -298,7 +300,7 @@ export function buildLogMessage( entry ) {
     case 'settings_updated': {
       const keys = data.changed_keys || [];
       return keys.length
-        ? `Settings updated: <strong>${ keys.join( ', ' ) }</strong>`
+        ? `Settings updated: <strong>${ esc( keys.join( ', ' ) ) }</strong>`
         : 'Settings updated';
     }
 
@@ -320,7 +322,7 @@ export function buildLogMessage( entry ) {
         msg = `imported <strong>${ imported.toLocaleString() } ${ noun }</strong>`;
       }
 
-      const actor = data.actor_name;
+      const actor = data.actor_name ? esc( data.actor_name ) : '';
       return actor
         ? `${ actor } ${ msg }`
         : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
@@ -339,7 +341,7 @@ export function buildLogMessage( entry ) {
       }
 
       const msg = `migrated <strong>${ total.toLocaleString() }</strong> records from ${ source }`;
-      const actor = data.actor_name;
+      const actor = data.actor_name ? esc( data.actor_name ) : '';
       return actor
         ? `${ actor } ${ msg }`
         : msg.charAt( 0 ).toUpperCase() + msg.slice( 1 );
@@ -347,7 +349,7 @@ export function buildLogMessage( entry ) {
 
     case 'migration_rolled_back': {
       const source = migrationSourceName( data.source );
-      const actor = data.actor_name;
+      const actor = data.actor_name ? esc( data.actor_name ) : '';
       const msg = `removed the data migrated from ${ source }`;
       return actor
         ? `${ actor } ${ msg }`
@@ -356,7 +358,7 @@ export function buildLogMessage( entry ) {
 
     case 'migration_failed': {
       const source = migrationSourceName( data.source );
-      const reason = data.reason;
+      const reason = data.reason ? esc( data.reason ) : '';
       return reason
         ? `Migration from ${ source } failed: ${ reason }`
         : `Migration from ${ source } failed`;
@@ -365,8 +367,8 @@ export function buildLogMessage( entry ) {
     case 'outgoing_webhook_created':
     case 'outgoing_webhook_deleted': {
       const verb = event === 'outgoing_webhook_created' ? 'created' : 'deleted';
-      const actor = data.actor_name;
-      const name = data.name;
+      const actor = data.actor_name ? esc( data.actor_name ) : '';
+      const name = data.name ? esc( data.name ) : '';
 
       if ( ! name ) {
         return `Webhook ${ verb }`;
@@ -378,7 +380,7 @@ export function buildLogMessage( entry ) {
     }
 
     case 'outgoing_webhook_auto_paused': {
-      const name = data.name;
+      const name = data.name ? esc( data.name ) : '';
       return name
         ? `<strong>${ name }</strong> webhook paused automatically after repeated failures`
         : 'A webhook was paused automatically after repeated failures';
