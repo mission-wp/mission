@@ -11,6 +11,7 @@
  */
 
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\P2P\BlockSupport;
@@ -90,19 +91,16 @@ ob_start();
 			foreach ( $donors as $donor ) :
 				++$rank;
 
+				$first    = $donor['first_name'] ?? '';
+				$last     = $donor['last_name'] ?? '';
+				$initials = DashboardLabels::person_initials( $first, $last, (bool) $donor['is_anonymous'] );
+
 				if ( $donor['is_anonymous'] ) {
-					$name     = __( 'Anonymous', 'mission-donation-platform' );
-					$initials = '?';
+					$name = __( 'Anonymous', 'mission-donation-platform' );
 				} else {
-					$first = $donor['first_name'] ?? '';
-					$last  = $donor['last_name'] ?? '';
-					$name  = trim( $first . ' ' . mb_substr( $last, 0, 1 ) . '.' );
+					$name = trim( $first . ' ' . mb_substr( $last, 0, 1 ) . '.' );
 					if ( '.' === $name ) {
 						$name = __( 'Anonymous', 'mission-donation-platform' );
-					}
-					$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
-					if ( '' === trim( $initials ) ) {
-						$initials = '?';
 					}
 				}
 
@@ -119,14 +117,8 @@ ob_start();
 				<li class="mission-donor-item">
 					<div class="mission-donor-item-left">
 						<?php if ( $show_ribbons && $rank <= 3 ) : ?>
-							<span class="mission-td-medal" title="<?php echo esc_attr( $rank ); ?>">
-								<?php if ( 1 === $rank ) : ?>
-									<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="7" fill="#D4A843" stroke="#C4962F" stroke-width="1"/><circle cx="12" cy="9" r="5" fill="none" stroke="#E8C96A" stroke-width="0.75" opacity="0.6"/><text x="12" y="12.5" text-anchor="middle" font-size="8" font-weight="700" fill="#7A5C1F" font-family="-apple-system, sans-serif">1</text><path d="M7.5 15L6 22l6-3 6 3-1.5-7" fill="#D4A843" stroke="#C4962F" stroke-width="0.75" stroke-linejoin="round"/></svg>
-								<?php elseif ( 2 === $rank ) : ?>
-									<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="7" fill="#B0B4BC" stroke="#9CA0A8" stroke-width="1"/><circle cx="12" cy="9" r="5" fill="none" stroke="#D0D4DC" stroke-width="0.75" opacity="0.6"/><text x="12" y="12.5" text-anchor="middle" font-size="8" font-weight="700" fill="#5C5F66" font-family="-apple-system, sans-serif">2</text><path d="M7.5 15L6 22l6-3 6 3-1.5-7" fill="#B0B4BC" stroke="#9CA0A8" stroke-width="0.75" stroke-linejoin="round"/></svg>
-								<?php else : ?>
-									<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="7" fill="#C68E5B" stroke="#B07A48" stroke-width="1"/><circle cx="12" cy="9" r="5" fill="none" stroke="#DAA872" stroke-width="0.75" opacity="0.6"/><text x="12" y="12.5" text-anchor="middle" font-size="8" font-weight="700" fill="#6B4420" font-family="-apple-system, sans-serif">3</text><path d="M7.5 15L6 22l6-3 6 3-1.5-7" fill="#C68E5B" stroke="#B07A48" stroke-width="0.75" stroke-linejoin="round"/></svg>
-								<?php endif; ?>
+							<span class="mission-td-medal" title="<?php echo esc_attr( (string) $rank ); ?>">
+								<?php echo wp_kses( BlockSupport::medal_svg( $rank ), \MissionDP\Helpers\Kses::block_allowed_html() ); ?>
 							</span>
 						<?php else : ?>
 							<span class="mission-td-rank"><?php echo esc_html( $rank . '.' ); ?></span>

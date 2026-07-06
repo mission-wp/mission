@@ -11,6 +11,7 @@
  */
 
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\Models\Fundraiser;
 use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
@@ -61,17 +62,15 @@ defined( 'ABSPATH' ) || exit;
 			<ul class="mission-donor-list">
 				<?php
 				foreach ( $supporters as $supporter ) :
-					$first = $supporter['first_name'] ?? '';
-					$last  = $supporter['last_name'] ?? '';
+					$first    = $supporter['first_name'] ?? '';
+					$last     = $supporter['last_name'] ?? '';
+					$initials = DashboardLabels::person_initials( $first, $last, (bool) $supporter['is_anonymous'] );
 
 					if ( $supporter['is_anonymous'] ) {
-						$name     = __( 'Anonymous', 'mission-donation-platform' );
-						$initials = '?';
+						$name = __( 'Anonymous', 'mission-donation-platform' );
 					} else {
-						$name     = trim( $first . ' ' . mb_substr( $last, 0, 1 ) . '.' );
-						$name     = '.' === $name ? __( 'Anonymous', 'mission-donation-platform' ) : $name;
-						$initials = strtoupper( mb_substr( $first, 0, 1 ) . mb_substr( $last, 0, 1 ) );
-						$initials = '' === trim( $initials ) ? '?' : $initials;
+						$name = trim( $first . ' ' . mb_substr( $last, 0, 1 ) . '.' );
+						$name = '.' === $name ? __( 'Anonymous', 'mission-donation-platform' ) : $name;
 					}
 
 					$comment  = $supporter['comment'] ?? '';
