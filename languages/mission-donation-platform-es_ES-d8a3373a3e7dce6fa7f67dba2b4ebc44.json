@@ -358,6 +358,10 @@
 			"Organization": [
 				"Organización"
 			],
+			"%d donation": [
+				"%d donación",
+				"%d donaciones"
+			],
 			"Goal amount cannot be negative.": [
 				"El importe de la meta no puede ser negativo."
 			],
@@ -2578,12 +2582,6 @@
 			"System": [
 				"Sistema"
 			],
-			"1 entry": [
-				"1 entrada"
-			],
-			"%s entries": [
-				"%s entradas"
-			],
 			"Search logs…": [
 				"Buscar registros…"
 			],
@@ -3431,9 +3429,6 @@
 			"Direct to team": [
 				"Directo al equipo"
 			],
-			"Show all %d donations": [
-				"Mostrar las %d donaciones"
-			],
 			"of %1$s %2$s": [
 				"de %1$s de la %2$s"
 			],
@@ -3442,9 +3437,6 @@
 			],
 			"%d%% of goal": [
 				"%d%% de la meta"
-			],
-			"%d days left": [
-				"Quedan %d días"
 			],
 			"Page URL": [
 				"URL de la página"
@@ -3521,9 +3513,6 @@
 			"Avg. gift": [
 				"Donación media"
 			],
-			"%d donations": [
-				"%d donaciones"
-			],
 			"Story saved.": [
 				"Historia guardada."
 			],
@@ -3547,9 +3536,6 @@
 			],
 			"#%1$d of %2$d teams": [
 				"N.º %1$d de %2$d equipos"
-			],
-			"%d fundraisers": [
-				"%d recaudadores"
 			],
 			"Joined": [
 				"Se unió"
@@ -3667,6 +3653,37 @@
 			],
 			"Make Captain": [
 				"Hacer capitán"
+			],
+			"Show all %d donation": [
+				"Mostrar %d donación",
+				"Mostrar todas las %d donaciones"
+			],
+			"The summary stats could not be loaded.": [
+				"No se han podido cargar las estadísticas de resumen."
+			],
+			"%d day left": [
+				"Queda %d día",
+				"Quedan %d días"
+			],
+			"Fundraiser reactivated.": [
+				"Recaudador reactivado."
+			],
+			"Failed to reactivate fundraiser.": [
+				"No se pudo reactivar el recaudador."
+			],
+			"%d fundraiser": [
+				"%d recaudador",
+				"%d recaudadores"
+			],
+			"Team reactivated.": [
+				"Equipo reactivado."
+			],
+			"Failed to reactivate team.": [
+				"No se pudo reactivar el equipo."
+			],
+			"%s entry": [
+				"%s entrada",
+				"%s entradas"
 			]
 		}
 	}

@@ -283,6 +283,10 @@
 			"Organization": [
 				"Organisaatio"
 			],
+			"%d donation": [
+				"%d lahjoitus",
+				"%d lahjoitusta"
+			],
 			"Goal amount cannot be negative.": [
 				"Tavoitesumma ei voi olla negatiivinen."
 			],
@@ -2383,12 +2387,6 @@
 			"System": [
 				"Järjestelmä"
 			],
-			"1 entry": [
-				"1 merkintä"
-			],
-			"%s entries": [
-				"%s merkintää"
-			],
 			"Search logs…": [
 				"Hae lokeista…"
 			],
@@ -3431,9 +3429,6 @@
 			"Direct to team": [
 				"Suoraan tiimille"
 			],
-			"Show all %d donations": [
-				"Näytä kaikki %d lahjoitusta"
-			],
 			"of %1$s %2$s": [
 				"/ %1$s (%2$s)"
 			],
@@ -3442,9 +3437,6 @@
 			],
 			"%d%% of goal": [
 				"%d %% tavoitteesta"
-			],
-			"%d days left": [
-				"%d päivää jäljellä"
 			],
 			"Page URL": [
 				"Sivun URL"
@@ -3521,9 +3513,6 @@
 			"Avg. gift": [
 				"Keskim. lahjoitus"
 			],
-			"%d donations": [
-				"%d lahjoitusta"
-			],
 			"Story saved.": [
 				"Tarina tallennettu."
 			],
@@ -3547,9 +3536,6 @@
 			],
 			"#%1$d of %2$d teams": [
 				"Sija %1$d / %2$d tiimiä"
-			],
-			"%d fundraisers": [
-				"%d varainkerääjää"
 			],
 			"Joined": [
 				"Liittyi"
@@ -3667,6 +3653,37 @@
 			],
 			"Make Captain": [
 				"Tee kapteeniksi"
+			],
+			"Show all %d donation": [
+				"Näytä %d lahjoitus",
+				"Näytä kaikki %d lahjoitusta"
+			],
+			"The summary stats could not be loaded.": [
+				"Yhteenvetotilastoja ei voitu ladata."
+			],
+			"%d day left": [
+				"%d päivä jäljellä",
+				"%d päivää jäljellä"
+			],
+			"Fundraiser reactivated.": [
+				"Varainkerääjä aktivoitu uudelleen."
+			],
+			"Failed to reactivate fundraiser.": [
+				"Varainkerääjän uudelleenaktivointi epäonnistui."
+			],
+			"%d fundraiser": [
+				"%d varainkerääjä",
+				"%d varainkerääjää"
+			],
+			"Team reactivated.": [
+				"Tiimi aktivoitu uudelleen."
+			],
+			"Failed to reactivate team.": [
+				"Tiimin uudelleenaktivointi epäonnistui."
+			],
+			"%s entry": [
+				"%s merkintä",
+				"%s merkintää"
 			]
 		}
 	}
