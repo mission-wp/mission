@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-07T20:48:29+00:00\n"
+"POT-Creation-Date: 2026-07-07T22:14:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: mission-donation-platform\n"
@@ -1409,7 +1409,7 @@ msgstr ""
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:102
+#: src/P2P/SignupModal.php:103
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -5067,40 +5067,44 @@ msgstr ""
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: src/P2P/SignupModal.php:103
-msgid "Copied"
+#: src/P2P/SignupModal.php:102
+msgid "Please check the highlighted fields."
 msgstr ""
 
 #: src/P2P/SignupModal.php:104
-msgid "Copy failed"
+msgid "Copied"
 msgstr ""
 
 #: src/P2P/SignupModal.php:105
-msgid "Enter the 6-digit code."
+msgid "Copy failed"
 msgstr ""
 
 #: src/P2P/SignupModal.php:106
+msgid "Enter the 6-digit code."
+msgstr ""
+
+#: src/P2P/SignupModal.php:107
 msgid "Enter a new password."
 msgstr ""
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:160
+#: src/P2P/SignupModal.php:161
 msgid "Join %s"
 msgstr ""
 
-#: src/P2P/SignupModal.php:189
+#: src/P2P/SignupModal.php:190
 msgid "You're a fundraiser!"
 msgstr ""
 
-#: src/P2P/SignupModal.php:197
+#: src/P2P/SignupModal.php:198
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr ""
 
-#: src/P2P/SignupModal.php:205
+#: src/P2P/SignupModal.php:206
 msgid "You're almost there!"
 msgstr ""
 
-#: src/P2P/SignupModal.php:213
+#: src/P2P/SignupModal.php:214
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr ""
 

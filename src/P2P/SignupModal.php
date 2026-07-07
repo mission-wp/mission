@@ -99,6 +99,7 @@ class SignupModal {
 			// Translated strings for view.js (script modules can't import @wordpress/i18n).
 			'i18n'           => [
 				'genericError'     => __( 'Something went wrong. Please try again.', 'mission-donation-platform' ),
+				'checkFields'      => __( 'Please check the highlighted fields.', 'mission-donation-platform' ),
 				'copy'             => __( 'Copy', 'mission-donation-platform' ),
 				'copied'           => __( 'Copied', 'mission-donation-platform' ),
 				'copyFailed'       => __( 'Copy failed', 'mission-donation-platform' ),

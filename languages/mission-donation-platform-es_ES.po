@@ -1287,7 +1287,7 @@ msgstr "Comparte tu página"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:102
+#: src/P2P/SignupModal.php:103
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -2397,15 +2397,15 @@ msgid "Your name could be the first one on this list."
 msgstr "Tu nombre podría ser el primero de esta lista."
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:160
+#: src/P2P/SignupModal.php:161
 msgid "Join %s"
 msgstr "Únete a %s"
 
-#: src/P2P/SignupModal.php:189
+#: src/P2P/SignupModal.php:190
 msgid "You're a fundraiser!"
 msgstr "¡Ya eres recaudador!"
 
-#: src/P2P/SignupModal.php:197
+#: src/P2P/SignupModal.php:198
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr "Tu página está activa. Compártela con amigos y familiares para empezar a recaudar fondos."
 
@@ -12380,11 +12380,11 @@ msgctxt "block description"
 msgid "Display a ranked list of top teams for a peer-to-peer campaign."
 msgstr "Muestra una lista clasificada de los principales equipos de una campaña entre pares."
 
-#: src/P2P/SignupModal.php:205
+#: src/P2P/SignupModal.php:206
 msgid "You're almost there!"
 msgstr "¡Ya casi está!"
 
-#: src/P2P/SignupModal.php:213
+#: src/P2P/SignupModal.php:214
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Tu página de recaudación se ha enviado para su revisión. Te enviaremos un correo en cuanto esté aprobada y lista para compartir."
 
@@ -12420,15 +12420,15 @@ msgstr "Privado — solo con invitación"
 msgid "Private teams are hidden from the sign-up form; people join through your email invitations."
 msgstr "Los equipos privados no aparecen en el formulario de inscripción; las personas se unen mediante tus invitaciones por correo."
 
-#: src/P2P/SignupModal.php:103
+#: src/P2P/SignupModal.php:104
 msgid "Copied"
 msgstr "Copiado"
 
-#: src/P2P/SignupModal.php:105
+#: src/P2P/SignupModal.php:106
 msgid "Enter the 6-digit code."
 msgstr "Introduce el código de 6 dígitos."
 
-#: src/P2P/SignupModal.php:106
+#: src/P2P/SignupModal.php:107
 msgid "Enter a new password."
 msgstr "Introduce una nueva contraseña."
 
@@ -13547,7 +13547,7 @@ msgstr "Sin equipo"
 msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
 msgstr "Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el puesto de capitán quedará vacante."
 
-#: src/P2P/SignupModal.php:104
+#: src/P2P/SignupModal.php:105
 msgid "Copy failed"
 msgstr "Error al copiar"
 
@@ -13576,3 +13576,7 @@ msgstr "No se han podido cargar los miembros. Inténtalo de nuevo."
 #: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:476
 msgid "You are not a member of this team."
 msgstr "No eres miembro de este equipo."
+
+#: src/P2P/SignupModal.php:102
+msgid "Please check the highlighted fields."
+msgstr "Revisa los campos resaltados."

@@ -257,3 +257,90 @@ describe( 'copyLink', () => {
     expect( storeDef.state.copyLabel ).toBe( 'Copy' );
   } );
 } );
+
+describe( 'continueAccount validation', () => {
+  beforeEach( () => {
+    Object.assign( storeDef.state, {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      firstNameError: false,
+      lastNameError: false,
+      emailError: false,
+      passwordError: false,
+      formError: '',
+      loading: false,
+    } );
+  } );
+
+  /**
+   * Run the generator action far enough to hit the validation gate.
+   */
+  function runValidation() {
+    storeDef.actions.continueAccount().next();
+  }
+
+  it( 'flags every empty field and shows a message without fetching', () => {
+    global.fetch = jest.fn();
+
+    runValidation();
+
+    expect( storeDef.state.firstNameError ).toBe( true );
+    expect( storeDef.state.lastNameError ).toBe( true );
+    expect( storeDef.state.emailError ).toBe( true );
+    expect( storeDef.state.passwordError ).toBe( true );
+    expect( storeDef.state.formError ).toBe(
+      'Please check the highlighted fields.'
+    );
+    expect( global.fetch ).not.toHaveBeenCalled();
+  } );
+
+  it( 'flags a malformed email', () => {
+    Object.assign( storeDef.state, {
+      firstName: 'Jane',
+      lastName: 'Doe',
+      email: 'not-an-email',
+      password: 'secret123',
+    } );
+
+    runValidation();
+
+    expect( storeDef.state.emailError ).toBe( true );
+    expect( storeDef.state.firstNameError ).toBe( false );
+    expect( storeDef.state.formError ).toBe(
+      'Please check the highlighted fields.'
+    );
+  } );
+
+  it( 'passes validation and starts the lookup when the form is complete', () => {
+    global.fetch = jest.fn( () => new Promise( () => {} ) );
+    Object.assign( storeDef.state, {
+      firstName: 'Jane',
+      lastName: 'Doe',
+      email: 'jane@example.com',
+      password: 'secret123',
+    } );
+
+    runValidation();
+
+    expect( storeDef.state.firstNameError ).toBe( false );
+    expect( storeDef.state.lastNameError ).toBe( false );
+    expect( storeDef.state.emailError ).toBe( false );
+    expect( storeDef.state.passwordError ).toBe( false );
+    expect( storeDef.state.formError ).toBe( '' );
+    expect( storeDef.state.loading ).toBe( true );
+    expect( global.fetch ).toHaveBeenCalled();
+  } );
+
+  it( 'clears a field error as the user types', () => {
+    storeDef.state.firstNameError = true;
+    storeDef.state.emailError = true;
+
+    storeDef.actions.updateFirstName( { target: { value: 'J' } } );
+    storeDef.actions.updateEmail( { target: { value: 'j' } } );
+
+    expect( storeDef.state.firstNameError ).toBe( false );
+    expect( storeDef.state.emailError ).toBe( false );
+  } );
+} );

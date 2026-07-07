@@ -359,15 +359,19 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
     // Field updaters.
     updateFirstName( event ) {
       state.firstName = event.target.value;
+      state.firstNameError = false;
     },
     updateLastName( event ) {
       state.lastName = event.target.value;
+      state.lastNameError = false;
     },
     updateEmail( event ) {
       state.email = event.target.value;
+      state.emailError = false;
     },
     updatePassword( event ) {
       state.password = event.target.value;
+      state.passwordError = false;
     },
     updateNewPassword( event ) {
       state.newPassword = event.target.value;
@@ -420,7 +424,9 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
     *continueAccount() {
       state.firstNameError = ! state.firstName.trim();
       state.lastNameError = ! state.lastName.trim();
-      state.emailError = ! state.email.trim();
+      state.emailError = ! /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        state.email.trim()
+      );
       state.passwordError = ! state.password;
       state.showPasswordWarning = false;
       state.formError = '';
@@ -431,6 +437,15 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
         state.emailError ||
         state.passwordError
       ) {
+        state.formError = i18n(
+          'checkFields',
+          'Please check the highlighted fields.'
+        );
+        const root = getElement().ref?.closest( '.mission-su' );
+        // The error classes land on the next render; focus after it.
+        window.requestAnimationFrame( () => {
+          root?.querySelector( '[aria-invalid="true"]' )?.focus();
+        } );
         return;
       }
 

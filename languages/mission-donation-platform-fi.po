@@ -9038,7 +9038,7 @@ msgstr "Allekirjoitussalaisuus"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:102
+#: src/P2P/SignupModal.php:103
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -11056,35 +11056,35 @@ msgid "%1$s is fundraising for %2$s"
 msgstr "%1$s kerää varoja kampanjalle %2$s"
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:160
+#: src/P2P/SignupModal.php:161
 msgid "Join %s"
 msgstr "Liity tiimiin %s"
 
-#: src/P2P/SignupModal.php:103
+#: src/P2P/SignupModal.php:104
 msgid "Copied"
 msgstr "Kopioitu"
 
-#: src/P2P/SignupModal.php:105
+#: src/P2P/SignupModal.php:106
 msgid "Enter the 6-digit code."
 msgstr "Syötä 6-numeroinen koodi."
 
-#: src/P2P/SignupModal.php:106
+#: src/P2P/SignupModal.php:107
 msgid "Enter a new password."
 msgstr "Syötä uusi salasana."
 
-#: src/P2P/SignupModal.php:189
+#: src/P2P/SignupModal.php:190
 msgid "You're a fundraiser!"
 msgstr "Olet nyt varainkerääjä!"
 
-#: src/P2P/SignupModal.php:197
+#: src/P2P/SignupModal.php:198
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr "Sivusi on julkaistu. Jaa se ystäville ja perheelle aloittaaksesi varojen keräämisen."
 
-#: src/P2P/SignupModal.php:205
+#: src/P2P/SignupModal.php:206
 msgid "You're almost there!"
 msgstr "Olet melkein valmis!"
 
-#: src/P2P/SignupModal.php:213
+#: src/P2P/SignupModal.php:214
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Varainkeruusivusi on lähetetty tarkistettavaksi. Saat sähköpostia heti, kun se on hyväksytty ja valmis jaettavaksi."
 
@@ -13547,7 +13547,7 @@ msgstr "Ei tiimiä"
 msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
 msgstr "Tämä varainkerääjä on tiiminsä kapteeni. Tiimin vaihtaminen jättää kapteenin paikan avoimeksi."
 
-#: src/P2P/SignupModal.php:104
+#: src/P2P/SignupModal.php:105
 msgid "Copy failed"
 msgstr "Kopiointi epäonnistui"
 
@@ -13576,3 +13576,7 @@ msgstr "Jäsenten lataaminen epäonnistui. Yritä uudelleen."
 #: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:476
 msgid "You are not a member of this team."
 msgstr "Et ole tämän tiimin jäsen."
+
+#: src/P2P/SignupModal.php:102
+msgid "Please check the highlighted fields."
+msgstr "Tarkista korostetut kentät."
