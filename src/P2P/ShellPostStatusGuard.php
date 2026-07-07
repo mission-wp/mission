@@ -32,7 +32,6 @@ class ShellPostStatusGuard {
 	public function init(): void {
 		add_filter( 'wp_insert_post_data', [ $this, 'enforce_mapped_status' ], 10, 2 );
 		add_action( 'transition_post_status', [ $this, 'reassert_after_direct_write' ], 10, 3 );
-		add_action( 'trashed_post', [ $this, 'deactivate_row_on_trash' ] );
 		add_action( 'after_delete_post', [ $this, 'deactivate_row_on_delete' ], 10, 2 );
 	}
 
@@ -88,8 +87,12 @@ class ShellPostStatusGuard {
 	 *
 	 * wp_publish_post() and similar writers update the posts table directly,
 	 * bypassing the wp_insert_post_data filter, but they still fire
-	 * transition_post_status. Trash transitions are handled by the trash
-	 * listener instead.
+	 * transition_post_status. Every trash path fires it too (wp_trash_post()
+	 * routes through wp_update_post()), so a trash transition is allowed
+	 * through here and deactivates the row: a trashed page 404s, so it must
+	 * stop counting toward leaderboards and stop accepting donation
+	 * attribution. Untrashing restores the post at the mapped
+	 * (inactive = draft) status; an admin can then reactivate.
 	 *
 	 * @param string  $new_status New post status.
 	 * @param string  $old_status Old post status.
@@ -105,7 +108,14 @@ class ShellPostStatusGuard {
 			return;
 		}
 
-		if ( 'trash' === $new_status || 'new' === $old_status ) {
+		if ( 'new' === $old_status ) {
+			return;
+		}
+
+		if ( 'trash' === $new_status ) {
+			// Safe mid-transition: deactivate() is idempotent and its shell
+			// sync refuses to write to a trashed post.
+			$this->find_model( $post->post_type, (int) $post->ID )?->deactivate();
 			return;
 		}
 
@@ -130,24 +140,6 @@ class ShellPostStatusGuard {
 				'post_status' => $mapped,
 			]
 		);
-	}
-
-	/**
-	 * Deactivate the table row when its shell post is trashed externally.
-	 *
-	 * A trashed page 404s, so the row must stop counting toward leaderboards
-	 * and stop accepting donation attribution. Untrashing restores the post at
-	 * the mapped (inactive = draft) status; an admin can then reactivate.
-	 *
-	 * @param int $post_id The trashed post ID.
-	 * @return void
-	 */
-	public function deactivate_row_on_trash( int $post_id ): void {
-		if ( Fundraiser::is_syncing_shell_post() || Team::is_syncing_shell_post() ) {
-			return;
-		}
-
-		$this->find_model( (string) get_post_type( $post_id ), $post_id )?->deactivate();
 	}
 
 	/**

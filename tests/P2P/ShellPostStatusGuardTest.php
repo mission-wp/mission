@@ -179,6 +179,47 @@ class ShellPostStatusGuardTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a direct status write to trash (bypassing wp_trash_post) deactivates the row.
+	 */
+	public function test_direct_trash_write_deactivates_fundraiser_row(): void {
+		$fundraiser = new Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1, 'status' => 'active' ] );
+		$fundraiser->save();
+
+		// WP-CLI's `wp post update --post_status=trash` and cleanup plugins
+		// write the status directly instead of calling wp_trash_post().
+		wp_update_post(
+			[
+				'ID'          => $fundraiser->post_id,
+				'post_status' => 'trash',
+			]
+		);
+
+		$this->assertSame( 'inactive', Fundraiser::find( $fundraiser->id )->status );
+		$this->assertSame( 'trash', get_post_status( $fundraiser->post_id ) );
+	}
+
+	/**
+	 * Test untrashing after a direct trash write restores the mapped (draft) status.
+	 */
+	public function test_untrash_after_direct_trash_write_restores_draft(): void {
+		$fundraiser = new Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1, 'status' => 'active' ] );
+		$fundraiser->save();
+
+		wp_update_post(
+			[
+				'ID'          => $fundraiser->post_id,
+				'post_status' => 'trash',
+			]
+		);
+		wp_untrash_post( $fundraiser->post_id );
+
+		// The trash deactivated the row, so the restored post maps to draft
+		// instead of flipping back to publish.
+		$this->assertSame( 'inactive', Fundraiser::find( $fundraiser->id )->status );
+		$this->assertSame( 'draft', get_post_status( $fundraiser->post_id ) );
+	}
+
+	/**
 	 * Test an external force-delete deactivates the fundraiser row.
 	 */
 	public function test_external_delete_deactivates_fundraiser_row(): void {
