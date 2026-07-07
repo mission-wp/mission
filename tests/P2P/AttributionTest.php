@@ -461,6 +461,56 @@ class AttributionTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test top_teams() orders by raised, rolling up member donations and
+	 * refund-netted direct gifts, with zero-raised teams still listed.
+	 */
+	public function test_top_teams_orders_by_raised(): void {
+		$alpha = new Team( [ 'campaign_id' => 1, 'name' => 'Alpha', 'status' => 'active' ] );
+		$alpha->save();
+		$beta = new Team( [ 'campaign_id' => 1, 'name' => 'Beta', 'status' => 'active' ] );
+		$beta->save();
+		$empty = new Team( [ 'campaign_id' => 1, 'name' => 'Empty', 'status' => 'active' ] );
+		$empty->save();
+
+		$member_a = $this->make_fundraiser( 1, 1, [ 'team_id' => $alpha->id ] );
+		$member_b = $this->make_fundraiser( 1, 2, [ 'team_id' => $beta->id ] );
+
+		$this->make_completed( [ 'fundraiser_id' => $member_a->id, 'amount' => 3000 ] );
+		$this->make_completed( [ 'fundraiser_id' => $member_b->id, 'donor_id' => 2, 'amount' => 2000 ] );
+
+		// A partially refunded direct gift nets to 4000 and pushes Beta ahead.
+		$gift                  = $this->make_completed( [ 'team_id' => $beta->id, 'donor_id' => 3, 'amount' => 5000 ] );
+		$gift->amount_refunded = 1000;
+		$gift->save();
+
+		$top = ( new ReportingService() )->top_teams( 1 );
+
+		$this->assertSame( [ $beta->id, $alpha->id, $empty->id ], array_column( $top, 'id' ) );
+		$this->assertSame( [ 6000, 3000, 0 ], array_column( $top, 'raised' ) );
+		$this->assertSame( [ 1, 1, 0 ], array_column( $top, 'member_count' ) );
+	}
+
+	/**
+	 * Test top_teams() lists only public active teams in the given campaign.
+	 */
+	public function test_top_teams_excludes_private_inactive_and_other_campaigns(): void {
+		$public = new Team( [ 'campaign_id' => 1, 'name' => 'Public', 'status' => 'active' ] );
+		$public->save();
+		$private = new Team( [ 'campaign_id' => 1, 'name' => 'Private', 'status' => 'active', 'access' => Team::ACCESS_PRIVATE ] );
+		$private->save();
+		$pending = new Team( [ 'campaign_id' => 1, 'name' => 'Pending', 'status' => 'pending' ] );
+		$pending->save();
+		$elsewhere = new Team( [ 'campaign_id' => 2, 'name' => 'Elsewhere', 'status' => 'active' ] );
+		$elsewhere->save();
+
+		$this->make_completed( [ 'team_id' => $elsewhere->id, 'donor_id' => 2, 'amount' => 99000 ] );
+
+		$top = ( new ReportingService() )->top_teams( 1 );
+
+		$this->assertSame( [ $public->id ], array_column( $top, 'id' ) );
+	}
+
+	/**
 	 * Test team_members lists members by raised with the captain flag.
 	 */
 	public function test_team_members_lists_by_raised(): void {

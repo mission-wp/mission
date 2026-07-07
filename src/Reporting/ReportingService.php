@@ -2018,24 +2018,23 @@ class ReportingService {
 		global $wpdb;
 
 		$t_table = $wpdb->prefix . 'missiondp_teams';
-		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
 
-		[ $raised_sql, $raised_args ] = self::team_raised_sql( 't.id', $this->is_test_mode() );
+		[ $joins_sql, $joins_args ] = self::team_raised_joins_sql( $campaign_id, $this->is_test_mode() );
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT t.id, t.post_id, t.name, t.goal,
-						{$raised_sql} AS raised,
-						( SELECT COUNT(*) FROM %i AS m2 WHERE m2.team_id = t.id ) AS member_count
+						COALESCE(f.raised, 0) + COALESCE(x.raised, 0) AS raised,
+						COALESCE(f.member_count, 0) AS member_count
 				 FROM %i AS t
+				 {$joins_sql}
 				 WHERE t.campaign_id = %d AND t.status = %s AND t.access = %s
 				 ORDER BY raised DESC, t.id ASC
 				 LIMIT %d",
 				array_merge(
-					$raised_args,
+					[ $t_table ],
+					$joins_args,
 					[
-						$f_table,
-						$t_table,
 						$campaign_id,
 						\MissionDP\Models\Team::STATUS_ACTIVE,
 						\MissionDP\Models\Team::ACCESS_PUBLIC,
@@ -2096,6 +2095,44 @@ class ReportingService {
 				FROM %i AS tg WHERE tg.team_id {$match} AND tg.status = 'completed' AND tg.is_test = %d )";
 
 		return [ $sql, $args ];
+	}
+
+	/**
+	 * LEFT JOIN clauses (and their prepare() args) for per-team raised sums.
+	 *
+	 * The grouped derived-table form of the team_raised_sql() roll-up rule:
+	 * two grouped scans over a campaign's teams regardless of team count,
+	 * instead of correlated subqueries per team. Joins `f` (member
+	 * fundraisers: raised plus member_count) and `x` (direct team gifts,
+	 * refund-netted) onto an outer teams table aliased `t`.
+	 *
+	 * @param int  $campaign_id Campaign whose teams to aggregate.
+	 * @param bool $is_test     Whether to sum test-mode amounts.
+	 * @return array{0: string, 1: array} Fragment with %i/%d placeholders and
+	 *                                    the args to merge into prepare().
+	 */
+	private static function team_raised_joins_sql( int $campaign_id, bool $is_test ): array {
+		global $wpdb;
+
+		$t_table  = $wpdb->prefix . 'missiondp_teams';
+		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+
+		$raised_col = $is_test ? 'test_total_raised' : 'total_raised';
+		$net        = self::TX_NET_AMOUNT_SQL;
+
+		$sql = "LEFT JOIN ( SELECT team_id, SUM(%i) AS raised, COUNT(*) AS member_count
+				FROM %i WHERE team_id IN ( SELECT id FROM %i WHERE campaign_id = %d )
+				GROUP BY team_id ) AS f ON f.team_id = t.id
+			 LEFT JOIN ( SELECT team_id, SUM({$net}) AS raised
+				FROM %i WHERE team_id IN ( SELECT id FROM %i WHERE campaign_id = %d )
+					AND status = 'completed' AND is_test = %d
+				GROUP BY team_id ) AS x ON x.team_id = t.id";
+
+		return [
+			$sql,
+			[ $raised_col, $f_table, $t_table, $campaign_id, $tx_table, $t_table, $campaign_id, $is_test ? 1 : 0 ],
+		];
 	}
 
 	/**
