@@ -8,6 +8,7 @@
 namespace MissionDP\DonorDashboard;
 
 use MissionDP\Currency\Currency;
+use MissionDP\Helpers\Sharing;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
@@ -266,9 +267,9 @@ class FundraisersContextBuilder {
 			'roleLabel'          => $fundraiser->team_id
 				? ( $fundraiser->is_captain() ? __( 'Captain', 'mission-donation-platform' ) : __( 'Member', 'mission-donation-platform' ) )
 				: '',
-			'shareFacebook'      => $url ? 'https://www.facebook.com/sharer/sharer.php?u=' . rawurlencode( $url ) : '',
-			'shareX'             => $url ? 'https://twitter.com/intent/tweet?text=' . rawurlencode( $share_text ) . '&url=' . rawurlencode( $url ) : '',
-			'shareBluesky'       => $url ? 'https://bsky.app/intent/compose?text=' . rawurlencode( $share_text . ' ' . $url ) : '',
+			'shareFacebook'      => $url ? Sharing::intent_url( 'facebook', $url ) : '',
+			'shareX'             => $url ? Sharing::intent_url( 'x', $url, $share_text ) : '',
+			'shareBluesky'       => $url ? Sharing::intent_url( 'bluesky', $url, $share_text ) : '',
 			'supporters'         => $supporters,
 			'supportersTotal'    => $donation_count,
 		];
