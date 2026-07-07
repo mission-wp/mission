@@ -253,6 +253,27 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * `fields=options` returns a slim id/name listing for dropdowns, honoring
+	 * the campaign filter and skipping the aggregate columns.
+	 */
+	public function test_list_fields_options_returns_slim_items(): void {
+		$campaign = $this->create_p2p_campaign( [ 'title' => 'Marathon' ] );
+		$other    = $this->create_p2p_campaign( [ 'title' => 'Walkathon' ] );
+		$team     = $this->create_team( $campaign->id, [ 'name' => 'Rangers' ] );
+		$this->create_team( $other->id, [ 'name' => 'Strollers' ] );
+
+		$request = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/teams' );
+		$request->set_query_params( [ 'fields' => 'options', 'campaign_id' => $campaign->id ] );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 1, $data );
+		$this->assertSame( [ 'id' => (int) $team->id, 'name' => 'Rangers' ], $data[0] );
+		$this->assertSame( '1', $response->get_headers()['X-WP-Total'] );
+	}
+
+	/**
 	 * Test list includes the captain's name.
 	 */
 	public function test_list_includes_captain_name(): void {

@@ -62,7 +62,7 @@ export default function EditFundraiserDrawer( {
       return;
     }
     apiFetch( {
-      path: `/mission-donation-platform/v1/teams?campaign_id=${ fundraiser.campaign_id }&per_page=100&orderby=name&order=ASC`,
+      path: `/mission-donation-platform/v1/teams?campaign_id=${ fundraiser.campaign_id }&per_page=100&orderby=name&order=ASC&fields=options`,
     } )
       .then( ( items ) => setTeams( items || [] ) )
       .catch( () => {} );

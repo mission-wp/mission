@@ -440,7 +440,7 @@ class TeamEndpoint {
 			'access'             => $team->access,
 			'raised'             => $raised,
 			'raised_display'     => $raised_display,
-			'progress'           => $team->progress( $is_test ),
+			'progress'           => BlockSupport::progress_percent( $raised, (int) $team->goal, 2 ),
 			'progress_label'     => DashboardLabels::progress_label( $raised_display, $goal_display ),
 			'bar_width'          => $percent . '%',
 			'percent_label'      => $team->goal > 0 ? $percent . '%' : '',

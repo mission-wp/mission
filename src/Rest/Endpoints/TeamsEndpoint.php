@@ -97,6 +97,65 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 	}
 
 	/**
+	 * Allow the slim id/name fast path on the collection route.
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	protected function extra_collection_params(): array {
+		return [ 'fields' => Args::enum( [ 'options' ] ) ];
+	}
+
+	/**
+	 * GET handler — `fields=options` serves dropdowns a slim id/name listing
+	 * from Team::query(), skipping the per-row aggregate subqueries.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response
+	 */
+	public function get_items( WP_REST_Request $request ): WP_REST_Response {
+		if ( 'options' !== $request->get_param( 'fields' ) ) {
+			return parent::get_items( $request );
+		}
+
+		$filters = [
+			'search'      => $request->get_param( 'search' ),
+			'campaign_id' => $request->get_param( 'campaign_id' ),
+			'status'      => $request->get_param( 'status' ),
+		];
+
+		$per_page = (int) ( $request->get_param( 'per_page' ) ?? 25 );
+
+		$teams = Team::query(
+			array_merge(
+				$filters,
+				[
+					'per_page' => $per_page,
+					'page'     => $request->get_param( 'page' ) ?? 1,
+					'orderby'  => $request->get_param( 'orderby' ) ?? 'date_created',
+					'order'    => $request->get_param( 'order' ) ?? 'DESC',
+				]
+			)
+		);
+
+		$items = array_map(
+			static fn( Team $team ): array => [
+				'id'   => (int) $team->id,
+				'name' => $team->name,
+			],
+			$teams
+		);
+
+		$total       = Team::count( $filters );
+		$total_pages = $per_page > 0 ? (int) ceil( $total / $per_page ) : 0;
+
+		$response = new WP_REST_Response( $items, 200 );
+		$response->header( 'X-WP-Total', (string) $total );
+		$response->header( 'X-WP-TotalPages', (string) $total_pages );
+
+		return $response;
+	}
+
+	/**
 	 * POST handler — creates a team for a P2P campaign.
 	 *
 	 * @param WP_REST_Request $request Request object.

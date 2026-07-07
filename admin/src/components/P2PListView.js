@@ -139,7 +139,9 @@ export default function P2PListView( {
     if ( ! withTeamFilter ) {
       return;
     }
-    apiFetch( { path: '/mission-donation-platform/v1/teams?per_page=100' } )
+    apiFetch( {
+      path: '/mission-donation-platform/v1/teams?per_page=100&fields=options',
+    } )
       .then( ( items ) =>
         setTeamElements(
           ( items || [] ).map( ( t ) => ( {
