@@ -381,6 +381,28 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test PUT with only a name stores a dedication when none exists yet.
+	 */
+	public function test_update_name_only_dedication_defaults_type(): void {
+		$campaign   = $this->create_p2p_campaign();
+		$donor      = $this->create_donor( 'jane@example.com' );
+		$fundraiser = $this->create_fundraiser( $campaign->id, $donor->id );
+
+		$request = new WP_REST_Request( 'PUT', '/mission-donation-platform/v1/fundraisers/' . $fundraiser->id );
+		$request->set_body_params( [ 'dedication_name' => 'Jane Smith' ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			[
+				'type' => 'honor',
+				'name' => 'Jane Smith',
+			],
+			Fundraiser::find( $fundraiser->id )->dedication()
+		);
+	}
+
+	/**
 	 * Test POST creates a fundraiser.
 	 */
 	public function test_create_fundraiser(): void {

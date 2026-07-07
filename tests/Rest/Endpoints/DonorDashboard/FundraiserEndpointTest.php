@@ -440,6 +440,27 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * PUT with only a name stores a dedication when none exists yet.
+	 */
+	public function test_put_name_only_dedication_defaults_type(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$response = $this->put(
+			"/mission-donation-platform/v1/donor-dashboard/fundraisers/{$fundraiser->id}",
+			[ 'tribute_name' => 'Grandma' ]
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			[
+				'type' => 'honor',
+				'name' => 'Grandma',
+			],
+			Fundraiser::find( $fundraiser->id )->dedication()
+		);
+	}
+
+	/**
 	 * Writes to a fundraiser on an ended campaign are rejected.
 	 */
 	public function test_put_rejected_when_campaign_ended(): void {

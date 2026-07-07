@@ -410,18 +410,24 @@ class Fundraiser extends Model {
 	}
 
 	/**
-	 * Set or clear the page dedication.
+	 * Set, update, or clear the page dedication.
 	 *
-	 * Mirrors the registration normalization: any type other than 'memory'
-	 * stores 'honor'. An empty type or name clears the dedication.
+	 * Null means "not provided": the stored value is kept, so callers can
+	 * pass partial input without merging first. A name with no stored type
+	 * defaults to 'honor', and any type other than 'memory' normalizes to
+	 * 'honor', mirroring registration. An explicit empty type or name
+	 * clears the dedication.
 	 *
-	 * @param string|null $type Dedication type ('honor' or 'memory'), or null/'' to clear.
-	 * @param string      $name The honoree's name.
+	 * @param string|null $type Dedication type ('honor' or 'memory'), '' to clear, null to keep the stored type.
+	 * @param string|null $name The honoree's name, '' to clear, null to keep the stored name.
 	 */
-	public function set_dedication( ?string $type, string $name ): void {
-		$name = trim( $name );
+	public function set_dedication( ?string $type, ?string $name ): void {
+		$existing = $this->dedication();
 
-		if ( null === $type || '' === $type || '' === $name ) {
+		$type ??= $existing['type'] ?? 'honor';
+		$name   = trim( $name ?? $existing['name'] ?? '' );
+
+		if ( '' === $type || '' === $name ) {
 			$this->delete_meta( 'tribute_type' );
 			$this->delete_meta( 'tribute_name' );
 			return;

@@ -140,12 +140,7 @@ class FundraiserEndpoint {
 		$tribute_name = $request->get_param( 'tribute_name' );
 
 		if ( null !== $tribute_type || null !== $tribute_name ) {
-			$existing = $fundraiser->dedication();
-
-			$fundraiser->set_dedication(
-				null !== $tribute_type ? (string) $tribute_type : ( $existing['type'] ?? '' ),
-				null !== $tribute_name ? (string) $tribute_name : ( $existing['name'] ?? '' )
-			);
+			$fundraiser->set_dedication( $tribute_type, $tribute_name );
 		}
 
 		$fundraiser->save();

@@ -937,6 +937,55 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test set_dedication() treats null as "keep the stored value".
+	 */
+	public function test_set_dedication_null_keeps_stored_values(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		// A name-only update with no stored dedication defaults the type to honor.
+		$fundraiser->set_dedication( null, 'Grandma' );
+		$this->assertSame(
+			[
+				'type' => 'honor',
+				'name' => 'Grandma',
+			],
+			$fundraiser->dedication()
+		);
+
+		// A type-only update keeps the stored name.
+		$fundraiser->set_dedication( 'memory', null );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'Grandma',
+			],
+			$fundraiser->dedication()
+		);
+
+		// A name-only update keeps the stored type.
+		$fundraiser->set_dedication( null, 'Grandpa' );
+		$this->assertSame(
+			[
+				'type' => 'memory',
+				'name' => 'Grandpa',
+			],
+			$fundraiser->dedication()
+		);
+	}
+
+	/**
+	 * Test set_dedication() with a type but no stored or provided name stores nothing.
+	 */
+	public function test_set_dedication_type_only_without_name_stores_nothing(): void {
+		$fundraiser = $this->create_fundraiser();
+
+		$fundraiser->set_dedication( 'memory', null );
+
+		$this->assertNull( $fundraiser->dedication() );
+		$this->assertSame( '', $fundraiser->get_meta( 'tribute_type' ) );
+	}
+
+	/**
 	 * Test is_locked() follows the campaign's ended status.
 	 */
 	public function test_is_locked_follows_campaign_status(): void {

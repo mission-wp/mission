@@ -289,8 +289,8 @@ class FundraiserRegistrationService {
 		}
 
 		if ( ! empty( $input['dedicate'] ) && ! empty( $input['honoree_name'] ) ) {
-			$fundraiser->update_meta( 'tribute_type', 'memory' === ( $input['tribute_type'] ?? '' ) ? 'memory' : 'honor' );
-			$fundraiser->update_meta( 'tribute_name', $input['honoree_name'] );
+			// An empty type would clear; null lets the model default it to 'honor'.
+			$fundraiser->set_dedication( ( $input['tribute_type'] ?? '' ) ?: null, (string) $input['honoree_name'] );
 		}
 
 		$team = $this->resolve_team( $campaign, $fundraiser, $input, $settings );
