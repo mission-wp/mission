@@ -2222,32 +2222,26 @@ class ReportingService {
 			];
 		}
 
-		$t_table  = $wpdb->prefix . 'missiondp_teams';
-		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
-		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+		$raised  = $this->team_totals( $team_id )['raised'];
 
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
-		$is_test    = $this->is_test_mode() ? 1 : 0;
-		$raised     = $this->team_totals( $team_id )['raised'];
+		[ $joins_sql, $joins_args ] = self::team_raised_joins_sql( $team->campaign_id, $this->is_test_mode() );
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				'SELECT COUNT(*) AS total,
+				"SELECT COUNT(*) AS total,
 					COALESCE(SUM(CASE WHEN COALESCE(f.raised, 0) + COALESCE(x.raised, 0) > %d THEN 1 ELSE 0 END), 0) AS higher
 				 FROM %i AS t
-				 LEFT JOIN ( SELECT team_id, SUM(%i) AS raised
-					FROM %i WHERE team_id IS NOT NULL GROUP BY team_id ) AS f ON f.team_id = t.id
-				 LEFT JOIN ( SELECT team_id, SUM(' . self::TX_NET_AMOUNT_SQL . ") AS raised
-					FROM %i WHERE team_id IS NOT NULL AND status = 'completed' AND is_test = %d GROUP BY team_id ) AS x ON x.team_id = t.id
+				 {$joins_sql}
 				 WHERE t.campaign_id = %d AND t.status = %s",
-				$raised,
-				$t_table,
-				$raised_col,
-				$f_table,
-				$tx_table,
-				$is_test,
-				$team->campaign_id,
-				\MissionDP\Models\Team::STATUS_ACTIVE
+				array_merge(
+					[ $raised, $t_table ],
+					$joins_args,
+					[
+						$team->campaign_id,
+						\MissionDP\Models\Team::STATUS_ACTIVE,
+					]
+				)
 			),
 			ARRAY_A
 		);
