@@ -16,6 +16,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
+use MissionDP\P2P\SignupModal;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -98,6 +99,9 @@ $color_style   = PrimaryColorResolver::inline_style( $primary_color );
 $context = [
 	'donateAction' => $donate_action,
 ];
+if ( $show_become ) {
+	$context['signup'] = SignupModal::payload( $campaign );
+}
 
 // Build the output. The legacy mission-campaign-progress/mission-cp-* classes
 // carry no plugin styles; they're kept so user CSS overrides written against
@@ -188,4 +192,8 @@ $output = ob_get_clean();
  * @param array    $attributes Block attributes.
  */
 echo wp_kses( apply_filters( 'mission_campaign_progress_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+
+if ( $show_become ) {
+	echo SignupModal::render( $campaign ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered and kses'd in render().
+}
 } )( $attributes, $content, $block );

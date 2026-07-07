@@ -1,16 +1,27 @@
 /**
  * Fundraiser sign-up modal — Interactivity API store.
  *
- * Drives the multi-step modal: account step (login / inline 6-digit code /
- * password reset / signed-in shortcut), fundraiser setup, and the share
- * success screen. Open/step state is global so the trigger buttons in other
- * blocks can open it; per-page config (REST URL, nonce, campaign, preselected
- * team, signed-in donor) is read from this block's own context.
+ * The modal is not a block: SignupModal::render() outputs the dialog shell
+ * once per page (this directory only exists so wp-scripts builds this module
+ * and its stylesheet; the block.json is a build manifest, not a registered
+ * block). Drives the multi-step modal: account step (login / inline 6-digit
+ * code / password reset / signed-in shortcut), fundraiser setup, and the
+ * share success screen against the /p2p REST routes.
+ *
+ * Campaign binding: every campaign-dependent value (campaignId, brandline,
+ * teams list, goal, success copy) lives in global state, server-seeded with
+ * the shell's default payload. CTA blocks embed their own campaign's payload
+ * in their context and pass it to `open( payload )`, which rebinds the modal;
+ * `open()` with no payload (e.g. the invite-link auto-open) keeps the default.
+ * Request plumbing (REST URL, nonce, i18n, share templates) is read from the
+ * shell's own context.
  */
 /* global navigator */
 // Script modules can't import @wordpress/i18n; copy is translated server-side
 // and passed via ctx.i18n, so the literals here are English-only fallbacks.
 import { store, getContext, getElement } from '@wordpress/interactivity';
+
+import './style.scss';
 
 let cooldownTimer = null;
 
@@ -77,6 +88,23 @@ function shareUrl() {
   return state.successUrl || window.location.href;
 }
 
+/**
+ * Open a share-intent popup for a network.
+ *
+ * @param {string} network  Network key in the shell context's shareTemplates.
+ * @param {string} fallback English/default intent URL template with a %s slot.
+ */
+function openShareIntent( network, fallback ) {
+  const ctx = getContext();
+  const template =
+    ( ctx.shareTemplates && ctx.shareTemplates[ network ] ) || fallback;
+  window.open(
+    template.replace( '%s', encodeURIComponent( shareUrl() ) ),
+    '_blank',
+    'noopener,width=600,height=500'
+  );
+}
+
 let lastFocused = null;
 
 const FOCUSABLE_SELECTOR =
@@ -131,8 +159,60 @@ function markSignedIn() {
   state.donorEmail = state.email.trim();
 }
 
+/**
+ * Rebind the modal to a campaign payload (see SignupModal::payload()).
+ *
+ * When the payload targets a different campaign than the modal is currently
+ * bound to, all transient form state is reset first so a half-completed form
+ * for one campaign never leaks into another's. Page-level state (signed-in
+ * donor, invite token) survives.
+ *
+ * @param {Object} payload Sign-up payload, or undefined to keep the current binding.
+ */
+function applyPayload( payload ) {
+  if ( ! payload || ! payload.campaignId ) {
+    return;
+  }
+  const rebinding = payload.campaignId !== state.campaignId;
+  if ( rebinding ) {
+    state.firstName = '';
+    state.lastName = '';
+    state.email = '';
+    state.password = '';
+    state.newPassword = '';
+    state.resetGrant = '';
+    state.otpPurpose = 'signup';
+    state.teamMode = 'join';
+    state.teamPrivate = false;
+    state.teamId = '';
+    state.teamName = '';
+    state.story = '';
+    state.tributeChecked = false;
+    state.tributeType = 'honor';
+    state.honoreeName = '';
+    state.successUrl = '';
+    state.isPending = false;
+  }
+  Object.assign( state, payload );
+  if ( rebinding ) {
+    state.goal = payload.defaultGoal || 0;
+  }
+  if ( payload.preselectedTeamId ) {
+    state.teamMode = 'join';
+    state.teamId = String( payload.preselectedTeamId );
+  }
+}
+
 const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
   state: {
+    // The campaign binding (campaignId, brandline, currencySymbol,
+    // defaultGoal, teamCreationEnabled, showTeamChooser, preselectedTeamId,
+    // preselectedTeamName, teams, storyPlaceholder, success/pending copy) and
+    // the signed-in donor (signedIn, donorName, donorEmail, goal) are NOT
+    // declared here: they arrive server-seeded via wp_interactivity_state()
+    // (see SignupModal::render()), and store() definitions override server
+    // state, so literal defaults would clobber the seed. open( payload )
+    // rebinds them.
     isOpen: false,
     currentStep: 1,
     step1View: 'form',
@@ -150,15 +230,10 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
     teamId: '',
     teamName: '',
     inviteToken: '',
-    goal: 0,
     story: '',
     tributeChecked: false,
     tributeType: 'honor',
     honoreeName: '',
-    // Signed-in donor (seeded from context on init).
-    signedIn: false,
-    donorName: '',
-    donorEmail: '',
     // UI state.
     loading: false,
     firstNameError: false,
@@ -211,7 +286,10 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
   },
 
   actions: {
-    open() {
+    // Note: open() may be called cross-store from a CTA block's scope, so it
+    // must not read getContext() — everything it needs travels in the payload.
+    open( payload ) {
+      applyPayload( payload );
       state.isOpen = true;
       state.currentStep = 1;
       state.step1View = state.signedIn ? 'signedin' : 'form';
@@ -360,7 +438,7 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       state.loading = true;
       try {
         const res = yield post( ctx, 'p2p/account-lookup', {
-          campaign_id: ctx.campaignId,
+          campaign_id: state.campaignId,
           email: state.email.trim(),
           password: state.password,
         } );
@@ -460,13 +538,13 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       const body =
         state.otpPurpose === 'reset'
           ? {
-              campaign_id: ctx.campaignId,
+              campaign_id: state.campaignId,
               email: state.email.trim(),
               purpose: 'reset',
               code,
             }
           : {
-              campaign_id: ctx.campaignId,
+              campaign_id: state.campaignId,
               email: state.email.trim(),
               purpose: 'signup',
               code,
@@ -548,10 +626,10 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       state.loading = true;
       try {
         const res = yield post( ctx, 'p2p/register', {
-          campaign_id: ctx.campaignId,
-          team_mode: ctx.preselectedTeamId ? 'join' : state.teamMode,
+          campaign_id: state.campaignId,
+          team_mode: state.preselectedTeamId ? 'join' : state.teamMode,
           team_id:
-            ctx.preselectedTeamId ||
+            state.preselectedTeamId ||
             ( state.teamId ? Number( state.teamId ) : 0 ),
           team_name: state.teamName,
           team_access: state.teamPrivate ? 'private' : 'public',
@@ -626,30 +704,19 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       }
     },
 
-    // Share.
+    // Share. Intent URL templates come from the shell context (built by
+    // Sharing::intent_url()'s PHP templates); literals are fallbacks only.
     shareFacebook() {
-      window.open(
-        'https://www.facebook.com/sharer/sharer.php?u=' +
-          encodeURIComponent( shareUrl() ),
-        '_blank',
-        'noopener,width=600,height=500'
+      openShareIntent(
+        'facebook',
+        'https://www.facebook.com/sharer/sharer.php?u=%s'
       );
     },
     shareX() {
-      window.open(
-        'https://twitter.com/intent/tweet?url=' +
-          encodeURIComponent( shareUrl() ),
-        '_blank',
-        'noopener,width=600,height=500'
-      );
+      openShareIntent( 'x', 'https://twitter.com/intent/tweet?text=%s' );
     },
     shareBluesky() {
-      window.open(
-        'https://bsky.app/intent/compose?text=' +
-          encodeURIComponent( shareUrl() ),
-        '_blank',
-        'noopener,width=600,height=500'
-      );
+      openShareIntent( 'bluesky', 'https://bsky.app/intent/compose?text=%s' );
     },
     copyLink() {
       if ( ! navigator.clipboard ) {
@@ -679,22 +746,17 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
 
   callbacks: {
     init() {
-      const ctx = getContext();
-      state.signedIn = !! ctx.signedIn;
-      state.donorName = ctx.donorName || '';
-      state.donorEmail = ctx.donorEmail || '';
+      // Campaign binding and the signed-in donor arrive server-seeded in
+      // state; only the client-only pieces are derived here.
       state.copyLabel = i18n( 'copy', 'Copy' );
-      state.step1View = ctx.signedIn ? 'signedin' : 'form';
-      if ( ! state.goal ) {
-        // The server provides the default goal in major units, ready to display.
-        state.goal = ctx.defaultGoal || 0;
-      }
-      if ( ctx.preselectedTeamId ) {
+      state.step1View = state.signedIn ? 'signedin' : 'form';
+      if ( state.preselectedTeamId ) {
         state.teamMode = 'join';
-        state.teamId = String( ctx.preselectedTeamId );
+        state.teamId = String( state.preselectedTeamId );
       }
 
-      // Invite links (?team_invite=<token>) open the modal straight away.
+      // Invite links (?team_invite=<token>) open the modal straight away,
+      // bound to the shell's default payload.
       const params = new URLSearchParams( window.location.search );
       const token = params.get( 'team_invite' );
       if ( token ) {

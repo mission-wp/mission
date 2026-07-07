@@ -13,6 +13,7 @@
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
+use MissionDP\P2P\SignupModal;
 use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
@@ -43,17 +44,22 @@ defined( 'ABSPATH' ) || exit;
 		? sprintf( __( 'raised of %s team goal', 'mission-donation-platform' ), Currency::format_amount( $goal, $currency ) )
 		: __( 'raised', 'mission-donation-platform' );
 
-	// The sign-up modal only renders while registration is open, so the Join
-	// button would silently no-op without this gate (campaign-progress does the
-	// same). Private teams hide it too: uninvited visitors can't join, and
-	// invitees arrive through the invite link, which opens the modal itself.
-	$show_join = true === $team->campaign()?->is_registration_open() && Team::ACCESS_PUBLIC === $team->access;
+	// The Join button hides on private teams (uninvited visitors can't join),
+	// but the modal shell must still render while registration is open:
+	// invitees land on private team pages via ?team_invite= links, and the
+	// invite auto-open needs the shell with this team preselected.
+	$campaign          = $team->campaign();
+	$registration_open = true === $campaign?->is_registration_open();
+	$show_join         = $registration_open && Team::ACCESS_PUBLIC === $team->access;
 
 	ob_start();
 	?>
 	<div
 		<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress' ] ) ); ?>
 		data-wp-interactive="mission-donation-platform/team-progress"
+		<?php if ( $show_join ) : ?>
+			<?php echo wp_interactivity_data_wp_context( [ 'signup' => SignupModal::payload( $campaign, $team ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
+		<?php endif; ?>
 		style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 	>
 		<div class="mission-progress__header">
@@ -111,4 +117,8 @@ defined( 'ABSPATH' ) || exit;
 	 * @param array  $attributes Block attributes.
 	 */
 	echo wp_kses( apply_filters( 'mission_team_progress_output', $output, $team, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+
+	if ( $registration_open ) {
+		echo SignupModal::render( $campaign, $team ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered and kses'd in render().
+	}
 } )( $attributes );

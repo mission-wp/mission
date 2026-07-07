@@ -15,6 +15,7 @@ use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\P2P\BlockSupport;
+use MissionDP\P2P\SignupModal;
 use MissionDP\Reporting\ReportingService;
 
 defined( 'ABSPATH' ) || exit;
@@ -54,11 +55,18 @@ defined( 'ABSPATH' ) || exit;
 
 	$registration_open = $campaign->is_registration_open();
 
+	// The signup CTA only exists in the empty state; the modal shell and the
+	// payload it opens with are only needed when that CTA renders.
+	$has_signup_cta = 'signup' === $cta_action && $registration_open && empty( $fundraisers );
+
 	ob_start();
 	?>
 	<div
 		<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-top-fundraisers' ] ) ); ?>
 		data-wp-interactive="mission-donation-platform/top-fundraisers"
+		<?php if ( $has_signup_cta ) : ?>
+			<?php echo wp_interactivity_data_wp_context( [ 'signup' => SignupModal::payload( $campaign ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
+		<?php endif; ?>
 		style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 	>
 		<h3 class="mission-donor-heading"><?php echo esc_html( $heading ); ?></h3>
@@ -135,4 +143,8 @@ defined( 'ABSPATH' ) || exit;
 	 * @param array    $attributes Block attributes.
 	 */
 	echo wp_kses( apply_filters( 'mission_top_fundraisers_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+
+	if ( $has_signup_cta ) {
+		echo SignupModal::render( $campaign ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered and kses'd in render().
+	}
 } )( $attributes );

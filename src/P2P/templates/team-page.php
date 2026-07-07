@@ -37,5 +37,3 @@ defined( 'ABSPATH' ) || exit;
 <!-- /wp:heading -->
 
 <!-- wp:mission-donation-platform/donation-form /-->
-
-<!-- wp:mission-donation-platform/signup-modal /-->

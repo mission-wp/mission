@@ -74,5 +74,3 @@ defined( 'ABSPATH' ) || exit;
 <!-- /wp:paragraph -->
 
 <!-- wp:mission-donation-platform/donation-form {"campaignId":<?php echo (int) $campaign_id; ?>} /-->
-
-<!-- wp:mission-donation-platform/signup-modal {"campaignId":<?php echo (int) $campaign_id; ?>} /-->
