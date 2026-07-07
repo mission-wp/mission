@@ -147,6 +147,92 @@ class TeamsContextBuilderTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Member counts use the active-only basis and the card embeds only the
+	 * first roster page with paging totals.
+	 */
+	public function test_member_count_is_active_only_and_roster_is_paged(): void {
+		$donor  = $this->create_donor();
+		$result = $this->create_membership( $donor, true );
+
+		// Six more active members and one pending (approval-required signup).
+		for ( $i = 1; $i <= 6; $i++ ) {
+			$member = $this->create_donor( "m{$i}@example.com", 'Mem', "Ber{$i}" );
+			( new Fundraiser(
+				[
+					'campaign_id' => $result['campaign']->id,
+					'donor_id'    => $member->id,
+					'team_id'     => $result['team']->id,
+					'status'      => Fundraiser::STATUS_ACTIVE,
+				]
+			) )->save();
+		}
+		$pending = $this->create_donor( 'pending@example.com', 'Pen', 'Ding' );
+		( new Fundraiser(
+			[
+				'campaign_id' => $result['campaign']->id,
+				'donor_id'    => $pending->id,
+				'team_id'     => $result['team']->id,
+				'status'      => Fundraiser::STATUS_PENDING,
+			]
+		) )->save();
+
+		$context = $this->build( $donor );
+		$card    = $context['current'][0];
+
+		// Captain + 6 active members; the pending fundraiser never counts.
+		$this->assertSame( 7, $card['memberCount'] );
+		$this->assertSame( '7 members', $card['memberCountLabel'] );
+		$this->assertSame( 7, $card['membersTotal'] );
+		$this->assertSame( 2, $card['membersTotalPages'] );
+		$this->assertCount( TeamsContextBuilder::MEMBERS_PER_PAGE, $card['members'] );
+	}
+
+	/**
+	 * The captain chip resolves even when the captain is not on the first
+	 * roster page (members are ordered by raised).
+	 */
+	public function test_captain_chip_resolves_off_page_captain(): void {
+		$donor   = $this->create_donor( 'member@example.com', 'Plain', 'Member' );
+		$result  = $this->create_membership( $donor );
+		$captain = $this->create_donor( 'cap@example.com', 'Quiet', 'Captain' );
+
+		$captain_fundraiser = new Fundraiser(
+			[
+				'campaign_id' => $result['campaign']->id,
+				'donor_id'    => $captain->id,
+				'team_id'     => $result['team']->id,
+				'status'      => Fundraiser::STATUS_ACTIVE,
+			]
+		);
+		$captain_fundraiser->save();
+		$result['team']->set_captain( $captain_fundraiser );
+
+		// Five members who out-raised the captain fill the first page.
+		global $wpdb;
+		for ( $i = 1; $i <= 5; $i++ ) {
+			$member = $this->create_donor( "big{$i}@example.com", 'Big', "Raiser{$i}" );
+			$f      = new Fundraiser(
+				[
+					'campaign_id' => $result['campaign']->id,
+					'donor_id'    => $member->id,
+					'team_id'     => $result['team']->id,
+					'status'      => Fundraiser::STATUS_ACTIVE,
+				]
+			);
+			$f->save();
+			$wpdb->update( "{$wpdb->prefix}missiondp_fundraisers", [ 'total_raised' => 10000 * $i ], [ 'id' => $f->id ] );
+		}
+		wp_cache_flush();
+
+		$context = $this->build( $donor );
+		$card    = $context['current'][0];
+
+		$page_names = array_column( $card['members'], 'name' );
+		$this->assertNotContains( 'Quiet Captain', $page_names );
+		$this->assertSame( 'Quiet Captain', $card['captainName'] );
+	}
+
+	/**
 	 * Test current and past teams split by campaign state.
 	 */
 	public function test_current_and_past_split(): void {

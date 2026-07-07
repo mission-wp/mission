@@ -244,6 +244,83 @@ class TeamEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The team payload embeds only the first roster page while counts and the
+	 * label reflect the full roster.
+	 */
+	public function test_team_payload_counts_full_roster_not_first_page(): void {
+		for ( $i = 1; $i <= 6; $i++ ) {
+			$this->add_member( "m{$i}@example.com" );
+		}
+
+		$response = $this->dispatch(
+			'PUT',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}",
+			[ 'name' => 'Runners' ]
+		);
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		// Captain + 6 members, paged at 5.
+		$this->assertCount( 5, $data['members'] );
+		$this->assertSame( 7, $data['member_count'] );
+		$this->assertSame( 2, $data['members_total_pages'] );
+		$this->assertSame( '7 members', $data['member_count_label'] );
+	}
+
+	/**
+	 * The members route pages through the roster with totals in headers.
+	 */
+	public function test_members_route_paginates(): void {
+		for ( $i = 1; $i <= 6; $i++ ) {
+			$this->add_member( "m{$i}@example.com" );
+		}
+
+		$request = new WP_REST_Request(
+			'GET',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/members"
+		);
+		$request->set_query_params( [ 'per_page' => 5, 'page' => 2 ] );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 2, $response->get_data() );
+		$this->assertSame( '7', $response->get_headers()['X-WP-Total'] );
+		$this->assertSame( '2', $response->get_headers()['X-WP-TotalPages'] );
+	}
+
+	/**
+	 * Plain members can read the roster; the write routes stay captain-only.
+	 */
+	public function test_members_route_allows_plain_members(): void {
+		$this->act_as_member();
+
+		$response = $this->dispatch(
+			'GET',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/members"
+		);
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 2, $response->get_data() );
+	}
+
+	/**
+	 * Donors outside the team cannot read the roster.
+	 */
+	public function test_members_route_rejects_non_members(): void {
+		$outsider = self::factory()->user->create( [ 'role' => 'missiondp_donor', 'user_email' => 'out@example.com' ] );
+		$donor    = new Donor( [ 'email' => 'out@example.com', 'user_id' => $outsider ] );
+		$donor->save();
+		wp_set_current_user( $outsider );
+
+		$response = $this->dispatch(
+			'GET',
+			"/mission-donation-platform/v1/donor-dashboard/teams/{$this->team->id}/members"
+		);
+
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	/**
 	 * PUT updates the editable team fields (goal converts from major units).
 	 */
 	public function test_put_updates_team_fields(): void {

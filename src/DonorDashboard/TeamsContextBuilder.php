@@ -116,6 +116,10 @@ class TeamsContextBuilder {
 			],
 			'membersPage'     => 1,
 			'membersPerPage'  => self::MEMBERS_PER_PAGE,
+			'membersItems'    => $detail['members'] ?? [],
+			'membersTotal'    => $detail['membersTotal'] ?? 0,
+			'membersPages'    => $detail['membersTotalPages'] ?? 0,
+			'membersLoading'  => false,
 			'leaving'         => false,
 			'photoPreviewUrl' => '',
 			'photoRemoved'    => false,
@@ -144,6 +148,7 @@ class TeamsContextBuilder {
 				'confirmLeave'   => __( 'Leave this team? Your fundraiser page stays active. It will just no longer count toward the team total.', 'mission-donation-platform' ),
 				/* translators: 1: first row number, 2: last row number, 3: total rows */
 				'range'          => __( '%1$s–%2$s of %3$s', 'mission-donation-platform' ),
+				'membersError'   => __( "Couldn't load members. Please try again.", 'mission-donation-platform' ),
 			],
 		];
 	}
@@ -163,11 +168,13 @@ class TeamsContextBuilder {
 		$progress       = BlockSupport::progress_percent( (int) $totals['raised'], (int) $team->goal, 2 );
 		$percent        = BlockSupport::progress_percent( (int) $totals['raised'], (int) $team->goal );
 		$is_captain     = $membership->is_captain();
-		$members        = array_map(
+		// First roster page only; the members REST route serves the rest.
+		$member_count = $this->reporting->team_member_count( (int) $team->id );
+		$members      = array_map(
 			fn( array $row ): array => TeamRoster::member_row( $row, $this->currency, (int) $this->donor->id ),
-			$this->reporting->team_members( (int) $team->id )
+			$this->reporting->team_members( (int) $team->id, self::MEMBERS_PER_PAGE )
 		);
-		$cover_url      = DashboardLabels::cover_image_url( $team->cover_image );
+		$cover_url    = DashboardLabels::cover_image_url( $team->cover_image );
 
 		$rank_label = '';
 		$rank       = [
@@ -182,12 +189,11 @@ class TeamsContextBuilder {
 			}
 		}
 
+		// Looked up directly: the captain may not be on the first roster page.
 		$captain_name = '';
-		foreach ( $members as $member ) {
-			if ( $member['isCaptain'] ) {
-				$captain_name = $member['name'];
-				break;
-			}
+		if ( ! $is_captain ) {
+			$captain_donor = $team->captain()?->donor();
+			$captain_name  = trim( ( $captain_donor->first_name ?? '' ) . ' ' . ( $captain_donor->last_name ?? '' ) );
 		}
 
 		$status_labels = [
@@ -199,55 +205,57 @@ class TeamsContextBuilder {
 		$url = $team->get_url();
 
 		$card = [
-			'id'               => (int) $team->id,
-			'name'             => $team->name,
-			'campaignTitle'    => $campaign->title,
-			'description'      => $team->description,
-			'status'           => $team->status,
-			'statusLabel'      => $status_labels[ $team->status ] ?? $team->status,
-			'isPending'        => Team::STATUS_PENDING === $team->status,
-			'isInactive'       => Team::STATUS_INACTIVE === $team->status,
-			'isLocked'         => false,
-			'access'           => $team->access,
-			'isPrivate'        => Team::ACCESS_PRIVATE === $team->access,
-			'isCaptain'        => $is_captain,
-			'roleLabel'        => $is_captain ? __( 'Captain', 'mission-donation-platform' ) : __( 'Member', 'mission-donation-platform' ),
-			'captainName'      => $is_captain ? '' : $captain_name,
-			'captainChipLabel' => ! $is_captain && '' !== $captain_name
+			'id'                => (int) $team->id,
+			'name'              => $team->name,
+			'campaignTitle'     => $campaign->title,
+			'description'       => $team->description,
+			'status'            => $team->status,
+			'statusLabel'       => $status_labels[ $team->status ] ?? $team->status,
+			'isPending'         => Team::STATUS_PENDING === $team->status,
+			'isInactive'        => Team::STATUS_INACTIVE === $team->status,
+			'isLocked'          => false,
+			'access'            => $team->access,
+			'isPrivate'         => Team::ACCESS_PRIVATE === $team->access,
+			'isCaptain'         => $is_captain,
+			'roleLabel'         => $is_captain ? __( 'Captain', 'mission-donation-platform' ) : __( 'Member', 'mission-donation-platform' ),
+			'captainName'       => $is_captain ? '' : $captain_name,
+			'captainChipLabel'  => ! $is_captain && '' !== $captain_name
 				/* translators: %s: team captain's name */
 				? sprintf( __( 'Captain: %s', 'mission-donation-platform' ), $captain_name )
 				: '',
-			'raisedDisplay'    => $raised_display,
-			'goalDisplay'      => $goal_display,
-			'hasGoal'          => $team->goal > 0,
-			'goalMajor'        => (string) Currency::minor_to_major( $team->goal, $this->currency ),
-			'progress'         => $progress,
-			'barWidth'         => $percent . '%',
-			'progressLabel'    => DashboardLabels::team_progress_label( $raised_display, $goal_display ),
-			'percentLabel'     => $team->goal > 0 ? $percent . '%' : '',
-			'goalStatLabel'    => $goal_display
+			'raisedDisplay'     => $raised_display,
+			'goalDisplay'       => $goal_display,
+			'hasGoal'           => $team->goal > 0,
+			'goalMajor'         => (string) Currency::minor_to_major( $team->goal, $this->currency ),
+			'progress'          => $progress,
+			'barWidth'          => $percent . '%',
+			'progressLabel'     => DashboardLabels::team_progress_label( $raised_display, $goal_display ),
+			'percentLabel'      => $team->goal > 0 ? $percent . '%' : '',
+			'goalStatLabel'     => $goal_display
 				/* translators: %s: team goal */
 				? sprintf( __( 'Of %s Goal', 'mission-donation-platform' ), $goal_display )
 				: __( 'Raised', 'mission-donation-platform' ),
-			'memberCount'      => $totals['member_count'],
-			'memberCountLabel' => DashboardLabels::member_count_label( $totals['member_count'] ),
-			'donationCount'    => $totals['donations'],
-			'rank'             => $rank['rank'],
-			'rankTotal'        => $rank['total'],
-			'rankLabel'        => $rank_label,
-			'rankStatValue'    => $rank_label ? '#' . number_format_i18n( $rank['rank'] ) : '',
-			'rankStatLabel'    => $rank_label
+			'memberCount'       => $member_count,
+			'memberCountLabel'  => DashboardLabels::member_count_label( $member_count ),
+			'donationCount'     => $totals['donations'],
+			'rank'              => $rank['rank'],
+			'rankTotal'         => $rank['total'],
+			'rankLabel'         => $rank_label,
+			'rankStatValue'     => $rank_label ? '#' . number_format_i18n( $rank['rank'] ) : '',
+			'rankStatLabel'     => $rank_label
 				/* translators: %s: number of teams */
 				? sprintf( __( 'Of %s Teams', 'mission-donation-platform' ), number_format_i18n( $rank['total'] ) )
 				: '',
-			'timeLabel'        => DashboardLabels::time_label( $campaign, false ),
-			'url'              => $url ?? '',
-			'hasUrl'           => null !== $url,
-			'coverImageUrl'    => $cover_url,
-			'hasCover'         => '' !== $cover_url,
-			'myFundraiserId'   => (int) $membership->id,
-			'members'          => $members,
-			'invitations'      => $is_captain ? $team->pending_invitation_summaries() : [],
+			'timeLabel'         => DashboardLabels::time_label( $campaign, false ),
+			'url'               => $url ?? '',
+			'hasUrl'            => null !== $url,
+			'coverImageUrl'     => $cover_url,
+			'hasCover'          => '' !== $cover_url,
+			'myFundraiserId'    => (int) $membership->id,
+			'members'           => $members,
+			'membersTotal'      => $member_count,
+			'membersTotalPages' => (int) ceil( $member_count / self::MEMBERS_PER_PAGE ),
+			'invitations'       => $is_captain ? $team->pending_invitation_summaries() : [],
 		];
 
 		/**

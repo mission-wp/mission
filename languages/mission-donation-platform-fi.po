@@ -1765,7 +1765,7 @@ msgstr "Sinulla ei ole vielä toistuvia lahjoituksia. Kun määrität toistuvan 
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
 #: src/DonorDashboard/FundraisersContextBuilder.php:333
-#: src/DonorDashboard/TeamsContextBuilder.php:194
+#: src/DonorDashboard/TeamsContextBuilder.php:200
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:204
@@ -3044,7 +3044,7 @@ msgstr "Tunnus"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
 #: src/DonorDashboard/FundraisersContextBuilder.php:253
-#: src/DonorDashboard/TeamsContextBuilder.php:231
+#: src/DonorDashboard/TeamsContextBuilder.php:237
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
@@ -6047,7 +6047,7 @@ msgid "Write a note…"
 msgstr "Kirjoita muistiinpano…"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:121
-#: src/DonorDashboard/TeamsContextBuilder.php:127
+#: src/DonorDashboard/TeamsContextBuilder.php:131
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:204
@@ -6130,7 +6130,7 @@ msgid "All changes saved."
 msgstr "Kaikki muutokset tallennettu."
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:120
-#: src/DonorDashboard/TeamsContextBuilder.php:126
+#: src/DonorDashboard/TeamsContextBuilder.php:130
 #: admin/build/mission-admin.js:202
 #: admin/src/pages/settings/SaveBar.js:31
 msgid "Save changes"
@@ -11032,8 +11032,8 @@ msgstr "Jäsenet"
 #: blocks/src/donor-dashboard/parts/team-detail.php:250
 #: blocks/src/team-members/index.php:84
 #: src/DonorDashboard/FundraisersContextBuilder.php:267
-#: src/DonorDashboard/TeamsContextBuilder.php:214
-#: src/DonorDashboard/TeamsContextBuilder.php:277
+#: src/DonorDashboard/TeamsContextBuilder.php:220
+#: src/DonorDashboard/TeamsContextBuilder.php:285
 #: src/Email/TeamEmailListener.php:132
 #: src/Email/TeamEmailListener.php:171
 #: src/Email/templates/p2p-team-approved.php:14
@@ -11558,7 +11558,7 @@ msgid "Your gift supports the campaign and helps every fundraiser reach their go
 msgstr "Lahjoituksesi tukee kampanjaa ja auttaa jokaista varainkerääjää saavuttamaan tavoitteensa."
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:122
-#: src/DonorDashboard/TeamsContextBuilder.php:128
+#: src/DonorDashboard/TeamsContextBuilder.php:132
 msgid "Saved"
 msgstr "Tallennettu"
 
@@ -11570,33 +11570,33 @@ msgstr "Keräyssivu päivitetty"
 msgid "Link copied"
 msgstr "Linkki kopioitu"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:129
+#: src/DonorDashboard/TeamsContextBuilder.php:133
 msgid "Team updated"
 msgstr "Tiimi päivitetty"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:135
+#: src/DonorDashboard/TeamsContextBuilder.php:139
 msgid "Invitation sent"
 msgstr "Kutsu lähetetty"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:136
+#: src/DonorDashboard/TeamsContextBuilder.php:140
 msgid "Member removed"
 msgstr "Jäsen poistettu"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:137
+#: src/DonorDashboard/TeamsContextBuilder.php:141
 msgid "New captain set"
 msgstr "Uusi kapteeni asetettu"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:143
+#: src/DonorDashboard/TeamsContextBuilder.php:147
 msgid "Make this member the captain? You will no longer manage the team."
 msgstr "Tehdäänkö tästä jäsenestä kapteeni? Et enää hallinnoi tiimiä."
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:318
-#: src/DonorDashboard/TeamsContextBuilder.php:195
+#: src/DonorDashboard/TeamsContextBuilder.php:201
 msgid "Pending review"
 msgstr "Odottaa tarkistusta"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:322
-#: src/DonorDashboard/TeamsContextBuilder.php:196
+#: src/DonorDashboard/TeamsContextBuilder.php:202
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:173
 #: admin/src/constants.js:194
@@ -11794,7 +11794,7 @@ msgstr "%1$s liittyi juuri tiimiin %2$s. Kannusta häntä, kun hän aloittaa var
 #: src/Models/Fundraiser.php:279
 #: src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1994
-#: src/Reporting/ReportingService.php:2269
+#: src/Reporting/ReportingService.php:2271
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:27
@@ -11838,7 +11838,7 @@ msgstr "Kuvaa ei voitu tallentaa."
 
 #: src/P2P/FundraiserImageUploader.php:168
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:189
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:206
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:232
 msgid "No image was uploaded."
 msgstr "Kuvaa ei ladattu."
 
@@ -11902,13 +11902,13 @@ msgstr "Tue tätä tiimiä"
 msgid "Fundraiser not found."
 msgstr "Varainkerääjää ei löytynyt."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:317
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:351
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:378
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:412
 #: src/Rest/Endpoints/TeamMembersEndpoint.php:107
 msgid "Member not found."
 msgstr "Jäsentä ei löytynyt."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:382
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:443
 msgid "You are not the captain of this team."
 msgstr "Et ole tämän tiimin kapteeni."
 
@@ -13014,7 +13014,7 @@ msgstr "Päättyneet (%s)"
 
 #. translators: 1: first row number, 2: last row number, 3: total rows
 #: src/DonorDashboard/FundraisersContextBuilder.php:131
-#: src/DonorDashboard/TeamsContextBuilder.php:146
+#: src/DonorDashboard/TeamsContextBuilder.php:150
 msgid "%1$s–%2$s of %3$s"
 msgstr "%1$s–%2$s / %3$s"
 
@@ -13024,9 +13024,9 @@ msgid "Raised of %s"
 msgstr "Kerätty tavoitteesta %s"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:267
-#: src/DonorDashboard/TeamsContextBuilder.php:139
-#: src/DonorDashboard/TeamsContextBuilder.php:214
-#: src/DonorDashboard/TeamsContextBuilder.php:278
+#: src/DonorDashboard/TeamsContextBuilder.php:143
+#: src/DonorDashboard/TeamsContextBuilder.php:220
+#: src/DonorDashboard/TeamsContextBuilder.php:286
 #: admin/build/mission-admin.js:209
 #: admin/src/pages/teams/TeamMembersCard.js:103
 msgid "Member"
@@ -13078,36 +13078,36 @@ msgstr[1] "Aktiiviset keräykset"
 msgid "%1$s of %2$s team goal"
 msgstr "%1$s / %2$s tiimin tavoitteesta"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:138
+#: src/DonorDashboard/TeamsContextBuilder.php:142
 msgid "You left the team"
 msgstr "Poistuit tiimistä"
 
 #. translators: %s: team captain's name
-#: src/DonorDashboard/TeamsContextBuilder.php:141
-#: src/DonorDashboard/TeamsContextBuilder.php:218
+#: src/DonorDashboard/TeamsContextBuilder.php:145
+#: src/DonorDashboard/TeamsContextBuilder.php:224
 msgid "Captain: %s"
 msgstr "Kapteeni: %s"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:142
+#: src/DonorDashboard/TeamsContextBuilder.php:146
 msgid "Remove this member from the team? Their fundraiser page stays active but will no longer count toward the team total."
 msgstr "Poistetaanko tämä jäsen tiimistä? Hänen keräyssivunsa pysyy aktiivisena, mutta sitä ei enää lasketa tiimin kokonaissummaan."
 
-#: src/DonorDashboard/TeamsContextBuilder.php:144
+#: src/DonorDashboard/TeamsContextBuilder.php:148
 msgid "Leave this team? Your fundraiser page stays active. It will just no longer count toward the team total."
 msgstr "Poistutko tiimistä? Keräyssivusi pysyy aktiivisena. Sitä ei vain enää lasketa tiimin kokonaissummaan."
 
 #. translators: 1: this team's rank, 2: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:181
+#: src/DonorDashboard/TeamsContextBuilder.php:188
 msgid "Rank #%1$s of %2$s teams"
 msgstr "Sija %1$s / %2$s tiimiä"
 
 #. translators: %s: team goal
-#: src/DonorDashboard/TeamsContextBuilder.php:230
+#: src/DonorDashboard/TeamsContextBuilder.php:236
 msgid "Of %s Goal"
 msgstr "Tavoitteesta %s"
 
 #. translators: %s: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:241
+#: src/DonorDashboard/TeamsContextBuilder.php:247
 msgid "Of %s Teams"
 msgstr "%s tiimistä"
 
@@ -13120,7 +13120,7 @@ msgid "%1$s of %2$s"
 msgstr "%1$s / %2$s"
 
 #. translators: %s: amount the team raised
-#: src/DonorDashboard/TeamsContextBuilder.php:281
+#: src/DonorDashboard/TeamsContextBuilder.php:289
 msgid "team raised %s"
 msgstr "tiimi keräsi %s"
 
@@ -13136,13 +13136,13 @@ msgstr "Emme voineet poistaa sinua tiimistä. Yritä uudelleen."
 msgid "This campaign has ended, so the page can no longer be edited."
 msgstr "Tämä kampanja on päättynyt, joten sivua ei voi enää muokata."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:403
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:497
 msgid "This campaign has ended, so the team can no longer be edited."
 msgstr "Tämä kampanja on päättynyt, joten tiimiä ei voi enää muokata."
 
 #. translators: %s: maximum allowed file size, e.g. "5 MB".
 #: src/DonorDashboard/FundraisersContextBuilder.php:126
-#: src/DonorDashboard/TeamsContextBuilder.php:132
+#: src/DonorDashboard/TeamsContextBuilder.php:136
 #: src/P2P/FundraiserImageUploader.php:180
 msgid "The image is too large. Please upload a file under %s."
 msgstr "Kuva on liian suuri. Lataa alle %s:n kokoinen tiedosto."
@@ -13723,3 +13723,11 @@ msgstr "Ikuisesti sydämissämme."
 #: src/Rest/Endpoints/EmailTestEndpoint.php:216
 msgid "Team Sunshine"
 msgstr "Tiimi Aurinko"
+
+#: src/DonorDashboard/TeamsContextBuilder.php:151
+msgid "Couldn't load members. Please try again."
+msgstr "Jäsenten lataaminen epäonnistui. Yritä uudelleen."
+
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:476
+msgid "You are not a member of this team."
+msgstr "Et ole tämän tiimin jäsen."

@@ -10,6 +10,7 @@ namespace MissionDP\Rest\Endpoints\DonorDashboard;
 use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\DonorDashboard\TeamRoster;
+use MissionDP\DonorDashboard\TeamsContextBuilder;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\P2P\BlockSupport;
@@ -100,6 +101,31 @@ class TeamEndpoint {
 						'type'              => 'string',
 						'required'          => true,
 						'sanitize_callback' => 'sanitize_email',
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			RestModule::NAMESPACE,
+			'/donor-dashboard/teams/(?P<id>\d+)/members',
+			[
+				'methods'             => 'GET',
+				'callback'            => [ $this, 'get_members' ],
+				'permission_callback' => [ $this, 'check_donor_permission' ],
+				'args'                => [
+					'page'     => [
+						'type'              => 'integer',
+						'default'           => 1,
+						'sanitize_callback' => 'absint',
+					],
+					'per_page' => [
+						'type'              => 'integer',
+						'default'           => TeamsContextBuilder::MEMBERS_PER_PAGE,
+						'minimum'           => 1,
+						'maximum'           => 100,
+						'sanitize_callback' => 'absint',
+						'validate_callback' => 'rest_validate_request_arg',
 					],
 				],
 			]
@@ -294,6 +320,41 @@ class TeamEndpoint {
 	}
 
 	/**
+	 * GET /donor-dashboard/teams/{id}/members
+	 *
+	 * One page of the team roster, for any member of the team. Totals travel
+	 * in the standard X-WP-Total / X-WP-TotalPages headers.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function get_members( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$team = $this->resolve_member_team( $request );
+
+		if ( is_wp_error( $team ) ) {
+			return $team;
+		}
+
+		$donor    = $this->resolve_donor();
+		$self_id  = is_wp_error( $donor ) ? 0 : (int) $donor->id;
+		$currency = $this->dashboard_currency();
+		$page     = max( 1, (int) $request->get_param( 'page' ) );
+		$per_page = (int) $request->get_param( 'per_page' );
+		$total    = $this->reporting->team_member_count( (int) $team->id );
+
+		$members = array_map(
+			fn( array $row ): array => TeamRoster::member_row( $row, $currency, $self_id ),
+			$this->reporting->team_members( (int) $team->id, $per_page, ( $page - 1 ) * $per_page )
+		);
+
+		$response = new WP_REST_Response( $members );
+		$response->header( 'X-WP-Total', (string) $total );
+		$response->header( 'X-WP-TotalPages', (string) (int) ceil( $total / $per_page ) );
+
+		return $response;
+	}
+
+	/**
 	 * POST /donor-dashboard/teams/{id}/members/{fundraiser_id}/remove
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -388,6 +449,39 @@ class TeamEndpoint {
 	}
 
 	/**
+	 * Resolve a team from the request and confirm the current donor belongs to it.
+	 *
+	 * Captains pass too: the captain is a member fundraiser on their own team.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return Team|WP_Error
+	 */
+	private function resolve_member_team( WP_REST_Request $request ): Team|WP_Error {
+		$donor = $this->resolve_donor();
+
+		if ( is_wp_error( $donor ) ) {
+			return $donor;
+		}
+
+		$team = Team::find( (int) $request->get_param( 'id' ) );
+
+		if ( ! $team || 0 === Fundraiser::count(
+			[
+				'donor_id' => (int) $donor->id,
+				'team_id'  => (int) $team->id,
+			]
+		) ) {
+			return new WP_Error(
+				'rest_forbidden',
+				__( 'You are not a member of this team.', 'mission-donation-platform' ),
+				[ 'status' => 403 ]
+			);
+		}
+
+		return $team;
+	}
+
+	/**
 	 * Reject writes to a team whose campaign has ended.
 	 *
 	 * @param Team $team Team model.
@@ -423,33 +517,38 @@ class TeamEndpoint {
 		$raised_display = Currency::format_amount( $raised, $currency );
 		$percent        = BlockSupport::progress_percent( $raised, (int) $team->goal );
 
-		$members = array_map(
+		// First roster page only; the members route serves the rest. Counts and
+		// labels come from the full count, never from the fetched page.
+		$member_count = $this->reporting->team_member_count( (int) $team->id );
+		$members      = array_map(
 			fn( array $row ): array => TeamRoster::member_row( $row, $currency, $self_id ),
-			$this->reporting->team_members( (int) $team->id )
+			$this->reporting->team_members( (int) $team->id, TeamsContextBuilder::MEMBERS_PER_PAGE )
 		);
 
 		return [
-			'id'                 => (int) $team->id,
-			'campaign_id'        => $team->campaign_id,
-			'name'               => $team->name,
-			'description'        => $team->description,
-			'goal'               => $team->goal,
-			'goal_major'         => (string) Currency::minor_to_major( $team->goal, $currency ),
-			'goal_display'       => $goal_display,
-			'status'             => $team->status,
-			'access'             => $team->access,
-			'raised'             => $raised,
-			'raised_display'     => $raised_display,
-			'progress'           => BlockSupport::progress_percent( $raised, (int) $team->goal, 2 ),
-			'progress_label'     => DashboardLabels::progress_label( $raised_display, $goal_display ),
-			'bar_width'          => $percent . '%',
-			'percent_label'      => $team->goal > 0 ? $percent . '%' : '',
-			'cover_image'        => DashboardLabels::cover_image_id( $cover ),
-			'cover_image_url'    => DashboardLabels::cover_image_url( $cover ),
-			'url'                => $team->get_url() ?? '',
-			'members'            => $members,
-			'member_count_label' => DashboardLabels::member_count_label( count( $members ) ),
-			'invitations'        => $team->pending_invitation_summaries(),
+			'id'                  => (int) $team->id,
+			'campaign_id'         => $team->campaign_id,
+			'name'                => $team->name,
+			'description'         => $team->description,
+			'goal'                => $team->goal,
+			'goal_major'          => (string) Currency::minor_to_major( $team->goal, $currency ),
+			'goal_display'        => $goal_display,
+			'status'              => $team->status,
+			'access'              => $team->access,
+			'raised'              => $raised,
+			'raised_display'      => $raised_display,
+			'progress'            => BlockSupport::progress_percent( $raised, (int) $team->goal, 2 ),
+			'progress_label'      => DashboardLabels::progress_label( $raised_display, $goal_display ),
+			'bar_width'           => $percent . '%',
+			'percent_label'       => $team->goal > 0 ? $percent . '%' : '',
+			'cover_image'         => DashboardLabels::cover_image_id( $cover ),
+			'cover_image_url'     => DashboardLabels::cover_image_url( $cover ),
+			'url'                 => $team->get_url() ?? '',
+			'members'             => $members,
+			'member_count'        => $member_count,
+			'members_total_pages' => (int) ceil( $member_count / TeamsContextBuilder::MEMBERS_PER_PAGE ),
+			'member_count_label'  => DashboardLabels::member_count_label( $member_count ),
+			'invitations'         => $team->pending_invitation_summaries(),
 		];
 	}
 

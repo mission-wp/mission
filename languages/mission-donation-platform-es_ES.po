@@ -1207,7 +1207,7 @@ msgstr "Tu página está pendiente de aprobación. Puedes editarla ahora y se pu
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:37
 #: src/DonorDashboard/FundraisersContextBuilder.php:253
-#: src/DonorDashboard/TeamsContextBuilder.php:231
+#: src/DonorDashboard/TeamsContextBuilder.php:237
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
@@ -1421,8 +1421,8 @@ msgstr "Miembros"
 #: blocks/src/donor-dashboard/parts/team-detail.php:250
 #: blocks/src/team-members/index.php:84
 #: src/DonorDashboard/FundraisersContextBuilder.php:267
-#: src/DonorDashboard/TeamsContextBuilder.php:214
-#: src/DonorDashboard/TeamsContextBuilder.php:277
+#: src/DonorDashboard/TeamsContextBuilder.php:220
+#: src/DonorDashboard/TeamsContextBuilder.php:285
 #: src/Email/TeamEmailListener.php:132
 #: src/Email/TeamEmailListener.php:171
 #: src/Email/templates/p2p-team-approved.php:14
@@ -2135,7 +2135,7 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
 #: src/DonorDashboard/FundraisersContextBuilder.php:333
-#: src/DonorDashboard/TeamsContextBuilder.php:194
+#: src/DonorDashboard/TeamsContextBuilder.php:200
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:204
@@ -3190,14 +3190,14 @@ msgid "Page %1$d of %2$d"
 msgstr "Página %1$d de %2$d"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:120
-#: src/DonorDashboard/TeamsContextBuilder.php:126
+#: src/DonorDashboard/TeamsContextBuilder.php:130
 #: admin/build/mission-admin.js:202
 #: admin/src/pages/settings/SaveBar.js:31
 msgid "Save changes"
 msgstr "Guardar cambios"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:121
-#: src/DonorDashboard/TeamsContextBuilder.php:127
+#: src/DonorDashboard/TeamsContextBuilder.php:131
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:204
@@ -3212,7 +3212,7 @@ msgid "Saving…"
 msgstr "Guardando…"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:122
-#: src/DonorDashboard/TeamsContextBuilder.php:128
+#: src/DonorDashboard/TeamsContextBuilder.php:132
 msgid "Saved"
 msgstr "Guardado"
 
@@ -3224,33 +3224,33 @@ msgstr "Recaudación actualizada"
 msgid "Link copied"
 msgstr "Enlace copiado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:129
+#: src/DonorDashboard/TeamsContextBuilder.php:133
 msgid "Team updated"
 msgstr "Equipo actualizado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:135
+#: src/DonorDashboard/TeamsContextBuilder.php:139
 msgid "Invitation sent"
 msgstr "Invitación enviada"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:136
+#: src/DonorDashboard/TeamsContextBuilder.php:140
 msgid "Member removed"
 msgstr "Miembro eliminado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:137
+#: src/DonorDashboard/TeamsContextBuilder.php:141
 msgid "New captain set"
 msgstr "Nuevo capitán asignado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:143
+#: src/DonorDashboard/TeamsContextBuilder.php:147
 msgid "Make this member the captain? You will no longer manage the team."
 msgstr "¿Hacer a este miembro el capitán? Dejarás de gestionar el equipo."
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:318
-#: src/DonorDashboard/TeamsContextBuilder.php:195
+#: src/DonorDashboard/TeamsContextBuilder.php:201
 msgid "Pending review"
 msgstr "Pendiente de revisión"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:322
-#: src/DonorDashboard/TeamsContextBuilder.php:196
+#: src/DonorDashboard/TeamsContextBuilder.php:202
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:173
 #: admin/src/constants.js:194
@@ -4644,7 +4644,7 @@ msgstr "Este donante ya tiene una cuenta."
 #: src/Models/Fundraiser.php:279
 #: src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1994
-#: src/Reporting/ReportingService.php:2269
+#: src/Reporting/ReportingService.php:2271
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:27
@@ -4825,7 +4825,7 @@ msgstr "No se ha podido guardar la imagen."
 
 #: src/P2P/FundraiserImageUploader.php:168
 #: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:189
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:206
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:232
 msgid "No image was uploaded."
 msgstr "No se ha subido ninguna imagen."
 
@@ -5182,13 +5182,13 @@ msgstr "El importe de la propina no puede ser negativo."
 msgid "You do not have permission to manage this subscription."
 msgstr "No tienes permiso para gestionar esta suscripción."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:317
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:351
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:378
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:412
 #: src/Rest/Endpoints/TeamMembersEndpoint.php:107
 msgid "Member not found."
 msgstr "Miembro no encontrado."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:382
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:443
 msgid "You are not the captain of this team."
 msgstr "No eres el capitán de este equipo."
 
@@ -13014,7 +13014,7 @@ msgstr "Finalizadas (%s)"
 
 #. translators: 1: first row number, 2: last row number, 3: total rows
 #: src/DonorDashboard/FundraisersContextBuilder.php:131
-#: src/DonorDashboard/TeamsContextBuilder.php:146
+#: src/DonorDashboard/TeamsContextBuilder.php:150
 msgid "%1$s–%2$s of %3$s"
 msgstr "%1$s–%2$s de %3$s"
 
@@ -13024,9 +13024,9 @@ msgid "Raised of %s"
 msgstr "Recaudado de %s"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:267
-#: src/DonorDashboard/TeamsContextBuilder.php:139
-#: src/DonorDashboard/TeamsContextBuilder.php:214
-#: src/DonorDashboard/TeamsContextBuilder.php:278
+#: src/DonorDashboard/TeamsContextBuilder.php:143
+#: src/DonorDashboard/TeamsContextBuilder.php:220
+#: src/DonorDashboard/TeamsContextBuilder.php:286
 #: admin/build/mission-admin.js:209
 #: admin/src/pages/teams/TeamMembersCard.js:103
 msgid "Member"
@@ -13078,36 +13078,36 @@ msgstr[1] "Recaudaciones activas"
 msgid "%1$s of %2$s team goal"
 msgstr "%1$s de %2$s de la meta del equipo"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:138
+#: src/DonorDashboard/TeamsContextBuilder.php:142
 msgid "You left the team"
 msgstr "Has abandonado el equipo"
 
 #. translators: %s: team captain's name
-#: src/DonorDashboard/TeamsContextBuilder.php:141
-#: src/DonorDashboard/TeamsContextBuilder.php:218
+#: src/DonorDashboard/TeamsContextBuilder.php:145
+#: src/DonorDashboard/TeamsContextBuilder.php:224
 msgid "Captain: %s"
 msgstr "Capitán: %s"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:142
+#: src/DonorDashboard/TeamsContextBuilder.php:146
 msgid "Remove this member from the team? Their fundraiser page stays active but will no longer count toward the team total."
 msgstr "¿Eliminar a este miembro del equipo? Su página de recaudación sigue activa pero ya no contará para el total del equipo."
 
-#: src/DonorDashboard/TeamsContextBuilder.php:144
+#: src/DonorDashboard/TeamsContextBuilder.php:148
 msgid "Leave this team? Your fundraiser page stays active. It will just no longer count toward the team total."
 msgstr "¿Abandonar este equipo? Tu página de recaudación sigue activa. Simplemente ya no contará para el total del equipo."
 
 #. translators: 1: this team's rank, 2: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:181
+#: src/DonorDashboard/TeamsContextBuilder.php:188
 msgid "Rank #%1$s of %2$s teams"
 msgstr "Puesto n.º %1$s de %2$s equipos"
 
 #. translators: %s: team goal
-#: src/DonorDashboard/TeamsContextBuilder.php:230
+#: src/DonorDashboard/TeamsContextBuilder.php:236
 msgid "Of %s Goal"
 msgstr "De la meta de %s"
 
 #. translators: %s: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:241
+#: src/DonorDashboard/TeamsContextBuilder.php:247
 msgid "Of %s Teams"
 msgstr "De %s equipos"
 
@@ -13120,7 +13120,7 @@ msgid "%1$s of %2$s"
 msgstr "%1$s de %2$s"
 
 #. translators: %s: amount the team raised
-#: src/DonorDashboard/TeamsContextBuilder.php:281
+#: src/DonorDashboard/TeamsContextBuilder.php:289
 msgid "team raised %s"
 msgstr "el equipo recaudó %s"
 
@@ -13136,13 +13136,13 @@ msgstr "No hemos podido eliminarte del equipo. Inténtalo de nuevo."
 msgid "This campaign has ended, so the page can no longer be edited."
 msgstr "Esta campaña ha finalizado, por lo que la página ya no se puede editar."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:403
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:497
 msgid "This campaign has ended, so the team can no longer be edited."
 msgstr "Esta campaña ha finalizado, por lo que el equipo ya no se puede editar."
 
 #. translators: %s: maximum allowed file size, e.g. "5 MB".
 #: src/DonorDashboard/FundraisersContextBuilder.php:126
-#: src/DonorDashboard/TeamsContextBuilder.php:132
+#: src/DonorDashboard/TeamsContextBuilder.php:136
 #: src/P2P/FundraiserImageUploader.php:180
 msgid "The image is too large. Please upload a file under %s."
 msgstr "La imagen es demasiado grande. Sube un archivo de menos de %s."
@@ -13723,3 +13723,11 @@ msgstr "Siempre en nuestros corazones."
 #: src/Rest/Endpoints/EmailTestEndpoint.php:216
 msgid "Team Sunshine"
 msgstr "Equipo Sol"
+
+#: src/DonorDashboard/TeamsContextBuilder.php:151
+msgid "Couldn't load members. Please try again."
+msgstr "No se han podido cargar los miembros. Inténtalo de nuevo."
+
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:476
+msgid "You are not a member of this team."
+msgstr "No eres miembro de este equipo."

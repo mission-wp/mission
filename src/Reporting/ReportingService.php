@@ -2226,9 +2226,10 @@ class ReportingService {
 	 *
 	 * @param int $team_id Team ID.
 	 * @param int $limit   Maximum members to return.
+	 * @param int $offset  Rows to skip, for pagination.
 	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, goal:int, raised:int, is_captain:bool}>
 	 */
-	public function team_members( int $team_id, int $limit = 100 ): array {
+	public function team_members( int $team_id, int $limit = 100, int $offset = 0 ): array {
 		global $wpdb;
 
 		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
@@ -2246,14 +2247,15 @@ class ReportingService {
 				 LEFT JOIN %i AS t ON f.team_id = t.id
 				 WHERE f.team_id = %d AND f.status = %s
 				 ORDER BY raised DESC, f.id ASC
-				 LIMIT %d',
+				 LIMIT %d OFFSET %d',
 				$raised_col,
 				$f_table,
 				$d_table,
 				$wpdb->prefix . 'missiondp_teams',
 				$team_id,
 				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
-				max( 1, $limit )
+				max( 1, $limit ),
+				max( 0, $offset )
 			),
 			ARRAY_A
 		);
@@ -2276,5 +2278,27 @@ class ReportingService {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Count a team's active member fundraisers.
+	 *
+	 * The companion to team_members(): the roster is paginated, so counts and
+	 * labels must come from this full count, never from a fetched page.
+	 *
+	 * @param int $team_id Team ID.
+	 * @return int
+	 */
+	public function team_member_count( int $team_id ): int {
+		global $wpdb;
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i WHERE team_id = %d AND status = %s',
+				$wpdb->prefix . 'missiondp_fundraisers',
+				$team_id,
+				\MissionDP\Models\Fundraiser::STATUS_ACTIVE
+			)
+		);
 	}
 }

@@ -50,9 +50,85 @@ export function syncTeamDetail( ctx, id ) {
   teams.invite.error = '';
   teams.invite.sending = false;
   teams.membersPage = 1;
+  teams.membersItems = card.members || [];
+  teams.membersTotal = card.membersTotal || 0;
+  teams.membersPages = card.membersTotalPages || 0;
+  teams.membersLoading = false;
   teams.uploadError = '';
   teams.photoRemoved = false;
   photo.clearStaged( teams );
+}
+
+/**
+ * Fetch one page of the team roster from the server.
+ *
+ * @param {Object} ctx  Interactivity context.
+ * @param {number} id   Team ID.
+ * @param {number} page Page number to load.
+ */
+function loadMembersPage( ctx, id, page ) {
+  const teams = ctx.teams;
+  teams.membersLoading = true;
+
+  fetch(
+    `${ ctx.restUrl }donor-dashboard/teams/${ id }/members?per_page=${ teams.membersPerPage }&page=${ page }`,
+    {
+      credentials: 'same-origin',
+      headers: { 'X-WP-Nonce': ctx.nonce },
+    }
+  )
+    .then( ( response ) => {
+      if ( ! response.ok ) {
+        throw new Error( 'request_failed' );
+      }
+      const total = Number( response.headers.get( 'X-WP-Total' ) ) || 0;
+      const totalPages =
+        Number( response.headers.get( 'X-WP-TotalPages' ) ) || 0;
+      return response.json().then( ( rows ) => {
+        // Ignore stale responses after the user switched teams.
+        if ( ctx.teams.detail?.id !== id ) {
+          return;
+        }
+        teams.membersItems = rows;
+        teams.membersTotal = total;
+        teams.membersPages = totalPages;
+        teams.membersPage = page;
+        teams.membersLoading = false;
+      } );
+    } )
+    .catch( () => {
+      if ( ctx.teams.detail?.id === id ) {
+        teams.membersLoading = false;
+        showToast(
+          ctx,
+          ctx.teams?.i18n?.membersError ||
+            "Couldn't load members. Please try again.",
+          'error'
+        );
+      }
+    } );
+}
+
+/**
+ * Apply a fresh roster payload (first page plus counts) from a team response.
+ *
+ * @param {Object} teams Teams context slice.
+ * @param {Object} card  Team card being updated.
+ * @param {Object} data  Team payload from the REST API.
+ */
+function applyRoster( teams, card, data ) {
+  card.members = data.members || [];
+  card.memberCount = data.member_count || 0;
+  card.membersTotal = data.member_count || 0;
+  card.membersTotalPages = data.members_total_pages || 0;
+  if ( data.member_count_label ) {
+    card.memberCountLabel = data.member_count_label;
+  }
+  teams.membersPage = 1;
+  teams.membersItems = card.members;
+  teams.membersTotal = card.membersTotal;
+  teams.membersPages = card.membersTotalPages;
+  teams.membersLoading = false;
 }
 
 /**
@@ -107,39 +183,39 @@ export const teamState = {
     );
   },
 
-  // ── Members pagination (client-side; the full roster is in context) ──
+  // ── Members pagination (server pages; page 1 is embedded in the card) ──
   get teamMembersPageItems() {
-    const teams = getContext().teams;
-    const members = teams?.detail?.members || [];
-    const start = ( ( teams?.membersPage || 1 ) - 1 ) * teams.membersPerPage;
-    return members.slice( start, start + teams.membersPerPage );
+    return getContext().teams?.membersItems || [];
   },
   get teamMembersHasPages() {
-    const teams = getContext().teams;
-    return (
-      ( teams?.detail?.members?.length || 0 ) > ( teams?.membersPerPage || 5 )
-    );
+    return ( getContext().teams?.membersPages || 0 ) > 1;
   },
   get teamMembersRangeLabel() {
     const teams = getContext().teams;
-    const total = teams?.detail?.members?.length || 0;
+    const total = teams?.membersTotal || 0;
     if ( ! total ) {
       return '';
     }
     const first = ( teams.membersPage - 1 ) * teams.membersPerPage + 1;
-    const last = Math.min( teams.membersPage * teams.membersPerPage, total );
+    const last = Math.min(
+      first + ( teams.membersItems?.length || 0 ) - 1,
+      total
+    );
     return teamStrings()
       .range.replace( '%1$s', first )
       .replace( '%2$s', last )
       .replace( '%3$s', total );
   },
   get teamMembersPrevDisabled() {
-    return ( getContext().teams?.membersPage || 1 ) <= 1;
+    const teams = getContext().teams;
+    return !! teams?.membersLoading || ( teams?.membersPage || 1 ) <= 1;
   },
   get teamMembersNextDisabled() {
     const teams = getContext().teams;
-    const total = teams?.detail?.members?.length || 0;
-    return teams?.membersPage >= Math.ceil( total / teams?.membersPerPage );
+    return (
+      !! teams?.membersLoading ||
+      ( teams?.membersPage || 1 ) >= ( teams?.membersPages || 0 )
+    );
   },
 };
 
@@ -331,12 +407,7 @@ export const teamActions = {
       }
 
       const data = yield response.json();
-      card.members = data.members || [];
-      card.memberCount = card.members.length;
-      if ( data.member_count_label ) {
-        card.memberCountLabel = data.member_count_label;
-      }
-      teams.membersPage = 1;
+      applyRoster( teams, card, data );
       showToast( ctx, teams.i18n?.removeToast || 'Member removed' );
     } catch {
       teams.edit.error = GENERIC_ERROR;
@@ -382,7 +453,7 @@ export const teamActions = {
       card.captainChipLabel = (
         teams.i18n?.captainChip || 'Captain: %s'
       ).replace( '%s', member.name );
-      card.members = data.members || [];
+      applyRoster( teams, card, data );
       card.invitations = [];
       showToast( ctx, teams.i18n?.promoteToast || 'New captain set' );
     } catch {
@@ -450,17 +521,18 @@ export const teamActions = {
   },
 
   teamMembersPrev() {
-    const teams = getContext().teams;
-    if ( teams.membersPage > 1 ) {
-      teams.membersPage--;
+    const ctx = getContext();
+    const teams = ctx.teams;
+    if ( teams.membersPage > 1 && ! teams.membersLoading ) {
+      loadMembersPage( ctx, teams.detail.id, teams.membersPage - 1 );
     }
   },
 
   teamMembersNext() {
-    const teams = getContext().teams;
-    const total = teams.detail?.members?.length || 0;
-    if ( teams.membersPage < Math.ceil( total / teams.membersPerPage ) ) {
-      teams.membersPage++;
+    const ctx = getContext();
+    const teams = ctx.teams;
+    if ( teams.membersPage < teams.membersPages && ! teams.membersLoading ) {
+      loadMembersPage( ctx, teams.detail.id, teams.membersPage + 1 );
     }
   },
 };
