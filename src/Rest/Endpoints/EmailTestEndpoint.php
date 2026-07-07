@@ -28,22 +28,6 @@ class EmailTestEndpoint {
 	use AdminPermissionTrait;
 
 	/**
-	 * Template file name per email type (hyphenated).
-	 *
-	 * @var array<string, string>
-	 */
-	private const TEMPLATE_MAP = [
-		'donation_receipt'          => 'donation-receipt',
-		'subscription_activated'    => 'subscription-activated',
-		'renewal_receipt'           => 'renewal-receipt',
-		'payment_failed'            => 'payment-failed',
-		'subscription_cancelled'    => 'subscription-cancelled',
-		'account_activation'        => 'account-activation',
-		'password_reset'            => 'password-reset',
-		'email_change_verification' => 'email-change-verification',
-	];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param SettingsService $settings Settings service.
@@ -98,7 +82,7 @@ class EmailTestEndpoint {
 		$email_type = $request->get_param( 'email_type' );
 		$to         = $request->get_param( 'to' );
 
-		if ( ! isset( self::TEMPLATE_MAP[ $email_type ] ) ) {
+		if ( ! isset( EmailModule::TEMPLATE_MAP[ $email_type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
 				__( 'Unknown email type.', 'mission-donation-platform' ),
@@ -112,7 +96,7 @@ class EmailTestEndpoint {
 
 		$email_module = $this->email;
 		$data         = $this->build_sample_data( $email_type, $to );
-		$template     = self::TEMPLATE_MAP[ $email_type ];
+		$template     = EmailModule::TEMPLATE_MAP[ $email_type ];
 
 		$tags = $email_module->build_merge_tags( $data );
 		// Lowercased because the tag sits mid-sentence in the default subjects.
@@ -186,6 +170,51 @@ class EmailTestEndpoint {
 				$base['new_email']        = 'newemail@example.com';
 				$base['verification_url'] = home_url( '/?action=verify-email&token=sample-test-token' );
 				$base['expiry_hours']     = 24;
+				break;
+
+			case 'donor_note':
+				$base['note'] = (object) [
+					'content' => __( 'Thank you so much for your generous support. It means the world to us!', 'mission-donation-platform' ),
+				];
+				break;
+
+			case 'tribute_notification':
+				$base['organization']       = $this->settings->get( 'org_name', get_bloginfo( 'name' ) );
+				$base['tribute_type_label'] = __( 'in memory of', 'mission-donation-platform' );
+				$base['honoree_name']       = 'Robert Johnson';
+				$base['message']            = __( 'Forever in our hearts.', 'mission-donation-platform' );
+				break;
+
+			case 'p2p_fundraiser_approved':
+				$base['page_url'] = home_url( '/fundraisers/sample-fundraiser/' );
+				break;
+
+			case 'p2p_fundraiser_received_donation':
+				$base['page_url']   = home_url( '/fundraisers/sample-fundraiser/' );
+				$base['giver_name'] = 'Alex Rivera';
+				break;
+
+			case 'p2p_fundraiser_milestone':
+				$base['page_url']         = home_url( '/fundraisers/sample-fundraiser/' );
+				$base['milestone_label']  = '50%';
+				$base['raised_formatted'] = Currency::format_amount( 25000, $currency );
+				$base['goal_formatted']   = Currency::format_amount( 50000, $currency );
+				break;
+
+			case 'p2p_team_invitation':
+				$base['team']       = (object) [ 'name' => __( 'Team Sunshine', 'mission-donation-platform' ) ];
+				$base['accept_url'] = add_query_arg( 'team_invite', 'sample-test-token', home_url( '/teams/sample-team/' ) );
+				break;
+
+			case 'p2p_team_member_joined':
+				$base['team']        = (object) [ 'name' => __( 'Team Sunshine', 'mission-donation-platform' ) ];
+				$base['member_name'] = 'Alex Rivera';
+				$base['page_url']    = home_url( '/teams/sample-team/' );
+				break;
+
+			case 'p2p_team_approved':
+				$base['team']     = (object) [ 'name' => __( 'Team Sunshine', 'mission-donation-platform' ) ];
+				$base['page_url'] = home_url( '/teams/sample-team/' );
 				break;
 		}
 

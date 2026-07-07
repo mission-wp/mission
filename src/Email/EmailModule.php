@@ -20,6 +20,33 @@ defined( 'ABSPATH' ) || exit;
 class EmailModule {
 
 	/**
+	 * Template file name per editable email type (hyphenated).
+	 *
+	 * The single source for the admin editor preview and test-send endpoints.
+	 * The OTP email (p2p_otp_code) is intentionally absent: it has no editor UI.
+	 *
+	 * @var array<string, string>
+	 */
+	public const TEMPLATE_MAP = [
+		'donation_receipt'                 => 'donation-receipt',
+		'subscription_activated'           => 'subscription-activated',
+		'renewal_receipt'                  => 'renewal-receipt',
+		'payment_failed'                   => 'payment-failed',
+		'subscription_cancelled'           => 'subscription-cancelled',
+		'account_activation'               => 'account-activation',
+		'password_reset'                   => 'password-reset',
+		'email_change_verification'        => 'email-change-verification',
+		'donor_note'                       => 'donor-note',
+		'tribute_notification'             => 'tribute-notification',
+		'p2p_fundraiser_approved'          => 'p2p-fundraiser-approved',
+		'p2p_fundraiser_received_donation' => 'p2p-fundraiser-received-donation',
+		'p2p_fundraiser_milestone'         => 'p2p-fundraiser-milestone',
+		'p2p_team_invitation'              => 'p2p-team-invitation',
+		'p2p_team_member_joined'           => 'p2p-team-member-joined',
+		'p2p_team_approved'                => 'p2p-team-approved',
+	];
+
+	/**
 	 * Template directory path.
 	 *
 	 * @var string

@@ -100,13 +100,13 @@ msgstr[1] "Quedan %d días"
 #: blocks/build/campaign/index.php:99
 #: blocks/build/campaign/index.php:105
 #: blocks/build/campaign/index.php:111
-#: blocks/build/team-members/index.php:95
+#: blocks/build/team-members/index.php:96
 #: blocks/src/campaign-grid/index.php:145
 #: blocks/src/campaign-grid/index.php:151
 #: blocks/src/campaign/index.php:99
 #: blocks/src/campaign/index.php:105
 #: blocks/src/campaign/index.php:111
-#: blocks/src/team-members/index.php:95
+#: blocks/src/team-members/index.php:96
 #: blocks/build/team-members/index.js:2
 #: blocks/src/team-members/index.js:74
 msgid "of %s"
@@ -211,11 +211,11 @@ msgid "days remaining"
 msgstr "días restantes"
 
 #: blocks/build/campaign-progress/index.php:158
-#: blocks/build/top-fundraisers/index.php:72
-#: blocks/build/top-fundraisers/index.php:76
+#: blocks/build/top-fundraisers/index.php:73
+#: blocks/build/top-fundraisers/index.php:77
 #: blocks/src/campaign-progress/index.php:158
-#: blocks/src/top-fundraisers/index.php:72
-#: blocks/src/top-fundraisers/index.php:76
+#: blocks/src/top-fundraisers/index.php:73
+#: blocks/src/top-fundraisers/index.php:77
 msgid "Become a Fundraiser"
 msgstr "Conviértete en recaudador"
 
@@ -327,7 +327,7 @@ msgstr "Semanal"
 #: blocks/src/donation-form/index.php:72
 #: blocks/src/donor-wall/index.php:102
 #: src/DonorDashboard/DashboardContextBuilder.php:89
-#: src/Rest/Endpoints/EmailTestEndpoint.php:170
+#: src/Rest/Endpoints/EmailTestEndpoint.php:154
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:77
 #: assets/shared/components/FrequencyChips.js:6
@@ -1417,9 +1417,9 @@ msgstr "Miembros"
 
 #: blocks/build/donor-dashboard/parts/fundraising.php:318
 #: blocks/build/donor-dashboard/parts/team-detail.php:250
-#: blocks/build/team-members/index.php:83
+#: blocks/build/team-members/index.php:84
 #: blocks/src/donor-dashboard/parts/team-detail.php:250
-#: blocks/src/team-members/index.php:83
+#: blocks/src/team-members/index.php:84
 #: src/DonorDashboard/FundraisersContextBuilder.php:267
 #: src/DonorDashboard/TeamsContextBuilder.php:214
 #: src/DonorDashboard/TeamsContextBuilder.php:277
@@ -2683,15 +2683,15 @@ msgid "View my page"
 msgstr "Ver mi página"
 
 #. translators: %s: number of fundraisers on the team
-#: blocks/build/team-members/index.php:54
-#: blocks/src/team-members/index.php:54
+#: blocks/build/team-members/index.php:55
+#: blocks/src/team-members/index.php:55
 msgid "%s fundraiser"
 msgid_plural "%s fundraisers"
 msgstr[0] "%s recaudador"
 msgstr[1] "%s recaudadores"
 
-#: blocks/build/team-members/index.php:103
-#: blocks/src/team-members/index.php:103
+#: blocks/build/team-members/index.php:104
+#: blocks/src/team-members/index.php:104
 msgid "No members have joined this team yet."
 msgstr "Aún no se ha unido ningún miembro a este equipo."
 
@@ -2760,27 +2760,27 @@ msgstr "Haz una donación y hazte con lo más alto de la lista."
 msgid "Be the First Donor"
 msgstr "Sé el primer donante"
 
-#: blocks/build/top-fundraisers/index.php:35
-#: blocks/src/top-fundraisers/index.php:35
+#: blocks/build/top-fundraisers/index.php:36
+#: blocks/src/top-fundraisers/index.php:36
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/src/top-fundraisers/edit/Edit.js:175
 msgid "Top Fundraisers"
 msgstr "Mejores recaudadores"
 
-#: blocks/build/top-fundraisers/index.php:68
-#: blocks/src/top-fundraisers/index.php:68
+#: blocks/build/top-fundraisers/index.php:69
+#: blocks/src/top-fundraisers/index.php:69
 msgid "Be the first fundraiser."
 msgstr "Sé el primer recaudador."
 
-#: blocks/build/top-fundraisers/index.php:69
-#: blocks/src/top-fundraisers/index.php:69
+#: blocks/build/top-fundraisers/index.php:70
+#: blocks/src/top-fundraisers/index.php:70
 msgid "Start your own page and rally your friends."
 msgstr "Crea tu propia página y reúne a tus amigos."
 
 #: blocks/build/donor-dashboard/parts/fundraisers.php:48
-#: blocks/build/top-fundraisers/index.php:114
+#: blocks/build/top-fundraisers/index.php:115
 #: blocks/src/donor-dashboard/parts/fundraisers.php:48
-#: blocks/src/top-fundraisers/index.php:114
+#: blocks/src/top-fundraisers/index.php:115
 #: blocks/build/top-fundraisers/index.js:1
 #: blocks/src/top-fundraisers/edit/Edit.js:201
 msgid "Individual fundraiser"
@@ -3331,16 +3331,16 @@ msgstr "No hemos encontrado ninguna donación con esta dirección de correo elec
 msgid "An account already exists for this email. Please log in instead."
 msgstr "Ya existe una cuenta para este correo electrónico. Inicia sesión en su lugar."
 
-#: src/Email/EmailModule.php:98
+#: src/Email/EmailModule.php:125
 msgid "Verify your email to activate your donor account"
 msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 
 #: src/DonorDashboard/DonorAuthService.php:98
 #: src/DonorDashboard/DonorAuthService.php:437
 #: src/Email/DonationEmailListener.php:122
-#: src/Email/EmailModule.php:227
-#: src/Email/EmailModule.php:360
-#: src/Email/EmailModule.php:381
+#: src/Email/EmailModule.php:254
+#: src/Email/EmailModule.php:387
+#: src/Email/EmailModule.php:408
 #: src/Email/FundraiserEmailListener.php:120
 #: src/Email/FundraiserEmailListener.php:161
 #: src/Email/FundraiserEmailListener.php:227
@@ -3388,7 +3388,7 @@ msgstr "No se ha podido procesar esta solicitud."
 msgid "Unable to generate a password reset link. Please try again later."
 msgstr "No se ha podido generar un enlace para restablecer la contraseña. Inténtalo de nuevo más tarde."
 
-#: src/Email/EmailModule.php:99
+#: src/Email/EmailModule.php:126
 #: src/Email/templates/password-reset.php:15
 msgid "Reset your password"
 msgstr "Restablecer tu contraseña"
@@ -3434,7 +3434,7 @@ msgstr "Demasiados intentos. Solicita un código nuevo."
 msgid "That code didn't match. Please try again."
 msgstr "Ese código no coincide. Inténtalo de nuevo."
 
-#: src/Email/EmailModule.php:103
+#: src/Email/EmailModule.php:130
 msgid "Your verification code"
 msgstr "Tu código de verificación"
 
@@ -3495,6 +3495,7 @@ msgstr "Hito de campaña: %1$s alcanzó %2$s"
 
 #: src/Email/AdminNotificationListener.php:452
 #: src/Email/DonationEmailListener.php:160
+#: src/Rest/Endpoints/EmailTestEndpoint.php:183
 msgid "in memory of"
 msgstr "en memoria de"
 
@@ -3509,7 +3510,7 @@ msgstr "en honor a"
 msgid "Mail dedication pending: %1$s (from %2$s)"
 msgstr "Dedicatoria por correo pendiente: %1$s (de %2$s)"
 
-#: src/Email/EmailModule.php:101
+#: src/Email/EmailModule.php:128
 msgid "A note about your donation"
 msgstr "Una nota sobre tu donación"
 
@@ -3523,7 +3524,7 @@ msgstr "Alguien"
 #. translators: %s: donor first name
 #. translators: %s: participant first name
 #. translators: %s: captain first name
-#: src/Email/EmailModule.php:385
+#: src/Email/EmailModule.php:412
 #: src/Email/templates/account-activation.php:22
 #: src/Email/templates/donation-receipt.php:22
 #: src/Email/templates/email-change-verification.php:22
@@ -3545,15 +3546,15 @@ msgstr "Hola %s:"
 msgid "You've reached %s of your goal!"
 msgstr "¡Has alcanzado el %s de tu meta!"
 
-#: src/Email/EmailModule.php:104
+#: src/Email/EmailModule.php:131
 msgid "Your fundraising page is live"
 msgstr "Tu página de recaudación está activa"
 
-#: src/Email/EmailModule.php:96
+#: src/Email/EmailModule.php:123
 msgid "Action needed: Update your payment for your recurring donation"
 msgstr "Acción necesaria: actualiza el pago de tu donación recurrente"
 
-#: src/Email/EmailModule.php:97
+#: src/Email/EmailModule.php:124
 msgid "Your recurring donation has ended"
 msgstr "Tu donación recurrente ha finalizado"
 
@@ -3772,7 +3773,7 @@ msgstr "Tu donación se ha recibido correctamente."
 msgid "Thank you for your generosity!"
 msgstr "¡Gracias por tu generosidad!"
 
-#: src/Email/EmailModule.php:100
+#: src/Email/EmailModule.php:127
 #: src/Email/templates/email-change-verification.php:15
 msgid "Verify your new email address"
 msgstr "Verifica tu nueva dirección de correo electrónico"
@@ -4643,7 +4644,7 @@ msgstr "Este donante ya tiene una cuenta."
 #: src/Models/Fundraiser.php:279
 #: src/P2P/FundraiserPostType.php:73
 #: src/Reporting/ReportingService.php:1994
-#: src/Reporting/ReportingService.php:2267
+#: src/Reporting/ReportingService.php:2269
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:27
@@ -4955,7 +4956,7 @@ msgstr "Sin título"
 
 #: src/Reporting/ReportingService.php:1423
 #: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:271
-#: src/Rest/Endpoints/EmailTestEndpoint.php:169
+#: src/Rest/Endpoints/EmailTestEndpoint.php:153
 #: src/Rest/Endpoints/TransactionsEndpoint.php:754
 msgid "General Fund"
 msgstr "Fondo general"
@@ -5212,48 +5213,48 @@ msgstr "No tienes permiso para ver los donantes."
 msgid "A donor with this email address already exists."
 msgstr "Ya existe un donante con esta dirección de correo electrónico."
 
-#: src/Email/EmailModule.php:93
+#: src/Email/EmailModule.php:120
 msgid "Thank you for your {amount} donation"
 msgstr "Gracias por tu donación de {amount}"
 
-#: src/Email/EmailModule.php:94
+#: src/Email/EmailModule.php:121
 msgid "Thank you for your {amount} {frequency} donation"
 msgstr "Gracias por tu donación {frequency} de {amount}"
 
-#: src/Email/EmailModule.php:95
+#: src/Email/EmailModule.php:122
 msgid "Thank you for your {frequency} gift of {amount}"
 msgstr "Gracias por tu donativo {frequency} de {amount}"
 
-#: src/Email/EmailModule.php:102
+#: src/Email/EmailModule.php:129
 msgid "A donation has been made {tribute_type_label} {honoree_name}"
 msgstr "Se ha realizado una donación {tribute_type_label} {honoree_name}"
 
-#: src/Email/EmailModule.php:105
+#: src/Email/EmailModule.php:132
 msgid "You received a {amount} donation!"
 msgstr "¡Has recibido una donación de {amount}!"
 
-#: src/Email/EmailModule.php:106
+#: src/Email/EmailModule.php:133
 msgid "You've reached {milestone} of your goal!"
 msgstr "¡Has alcanzado el {milestone} de tu meta!"
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:90
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:66
 msgid "You do not have permission to view email templates."
 msgstr "No tienes permiso para ver las plantillas de correo electrónico."
 
-#: src/Rest/Endpoints/EmailTemplateEndpoint.php:105
-#: src/Rest/Endpoints/EmailTestEndpoint.php:104
+#: src/Rest/Endpoints/EmailTemplateEndpoint.php:81
+#: src/Rest/Endpoints/EmailTestEndpoint.php:88
 msgid "Unknown email type."
 msgstr "Tipo de correo electrónico desconocido."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:88
+#: src/Rest/Endpoints/EmailTestEndpoint.php:72
 msgid "You do not have permission to send test emails."
 msgstr "No tienes permiso para enviar correos electrónicos de prueba."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:128
+#: src/Rest/Endpoints/EmailTestEndpoint.php:112
 msgid "Failed to render email template."
 msgstr "No se ha podido generar la plantilla de correo electrónico."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:138
+#: src/Rest/Endpoints/EmailTestEndpoint.php:122
 msgid "Failed to send test email. Check your mail configuration."
 msgstr "No se ha podido enviar el correo electrónico de prueba. Comprueba la configuración de tu correo."
 
@@ -5411,12 +5412,12 @@ msgstr "No tienes permiso para ver los equipos."
 msgid "Teams can only be added to peer-to-peer campaigns."
 msgstr "Los equipos solo se pueden añadir a campañas entre pares."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:136
-#: src/Rest/Endpoints/TeamsEndpoint.php:150
+#: src/Rest/Endpoints/TeamsEndpoint.php:195
+#: src/Rest/Endpoints/TeamsEndpoint.php:209
 msgid "The team could not be created."
 msgstr "No se ha podido crear el equipo."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:238
+#: src/Rest/Endpoints/TeamsEndpoint.php:297
 msgid "The selected captain is not a fundraiser in this campaign."
 msgstr "El capitán seleccionado no es un recaudador de esta campaña."
 
@@ -12526,15 +12527,15 @@ msgstr "¡Ya casi está!"
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Tu página de recaudación se ha enviado para su revisión. Te enviaremos un correo en cuanto esté aprobada y lista para compartir."
 
-#: src/Email/EmailModule.php:107
+#: src/Email/EmailModule.php:134
 msgid "You're invited to join {team_name}"
 msgstr "Te han invitado a unirte a {team_name}"
 
-#: src/Email/EmailModule.php:108
+#: src/Email/EmailModule.php:135
 msgid "A new member joined {team_name}"
 msgstr "Un nuevo miembro se unió a {team_name}"
 
-#: src/Email/EmailModule.php:109
+#: src/Email/EmailModule.php:136
 msgid "Your team {team_name} has been approved"
 msgstr "Tu equipo {team_name} ha sido aprobado"
 
@@ -12581,7 +12582,7 @@ msgstr "Introduce una nueva contraseña."
 msgid "That code didn't work. Request a new one and try again."
 msgstr "Ese código no funcionó. Solicita uno nuevo e inténtalo de nuevo."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:185
+#: src/Rest/Endpoints/TeamsEndpoint.php:244
 msgid "The selected captain is not a member of this team."
 msgstr "El capitán seleccionado no es miembro de este equipo."
 
@@ -13708,3 +13709,17 @@ msgstr "Error al copiar"
 #: src/DonorDashboard/FundraisersContextBuilder.php:132
 msgid "Couldn't load supporters. Please try again."
 msgstr "No se han podido cargar los colaboradores. Inténtalo de nuevo."
+
+#: src/Rest/Endpoints/EmailTestEndpoint.php:177
+msgid "Thank you so much for your generous support. It means the world to us!"
+msgstr "¡Muchas gracias por tu generoso apoyo. Significa muchísimo para nosotros!"
+
+#: src/Rest/Endpoints/EmailTestEndpoint.php:185
+msgid "Forever in our hearts."
+msgstr "Siempre en nuestros corazones."
+
+#: src/Rest/Endpoints/EmailTestEndpoint.php:205
+#: src/Rest/Endpoints/EmailTestEndpoint.php:210
+#: src/Rest/Endpoints/EmailTestEndpoint.php:216
+msgid "Team Sunshine"
+msgstr "Equipo Sol"

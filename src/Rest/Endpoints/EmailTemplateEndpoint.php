@@ -29,30 +29,6 @@ class EmailTemplateEndpoint {
 	use AdminPermissionTrait;
 
 	/**
-	 * Template file name per email type (hyphenated).
-	 *
-	 * @var array<string, string>
-	 */
-	private const TEMPLATE_MAP = [
-		'donation_receipt'                 => 'donation-receipt',
-		'subscription_activated'           => 'subscription-activated',
-		'renewal_receipt'                  => 'renewal-receipt',
-		'payment_failed'                   => 'payment-failed',
-		'subscription_cancelled'           => 'subscription-cancelled',
-		'account_activation'               => 'account-activation',
-		'password_reset'                   => 'password-reset',
-		'email_change_verification'        => 'email-change-verification',
-		'donor_note'                       => 'donor-note',
-		'tribute_notification'             => 'tribute-notification',
-		'p2p_fundraiser_approved'          => 'p2p-fundraiser-approved',
-		'p2p_fundraiser_received_donation' => 'p2p-fundraiser-received-donation',
-		'p2p_fundraiser_milestone'         => 'p2p-fundraiser-milestone',
-		'p2p_team_invitation'              => 'p2p-team-invitation',
-		'p2p_team_member_joined'           => 'p2p-team-member-joined',
-		'p2p_team_approved'                => 'p2p-team-approved',
-	];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param EmailModule $email Email module.
@@ -99,7 +75,7 @@ class EmailTemplateEndpoint {
 	public function get_template( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$type = $request->get_param( 'type' );
 
-		if ( ! isset( self::TEMPLATE_MAP[ $type ] ) ) {
+		if ( ! isset( EmailModule::TEMPLATE_MAP[ $type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
 				__( 'Unknown email type.', 'mission-donation-platform' ),
@@ -108,7 +84,7 @@ class EmailTemplateEndpoint {
 		}
 
 		$email_module = $this->email;
-		$template     = self::TEMPLATE_MAP[ $type ];
+		$template     = EmailModule::TEMPLATE_MAP[ $type ];
 		$subject      = $this->email->default_subject( $type );
 
 		$data            = $this->build_tag_data( $type );
