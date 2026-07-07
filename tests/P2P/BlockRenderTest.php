@@ -13,6 +13,7 @@ use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
+use MissionDP\P2P\SignupModal;
 use WP_UnitTestCase;
 
 /**
@@ -40,6 +41,7 @@ class BlockRenderTest extends WP_UnitTestCase {
 	public function set_up(): void {
 		parent::set_up();
 		update_option( 'missiondp_settings', [ 'test_mode' => false, 'currency' => 'USD' ] );
+		SignupModal::reset();
 	}
 
 	/**
@@ -205,41 +207,67 @@ class BlockRenderTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the sign-up modal renders for an open p2p campaign.
+	 * A signup CTA block brings the modal shell along, bound to its campaign.
 	 */
-	public function test_signup_modal_renders_when_registration_open(): void {
-		$this->require_block( 'mission-donation-platform/signup-modal' );
+	public function test_campaign_progress_renders_signup_shell(): void {
+		$this->require_block( 'mission-donation-platform/campaign-progress' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
 		$campaign->update_meta( 'registration_open', true );
 
-		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/signup-modal {"campaignId":%d} /-->', $campaign->id ) );
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/campaign-progress {"campaignId":%d} /-->', $campaign->id ) );
 
+		$this->assertStringContainsString( 'Become a Fundraiser', $html );
 		$this->assertStringContainsString( 'mission-su__overlay', $html );
 		$this->assertStringContainsString( 'mission-su__step', $html );
+		// The block carries the campaign payload in its own context.
+		$this->assertStringContainsString( '&quot;signup&quot;', $html );
+		$this->assertStringContainsString( '&quot;campaignId&quot;:' . $campaign->id, $html );
 	}
 
 	/**
-	 * Test the sign-up modal renders nothing when registration is closed.
+	 * Two CTA blocks on one page render a single modal shell.
 	 */
-	public function test_signup_modal_hidden_when_registration_closed(): void {
-		$this->require_block( 'mission-donation-platform/signup-modal' );
+	public function test_signup_shell_renders_once_per_page(): void {
+		$this->require_block( 'mission-donation-platform/campaign-progress' );
+		$this->require_block( 'mission-donation-platform/top-fundraisers' );
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$campaign->update_meta( 'registration_open', true );
+
+		$html = do_blocks(
+			sprintf(
+				'<!-- wp:mission-donation-platform/campaign-progress {"campaignId":%1$d} /--><!-- wp:mission-donation-platform/top-fundraisers {"campaignId":%1$d} /-->',
+				$campaign->id
+			)
+		);
+
+		$this->assertSame( 1, substr_count( $html, 'mission-su__overlay' ) );
+	}
+
+	/**
+	 * With registration closed there is no CTA and no shell on the page.
+	 */
+	public function test_signup_shell_absent_when_registration_closed(): void {
+		$this->require_block( 'mission-donation-platform/campaign-progress' );
 
 		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
 		$campaign->save();
 		$campaign->update_meta( 'registration_open', false );
 
-		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/signup-modal {"campaignId":%d} /-->', $campaign->id ) );
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/campaign-progress {"campaignId":%d} /-->', $campaign->id ) );
 
-		$this->assertStringNotContainsString( 'mission-su__overlay', $html );
+		$this->assertStringNotContainsString( 'Become a Fundraiser', $html );
+		$this->assertStringNotContainsString( 'mission-su', $html );
 	}
 
 	/**
-	 * Test the sign-up modal renders nothing on a scheduled campaign even with the toggle on.
+	 * The shell renders nothing on a scheduled campaign even with the toggle on.
 	 */
-	public function test_signup_modal_hidden_when_campaign_not_active(): void {
-		$this->require_block( 'mission-donation-platform/signup-modal' );
+	public function test_signup_shell_absent_when_campaign_not_active(): void {
+		$this->require_block( 'mission-donation-platform/campaign-progress' );
 
 		$campaign = new Campaign(
 			[
@@ -251,8 +279,54 @@ class BlockRenderTest extends WP_UnitTestCase {
 		$campaign->save();
 		$campaign->update_meta( 'registration_open', true );
 
-		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/signup-modal {"campaignId":%d} /-->', $campaign->id ) );
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/campaign-progress {"campaignId":%d} /-->', $campaign->id ) );
 
-		$this->assertStringNotContainsString( 'mission-su__overlay', $html );
+		$this->assertStringNotContainsString( 'mission-su', $html );
+	}
+
+	/**
+	 * Private teams hide the join CTA but still render the shell: invite links
+	 * land on private team pages and must be able to open the modal.
+	 */
+	public function test_team_progress_renders_shell_for_private_team(): void {
+		$this->require_block( 'mission-donation-platform/team-progress' );
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$campaign->update_meta( 'registration_open', true );
+		$private = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Closed Crew', 'status' => 'active', 'access' => Team::ACCESS_PRIVATE ] );
+		$private->save();
+
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/team-progress {"teamId":%d} /-->', $private->id ) );
+
+		$this->assertStringNotContainsString( 'Join this Team', $html );
+		$this->assertStringContainsString( 'mission-su__overlay', $html );
+	}
+
+	/**
+	 * Two CTA blocks for two campaigns share one shell but each carries its
+	 * own campaign's payload.
+	 */
+	public function test_signup_payloads_are_per_block_across_campaigns(): void {
+		$this->require_block( 'mission-donation-platform/top-fundraisers' );
+
+		$first = new Campaign( [ 'title' => 'First Drive', 'type' => 'p2p' ] );
+		$first->save();
+		$first->update_meta( 'registration_open', true );
+		$second = new Campaign( [ 'title' => 'Second Drive', 'type' => 'p2p' ] );
+		$second->save();
+		$second->update_meta( 'registration_open', true );
+
+		$html = do_blocks(
+			sprintf(
+				'<!-- wp:mission-donation-platform/top-fundraisers {"campaignId":%d} /--><!-- wp:mission-donation-platform/top-fundraisers {"campaignId":%d} /-->',
+				$first->id,
+				$second->id
+			)
+		);
+
+		$this->assertSame( 1, substr_count( $html, 'mission-su__overlay' ) );
+		$this->assertStringContainsString( '&quot;campaignId&quot;:' . $first->id, $html );
+		$this->assertStringContainsString( '&quot;campaignId&quot;:' . $second->id, $html );
 	}
 }

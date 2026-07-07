@@ -99,6 +99,117 @@ describe( 'onKeydown Enter handling', () => {
   } );
 } );
 
+describe( 'open( payload ) rebinding', () => {
+  beforeEach( () => {
+    document.body.innerHTML = `
+      <div class="mission-su"><div class="mission-su__dialog"></div></div>`;
+    // Simulate the server-seeded default payload for campaign 1.
+    Object.assign( storeDef.state, {
+      campaignId: 1,
+      brandline: 'First Drive',
+      defaultGoal: 500,
+      goal: 500,
+      preselectedTeamId: 0,
+      preselectedTeamName: '',
+      showTeamChooser: true,
+      teams: [ { id: '7', name: 'Open Crew' } ],
+      signedIn: false,
+      teamId: '',
+      teamName: '',
+      story: '',
+      successUrl: '',
+    } );
+  } );
+
+  afterEach( () => {
+    document.body.style.overflow = '';
+  } );
+
+  it( 'resets campaign-scoped form state when opening another campaign', () => {
+    Object.assign( storeDef.state, {
+      firstName: 'Jane',
+      teamId: '7',
+      teamName: 'My Team',
+      goal: 999,
+      story: 'Half-typed story',
+      tributeChecked: true,
+      honoreeName: 'Grandma',
+      successUrl: 'https://example.com/jane',
+    } );
+
+    storeDef.actions.open( {
+      campaignId: 2,
+      brandline: 'Second Drive',
+      defaultGoal: 250,
+      preselectedTeamId: 0,
+      preselectedTeamName: '',
+      showTeamChooser: false,
+      teams: [],
+    } );
+
+    expect( storeDef.state.isOpen ).toBe( true );
+    expect( storeDef.state.campaignId ).toBe( 2 );
+    expect( storeDef.state.brandline ).toBe( 'Second Drive' );
+    expect( storeDef.state.teams ).toEqual( [] );
+    expect( storeDef.state.firstName ).toBe( '' );
+    expect( storeDef.state.teamId ).toBe( '' );
+    expect( storeDef.state.teamName ).toBe( '' );
+    expect( storeDef.state.goal ).toBe( 250 );
+    expect( storeDef.state.story ).toBe( '' );
+    expect( storeDef.state.tributeChecked ).toBe( false );
+    expect( storeDef.state.honoreeName ).toBe( '' );
+    expect( storeDef.state.successUrl ).toBe( '' );
+  } );
+
+  it( 'keeps form state when reopening the same campaign', () => {
+    Object.assign( storeDef.state, {
+      firstName: 'Jane',
+      goal: 999,
+      story: 'Half-typed story',
+    } );
+
+    storeDef.actions.open( {
+      campaignId: 1,
+      brandline: 'First Drive',
+      defaultGoal: 500,
+      preselectedTeamId: 0,
+      preselectedTeamName: '',
+      showTeamChooser: true,
+      teams: [ { id: '7', name: 'Open Crew' } ],
+    } );
+
+    expect( storeDef.state.firstName ).toBe( 'Jane' );
+    expect( storeDef.state.goal ).toBe( 999 );
+    expect( storeDef.state.story ).toBe( 'Half-typed story' );
+  } );
+
+  it( 'keeps the current binding when opened without a payload', () => {
+    storeDef.state.firstName = 'Jane';
+
+    storeDef.actions.open();
+
+    expect( storeDef.state.isOpen ).toBe( true );
+    expect( storeDef.state.campaignId ).toBe( 1 );
+    expect( storeDef.state.brandline ).toBe( 'First Drive' );
+    expect( storeDef.state.firstName ).toBe( 'Jane' );
+  } );
+
+  it( 'preselects the payload team', () => {
+    storeDef.actions.open( {
+      campaignId: 3,
+      brandline: 'Join Closed Crew',
+      defaultGoal: 500,
+      preselectedTeamId: 12,
+      preselectedTeamName: 'Closed Crew',
+      showTeamChooser: false,
+      teams: [],
+    } );
+
+    expect( storeDef.state.teamMode ).toBe( 'join' );
+    expect( storeDef.state.teamId ).toBe( '12' );
+  } );
+} );
+
 describe( 'copyLink', () => {
   let writeText;
 
