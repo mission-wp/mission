@@ -114,23 +114,14 @@ class FundraiserEmailListener {
 			'page_url'         => $fundraiser->get_url(),
 		];
 
-		$subject = sprintf(
-			/* translators: %s: milestone percentage (e.g. "50%") */
-			__( "You've reached %s of your goal!", 'mission-donation-platform' ),
-			$label,
+		$subject = $this->email->subject(
+			'p2p_fundraiser_milestone',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{milestone}'    => $label,
+				'{organization}' => $org_name,
+			]
 		);
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_fundraiser_milestone' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{milestone}'    => $label,
-					'{organization}' => $org_name,
-				]
-			);
-		}
 
 		$html = $this->email->render_template( 'p2p-fundraiser-milestone', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );
@@ -164,18 +155,13 @@ class FundraiserEmailListener {
 			'page_url'     => $fundraiser->get_url(),
 		];
 
-		$subject = __( 'Your fundraising page is live', 'mission-donation-platform' );
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_fundraiser_approved' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{organization}' => $org_name,
-				]
-			);
-		}
+		$subject = $this->email->subject(
+			'p2p_fundraiser_approved',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{organization}' => $org_name,
+			]
+		);
 
 		$html = $this->email->render_template( 'p2p-fundraiser-approved', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );
@@ -235,24 +221,15 @@ class FundraiserEmailListener {
 			'page_url'         => $fundraiser->get_url(),
 		];
 
-		$subject = sprintf(
-			/* translators: %s: formatted amount */
-			__( 'You received a %s donation!', 'mission-donation-platform' ),
-			$amount_formatted,
+		$subject = $this->email->subject(
+			'p2p_fundraiser_received_donation',
+			[
+				'{donor_name}'   => $owner->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{giver_name}'   => $giver_name,
+				'{amount}'       => $amount_formatted,
+				'{organization}' => $org_name,
+			]
 		);
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_fundraiser_received_donation' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $owner->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{giver_name}'   => $giver_name,
-					'{amount}'       => $amount_formatted,
-					'{organization}' => $org_name,
-				]
-			);
-		}
 
 		$html = $this->email->render_template( 'p2p-fundraiser-received-donation', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $owner->email, $subject, $html );

@@ -92,18 +92,13 @@ class DonorAuthService {
 			'expiry_hours'     => self::TOKEN_EXPIRY_HOURS,
 		];
 
-		$subject = __( 'Verify your email to activate your donor account', 'mission-donation-platform' );
-
-		$custom_subject = $email_module->get_custom_subject( 'account_activation' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
-				]
-			);
-		}
+		$subject = $email_module->subject(
+			'account_activation',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+			]
+		);
 
 		$html = $email_module->render_template( 'account-activation', array_merge( $data, [ 'subject' => $subject ] ) );
 		$email_module->send( $donor->email, $subject, $html );
@@ -436,18 +431,13 @@ class DonorAuthService {
 			return;
 		}
 
-		$subject = __( 'Reset your password', 'mission-donation-platform' );
-
-		$custom_subject = $email_module->get_custom_subject( 'password_reset' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
-				]
-			);
-		}
+		$subject = $email_module->subject(
+			'password_reset',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+			]
+		);
 
 		$data = [
 			'donor'        => $donor,

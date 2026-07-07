@@ -62,34 +62,6 @@ class EmailTemplateEndpoint {
 	) {}
 
 	/**
-	 * Default subjects per email type, with merge tags as literal placeholders.
-	 *
-	 * Wrapped in a method instead of a const so strings can be translated.
-	 *
-	 * @return array<string, string>
-	 */
-	private function default_subjects(): array {
-		return [
-			'donation_receipt'                 => __( 'Thank you for your {amount} donation', 'mission-donation-platform' ),
-			'subscription_activated'           => __( 'Thank you for your {amount} {frequency} donation', 'mission-donation-platform' ),
-			'renewal_receipt'                  => __( 'Thank you for your {frequency} gift of {amount}', 'mission-donation-platform' ),
-			'payment_failed'                   => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
-			'subscription_cancelled'           => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
-			'account_activation'               => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
-			'password_reset'                   => __( 'Reset your password', 'mission-donation-platform' ),
-			'email_change_verification'        => __( 'Verify your new email address', 'mission-donation-platform' ),
-			'donor_note'                       => __( 'A note about your donation', 'mission-donation-platform' ),
-			'tribute_notification'             => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
-			'p2p_fundraiser_approved'          => __( 'Your fundraising page is live', 'mission-donation-platform' ),
-			'p2p_fundraiser_received_donation' => __( 'You received a {amount} donation!', 'mission-donation-platform' ),
-			'p2p_fundraiser_milestone'         => __( "You've reached {milestone} of your goal!", 'mission-donation-platform' ),
-			'p2p_team_invitation'              => __( "You're invited to join {team_name}", 'mission-donation-platform' ),
-			'p2p_team_member_joined'           => __( 'A new member joined {team_name}', 'mission-donation-platform' ),
-			'p2p_team_approved'                => __( 'Your team {team_name} has been approved', 'mission-donation-platform' ),
-		];
-	}
-
-	/**
 	 * Register REST routes.
 	 *
 	 * @return void
@@ -137,7 +109,7 @@ class EmailTemplateEndpoint {
 
 		$email_module = $this->email;
 		$template     = self::TEMPLATE_MAP[ $type ];
-		$subject      = $this->default_subjects()[ $type ] ?? '';
+		$subject      = $this->email->default_subject( $type );
 
 		$data            = $this->build_tag_data( $type );
 		$data['subject'] = $subject;
@@ -180,7 +152,7 @@ class EmailTemplateEndpoint {
 			'campaign_name'          => '{campaign}',
 			'frequency_label'        => '{frequency}',
 			'next_renewal_formatted' => '{next_renewal_date}',
-			'subject'                => $this->default_subjects()[ $type ] ?? '',
+			'subject'                => $this->email->default_subject( $type ),
 		];
 
 		switch ( $type ) {

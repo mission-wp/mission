@@ -28,29 +28,6 @@ class EmailTestEndpoint {
 	use AdminPermissionTrait;
 
 	/**
-	 * Default subjects per email type (mirrors listener hardcoded defaults).
-	 *
-	 * Method instead of const so strings can be translated.
-	 *
-	 * @return array<string, string>
-	 */
-	private function default_subjects(): array {
-		return [
-			// translators: %s: formatted donation amount
-			'donation_receipt'          => __( 'Thank you for your %s donation', 'mission-donation-platform' ),
-			// translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly")
-			'subscription_activated'    => __( 'Thank you for your %1$s %2$s donation', 'mission-donation-platform' ),
-			// translators: 1: frequency label (e.g. "monthly"), 2: formatted donation amount
-			'renewal_receipt'           => __( 'Thank you for your %1$s gift of %2$s', 'mission-donation-platform' ),
-			'payment_failed'            => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
-			'subscription_cancelled'    => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
-			'account_activation'        => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
-			'password_reset'            => __( 'Reset your password', 'mission-donation-platform' ),
-			'email_change_verification' => __( 'Verify your new email address', 'mission-donation-platform' ),
-		];
-	}
-
-	/**
 	 * Template file name per email type (hyphenated).
 	 *
 	 * @var array<string, string>
@@ -137,13 +114,11 @@ class EmailTestEndpoint {
 		$data         = $this->build_sample_data( $email_type, $to );
 		$template     = self::TEMPLATE_MAP[ $email_type ];
 
-		$subject        = $this->get_default_subject( $email_type, $data );
-		$custom_subject = $email_module->get_custom_subject( $email_type );
+		$tags = $email_module->build_merge_tags( $data );
+		// Lowercased because the tag sits mid-sentence in the default subjects.
+		$tags['{frequency}'] = strtolower( $tags['{frequency}'] );
 
-		if ( $custom_subject ) {
-			$tags    = $email_module->build_merge_tags( $data );
-			$subject = $email_module->replace_subject_tags( $custom_subject, $tags );
-		}
+		$subject = $email_module->subject( $email_type, $tags );
 
 		$html = $email_module->render_template( $template, array_merge( $data, [ 'subject' => $subject ] ) );
 
@@ -215,23 +190,5 @@ class EmailTestEndpoint {
 		}
 
 		return $base;
-	}
-
-	/**
-	 * Get the default subject for an email type with sample data interpolated.
-	 *
-	 * @param string $email_type Email type key.
-	 * @param array  $data       Sample data.
-	 * @return string
-	 */
-	private function get_default_subject( string $email_type, array $data ): string {
-		$subjects = $this->default_subjects();
-
-		return match ( $email_type ) {
-			'donation_receipt'       => sprintf( $subjects[ $email_type ], $data['amount_formatted'] ),
-			'subscription_activated' => sprintf( $subjects[ $email_type ], $data['amount_formatted'], strtolower( $data['frequency_label'] ) ),
-			'renewal_receipt'        => sprintf( $subjects[ $email_type ], strtolower( $data['frequency_label'] ), $data['amount_formatted'] ),
-			default                  => $subjects[ $email_type ] ?? '',
-		};
 	}
 }

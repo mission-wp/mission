@@ -110,6 +110,33 @@ class EmailModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test subject() falls back to the default subject and replaces its tags.
+	 */
+	public function test_subject_uses_default_with_tags(): void {
+		$subject = $this->module->subject( 'donation_receipt', [ '{amount}' => '$25.00' ] );
+
+		$this->assertSame( 'Thank you for your $25.00 donation', $subject );
+	}
+
+	/**
+	 * Test subject() prefers a stored custom subject over the default.
+	 */
+	public function test_subject_prefers_custom_subject(): void {
+		$this->set_email_settings( 'donation_receipt', [ 'subject' => 'Thanks {donor_name}!' ] );
+
+		$subject = $this->module->subject( 'donation_receipt', [ '{donor_name}' => 'Sam' ] );
+
+		$this->assertSame( 'Thanks Sam!', $subject );
+	}
+
+	/**
+	 * Test subject() returns an empty string for an unknown type.
+	 */
+	public function test_subject_empty_for_unknown_type(): void {
+		$this->assertSame( '', $this->module->subject( 'nonexistent_type' ) );
+	}
+
+	/**
 	 * Test custom body is empty when none is stored.
 	 */
 	public function test_get_custom_body_empty_by_default(): void {

@@ -78,22 +78,13 @@ class TeamEmailListener {
 			'accept_url'   => $accept_url,
 		];
 
-		$subject = sprintf(
-			/* translators: %s: team name */
-			__( "You're invited to join %s", 'mission-donation-platform' ),
-			$team->name,
+		$subject = $this->email->subject(
+			'p2p_team_invitation',
+			[
+				'{team_name}'    => $team->name,
+				'{organization}' => $org_name,
+			]
 		);
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_team_invitation' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{team_name}'    => $team->name,
-					'{organization}' => $org_name,
-				]
-			);
-		}
 
 		$html = $this->email->render_template( 'p2p-team-invitation', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $invitation->email, $subject, $html );
@@ -135,24 +126,15 @@ class TeamEmailListener {
 			'page_url'     => $team->get_url(),
 		];
 
-		$subject = sprintf(
-			/* translators: %s: team name */
-			__( 'A new member joined %s', 'mission-donation-platform' ),
-			$team->name,
+		$subject = $this->email->subject(
+			'p2p_team_member_joined',
+			[
+				'{captain_name}' => $captain->first_name ?: __( 'Captain', 'mission-donation-platform' ),
+				'{member_name}'  => $member_name,
+				'{team_name}'    => $team->name,
+				'{organization}' => $org_name,
+			]
 		);
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_team_member_joined' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{captain_name}' => $captain->first_name ?: __( 'Captain', 'mission-donation-platform' ),
-					'{member_name}'  => $member_name,
-					'{team_name}'    => $team->name,
-					'{organization}' => $org_name,
-				]
-			);
-		}
 
 		$html = $this->email->render_template( 'p2p-team-member-joined', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $captain->email, $subject, $html );
@@ -183,23 +165,14 @@ class TeamEmailListener {
 			'page_url'     => $team->get_url(),
 		];
 
-		$subject = sprintf(
-			/* translators: %s: team name */
-			__( 'Your team %s has been approved', 'mission-donation-platform' ),
-			$team->name,
+		$subject = $this->email->subject(
+			'p2p_team_approved',
+			[
+				'{captain_name}' => $captain->first_name ?: __( 'Captain', 'mission-donation-platform' ),
+				'{team_name}'    => $team->name,
+				'{organization}' => $org_name,
+			]
 		);
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_team_approved' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{captain_name}' => $captain->first_name ?: __( 'Captain', 'mission-donation-platform' ),
-					'{team_name}'    => $team->name,
-					'{organization}' => $org_name,
-				]
-			);
-		}
 
 		$html = $this->email->render_template( 'p2p-team-approved', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $captain->email, $subject, $html );

@@ -169,19 +169,14 @@ class EmailChangeEndpoint {
 			return new \WP_REST_Response( [ 'message' => __( 'Email change verification is disabled.', 'mission-donation-platform' ) ], 200 );
 		}
 
-		$subject = __( 'Verify your new email address', 'mission-donation-platform' );
-
-		$custom_subject = $email_module->get_custom_subject( 'email_change_verification' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{new_email}'    => $new_email,
-					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
-				]
-			);
-		}
+		$subject = $email_module->subject(
+			'email_change_verification',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{new_email}'    => $new_email,
+				'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+			]
+		);
 
 		$data = [
 			'donor'            => $donor,

@@ -210,18 +210,13 @@ class OtpService {
 	private function send_code_email( string $email, string $code ): void {
 		$org = ( new SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) );
 
-		$subject = __( 'Your verification code', 'mission-donation-platform' );
-
-		$custom_subject = $this->email->get_custom_subject( 'p2p_otp_code' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{code}'         => $code,
-					'{organization}' => $org,
-				]
-			);
-		}
+		$subject = $this->email->subject(
+			'p2p_otp_code',
+			[
+				'{code}'         => $code,
+				'{organization}' => $org,
+			]
+		);
 
 		$html = $this->email->render_template(
 			'p2p-otp-code',
