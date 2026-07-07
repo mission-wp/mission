@@ -10,6 +10,7 @@ namespace MissionDP\Rest\Endpoints\DonorDashboard;
 use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\Models\Fundraiser;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\Args;
@@ -384,6 +385,7 @@ class FundraiserEndpoint {
 
 		$goal_display   = $fundraiser->goal > 0 ? Currency::format_amount( $fundraiser->goal, $currency ) : '';
 		$raised_display = Currency::format_amount( $raised, $currency );
+		$percent        = BlockSupport::progress_percent( $raised, (int) $fundraiser->goal );
 
 		return [
 			'id'               => (int) $fundraiser->id,
@@ -404,6 +406,8 @@ class FundraiserEndpoint {
 			'donor_count'      => $is_test ? $fundraiser->test_donor_count : $fundraiser->donor_count,
 			'progress'         => $fundraiser->progress( $is_test ),
 			'progress_label'   => DashboardLabels::progress_label( $raised_display, $goal_display ),
+			'bar_width'        => $percent . '%',
+			'percent_label'    => $fundraiser->goal > 0 ? $percent . '%' : '',
 			'cover_image'      => DashboardLabels::cover_image_id( $cover ),
 			'cover_image_url'  => DashboardLabels::cover_image_url( $cover ),
 			'url'              => $fundraiser->get_url() ?? '',

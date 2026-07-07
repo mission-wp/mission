@@ -12,6 +12,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 
@@ -159,7 +160,8 @@ class TeamsContextBuilder {
 		$totals         = $this->reporting->team_totals( (int) $team->id );
 		$raised_display = Currency::format_amount( $totals['raised'], $this->currency );
 		$goal_display   = $team->goal > 0 ? Currency::format_amount( $team->goal, $this->currency ) : '';
-		$progress       = $team->goal > 0 ? min( 100.0, round( $totals['raised'] / $team->goal * 100, 2 ) ) : 0.0;
+		$progress       = BlockSupport::progress_percent( (int) $totals['raised'], (int) $team->goal, 2 );
+		$percent        = BlockSupport::progress_percent( (int) $totals['raised'], (int) $team->goal );
 		$is_captain     = $membership->is_captain();
 		$members        = array_map(
 			fn( array $row ): array => TeamRoster::member_row( $row, $this->currency, (int) $this->donor->id ),
@@ -220,9 +222,9 @@ class TeamsContextBuilder {
 			'hasGoal'          => $team->goal > 0,
 			'goalMajor'        => (string) Currency::minor_to_major( $team->goal, $this->currency ),
 			'progress'         => $progress,
-			'barWidth'         => min( 100, (int) round( $progress ) ) . '%',
+			'barWidth'         => $percent . '%',
 			'progressLabel'    => DashboardLabels::team_progress_label( $raised_display, $goal_display ),
-			'percentLabel'     => $team->goal > 0 ? min( 100, (int) round( $progress ) ) . '%' : '',
+			'percentLabel'     => $team->goal > 0 ? $percent . '%' : '',
 			'goalStatLabel'    => $goal_display
 				/* translators: %s: team goal */
 				? sprintf( __( 'Of %s Goal', 'mission-donation-platform' ), $goal_display )

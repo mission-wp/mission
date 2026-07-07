@@ -13,6 +13,7 @@
 use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
+use MissionDP\P2P\BlockSupport;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -101,7 +102,7 @@ ob_start();
 			$goal_type     = $campaign->goal_type;
 			$goal_progress = $campaign->get_goal_progress( $is_test );
 			$has_goal      = $goal_amount > 0;
-			$percentage    = $has_goal ? (int) min( 100, round( $goal_progress / $goal_amount * 100 ) ) : 0;
+			$percentage    = BlockSupport::progress_percent( (int) $goal_progress, (int) $goal_amount );
 			$is_ended      = 'ended' === $campaign->status;
 			$donor_count   = $is_test ? $campaign->test_donor_count : $campaign->donor_count;
 			$show_progress = $show_progress_attr && $has_goal;

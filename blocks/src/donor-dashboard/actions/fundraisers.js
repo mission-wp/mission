@@ -291,11 +291,8 @@ export const fundraisersActions = {
       card.hasGoal = data.goal > 0;
       card.goalDisplay = data.goal_display;
       card.progress = data.progress;
-      card.barWidth = `${ Math.min( 100, Math.round( data.progress || 0 ) ) }%`;
-      card.percentLabel =
-        data.goal > 0
-          ? `${ Math.min( 100, Math.round( data.progress || 0 ) ) }%`
-          : '';
+      card.barWidth = data.bar_width;
+      card.percentLabel = data.percent_label;
       card.progressLabel = data.progress_label;
       card.raisedDisplay = data.raised_display;
       card.tributeType = data.tribute_type;

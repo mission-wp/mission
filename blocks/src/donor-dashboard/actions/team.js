@@ -234,11 +234,8 @@ export const teamActions = {
       card.access = data.access;
       card.isPrivate = data.access === 'private';
       card.progress = data.progress;
-      card.barWidth = `${ Math.min( 100, Math.round( data.progress || 0 ) ) }%`;
-      card.percentLabel =
-        data.goal > 0
-          ? `${ Math.min( 100, Math.round( data.progress || 0 ) ) }%`
-          : '';
+      card.barWidth = data.bar_width;
+      card.percentLabel = data.percent_label;
       card.raisedDisplay = data.raised_display;
 
       teams.edit.saving = false;

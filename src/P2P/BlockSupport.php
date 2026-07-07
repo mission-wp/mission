@@ -161,16 +161,19 @@ class BlockSupport {
 	/**
 	 * Progress percentage toward a goal, clamped to 0-100.
 	 *
-	 * @param int $raised Amount raised (minor units).
-	 * @param int $goal   Goal (minor units).
-	 * @return int
+	 * @param int $raised    Amount raised (minor units).
+	 * @param int $goal      Goal (minor units).
+	 * @param int $precision Decimal places to keep; 0 returns an int, more returns a float.
+	 * @return int|float
 	 */
-	public static function progress_percent( int $raised, int $goal ): int {
+	public static function progress_percent( int $raised, int $goal, int $precision = 0 ): int|float {
 		if ( $goal <= 0 ) {
-			return 0;
+			return $precision > 0 ? 0.0 : 0;
 		}
 
-		return (int) min( 100, round( $raised / $goal * 100 ) );
+		$percent = min( 100.0, round( $raised / $goal * 100, $precision ) );
+
+		return $precision > 0 ? $percent : (int) $percent;
 	}
 
 	/**

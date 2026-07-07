@@ -9,6 +9,7 @@ namespace MissionDP\Models;
 
 use MissionDP\Database\DataStore\DataStoreInterface;
 use MissionDP\Database\DataStore\TeamDataStore;
+use MissionDP\P2P\BlockSupport;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -281,11 +282,7 @@ class Team extends Model {
 	 * @return float
 	 */
 	public function progress( bool $is_test = false ): float {
-		if ( $this->goal <= 0 ) {
-			return 0.0;
-		}
-
-		return min( 100.0, round( $this->amount_raised( $is_test ) / $this->goal * 100, 2 ) );
+		return BlockSupport::progress_percent( $this->amount_raised( $is_test ), (int) $this->goal, 2 );
 	}
 
 	/**

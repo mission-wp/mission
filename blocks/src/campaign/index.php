@@ -35,7 +35,7 @@ $goal_amount   = $campaign->goal_amount;
 $goal_type     = $campaign->goal_type;
 $goal_progress = $campaign->get_goal_progress( $is_test );
 $has_goal      = $goal_amount > 0;
-$percentage    = $has_goal ? (int) min( 100, round( $goal_progress / $goal_amount * 100 ) ) : 0;
+$percentage    = BlockSupport::progress_percent( (int) $goal_progress, (int) $goal_amount );
 $is_ended      = 'ended' === $campaign->status;
 
 // Donor count.

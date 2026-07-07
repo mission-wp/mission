@@ -259,6 +259,11 @@ class TeamEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'Trail Blazers', $updated->name );
 		$this->assertSame( 'We run', $updated->description );
 		$this->assertSame( 200000, $updated->goal );
+
+		// The response precomputes the progress-bar strings the dashboard renders.
+		$data = $response->get_data();
+		$this->assertSame( '0%', $data['bar_width'] );
+		$this->assertSame( '0%', $data['percent_label'] );
 	}
 
 	/**

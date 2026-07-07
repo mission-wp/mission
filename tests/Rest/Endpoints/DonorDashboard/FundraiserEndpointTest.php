@@ -197,6 +197,11 @@ class FundraiserEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 'New headline', $updated->headline );
 		$this->assertSame( 'A fresh story', $updated->story );
 		$this->assertSame( 75000, $updated->goal );
+
+		// The response precomputes the progress-bar strings the dashboard renders.
+		$data = $response->get_data();
+		$this->assertSame( '0%', $data['bar_width'] );
+		$this->assertSame( '0%', $data['percent_label'] );
 	}
 
 	/**

@@ -8,6 +8,7 @@
 namespace MissionDP\DonorDashboard;
 
 use MissionDP\Currency\Currency;
+use MissionDP\P2P\BlockSupport;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -29,7 +30,8 @@ class TeamRoster {
 	public static function member_row( array $row, string $currency, int $self_donor_id ): array {
 		$raised_display = Currency::format_amount( $row['raised'], $currency );
 		$goal_display   = $row['goal'] > 0 ? Currency::format_amount( $row['goal'], $currency ) : '';
-		$progress       = $row['goal'] > 0 ? min( 100.0, round( $row['raised'] / $row['goal'] * 100, 2 ) ) : 0.0;
+		$progress       = BlockSupport::progress_percent( (int) $row['raised'], (int) $row['goal'], 2 );
+		$percent        = BlockSupport::progress_percent( (int) $row['raised'], (int) $row['goal'] );
 
 		return [
 			'fundraiserId'      => $row['id'],
@@ -38,7 +40,7 @@ class TeamRoster {
 			'isCaptain'         => $row['is_captain'],
 			'isSelf'            => $row['donor_id'] === $self_donor_id,
 			'progress'          => $progress,
-			'barWidth'          => min( 100, (int) round( $progress ) ) . '%',
+			'barWidth'          => $percent . '%',
 			'raisedOfGoalLabel' => $goal_display
 				/* translators: 1: amount raised, 2: personal goal */
 				? sprintf( __( '%1$s of %2$s', 'mission-donation-platform' ), $raised_display, $goal_display )

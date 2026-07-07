@@ -12,6 +12,7 @@ use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\DonorDashboard\TeamRoster;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Settings\SettingsService;
@@ -420,6 +421,7 @@ class TeamEndpoint {
 
 		$goal_display   = $team->goal > 0 ? Currency::format_amount( $team->goal, $currency ) : '';
 		$raised_display = Currency::format_amount( $raised, $currency );
+		$percent        = BlockSupport::progress_percent( $raised, (int) $team->goal );
 
 		$members = array_map(
 			fn( array $row ): array => TeamRoster::member_row( $row, $currency, $self_id ),
@@ -440,6 +442,8 @@ class TeamEndpoint {
 			'raised_display'     => $raised_display,
 			'progress'           => $team->progress( $is_test ),
 			'progress_label'     => DashboardLabels::progress_label( $raised_display, $goal_display ),
+			'bar_width'          => $percent . '%',
+			'percent_label'      => $team->goal > 0 ? $percent . '%' : '',
 			'cover_image'        => DashboardLabels::cover_image_id( $cover ),
 			'cover_image_url'    => DashboardLabels::cover_image_url( $cover ),
 			'url'                => $team->get_url() ?? '',

@@ -124,6 +124,25 @@ class BlockSupportTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The default precision rounds to a whole int and clamps at 100.
+	 */
+	public function test_progress_percent_int(): void {
+		$this->assertSame( 0, BlockSupport::progress_percent( 500, 0 ) );
+		$this->assertSame( 25, BlockSupport::progress_percent( 2500, 10000 ) );
+		$this->assertSame( 43, BlockSupport::progress_percent( 4250, 9900 ) );
+		$this->assertSame( 100, BlockSupport::progress_percent( 15000, 10000 ) );
+	}
+
+	/**
+	 * A positive precision returns a clamped float with that many decimals.
+	 */
+	public function test_progress_percent_float(): void {
+		$this->assertSame( 0.0, BlockSupport::progress_percent( 500, 0, 2 ) );
+		$this->assertSame( 42.93, BlockSupport::progress_percent( 4250, 9900, 2 ) );
+		$this->assertSame( 100.0, BlockSupport::progress_percent( 15000, 10000, 2 ) );
+	}
+
+	/**
 	 * Empty attributes produce no inline style.
 	 */
 	public function test_image_inline_style_empty(): void {

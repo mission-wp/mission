@@ -12,6 +12,7 @@ use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 
@@ -196,6 +197,7 @@ class FundraisersContextBuilder {
 		$goal_display   = $fundraiser->goal > 0 ? Currency::format_amount( $fundraiser->goal, $this->currency ) : '';
 		$raised_display = Currency::format_amount( $raised, $this->currency );
 		$progress       = $fundraiser->progress( $this->is_test );
+		$percent        = BlockSupport::progress_percent( $raised, (int) $fundraiser->goal );
 		$dedication     = $fundraiser->dedication();
 		$url            = $fundraiser->get_url() ?? '';
 		$cover_url      = DashboardLabels::cover_image_url( $fundraiser->cover_image );
@@ -235,9 +237,9 @@ class FundraisersContextBuilder {
 			'hasGoal'            => $fundraiser->goal > 0,
 			'goalMajor'          => (string) Currency::minor_to_major( $fundraiser->goal, $this->currency ),
 			'progress'           => $progress,
-			'barWidth'           => min( 100, (int) round( $progress ) ) . '%',
+			'barWidth'           => $percent . '%',
 			'progressLabel'      => DashboardLabels::progress_label( $raised_display, $goal_display ),
-			'percentLabel'       => $fundraiser->goal > 0 ? min( 100, (int) round( $progress ) ) . '%' : '',
+			'percentLabel'       => $fundraiser->goal > 0 ? $percent . '%' : '',
 			'donationCount'      => $donation_count,
 			'donationCountLabel' => sprintf(
 				/* translators: %s: number of donations */

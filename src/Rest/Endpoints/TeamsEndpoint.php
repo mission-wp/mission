@@ -9,6 +9,7 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\Rest\Args;
 use MissionDP\Rest\RestErrors;
 use WP_REST_Request;
@@ -251,7 +252,7 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 
 		$totals   = $this->reporting->team_totals( (int) $item->id );
 		$rank     = $this->reporting->team_rank( (int) $item->id );
-		$progress = $item->goal > 0 ? min( 100.0, round( $totals['raised'] / $item->goal * 100, 2 ) ) : 0.0;
+		$progress = BlockSupport::progress_percent( (int) $totals['raised'], (int) $item->goal, 2 );
 
 		return [
 			'id'                 => (int) $item->id,
