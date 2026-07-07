@@ -214,6 +214,42 @@ class TeamEmailListenerTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * An invitation held past its TTL still sends on approval, and the send
+	 * restarts the expiry window so the emailed link works.
+	 */
+	public function test_flushed_invitation_is_valid_from_send_time(): void {
+		$team         = $this->create_team_with_captain();
+		$team->status = Team::STATUS_PENDING;
+		$team->save();
+
+		$invite = new TeamInvitation( [ 'team_id' => $team->id, 'email' => 'invitee@example.com', 'token' => 'tok123' ] );
+		$invite->save();
+
+		// The team sat unapproved past the invitation TTL.
+		global $wpdb;
+		$wpdb->update(
+			"{$wpdb->prefix}missiondp_team_invitations",
+			[ 'date_created' => gmdate( 'Y-m-d H:i:s', time() - ( 20 * DAY_IN_SECONDS ) ) ],
+			[ 'id' => $invite->id ]
+		);
+		wp_cache_flush();
+
+		$email    = $this->stub_email_module();
+		$listener = new TeamEmailListener();
+		$listener->init( $email );
+
+		$team->status = Team::STATUS_ACTIVE;
+		$team->save();
+		$listener->flush_pending_invitations( $team );
+
+		$this->assertContains( 'invitee@example.com', array_column( $email->sent, 'to' ) );
+
+		$sent = TeamInvitation::find( $invite->id );
+		$this->assertNotNull( $sent->sent_at );
+		$this->assertFalse( $sent->is_expired() );
+	}
+
+	/**
 	 * Test the invitation email respects the disabled setting.
 	 */
 	public function test_invitation_respects_disabled_setting(): void {

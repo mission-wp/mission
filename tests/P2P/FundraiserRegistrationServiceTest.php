@@ -628,7 +628,9 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 		$team     = Team::register( $campaign->id, 'Secret', 100000, Team::ACCESS_PRIVATE );
 		$invite   = $team->invite( 'invited@example.com' );
 
+		// Created and emailed 30 days ago; the window anchors to sent_at.
 		$invite->date_created = gmdate( 'Y-m-d H:i:s', time() - ( 30 * DAY_IN_SECONDS ) );
+		$invite->sent_at      = gmdate( 'Y-m-d H:i:s', time() - ( 30 * DAY_IN_SECONDS ) );
 		$invite->save();
 
 		$donor = new Donor( [ 'email' => 'invited@example.com' ] );

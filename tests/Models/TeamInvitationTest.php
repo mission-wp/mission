@@ -176,7 +176,8 @@ class TeamInvitationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test is_expired() compares date_created against the filterable TTL.
+	 * Test is_expired() compares date_created against the filterable TTL for
+	 * never-sent invitations.
 	 */
 	public function test_is_expired(): void {
 		$fresh = $this->create_invitation( [ 'date_created' => current_time( 'mysql', true ) ] );
@@ -184,6 +185,28 @@ class TeamInvitationTest extends WP_UnitTestCase {
 
 		$stale = $this->create_invitation( [ 'date_created' => gmdate( 'Y-m-d H:i:s', time() - ( 20 * DAY_IN_SECONDS ) ) ] );
 		$this->assertTrue( $stale->is_expired() );
+	}
+
+	/**
+	 * Test the window anchors to sent_at once the email has gone out, so an
+	 * invite held while its team awaited approval stays valid after the flush.
+	 */
+	public function test_is_expired_anchors_to_sent_at(): void {
+		$held_then_sent = $this->create_invitation(
+			[
+				'date_created' => gmdate( 'Y-m-d H:i:s', time() - ( 20 * DAY_IN_SECONDS ) ),
+				'sent_at'      => current_time( 'mysql', true ),
+			]
+		);
+		$this->assertFalse( $held_then_sent->is_expired() );
+
+		$sent_long_ago = $this->create_invitation(
+			[
+				'date_created' => gmdate( 'Y-m-d H:i:s', time() - ( 20 * DAY_IN_SECONDS ) ),
+				'sent_at'      => gmdate( 'Y-m-d H:i:s', time() - ( 15 * DAY_IN_SECONDS ) ),
+			]
+		);
+		$this->assertTrue( $sent_long_ago->is_expired() );
 	}
 
 	/**

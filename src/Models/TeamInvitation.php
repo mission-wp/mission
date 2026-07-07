@@ -90,7 +90,10 @@ class TeamInvitation extends Model {
 	/**
 	 * Whether this invitation has passed its time-to-live.
 	 *
-	 * The window is computed from date_created; there is no expires_at column.
+	 * The window is anchored to sent_at (falling back to date_created for
+	 * never-sent invites); there is no expires_at column. Anchoring to the
+	 * send matters for invites held while a team awaits approval: the
+	 * recipient's window starts when the email could first be acted on.
 	 *
 	 * @return bool
 	 */
@@ -103,12 +106,12 @@ class TeamInvitation extends Model {
 		 */
 		$ttl = (int) apply_filters( 'mission_team_invitation_ttl', 14 * DAY_IN_SECONDS, $this );
 
-		$created = strtotime( $this->date_created . ' UTC' );
-		if ( ! $created ) {
+		$anchor = strtotime( ( $this->sent_at ?? $this->date_created ) . ' UTC' );
+		if ( ! $anchor ) {
 			return false;
 		}
 
-		return ( $created + $ttl ) < time();
+		return ( $anchor + $ttl ) < time();
 	}
 
 	/**
