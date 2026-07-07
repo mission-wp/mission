@@ -11,6 +11,7 @@
  */
 
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\DashboardLabels;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\P2P\BlockSupport;
@@ -96,7 +97,7 @@ defined( 'ABSPATH' ) || exit;
 								<span class="mission-tf-rank"><?php echo esc_html( $rank . '.' ); ?></span>
 							<?php endif; ?>
 							<?php if ( $show_avatars ) : ?>
-								<span class="mission-donor-avatar"><?php echo esc_html( BlockSupport::initials( $name ) ); ?></span>
+								<span class="mission-donor-avatar"><?php echo esc_html( DashboardLabels::person_initials( $fundraiser['first_name'], $fundraiser['last_name'] ) ); ?></span>
 							<?php endif; ?>
 							<div class="mission-donor-info">
 								<span class="mission-donor-name">

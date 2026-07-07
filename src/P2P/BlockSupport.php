@@ -109,9 +109,12 @@ class BlockSupport {
 	}
 
 	/**
-	 * Up-to-two-letter initials from a display name.
+	 * Up-to-two-letter initials from a team or other entity name.
 	 *
-	 * @param string $name Display name.
+	 * For people, use DashboardLabels::person_initials() with first/last name
+	 * so the same person gets the same initials everywhere.
+	 *
+	 * @param string $name Entity display name (e.g. a team name).
 	 * @return string
 	 */
 	public static function initials( string $name ): string {

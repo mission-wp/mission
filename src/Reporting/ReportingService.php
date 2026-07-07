@@ -1951,7 +1951,7 @@ class ReportingService {
 	 *
 	 * @param int $campaign_id Campaign ID.
 	 * @param int $limit       Maximum rows.
-	 * @return array<int, array{id:int, post_id:int, name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
+	 * @return array<int, array{id:int, post_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
 	 */
 	public function top_fundraisers( int $campaign_id, int $limit = 10 ): array {
 		global $wpdb;
@@ -1992,6 +1992,8 @@ class ReportingService {
 				'id'         => (int) $row['id'],
 				'post_id'    => (int) $row['post_id'],
 				'name'       => $name ?: __( 'Fundraiser', 'mission-donation-platform' ),
+				'first_name' => (string) ( $row['first_name'] ?? '' ),
+				'last_name'  => (string) ( $row['last_name'] ?? '' ),
 				'team_name'  => $row['team_name'] ?? '',
 				'goal'       => (int) $row['goal'],
 				'raised'     => (int) $row['raised'],

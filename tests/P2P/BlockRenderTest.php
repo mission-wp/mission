@@ -184,6 +184,27 @@ class BlockRenderTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A member with a multi-word first name gets first+last initials ("MW",
+	 * not "MJ"), matching the donor dashboard roster avatars.
+	 */
+	public function test_team_members_avatar_uses_person_initials(): void {
+		$this->require_block( 'mission-donation-platform/team-members' );
+
+		$campaign = new Campaign( [ 'title' => 'Drive', 'type' => 'p2p' ] );
+		$campaign->save();
+		$donor = new Donor( [ 'email' => 'mj@example.com', 'first_name' => 'Mary Jane', 'last_name' => 'Watson' ] );
+		$donor->save();
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Rangers', 'status' => 'active' ] );
+		$team->save();
+		$member = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => $donor->id, 'team_id' => $team->id, 'status' => 'active' ] );
+		$member->save();
+
+		$html = do_blocks( sprintf( '<!-- wp:mission-donation-platform/team-members {"teamId":%d} /-->', $team->id ) );
+
+		$this->assertStringContainsString( '>MW<', $html );
+	}
+
+	/**
 	 * Test the sign-up modal renders for an open p2p campaign.
 	 */
 	public function test_signup_modal_renders_when_registration_open(): void {
