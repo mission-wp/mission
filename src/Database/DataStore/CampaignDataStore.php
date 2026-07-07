@@ -31,6 +31,22 @@ class CampaignDataStore implements DataStoreInterface {
 	public const CACHE_GROUP = 'missiondp_campaigns';
 
 	/**
+	 * Aggregate columns owned by recompute_aggregates(). Excluded from update()
+	 * so a stale in-memory model can't overwrite a concurrent recompute (e.g. a
+	 * donation webhook landing between a request's find() and save()).
+	 *
+	 * @var string[]
+	 */
+	private const AGGREGATE_COLUMNS = [
+		'total_raised',
+		'transaction_count',
+		'donor_count',
+		'test_total_raised',
+		'test_transaction_count',
+		'test_donor_count',
+	];
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected function cache_group(): string {
@@ -215,6 +231,7 @@ class CampaignDataStore implements DataStoreInterface {
 		$data['date_modified'] = current_time( 'mysql', true );
 		// A campaign's type (standard/p2p) is fixed at creation; never rewrite it.
 		unset( $data['id'], $data['type'] );
+		$data = array_diff_key( $data, array_flip( self::AGGREGATE_COLUMNS ) );
 
 		$result = $wpdb->update(
 			$this->get_table_name(),

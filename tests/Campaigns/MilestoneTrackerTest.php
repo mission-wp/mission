@@ -341,9 +341,17 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		] );
 		$txn->save();
 
-		$campaign->transaction_count = 1;
-		$campaign->total_raised      = 3000;
-		$campaign->save();
+		// Seed aggregates directly; update() deliberately never writes them.
+		global $wpdb;
+		$wpdb->update(
+			"{$wpdb->prefix}missiondp_campaigns",
+			[
+				'transaction_count' => 1,
+				'total_raised'      => 3000,
+			],
+			[ 'id' => $campaign->id ]
+		);
+		wp_cache_flush();
 
 		$this->tracker->recompile( $campaign->id );
 

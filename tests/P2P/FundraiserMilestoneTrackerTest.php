@@ -75,14 +75,27 @@ class FundraiserMilestoneTrackerTest extends WP_UnitTestCase {
 		);
 		$fundraiser->save();
 
-		if ( $is_test ) {
-			$fundraiser->test_total_raised = $raised;
-		} else {
-			$fundraiser->total_raised = $raised;
-		}
-		$fundraiser->save();
+		$this->set_raised( $fundraiser->id, $raised, $is_test );
 
 		return $fundraiser;
+	}
+
+	/**
+	 * Write a raised total directly to the fundraisers table.
+	 *
+	 * Aggregate columns are only writable through recompute_aggregates(), so
+	 * tests seed them with a direct update, as a recompute would.
+	 *
+	 * @param int  $fundraiser_id Fundraiser ID.
+	 * @param int  $raised        Raised total in minor units.
+	 * @param bool $is_test       Whether to set the test mirror.
+	 */
+	private function set_raised( int $fundraiser_id, int $raised, bool $is_test = false ): void {
+		global $wpdb;
+
+		$column = $is_test ? 'test_total_raised' : 'total_raised';
+		$wpdb->update( "{$wpdb->prefix}missiondp_fundraisers", [ $column => $raised ], [ 'id' => $fundraiser_id ] );
+		wp_cache_flush();
 	}
 
 	/**
@@ -106,8 +119,7 @@ class FundraiserMilestoneTrackerTest extends WP_UnitTestCase {
 		$this->fired = [];
 
 		// Raise more, crossing 75% — only the new milestone should fire.
-		$fundraiser->total_raised = 8000;
-		$fundraiser->save();
+		$this->set_raised( $fundraiser->id, 8000 );
 		$this->tracker->recompile( $fundraiser->id, false );
 
 		$this->assertSame( [ '75-pct' ], $this->fired );
