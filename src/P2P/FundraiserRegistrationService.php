@@ -391,17 +391,19 @@ class FundraiserRegistrationService {
 			$team_access = in_array( $input['team_access'] ?? '', Team::ACCESS_LEVELS, true )
 				? $input['team_access']
 				: Team::ACCESS_PUBLIC;
-			$team        = Team::register( $campaign->id, $name, (int) $settings['default_team_goal'], $team_access, $team_status );
 
-			// A failed insert leaves the team without an ID; complete the
-			// registration solo instead of attaching a phantom team.
-			if ( ! $team->id ) {
-				return null;
-			}
-
-			$fundraiser->join_team( $team, true );
-
-			return $team;
+			// A failed create or captain join returns null; the registration
+			// completes solo instead of attaching a phantom team.
+			return Team::register_with_captain(
+				[
+					'campaign_id' => $campaign->id,
+					'name'        => $name,
+					'goal'        => (int) $settings['default_team_goal'],
+					'access'      => $team_access,
+					'status'      => $team_status,
+				],
+				$fundraiser
+			);
 		}
 
 		$team_id = (int) ( $input['team_id'] ?? 0 );

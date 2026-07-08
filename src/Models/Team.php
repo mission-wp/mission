@@ -156,6 +156,35 @@ class Team extends Model {
 	}
 
 	/**
+	 * Create a team and its captain membership as one operation.
+	 *
+	 * The two rows reference each other (the captain must be on the team
+	 * before set_captain() records them), so the team is created first and
+	 * a failed captain join deletes it again, rather than leaving an
+	 * active, captainless team publicly joinable on the campaign.
+	 *
+	 * @param array<string, mixed> $data    Column values for the new team.
+	 * @param Fundraiser|null      $captain The captain, or null to create the team without one.
+	 * @return self|null The saved team, or null when any step failed.
+	 */
+	public static function register_with_captain( array $data, ?Fundraiser $captain ): ?self {
+		$team = new self( $data );
+
+		if ( ! $team->save() ) {
+			return null;
+		}
+
+		// move_to_team() vacates any previous captaincy before joining.
+		if ( $captain && ! $captain->move_to_team( $team, true ) ) {
+			$team->delete();
+
+			return null;
+		}
+
+		return $team;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	protected function shell_post_type(): string {

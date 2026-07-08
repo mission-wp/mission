@@ -177,7 +177,7 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 		$settings = $campaign->p2p_settings();
 		$goal     = $request->get_param( 'goal' );
 
-		$team = new Team(
+		$team = Team::register_with_captain(
 			[
 				'campaign_id' => $campaign->id,
 				'name'        => sanitize_text_field( $request->get_param( 'name' ) ),
@@ -186,30 +186,16 @@ class TeamsEndpoint extends AbstractP2PAdminEndpoint {
 				'access'      => $request->get_param( 'access' ) ?? Team::ACCESS_PUBLIC,
 				'status'      => $request->get_param( 'status' ) ?? Team::STATUS_ACTIVE,
 				'cover_image' => sanitize_text_field( $request->get_param( 'cover_image' ) ?? '' ),
-			]
+			],
+			$captain_id ? Fundraiser::find( (int) $captain_id ) : null
 		);
 
-		if ( ! $team->save() ) {
+		if ( ! $team ) {
 			return new WP_Error(
 				'rest_cannot_create',
 				__( 'The team could not be created.', 'mission-donation-platform' ),
 				[ 'status' => 500 ]
 			);
-		}
-
-		if ( $captain_id ) {
-			$captain = Fundraiser::find( (int) $captain_id );
-
-			// move_to_team() vacates any previous captaincy before joining.
-			if ( ! $captain->move_to_team( $team, true ) ) {
-				$team->delete();
-
-				return new WP_Error(
-					'rest_cannot_create',
-					__( 'The team could not be created.', 'mission-donation-platform' ),
-					[ 'status' => 500 ]
-				);
-			}
 		}
 
 		return new WP_REST_Response( $this->prepare_item( $team ), 201 );

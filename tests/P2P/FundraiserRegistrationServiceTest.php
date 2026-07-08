@@ -439,6 +439,41 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test a failed captain join deletes the just-created team and completes
+	 * the registration solo, leaving no active captainless team behind.
+	 */
+	public function test_register_fundraiser_failed_captain_join_deletes_team(): void {
+		global $wpdb;
+
+		$campaign = $this->create_campaign( [ 'teams_enabled' => true, 'team_creation_enabled' => true ] );
+		$donor    = new Donor( [ 'email' => 'orphan-captain@example.com' ] );
+		$donor->save();
+
+		// Sabotage team updates so set_captain() fails after the team row and
+		// the fundraiser's membership were already written.
+		$break_updates = function ( $query ) use ( $wpdb ) {
+			if ( str_starts_with( $query, 'UPDATE' ) && str_contains( $query, "{$wpdb->prefix}missiondp_teams" ) ) {
+				return "UPDATE {$wpdb->prefix}missiondp_nonexistent SET id = 0";
+			}
+			return $query;
+		};
+		add_filter( 'query', $break_updates );
+		$suppress = $wpdb->suppress_errors( true );
+
+		$result = $this->service()->register_fundraiser( $donor, $campaign, [ 'team_mode' => 'create', 'team_name' => 'Orphan Squad', 'goal' => 10000 ] );
+
+		$wpdb->suppress_errors( $suppress );
+		remove_filter( 'query', $break_updates );
+
+		$this->assertIsArray( $result );
+		$this->assertNull( $result['team'] );
+
+		$fundraiser = Fundraiser::find( $result['fundraiser']['id'] );
+		$this->assertNull( $fundraiser->team_id );
+		$this->assertCount( 0, Team::query( [ 'campaign_id' => $campaign->id ] ) );
+	}
+
+	/**
 	 * Test an unknown team access value falls back to a public team.
 	 */
 	public function test_register_fundraiser_rejects_unknown_team_access(): void {

@@ -166,6 +166,79 @@ class TeamTest extends WP_UnitTestCase {
 		$this->assertSame( $captain->id, Team::find( $team->id )->captain_id );
 	}
 
+	/**
+	 * Test register_with_captain() creates the team and joins the captain.
+	 */
+	public function test_register_with_captain_creates_and_joins(): void {
+		$captain = $this->create_member( 0, 1 );
+
+		$team = Team::register_with_captain(
+			[
+				'campaign_id' => 1,
+				'name'        => 'Led Squad',
+				'goal'        => 50000,
+				'status'      => Team::STATUS_ACTIVE,
+			],
+			$captain
+		);
+
+		$this->assertNotNull( $team );
+		$this->assertSame( $captain->id, $team->captain_id );
+		$this->assertSame( $team->id, Fundraiser::find( $captain->id )->team_id );
+	}
+
+	/**
+	 * Test register_with_captain() with a null captain just creates the team.
+	 */
+	public function test_register_with_captain_allows_no_captain(): void {
+		$team = Team::register_with_captain(
+			[
+				'campaign_id' => 1,
+				'name'        => 'Captainless',
+				'goal'        => 50000,
+			],
+			null
+		);
+
+		$this->assertNotNull( $team );
+		$this->assertNull( $team->captain_id );
+	}
+
+	/**
+	 * Test register_with_captain() deletes the team when the captain join fails.
+	 */
+	public function test_register_with_captain_rolls_back_on_failed_join(): void {
+		global $wpdb;
+
+		$captain = $this->create_member( 0, 1 );
+
+		// Sabotage team updates so set_captain() fails after the create.
+		$break_updates = function ( $query ) use ( $wpdb ) {
+			if ( str_starts_with( $query, 'UPDATE' ) && str_contains( $query, "{$wpdb->prefix}missiondp_teams" ) ) {
+				return "UPDATE {$wpdb->prefix}missiondp_nonexistent SET id = 0";
+			}
+			return $query;
+		};
+		add_filter( 'query', $break_updates );
+		$suppress = $wpdb->suppress_errors( true );
+
+		$team = Team::register_with_captain(
+			[
+				'campaign_id' => 1,
+				'name'        => 'Doomed Squad',
+				'goal'        => 50000,
+			],
+			$captain
+		);
+
+		$wpdb->suppress_errors( $suppress );
+		remove_filter( 'query', $break_updates );
+
+		$this->assertNull( $team );
+		$this->assertCount( 0, Team::query( [ 'campaign_id' => 1 ] ) );
+		$this->assertNull( Fundraiser::find( $captain->id )->team_id );
+	}
+
 	// -------------------------------------------------------------------------
 	// query() / count() tests.
 	// -------------------------------------------------------------------------
