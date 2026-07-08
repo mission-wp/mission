@@ -280,7 +280,9 @@ class DashboardContextBuilder {
 			$context['fundraisers'] = $fundraisers_context;
 			$context['overview']    = array_merge( $context['overview'], $fundraisers_builder->overview_extras( $has_giving ) );
 
-			$teams_context = ( new TeamsContextBuilder( $donor, $this->settings, $this->reporting, $this->fundraisers() ) )->build();
+			[ $campaigns, $teams ] = $fundraisers_builder->preloaded_relations();
+
+			$teams_context = ( new TeamsContextBuilder( $donor, $this->settings, $this->reporting, $this->fundraisers(), $teams, $campaigns ) )->build();
 			if ( null !== $teams_context ) {
 				$context['teams'] = $teams_context;
 			}

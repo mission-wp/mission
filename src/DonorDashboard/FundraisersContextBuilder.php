@@ -157,6 +157,20 @@ class FundraisersContextBuilder {
 	}
 
 	/**
+	 * The campaign and team maps preloaded for the cards, keyed by ID.
+	 *
+	 * Lets DashboardContextBuilder hand the same maps to TeamsContextBuilder
+	 * instead of re-querying the IDs this builder just loaded.
+	 *
+	 * @return array{0: array<int, Campaign>, 1: array<int, Team>} Campaigns and teams.
+	 */
+	public function preloaded_relations(): array {
+		$this->cards();
+
+		return [ $this->campaigns, $this->teams ];
+	}
+
+	/**
 	 * The prepared cards, building them on first use.
 	 *
 	 * @return array<int, array<string, mixed>>
@@ -172,6 +186,11 @@ class FundraisersContextBuilder {
 
 	/**
 	 * Batch-load the campaigns and teams the fundraisers reference.
+	 *
+	 * Also primes the posts cache for every post the cards touch: each card's
+	 * get_url() reads its shell post, and the permalink filter reads the
+	 * campaign post (and team shell post) behind it — one posts query each
+	 * when un-primed.
 	 */
 	private function preload_relations(): void {
 		$campaign_ids = array_unique( array_filter( array_map( static fn( Fundraiser $f ): int => $f->campaign_id, $this->fundraisers ) ) );
@@ -179,6 +198,18 @@ class FundraisersContextBuilder {
 
 		$this->campaigns = $campaign_ids ? Campaign::find_many( $campaign_ids ) : [];
 		$this->teams     = $team_ids ? Team::find_many( $team_ids ) : [];
+
+		$post_ids = array_filter(
+			array_merge(
+				array_map( static fn( Fundraiser $f ): int => $f->post_id, $this->fundraisers ),
+				array_map( static fn( Team $t ): int => $t->post_id, array_values( $this->teams ) ),
+				array_map( static fn( Campaign $c ): int => $c->post_id, array_values( $this->campaigns ) )
+			)
+		);
+
+		if ( $post_ids ) {
+			_prime_post_caches( $post_ids, false, false );
+		}
 	}
 
 	/**

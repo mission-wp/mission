@@ -35,16 +35,21 @@ class TeamsContextBuilder {
 	/**
 	 * Constructor.
 	 *
-	 * @param Donor            $donor       The authenticated donor.
-	 * @param array            $settings    Plugin settings (missiondp_settings option).
-	 * @param ReportingService $reporting   Reporting service.
-	 * @param Fundraiser[]     $fundraisers The donor's fundraisers, newest first.
+	 * @param Donor                    $donor       The authenticated donor.
+	 * @param array                    $settings    Plugin settings (missiondp_settings option).
+	 * @param ReportingService         $reporting   Reporting service.
+	 * @param Fundraiser[]             $fundraisers The donor's fundraisers, newest first.
+	 * @param array<int, Team>|null    $teams       Preloaded teams keyed by ID (shared from
+	 *                                              FundraisersContextBuilder), or null to load here.
+	 * @param array<int, Campaign>|null $campaigns  Preloaded campaigns keyed by ID, or null to load here.
 	 */
 	public function __construct(
 		private Donor $donor,
 		private array $settings,
 		private ReportingService $reporting,
 		private array $fundraisers,
+		private ?array $teams = null,
+		private ?array $campaigns = null,
 	) {
 		$this->currency = strtoupper( $settings['currency'] ?? 'USD' );
 		$this->is_test  = ! empty( $settings['test_mode'] );
@@ -62,9 +67,8 @@ class TeamsContextBuilder {
 			return null;
 		}
 
-		$team_ids  = array_unique( array_map( static fn( Fundraiser $f ): int => (int) $f->team_id, $memberships ) );
-		$teams     = Team::find_many( $team_ids );
-		$campaigns = Campaign::find_many( array_unique( array_map( static fn( Fundraiser $f ): int => $f->campaign_id, $memberships ) ) );
+		$teams     = $this->teams ?? Team::find_many( array_unique( array_map( static fn( Fundraiser $f ): int => (int) $f->team_id, $memberships ) ) );
+		$campaigns = $this->campaigns ?? Campaign::find_many( array_unique( array_map( static fn( Fundraiser $f ): int => $f->campaign_id, $memberships ) ) );
 
 		$current = [];
 		$past    = [];

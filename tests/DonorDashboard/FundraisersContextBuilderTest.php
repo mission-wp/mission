@@ -402,4 +402,59 @@ class FundraisersContextBuilderTest extends WP_UnitTestCase {
 	public function test_build_null_without_fundraisers(): void {
 		$this->assertNull( $this->build( $this->create_donor() )['context'] );
 	}
+
+	/**
+	 * Test build batch-primes posts: no per-card single-post lookups run.
+	 *
+	 * Each card's get_url() reads the fundraiser shell post, and the permalink
+	 * filter reads the campaign post behind it (and the team shell post for
+	 * team cards). Un-primed, that is one posts query per post — the N+1 this
+	 * pins down.
+	 */
+	public function test_build_runs_no_single_post_lookups(): void {
+		global $wpdb;
+
+		$this->set_permalink_structure( '/%postname%/' );
+
+		$donor  = $this->create_donor();
+		$live   = $this->create_campaign();
+		$second = $this->create_campaign( [ 'title' => 'Second Drive' ] );
+
+		$team = new Team(
+			[
+				'campaign_id' => $live->id,
+				'name'        => 'Rangers',
+				'status'      => Team::STATUS_ACTIVE,
+			]
+		);
+		$team->save();
+
+		$this->create_fundraiser( $live->id, $donor->id, [ 'team_id' => $team->id ] );
+		$this->create_fundraiser( $second->id, $donor->id );
+
+		// Simulate a fresh request: nothing cached from fixture creation.
+		wp_cache_flush();
+
+		$captured = [];
+		$collect  = function ( string $sql ) use ( &$captured ): string {
+			$captured[] = $sql;
+			return $sql;
+		};
+
+		add_filter( 'query', $collect );
+		$context = $this->build( $donor )['context'];
+		remove_filter( 'query', $collect );
+
+		// The URLs must still resolve; priming must not short-circuit them.
+		$this->assertStringContainsString( 'fundraiser', $context['active'][0]['url'] );
+
+		$single_post_lookups = array_values(
+			array_filter(
+				$captured,
+				static fn( string $sql ): bool => (bool) preg_match( "/FROM\s+{$wpdb->posts}\s+WHERE\s+ID\s*=\s*\d/i", $sql )
+			)
+		);
+
+		$this->assertSame( [], $single_post_lookups );
+	}
 }

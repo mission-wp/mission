@@ -147,6 +147,58 @@ class TeamsContextBuilderTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Preloaded relation maps are used as-is: no team or campaign query runs.
+	 */
+	public function test_preloaded_relations_skip_requerying(): void {
+		global $wpdb;
+
+		$donor  = $this->create_donor();
+		$result = $this->create_membership( $donor, true );
+
+		$fundraisers = $donor->fundraisers(
+			[
+				'orderby' => 'date_created',
+				'order'   => 'DESC',
+			]
+		);
+		$teams       = Team::find_many( [ $result['team']->id ] );
+		$campaigns   = Campaign::find_many( [ $result['campaign']->id ] );
+
+		$captured = [];
+		$collect  = function ( string $sql ) use ( &$captured ): string {
+			$captured[] = $sql;
+			return $sql;
+		};
+
+		add_filter( 'query', $collect );
+		$context = ( new TeamsContextBuilder(
+			$donor,
+			[ 'currency' => 'USD' ],
+			new ReportingService(),
+			$fundraisers,
+			$teams,
+			$campaigns
+		) )->build();
+		remove_filter( 'query', $collect );
+
+		$this->assertSame( 'Rangers', $context['current'][0]['name'] );
+
+		// Aggregate queries (rank, totals) may reference these tables; only the
+		// by-ID relation loads find_many() would issue must not run again.
+		$relation_queries = array_values(
+			array_filter(
+				$captured,
+				static fn( string $sql ): bool => (bool) preg_match(
+					"/{$wpdb->prefix}missiondp_(teams|campaigns)`?\s+WHERE\s+id\s+IN/i",
+					$sql
+				)
+			)
+		);
+
+		$this->assertSame( [], $relation_queries );
+	}
+
+	/**
 	 * Member counts use the active-only basis and the card embeds only the
 	 * first roster page with paging totals.
 	 */
