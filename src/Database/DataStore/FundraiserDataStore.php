@@ -363,9 +363,14 @@ class FundraiserDataStore implements DataStoreInterface {
 		$prepare_args = array_merge( [ $this->get_table_name() ], $values, [ $orderby, $per_page, $offset ] );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via placeholders built from counted arrays, direction whitelisted.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A ) ?: [];
 
-		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
+		// Prime the memo so later find()/find_by_post_id() reads are free.
+		foreach ( $rows as $row ) {
+			$this->prime_row_cache( $row );
+		}
+
+		return array_map( [ $this, 'row_to_model' ], $rows );
 	}
 
 	/**

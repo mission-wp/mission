@@ -361,6 +361,64 @@ class RowCacheTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test query() primes the memo, so later id and post-ID reads are free.
+	 */
+	public function test_query_primes_the_row_memo(): void {
+		$fundraisers = [
+			$this->create_fundraiser( [ 'donor_id' => 7 ] ),
+			$this->create_fundraiser(
+				[
+					'donor_id'    => 7,
+					'campaign_id' => 2,
+				]
+			),
+		];
+
+		wp_cache_flush();
+		Fundraiser::query( [ 'donor_id' => 7 ] );
+
+		$queries = $this->count_queries(
+			function () use ( $fundraisers ): void {
+				foreach ( $fundraisers as $fundraiser ) {
+					Fundraiser::find( $fundraiser->id );
+					Fundraiser::find_by_post_id( $fundraiser->post_id );
+				}
+			}
+		);
+
+		$this->assertSame( 0, $queries );
+	}
+
+	/**
+	 * Test find_many() primes the campaign and team memos for later reads.
+	 */
+	public function test_find_many_primes_the_row_memo(): void {
+		$campaign = new Campaign( [ 'title' => 'Drive' ] );
+		$campaign->save();
+		$team = new Team(
+			[
+				'campaign_id' => $campaign->id,
+				'name'        => 'Rangers',
+			]
+		);
+		$team->save();
+
+		wp_cache_flush();
+		Campaign::find_many( [ $campaign->id ] );
+		Team::find_many( [ $team->id ] );
+
+		$queries = $this->count_queries(
+			function () use ( $campaign, $team ): void {
+				Campaign::find( $campaign->id );
+				Team::find( $team->id );
+				Team::find_by_post_id( $team->post_id );
+			}
+		);
+
+		$this->assertSame( 0, $queries );
+	}
+
+	/**
 	 * Test warm_by_post_ids() with no valid post IDs runs no queries.
 	 */
 	public function test_warm_by_post_ids_empty_is_a_no_op(): void {
