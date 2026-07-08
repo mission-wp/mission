@@ -99,8 +99,6 @@ class EmailTestEndpoint {
 		$template     = EmailModule::TEMPLATE_MAP[ $email_type ];
 
 		$tags = $email_module->build_merge_tags( $data );
-		// Lowercased because the tag sits mid-sentence in the default subjects.
-		$tags['{frequency}'] = strtolower( $tags['{frequency}'] );
 
 		$subject = $email_module->subject( $email_type, $tags );
 

@@ -143,14 +143,27 @@ class EmailModule {
 	 * Resolve the subject for an email type: custom if set, default otherwise,
 	 * with merge tags replaced either way.
 	 *
+	 * Custom subjects get the tag values as-is, keeping the case the admin
+	 * saw when writing them. The default subjects embed {frequency}
+	 * mid-sentence ("your {amount} {frequency} donation"), so its value is
+	 * lowercased on the default path only.
+	 *
 	 * @param string               $email_type Email type key.
 	 * @param array<string,string> $tags       Map of '{tag}' => 'replacement'.
 	 * @return string
 	 */
 	public function subject( string $email_type, array $tags = [] ): string {
-		$subject = $this->get_custom_subject( $email_type ) ?: $this->default_subject( $email_type );
+		$custom = $this->get_custom_subject( $email_type );
 
-		return $this->replace_subject_tags( $subject, $tags );
+		if ( $custom ) {
+			return $this->replace_subject_tags( $custom, $tags );
+		}
+
+		if ( isset( $tags['{frequency}'] ) ) {
+			$tags['{frequency}'] = strtolower( $tags['{frequency}'] );
+		}
+
+		return $this->replace_subject_tags( $this->default_subject( $email_type ), $tags );
 	}
 
 	/**

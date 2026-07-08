@@ -165,8 +165,7 @@ class SubscriptionEmailListener {
 		return [
 			'{donor_name}'        => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
 			'{amount}'            => $data['amount_formatted'],
-			// Lowercased because the tag sits mid-sentence in the default subjects.
-			'{frequency}'         => strtolower( $data['frequency_label'] ),
+			'{frequency}'         => $data['frequency_label'],
 			'{next_renewal_date}' => $data['next_renewal_formatted'],
 			'{organization}'      => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
 		];

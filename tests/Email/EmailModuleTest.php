@@ -137,6 +137,32 @@ class EmailModuleTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the default subjects lowercase {frequency} for their mid-sentence use.
+	 */
+	public function test_subject_lowercases_frequency_in_defaults(): void {
+		$subject = $this->module->subject(
+			'subscription_activated',
+			[
+				'{amount}'    => '$25.00',
+				'{frequency}' => 'Monthly',
+			]
+		);
+
+		$this->assertSame( 'Thank you for your $25.00 monthly donation', $subject );
+	}
+
+	/**
+	 * Test custom subjects keep the {frequency} case the admin saw when writing them.
+	 */
+	public function test_subject_keeps_frequency_case_in_custom_subjects(): void {
+		$this->set_email_settings( 'subscription_activated', [ 'subject' => '{frequency} donation confirmed' ] );
+
+		$subject = $this->module->subject( 'subscription_activated', [ '{frequency}' => 'Monthly' ] );
+
+		$this->assertSame( 'Monthly donation confirmed', $subject );
+	}
+
+	/**
 	 * Test custom body is empty when none is stored.
 	 */
 	public function test_get_custom_body_empty_by_default(): void {

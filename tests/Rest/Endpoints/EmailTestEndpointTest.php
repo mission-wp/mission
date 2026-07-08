@@ -104,6 +104,23 @@ class EmailTestEndpointTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test sends resolve {frequency} the same way real sends do: original
+	 * case in a custom subject, lowercase in the default subject.
+	 */
+	public function test_frequency_case_matches_real_sends(): void {
+		$this->send_test( 'subscription_activated' );
+		$this->assertStringContainsString( 'monthly donation', $this->sent_mail['subject'] );
+
+		update_option(
+			'missiondp_settings',
+			[ 'emails' => [ 'subscription_activated' => [ 'subject' => '{frequency} plan confirmed' ] ] ]
+		);
+
+		$this->send_test( 'subscription_activated' );
+		$this->assertSame( 'Monthly plan confirmed', $this->sent_mail['subject'] );
+	}
+
+	/**
 	 * Team test emails render the sample team name, not an empty merge value.
 	 */
 	public function test_team_email_renders_sample_team_name(): void {

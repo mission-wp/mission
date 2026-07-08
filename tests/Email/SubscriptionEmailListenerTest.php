@@ -346,8 +346,9 @@ class SubscriptionEmailListenerTest extends WP_UnitTestCase {
 	/**
 	 * Test a custom activation subject resolves all subscription tags.
 	 *
-	 * {frequency} renders lowercase to match its mid-sentence use in the
-	 * default subjects.
+	 * {frequency} keeps its original case in custom subjects (an admin's
+	 * "{frequency} donation confirmed" must send "Monthly …", as released);
+	 * only the default subjects lowercase it for mid-sentence use.
 	 */
 	public function test_custom_subject_tags_for_activation(): void {
 		update_option(
@@ -369,7 +370,7 @@ class SubscriptionEmailListenerTest extends WP_UnitTestCase {
 
 		$sent     = $this->sent_emails();
 		$expected = sprintf(
-			'Sam|$25.00|monthly|%s|Test Org',
+			'Sam|$25.00|Monthly|%s|Test Org',
 			wp_date( get_option( 'date_format' ), strtotime( '2026-07-12 00:00:00' ) )
 		);
 
