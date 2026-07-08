@@ -203,7 +203,7 @@ export const fundraisersState = {
 export const fundraisersActions = {
   /**
    * Drill into a fundraiser card. The hash drives panel state; the
-   * hashchange listener re-syncs the detail objects.
+   * hashchange listener syncs the panel and detail objects.
    */
   openFundraiser() {
     const ctx = getContext();
@@ -212,9 +212,7 @@ export const fundraisersActions = {
       return;
     }
     window.location.hash = `fundraiser-${ id }`;
-    ctx.activePanel = `fundraiser-${ id }`;
     ctx.sidebarOpen = false;
-    syncFundraiserDetail( ctx, id );
   },
 
   editHeadline( event ) {

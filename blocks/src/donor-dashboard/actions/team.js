@@ -222,7 +222,7 @@ export const teamState = {
 export const teamActions = {
   /**
    * Drill into a team card. The hash drives panel state; the hashchange
-   * listener re-syncs the detail objects.
+   * listener syncs the panel and detail objects.
    */
   openTeam() {
     const ctx = getContext();
@@ -231,9 +231,7 @@ export const teamActions = {
       return;
     }
     window.location.hash = `team-${ id }`;
-    ctx.activePanel = `team-${ id }`;
     ctx.sidebarOpen = false;
-    syncTeamDetail( ctx, id );
   },
 
   editTeamName( event ) {
