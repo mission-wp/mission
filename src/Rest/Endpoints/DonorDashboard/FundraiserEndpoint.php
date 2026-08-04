@@ -15,6 +15,7 @@ use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Rest\Args;
 use MissionDP\Rest\RestModule;
+use MissionDP\Rest\Traits\CoverPhotoRoutesTrait;
 use MissionDP\Rest\Traits\DonorDashboardPrepareTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
 use MissionDP\Rest\Traits\ResolveDonorTrait;
@@ -35,6 +36,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class FundraiserEndpoint {
 
+	use CoverPhotoRoutesTrait;
 	use DonorDashboardPrepareTrait;
 	use RateLimitTrait;
 	use ResolveDonorTrait;
@@ -156,89 +158,6 @@ class FundraiserEndpoint {
 	}
 
 	/**
-	 * POST /donor-dashboard/fundraisers/{id}/photo
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function upload_photo( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$rate_error = $this->check_rate_limit( 'p2p_photo_upload', 30, HOUR_IN_SECONDS );
-		if ( $rate_error ) {
-			return $rate_error;
-		}
-
-		$fundraiser = $this->resolve_owned_fundraiser( $request );
-
-		if ( is_wp_error( $fundraiser ) ) {
-			return $fundraiser;
-		}
-
-		$locked = $this->check_not_locked( $fundraiser );
-		if ( $locked ) {
-			return $locked;
-		}
-
-		$files = $request->get_file_params();
-
-		if ( empty( $files['file'] ) ) {
-			return new WP_Error( 'no_file', __( 'No image was uploaded.', 'mission-donation-platform' ), [ 'status' => 400 ] );
-		}
-
-		$attachment_id = $this->uploader->handle( $files['file'] );
-
-		if ( is_wp_error( $attachment_id ) ) {
-			return $attachment_id;
-		}
-
-		$previous = (string) $fundraiser->cover_image;
-
-		$fundraiser->cover_image = (string) $attachment_id;
-		$fundraiser->save();
-
-		$this->uploader->cleanup_replaced_image( $previous );
-
-		return new WP_REST_Response(
-			[
-				'cover_image'     => (int) $attachment_id,
-				'cover_image_url' => wp_get_attachment_image_url( $attachment_id, 'large' ) ?: '',
-			]
-		);
-	}
-
-	/**
-	 * DELETE /donor-dashboard/fundraisers/{id}/photo
-	 *
-	 * @param WP_REST_Request $request Request object.
-	 * @return WP_REST_Response|WP_Error
-	 */
-	public function remove_photo( WP_REST_Request $request ): WP_REST_Response|WP_Error {
-		$fundraiser = $this->resolve_owned_fundraiser( $request );
-
-		if ( is_wp_error( $fundraiser ) ) {
-			return $fundraiser;
-		}
-
-		$locked = $this->check_not_locked( $fundraiser );
-		if ( $locked ) {
-			return $locked;
-		}
-
-		$previous = (string) $fundraiser->cover_image;
-
-		$fundraiser->cover_image = '';
-		$fundraiser->save();
-
-		$this->uploader->cleanup_replaced_image( $previous );
-
-		return new WP_REST_Response(
-			[
-				'cover_image'     => 0,
-				'cover_image_url' => '',
-			]
-		);
-	}
-
-	/**
 	 * GET /donor-dashboard/fundraisers/{id}/donors
 	 *
 	 * @param WP_REST_Request $request Request object.
@@ -343,6 +262,16 @@ class FundraiserEndpoint {
 		}
 
 		return $fundraiser;
+	}
+
+	/**
+	 * Resolve the cover photo's owner for the shared photo routes.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return Fundraiser|WP_Error
+	 */
+	protected function resolve_photo_model( WP_REST_Request $request ): Fundraiser|WP_Error {
+		return $this->resolve_owned_fundraiser( $request );
 	}
 
 	/**

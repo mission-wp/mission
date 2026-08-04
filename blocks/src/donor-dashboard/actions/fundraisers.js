@@ -10,7 +10,7 @@ import { createPhotoFlow } from '../utils/photo-flow';
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
 
-const photo = createPhotoFlow( 'fundraisers', 'fundraisers' );
+const photo = createPhotoFlow( 'fundraisers' );
 
 /**
  * Find a fundraiser card by ID across the Active and Ended lists.

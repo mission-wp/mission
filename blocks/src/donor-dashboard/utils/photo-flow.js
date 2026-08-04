@@ -11,11 +11,11 @@ import { resizeImageFile } from '@shared/image-resize';
 /**
  * Create the staged-photo state getters and actions for one detail view.
  *
- * @param {string} slice        Context slice name ('fundraisers' or 'teams').
- * @param {string} endpointBase REST base under donor-dashboard/ with the /photo routes.
+ * @param {string} slice Context slice name and REST base under donor-dashboard/
+ *                       ('fundraisers' or 'teams').
  * @return {Object} Photo flow members to expose from the store.
  */
-export function createPhotoFlow( slice, endpointBase ) {
+export function createPhotoFlow( slice ) {
   // Image staged for upload on save. A File can't live in the reactive
   // context, so it's held here; only its preview URL goes in context.
   let staged = null;
@@ -134,7 +134,7 @@ export function createPhotoFlow( slice, endpointBase ) {
         body.append( 'file', staged );
 
         const photoResponse = yield fetch(
-          `${ ctx.restUrl }donor-dashboard/${ endpointBase }/${ card.id }/photo`,
+          `${ ctx.restUrl }donor-dashboard/${ slice }/${ card.id }/photo`,
           {
             method: 'POST',
             credentials: 'same-origin',
@@ -157,7 +157,7 @@ export function createPhotoFlow( slice, endpointBase ) {
         clearStaged( s );
       } else if ( s.photoRemoved && card.hasCover ) {
         const photoResponse = yield fetch(
-          `${ ctx.restUrl }donor-dashboard/${ endpointBase }/${ card.id }/photo`,
+          `${ ctx.restUrl }donor-dashboard/${ slice }/${ card.id }/photo`,
           {
             method: 'DELETE',
             credentials: 'same-origin',

@@ -12,7 +12,7 @@ import { findFundraiserCard } from './fundraisers';
 
 const GENERIC_ERROR = 'Something went wrong. Please try again.';
 
-const photo = createPhotoFlow( 'teams', 'teams' );
+const photo = createPhotoFlow( 'teams' );
 
 /**
  * Find a current-team card by ID.
