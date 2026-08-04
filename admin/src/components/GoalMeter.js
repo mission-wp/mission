@@ -1,6 +1,7 @@
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDate } from '@shared/date';
+import { goalPercent } from './ProgressBar';
 
 /**
  * Days from now until a date string, or null when absent or already past.
@@ -46,7 +47,7 @@ export default function GoalMeter( {
     return null;
   }
 
-  const percent = Math.min( 100, Math.round( ( raised / goal ) * 100 ) );
+  const percent = goalPercent( raised, goal );
   const remaining = daysLeft ?? daysUntil( endDate );
 
   return (

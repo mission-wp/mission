@@ -22,6 +22,7 @@ import { formatDateOnly } from '@shared/date';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
 import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
 import EmptyState from '../../components/EmptyState';
+import ProgressBar, { goalPercent } from '../../components/ProgressBar';
 
 const MegaphoneIcon = () => (
   <svg
@@ -187,21 +188,8 @@ const fields = [
         return <Text style={ { color: '#9b9ba8' } }>{ '\u2014' }</Text>;
       }
       const progress = item.goal_progress ?? item.total_raised;
-      const pct = Math.min(
-        Math.round( ( progress / item.goal_amount ) * 100 ),
-        100
-      );
-      return (
-        <span className="mission-progress-bar">
-          <span className="mission-progress-bar__track">
-            <span
-              className="mission-progress-bar__fill"
-              style={ { width: `${ pct }%` } }
-            />
-          </span>
-          <span className="mission-progress-bar__text">{ pct }%</span>
-        </span>
-      );
+      const pct = goalPercent( progress, item.goal_amount );
+      return <ProgressBar percent={ pct }>{ pct }%</ProgressBar>;
     },
   },
   {

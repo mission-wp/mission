@@ -12,30 +12,20 @@ import { formatAmount } from '@shared/currency';
 import ClickableRows from '@shared/components/ClickableRows';
 import DetailCard from '../../components/DetailCard';
 import DonorAvatar from '../../components/DonorAvatar';
+import ProgressBar, { goalPercent } from '../../components/ProgressBar';
 
 function MemberProgress( { raised, goal } ) {
-  const percent =
-    goal > 0 ? Math.min( 100, Math.round( ( raised / goal ) * 100 ) ) : 0;
-
   return (
-    <div className="mission-progress-bar mission-progress-bar--wide">
-      <span className="mission-progress-bar__track">
-        <span
-          className="mission-progress-bar__fill"
-          style={ { width: `${ percent }%` } }
-        />
-      </span>
-      <span className="mission-progress-bar__text">
-        { goal > 0
-          ? sprintf(
-              /* translators: 1: amount raised, 2: goal amount */
-              __( '%1$s of %2$s', 'mission-donation-platform' ),
-              formatAmount( raised ),
-              formatAmount( goal )
-            )
-          : formatAmount( raised ) }
-      </span>
-    </div>
+    <ProgressBar percent={ goalPercent( raised, goal ) } wide>
+      { goal > 0
+        ? sprintf(
+            /* translators: 1: amount raised, 2: goal amount */
+            __( '%1$s of %2$s', 'mission-donation-platform' ),
+            formatAmount( raised ),
+            formatAmount( goal )
+          )
+        : formatAmount( raised ) }
+    </ProgressBar>
   );
 }
 
