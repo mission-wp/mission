@@ -1951,35 +1951,49 @@ class ReportingService {
 	 *
 	 * @param int $campaign_id Campaign ID.
 	 * @param int $limit       Maximum rows.
-	 * @return array<int, array{id:int, post_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
 	 */
 	public function top_fundraisers( int $campaign_id, int $limit = 10 ): array {
-		global $wpdb;
+		return $this->fundraiser_leaderboard( 'campaign_id', $campaign_id, $limit, 0 );
+	}
 
-		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
-		$d_table = $wpdb->prefix . 'missiondp_donors';
-		$t_table = $wpdb->prefix . 'missiondp_teams';
+	/**
+	 * Active fundraisers in one scope with per-fundraiser progress, by raised.
+	 *
+	 * The single query and item shape behind top_fundraisers() and
+	 * team_members(), so the two leaderboards can't drift.
+	 *
+	 * @param string $scope_col Fundraisers column to scope by: 'campaign_id' or 'team_id'.
+	 * @param int    $scope_id  Campaign or team ID.
+	 * @param int    $limit     Maximum rows.
+	 * @param int    $offset    Rows to skip.
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
+	 */
+	private function fundraiser_leaderboard( string $scope_col, int $scope_id, int $limit, int $offset ): array {
+		global $wpdb;
 
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
-				'SELECT f.id, f.post_id, f.goal, f.%i AS raised,
+				'SELECT f.id, f.post_id, f.donor_id, f.goal, f.%i AS raised,
 						CASE WHEN f.id = tm.captain_id THEN 1 ELSE 0 END AS is_team_captain,
 						d.first_name, d.last_name, tm.name AS team_name
 				 FROM %i AS f
 				 LEFT JOIN %i AS d ON f.donor_id = d.id
 				 LEFT JOIN %i AS tm ON f.team_id = tm.id
-				 WHERE f.campaign_id = %d AND f.status = %s
+				 WHERE f.%i = %d AND f.status = %s
 				 ORDER BY raised DESC, f.id ASC
-				 LIMIT %d',
+				 LIMIT %d OFFSET %d',
 				$raised_col,
-				$f_table,
-				$d_table,
-				$t_table,
-				$campaign_id,
+				$wpdb->prefix . 'missiondp_fundraisers',
+				$wpdb->prefix . 'missiondp_donors',
+				$wpdb->prefix . 'missiondp_teams',
+				$scope_col,
+				$scope_id,
 				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
-				$limit
+				$limit,
+				$offset
 			),
 			ARRAY_A
 		);
@@ -1991,6 +2005,7 @@ class ReportingService {
 			$items[] = [
 				'id'         => (int) $row['id'],
 				'post_id'    => (int) $row['post_id'],
+				'donor_id'   => (int) $row['donor_id'],
 				'name'       => $name ?: __( 'Fundraiser', 'mission-donation-platform' ),
 				'first_name' => (string) ( $row['first_name'] ?? '' ),
 				'last_name'  => (string) ( $row['last_name'] ?? '' ),
@@ -2258,57 +2273,10 @@ class ReportingService {
 	 * @param int $team_id Team ID.
 	 * @param int $limit   Maximum members to return.
 	 * @param int $offset  Rows to skip, for pagination.
-	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, goal:int, raised:int, is_captain:bool}>
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
 	 */
 	public function team_members( int $team_id, int $limit = 100, int $offset = 0 ): array {
-		global $wpdb;
-
-		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
-		$d_table = $wpdb->prefix . 'missiondp_donors';
-
-		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
-
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT f.id, f.post_id, f.donor_id, f.goal, f.%i AS raised,
-						CASE WHEN f.id = t.captain_id THEN 1 ELSE 0 END AS is_team_captain,
-						d.first_name, d.last_name
-				 FROM %i AS f
-				 LEFT JOIN %i AS d ON f.donor_id = d.id
-				 LEFT JOIN %i AS t ON f.team_id = t.id
-				 WHERE f.team_id = %d AND f.status = %s
-				 ORDER BY raised DESC, f.id ASC
-				 LIMIT %d OFFSET %d',
-				$raised_col,
-				$f_table,
-				$d_table,
-				$wpdb->prefix . 'missiondp_teams',
-				$team_id,
-				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
-				max( 1, $limit ),
-				max( 0, $offset )
-			),
-			ARRAY_A
-		);
-
-		$items = [];
-		foreach ( $rows ?: [] as $row ) {
-			$name = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
-
-			$items[] = [
-				'id'         => (int) $row['id'],
-				'post_id'    => (int) $row['post_id'],
-				'donor_id'   => (int) $row['donor_id'],
-				'name'       => $name ?: __( 'Fundraiser', 'mission-donation-platform' ),
-				'first_name' => (string) ( $row['first_name'] ?? '' ),
-				'last_name'  => (string) ( $row['last_name'] ?? '' ),
-				'goal'       => (int) $row['goal'],
-				'raised'     => (int) $row['raised'],
-				'is_captain' => (bool) (int) $row['is_team_captain'],
-			];
-		}
-
-		return $items;
+		return $this->fundraiser_leaderboard( 'team_id', $team_id, max( 1, $limit ), max( 0, $offset ) );
 	}
 
 	/**
