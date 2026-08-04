@@ -321,7 +321,7 @@ class FundraiserEndpoint {
 			'headline'         => $fundraiser->headline,
 			'story'            => $fundraiser->story,
 			'status'           => $fundraiser->status,
-			'is_locked'        => ! $campaign || $campaign->has_ended(),
+			'is_locked'        => $fundraiser->is_locked(),
 			'tribute_type'     => $dedication['type'] ?? '',
 			'tribute_name'     => $dedication['name'] ?? '',
 			'dedication_label' => $fundraiser->dedication_label(),
