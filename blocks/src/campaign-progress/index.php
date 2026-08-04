@@ -11,7 +11,6 @@
  */
 
 use MissionDP\Currency\Currency;
-use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Team;
@@ -91,10 +90,6 @@ if ( 'amount' === $goal_type ) {
 		: _n( 'donor', 'donors', $goal_progress, 'mission-donation-platform' );
 }
 
-// Primary color.
-$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
-$color_style   = PrimaryColorResolver::inline_style( $primary_color );
-
 // Build context for Interactivity API.
 $context = [
 	'donateAction' => $donate_action,
@@ -112,7 +107,7 @@ ob_start();
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress mission-campaign-progress' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/campaign-progress"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
-	style="<?php echo esc_attr( $color_style ); ?>"
+	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
 	<div class="mission-progress__header mission-cp-header">
 		<span class="mission-progress__raised mission-cp-raised"><?php echo esc_html( $progress_text ); ?></span>

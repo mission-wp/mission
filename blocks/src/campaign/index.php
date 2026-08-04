@@ -11,7 +11,6 @@
  */
 
 use MissionDP\Currency\Currency;
-use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\P2P\BlockSupport;
 
@@ -129,17 +128,13 @@ if ( $is_ended ) {
 	$card_classes .= ' mission-cc--ended';
 }
 
-// Primary color.
-$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
-$color_style   = PrimaryColorResolver::inline_style( $primary_color );
-
 // Build the output.
 ob_start();
 ?>
 <div
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-campaign-card' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/campaign"
-	style="<?php echo esc_attr( $color_style ); ?>"
+	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
 	<div class="<?php echo esc_attr( $card_classes ); ?>">
 		<?php if ( $show_image ) : ?>

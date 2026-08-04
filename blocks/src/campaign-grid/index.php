@@ -11,7 +11,6 @@
  */
 
 use MissionDP\Currency\Currency;
-use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\P2P\BlockSupport;
 
@@ -65,10 +64,6 @@ $mission_settings = get_option( 'missiondp_settings', [] );
 $is_test          = (bool) ( $mission_settings['test_mode'] ?? false );
 $currency         = strtoupper( $mission_settings['currency'] ?? 'USD' );
 
-// Primary color.
-$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
-$color_style   = PrimaryColorResolver::inline_style( $primary_color );
-
 $columns = (int) ( $attributes['columns'] ?? 2 );
 
 // Show/hide toggles.
@@ -92,7 +87,7 @@ ob_start();
 	);
 	?>
 	data-wp-interactive="mission-donation-platform/campaign"
-	style="<?php echo esc_attr( $color_style ); ?>;--mission-cg-columns:<?php echo esc_attr( $columns ); ?>"
+	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>;--mission-cg-columns:<?php echo esc_attr( $columns ); ?>"
 >
 	<div class="mission-cg-grid">
 		<?php foreach ( $campaigns as $campaign ) : ?>

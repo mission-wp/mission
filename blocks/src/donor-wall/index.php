@@ -11,7 +11,6 @@
  */
 
 use MissionDP\Currency\Currency;
-use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
@@ -166,10 +165,6 @@ foreach ( $items as $i => &$entry ) {
 }
 unset( $entry );
 
-// Primary color.
-$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
-$color_style   = PrimaryColorResolver::inline_style( $primary_color );
-
 // Compute truncated comments for display.
 foreach ( $items as &$entry ) {
 	if ( ! empty( $entry['comment'] ) && mb_strlen( $entry['comment'] ) > $comment_length ) {
@@ -203,7 +198,7 @@ $context = [
 
 // Wrapper attributes.
 $style_parts = [
-	$color_style,
+	BlockSupport::primary_color_style(),
 	'--mission-dw-columns:' . $columns,
 	'--mission-dw-avatar-size:' . $avatar_width . 'px',
 ];

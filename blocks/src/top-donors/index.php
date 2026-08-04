@@ -12,7 +12,6 @@
 
 use MissionDP\Currency\Currency;
 use MissionDP\DonorDashboard\DashboardLabels;
-use MissionDP\DonorDashboard\PrimaryColorResolver;
 use MissionDP\Models\Campaign;
 use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
@@ -44,10 +43,6 @@ $limit           = (int) ( $attributes['numberOfDonors'] ?? 5 );
 $reporting = new ReportingService();
 $donors    = $reporting->top_donors_for_campaign( $campaign->id, $limit );
 
-// Primary color.
-$primary_color = $mission_settings['primary_color'] ?? '#2fa36b';
-$color_style   = PrimaryColorResolver::inline_style( $primary_color );
-
 // Interactivity API context.
 $context = [
 	'donateAction' => $donate_action,
@@ -59,7 +54,7 @@ ob_start();
 	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-top-donors' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/top-donors"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
-	style="<?php echo esc_attr( $color_style ); ?>"
+	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
 	<h3 class="mission-donor-heading"><?php echo esc_html( $heading ); ?></h3>
 
