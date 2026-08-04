@@ -241,12 +241,12 @@ class FundraiserRegistrationService {
 					]
 				);
 
-				$team_error = $this->validate_team_choice( $campaign, $donor, $join_input, $settings );
-				if ( $team_error ) {
-					return $team_error;
+				$choice = $this->resolve_team_choice( $campaign, $donor, $join_input, $settings );
+				if ( is_wp_error( $choice ) ) {
+					return $choice;
 				}
 
-				$team = $this->resolve_team( $campaign, $fundraiser, $join_input, $settings );
+				$team = $this->attach_team( $campaign, $fundraiser, $join_input, $settings, $choice );
 
 				return $this->result( $fundraiser, $team ?? $fundraiser->team() );
 			}
@@ -256,9 +256,9 @@ class FundraiserRegistrationService {
 
 		// Validate the team choice before creating anything, so a failed join
 		// or create never silently produces a solo page the user didn't want.
-		$team_error = $this->validate_team_choice( $campaign, $donor, $input, $settings );
-		if ( $team_error ) {
-			return $team_error;
+		$choice = $this->resolve_team_choice( $campaign, $donor, $input, $settings );
+		if ( is_wp_error( $choice ) ) {
+			return $choice;
 		}
 
 		$status = empty( $settings['approval_required'] ) ? Fundraiser::STATUS_ACTIVE : Fundraiser::STATUS_PENDING;
@@ -293,7 +293,7 @@ class FundraiserRegistrationService {
 			$fundraiser->set_dedication( ( $input['tribute_type'] ?? '' ) ?: null, (string) $input['honoree_name'] );
 		}
 
-		$team = $this->resolve_team( $campaign, $fundraiser, $input, $settings );
+		$team = $this->attach_team( $campaign, $fundraiser, $input, $settings, $choice );
 
 		return $this->result( $fundraiser, $team );
 	}
@@ -308,19 +308,21 @@ class FundraiserRegistrationService {
 	}
 
 	/**
-	 * Check whether a requested team join/create can succeed, without side effects.
+	 * Validate a requested team join/create and resolve what it refers to.
 	 *
 	 * Run before the fundraiser row is created: when the user explicitly asked
 	 * for a team, a doomed request must fail with a clear error instead of
-	 * completing as a solo registration.
+	 * completing as a solo registration. The resolved team and invitation are
+	 * carried in the returned choice so attach_team() never re-runs these rules.
 	 *
 	 * @param Campaign $campaign Parent campaign.
 	 * @param Donor    $donor    The registering donor.
 	 * @param array    $input    Setup fields.
 	 * @param array    $settings Campaign P2P settings.
-	 * @return WP_Error|null An error when the requested team action can't succeed.
+	 * @return array{mode: string, team: ?Team, invitation: ?TeamInvitation}|WP_Error
+	 *         The validated choice, or an error when it can't succeed.
 	 */
-	private function validate_team_choice( Campaign $campaign, Donor $donor, array $input, array $settings ): ?WP_Error {
+	private function resolve_team_choice( Campaign $campaign, Donor $donor, array $input, array $settings ): array|WP_Error {
 		$mode = $input['team_mode'] ?? '';
 
 		if ( 'create' === $mode ) {
@@ -332,13 +334,21 @@ class FundraiserRegistrationService {
 				return new WP_Error( 'team_name_required', __( 'Please enter a team name.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 			}
 
-			return null;
+			return [
+				'mode'       => 'create',
+				'team'       => null,
+				'invitation' => null,
+			];
 		}
 
 		$team_id = (int) ( $input['team_id'] ?? 0 );
 
 		if ( $team_id <= 0 ) {
-			return null;
+			return [
+				'mode'       => 'solo',
+				'team'       => null,
+				'invitation' => null,
+			];
 		}
 
 		if ( empty( $settings['teams_enabled'] ) ) {
@@ -351,6 +361,8 @@ class FundraiserRegistrationService {
 			return new WP_Error( 'team_unavailable', __( 'This team is no longer accepting new members.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
+		$invitation = null;
+
 		if ( Team::ACCESS_PUBLIC !== $team->access ) {
 			$invitation = $this->locate_invitation( $team, $donor, (string) ( $input['invite_token'] ?? '' ) );
 
@@ -359,34 +371,28 @@ class FundraiserRegistrationService {
 			}
 		}
 
-		return null;
+		return [
+			'mode'       => 'join',
+			'team'       => $team,
+			'invitation' => $invitation,
+		];
 	}
 
 	/**
-	 * Attach the fundraiser to a team per the chosen mode (or fundraise solo).
+	 * Commit a validated team choice for the just-created fundraiser.
 	 *
-	 * Inputs are pre-checked by validate_team_choice(); the guards here remain
-	 * as backstops for state that changed mid-request.
+	 * All rules ran in resolve_team_choice(); this only performs the side
+	 * effects: create the team, accept the invitation, join.
 	 *
 	 * @param Campaign   $campaign   Parent campaign.
 	 * @param Fundraiser $fundraiser The just-created fundraiser.
 	 * @param array      $input      Setup fields.
 	 * @param array      $settings   Campaign P2P settings.
+	 * @param array      $choice     Validated choice from resolve_team_choice().
 	 * @return Team|null The team joined/created, or null for a solo fundraiser.
 	 */
-	private function resolve_team( Campaign $campaign, Fundraiser $fundraiser, array $input, array $settings ): ?Team {
-		$mode = $input['team_mode'] ?? '';
-
-		if ( 'create' === $mode ) {
-			if ( empty( $settings['teams_enabled'] ) || empty( $settings['team_creation_enabled'] ) ) {
-				return null;
-			}
-
-			$name = trim( (string) ( $input['team_name'] ?? '' ) );
-			if ( '' === $name ) {
-				return null;
-			}
-
+	private function attach_team( Campaign $campaign, Fundraiser $fundraiser, array $input, array $settings, array $choice ): ?Team {
+		if ( 'create' === $choice['mode'] ) {
 			$team_status = empty( $settings['team_approval_required'] ) ? Team::STATUS_ACTIVE : Team::STATUS_PENDING;
 			$team_access = in_array( $input['team_access'] ?? '', Team::ACCESS_LEVELS, true )
 				? $input['team_access']
@@ -397,7 +403,7 @@ class FundraiserRegistrationService {
 			return Team::register_with_captain(
 				[
 					'campaign_id' => $campaign->id,
-					'name'        => $name,
+					'name'        => trim( (string) ( $input['team_name'] ?? '' ) ),
 					'goal'        => (int) $settings['default_team_goal'],
 					'access'      => $team_access,
 					'status'      => $team_status,
@@ -406,46 +412,18 @@ class FundraiserRegistrationService {
 			);
 		}
 
-		$team_id = (int) ( $input['team_id'] ?? 0 );
-		if ( $team_id <= 0 || empty( $settings['teams_enabled'] ) ) {
+		if ( 'join' !== $choice['mode'] ) {
 			return null;
 		}
 
-		$team = Team::find( $team_id );
-
-		if ( ! $team || $team->campaign_id !== $campaign->id || Team::STATUS_ACTIVE !== $team->status ) {
-			return null;
+		if ( $choice['invitation'] ) {
+			$choice['invitation']->status = TeamInvitation::STATUS_ACCEPTED;
+			$choice['invitation']->save();
 		}
 
-		if ( Team::ACCESS_PUBLIC !== $team->access
-			&& ! $this->accept_invitation( $team, $fundraiser->donor(), (string) ( $input['invite_token'] ?? '' ) ) ) {
-			return null;
-		}
+		$fundraiser->join_team( $choice['team'], false );
 
-		$fundraiser->join_team( $team, false );
-
-		return $team;
-	}
-
-	/**
-	 * Validate an invitation token and mark it accepted.
-	 *
-	 * @param Team       $team  The team being joined.
-	 * @param Donor|null $donor The accepting donor.
-	 * @param string     $token The bearer token from the invite link.
-	 * @return bool True when the invitation is valid for this team and donor.
-	 */
-	private function accept_invitation( Team $team, ?Donor $donor, string $token ): bool {
-		$invitation = $this->locate_invitation( $team, $donor, $token );
-
-		if ( $invitation instanceof WP_Error ) {
-			return false;
-		}
-
-		$invitation->status = TeamInvitation::STATUS_ACCEPTED;
-		$invitation->save();
-
-		return true;
+		return $choice['team'];
 	}
 
 	/**
