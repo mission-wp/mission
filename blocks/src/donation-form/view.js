@@ -69,13 +69,37 @@ function getPlatformRate( ctx ) {
   return ctx.settings.tipEnabled ? 0 : PLATFORM_FEE_RATE;
 }
 
+// Stripe objects are kept per form instance, keyed by the form's root
+// element, so multiple donation forms on one page don't clobber each
+// other. Deliberately outside the reactive context: proxying Stripe's
+// internals breaks them.
+const stripeStateByForm = new WeakMap();
+
 /**
- * Module-scope references for Stripe instances.
+ * Get (or create) the Stripe state for the form containing an element.
+ *
+ * @param {Element|null} el Any element inside a donation form block.
+ * @return {?Object} Mutable { stripe, elements, isRecurring, appearance }, or null.
  */
-let stripeInstance = null;
-let elementsInstance = null;
-let elementsIsRecurring = false;
-let elementsAppearance = null;
+function getStripeState( el ) {
+  const root = el?.closest(
+    '[data-wp-interactive="mission-donation-platform/donation-form"]'
+  );
+  if ( ! root ) {
+    return null;
+  }
+  let state = stripeStateByForm.get( root );
+  if ( ! state ) {
+    state = {
+      stripe: null,
+      elements: null,
+      isRecurring: false,
+      appearance: null,
+    };
+    stripeStateByForm.set( root, state );
+  }
+  return state;
+}
 
 /**
  * Focus the payment error container within the form.
@@ -604,6 +628,8 @@ store( 'mission-donation-platform/donation-form', {
     },
     *submit() {
       const ctx = getContext();
+      // eslint-disable-next-line @wordpress/no-unused-vars-before-return -- getElement() must be called synchronously at action start.
+      const stripeState = getStripeState( getElement().ref );
 
       // Prevent double-submit.
       if ( ctx.isSubmitting ) {
@@ -614,7 +640,7 @@ store( 'mission-donation-platform/donation-form', {
       ctx.paymentError = '';
 
       try {
-        if ( ! elementsInstance ) {
+        if ( ! stripeState?.elements ) {
           ctx.paymentError =
             'Payment element not loaded. Please refresh the page.';
           focusPaymentError( getElement().ref );
@@ -633,7 +659,7 @@ store( 'mission-donation-platform/donation-form', {
         }
 
         const { error: submitError } = yield withDeadline(
-          elementsInstance.submit(),
+          stripeState.elements.submit(),
           PRE_CHARGE_DEADLINE_MS,
           PRE_CHARGE_TIMEOUT_MESSAGE
         );
@@ -785,8 +811,8 @@ store( 'mission-donation-platform/donation-form', {
         );
         let confirmResult;
         try {
-          confirmResult = yield stripeInstance.confirmPayment( {
-            elements: elementsInstance,
+          confirmResult = yield stripeState.stripe.confirmPayment( {
+            elements: stripeState.elements,
             clientSecret: intentData.client_secret,
             confirmParams: {
               payment_method_data: {
@@ -1137,7 +1163,9 @@ store( 'mission-donation-platform/donation-form', {
         return;
       }
 
-      stripeInstance = window.Stripe( ctx.stripePublishableKey, {
+      const stripeState = getStripeState( ref );
+
+      stripeState.stripe = window.Stripe( ctx.stripePublishableKey, {
         stripeAccount: configData.connected_account_id,
         locale: ctx.locale || 'auto',
       } );
@@ -1161,7 +1189,7 @@ store( 'mission-donation-platform/donation-form', {
 
       const customAppearance = ctx.stripeAppearance || {};
 
-      elementsAppearance = {
+      stripeState.appearance = {
         theme: customAppearance.theme || 'stripe',
         variables: {
           colorPrimary: ctx.primaryColor || '#2FA36B',
@@ -1183,15 +1211,15 @@ store( 'mission-donation-platform/donation-form', {
         },
       };
 
-      elementsInstance = stripeInstance.elements( {
+      stripeState.elements = stripeState.stripe.elements( {
         mode: 'payment',
         amount: amount + fee + tip,
         currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
         paymentMethodTypes: [ 'card' ],
-        appearance: elementsAppearance,
+        appearance: stripeState.appearance,
       } );
 
-      const paymentElement = elementsInstance.create( 'payment', {
+      const paymentElement = stripeState.elements.create( 'payment', {
         layout: 'tabs',
         fields: {
           billingDetails: {
@@ -1213,7 +1241,7 @@ store( 'mission-donation-platform/donation-form', {
           ref.id.replace( 'payment-element', 'address-element' )
         );
         if ( addressContainer ) {
-          const addressElement = elementsInstance.create( 'address', {
+          const addressElement = stripeState.elements.create( 'address', {
             mode: 'billing',
             display: { name: 'split' },
           } );
@@ -1252,7 +1280,10 @@ store( 'mission-donation-platform/donation-form', {
       void ctx.isCustomTip;
       void ctx.customTipAmount;
 
-      if ( ! elementsInstance ) {
+      const container = getElement().ref;
+      const stripeState = getStripeState( container );
+
+      if ( ! stripeState?.elements ) {
         return;
       }
       const amount = getEffectiveAmount( ctx );
@@ -1272,13 +1303,10 @@ store( 'mission-donation-platform/donation-form', {
 
       // Recreate Elements when switching between one-time and recurring
       // because setupFutureUsage can only be set at creation time.
-      if ( isRecurring !== elementsIsRecurring ) {
-        elementsIsRecurring = isRecurring;
-        const container = document.querySelector(
-          '.mission-df-payment-element'
-        );
+      if ( isRecurring !== stripeState.isRecurring ) {
+        stripeState.isRecurring = isRecurring;
         if ( container && total > 0 ) {
-          elementsInstance = stripeInstance.elements( {
+          stripeState.elements = stripeState.stripe.elements( {
             mode: 'payment',
             amount: total,
             currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
@@ -1286,9 +1314,9 @@ store( 'mission-donation-platform/donation-form', {
             ...( isRecurring && {
               setupFutureUsage: 'off_session',
             } ),
-            appearance: elementsAppearance,
+            appearance: stripeState.appearance,
           } );
-          const paymentElement = elementsInstance.create( 'payment', {
+          const paymentElement = stripeState.elements.create( 'payment', {
             layout: 'tabs',
             fields: {
               billingDetails: {
@@ -1313,7 +1341,7 @@ store( 'mission-donation-platform/donation-form', {
               container.id.replace( 'payment-element', 'address-element' )
             );
             if ( addressContainer ) {
-              const addressElement = elementsInstance.create( 'address', {
+              const addressElement = stripeState.elements.create( 'address', {
                 mode: 'billing',
                 display: { name: 'split' },
               } );
@@ -1337,7 +1365,7 @@ store( 'mission-donation-platform/donation-form', {
           }
         }
       } else if ( total > 0 ) {
-        elementsInstance.update( { amount: total } );
+        stripeState.elements.update( { amount: total } );
       }
     },
   },
