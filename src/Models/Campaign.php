@@ -502,6 +502,33 @@ class Campaign extends Model {
 	}
 
 	/**
+	 * Update peer-to-peer settings meta from a partial settings array.
+	 *
+	 * Owns the key list, casts, and clamping for every writer: keys come from
+	 * P2P_DEFAULT_SETTINGS, values are cast to the default's native type, and
+	 * the goal amounts are clamped to zero or more. Keys absent from the input
+	 * are left untouched; unknown keys are ignored.
+	 *
+	 * @param array<string, mixed> $settings New values, keyed like P2P_DEFAULT_SETTINGS.
+	 */
+	public function update_p2p_settings( array $settings ): void {
+		foreach ( self::P2P_DEFAULT_SETTINGS as $key => $default ) {
+			if ( ! array_key_exists( $key, $settings ) ) {
+				continue;
+			}
+
+			$this->update_meta(
+				$key,
+				match ( true ) {
+					is_bool( $default ) => (bool) $settings[ $key ],
+					is_int( $default )  => max( 0, (int) $settings[ $key ] ),
+					default             => (string) $settings[ $key ],
+				}
+			);
+		}
+	}
+
+	/**
 	 * Get the edit URL for this campaign's post.
 	 *
 	 * @return string|null

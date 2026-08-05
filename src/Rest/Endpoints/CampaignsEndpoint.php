@@ -74,24 +74,6 @@ class CampaignsEndpoint {
 	];
 
 	/**
-	 * P2P settings meta and their value types, persisted only for P2P campaigns.
-	 * Read back as a typed object via Campaign::p2p_settings().
-	 *
-	 * @var array<string, string>
-	 */
-	private const P2P_META = [
-		'registration_open'       => 'bool',
-		'approval_required'       => 'bool',
-		'teams_enabled'           => 'bool',
-		'team_creation_enabled'   => 'bool',
-		'team_approval_required'  => 'bool',
-		'default_fundraiser_goal' => 'int',
-		'default_team_goal'       => 'int',
-		'story_placeholder'       => 'text',
-		'team_story_placeholder'  => 'text',
-	];
-
-	/**
 	 * Register REST routes.
 	 *
 	 * @return void
@@ -588,21 +570,16 @@ class CampaignsEndpoint {
 		}
 
 		if ( $campaign->is_p2p() ) {
-			foreach ( self::P2P_META as $key => $cast ) {
-				$value = $request->get_param( $key );
-				if ( null === $value ) {
-					continue;
-				}
+			$p2p_settings = [];
 
-				$campaign->update_meta(
-					$key,
-					match ( $cast ) {
-						'bool'  => (bool) $value,
-						'int'   => max( 0, (int) $value ),
-						default => (string) $value,
-					}
-				);
+			foreach ( array_keys( Campaign::P2P_DEFAULT_SETTINGS ) as $key ) {
+				$value = $request->get_param( $key );
+				if ( null !== $value ) {
+					$p2p_settings[ $key ] = $value;
+				}
 			}
+
+			$campaign->update_p2p_settings( $p2p_settings );
 		}
 
 		if ( $goal_changed ) {

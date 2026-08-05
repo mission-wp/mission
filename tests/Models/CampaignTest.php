@@ -761,6 +761,53 @@ class CampaignTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test update_p2p_settings() casts to native types and clamps the goals.
+	 */
+	public function test_update_p2p_settings_casts_and_clamps(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		$campaign->update_p2p_settings(
+			[
+				'registration_open'       => '0',
+				'teams_enabled'           => 1,
+				'default_fundraiser_goal' => '-500',
+				'default_team_goal'       => '300000',
+				'story_placeholder'       => 'Tell your story',
+			]
+		);
+
+		$settings = $campaign->p2p_settings();
+
+		$this->assertFalse( $settings['registration_open'] );
+		$this->assertTrue( $settings['teams_enabled'] );
+		$this->assertSame( 0, $settings['default_fundraiser_goal'] );
+		$this->assertSame( 300000, $settings['default_team_goal'] );
+		$this->assertSame( 'Tell your story', $settings['story_placeholder'] );
+	}
+
+	/**
+	 * Test update_p2p_settings() leaves absent keys alone and ignores unknown keys.
+	 */
+	public function test_update_p2p_settings_partial_and_unknown_keys(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+		$campaign->update_meta( 'approval_required', '1' );
+
+		$campaign->update_p2p_settings(
+			[
+				'teams_enabled' => true,
+				'not_a_setting' => 'ignored',
+			]
+		);
+
+		$settings = $campaign->p2p_settings();
+
+		$this->assertTrue( $settings['approval_required'] );
+		$this->assertTrue( $settings['teams_enabled'] );
+		$this->assertArrayNotHasKey( 'not_a_setting', $settings );
+		$this->assertSame( '', $campaign->get_meta( 'not_a_setting' ) );
+	}
+
+	/**
 	 * Test fundraisers() and teams() return records scoped to the campaign.
 	 */
 	public function test_fundraisers_and_teams_relationships(): void {
