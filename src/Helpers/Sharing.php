@@ -30,6 +30,7 @@ class Sharing {
 		'facebook' => 'https://www.facebook.com/sharer/sharer.php?u=%s',
 		'x'        => 'https://twitter.com/intent/tweet?text=%s',
 		'bluesky'  => 'https://bsky.app/intent/compose?text=%s',
+		'email'    => 'mailto:?body=%s',
 	];
 
 	/**
