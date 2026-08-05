@@ -845,6 +845,27 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test the slug proxy never falls back to the global post for a post-less row.
+	 *
+	 * A row can be left with post_id 0 when its shell-post insert failed;
+	 * get_post( 0 ) would return the global $post, so an unguarded read would
+	 * report the currently-rendered page's slug as the fundraiser's own.
+	 */
+	public function test_slug_proxy_guards_missing_shell_post(): void {
+		global $post;
+
+		$fundraiser          = $this->create_fundraiser();
+		$fundraiser->post_id = 0;
+
+		$post = get_post( self::factory()->post->create( [ 'post_name' => 'some-other-page' ] ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- simulating a frontend render.
+
+		$this->assertSame( '', $fundraiser->slug );
+		$this->assertFalse( isset( $fundraiser->slug ) );
+
+		$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+	}
+
+	/**
 	 * Test two participants with the same display name get distinct shell post slugs.
 	 */
 	public function test_shell_post_slug_collision_gets_numeric_suffix(): void {

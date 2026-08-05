@@ -216,6 +216,23 @@ trait HasShellPost {
 	}
 
 	/**
+	 * Load and memoize the shell post.
+	 *
+	 * Guards the post_id-0 row a failed sync_shell_post() can leave behind:
+	 * get_post( 0 ) falls back to the global $post, which would report the
+	 * currently-rendered page's slug as this record's own.
+	 *
+	 * @return \WP_Post|null
+	 */
+	private function load_shell_post(): ?\WP_Post {
+		if ( $this->post_id <= 0 ) {
+			return null;
+		}
+
+		return $this->shell_post ??= get_post( $this->post_id );
+	}
+
+	/**
 	 * Transparent read access to the shell post slug.
 	 *
 	 * Note: any other undeclared property reads null (no notice), so a typoed
@@ -227,9 +244,7 @@ trait HasShellPost {
 	 */
 	public function __get( string $name ): mixed {
 		if ( 'slug' === $name ) {
-			$this->shell_post ??= get_post( $this->post_id );
-
-			return $this->shell_post?->post_name ?? '';
+			return $this->load_shell_post()?->post_name ?? '';
 		}
 
 		return null;
@@ -243,9 +258,7 @@ trait HasShellPost {
 	 */
 	public function __isset( string $name ): bool {
 		if ( 'slug' === $name ) {
-			$this->shell_post ??= get_post( $this->post_id );
-
-			return null !== $this->shell_post;
+			return null !== $this->load_shell_post();
 		}
 
 		return false;
