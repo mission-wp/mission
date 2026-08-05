@@ -7,20 +7,35 @@ const SETTINGS_PATH = 'admin.php?page=mission-donation-platform-settings';
 
 const DISCONNECTED_SETTINGS = {
   currency: 'USD',
-  stripe_site_id: '',
-  stripe_account_id: '',
+  stripe_accounts: [],
   stripe_connection_status: 'disconnected',
-  stripe_display_name: '',
+  stripe_charges_enabled: false,
   email_from_name: 'Test Blog',
   email_from_address: 'admin@example.org',
 };
 
+const TEST_ACCOUNT = {
+  account_id: 'acct_1234567890',
+  display_name: 'Test Nonprofit',
+  connection_status: 'connected',
+  charges_enabled: true,
+  is_default: true,
+  connected_at: '2026-01-01 00:00:00',
+};
+
+const SECOND_ACCOUNT = {
+  account_id: 'acct_0987654321',
+  display_name: 'Second Nonprofit',
+  connection_status: 'connected',
+  charges_enabled: true,
+  is_default: false,
+  connected_at: '2026-01-02 00:00:00',
+};
+
 const CONNECTED_SETTINGS = {
   ...DISCONNECTED_SETTINGS,
-  stripe_site_id: 'site_abc123',
-  stripe_account_id: 'acct_1234567890',
+  stripe_accounts: [ TEST_ACCOUNT ],
   stripe_connection_status: 'connected',
-  stripe_display_name: 'Test Nonprofit',
   stripe_charges_enabled: true,
 };
 
@@ -61,17 +76,17 @@ async function mockSettingsGet( page, settings ) {
 
 test.describe( 'Settings — Stripe Connection', () => {
   test.describe( 'Disconnected state', () => {
-    test( 'shows Connect to Stripe button', async ( { admin, page } ) => {
+    test( 'shows Connect with Stripe button', async ( { admin, page } ) => {
       await mockSettingsGet( page, DISCONNECTED_SETTINGS );
       await admin.visitAdminPage( SETTINGS_PATH );
 
       const connectButton = page.getByRole( 'link', {
-        name: 'Connect to Stripe',
+        name: 'Connect with Stripe',
       } );
       await expect( connectButton ).toBeVisible();
     } );
 
-    test( 'Connect to Stripe links to the API connect URL', async ( {
+    test( 'Connect with Stripe links to the API connect URL', async ( {
       admin,
       page,
     } ) => {
@@ -79,7 +94,7 @@ test.describe( 'Settings — Stripe Connection', () => {
       await admin.visitAdminPage( SETTINGS_PATH );
 
       const connectButton = page.getByRole( 'link', {
-        name: 'Connect to Stripe',
+        name: 'Connect with Stripe',
       } );
       const href = await connectButton.getAttribute( 'href' );
 
@@ -87,7 +102,7 @@ test.describe( 'Settings — Stripe Connection', () => {
       expect( href ).toContain( 'return_url=' );
     } );
 
-    test( 'does not show connected badge or Disconnect button', async ( {
+    test( 'does not show a connected account or Disconnect button', async ( {
       admin,
       page,
     } ) => {
@@ -122,7 +137,7 @@ test.describe( 'Settings — Stripe Connection', () => {
       );
 
       await admin.visitAdminPage(
-        `${ SETTINGS_PATH }&setup_code=sc_test123&site_id=site_abc123`
+        `${ SETTINGS_PATH }&setup_code=sc_test123&site_id=site_abc123&charges_enabled=1`
       );
 
       // Should show success toast.
@@ -132,10 +147,9 @@ test.describe( 'Settings — Stripe Connection', () => {
         } )
       ).toBeVisible();
 
-      // Should show connected state with account ID.
-      await expect(
-        page.getByText( 'Test Nonprofit (acct_1234567890)' )
-      ).toBeVisible();
+      // Should show the connected account row.
+      await expect( page.getByText( 'Test Nonprofit' ) ).toBeVisible();
+      await expect( page.getByText( 'acct_1234567890' ) ).toBeVisible();
       // URL should be cleaned (no setup_code/site_id).
       expect( page.url() ).not.toContain( 'setup_code' );
       expect( page.url() ).not.toContain( 'site_id' );
@@ -174,25 +188,27 @@ test.describe( 'Settings — Stripe Connection', () => {
 
       // Should still show the Connect button (not connected).
       await expect(
-        page.getByRole( 'link', { name: 'Connect to Stripe' } )
+        page.getByRole( 'link', { name: 'Connect with Stripe' } )
       ).toBeVisible();
     } );
   } );
 
   test.describe( 'Connected state', () => {
-    test( 'shows connected badge with display name', async ( {
+    test( 'shows the connected account with display name and status', async ( {
       admin,
       page,
     } ) => {
       await mockSettingsGet( page, CONNECTED_SETTINGS );
       await admin.visitAdminPage( SETTINGS_PATH );
 
+      await expect( page.getByText( 'Test Nonprofit' ) ).toBeVisible();
+      await expect( page.getByText( 'acct_1234567890' ) ).toBeVisible();
       await expect(
-        page.getByText( 'Test Nonprofit (acct_1234567890)' )
+        page.getByText( 'Connected', { exact: true } )
       ).toBeVisible();
     } );
 
-    test( 'does not show Connect to Stripe button', async ( {
+    test( 'offers to connect another account instead of a first one', async ( {
       admin,
       page,
     } ) => {
@@ -200,8 +216,47 @@ test.describe( 'Settings — Stripe Connection', () => {
       await admin.visitAdminPage( SETTINGS_PATH );
 
       await expect(
-        page.getByRole( 'link', { name: 'Connect to Stripe' } )
+        page.getByRole( 'link', { name: 'Connect another Stripe account' } )
+      ).toBeVisible();
+      await expect(
+        page.getByRole( 'link', { name: 'Connect with Stripe' } )
       ).not.toBeVisible();
+    } );
+
+    test( 'shows Default badge and Make default with multiple accounts', async ( {
+      admin,
+      page,
+    } ) => {
+      await mockSettingsGet( page, {
+        ...CONNECTED_SETTINGS,
+        stripe_accounts: [ TEST_ACCOUNT, SECOND_ACCOUNT ],
+      } );
+      await admin.visitAdminPage( SETTINGS_PATH );
+
+      await expect(
+        page.getByText( 'Default', { exact: true } )
+      ).toBeVisible();
+      await expect(
+        page.getByRole( 'button', { name: 'Make default' } )
+      ).toBeVisible();
+    } );
+
+    test( 'warns when an account cannot accept charges', async ( {
+      admin,
+      page,
+    } ) => {
+      await mockSettingsGet( page, {
+        ...CONNECTED_SETTINGS,
+        stripe_accounts: [ { ...TEST_ACCOUNT, charges_enabled: false } ],
+        stripe_charges_enabled: false,
+      } );
+      await admin.visitAdminPage( SETTINGS_PATH );
+
+      await expect(
+        page.getByText(
+          'Your default Stripe account isn’t ready to accept charges.'
+        )
+      ).toBeVisible();
     } );
   } );
 
@@ -215,11 +270,13 @@ test.describe( 'Settings — Stripe Connection', () => {
 
       await page.getByRole( 'button', { name: 'Disconnect' } ).click();
 
+      const modal = page.getByRole( 'dialog', { name: 'Disconnect Stripe' } );
+      await expect( modal ).toBeVisible();
       await expect(
-        page.getByRole( 'dialog', { name: 'Disconnect Stripe' } )
+        modal.getByText( 'This is your default Stripe account' )
       ).toBeVisible();
       await expect(
-        page.getByText( 'You will not be able to process donations' )
+        modal.getByText( 'Test Nonprofit (acct_1234567890)' )
       ).toBeVisible();
     } );
 
@@ -239,9 +296,7 @@ test.describe( 'Settings — Stripe Connection', () => {
       await expect( modal ).not.toBeVisible();
 
       // Should still be connected.
-      await expect(
-        page.getByText( 'Test Nonprofit (acct_1234567890)' )
-      ).toBeVisible();
+      await expect( page.getByText( 'Test Nonprofit' ) ).toBeVisible();
     } );
 
     test( 'disconnects after confirming', async ( { admin, page } ) => {
@@ -279,9 +334,9 @@ test.describe( 'Settings — Stripe Connection', () => {
         } )
       ).toBeVisible();
 
-      // Should show Connect button again.
+      // Should show the first-connection button again.
       await expect(
-        page.getByRole( 'link', { name: 'Connect to Stripe' } )
+        page.getByRole( 'link', { name: 'Connect with Stripe' } )
       ).toBeVisible();
     } );
   } );
@@ -302,7 +357,7 @@ test.describe( 'Settings — Stripe Connection', () => {
 
       // Should still show Connect button to retry.
       await expect(
-        page.getByRole( 'link', { name: 'Connect to Stripe' } )
+        page.getByRole( 'link', { name: 'Connect with Stripe' } )
       ).toBeVisible();
     } );
   } );
