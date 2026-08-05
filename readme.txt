@@ -4,7 +4,7 @@ Tags: donations, fundraising, recurring donations, nonprofit, stripe
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.3.2
+Stable Tag: 1.3.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -187,6 +187,12 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.3.3 =
+* Enhancement: The donation form now shows a clear message when a payment can't start or is taking unusually long, instead of an endless loading spinner
+* Enhancement: The donation form now explains when the payment field can't load, instead of failing silently
+* Fix: Restored reliable checkout on pages that contain more than one donation form
+* Tweak: Stripe.js now loads with Stripe's recommended script tag for maximum compatibility with Stripe's fraud protection
+
 = 1.3.2 =
 * New: Added a complete Finnish (fi) translation
 
@@ -226,10 +232,5 @@ This plugin connects to the following third-party services:
 * Enhancement: Improved the donation form layout on small screens and in narrow spaces like sidebars
 * Tweak: Updated the currency list to match the currencies Stripe currently supports
 * Tweak: Internal code quality and maintainability improvements
-
-= 1.1.7 =
-* New: Connect multiple Stripe accounts, mark one as the default, and choose per donation form which account receives donations
-* New: Added an "Edit Campaign" link to the admin bar when viewing a campaign on the frontend
-* Enhancement: Tools > Status now lists every connected Stripe account instead of only the default one
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

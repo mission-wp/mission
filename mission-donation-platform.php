@@ -3,7 +3,7 @@
  * Plugin Name: Mission - Donation Platform
  * Plugin URI: https://missionwp.com
  * Description: The free donation plugin for nonprofits. Powerful features, modern forms, no add-ons required.
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Mission
  * Author URI: https://missionwp.com
  * License: GPL-2.0-or-later
@@ -55,7 +55,7 @@ if ( version_compare( PHP_VERSION, '8.0', '<' ) ) {
 }
 
 // Plugin constants.
-define( 'MISSIONDP_VERSION', '1.3.2' );
+define( 'MISSIONDP_VERSION', '1.3.3' );
 define( 'MISSIONDP_FILE', __FILE__ );
 define( 'MISSIONDP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MISSIONDP_URL', plugin_dir_url( __FILE__ ) );
