@@ -126,6 +126,26 @@ class FundraiserMilestoneTrackerTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The atomic claim stops a concurrent recompute from double-firing.
+	 *
+	 * Simulates the webhook race by wiping the reached-list meta after the
+	 * first recompile: the second run then recomputes the same "newly crossed"
+	 * list a concurrent reader would have seen, and only the options-table
+	 * claim stands between it and a duplicate email.
+	 */
+	public function test_claim_blocks_concurrent_double_fire(): void {
+		$fundraiser = $this->create_fundraiser( 10000, 2500 );
+
+		$this->tracker->recompile( $fundraiser->id, false );
+		$this->assertSame( [ '25-pct' ], $this->fired );
+
+		$fundraiser->update_meta( 'milestones_reached', [] );
+		$this->tracker->recompile( $fundraiser->id, false );
+
+		$this->assertSame( [ '25-pct' ], $this->fired, 'The claimed milestone must not fire a second time.' );
+	}
+
+	/**
 	 * A fundraiser with no goal never fires milestones.
 	 */
 	public function test_no_goal_no_milestones(): void {

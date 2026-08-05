@@ -11,6 +11,7 @@
 
 namespace MissionDP\P2P;
 
+use MissionDP\Helpers\AttemptCounter;
 use MissionDP\Models\Fundraiser;
 
 defined( 'ABSPATH' ) || exit;
@@ -70,7 +71,15 @@ class FundraiserMilestoneTracker {
 
 		$fundraiser->update_meta( $meta_key, $reached );
 
+		$mode = $is_test ? 'test' : 'live';
+
 		foreach ( $newly as $id ) {
+			// Concurrent recomputes can both see the same newly-crossed list; the
+			// atomic claim lets only one of them fire the milestone.
+			if ( ! AttemptCounter::claim( "milestone_fundraiser_{$fundraiser_id}_{$mode}_{$id}", 1, 15 * MINUTE_IN_SECONDS ) ) {
+				continue;
+			}
+
 			/**
 			 * Fires when a fundraiser reaches a goal milestone for the first time.
 			 *

@@ -353,6 +353,8 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		);
 		wp_cache_flush();
 
+		$before_race = $campaign->get_meta( 'milestones' );
+
 		$this->tracker->recompile( $campaign->id );
 
 		$this->assertContains( 'first-donation', $fired );
@@ -363,6 +365,14 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		$fired = [];
 		$this->tracker->recompile( $campaign->id );
 		$this->assertEmpty( $fired, 'Already-reached milestones should not fire again.' );
+
+		// Simulate the webhook race: restore the pre-race milestones meta so this
+		// recompile sees the same "newly reached" list a concurrent reader would
+		// have. The atomic claim must keep it from firing a second time.
+		$campaign->update_meta( 'milestones', $before_race );
+		$fired = [];
+		$this->tracker->recompile( $campaign->id );
+		$this->assertEmpty( $fired, 'Claimed milestones must not fire again from a concurrent recompute.' );
 	}
 
 	/**

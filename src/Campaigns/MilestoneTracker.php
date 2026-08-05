@@ -10,6 +10,7 @@
 
 namespace MissionDP\Campaigns;
 
+use MissionDP\Helpers\AttemptCounter;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Transaction;
 
@@ -126,17 +127,27 @@ class MilestoneTracker {
 
 		$campaign->update_meta( 'milestones', $milestones );
 
+		$mode = $is_test ? 'test' : 'live';
+
 		foreach ( $milestones as $m ) {
-			if ( ! empty( $m['reached'] ) && empty( $old_reached[ $m['id'] ] ) ) {
-				/**
-				 * Fires when a campaign milestone is reached for the first time.
-				 *
-				 * @param Campaign $campaign     The campaign.
-				 * @param string   $milestone_id Milestone ID (e.g. 'first-donation', '25-pct', '100-pct').
-				 * @param bool     $is_test      Whether the triggering transaction is a test.
-				 */
-				do_action( 'mission_campaign_milestone_reached', $campaign, $m['id'], $is_test );
+			if ( empty( $m['reached'] ) || ! empty( $old_reached[ $m['id'] ] ) ) {
+				continue;
 			}
+
+			// Concurrent recomputes can both see a milestone as newly reached; the
+			// atomic claim lets only one of them fire it.
+			if ( ! AttemptCounter::claim( "milestone_campaign_{$campaign_id}_{$mode}_{$m['id']}", 1, 15 * MINUTE_IN_SECONDS ) ) {
+				continue;
+			}
+
+			/**
+			 * Fires when a campaign milestone is reached for the first time.
+			 *
+			 * @param Campaign $campaign     The campaign.
+			 * @param string   $milestone_id Milestone ID (e.g. 'first-donation', '25-pct', '100-pct').
+			 * @param bool     $is_test      Whether the triggering transaction is a test.
+			 */
+			do_action( 'mission_campaign_milestone_reached', $campaign, $m['id'], $is_test );
 		}
 	}
 
