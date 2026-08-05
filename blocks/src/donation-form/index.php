@@ -98,6 +98,11 @@ $default_amount       = $default_amounts[ $initial_freq_key ] ?? ( $initial_amou
 
 $currency_symbol = Currency::get_symbol( $currency );
 
+// Initial amount descriptions, keyed by amount string (matches the JS lookup).
+$amount_descriptions  = $settings['amountDescriptions'] ?? [];
+$initial_descriptions = $amount_descriptions[ $initial_freq_key ] ?? [];
+$initial_has_descs    = (bool) array_filter( array_map( 'trim', array_map( 'strval', $initial_descriptions ) ) );
+
 // Unique prefix for field IDs (multi-form support).
 $uid = wp_unique_id( 'mission-df-' );
 
@@ -121,7 +126,7 @@ $context = [
 	'amountsByFrequency'   => $amounts_by_frequency,
 	'currentAmounts'       => $amounts_by_frequency[ $is_ongoing ? $default_frequency : 'one_time' ] ?? $amounts_by_frequency['one_time'] ?? [],
 	'defaultAmounts'       => (object) $default_amounts,
-	'amountDescriptions'   => (object) ( $settings['amountDescriptions'] ?? [] ),
+	'amountDescriptions'   => (object) $amount_descriptions,
 	'selectedAmount'       => $default_amount,
 	'isCustomAmount'       => false,
 	'customAmountValue'    => '',
@@ -295,7 +300,7 @@ $context = [
 		<?php endif; ?>
 
 		<?php // Amount grid. ?>
-		<div class="mission-df-amount-grid" data-wp-class--has-descriptions="state.currentFrequencyHasDescriptions">
+		<div class="mission-df-amount-grid<?php echo $initial_has_descs ? ' has-descriptions' : ''; ?>" data-wp-class--has-descriptions="state.currentFrequencyHasDescriptions">
 			<template data-wp-each--amount="state.currentAmounts">
 				<button
 					type="button"
@@ -307,6 +312,23 @@ $context = [
 					<span class="mission-df-amount-desc" data-wp-text="callbacks.amountDescription"></span>
 				</button>
 			</template>
+			<?php
+			// `state.currentAmounts` is a JS-only derived getter, so the server
+			// can't expand the template above. Render the initial items manually
+			// with `data-wp-each-child` so hydration finds matching DOM nodes.
+			foreach ( $initial_amounts as $preset_amount ) :
+				?>
+				<button
+					type="button"
+					class="mission-df-amount-btn<?php echo (int) $preset_amount === (int) $default_amount ? ' active' : ''; ?>"
+					data-wp-each-child="mission-donation-platform/donation-form::state.currentAmounts"
+					data-wp-on--click="actions.selectAmount"
+					data-wp-class--active="callbacks.isSelectedAmount"
+				>
+					<span data-wp-text="callbacks.formattedPresetAmount"><?php echo esc_html( Currency::format_amount( (int) $preset_amount, $currency ) ); ?></span>
+					<span class="mission-df-amount-desc" data-wp-text="callbacks.amountDescription"><?php echo esc_html( $initial_descriptions[ (string) $preset_amount ] ?? '' ); ?></span>
+				</button>
+			<?php endforeach; ?>
 
 			<?php if ( ! empty( $settings['customAmount'] ) ) : ?>
 				<div class="mission-df-amount-other-cell">
