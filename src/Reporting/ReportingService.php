@@ -1763,19 +1763,28 @@ class ReportingService {
 	public function fundraiser_summary(): array {
 		global $wpdb;
 
-		$table      = $wpdb->prefix . 'missiondp_fundraisers';
 		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
 
-		$total   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) );
-		$active  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $table, \MissionDP\Models\Fundraiser::STATUS_ACTIVE ) );
-		$pending = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $table, \MissionDP\Models\Fundraiser::STATUS_PENDING ) );
-		$raised  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COALESCE(SUM(%i), 0) FROM %i', $raised_col, $table ) );
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT COUNT(*) AS total,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS active,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS pending,
+						COALESCE(SUM(%i), 0) AS raised
+				 FROM %i',
+				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
+				\MissionDP\Models\Fundraiser::STATUS_PENDING,
+				$raised_col,
+				$wpdb->prefix . 'missiondp_fundraisers'
+			),
+			ARRAY_A
+		);
 
 		return [
-			'total_fundraisers' => $total,
-			'active_count'      => $active,
-			'pending_count'     => $pending,
-			'total_raised'      => $raised,
+			'total_fundraisers' => (int) ( $row['total'] ?? 0 ),
+			'active_count'      => (int) ( $row['active'] ?? 0 ),
+			'pending_count'     => (int) ( $row['pending'] ?? 0 ),
+			'total_raised'      => (int) ( $row['raised'] ?? 0 ),
 		];
 	}
 
@@ -1925,20 +1934,30 @@ class ReportingService {
 	public function team_summary(): array {
 		global $wpdb;
 
-		$t_table = $wpdb->prefix . 'missiondp_teams';
-
 		[ $raised_sql, $raised_args ] = self::team_raised_sql( 'any', $this->is_test_mode() );
 
-		$total   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $t_table ) );
-		$active  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $t_table, \MissionDP\Models\Team::STATUS_ACTIVE ) );
-		$pending = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE status = %s', $t_table, \MissionDP\Models\Team::STATUS_PENDING ) );
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT COUNT(*) AS total,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS active,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS pending
+				 FROM %i',
+				\MissionDP\Models\Team::STATUS_ACTIVE,
+				\MissionDP\Models\Team::STATUS_PENDING,
+				$wpdb->prefix . 'missiondp_teams'
+			),
+			ARRAY_A
+		);
+
+		// Raised comes from the transactions roll-up, not the teams table, so it
+		// stays a separate query.
 		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- the fragment is literal SQL whose %i/%d placeholders are matched by $raised_args.
 		$raised = (int) $wpdb->get_var( $wpdb->prepare( "SELECT {$raised_sql}", $raised_args ) );
 
 		return [
-			'total_teams'   => $total,
-			'active_count'  => $active,
-			'pending_count' => $pending,
+			'total_teams'   => (int) ( $row['total'] ?? 0 ),
+			'active_count'  => (int) ( $row['active'] ?? 0 ),
+			'pending_count' => (int) ( $row['pending'] ?? 0 ),
 			'total_raised'  => $raised,
 		];
 	}

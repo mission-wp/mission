@@ -717,4 +717,19 @@ class TeamsEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 1, $data['active_count'] );
 		$this->assertSame( 1, $data['pending_count'] );
 	}
+
+	/**
+	 * Test summary returns integer zeros with no teams at all.
+	 */
+	public function test_summary_empty(): void {
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/teams/summary' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 0, $data['total_teams'] );
+		$this->assertSame( 0, $data['active_count'] );
+		$this->assertSame( 0, $data['pending_count'] );
+		$this->assertSame( 0, $data['total_raised'] );
+	}
 }

@@ -708,4 +708,19 @@ class FundraisersEndpointTest extends WP_UnitTestCase {
 		$this->assertSame( 1, $data['active_count'] );
 		$this->assertSame( 1, $data['pending_count'] );
 	}
+
+	/**
+	 * Test summary returns integer zeros with no fundraisers at all.
+	 */
+	public function test_summary_empty(): void {
+		$request  = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/fundraisers/summary' );
+		$response = $this->server->dispatch( $request );
+		$data     = $response->get_data();
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 0, $data['total_fundraisers'] );
+		$this->assertSame( 0, $data['active_count'] );
+		$this->assertSame( 0, $data['pending_count'] );
+		$this->assertSame( 0, $data['total_raised'] );
+	}
 }
