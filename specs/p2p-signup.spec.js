@@ -12,6 +12,8 @@ const {
   createP2PCampaign,
   cleanupCampaignParticipants,
   openModal,
+  clearP2PRateLimits,
+  setChargesEnabled,
   fillAccount,
   fillOtp,
 } = require( './helpers/p2p' );
@@ -35,6 +37,11 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   let url;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    clearP2PRateLimits();
+    // These specs cover the share-only success screen; the first-gift nudge
+    // (charges enabled) is covered by p2p-signup-first-gift.spec.js.
+    await setChargesEnabled( requestUtils, false );
+
     ( { campaign, url } = await createP2PCampaign(
       requestUtils,
       'P2P Signup E2E'

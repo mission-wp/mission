@@ -87,6 +87,38 @@ async function openModal( page, url ) {
 }
 
 /**
+ * Clear the p2p endpoints' IP rate limiters (account lookup, send-code, etc.).
+ *
+ * Sign-up specs run many journeys from one IP inside the limiter windows, so
+ * each spec clears the counters first. The limiter's own behavior is covered
+ * by PHPUnit.
+ */
+function clearP2PRateLimits() {
+  // AttemptCounter rows: missiondp_attempts_rl_p2p_<action>_<ip hash>.
+  wpEval(
+    'global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE \\"%missiondp_attempts_rl_p2p_%\\"" );'
+  );
+}
+
+/**
+ * Set the global Stripe charges toggle.
+ *
+ * The success step branches on it at render time (first-gift nudge vs the
+ * share-only panel), and other spec files flip it, so signup specs pin the
+ * state they expect.
+ *
+ * @param {import('@wordpress/e2e-test-utils-playwright').RequestUtils} requestUtils
+ * @param {boolean}                                                     enabled      Whether charges are enabled.
+ */
+async function setChargesEnabled( requestUtils, enabled ) {
+  await requestUtils.rest( {
+    path: '/mission-donation-platform/v1/settings',
+    method: 'POST',
+    data: { stripe_charges_enabled: enabled },
+  } );
+}
+
+/**
  * Fill the step-1 account form (scoped to the modal).
  *
  * @param {import('@playwright/test').Locator} modal           Modal root locator.
@@ -184,6 +216,8 @@ module.exports = {
   createP2PCampaign,
   cleanupCampaignParticipants,
   openModal,
+  clearP2PRateLimits,
+  setChargesEnabled,
   fillAccount,
   fillOtp,
   advanceToSetup,

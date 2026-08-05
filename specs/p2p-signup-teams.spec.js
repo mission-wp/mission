@@ -11,6 +11,8 @@ const {
   createP2PCampaign,
   cleanupCampaignParticipants,
   openModal,
+  clearP2PRateLimits,
+  setChargesEnabled,
   advanceToSetup,
 } = require( './helpers/p2p' );
 
@@ -21,6 +23,10 @@ test.describe( 'Peer-to-peer team sign-up', () => {
   let teamUrl;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    clearP2PRateLimits();
+    // Pin the share-only success screen (the nudge has its own spec).
+    await setChargesEnabled( requestUtils, false );
+
     ( { campaign, url } = await createP2PCampaign(
       requestUtils,
       'P2P Teams E2E'
