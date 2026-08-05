@@ -24,6 +24,10 @@ const interactivity = {
   getElement() {
     return { ref: null };
   },
+
+  withScope( fn ) {
+    return fn;
+  },
 };
 
 module.exports = interactivity;
