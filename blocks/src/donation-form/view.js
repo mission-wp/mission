@@ -1042,9 +1042,22 @@ store( 'mission-donation-platform/donation-form', {
         return;
       }
 
+      if ( ! window.Stripe ) {
+        ctx.paymentError =
+          'Payment system unavailable. Please refresh and try again.';
+        return;
+      }
+
       const configResponse = yield fetch(
         `${ ctx.restUrl }donations/payment-config`
       );
+
+      if ( ! configResponse.ok ) {
+        ctx.paymentError =
+          'Payment processing is not available right now. Please try again later.';
+        return;
+      }
+
       const configData = yield configResponse.json();
 
       if ( ! configData.connected_account_id ) {
