@@ -179,6 +179,45 @@ class FundraiserTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test register_or_existing() creates a fresh pair and reports created=true.
+	 */
+	public function test_register_or_existing_creates_when_pair_is_free(): void {
+		$result = Fundraiser::register_or_existing( 5, 9, 25000, 'My story' );
+
+		$this->assertTrue( $result['created'] );
+		$this->assertNotNull( $result['fundraiser']->id );
+		$this->assertSame( 'My story', $result['fundraiser']->story );
+	}
+
+	/**
+	 * Test register_or_existing() resolves a lost unique-key race to the winner's row.
+	 */
+	public function test_register_or_existing_returns_winner_row_on_lost_race(): void {
+		global $wpdb;
+
+		$winner = $this->create_fundraiser( [ 'campaign_id' => 5, 'donor_id' => 9 ] );
+
+		// The duplicate-key INSERT fails by design; silence its expected error log.
+		$suppress = $wpdb->suppress_errors( true );
+		$result   = Fundraiser::register_or_existing( 5, 9, 25000 );
+		$wpdb->suppress_errors( $suppress );
+
+		$this->assertFalse( $result['created'] );
+		$this->assertSame( $winner->id, $result['fundraiser']->id );
+		$this->assertSame( 1, Fundraiser::count( [ 'campaign_id' => 5 ] ) );
+	}
+
+	/**
+	 * Test find_by_campaign_donor() returns the pair's row and null otherwise.
+	 */
+	public function test_find_by_campaign_donor(): void {
+		$fundraiser = $this->create_fundraiser( [ 'campaign_id' => 5, 'donor_id' => 9 ] );
+
+		$this->assertSame( $fundraiser->id, Fundraiser::find_by_campaign_donor( 5, 9 )->id );
+		$this->assertNull( Fundraiser::find_by_campaign_donor( 5, 8 ) );
+	}
+
+	/**
 	 * Test a failed row update does not push state onto the shell post.
 	 */
 	public function test_failed_row_update_leaves_post_untouched(): void {

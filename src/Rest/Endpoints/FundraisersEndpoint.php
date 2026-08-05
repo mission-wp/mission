@@ -134,7 +134,7 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			return RestErrors::donor_not_found();
 		}
 
-		if ( $this->find_existing( $campaign->id, $donor->id ) ) {
+		if ( Fundraiser::find_by_campaign_donor( $campaign->id, $donor->id ) ) {
 			return $this->duplicate_error();
 		}
 
@@ -147,7 +147,7 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 		$settings = $campaign->p2p_settings();
 		$goal     = $request->get_param( 'goal' );
 
-		$fundraiser = Fundraiser::register(
+		$result = Fundraiser::register_or_existing(
 			$campaign->id,
 			$donor->id,
 			null !== $goal ? max( 0, (int) $goal ) : (int) $settings['default_fundraiser_goal'],
@@ -156,10 +156,9 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 			$request->get_param( 'status' ) ?? Fundraiser::STATUS_ACTIVE
 		);
 
-		if ( ! $fundraiser->id ) {
-			// A lost create race on the (campaign, donor) pair is a duplicate;
-			// anything else is a plain failed insert.
-			if ( $this->find_existing( $campaign->id, $donor->id ) ) {
+		if ( ! $result['created'] ) {
+			// An explicit admin create treats a lost race as a duplicate.
+			if ( $result['fundraiser'] ) {
 				return $this->duplicate_error();
 			}
 
@@ -169,6 +168,8 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 				[ 'status' => 500 ]
 			);
 		}
+
+		$fundraiser = $result['fundraiser'];
 
 		$team = $team_id ? Team::find( (int) $team_id ) : null;
 		if ( $team ) {
@@ -224,25 +225,6 @@ class FundraisersEndpoint extends AbstractP2PAdminEndpoint {
 		$this->apply_status_transition( $fundraiser, $request->get_param( 'status' ) );
 
 		return new WP_REST_Response( $this->prepare_item( $fundraiser ), 200 );
-	}
-
-	/**
-	 * Find an existing fundraiser for a (campaign, donor) pair.
-	 *
-	 * @param int $campaign_id Campaign ID.
-	 * @param int $donor_id    Donor ID.
-	 * @return Fundraiser|null
-	 */
-	private function find_existing( int $campaign_id, int $donor_id ): ?Fundraiser {
-		$existing = Fundraiser::query(
-			[
-				'campaign_id' => $campaign_id,
-				'donor_id'    => $donor_id,
-				'per_page'    => 1,
-			]
-		);
-
-		return $existing[0] ?? null;
 	}
 
 	/**

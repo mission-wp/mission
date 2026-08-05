@@ -128,6 +128,60 @@ class Fundraiser extends Model {
 	}
 
 	/**
+	 * Find the fundraiser for a (campaign, donor) pair, if one exists.
+	 *
+	 * The pair is unique-keyed: one fundraiser record per person per campaign.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 * @param int $donor_id    Donor ID.
+	 * @return self|null
+	 */
+	public static function find_by_campaign_donor( int $campaign_id, int $donor_id ): ?self {
+		$rows = self::query(
+			[
+				'campaign_id' => $campaign_id,
+				'donor_id'    => $donor_id,
+				'per_page'    => 1,
+			]
+		);
+
+		return $rows[0] ?? null;
+	}
+
+	/**
+	 * Register, tolerating a lost create race on the (campaign, donor) key.
+	 *
+	 * Concurrent submits can both pass a pre-check and race the insert; the
+	 * loser's insert fails on the unique key. This resolves that race once for
+	 * every consumer: the loser gets the winner's row with created=false, and
+	 * the caller decides whether that means a duplicate error or a success.
+	 *
+	 * @param int    $campaign_id Parent campaign ID.
+	 * @param int    $donor_id    Participant donor ID.
+	 * @param int    $goal        Personal goal in minor units.
+	 * @param string $story       Personal fundraising story.
+	 * @param string $headline    Short tagline.
+	 * @param string $status      Initial status (active/pending).
+	 * @return array{fundraiser: ?self, created: bool} The created or pre-existing
+	 *         row (null when the insert failed outright) and which it was.
+	 */
+	public static function register_or_existing( int $campaign_id, int $donor_id, int $goal, string $story = '', string $headline = '', string $status = self::STATUS_ACTIVE ): array {
+		$fundraiser = self::register( $campaign_id, $donor_id, $goal, $story, $headline, $status );
+
+		if ( $fundraiser->id ) {
+			return [
+				'fundraiser' => $fundraiser,
+				'created'    => true,
+			];
+		}
+
+		return [
+			'fundraiser' => self::find_by_campaign_donor( $campaign_id, $donor_id ),
+			'created'    => false,
+		];
+	}
+
+	/**
 	 * Create a new fundraiser (and its shell post) during registration.
 	 *
 	 * Always created without a team; attaching to a team (including as the

@@ -210,16 +210,10 @@ class FundraiserRegistrationService {
 	public function register_fundraiser( Donor $donor, Campaign $campaign, array $input ): array|WP_Error {
 		$settings = $campaign->p2p_settings();
 
-		$existing = Fundraiser::query(
-			[
-				'campaign_id' => $campaign->id,
-				'donor_id'    => $donor->id,
-				'per_page'    => 1,
-			]
-		);
+		$existing = Fundraiser::find_by_campaign_donor( (int) $campaign->id, (int) $donor->id );
 
 		if ( $existing ) {
-			$fundraiser = $existing[0];
+			$fundraiser = $existing;
 
 			// Only a token mapping to a real pending invite on this campaign re-runs
 			// team resolution; a junk token must not create or join a team via team_mode.
@@ -268,25 +262,19 @@ class FundraiserRegistrationService {
 			$goal = (int) $settings['default_fundraiser_goal'];
 		}
 
-		$fundraiser = Fundraiser::register( $campaign->id, $donor->id, $goal, (string) ( $input['story'] ?? '' ), '', $status );
+		$result = Fundraiser::register_or_existing( $campaign->id, $donor->id, $goal, (string) ( $input['story'] ?? '' ), '', $status );
 
-		if ( ! $fundraiser->id ) {
-			// Most likely a lost create race on the (campaign, donor) unique key;
-			// the idempotent answer is the row the other request created.
-			$existing = Fundraiser::query(
-				[
-					'campaign_id' => $campaign->id,
-					'donor_id'    => $donor->id,
-					'per_page'    => 1,
-				]
-			);
-
-			if ( ! $existing ) {
-				return new WP_Error( 'registration_failed', __( 'We could not create your fundraising page. Please try again.', 'mission-donation-platform' ), [ 'status' => 500 ] );
+		if ( ! $result['created'] ) {
+			// The idempotent answer to a lost create race is the row the other
+			// request created.
+			if ( $result['fundraiser'] ) {
+				return $this->result( $result['fundraiser'], $result['fundraiser']->team() );
 			}
 
-			return $this->result( $existing[0], $existing[0]->team() );
+			return new WP_Error( 'registration_failed', __( 'We could not create your fundraising page. Please try again.', 'mission-donation-platform' ), [ 'status' => 500 ] );
 		}
+
+		$fundraiser = $result['fundraiser'];
 
 		if ( ! empty( $input['dedicate'] ) && ! empty( $input['honoree_name'] ) ) {
 			// An empty type would clear; null lets the model default it to 'honor'.
