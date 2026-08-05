@@ -370,6 +370,7 @@ msgstr "Anual"
 
 #: blocks/build/donation-form/index.php:214
 #: blocks/src/donation-form/index.php:214
+#: src/P2P/templates/signup-modal.php:312
 msgid "Test mode active: Donations in test mode are not processed"
 msgstr "Modo de prueba activado: las donaciones en modo de prueba no se procesan"
 
@@ -399,6 +400,8 @@ msgstr "Selecciona la frecuencia"
 #: blocks/src/donation-form/index.php:926
 #: blocks/src/donor-dashboard/parts/recurring.php:179
 #: src/Admin/DeactivationSurvey.php:199
+#: src/P2P/templates/signup-modal.php:273
+#: src/P2P/templates/signup-modal.php:336
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:112
 msgid "Other"
@@ -406,6 +409,7 @@ msgstr "Otro"
 
 #: blocks/build/donation-form/index.php:354
 #: blocks/src/donation-form/index.php:354
+#: src/P2P/templates/signup-modal.php:278
 msgid "Custom amount"
 msgstr "Importe personalizado"
 
@@ -428,7 +432,7 @@ msgstr "Dedica este donativo en honor o en memoria de alguien"
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/src/recent-donors/index.php:104
 #: blocks/src/top-donors/index.php:106
-#: src/P2P/templates/signup-modal.php:218
+#: src/P2P/templates/signup-modal.php:225
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:203
@@ -445,7 +449,7 @@ msgstr "En honor de"
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/src/recent-donors/index.php:103
 #: blocks/src/top-donors/index.php:105
-#: src/P2P/templates/signup-modal.php:219
+#: src/P2P/templates/signup-modal.php:226
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:207
@@ -474,7 +478,7 @@ msgstr "Indica el nombre del homenajeado."
 #: blocks/src/donor-dashboard/parts/profile.php:56
 #: src/Export/ExportService.php:102
 #: src/Export/ExportService.php:510
-#: src/P2P/templates/signup-modal.php:98
+#: src/P2P/templates/signup-modal.php:105
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
@@ -512,7 +516,7 @@ msgstr "Mensaje personal"
 
 #: blocks/build/donation-form/index.php:436
 #: blocks/src/donation-form/index.php:436
-#: src/P2P/templates/signup-modal.php:167
+#: src/P2P/templates/signup-modal.php:174
 msgid "(optional)"
 msgstr "(opcional)"
 
@@ -658,8 +662,8 @@ msgstr "Deja un mensaje (opcional)"
 #: blocks/build/donation-form/index.php:719
 #: blocks/src/donation-form/index.php:567
 #: blocks/src/donation-form/index.php:719
-#: src/P2P/templates/signup-modal.php:82
-#: src/P2P/templates/signup-modal.php:108
+#: src/P2P/templates/signup-modal.php:89
+#: src/P2P/templates/signup-modal.php:115
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:578
@@ -675,7 +679,8 @@ msgstr "Continuar"
 #: blocks/build/donation-form/index.php:734
 #: blocks/src/donation-form/index.php:582
 #: blocks/src/donation-form/index.php:734
-#: src/P2P/templates/signup-modal.php:229
+#: src/P2P/templates/signup-modal.php:236
+#: src/P2P/templates/signup-modal.php:289
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:263
@@ -723,6 +728,7 @@ msgstr "Completa tu donativo"
 #: blocks/src/donation-form/index.php:750
 #: blocks/src/donation-form/index.php:753
 #: blocks/src/donor-dashboard/parts/recurring.php:137
+#: src/P2P/templates/signup-modal.php:294
 msgid "processing fee"
 msgstr "comisión de procesamiento"
 
@@ -730,6 +736,7 @@ msgstr "comisión de procesamiento"
 #: blocks/build/donor-dashboard/parts/recurring.php:139
 #: blocks/src/donation-form/index.php:755
 #: blocks/src/donor-dashboard/parts/recurring.php:139
+#: src/P2P/templates/signup-modal.php:295
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:204
@@ -743,6 +750,7 @@ msgstr "Editar"
 
 #: blocks/build/donation-form/index.php:762
 #: blocks/src/donation-form/index.php:762
+#: src/P2P/templates/signup-modal.php:298
 msgid "Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about."
 msgstr "Las pasarelas de pago se quedan con una parte de cada transacción. Tienes la opción de cubrir estas comisiones para que el 100 % de tu donativo llegue a la causa que te importa."
 
@@ -750,6 +758,7 @@ msgstr "Las pasarelas de pago se quedan con una parte de cada transacción. Tien
 #: blocks/build/donor-dashboard/parts/recurring.php:151
 #: blocks/src/donation-form/index.php:769
 #: blocks/src/donor-dashboard/parts/recurring.php:151
+#: src/P2P/templates/signup-modal.php:301
 msgid "I want to cover the fee"
 msgstr "Quiero cubrir la comisión"
 
@@ -820,11 +829,13 @@ msgstr "Descartar el error"
 
 #: blocks/build/donation-form/index.php:903
 #: blocks/src/donation-form/index.php:903
+#: src/P2P/templates/signup-modal.php:325
 msgid "An optional tip keeps this free donation platform running"
 msgstr "Una propina opcional ayuda a mantener en funcionamiento esta plataforma de donaciones gratuita"
 
 #: blocks/build/donation-form/index.php:911
 #: blocks/src/donation-form/index.php:911
+#: src/P2P/templates/signup-modal.php:327
 msgid "Select tip amount"
 msgstr "Selecciona el importe de la propina"
 
@@ -832,6 +843,7 @@ msgstr "Selecciona el importe de la propina"
 #: blocks/build/donor-dashboard/parts/recurring.php:190
 #: blocks/src/donation-form/index.php:937
 #: blocks/src/donor-dashboard/parts/recurring.php:190
+#: src/P2P/templates/signup-modal.php:343
 msgid "Help keep this platform free"
 msgstr "Ayuda a mantener gratuita esta plataforma"
 
@@ -839,6 +851,7 @@ msgstr "Ayuda a mantener gratuita esta plataforma"
 #: blocks/build/donor-dashboard/parts/recurring.php:193
 #: blocks/src/donation-form/index.php:940
 #: blocks/src/donor-dashboard/parts/recurring.php:193
+#: src/P2P/templates/signup-modal.php:346
 msgid "Decrease tip"
 msgstr "Reducir la propina"
 
@@ -846,6 +859,7 @@ msgstr "Reducir la propina"
 #: blocks/build/donor-dashboard/parts/recurring.php:203
 #: blocks/src/donation-form/index.php:950
 #: blocks/src/donor-dashboard/parts/recurring.php:203
+#: src/P2P/templates/signup-modal.php:349
 msgid "Custom tip amount"
 msgstr "Importe de propina personalizado"
 
@@ -853,6 +867,7 @@ msgstr "Importe de propina personalizado"
 #: blocks/build/donor-dashboard/parts/recurring.php:206
 #: blocks/src/donation-form/index.php:953
 #: blocks/src/donor-dashboard/parts/recurring.php:206
+#: src/P2P/templates/signup-modal.php:351
 msgid "Increase tip"
 msgstr "Aumentar la propina"
 
@@ -865,11 +880,13 @@ msgstr "Donar"
 
 #: blocks/build/donation-form/index.php:974
 #: blocks/src/donation-form/index.php:974
+#: src/P2P/templates/signup-modal.php:359
 msgid "Processing"
 msgstr "Procesando"
 
 #: blocks/build/donation-form/index.php:1006
 #: blocks/src/donation-form/index.php:1006
+#: src/P2P/templates/signup-modal.php:367
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/Edit.js:19
 msgid "Thank you!"
@@ -993,7 +1010,7 @@ msgstr "Dirección de correo electrónico"
 #: blocks/build/donor-dashboard/parts/auth.php:239
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
-#: src/P2P/templates/signup-modal.php:99
+#: src/P2P/templates/signup-modal.php:106
 msgid "Password"
 msgstr "Contraseña"
 
@@ -1170,7 +1187,7 @@ msgstr "Introduce una nueva contraseña para tu cuenta de donante."
 
 #: blocks/build/donor-dashboard/parts/auth.php:405
 #: blocks/src/donor-dashboard/parts/auth.php:405
-#: src/P2P/templates/signup-modal.php:142
+#: src/P2P/templates/signup-modal.php:149
 msgid "New password"
 msgstr "Nueva contraseña"
 
@@ -1287,7 +1304,7 @@ msgstr "Comparte tu página"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:103
+#: src/P2P/SignupModal.php:124
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -1296,13 +1313,13 @@ msgstr "Copiar"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:237
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:237
-#: src/P2P/templates/signup-modal.php:32
+#: src/P2P/templates/signup-modal.php:35
 msgid "Share on Facebook"
 msgstr "Compartir en Facebook"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:241
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:241
-#: src/P2P/templates/signup-modal.php:36
+#: src/P2P/templates/signup-modal.php:39
 msgid "Share on X"
 msgstr "Compartir en X"
 
@@ -1318,7 +1335,7 @@ msgstr "Aún no hay imagen del equipo."
 
 #: blocks/build/donor-dashboard/parts/team-detail.php:121
 #: blocks/src/donor-dashboard/parts/team-detail.php:121
-#: src/P2P/templates/signup-modal.php:181
+#: src/P2P/templates/signup-modal.php:188
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:211
 #: admin/src/pages/settings/email-templates.js:325
@@ -1906,7 +1923,7 @@ msgstr "Cancelar"
 
 #: blocks/build/donor-dashboard/parts/profile.php:83
 #: blocks/src/donor-dashboard/parts/profile.php:83
-#: src/P2P/templates/signup-modal.php:115
+#: src/P2P/templates/signup-modal.php:122
 msgid "Change email"
 msgstr "Cambiar correo electrónico"
 
@@ -2397,19 +2414,19 @@ msgid "Your name could be the first one on this list."
 msgstr "Tu nombre podría ser el primero de esta lista."
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:161
+#: src/P2P/SignupModal.php:193
 msgid "Join %s"
 msgstr "Únete a %s"
 
-#: src/P2P/SignupModal.php:190
+#: src/P2P/SignupModal.php:258
 msgid "You're a fundraiser!"
 msgstr "¡Ya eres recaudador!"
 
-#: src/P2P/SignupModal.php:198
+#: src/P2P/SignupModal.php:266
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr "Tu página está activa. Compártela con amigos y familiares para empezar a recaudar fondos."
 
-#: src/P2P/templates/signup-modal.php:59
+#: src/P2P/templates/signup-modal.php:66
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:202
 #: admin/src/components/Drawer.js:26
@@ -2418,149 +2435,151 @@ msgstr "Tu página está activa. Compártela con amigos y familiares para empeza
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/P2P/templates/signup-modal.php:76
+#: src/P2P/templates/signup-modal.php:83
 msgid "Welcome back"
 msgstr "Bienvenido de nuevo"
 
-#: src/P2P/templates/signup-modal.php:77
+#: src/P2P/templates/signup-modal.php:84
 msgid "Continue setting up your fundraiser."
 msgstr "Continúa configurando tu página de recaudación."
 
-#: src/P2P/templates/signup-modal.php:84
+#: src/P2P/templates/signup-modal.php:91
 msgid "Not you?"
 msgstr "¿No eres tú?"
 
-#: src/P2P/templates/signup-modal.php:85
+#: src/P2P/templates/signup-modal.php:92
 msgid "Log out"
 msgstr "Cerrar sesión"
 
-#: src/P2P/templates/signup-modal.php:91
+#: src/P2P/templates/signup-modal.php:98
 msgid "Create your account"
 msgstr "Crea tu cuenta"
 
-#: src/P2P/templates/signup-modal.php:92
+#: src/P2P/templates/signup-modal.php:99
 msgid "Let's set up your fundraising page. First, the basics."
 msgstr "Vamos a crear tu página de recaudación. Primero, lo básico."
 
-#: src/P2P/templates/signup-modal.php:95
+#: src/P2P/templates/signup-modal.php:102
 msgid "First name"
 msgstr "Nombre"
 
-#: src/P2P/templates/signup-modal.php:96
+#: src/P2P/templates/signup-modal.php:103
 msgid "Last name"
 msgstr "Apellidos"
 
-#: src/P2P/templates/signup-modal.php:99
-#: src/P2P/templates/signup-modal.php:142
+#: src/P2P/templates/signup-modal.php:106
+#: src/P2P/templates/signup-modal.php:149
 msgid "At least 8 characters"
 msgstr "Al menos 8 caracteres"
 
-#: src/P2P/templates/signup-modal.php:102
+#: src/P2P/templates/signup-modal.php:109
 msgid "An account with this email already exists. Enter the correct password or"
 msgstr "Ya existe una cuenta con este correo electrónico. Introduce la contraseña correcta o"
 
-#: src/P2P/templates/signup-modal.php:103
+#: src/P2P/templates/signup-modal.php:110
 msgid "reset it"
 msgstr "restablécela"
 
 #: src/Email/templates/account-activation.php:15
 #: src/Email/templates/p2p-otp-code.php:18
-#: src/P2P/templates/signup-modal.php:116
+#: src/P2P/templates/signup-modal.php:123
 msgid "Verify your email"
 msgstr "Verifica tu correo electrónico"
 
-#: src/P2P/templates/signup-modal.php:118
+#: src/P2P/templates/signup-modal.php:125
 msgid "We sent a 6-digit code to"
 msgstr "Enviamos un código de 6 dígitos a"
 
 #. translators: %d: digit position
-#: src/P2P/templates/signup-modal.php:123
+#: src/P2P/templates/signup-modal.php:130
 msgid "Digit %d"
 msgstr "Dígito %d"
 
-#: src/P2P/templates/signup-modal.php:128
+#: src/P2P/templates/signup-modal.php:135
 msgid "Verify"
 msgstr "Verificar"
 
-#: src/P2P/templates/signup-modal.php:132
+#: src/P2P/templates/signup-modal.php:139
 msgid "Didn't get a code?"
 msgstr "¿No recibiste el código?"
 
-#: src/P2P/templates/signup-modal.php:133
+#: src/P2P/templates/signup-modal.php:140
 msgid "Resend"
 msgstr "Reenviar"
 
-#: src/P2P/templates/signup-modal.php:140
+#: src/P2P/templates/signup-modal.php:147
 msgid "Set a new password"
 msgstr "Establece una nueva contraseña"
 
-#: src/P2P/templates/signup-modal.php:141
+#: src/P2P/templates/signup-modal.php:148
 msgid "Choose a new password for your account."
 msgstr "Elige una nueva contraseña para tu cuenta."
 
-#: src/P2P/templates/signup-modal.php:145
+#: src/P2P/templates/signup-modal.php:152
 msgid "Save and continue"
 msgstr "Guardar y continuar"
 
-#: src/P2P/templates/signup-modal.php:153
+#: src/P2P/templates/signup-modal.php:160
 msgid "Set up your fundraiser"
 msgstr "Configura tu recaudación"
 
-#: src/P2P/templates/signup-modal.php:157
+#: src/P2P/templates/signup-modal.php:164
 msgid "Joining as a team member"
 msgstr "Te unes como miembro del equipo"
 
-#: src/P2P/templates/signup-modal.php:162
+#: src/P2P/templates/signup-modal.php:169
 msgid "Join a team"
 msgstr "Unirse a un equipo"
 
-#: src/P2P/templates/signup-modal.php:163
+#: src/P2P/templates/signup-modal.php:170
 msgid "Create a team"
 msgstr "Crear un equipo"
 
-#: src/P2P/templates/signup-modal.php:167
+#: src/P2P/templates/signup-modal.php:174
 msgid "Select a team"
 msgstr "Selecciona un equipo"
 
-#: src/P2P/templates/signup-modal.php:169
+#: src/P2P/templates/signup-modal.php:176
 msgid "No team — fundraise on your own"
 msgstr "Sin equipo — recauda por tu cuenta"
 
-#: src/P2P/templates/signup-modal.php:177
+#: src/P2P/templates/signup-modal.php:184
 msgid "Leave blank to fundraise on your own."
 msgstr "Déjalo en blanco para recaudar por tu cuenta."
 
-#: src/P2P/templates/signup-modal.php:199
+#: src/P2P/templates/signup-modal.php:206
 msgid "You can add a team logo later from your dashboard."
 msgstr "Puedes añadir el logotipo del equipo más tarde desde tu panel."
 
-#: src/P2P/templates/signup-modal.php:204
+#: src/P2P/templates/signup-modal.php:211
 msgid "Your fundraising goal"
 msgstr "Tu meta de recaudación"
 
-#: src/P2P/templates/signup-modal.php:210
+#: src/P2P/templates/signup-modal.php:217
 msgid "Tell your story"
 msgstr "Cuenta tu historia"
 
-#: src/P2P/templates/signup-modal.php:214
+#: src/P2P/templates/signup-modal.php:221
 msgid "Dedicate this fundraiser in honor or memory of someone"
 msgstr "Dedica esta recaudación en honor o memoria de alguien"
 
-#: src/P2P/templates/signup-modal.php:221
+#: src/P2P/templates/signup-modal.php:228
 msgid "Their name"
 msgstr "Su nombre"
 
-#: src/P2P/templates/signup-modal.php:226
+#: src/P2P/templates/signup-modal.php:233
 msgid "Create fundraiser"
 msgstr "Crear recaudación"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:70
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:70
-#: src/P2P/templates/signup-modal.php:241
+#: src/P2P/templates/signup-modal.php:252
+#: src/P2P/templates/signup-modal.php:373
 msgid "Copy link"
 msgstr "Copiar enlace"
 
-#: src/P2P/templates/signup-modal.php:243
+#: src/P2P/templates/signup-modal.php:254
+#: src/P2P/templates/signup-modal.php:375
 msgid "View my page"
 msgstr "Ver mi página"
 
@@ -5660,7 +5679,7 @@ msgstr "Imagen"
 msgid "Create Campaign"
 msgstr "Crear campaña"
 
-#: src/P2P/SignupModal.php:101
+#: src/P2P/SignupModal.php:122
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateModal.js:135
 msgid "Something went wrong. Please try again."
@@ -6642,7 +6661,7 @@ msgstr "Conceptos básicos"
 msgid "Payments"
 msgstr "Pagos"
 
-#: src/P2P/templates/signup-modal.php:248
+#: src/P2P/templates/signup-modal.php:383
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:263
@@ -12377,11 +12396,11 @@ msgctxt "block description"
 msgid "Display a ranked list of top teams for a peer-to-peer campaign."
 msgstr "Muestra una lista clasificada de los principales equipos de una campaña entre pares."
 
-#: src/P2P/SignupModal.php:206
+#: src/P2P/SignupModal.php:274
 msgid "You're almost there!"
 msgstr "¡Ya casi está!"
 
-#: src/P2P/SignupModal.php:214
+#: src/P2P/SignupModal.php:282
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Tu página de recaudación se ha enviado para su revisión. Te enviaremos un correo en cuanto esté aprobada y lista para compartir."
 
@@ -12417,15 +12436,15 @@ msgstr "Privado — solo con invitación"
 msgid "Private teams are hidden from the sign-up form; people join through your email invitations."
 msgstr "Los equipos privados no aparecen en el formulario de inscripción; las personas se unen mediante tus invitaciones por correo."
 
-#: src/P2P/SignupModal.php:104
+#: src/P2P/SignupModal.php:125
 msgid "Copied"
 msgstr "Copiado"
 
-#: src/P2P/SignupModal.php:106
+#: src/P2P/SignupModal.php:127
 msgid "Enter the 6-digit code."
 msgstr "Introduce el código de 6 dígitos."
 
-#: src/P2P/SignupModal.php:107
+#: src/P2P/SignupModal.php:128
 msgid "Enter a new password."
 msgstr "Introduce una nueva contraseña."
 
@@ -12633,7 +12652,7 @@ msgstr[1] "días restantes"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:245
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:245
-#: src/P2P/templates/signup-modal.php:40
+#: src/P2P/templates/signup-modal.php:43
 msgid "Share on Bluesky"
 msgstr "Compartir en Bluesky"
 
@@ -12644,15 +12663,15 @@ msgstr "Compartir en Bluesky"
 msgid "I am raising money for a cause that means a lot to me. Every donation, big or small, helps me get closer to my goal. Thank you for your support!"
 msgstr "Estoy recaudando fondos para una causa que significa mucho para mí. Cada donación, grande o pequeña, me acerca más a mi meta. ¡Gracias por tu apoyo!"
 
-#: src/P2P/templates/signup-modal.php:183
+#: src/P2P/templates/signup-modal.php:190
 msgid "Team access"
 msgstr "Acceso al equipo"
 
-#: src/P2P/templates/signup-modal.php:186
+#: src/P2P/templates/signup-modal.php:193
 msgid "Make this team private"
 msgstr "Hacer que este equipo sea privado"
 
-#: src/P2P/templates/signup-modal.php:190
+#: src/P2P/templates/signup-modal.php:197
 #: admin/build/mission-admin.js:206
 #: admin/build/mission-admin.js:211
 #: admin/build/mission-admin.js:215
@@ -12666,7 +12685,7 @@ msgstr "Público"
 #: blocks/build/donor-dashboard/parts/teams.php:31
 #: blocks/src/donor-dashboard/parts/team-detail.php:29
 #: blocks/src/donor-dashboard/parts/teams.php:31
-#: src/P2P/templates/signup-modal.php:191
+#: src/P2P/templates/signup-modal.php:198
 #: admin/build/mission-admin.js:206
 #: admin/build/mission-admin.js:211
 #: admin/build/mission-admin.js:215
@@ -12676,11 +12695,11 @@ msgstr "Público"
 msgid "Private"
 msgstr "Privado"
 
-#: src/P2P/templates/signup-modal.php:195
+#: src/P2P/templates/signup-modal.php:202
 msgid "Anyone can join your team."
 msgstr "Cualquiera puede unirse a tu equipo."
 
-#: src/P2P/templates/signup-modal.php:196
+#: src/P2P/templates/signup-modal.php:203
 msgid "Only people you invite can join."
 msgstr "Solo pueden unirse las personas que invites."
 
@@ -13544,7 +13563,7 @@ msgstr "Sin equipo"
 msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
 msgstr "Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el puesto de capitán quedará vacante."
 
-#: src/P2P/SignupModal.php:105
+#: src/P2P/SignupModal.php:126
 msgid "Copy failed"
 msgstr "Error al copiar"
 
@@ -13574,11 +13593,71 @@ msgstr "No se han podido cargar los miembros. Inténtalo de nuevo."
 msgid "You are not a member of this team."
 msgstr "No eres miembro de este equipo."
 
-#: src/P2P/SignupModal.php:102
+#: src/P2P/SignupModal.php:123
 msgid "Please check the highlighted fields."
 msgstr "Revisa los campos resaltados."
 
 #: blocks/build/donation-form/index.php:983
 #: blocks/src/donation-form/index.php:983
+#: src/P2P/templates/signup-modal.php:319
 msgid "This is taking longer than expected. If nothing happens shortly, refresh the page and try again. Your card is only charged when a payment completes."
 msgstr "Esto está tardando más de lo esperado. Si no ocurre nada en breve, recarga la página e inténtalo de nuevo. Solo se realizará el cargo en tu tarjeta cuando se complete el pago."
+
+#. translators: %s: formatted donation amount
+#: src/P2P/SignupModal.php:130
+msgid "Give %s to kick off your page"
+msgstr "Dona %s para poner en marcha tu página"
+
+#. translators: %s: formatted charge total
+#: src/P2P/SignupModal.php:132
+msgid "Donate %s & launch"
+msgstr "Donar %s y lanzar"
+
+#. translators: %s: formatted donation amount
+#: src/P2P/SignupModal.php:134
+msgid "Your %s gift is in. Your page is off to a great start, so keep the momentum going by sharing it:"
+msgstr "Tu donativo de %s está registrado. Tu página ha empezado con buen pie, así que mantén el impulso compartiéndola:"
+
+#: src/P2P/SignupModal.php:135
+msgid "Payment system unavailable. Please refresh and try again."
+msgstr "El sistema de pago no está disponible. Recarga la página e inténtalo de nuevo."
+
+#: src/P2P/SignupModal.php:136
+msgid "Payment processing is not available right now. Please try again later."
+msgstr "El procesamiento de pagos no está disponible en este momento. Inténtalo de nuevo más tarde."
+
+#: src/P2P/SignupModal.php:137
+msgid "Failed to create payment. Please try again."
+msgstr "No se pudo crear el pago. Inténtalo de nuevo."
+
+#: src/P2P/SignupModal.php:138
+msgid "The payment could not be started. Please check your connection and try again."
+msgstr "No se pudo iniciar el pago. Comprueba tu conexión e inténtalo de nuevo."
+
+#: src/P2P/SignupModal.php:139
+msgid "Payment element not loaded. Please refresh the page."
+msgstr "El formulario de pago no se ha cargado. Recarga la página."
+
+#: src/P2P/SignupModal.php:250
+msgid "Your page is live. Pages that start with a donation raise more, so make the first gift to yours."
+msgstr "Tu página está activa. Las páginas que empiezan con un donativo recaudan más, así que haz el primer donativo a la tuya."
+
+#: src/P2P/templates/signup-modal.php:47
+msgid "Share by email"
+msgstr "Compartir por correo electrónico"
+
+#: src/P2P/templates/signup-modal.php:263
+msgid "Change amount"
+msgstr "Cambiar importe"
+
+#: src/P2P/templates/signup-modal.php:283
+msgid "Make the first gift"
+msgstr "Haz el primer donativo"
+
+#: src/P2P/templates/signup-modal.php:284
+msgid "Skip for now and view my page"
+msgstr "Omitir por ahora y ver mi página"
+
+#: src/P2P/templates/signup-modal.php:306
+msgid "Donating as"
+msgstr "Donando como"

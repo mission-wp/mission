@@ -355,6 +355,7 @@ msgstr "Vuosittain"
 
 #: blocks/build/donation-form/index.php:214
 #: blocks/src/donation-form/index.php:214
+#: src/P2P/templates/signup-modal.php:312
 msgid "Test mode active: Donations in test mode are not processed"
 msgstr "Testitila käytössä: Testitilassa tehtyjä lahjoituksia ei käsitellä"
 
@@ -384,6 +385,8 @@ msgstr "Valitse maksuväli"
 #: blocks/src/donation-form/index.php:926
 #: blocks/src/donor-dashboard/parts/recurring.php:179
 #: src/Admin/DeactivationSurvey.php:199
+#: src/P2P/templates/signup-modal.php:273
+#: src/P2P/templates/signup-modal.php:336
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:112
 msgid "Other"
@@ -391,6 +394,7 @@ msgstr "Muu"
 
 #: blocks/build/donation-form/index.php:354
 #: blocks/src/donation-form/index.php:354
+#: src/P2P/templates/signup-modal.php:278
 msgid "Custom amount"
 msgstr "Mukautettu summa"
 
@@ -413,7 +417,7 @@ msgstr "Omista tämä lahjoitus jonkun kunniaksi tai muistoksi"
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:129
 #: blocks/src/recent-donors/index.php:104
 #: blocks/src/top-donors/index.php:106
-#: src/P2P/templates/signup-modal.php:218
+#: src/P2P/templates/signup-modal.php:225
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:203
@@ -430,7 +434,7 @@ msgstr "Kunniaksi"
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:130
 #: blocks/src/recent-donors/index.php:103
 #: blocks/src/top-donors/index.php:105
-#: src/P2P/templates/signup-modal.php:219
+#: src/P2P/templates/signup-modal.php:226
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:207
@@ -459,7 +463,7 @@ msgstr "Anna kunnianosoituksen saajan nimi."
 #: blocks/src/donor-dashboard/parts/profile.php:56
 #: src/Export/ExportService.php:102
 #: src/Export/ExportService.php:510
-#: src/P2P/templates/signup-modal.php:98
+#: src/P2P/templates/signup-modal.php:105
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
@@ -497,7 +501,7 @@ msgstr "Henkilökohtainen viesti"
 
 #: blocks/build/donation-form/index.php:436
 #: blocks/src/donation-form/index.php:436
-#: src/P2P/templates/signup-modal.php:167
+#: src/P2P/templates/signup-modal.php:174
 msgid "(optional)"
 msgstr "(valinnainen)"
 
@@ -643,8 +647,8 @@ msgstr "Jätä viesti (valinnainen)"
 #: blocks/build/donation-form/index.php:719
 #: blocks/src/donation-form/index.php:567
 #: blocks/src/donation-form/index.php:719
-#: src/P2P/templates/signup-modal.php:82
-#: src/P2P/templates/signup-modal.php:108
+#: src/P2P/templates/signup-modal.php:89
+#: src/P2P/templates/signup-modal.php:115
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/src/components/OnboardingModal.js:578
@@ -660,7 +664,8 @@ msgstr "Jatka"
 #: blocks/build/donation-form/index.php:734
 #: blocks/src/donation-form/index.php:582
 #: blocks/src/donation-form/index.php:734
-#: src/P2P/templates/signup-modal.php:229
+#: src/P2P/templates/signup-modal.php:236
+#: src/P2P/templates/signup-modal.php:289
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:263
@@ -708,6 +713,7 @@ msgstr "Viimeistele lahjoituksesi"
 #: blocks/src/donation-form/index.php:750
 #: blocks/src/donation-form/index.php:753
 #: blocks/src/donor-dashboard/parts/recurring.php:137
+#: src/P2P/templates/signup-modal.php:294
 msgid "processing fee"
 msgstr "käsittelymaksu"
 
@@ -715,6 +721,7 @@ msgstr "käsittelymaksu"
 #: blocks/build/donor-dashboard/parts/recurring.php:139
 #: blocks/src/donation-form/index.php:755
 #: blocks/src/donor-dashboard/parts/recurring.php:139
+#: src/P2P/templates/signup-modal.php:295
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:204
@@ -728,6 +735,7 @@ msgstr "Muokkaa"
 
 #: blocks/build/donation-form/index.php:762
 #: blocks/src/donation-form/index.php:762
+#: src/P2P/templates/signup-modal.php:298
 msgid "Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about."
 msgstr "Maksunvälittäjät ottavat osuuden jokaisesta maksutapahtumasta. Voit halutessasi kattaa nämä maksut, jotta 100 % lahjoituksestasi menee sinulle tärkeään tarkoitukseen."
 
@@ -735,6 +743,7 @@ msgstr "Maksunvälittäjät ottavat osuuden jokaisesta maksutapahtumasta. Voit h
 #: blocks/build/donor-dashboard/parts/recurring.php:151
 #: blocks/src/donation-form/index.php:769
 #: blocks/src/donor-dashboard/parts/recurring.php:151
+#: src/P2P/templates/signup-modal.php:301
 msgid "I want to cover the fee"
 msgstr "Haluan kattaa maksun"
 
@@ -805,11 +814,13 @@ msgstr "Ohita virhe"
 
 #: blocks/build/donation-form/index.php:903
 #: blocks/src/donation-form/index.php:903
+#: src/P2P/templates/signup-modal.php:325
 msgid "An optional tip keeps this free donation platform running"
 msgstr "Vapaaehtoinen tuki pitää tämän ilmaisen lahjoitusalustan toiminnassa"
 
 #: blocks/build/donation-form/index.php:911
 #: blocks/src/donation-form/index.php:911
+#: src/P2P/templates/signup-modal.php:327
 msgid "Select tip amount"
 msgstr "Valitse tuen määrä"
 
@@ -817,6 +828,7 @@ msgstr "Valitse tuen määrä"
 #: blocks/build/donor-dashboard/parts/recurring.php:190
 #: blocks/src/donation-form/index.php:937
 #: blocks/src/donor-dashboard/parts/recurring.php:190
+#: src/P2P/templates/signup-modal.php:343
 msgid "Help keep this platform free"
 msgstr "Auta pitämään tämä alusta ilmaisena"
 
@@ -824,6 +836,7 @@ msgstr "Auta pitämään tämä alusta ilmaisena"
 #: blocks/build/donor-dashboard/parts/recurring.php:193
 #: blocks/src/donation-form/index.php:940
 #: blocks/src/donor-dashboard/parts/recurring.php:193
+#: src/P2P/templates/signup-modal.php:346
 msgid "Decrease tip"
 msgstr "Vähennä tukea"
 
@@ -831,6 +844,7 @@ msgstr "Vähennä tukea"
 #: blocks/build/donor-dashboard/parts/recurring.php:203
 #: blocks/src/donation-form/index.php:950
 #: blocks/src/donor-dashboard/parts/recurring.php:203
+#: src/P2P/templates/signup-modal.php:349
 msgid "Custom tip amount"
 msgstr "Mukautettu tuen määrä"
 
@@ -838,6 +852,7 @@ msgstr "Mukautettu tuen määrä"
 #: blocks/build/donor-dashboard/parts/recurring.php:206
 #: blocks/src/donation-form/index.php:953
 #: blocks/src/donor-dashboard/parts/recurring.php:206
+#: src/P2P/templates/signup-modal.php:351
 msgid "Increase tip"
 msgstr "Lisää tukea"
 
@@ -850,11 +865,13 @@ msgstr "Lahjoita"
 
 #: blocks/build/donation-form/index.php:974
 #: blocks/src/donation-form/index.php:974
+#: src/P2P/templates/signup-modal.php:359
 msgid "Processing"
 msgstr "Käsitellään"
 
 #: blocks/build/donation-form/index.php:1006
 #: blocks/src/donation-form/index.php:1006
+#: src/P2P/templates/signup-modal.php:367
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/Edit.js:19
 msgid "Thank you!"
@@ -971,7 +988,7 @@ msgstr "Sähköpostiosoite"
 #: blocks/build/donor-dashboard/parts/auth.php:239
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
-#: src/P2P/templates/signup-modal.php:99
+#: src/P2P/templates/signup-modal.php:106
 msgid "Password"
 msgstr "Salasana"
 
@@ -1148,7 +1165,7 @@ msgstr "Anna lahjoittajatilillesi uusi salasana."
 
 #: blocks/build/donor-dashboard/parts/auth.php:405
 #: blocks/src/donor-dashboard/parts/auth.php:405
-#: src/P2P/templates/signup-modal.php:142
+#: src/P2P/templates/signup-modal.php:149
 msgid "New password"
 msgstr "Uusi salasana"
 
@@ -1602,7 +1619,7 @@ msgstr "Peruuta"
 
 #: blocks/build/donor-dashboard/parts/profile.php:83
 #: blocks/src/donor-dashboard/parts/profile.php:83
-#: src/P2P/templates/signup-modal.php:115
+#: src/P2P/templates/signup-modal.php:122
 msgid "Change email"
 msgstr "Vaihda sähköposti"
 
@@ -2632,7 +2649,7 @@ msgstr "Ei saatavilla"
 
 #: src/Email/templates/account-activation.php:15
 #: src/Email/templates/p2p-otp-code.php:18
-#: src/P2P/templates/signup-modal.php:116
+#: src/P2P/templates/signup-modal.php:123
 msgid "Verify your email"
 msgstr "Vahvista sähköpostisi"
 
@@ -4590,7 +4607,7 @@ msgstr "Kuva"
 msgid "Create Campaign"
 msgstr "Luo kampanja"
 
-#: src/P2P/SignupModal.php:101
+#: src/P2P/SignupModal.php:122
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateModal.js:135
 msgid "Something went wrong. Please try again."
@@ -5532,7 +5549,7 @@ msgstr "Perusteet"
 msgid "Payments"
 msgstr "Maksut"
 
-#: src/P2P/templates/signup-modal.php:248
+#: src/P2P/templates/signup-modal.php:383
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:263
@@ -5773,7 +5790,7 @@ msgstr "Stripe on yhdistetty, mutta tilisi ei ole vielä valmis vastaanottamaan 
 msgid "Setup"
 msgstr "Määritys"
 
-#: src/P2P/templates/signup-modal.php:59
+#: src/P2P/templates/signup-modal.php:66
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:202
 #: admin/src/components/Drawer.js:26
@@ -9038,7 +9055,7 @@ msgstr "Allekirjoitussalaisuus"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:103
+#: src/P2P/SignupModal.php:124
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -10865,19 +10882,19 @@ msgstr "Jaa sivusi"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:237
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:237
-#: src/P2P/templates/signup-modal.php:32
+#: src/P2P/templates/signup-modal.php:35
 msgid "Share on Facebook"
 msgstr "Jaa Facebookissa"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:241
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:241
-#: src/P2P/templates/signup-modal.php:36
+#: src/P2P/templates/signup-modal.php:39
 msgid "Share on X"
 msgstr "Jaa X:ssä"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:245
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:245
-#: src/P2P/templates/signup-modal.php:40
+#: src/P2P/templates/signup-modal.php:43
 msgid "Share on Bluesky"
 msgstr "Jaa Blueskyssa"
 
@@ -10893,7 +10910,7 @@ msgstr "Ei vielä tiimikuvaa."
 
 #: blocks/build/donor-dashboard/parts/team-detail.php:121
 #: blocks/src/donor-dashboard/parts/team-detail.php:121
-#: src/P2P/templates/signup-modal.php:181
+#: src/P2P/templates/signup-modal.php:188
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:211
 #: admin/src/pages/settings/email-templates.js:325
@@ -11056,153 +11073,153 @@ msgid "%1$s is fundraising for %2$s"
 msgstr "%1$s kerää varoja kampanjalle %2$s"
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:161
+#: src/P2P/SignupModal.php:193
 msgid "Join %s"
 msgstr "Liity tiimiin %s"
 
-#: src/P2P/SignupModal.php:104
+#: src/P2P/SignupModal.php:125
 msgid "Copied"
 msgstr "Kopioitu"
 
-#: src/P2P/SignupModal.php:106
+#: src/P2P/SignupModal.php:127
 msgid "Enter the 6-digit code."
 msgstr "Syötä 6-numeroinen koodi."
 
-#: src/P2P/SignupModal.php:107
+#: src/P2P/SignupModal.php:128
 msgid "Enter a new password."
 msgstr "Syötä uusi salasana."
 
-#: src/P2P/SignupModal.php:190
+#: src/P2P/SignupModal.php:258
 msgid "You're a fundraiser!"
 msgstr "Olet nyt varainkerääjä!"
 
-#: src/P2P/SignupModal.php:198
+#: src/P2P/SignupModal.php:266
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr "Sivusi on julkaistu. Jaa se ystäville ja perheelle aloittaaksesi varojen keräämisen."
 
-#: src/P2P/SignupModal.php:206
+#: src/P2P/SignupModal.php:274
 msgid "You're almost there!"
 msgstr "Olet melkein valmis!"
 
-#: src/P2P/SignupModal.php:214
+#: src/P2P/SignupModal.php:282
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Varainkeruusivusi on lähetetty tarkistettavaksi. Saat sähköpostia heti, kun se on hyväksytty ja valmis jaettavaksi."
 
-#: src/P2P/templates/signup-modal.php:76
+#: src/P2P/templates/signup-modal.php:83
 msgid "Welcome back"
 msgstr "Tervetuloa takaisin"
 
-#: src/P2P/templates/signup-modal.php:77
+#: src/P2P/templates/signup-modal.php:84
 msgid "Continue setting up your fundraiser."
 msgstr "Jatka varainkeruusivusi luomista."
 
-#: src/P2P/templates/signup-modal.php:84
+#: src/P2P/templates/signup-modal.php:91
 msgid "Not you?"
 msgstr "Etkö ole sinä?"
 
-#: src/P2P/templates/signup-modal.php:85
+#: src/P2P/templates/signup-modal.php:92
 msgid "Log out"
 msgstr "Kirjaudu ulos"
 
-#: src/P2P/templates/signup-modal.php:91
+#: src/P2P/templates/signup-modal.php:98
 msgid "Create your account"
 msgstr "Luo tilisi"
 
-#: src/P2P/templates/signup-modal.php:92
+#: src/P2P/templates/signup-modal.php:99
 msgid "Let's set up your fundraising page. First, the basics."
 msgstr "Luodaan varainkeruusivusi. Aloitetaan perustiedoista."
 
-#: src/P2P/templates/signup-modal.php:95
+#: src/P2P/templates/signup-modal.php:102
 msgid "First name"
 msgstr "Etunimi"
 
-#: src/P2P/templates/signup-modal.php:96
+#: src/P2P/templates/signup-modal.php:103
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: src/P2P/templates/signup-modal.php:99
-#: src/P2P/templates/signup-modal.php:142
+#: src/P2P/templates/signup-modal.php:106
+#: src/P2P/templates/signup-modal.php:149
 msgid "At least 8 characters"
 msgstr "Vähintään 8 merkkiä"
 
-#: src/P2P/templates/signup-modal.php:102
+#: src/P2P/templates/signup-modal.php:109
 msgid "An account with this email already exists. Enter the correct password or"
 msgstr "Tällä sähköpostilla on jo tili. Syötä oikea salasana tai"
 
-#: src/P2P/templates/signup-modal.php:103
+#: src/P2P/templates/signup-modal.php:110
 msgid "reset it"
 msgstr "nollaa se"
 
-#: src/P2P/templates/signup-modal.php:118
+#: src/P2P/templates/signup-modal.php:125
 msgid "We sent a 6-digit code to"
 msgstr "Lähetimme 6-numeroisen koodin osoitteeseen"
 
 #. translators: %d: digit position
-#: src/P2P/templates/signup-modal.php:123
+#: src/P2P/templates/signup-modal.php:130
 msgid "Digit %d"
 msgstr "Numero %d"
 
-#: src/P2P/templates/signup-modal.php:128
+#: src/P2P/templates/signup-modal.php:135
 msgid "Verify"
 msgstr "Vahvista"
 
-#: src/P2P/templates/signup-modal.php:132
+#: src/P2P/templates/signup-modal.php:139
 msgid "Didn't get a code?"
 msgstr "Etkö saanut koodia?"
 
-#: src/P2P/templates/signup-modal.php:133
+#: src/P2P/templates/signup-modal.php:140
 msgid "Resend"
 msgstr "Lähetä uudelleen"
 
-#: src/P2P/templates/signup-modal.php:140
+#: src/P2P/templates/signup-modal.php:147
 msgid "Set a new password"
 msgstr "Aseta uusi salasana"
 
-#: src/P2P/templates/signup-modal.php:141
+#: src/P2P/templates/signup-modal.php:148
 msgid "Choose a new password for your account."
 msgstr "Valitse tilillesi uusi salasana."
 
-#: src/P2P/templates/signup-modal.php:145
+#: src/P2P/templates/signup-modal.php:152
 msgid "Save and continue"
 msgstr "Tallenna ja jatka"
 
-#: src/P2P/templates/signup-modal.php:153
+#: src/P2P/templates/signup-modal.php:160
 msgid "Set up your fundraiser"
 msgstr "Luo varainkeruusivusi"
 
-#: src/P2P/templates/signup-modal.php:157
+#: src/P2P/templates/signup-modal.php:164
 msgid "Joining as a team member"
 msgstr "Liityt tiimin jäsenenä"
 
-#: src/P2P/templates/signup-modal.php:162
+#: src/P2P/templates/signup-modal.php:169
 msgid "Join a team"
 msgstr "Liity tiimiin"
 
-#: src/P2P/templates/signup-modal.php:163
+#: src/P2P/templates/signup-modal.php:170
 msgid "Create a team"
 msgstr "Luo tiimi"
 
-#: src/P2P/templates/signup-modal.php:167
+#: src/P2P/templates/signup-modal.php:174
 msgid "Select a team"
 msgstr "Valitse tiimi"
 
-#: src/P2P/templates/signup-modal.php:169
+#: src/P2P/templates/signup-modal.php:176
 msgid "No team — fundraise on your own"
 msgstr "Ei tiimiä — kerää varoja itsenäisesti"
 
-#: src/P2P/templates/signup-modal.php:177
+#: src/P2P/templates/signup-modal.php:184
 msgid "Leave blank to fundraise on your own."
 msgstr "Jätä tyhjäksi, jos keräät varoja itsenäisesti."
 
-#: src/P2P/templates/signup-modal.php:183
+#: src/P2P/templates/signup-modal.php:190
 msgid "Team access"
 msgstr "Tiimiin liittyminen"
 
-#: src/P2P/templates/signup-modal.php:186
+#: src/P2P/templates/signup-modal.php:193
 msgid "Make this team private"
 msgstr "Tee tiimistä yksityinen"
 
-#: src/P2P/templates/signup-modal.php:190
+#: src/P2P/templates/signup-modal.php:197
 #: admin/build/mission-admin.js:206
 #: admin/build/mission-admin.js:211
 #: admin/build/mission-admin.js:215
@@ -11216,7 +11233,7 @@ msgstr "Julkinen"
 #: blocks/build/donor-dashboard/parts/teams.php:31
 #: blocks/src/donor-dashboard/parts/team-detail.php:29
 #: blocks/src/donor-dashboard/parts/teams.php:31
-#: src/P2P/templates/signup-modal.php:191
+#: src/P2P/templates/signup-modal.php:198
 #: admin/build/mission-admin.js:206
 #: admin/build/mission-admin.js:211
 #: admin/build/mission-admin.js:215
@@ -11226,45 +11243,47 @@ msgstr "Julkinen"
 msgid "Private"
 msgstr "Yksityinen"
 
-#: src/P2P/templates/signup-modal.php:195
+#: src/P2P/templates/signup-modal.php:202
 msgid "Anyone can join your team."
 msgstr "Kuka tahansa voi liittyä tiimiisi."
 
-#: src/P2P/templates/signup-modal.php:196
+#: src/P2P/templates/signup-modal.php:203
 msgid "Only people you invite can join."
 msgstr "Vain kutsumasi henkilöt voivat liittyä."
 
-#: src/P2P/templates/signup-modal.php:199
+#: src/P2P/templates/signup-modal.php:206
 msgid "You can add a team logo later from your dashboard."
 msgstr "Voit lisätä tiimin logon myöhemmin hallintapaneelistasi."
 
-#: src/P2P/templates/signup-modal.php:204
+#: src/P2P/templates/signup-modal.php:211
 msgid "Your fundraising goal"
 msgstr "Varainkeruutavoitteesi"
 
-#: src/P2P/templates/signup-modal.php:210
+#: src/P2P/templates/signup-modal.php:217
 msgid "Tell your story"
 msgstr "Kerro tarinasi"
 
-#: src/P2P/templates/signup-modal.php:214
+#: src/P2P/templates/signup-modal.php:221
 msgid "Dedicate this fundraiser in honor or memory of someone"
 msgstr "Omista tämä keräys jonkun kunniaksi tai muistoksi"
 
-#: src/P2P/templates/signup-modal.php:221
+#: src/P2P/templates/signup-modal.php:228
 msgid "Their name"
 msgstr "Henkilön nimi"
 
-#: src/P2P/templates/signup-modal.php:226
+#: src/P2P/templates/signup-modal.php:233
 msgid "Create fundraiser"
 msgstr "Luo keräyssivu"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:70
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:70
-#: src/P2P/templates/signup-modal.php:241
+#: src/P2P/templates/signup-modal.php:252
+#: src/P2P/templates/signup-modal.php:373
 msgid "Copy link"
 msgstr "Kopioi linkki"
 
-#: src/P2P/templates/signup-modal.php:243
+#: src/P2P/templates/signup-modal.php:254
+#: src/P2P/templates/signup-modal.php:375
 msgid "View my page"
 msgstr "Näytä sivuni"
 
@@ -13544,7 +13563,7 @@ msgstr "Ei tiimiä"
 msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
 msgstr "Tämä varainkerääjä on tiiminsä kapteeni. Tiimin vaihtaminen jättää kapteenin paikan avoimeksi."
 
-#: src/P2P/SignupModal.php:105
+#: src/P2P/SignupModal.php:126
 msgid "Copy failed"
 msgstr "Kopiointi epäonnistui"
 
@@ -13574,11 +13593,71 @@ msgstr "Jäsenten lataaminen epäonnistui. Yritä uudelleen."
 msgid "You are not a member of this team."
 msgstr "Et ole tämän tiimin jäsen."
 
-#: src/P2P/SignupModal.php:102
+#: src/P2P/SignupModal.php:123
 msgid "Please check the highlighted fields."
 msgstr "Tarkista korostetut kentät."
 
 #: blocks/build/donation-form/index.php:983
 #: blocks/src/donation-form/index.php:983
+#: src/P2P/templates/signup-modal.php:319
 msgid "This is taking longer than expected. If nothing happens shortly, refresh the page and try again. Your card is only charged when a payment completes."
 msgstr "Tämä kestää odotettua kauemmin. Jos mitään ei tapahdu pian, päivitä sivu ja yritä uudelleen. Korttiasi veloitetaan vasta, kun maksu on suoritettu."
+
+#. translators: %s: formatted donation amount
+#: src/P2P/SignupModal.php:130
+msgid "Give %s to kick off your page"
+msgstr "Lahjoita %s sivusi alkuun"
+
+#. translators: %s: formatted charge total
+#: src/P2P/SignupModal.php:132
+msgid "Donate %s & launch"
+msgstr "Lahjoita %s ja aloita"
+
+#. translators: %s: formatted donation amount
+#: src/P2P/SignupModal.php:134
+msgid "Your %s gift is in. Your page is off to a great start, so keep the momentum going by sharing it:"
+msgstr "Lahjoituksesi (%s) on perillä. Sivusi sai hyvän alun, joten pidä vauhtia yllä jakamalla sitä:"
+
+#: src/P2P/SignupModal.php:135
+msgid "Payment system unavailable. Please refresh and try again."
+msgstr "Maksujärjestelmä ei ole käytettävissä. Päivitä sivu ja yritä uudelleen."
+
+#: src/P2P/SignupModal.php:136
+msgid "Payment processing is not available right now. Please try again later."
+msgstr "Maksujen käsittely ei ole juuri nyt käytettävissä. Yritä myöhemmin uudelleen."
+
+#: src/P2P/SignupModal.php:137
+msgid "Failed to create payment. Please try again."
+msgstr "Maksun luominen epäonnistui. Yritä uudelleen."
+
+#: src/P2P/SignupModal.php:138
+msgid "The payment could not be started. Please check your connection and try again."
+msgstr "Maksua ei voitu aloittaa. Tarkista yhteytesi ja yritä uudelleen."
+
+#: src/P2P/SignupModal.php:139
+msgid "Payment element not loaded. Please refresh the page."
+msgstr "Maksulomake ei latautunut. Päivitä sivu."
+
+#: src/P2P/SignupModal.php:250
+msgid "Your page is live. Pages that start with a donation raise more, so make the first gift to yours."
+msgstr "Sivusi on julkaistu. Lahjoituksella alkavat sivut keräävät enemmän, joten tee ensimmäinen lahjoitus omallesi."
+
+#: src/P2P/templates/signup-modal.php:47
+msgid "Share by email"
+msgstr "Jaa sähköpostitse"
+
+#: src/P2P/templates/signup-modal.php:263
+msgid "Change amount"
+msgstr "Muuta summaa"
+
+#: src/P2P/templates/signup-modal.php:283
+msgid "Make the first gift"
+msgstr "Tee ensimmäinen lahjoitus"
+
+#: src/P2P/templates/signup-modal.php:284
+msgid "Skip for now and view my page"
+msgstr "Ohita toistaiseksi ja katso sivuni"
+
+#: src/P2P/templates/signup-modal.php:306
+msgid "Donating as"
+msgstr "Lahjoitat nimellä"
