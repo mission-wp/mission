@@ -7,12 +7,14 @@
 
 namespace MissionDP\P2P;
 
+use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Currency\Currency;
 use MissionDP\Helpers\Kses;
 use MissionDP\Helpers\Sharing;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Team;
+use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -77,19 +79,38 @@ class SignupModal {
 			? Donor::find_by_user_id( $current_user->ID )
 			: null;
 
+		$mission_settings = ( new SettingsService() )->get_all();
+
 		// The default payload seeds the store's global state so the shell's SSR
 		// markup (teams list included) hydrates as-is; open( payload ) rebinds it.
 		wp_interactivity_state(
 			'mission-donation-platform/p2p-signup',
 			$payload + [
-				'signedIn'   => (bool) $current_donor,
-				'donorName'  => $current_donor ? trim( $current_donor->first_name . ' ' . $current_donor->last_name ) : '',
-				'donorEmail' => $current_donor ? $current_donor->email : '',
-				'goal'       => $payload['defaultGoal'],
+				'signedIn'             => (bool) $current_donor,
+				'donorName'            => $current_donor ? trim( $current_donor->first_name . ' ' . $current_donor->last_name ) : '',
+				// Split name parts too: the first-gift payment step needs them
+				// for Stripe billing details, and splitting a joined name is lossy.
+				'donorFirstName'       => $current_donor ? $current_donor->first_name : '',
+				'donorLastName'        => $current_donor ? $current_donor->last_name : '',
+				'donorEmail'           => $current_donor ? $current_donor->email : '',
+				'goal'                 => $payload['defaultGoal'],
+
+				// Request-scoped payment config for the first-gift step,
+				// mirroring the donation form block's context seeds.
+				'stripePublishableKey' => ! empty( $mission_settings['test_mode'] ) ? MISSIONDP_STRIPE_PK_TEST : MISSIONDP_STRIPE_PK_LIVE,
+				'testMode'             => ! empty( $mission_settings['test_mode'] ),
+				'stripeFeePercent'     => (float) ( $mission_settings['stripe_fee_percent'] ?? 2.9 ),
+				'stripeFeeFixed'       => (int) ( $mission_settings['stripe_fee_fixed'] ?? 30 ),
+				'stripeAppearance'     => apply_filters( 'mission_stripe_appearance', [] ),
+				'locale'               => str_replace( '_', '-', get_locale() ),
 			]
 		);
 
-		$share_networks = Sharing::networks( 'signup-modal' );
+		// The first-gift success screen also offers a mailto share; email is
+		// surface-opt-in (not in Sharing::DEFAULT_NETWORKS), appended after the
+		// filterable networks.
+		$share_networks   = Sharing::networks( 'signup-modal' );
+		$share_networks[] = 'email';
 
 		// Campaign-independent, request-scoped data lives on the shell's own context.
 		$context = [
@@ -98,17 +119,28 @@ class SignupModal {
 			'shareTemplates' => array_intersect_key( Sharing::INTENT_TEMPLATES, array_flip( $share_networks ) ),
 			// Translated strings for view.js (script modules can't import @wordpress/i18n).
 			'i18n'           => [
-				'genericError'     => __( 'Something went wrong. Please try again.', 'mission-donation-platform' ),
-				'checkFields'      => __( 'Please check the highlighted fields.', 'mission-donation-platform' ),
-				'copy'             => __( 'Copy', 'mission-donation-platform' ),
-				'copied'           => __( 'Copied', 'mission-donation-platform' ),
-				'copyFailed'       => __( 'Copy failed', 'mission-donation-platform' ),
-				'enterCode'        => __( 'Enter the 6-digit code.', 'mission-donation-platform' ),
-				'enterNewPassword' => __( 'Enter a new password.', 'mission-donation-platform' ),
+				'genericError'        => __( 'Something went wrong. Please try again.', 'mission-donation-platform' ),
+				'checkFields'         => __( 'Please check the highlighted fields.', 'mission-donation-platform' ),
+				'copy'                => __( 'Copy', 'mission-donation-platform' ),
+				'copied'              => __( 'Copied', 'mission-donation-platform' ),
+				'copyFailed'          => __( 'Copy failed', 'mission-donation-platform' ),
+				'enterCode'           => __( 'Enter the 6-digit code.', 'mission-donation-platform' ),
+				'enterNewPassword'    => __( 'Enter a new password.', 'mission-donation-platform' ),
+				/* translators: %s: formatted donation amount */
+				'kickoffHeadline'     => __( 'Give %s to kick off your page', 'mission-donation-platform' ),
+				/* translators: %s: formatted charge total */
+				'donateAndLaunch'     => __( 'Donate %s & launch', 'mission-donation-platform' ),
+				/* translators: %s: formatted donation amount */
+				'giftSuccessMessage'  => __( 'Your %s gift is in. Your page is off to a great start, so keep the momentum going by sharing it:', 'mission-donation-platform' ),
+				'paymentUnavailable'  => __( 'Payment system unavailable. Please refresh and try again.', 'mission-donation-platform' ),
+				'paymentInitFailed'   => __( 'Payment processing is not available right now. Please try again later.', 'mission-donation-platform' ),
+				'paymentCreateFailed' => __( 'Failed to create payment. Please try again.', 'mission-donation-platform' ),
+				'paymentTimeout'      => __( 'The payment could not be started. Please check your connection and try again.', 'mission-donation-platform' ),
+				'elementNotLoaded'    => __( 'Payment element not loaded. Please refresh the page.', 'mission-donation-platform' ),
 			],
 		];
 
-		self::enqueue_assets();
+		self::enqueue_assets( ! empty( $payload['kickoffEnabled'] ) );
 
 		ob_start();
 		include __DIR__ . '/templates/signup-modal.php';
@@ -161,6 +193,22 @@ class SignupModal {
 			? sprintf( __( 'Join %s', 'mission-donation-platform' ), $preselected_team->name )
 			: $campaign->title;
 
+		// The first-gift step inherits the campaign form's payment config so
+		// the kickoff donation behaves like a donation made on the campaign page.
+		$form_attrs       = $campaign->get_donation_form_attributes();
+		$form_settings    = DonationFormSettings::resolve( $form_attrs );
+		$mission_settings = ( new SettingsService() )->get_all();
+
+		/**
+		 * Filters the preset amounts (in minor units) offered by the first-gift
+		 * nudge on the sign-up success step.
+		 *
+		 * @param int[]    $amounts  Preset amounts in minor units. Default $25/$50/$100/$250/$500.
+		 * @param Campaign $campaign The campaign being fundraised for.
+		 */
+		$kickoff_amounts = apply_filters( 'mission_p2p_kickoff_amounts', [ 2500, 5000, 10000, 25000, 50000 ], $campaign );
+		$kickoff_amounts = array_values( array_filter( array_map( 'intval', (array) $kickoff_amounts ), static fn( int $amount ): bool => $amount > 0 ) );
+
 		$payload = [
 			'campaignId'          => (int) $campaign->id,
 			'brandline'           => $brandline,
@@ -180,6 +228,26 @@ class SignupModal {
 				$teams
 			),
 			'storyPlaceholder'    => (string) ( $settings['story_placeholder'] ?? '' ),
+
+			// First-gift nudge (step 3). Payment config mirrors the campaign
+			// page's donation form so both checkout paths behave identically.
+			'kickoffEnabled'      => ! empty( $mission_settings['stripe_charges_enabled'] ),
+			'kickoffAmounts'      => $kickoff_amounts,
+			// Uppercased: the shared JS currency tables are keyed by uppercase code.
+			'currency'            => strtoupper( $currency ),
+			'campaignPostId'      => (int) $campaign->post_id,
+			'stripeAccountId'     => (string) ( $form_attrs['stripeAccountId'] ?? '' ),
+			'tipEnabled'          => ! empty( $form_settings['tipEnabled'] ),
+			'feeRecovery'         => ! empty( $form_settings['feeRecovery'] ),
+			'feeMode'             => (string) ( $form_settings['feeMode'] ?? 'optional' ),
+
+			/**
+			 * Filters the message above the first-gift nudge on the sign-up success screen.
+			 *
+			 * @param string   $message  Default message.
+			 * @param Campaign $campaign The campaign being fundraised for.
+			 */
+			'kickoffMessage'      => apply_filters( 'mission_signup_kickoff_message', __( 'Your page is live. Pages that start with a donation raise more, so make the first gift to yours.', 'mission-donation-platform' ), $campaign ),
 
 			/**
 			 * Filters the heading on the sign-up success screen.
@@ -233,8 +301,23 @@ class SignupModal {
 	 * The modal is not a registered block, so its `viewScriptModule` is never
 	 * auto-enqueued; the build output under blocks/build/signup-modal/ is
 	 * enqueued here instead.
+	 *
+	 * @param bool $with_stripe Whether to also enqueue Stripe.js for the first-gift step.
 	 */
-	private static function enqueue_assets(): void {
+	private static function enqueue_assets( bool $with_stripe = false ): void {
+		if ( $with_stripe ) {
+			// Same handle/URL as BlocksModule::enqueue_stripe_js() so WordPress
+			// dedupes when a donation form shares the page. Stripe.js must load
+			// as a classic script (see that method for the full rationale).
+			wp_enqueue_script(
+				'mission-stripe-js',
+				'https://js.stripe.com/v3/',
+				[],
+				null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Stripe requires the evergreen v3 URL with no cache-busting query args.
+				false
+			);
+		}
+
 		$build_dir  = MISSIONDP_PATH . 'blocks/build/signup-modal/';
 		$build_url  = MISSIONDP_URL . 'blocks/build/signup-modal/';
 		$asset_file = $build_dir . 'view.asset.php';

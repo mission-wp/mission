@@ -6,7 +6,8 @@
  * and its stylesheet; the block.json is a build manifest, not a registered
  * block). Drives the multi-step modal: account step (login / inline 6-digit
  * code / password reset / signed-in shortcut), fundraiser setup, and the
- * share success screen against the /p2p REST routes.
+ * success screen against the /p2p REST routes. The success step's first-gift
+ * nudge/payment/thanks sub-views live in gift.js (same store namespace).
  *
  * Campaign binding: every campaign-dependent value (campaignId, brandline,
  * teams list, goal, success copy) lives in global state, server-seeded with
@@ -21,6 +22,7 @@
 // and passed via ctx.i18n, so the literals here are English-only fallbacks.
 import { store, getContext, getElement } from '@wordpress/interactivity';
 
+import { prefetchGiftPaymentConfig, resetGiftState } from './gift';
 import './style.scss';
 
 let cooldownTimer = null;
@@ -28,11 +30,13 @@ let cooldownTimer = null;
 /**
  * A translated string from the block context, with an English fallback.
  *
+ * Exported for the first-gift module (gift.js), which shares this store.
+ *
  * @param {string} key      Key in the context's i18n map.
  * @param {string} fallback English fallback.
  * @return {string} Translated string.
  */
-function i18n( key, fallback ) {
+export function i18n( key, fallback ) {
   const ctx = getContext();
   return ( ctx.i18n && ctx.i18n[ key ] ) || fallback;
 }
@@ -44,12 +48,15 @@ function genericError() {
 /**
  * POST JSON to a REST route with the nonce attached.
  *
+ * Exported for gift.js. ctx.nonce is refreshed after a mid-flow login, so
+ * every post-step-1 request must go through this helper.
+ *
  * @param {Object} ctx  Element context (restUrl, nonce).
  * @param {string} path REST path after the namespace.
  * @param {Object} body Request body.
  * @return {Promise} Fetch promise.
  */
-function post( ctx, path, body ) {
+export function post( ctx, path, body ) {
   return fetch( ctx.restUrl + path, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': ctx.nonce },
@@ -82,9 +89,11 @@ function startCooldown( seconds ) {
 /**
  * The fundraiser's public URL to share (falls back to the current page).
  *
+ * Exported for gift.js.
+ *
  * @return {string} URL.
  */
-function shareUrl() {
+export function shareUrl() {
   return state.successUrl || window.location.href;
 }
 
@@ -156,6 +165,8 @@ function markSignedIn() {
   state.signedIn = true;
   state.donorName =
     `${ state.firstName.trim() } ${ state.lastName.trim() }`.trim();
+  state.donorFirstName = state.firstName.trim();
+  state.donorLastName = state.lastName.trim();
   state.donorEmail = state.email.trim();
 }
 
@@ -192,10 +203,14 @@ function applyPayload( payload ) {
     state.honoreeName = '';
     state.successUrl = '';
     state.isPending = false;
+    state.fundraiserId = 0;
   }
   Object.assign( state, payload );
   if ( rebinding ) {
     state.goal = payload.defaultGoal || 0;
+    // The first-gift step is campaign-bound too (amounts, currency, Stripe
+    // account), so a rebind resets it and drops any mounted payment element.
+    resetGiftState();
   }
   if ( payload.preselectedTeamId ) {
     state.teamMode = 'join';
@@ -207,12 +222,15 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
   state: {
     // The campaign binding (campaignId, brandline, currencySymbol,
     // defaultGoal, teamCreationEnabled, showTeamChooser, preselectedTeamId,
-    // preselectedTeamName, teams, storyPlaceholder, success/pending copy) and
-    // the signed-in donor (signedIn, donorName, donorEmail, goal) are NOT
+    // preselectedTeamName, teams, storyPlaceholder, success/pending/kickoff
+    // copy, first-gift payment config), the signed-in donor (signedIn,
+    // donorName, donorFirstName, donorLastName, donorEmail, goal), and the
+    // request-scoped Stripe config (stripePublishableKey, testMode,
+    // stripeFeePercent, stripeFeeFixed, stripeAppearance, locale) are NOT
     // declared here: they arrive server-seeded via wp_interactivity_state()
     // (see SignupModal::render()), and store() definitions override server
     // state, so literal defaults would clobber the seed. open( payload )
-    // rebinds them.
+    // rebinds the campaign-scoped part.
     isOpen: false,
     currentStep: 1,
     step1View: 'form',
@@ -290,6 +308,7 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
     // must not read getContext() — everything it needs travels in the payload.
     open( payload ) {
       applyPayload( payload );
+      resetGiftState();
       state.isOpen = true;
       state.currentStep = 1;
       state.step1View = state.signedIn ? 'signedin' : 'form';
@@ -468,6 +487,7 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
           if ( data.nonce ) {
             ctx.nonce = data.nonce;
           }
+          markSignedIn();
           state.currentStep = 2;
         } else if ( data.branch === 'password_mismatch' ) {
           state.showPasswordWarning = true;
@@ -666,7 +686,12 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
         state.successUrl = ( data.fundraiser && data.fundraiser.url ) || '';
         state.isPending =
           ( ( data.fundraiser && data.fundraiser.status ) || '' ) === 'pending';
+        state.fundraiserId = ( data.fundraiser && data.fundraiser.id ) || 0;
+        resetGiftState();
         state.currentStep = 3;
+        if ( state.kickoffEnabled && ! state.isPending ) {
+          prefetchGiftPaymentConfig( ctx );
+        }
       } catch ( e ) {
         state.formError = genericError();
       } finally {

@@ -197,6 +197,166 @@ class SignupModalTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The payload carries the first-gift defaults inherited from the campaign
+	 * form's settings resolver.
+	 */
+	public function test_payload_kickoff_defaults(): void {
+		$campaign = $this->make_open_campaign();
+
+		$payload = SignupModal::payload( $campaign );
+
+		$this->assertFalse( $payload['kickoffEnabled'] );
+		$this->assertSame( [ 2500, 5000, 10000, 25000, 50000 ], $payload['kickoffAmounts'] );
+		$this->assertSame( 'USD', $payload['currency'] );
+		$this->assertSame( $campaign->post_id, $payload['campaignPostId'] );
+		$this->assertSame( '', $payload['stripeAccountId'] );
+		$this->assertTrue( $payload['tipEnabled'] );
+		$this->assertTrue( $payload['feeRecovery'] );
+		$this->assertSame( 'optional', $payload['feeMode'] );
+		$this->assertNotSame( '', $payload['kickoffMessage'] );
+	}
+
+	/**
+	 * kickoffEnabled follows the Stripe charges setting.
+	 */
+	public function test_payload_kickoff_enabled_when_charges_enabled(): void {
+		update_option(
+			'missiondp_settings',
+			[
+				'test_mode'              => true,
+				'currency'               => 'USD',
+				'stripe_charges_enabled' => true,
+			]
+		);
+		$campaign = $this->make_open_campaign();
+
+		$this->assertTrue( SignupModal::payload( $campaign )['kickoffEnabled'] );
+	}
+
+	/**
+	 * The kickoff amounts filter replaces the presets and junk is discarded.
+	 */
+	public function test_payload_kickoff_amounts_filter(): void {
+		$campaign = $this->make_open_campaign();
+
+		add_filter(
+			'mission_p2p_kickoff_amounts',
+			static fn(): array => [ 1000, 0, -5, '7500' ]
+		);
+
+		$this->assertSame( [ 1000, 7500 ], SignupModal::payload( $campaign )['kickoffAmounts'] );
+	}
+
+	/**
+	 * The payload inherits payment config saved on the campaign page's
+	 * donation form block.
+	 */
+	public function test_payload_inherits_campaign_form_attributes(): void {
+		$campaign = $this->make_open_campaign();
+		wp_update_post(
+			[
+				'ID'           => $campaign->post_id,
+				'post_content' => '<!-- wp:mission-donation-platform/donation-form {"stripeAccountId":"acct_123","feeMode":"required","tipEnabled":false} /-->',
+			]
+		);
+		$campaign = Campaign::find( $campaign->id );
+
+		$payload = SignupModal::payload( $campaign );
+
+		$this->assertSame( 'acct_123', $payload['stripeAccountId'] );
+		$this->assertSame( 'required', $payload['feeMode'] );
+		$this->assertFalse( $payload['tipEnabled'] );
+	}
+
+	/**
+	 * render() outputs the first-gift panels (surviving kses) when charges are
+	 * enabled, and the share-only success panel when they are not.
+	 */
+	public function test_render_contains_first_gift_panels(): void {
+		update_option(
+			'missiondp_settings',
+			[
+				'test_mode'              => true,
+				'currency'               => 'USD',
+				'stripe_charges_enabled' => true,
+			]
+		);
+		$campaign = $this->make_open_campaign();
+
+		$html = SignupModal::render( $campaign );
+
+		$this->assertStringContainsString( 'data-wp-text="state.kickoffHeadlineText"', $html );
+		$this->assertStringContainsString( 'mission-su__payment-element', $html );
+		$this->assertStringContainsString( 'data-wp-watch="callbacks.watchGiftAmounts"', $html );
+		$this->assertStringContainsString( 'actions.submitGift', $html );
+		$this->assertStringContainsString( 'actions.shareEmail', $html );
+		$this->assertStringContainsString( 'mission-su__share-icon--email', $html );
+		$this->assertStringContainsString( 'data-wp-bind--hidden="!state.isPending"', $html );
+		$this->assertStringContainsString( 'Skip for now and view my page', $html );
+		// Runtime-composed strings travel through the shell context.
+		$this->assertStringContainsString( 'kickoffHeadline', $html );
+		$this->assertStringContainsString( 'donateAndLaunch', $html );
+	}
+
+	/**
+	 * With charges disabled the success step is the share-only panel.
+	 */
+	public function test_render_without_charges_shows_share_only_success(): void {
+		$campaign = $this->make_open_campaign();
+
+		$html = SignupModal::render( $campaign );
+
+		$this->assertStringNotContainsString( 'mission-su__payment-element', $html );
+		$this->assertStringNotContainsString( 'actions.submitGift', $html );
+		$this->assertStringContainsString( 'data-wp-text="state.successMessage"', $html );
+		$this->assertStringContainsString( 'actions.shareEmail', $html );
+	}
+
+	/**
+	 * render() seeds the split donor name parts and Stripe config into the
+	 * store's global state.
+	 */
+	public function test_render_seeds_payment_state(): void {
+		$campaign = $this->make_open_campaign();
+
+		SignupModal::render( $campaign );
+
+		$state = wp_interactivity_state( 'mission-donation-platform/p2p-signup' );
+
+		$this->assertArrayHasKey( 'donorFirstName', $state );
+		$this->assertArrayHasKey( 'donorLastName', $state );
+		$this->assertArrayHasKey( 'stripePublishableKey', $state );
+		$this->assertArrayHasKey( 'stripeFeePercent', $state );
+		$this->assertArrayHasKey( 'stripeFeeFixed', $state );
+		$this->assertFalse( $state['testMode'] );
+		$this->assertFalse( $state['kickoffEnabled'] );
+	}
+
+	/**
+	 * Stripe.js is enqueued with the shared handle only when the kickoff can run.
+	 */
+	public function test_render_enqueues_stripe_js_only_when_kickoff_enabled(): void {
+		// The scripts registry persists across tests; start from a clean slate.
+		wp_dequeue_script( 'mission-stripe-js' );
+
+		$campaign = $this->make_open_campaign();
+		SignupModal::render( $campaign );
+		$this->assertFalse( wp_script_is( 'mission-stripe-js', 'enqueued' ) );
+
+		update_option(
+			'missiondp_settings',
+			[
+				'test_mode'              => true,
+				'currency'               => 'USD',
+				'stripe_charges_enabled' => true,
+			]
+		);
+		SignupModal::reset();
+		SignupModal::render( $campaign );
+		$this->assertTrue( wp_script_is( 'mission-stripe-js', 'enqueued' ) );
+	}
+
+	/**
 	 * Payloads are memoized per request: a repeat call runs no queries.
 	 */
 	public function test_payload_is_memoized_per_request(): void {

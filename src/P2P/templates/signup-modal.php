@@ -8,9 +8,11 @@
  * value (brandline, teams list, currency symbol, success copy) is a state
  * binding, server-rendered here with the default payload's values and rebound
  * at open time. Step 1 branches on the email (login, inline OTP verification,
- * or inline password reset); steps 2-3 are the fundraiser setup and the
- * share-focused success screen. Submission is wired in view.js against the
- * /p2p REST routes.
+ * or inline password reset); step 2 is the fundraiser setup; step 3 is the
+ * success screen with the first-gift nudge (amount picker, Stripe payment, and
+ * a share-focused thank-you), falling back to a share-only screen when Stripe
+ * charges are disabled. Submission is wired in view.js/gift.js against the
+ * /p2p and /donations REST routes.
  *
  * @package MissionDP
  *
@@ -21,6 +23,7 @@
  * @var \MissionDP\Models\Team|null  $preselected_team Preselected team, when rendered on a team page.
  */
 
+use MissionDP\Currency\Currency;
 use MissionDP\P2P\BlockSupport;
 
 defined( 'ABSPATH' ) || exit;
@@ -38,6 +41,10 @@ $share_buttons = [
 	'bluesky'  => [
 		'action' => 'actions.shareBluesky',
 		'label'  => __( 'Share on Bluesky', 'mission-donation-platform' ),
+	],
+	'email'    => [
+		'action' => 'actions.shareEmail',
+		'label'  => __( 'Share by email', 'mission-donation-platform' ),
 	],
 ];
 ?>
@@ -229,8 +236,12 @@ $share_buttons = [
 					<button type="button" class="mission-su__btn mission-su__btn--ghost" data-wp-bind--hidden="state.signedIn" data-wp-on--click="actions.back"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></button>
 				</div>
 
-				<!-- Step 3: success (live page, or submitted pending approval) -->
+				<!-- Step 3: first-gift nudge, payment, and thanks (or pending approval) -->
 				<div class="mission-su__step" data-wp-class--is-active="state.isStep3">
+
+					<?php // kickoffEnabled is site-global (Stripe charges), so the nudge/payment/thanks panels vs the share-only panel is a render-time branch, not a binding. ?>
+					<?php if ( ! $payload['kickoffEnabled'] ) : ?>
+					<!-- Success without the nudge (Stripe charges disabled) -->
 					<div class="mission-su__success" data-wp-bind--hidden="state.isPending">
 						<h2 class="mission-su__title mission-su__title--success" data-wp-text="state.successTitle"><?php echo esc_html( $payload['successTitle'] ); ?></h2>
 						<p class="mission-su__subtitle" data-wp-text="state.successMessage"><?php echo esc_html( $payload['successMessage'] ); ?></p>
@@ -242,6 +253,130 @@ $share_buttons = [
 						</div>
 						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
 					</div>
+					<?php else : ?>
+					<!-- Success + first-gift nudge -->
+					<div class="mission-su__success" data-wp-bind--hidden="!state.isNudgeView">
+						<h2 class="mission-su__title mission-su__title--success" data-wp-text="state.successTitle"><?php echo esc_html( $payload['successTitle'] ); ?></h2>
+						<p class="mission-su__subtitle" data-wp-text="state.kickoffMessage"><?php echo esc_html( $payload['kickoffMessage'] ); ?></p>
+
+						<h3 class="mission-su__kickoff-heading" data-wp-text="state.kickoffHeadlineText"></h3>
+						<button type="button" class="mission-su__link mission-su__kickoff-change" data-wp-on--click="actions.toggleGiftPicker"><?php esc_html_e( 'Change amount', 'mission-donation-platform' ); ?></button>
+
+						<div class="mission-su__kickoff-picker" data-wp-bind--hidden="!state.giftPickerOpen" hidden>
+							<div class="mission-su__amounts">
+								<template data-wp-each--preset="state.kickoffAmounts" data-wp-each-key="context.preset">
+									<button type="button" class="mission-su__amount-btn" data-wp-class--is-active="callbacks.isGiftPresetActive" data-wp-on--click="actions.selectGiftPreset" data-wp-text="callbacks.giftPresetLabel"></button>
+								</template>
+								<?php foreach ( $payload['kickoffAmounts'] as $kickoff_amount ) : ?>
+									<button type="button" class="mission-su__amount-btn" data-wp-each-child="mission-donation-platform/p2p-signup::state.kickoffAmounts" data-wp-context='<?php echo esc_attr( wp_json_encode( [ 'preset' => $kickoff_amount ] ) ); ?>' data-wp-class--is-active="callbacks.isGiftPresetActive" data-wp-on--click="actions.selectGiftPreset" data-wp-text="callbacks.giftPresetLabel"><?php echo esc_html( $payload['currencySymbol'] . Currency::minor_to_major( $kickoff_amount, $payload['currency'] ) ); ?></button>
+								<?php endforeach; ?>
+								<button type="button" class="mission-su__amount-btn" data-wp-class--is-active="state.isCustomGift" data-wp-on--click="actions.chooseOtherGift"><?php esc_html_e( 'Other', 'mission-donation-platform' ); ?></button>
+							</div>
+							<div class="mission-su__kickoff-custom" data-wp-bind--hidden="!state.isCustomGift" hidden>
+								<span class="mission-su__prefix-wrap">
+									<span class="mission-su__prefix" data-wp-text="state.currencySymbol"><?php echo esc_html( $payload['currencySymbol'] ); ?></span>
+									<input type="number" min="1" step="1" aria-label="<?php esc_attr_e( 'Custom amount', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.customGiftValue" data-wp-on--input="actions.updateCustomGift" />
+								</span>
+							</div>
+						</div>
+
+						<button type="button" class="mission-su__btn mission-su__btn--inline" data-wp-on--click="actions.showGiftPayment"><?php esc_html_e( 'Make the first gift', 'mission-donation-platform' ); ?></button>
+						<p class="mission-su__note"><a class="mission-su__skip" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'Skip for now and view my page', 'mission-donation-platform' ); ?></a></p>
+					</div>
+
+					<!-- First-gift payment -->
+					<div class="mission-su__pay" data-wp-bind--hidden="!state.isGiftPaymentView" hidden>
+						<button type="button" class="mission-su__back" data-wp-on--click="actions.backToNudge"><?php esc_html_e( 'Back', 'mission-donation-platform' ); ?></button>
+
+						<div class="mission-su__pay-amount" data-wp-text="state.giftAmountDisplay"></div>
+
+						<p class="mission-su__pay-fee" data-wp-bind--hidden="!state.feeRecovery">
+							<span class="mission-su__pay-fee-text" data-wp-class--uncovered="!state.giftFeeCovered">+ <span data-wp-text="state.giftFeeDisplay"></span> <?php esc_html_e( 'processing fee', 'mission-donation-platform' ); ?></span>
+							<button type="button" class="mission-su__link mission-su__pay-fee-edit" data-wp-bind--hidden="!state.isGiftFeeOptional" data-wp-on--click="actions.toggleGiftFeeDetails"><?php esc_html_e( 'Edit', 'mission-donation-platform' ); ?></button>
+						</p>
+						<div class="mission-su__pay-fee-details" data-wp-bind--hidden="!state.showGiftFeeDetails" hidden>
+							<p><?php esc_html_e( 'Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about.', 'mission-donation-platform' ); ?></p>
+							<label class="mission-su__check">
+								<input type="checkbox" data-wp-bind--checked="state.giftFeeCovered" data-wp-on--change="actions.toggleGiftFeeCovered" />
+								<?php esc_html_e( 'I want to cover the fee', 'mission-donation-platform' ); ?>
+							</label>
+						</div>
+
+						<p class="mission-su__pay-identity">
+							<?php esc_html_e( 'Donating as', 'mission-donation-platform' ); ?>
+							<strong data-wp-text="state.donorName"></strong>
+							(<span data-wp-text="state.donorEmail"></span>)
+						</p>
+
+						<p class="mission-su__pay-testmode" data-wp-bind--hidden="!state.testMode" hidden>
+							<?php esc_html_e( 'Test mode active: Donations in test mode are not processed', 'mission-donation-platform' ); ?>
+						</p>
+
+						<div class="mission-su__payment-element" data-wp-watch="callbacks.watchGiftAmounts"></div>
+
+						<p class="mission-su__error" role="alert" data-wp-bind--hidden="!state.giftError" data-wp-text="state.giftError"></p>
+						<p class="mission-su__hint mission-su__pay-slow" role="status" data-wp-bind--hidden="!state.giftTakingLong" hidden>
+							<?php esc_html_e( 'This is taking longer than expected. If nothing happens shortly, refresh the page and try again. Your card is only charged when a payment completes.', 'mission-donation-platform' ); ?>
+						</p>
+
+						<div class="mission-su__tip" data-wp-bind--hidden="!state.tipEnabled" data-wp-on-document--click="actions.closeGiftTipMenu" <?php echo $payload['tipEnabled'] ? '' : 'hidden'; ?>>
+							<div class="mission-su__tip-card">
+								<div class="mission-su__tip-header">
+									<p class="mission-su__tip-text"><?php esc_html_e( 'An optional tip keeps this free donation platform running', 'mission-donation-platform' ); ?></p>
+									<div class="mission-su__tip-trigger-wrap">
+										<button type="button" class="mission-su__tip-trigger" data-wp-on--click="actions.toggleGiftTipMenu" data-wp-bind--aria-expanded="state.giftTipMenuOpen" aria-label="<?php esc_attr_e( 'Select tip amount', 'mission-donation-platform' ); ?>">
+											<span class="mission-su__tip-chevron mission-su__tip-chevron--up" aria-hidden="true"></span>
+											<span class="mission-su__tip-value" data-wp-text="state.giftTipTriggerLabel">15%</span>
+											<span class="mission-su__tip-chevron" aria-hidden="true"></span>
+										</button>
+										<div class="mission-su__tip-menu" data-wp-bind--hidden="!state.giftTipMenuOpen" hidden>
+											<button type="button" class="mission-su__tip-option" data-wp-context='{"tipPercent":20}' data-wp-on--click="actions.selectGiftTipPercent" data-wp-class--is-active="callbacks.isGiftTipOptionActive">20%</button>
+											<button type="button" class="mission-su__tip-option" data-wp-context='{"tipPercent":15}' data-wp-on--click="actions.selectGiftTipPercent" data-wp-class--is-active="callbacks.isGiftTipOptionActive">15%</button>
+											<button type="button" class="mission-su__tip-option" data-wp-context='{"tipPercent":10}' data-wp-on--click="actions.selectGiftTipPercent" data-wp-class--is-active="callbacks.isGiftTipOptionActive">10%</button>
+											<button type="button" class="mission-su__tip-option" data-wp-class--is-active="state.isCustomGiftTip" data-wp-on--click="actions.selectGiftCustomTip"><?php esc_html_e( 'Other', 'mission-donation-platform' ); ?></button>
+										</div>
+									</div>
+								</div>
+								<div class="mission-su__tip-custom" data-wp-bind--hidden="!state.isCustomGiftTip" hidden>
+									<span class="mission-su__tip-custom-label">
+										<span class="mission-su__tip-heart" aria-hidden="true"></span>
+										<?php esc_html_e( 'Help keep this platform free', 'mission-donation-platform' ); ?>
+									</span>
+									<span class="mission-su__tip-stepper">
+										<button type="button" class="mission-su__tip-step-btn" data-wp-on--click="actions.giftTipDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'mission-donation-platform' ); ?>">&minus;</button>
+										<span class="mission-su__tip-input-wrap">
+											<span class="mission-su__tip-input-prefix" data-wp-text="state.currencySymbol"><?php echo esc_html( $payload['currencySymbol'] ); ?></span>
+											<input type="number" class="mission-su__tip-input" min="0" step="1" data-wp-bind--value="callbacks.customGiftTipDisplay" data-wp-on--input="actions.updateGiftCustomTip" aria-label="<?php esc_attr_e( 'Custom tip amount', 'mission-donation-platform' ); ?>" />
+										</span>
+										<button type="button" class="mission-su__tip-step-btn" data-wp-on--click="actions.giftTipUp" aria-label="<?php esc_attr_e( 'Increase tip', 'mission-donation-platform' ); ?>">&plus;</button>
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<button type="button" class="mission-su__btn" data-wp-on--click="actions.submitGift" data-wp-bind--disabled="state.isSubmittingGift" data-wp-bind--aria-busy="state.isSubmittingGift" data-wp-class--is-loading="state.isSubmittingGift">
+							<span data-wp-bind--hidden="state.isSubmittingGift" data-wp-text="state.giftSubmitLabel"></span>
+							<span data-wp-bind--hidden="!state.isSubmittingGift" hidden><?php esc_html_e( 'Processing', 'mission-donation-platform' ); ?></span>
+							<span class="mission-su__spinner" data-wp-bind--hidden="!state.isSubmittingGift" aria-hidden="true"></span>
+						</button>
+					</div>
+
+					<!-- First-gift complete -->
+					<div class="mission-su__success" data-wp-bind--hidden="!state.isGiftSuccessView" hidden>
+						<span class="mission-su__success-check" aria-hidden="true"></span>
+						<h2 class="mission-su__title mission-su__title--success"><?php esc_html_e( 'Thank you!', 'mission-donation-platform' ); ?></h2>
+						<p class="mission-su__subtitle" data-wp-text="state.giftSuccessText"></p>
+						<div class="mission-su__share">
+							<?php foreach ( $share_networks as $network ) : ?>
+								<button type="button" class="mission-su__share-btn" data-wp-on--click="<?php echo esc_attr( $share_buttons[ $network ]['action'] ); ?>" aria-label="<?php echo esc_attr( $share_buttons[ $network ]['label'] ); ?>"><span class="<?php echo esc_attr( 'mission-su__share-icon mission-su__share-icon--' . $network ); ?>" aria-hidden="true"></span></button>
+							<?php endforeach; ?>
+							<button type="button" class="mission-su__share-btn" data-wp-class--is-copied="state.copied" data-wp-on--click="actions.copyLink" aria-label="<?php esc_attr_e( 'Copy link', 'mission-donation-platform' ); ?>"><span class="mission-su__share-icon mission-su__share-icon--copy" aria-hidden="true"></span><span class="mission-su__sr-only" aria-live="polite" data-wp-text="state.copyLabel"></span></button>
+						</div>
+						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
+					</div>
+					<?php endif; ?>
+
+					<!-- Submitted pending approval -->
 					<div class="mission-su__success" data-wp-bind--hidden="!state.isPending">
 						<h2 class="mission-su__title mission-su__title--success" data-wp-text="state.pendingTitle"><?php echo esc_html( $payload['pendingTitle'] ); ?></h2>
 						<p class="mission-su__subtitle" data-wp-text="state.pendingMessage"><?php echo esc_html( $payload['pendingMessage'] ); ?></p>
