@@ -42,10 +42,10 @@ msgstr "Mission"
 msgid "Learn more about %s"
 msgstr "Más información sobre %s"
 
-#: blocks/build/campaign-grid/index.php:80
-#: blocks/build/campaign/index.php:61
-#: blocks/src/campaign-grid/index.php:80
-#: blocks/src/campaign/index.php:61
+#: blocks/build/campaign-grid/index.php:75
+#: blocks/build/campaign/index.php:60
+#: blocks/src/campaign-grid/index.php:75
+#: blocks/src/campaign/index.php:60
 #: src/Campaigns/CampaignPostType.php:236
 #: src/Email/templates/admin-milestone.php:84
 #: blocks/build/campaign-grid/index.js:1
@@ -57,26 +57,26 @@ msgstr "Más información sobre %s"
 msgid "View Campaign"
 msgstr "Ver campaña"
 
-#: blocks/build/campaign-grid/index.php:126
-#: blocks/build/campaign/index.php:82
-#: blocks/src/campaign-grid/index.php:126
-#: blocks/src/campaign/index.php:82
+#: blocks/build/campaign-grid/index.php:121
+#: blocks/build/campaign/index.php:81
+#: blocks/src/campaign-grid/index.php:121
+#: blocks/src/campaign/index.php:81
 #: src/DonorDashboard/DashboardLabels.php:120
-#: src/DonorDashboard/FundraisersContextBuilder.php:331
-#: src/DonorDashboard/FundraisersContextBuilder.php:348
+#: src/DonorDashboard/FundraisersContextBuilder.php:362
+#: src/DonorDashboard/FundraisersContextBuilder.php:379
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:59
-#: admin/src/pages/campaigns/CampaignList.js:132
+#: admin/src/pages/campaigns/CampaignList.js:60
+#: admin/src/pages/campaigns/CampaignList.js:133
 #: assets/shared/campaign-card-helpers.js:44
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign/index.js:1
 msgid "Ended"
 msgstr "Finalizada"
 
-#: blocks/build/campaign-grid/index.php:129
-#: blocks/build/campaign/index.php:85
-#: blocks/src/campaign-grid/index.php:129
-#: blocks/src/campaign/index.php:85
+#: blocks/build/campaign-grid/index.php:124
+#: blocks/build/campaign/index.php:84
+#: blocks/src/campaign-grid/index.php:124
+#: blocks/src/campaign/index.php:84
 #: assets/shared/campaign-card-helpers.js:51
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign/index.js:1
@@ -84,10 +84,10 @@ msgid "Goal Reached"
 msgstr "Meta alcanzada"
 
 #. translators: %d: number of days remaining
-#: blocks/build/campaign-grid/index.php:133
-#: blocks/build/campaign/index.php:89
-#: blocks/src/campaign-grid/index.php:133
-#: blocks/src/campaign/index.php:89
+#: blocks/build/campaign-grid/index.php:128
+#: blocks/build/campaign/index.php:88
+#: blocks/src/campaign-grid/index.php:128
+#: blocks/src/campaign/index.php:88
 msgid "%d Day Left"
 msgid_plural "%d Days Left"
 msgstr[0] "Queda %d día"
@@ -95,17 +95,17 @@ msgstr[1] "Quedan %d días"
 
 #. translators: %s: goal amount
 #. translators: %s: formatted goal amount
-#: blocks/build/campaign-grid/index.php:145
-#: blocks/build/campaign-grid/index.php:151
-#: blocks/build/campaign/index.php:99
-#: blocks/build/campaign/index.php:105
-#: blocks/build/campaign/index.php:111
+#: blocks/build/campaign-grid/index.php:140
+#: blocks/build/campaign-grid/index.php:146
+#: blocks/build/campaign/index.php:98
+#: blocks/build/campaign/index.php:104
+#: blocks/build/campaign/index.php:110
 #: blocks/build/team-members/index.php:96
-#: blocks/src/campaign-grid/index.php:145
-#: blocks/src/campaign-grid/index.php:151
-#: blocks/src/campaign/index.php:99
-#: blocks/src/campaign/index.php:105
-#: blocks/src/campaign/index.php:111
+#: blocks/src/campaign-grid/index.php:140
+#: blocks/src/campaign-grid/index.php:146
+#: blocks/src/campaign/index.php:98
+#: blocks/src/campaign/index.php:104
+#: blocks/src/campaign/index.php:110
 #: blocks/src/team-members/index.php:96
 #: blocks/build/team-members/index.js:2
 #: blocks/src/team-members/index.js:74
@@ -114,10 +114,10 @@ msgstr "de %s"
 
 #. translators: %s: formatted date
 #. translators: %s: campaign end date
-#: blocks/build/campaign-grid/index.php:158
-#: blocks/build/campaign/index.php:118
-#: blocks/src/campaign-grid/index.php:158
-#: blocks/src/campaign/index.php:118
+#: blocks/build/campaign-grid/index.php:153
+#: blocks/build/campaign/index.php:117
+#: blocks/src/campaign-grid/index.php:153
+#: blocks/src/campaign/index.php:117
 #: src/DonorDashboard/DashboardLabels.php:119
 msgid "Ended %s"
 msgstr "Finalizada el %s"
@@ -125,22 +125,22 @@ msgstr "Finalizada el %s"
 #. translators: %s: formatted date
 #. translators: %s: campaign end date
 #. translators: %s: formatted end date
-#: blocks/build/campaign-grid/index.php:161
-#: blocks/build/campaign/index.php:121
-#: blocks/src/campaign-grid/index.php:161
-#: blocks/src/campaign/index.php:121
+#: blocks/build/campaign-grid/index.php:156
+#: blocks/build/campaign/index.php:120
+#: blocks/src/campaign-grid/index.php:156
+#: blocks/src/campaign/index.php:120
 #: src/DonorDashboard/DashboardLabels.php:139
 #: admin/build/mission-admin.js:198
-#: admin/src/components/GoalMeter.js:92
+#: admin/src/components/GoalMeter.js:93
 msgid "Ends %s"
 msgstr "Finaliza el %s"
 
-#: blocks/build/campaign-grid/index.php:163
-#: blocks/build/campaign/index.php:123
-#: blocks/build/donation-form/index.php:260
-#: blocks/src/campaign-grid/index.php:163
-#: blocks/src/campaign/index.php:123
-#: blocks/src/donation-form/index.php:260
+#: blocks/build/campaign-grid/index.php:158
+#: blocks/build/campaign/index.php:122
+#: blocks/build/donation-form/index.php:266
+#: blocks/src/campaign-grid/index.php:158
+#: blocks/src/campaign/index.php:122
+#: blocks/src/donation-form/index.php:266
 #: assets/shared/campaign-card-helpers.js:116
 #: blocks/build/campaign-grid/index.js:1
 #: blocks/build/campaign/index.js:1
@@ -149,10 +149,10 @@ msgstr "Finaliza el %s"
 msgid "Ongoing"
 msgstr "Recurrente"
 
-#: blocks/build/campaign-grid/index.php:216
-#: blocks/build/campaign/index.php:190
-#: blocks/src/campaign-grid/index.php:216
-#: blocks/src/campaign/index.php:190
+#: blocks/build/campaign-grid/index.php:211
+#: blocks/build/campaign/index.php:185
+#: blocks/src/campaign-grid/index.php:211
+#: blocks/src/campaign/index.php:185
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignHero.js:103
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:286
@@ -168,25 +168,25 @@ msgid "donors"
 msgstr "donantes"
 
 #. translators: %s: formatted goal amount
-#: blocks/build/campaign-progress/index.php:78
+#: blocks/build/campaign-progress/index.php:77
 #: blocks/build/fundraiser-progress/index.php:51
-#: blocks/src/campaign-progress/index.php:78
+#: blocks/src/campaign-progress/index.php:77
 #: blocks/src/fundraiser-progress/index.php:51
 #: blocks/build/fundraiser-progress/index.js:2
 #: blocks/src/fundraiser-progress/edit/Edit.js:89
 msgid "raised of %s goal"
 msgstr "recaudado de la meta de %s"
 
-#: blocks/build/campaign-progress/index.php:79
+#: blocks/build/campaign-progress/index.php:78
 #: blocks/build/fundraiser-progress/index.php:52
 #: blocks/build/team-progress/index.php:45
 #: blocks/build/team-progress/index.php:90
-#: blocks/src/campaign-progress/index.php:79
+#: blocks/src/campaign-progress/index.php:78
 #: blocks/src/fundraiser-progress/index.php:52
 #: blocks/src/team-progress/index.php:45
 #: blocks/src/team-progress/index.php:90
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:428
+#: admin/src/pages/campaigns/CampaignList.js:416
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:291
 #: blocks/build/team-progress/index.js:2
 #: blocks/src/team-progress/edit/Edit.js:75
@@ -210,29 +210,29 @@ msgstr "donaciones"
 msgid "days remaining"
 msgstr "días restantes"
 
-#: blocks/build/campaign-progress/index.php:162
+#: blocks/build/campaign-progress/index.php:157
 #: blocks/build/top-fundraisers/index.php:81
 #: blocks/build/top-fundraisers/index.php:85
-#: blocks/src/campaign-progress/index.php:162
+#: blocks/src/campaign-progress/index.php:157
 #: blocks/src/top-fundraisers/index.php:81
 #: blocks/src/top-fundraisers/index.php:85
 msgid "Become a Fundraiser"
 msgstr "Conviértete en recaudador"
 
-#: blocks/build/campaign-progress/index.php:173
-#: blocks/build/campaign-progress/index.php:177
+#: blocks/build/campaign-progress/index.php:168
+#: blocks/build/campaign-progress/index.php:172
 #: blocks/build/donate-button/index.php:28
 #: blocks/build/fundraiser-progress/index.php:96
 #: blocks/build/fundraiser-progress/index.php:100
-#: blocks/build/recent-donors/index.php:76
-#: blocks/build/recent-donors/index.php:80
-#: blocks/src/campaign-progress/index.php:173
-#: blocks/src/campaign-progress/index.php:177
+#: blocks/build/recent-donors/index.php:71
+#: blocks/build/recent-donors/index.php:75
+#: blocks/src/campaign-progress/index.php:168
+#: blocks/src/campaign-progress/index.php:172
 #: blocks/src/donate-button/index.php:28
 #: blocks/src/fundraiser-progress/index.php:96
 #: blocks/src/fundraiser-progress/index.php:100
-#: blocks/src/recent-donors/index.php:76
-#: blocks/src/recent-donors/index.php:80
+#: blocks/src/recent-donors/index.php:71
+#: blocks/src/recent-donors/index.php:75
 #: blocks/build/campaign-progress/index.js:1
 #: blocks/build/donate-button/index.js:1
 #: blocks/build/fundraiser-progress/index.js:2
@@ -287,13 +287,13 @@ msgstr "Donación principal"
 
 #: blocks/build/campaign-statistics/index.php:64
 #: blocks/src/campaign-statistics/index.php:64
-#: src/DonorDashboard/FundraisersContextBuilder.php:396
+#: src/DonorDashboard/FundraisersContextBuilder.php:427
 #: src/Export/ExportService.php:807
 #: src/Export/ExportService.php:823
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:206
-#: admin/src/pages/campaigns/CampaignList.js:409
+#: admin/src/pages/campaigns/CampaignList.js:397
 #: admin/src/pages/fundraisers/FundraiserList.js:180
 #: admin/src/pages/teams/TeamList.js:190
 #: blocks/build/campaign-statistics/index.js:1
@@ -303,9 +303,9 @@ msgid "Total Raised"
 msgstr "Total recaudado"
 
 #: blocks/build/donation-form/index.php:66
-#: blocks/build/donation-form/index.php:247
+#: blocks/build/donation-form/index.php:253
 #: blocks/src/donation-form/index.php:66
-#: blocks/src/donation-form/index.php:247
+#: blocks/src/donation-form/index.php:253
 #: blocks/build/donation-form/index.js:1
 #: blocks/src/donation-form/edit/FormPreview.js:71
 msgid "One Time"
@@ -323,11 +323,11 @@ msgid "Weekly"
 msgstr "Semanal"
 
 #: blocks/build/donation-form/index.php:72
-#: blocks/build/donor-wall/index.php:102
+#: blocks/build/donor-wall/index.php:101
 #: blocks/src/donation-form/index.php:72
-#: blocks/src/donor-wall/index.php:102
+#: blocks/src/donor-wall/index.php:101
 #: src/DonorDashboard/DashboardContextBuilder.php:89
-#: src/Rest/Endpoints/EmailTestEndpoint.php:154
+#: src/Rest/Endpoints/EmailTestEndpoint.php:152
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:77
 #: assets/shared/components/FrequencyChips.js:6
@@ -339,9 +339,9 @@ msgid "Monthly"
 msgstr "Mensual"
 
 #: blocks/build/donation-form/index.php:73
-#: blocks/build/donor-wall/index.php:103
+#: blocks/build/donor-wall/index.php:102
 #: blocks/src/donation-form/index.php:73
-#: blocks/src/donor-wall/index.php:103
+#: blocks/src/donor-wall/index.php:102
 #: src/DonorDashboard/DashboardContextBuilder.php:90
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:78
@@ -354,9 +354,9 @@ msgid "Quarterly"
 msgstr "Trimestral"
 
 #: blocks/build/donation-form/index.php:74
-#: blocks/build/donor-wall/index.php:104
+#: blocks/build/donor-wall/index.php:103
 #: blocks/src/donation-form/index.php:74
-#: blocks/src/donor-wall/index.php:104
+#: blocks/src/donor-wall/index.php:103
 #: src/DonorDashboard/DashboardContextBuilder.php:91
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:79
@@ -368,13 +368,13 @@ msgstr "Trimestral"
 msgid "Annually"
 msgstr "Anual"
 
-#: blocks/build/donation-form/index.php:208
-#: blocks/src/donation-form/index.php:208
+#: blocks/build/donation-form/index.php:214
+#: blocks/src/donation-form/index.php:214
 msgid "Test mode active: Donations in test mode are not processed"
 msgstr "Modo de prueba activado: las donaciones en modo de prueba no se procesan"
 
-#: blocks/build/donation-form/index.php:234
-#: blocks/src/donation-form/index.php:234
+#: blocks/build/donation-form/index.php:240
+#: blocks/src/donation-form/index.php:240
 #: blocks/build/donation-form/index.js:1
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/FormPreview.js:65
@@ -382,21 +382,21 @@ msgstr "Modo de prueba activado: las donaciones en modo de prueba no se procesan
 msgid "Choose Your Gift"
 msgstr "Elige tu donativo"
 
-#: blocks/build/donation-form/index.php:268
-#: blocks/src/donation-form/index.php:268
+#: blocks/build/donation-form/index.php:274
+#: blocks/src/donation-form/index.php:274
 msgid "Give"
 msgstr "Donar"
 
-#: blocks/build/donation-form/index.php:275
-#: blocks/src/donation-form/index.php:275
+#: blocks/build/donation-form/index.php:281
+#: blocks/src/donation-form/index.php:281
 msgid "Select frequency"
 msgstr "Selecciona la frecuencia"
 
-#: blocks/build/donation-form/index.php:319
-#: blocks/build/donation-form/index.php:903
+#: blocks/build/donation-form/index.php:342
+#: blocks/build/donation-form/index.php:926
 #: blocks/build/donor-dashboard/parts/recurring.php:179
-#: blocks/src/donation-form/index.php:319
-#: blocks/src/donation-form/index.php:903
+#: blocks/src/donation-form/index.php:342
+#: blocks/src/donation-form/index.php:926
 #: blocks/src/donor-dashboard/parts/recurring.php:179
 #: src/Admin/DeactivationSurvey.php:199
 #: blocks/build/donation-form/index.js:1
@@ -404,30 +404,30 @@ msgstr "Selecciona la frecuencia"
 msgid "Other"
 msgstr "Otro"
 
-#: blocks/build/donation-form/index.php:331
-#: blocks/src/donation-form/index.php:331
+#: blocks/build/donation-form/index.php:354
+#: blocks/src/donation-form/index.php:354
 msgid "Custom amount"
 msgstr "Importe personalizado"
 
 #. translators: %s: formatted minimum amount
-#: blocks/build/donation-form/index.php:344
-#: blocks/src/donation-form/index.php:344
+#: blocks/build/donation-form/index.php:367
+#: blocks/src/donation-form/index.php:367
 msgid "Minimum donation is %s"
 msgstr "La donación mínima es de %s"
 
-#: blocks/build/donation-form/index.php:360
-#: blocks/src/donation-form/index.php:360
+#: blocks/build/donation-form/index.php:383
+#: blocks/src/donation-form/index.php:383
 msgid "Dedicate this gift in honor or memory of someone"
 msgstr "Dedica este donativo en honor o en memoria de alguien"
 
-#: blocks/build/donation-form/index.php:370
+#: blocks/build/donation-form/index.php:393
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:129
-#: blocks/build/recent-donors/index.php:109
-#: blocks/build/top-donors/index.php:111
-#: blocks/src/donation-form/index.php:370
+#: blocks/build/recent-donors/index.php:104
+#: blocks/build/top-donors/index.php:106
+#: blocks/src/donation-form/index.php:393
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:129
-#: blocks/src/recent-donors/index.php:109
-#: blocks/src/top-donors/index.php:111
+#: blocks/src/recent-donors/index.php:104
+#: blocks/src/top-donors/index.php:106
 #: src/P2P/templates/signup-modal.php:218
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
@@ -437,14 +437,14 @@ msgstr "Dedica este donativo en honor o en memoria de alguien"
 msgid "In honor of"
 msgstr "En honor de"
 
-#: blocks/build/donation-form/index.php:371
+#: blocks/build/donation-form/index.php:394
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:130
-#: blocks/build/recent-donors/index.php:108
-#: blocks/build/top-donors/index.php:110
-#: blocks/src/donation-form/index.php:371
+#: blocks/build/recent-donors/index.php:103
+#: blocks/build/top-donors/index.php:105
+#: blocks/src/donation-form/index.php:394
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:130
-#: blocks/src/recent-donors/index.php:108
-#: blocks/src/top-donors/index.php:110
+#: blocks/src/recent-donors/index.php:103
+#: blocks/src/top-donors/index.php:105
 #: src/P2P/templates/signup-modal.php:219
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:204
@@ -454,8 +454,8 @@ msgstr "En honor de"
 msgid "In memory of"
 msgstr "En memoria de"
 
-#: blocks/build/donation-form/index.php:377
-#: blocks/src/donation-form/index.php:377
+#: blocks/build/donation-form/index.php:400
+#: blocks/src/donation-form/index.php:400
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:202
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:216
@@ -463,14 +463,14 @@ msgstr "En memoria de"
 msgid "Honoree name"
 msgstr "Nombre del homenajeado"
 
-#: blocks/build/donation-form/index.php:384
-#: blocks/src/donation-form/index.php:384
+#: blocks/build/donation-form/index.php:407
+#: blocks/src/donation-form/index.php:407
 msgid "Please provide the honoree's name."
 msgstr "Indica el nombre del homenajeado."
 
-#: blocks/build/donation-form/index.php:397
+#: blocks/build/donation-form/index.php:420
 #: blocks/build/donor-dashboard/parts/profile.php:56
-#: blocks/src/donation-form/index.php:397
+#: blocks/src/donation-form/index.php:420
 #: blocks/src/donor-dashboard/parts/profile.php:56
 #: src/Export/ExportService.php:102
 #: src/Export/ExportService.php:510
@@ -496,8 +496,8 @@ msgstr "Indica el nombre del homenajeado."
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: blocks/build/donation-form/index.php:407
-#: blocks/src/donation-form/index.php:407
+#: blocks/build/donation-form/index.php:430
+#: blocks/src/donation-form/index.php:430
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:229
 #: admin/src/pages/tools/ExportPanel.js:237
@@ -505,50 +505,50 @@ msgstr "Correo electrónico"
 msgid "Mail"
 msgstr "Correo postal"
 
-#: blocks/build/donation-form/index.php:413
-#: blocks/src/donation-form/index.php:413
+#: blocks/build/donation-form/index.php:436
+#: blocks/src/donation-form/index.php:436
 msgid "Personal Message"
 msgstr "Mensaje personal"
 
-#: blocks/build/donation-form/index.php:413
-#: blocks/src/donation-form/index.php:413
+#: blocks/build/donation-form/index.php:436
+#: blocks/src/donation-form/index.php:436
 #: src/P2P/templates/signup-modal.php:167
 msgid "(optional)"
 msgstr "(opcional)"
 
-#: blocks/build/donation-form/index.php:419
-#: blocks/src/donation-form/index.php:419
+#: blocks/build/donation-form/index.php:442
+#: blocks/src/donation-form/index.php:442
 msgid "Add a personal message to include in the notification"
 msgstr "Añade un mensaje personal para incluirlo en la notificación"
 
-#: blocks/build/donation-form/index.php:427
-#: blocks/build/donation-form/index.php:458
-#: blocks/src/donation-form/index.php:427
-#: blocks/src/donation-form/index.php:458
+#: blocks/build/donation-form/index.php:450
+#: blocks/build/donation-form/index.php:481
+#: blocks/src/donation-form/index.php:450
+#: blocks/src/donation-form/index.php:481
 msgid "Recipient Name"
 msgstr "Nombre del destinatario"
 
-#: blocks/build/donation-form/index.php:437
-#: blocks/build/donation-form/index.php:468
-#: blocks/src/donation-form/index.php:437
-#: blocks/src/donation-form/index.php:468
+#: blocks/build/donation-form/index.php:460
+#: blocks/build/donation-form/index.php:491
+#: blocks/src/donation-form/index.php:460
+#: blocks/src/donation-form/index.php:491
 msgid "Please provide the recipient's name."
 msgstr "Indica el nombre del destinatario."
 
-#: blocks/build/donation-form/index.php:440
-#: blocks/src/donation-form/index.php:440
+#: blocks/build/donation-form/index.php:463
+#: blocks/src/donation-form/index.php:463
 msgid "Recipient Email"
 msgstr "Correo electrónico del destinatario"
 
-#: blocks/build/donation-form/index.php:450
-#: blocks/build/donation-form/index.php:800
-#: blocks/src/donation-form/index.php:450
-#: blocks/src/donation-form/index.php:800
+#: blocks/build/donation-form/index.php:473
+#: blocks/build/donation-form/index.php:823
+#: blocks/src/donation-form/index.php:473
+#: blocks/src/donation-form/index.php:823
 msgid "Please provide a valid email address."
 msgstr "Indica una dirección de correo electrónico válida."
 
-#: blocks/build/donation-form/index.php:471
-#: blocks/src/donation-form/index.php:471
+#: blocks/build/donation-form/index.php:494
+#: blocks/src/donation-form/index.php:494
 #: src/Export/ExportService.php:555
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
@@ -563,61 +563,61 @@ msgstr "Indica una dirección de correo electrónico válida."
 msgid "Country"
 msgstr "País"
 
-#: blocks/build/donation-form/index.php:473
-#: blocks/src/donation-form/index.php:473
+#: blocks/build/donation-form/index.php:496
+#: blocks/src/donation-form/index.php:496
 msgid "United States"
 msgstr "Estados Unidos"
 
-#: blocks/build/donation-form/index.php:474
-#: blocks/src/donation-form/index.php:474
+#: blocks/build/donation-form/index.php:497
+#: blocks/src/donation-form/index.php:497
 msgid "Canada"
 msgstr "Canadá"
 
-#: blocks/build/donation-form/index.php:475
-#: blocks/src/donation-form/index.php:475
+#: blocks/build/donation-form/index.php:498
+#: blocks/src/donation-form/index.php:498
 msgid "United Kingdom"
 msgstr "Reino Unido"
 
-#: blocks/build/donation-form/index.php:476
-#: blocks/src/donation-form/index.php:476
+#: blocks/build/donation-form/index.php:499
+#: blocks/src/donation-form/index.php:499
 msgid "Australia"
 msgstr "Australia"
 
-#: blocks/build/donation-form/index.php:477
-#: blocks/src/donation-form/index.php:477
+#: blocks/build/donation-form/index.php:500
+#: blocks/src/donation-form/index.php:500
 msgid "Germany"
 msgstr "Alemania"
 
-#: blocks/build/donation-form/index.php:478
-#: blocks/src/donation-form/index.php:478
+#: blocks/build/donation-form/index.php:501
+#: blocks/src/donation-form/index.php:501
 msgid "France"
 msgstr "Francia"
 
-#: blocks/build/donation-form/index.php:479
-#: blocks/src/donation-form/index.php:479
+#: blocks/build/donation-form/index.php:502
+#: blocks/src/donation-form/index.php:502
 msgid "New Zealand"
 msgstr "Nueva Zelanda"
 
-#: blocks/build/donation-form/index.php:480
-#: blocks/src/donation-form/index.php:480
+#: blocks/build/donation-form/index.php:503
+#: blocks/src/donation-form/index.php:503
 msgid "Ireland"
 msgstr "Irlanda"
 
-#: blocks/build/donation-form/index.php:481
-#: blocks/src/donation-form/index.php:481
+#: blocks/build/donation-form/index.php:504
+#: blocks/src/donation-form/index.php:504
 msgid "Netherlands"
 msgstr "Países Bajos"
 
-#: blocks/build/donation-form/index.php:485
-#: blocks/src/donation-form/index.php:485
+#: blocks/build/donation-form/index.php:508
+#: blocks/src/donation-form/index.php:508
 #: admin/build/mission-admin.js:191
 #: admin/src/components/onboarding/StepDetails.js:22
 msgid "Street Address"
 msgstr "Dirección"
 
-#: blocks/build/donation-form/index.php:490
+#: blocks/build/donation-form/index.php:513
 #: blocks/build/donor-dashboard/parts/profile.php:148
-#: blocks/src/donation-form/index.php:490
+#: blocks/src/donation-form/index.php:513
 #: blocks/src/donor-dashboard/parts/profile.php:148
 #: src/Export/ExportService.php:540
 #: admin/build/mission-admin.js:191
@@ -634,30 +634,30 @@ msgstr "Dirección"
 msgid "City"
 msgstr "Ciudad"
 
-#: blocks/build/donation-form/index.php:494
-#: blocks/src/donation-form/index.php:494
+#: blocks/build/donation-form/index.php:517
+#: blocks/src/donation-form/index.php:517
 msgid "State / Province"
 msgstr "Estado / Provincia"
 
-#: blocks/build/donation-form/index.php:498
-#: blocks/src/donation-form/index.php:498
+#: blocks/build/donation-form/index.php:521
+#: blocks/src/donation-form/index.php:521
 msgid "Postal Code"
 msgstr "Código postal"
 
-#: blocks/build/donation-form/index.php:524
-#: blocks/src/donation-form/index.php:524
+#: blocks/build/donation-form/index.php:547
+#: blocks/src/donation-form/index.php:547
 msgid "Add a comment to my donation"
 msgstr "Añadir un comentario a mi donación"
 
-#: blocks/build/donation-form/index.php:533
-#: blocks/src/donation-form/index.php:533
+#: blocks/build/donation-form/index.php:556
+#: blocks/src/donation-form/index.php:556
 msgid "Leave a message (optional)"
 msgstr "Deja un mensaje (opcional)"
 
-#: blocks/build/donation-form/index.php:544
-#: blocks/build/donation-form/index.php:696
-#: blocks/src/donation-form/index.php:544
-#: blocks/src/donation-form/index.php:696
+#: blocks/build/donation-form/index.php:567
+#: blocks/build/donation-form/index.php:719
+#: blocks/src/donation-form/index.php:567
+#: blocks/src/donation-form/index.php:719
 #: src/P2P/templates/signup-modal.php:82
 #: src/P2P/templates/signup-modal.php:108
 #: admin/build/mission-admin.js:152
@@ -671,10 +671,10 @@ msgstr "Deja un mensaje (opcional)"
 msgid "Continue"
 msgstr "Continuar"
 
-#: blocks/build/donation-form/index.php:559
-#: blocks/build/donation-form/index.php:711
-#: blocks/src/donation-form/index.php:559
-#: blocks/src/donation-form/index.php:711
+#: blocks/build/donation-form/index.php:582
+#: blocks/build/donation-form/index.php:734
+#: blocks/src/donation-form/index.php:582
+#: blocks/src/donation-form/index.php:734
 #: src/P2P/templates/signup-modal.php:229
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -685,20 +685,20 @@ msgstr "Continuar"
 msgid "Back"
 msgstr "Atrás"
 
-#: blocks/build/donation-form/index.php:561
-#: blocks/src/donation-form/index.php:561
+#: blocks/build/donation-form/index.php:584
+#: blocks/src/donation-form/index.php:584
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/tabs/AppearanceTab.js:138
 msgid "Additional Information"
 msgstr "Información adicional"
 
-#: blocks/build/donation-form/index.php:627
-#: blocks/src/donation-form/index.php:627
+#: blocks/build/donation-form/index.php:650
+#: blocks/src/donation-form/index.php:650
 msgid "Select an option"
 msgstr "Selecciona una opción"
 
-#: blocks/build/donation-form/index.php:685
-#: blocks/src/donation-form/index.php:685
+#: blocks/build/donation-form/index.php:708
+#: blocks/src/donation-form/index.php:708
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:269
@@ -712,50 +712,50 @@ msgstr "Selecciona una opción"
 msgid "This field is required."
 msgstr "Este campo es obligatorio."
 
-#: blocks/build/donation-form/index.php:713
-#: blocks/src/donation-form/index.php:713
+#: blocks/build/donation-form/index.php:736
+#: blocks/src/donation-form/index.php:736
 msgid "Complete Your Gift"
 msgstr "Completa tu donativo"
 
-#: blocks/build/donation-form/index.php:727
-#: blocks/build/donation-form/index.php:730
+#: blocks/build/donation-form/index.php:750
+#: blocks/build/donation-form/index.php:753
 #: blocks/build/donor-dashboard/parts/recurring.php:137
-#: blocks/src/donation-form/index.php:727
-#: blocks/src/donation-form/index.php:730
+#: blocks/src/donation-form/index.php:750
+#: blocks/src/donation-form/index.php:753
 #: blocks/src/donor-dashboard/parts/recurring.php:137
 msgid "processing fee"
 msgstr "comisión de procesamiento"
 
-#: blocks/build/donation-form/index.php:732
+#: blocks/build/donation-form/index.php:755
 #: blocks/build/donor-dashboard/parts/recurring.php:139
-#: blocks/src/donation-form/index.php:732
+#: blocks/src/donation-form/index.php:755
 #: blocks/src/donor-dashboard/parts/recurring.php:139
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:204
 #: admin/build/mission-admin.js:269
-#: admin/src/pages/campaigns/CampaignList.js:325
+#: admin/src/pages/campaigns/CampaignList.js:313
 #: admin/src/pages/settings/EmailsPanel.js:35
 #: admin/src/pages/tools/WebhooksPanel.js:375
 #: admin/src/pages/transactions/DedicationSection.js:256
 msgid "Edit"
 msgstr "Editar"
 
-#: blocks/build/donation-form/index.php:739
-#: blocks/src/donation-form/index.php:739
+#: blocks/build/donation-form/index.php:762
+#: blocks/src/donation-form/index.php:762
 msgid "Payment processors take a cut of each transaction. You have the option to cover these fees so 100% of your gift can go to the cause you care about."
 msgstr "Las pasarelas de pago se quedan con una parte de cada transacción. Tienes la opción de cubrir estas comisiones para que el 100 % de tu donativo llegue a la causa que te importa."
 
-#: blocks/build/donation-form/index.php:746
+#: blocks/build/donation-form/index.php:769
 #: blocks/build/donor-dashboard/parts/recurring.php:151
-#: blocks/src/donation-form/index.php:746
+#: blocks/src/donation-form/index.php:769
 #: blocks/src/donor-dashboard/parts/recurring.php:151
 msgid "I want to cover the fee"
 msgstr "Quiero cubrir la comisión"
 
-#: blocks/build/donation-form/index.php:759
+#: blocks/build/donation-form/index.php:782
 #: blocks/build/donor-dashboard/parts/profile.php:24
-#: blocks/src/donation-form/index.php:759
+#: blocks/src/donation-form/index.php:782
 #: blocks/src/donor-dashboard/parts/profile.php:24
 #: src/Export/ExportService.php:515
 #: admin/build/mission-admin.js:191
@@ -767,16 +767,16 @@ msgstr "Quiero cubrir la comisión"
 msgid "First Name"
 msgstr "Nombre"
 
-#: blocks/build/donation-form/index.php:770
-#: blocks/build/donation-form/index.php:784
-#: blocks/src/donation-form/index.php:770
-#: blocks/src/donation-form/index.php:784
+#: blocks/build/donation-form/index.php:793
+#: blocks/build/donation-form/index.php:807
+#: blocks/src/donation-form/index.php:793
+#: blocks/src/donation-form/index.php:807
 msgid "This field is incomplete."
 msgstr "Este campo está incompleto."
 
-#: blocks/build/donation-form/index.php:773
+#: blocks/build/donation-form/index.php:796
 #: blocks/build/donor-dashboard/parts/profile.php:40
-#: blocks/src/donation-form/index.php:773
+#: blocks/src/donation-form/index.php:796
 #: blocks/src/donor-dashboard/parts/profile.php:40
 #: src/Export/ExportService.php:520
 #: admin/build/mission-admin.js:191
@@ -788,108 +788,108 @@ msgstr "Este campo está incompleto."
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: blocks/build/donation-form/index.php:789
-#: blocks/src/donation-form/index.php:789
+#: blocks/build/donation-form/index.php:812
+#: blocks/src/donation-form/index.php:812
 msgid "Email Address"
 msgstr "Dirección de correo electrónico"
 
-#: blocks/build/donation-form/index.php:804
-#: blocks/src/donation-form/index.php:804
+#: blocks/build/donation-form/index.php:827
+#: blocks/src/donation-form/index.php:827
 msgid "Phone Number"
 msgstr "Número de teléfono"
 
-#: blocks/build/donation-form/index.php:815
-#: blocks/src/donation-form/index.php:815
+#: blocks/build/donation-form/index.php:838
+#: blocks/src/donation-form/index.php:838
 msgid "Please provide a phone number."
 msgstr "Indica un número de teléfono."
 
-#: blocks/build/donation-form/index.php:829
-#: blocks/src/donation-form/index.php:829
+#: blocks/build/donation-form/index.php:852
+#: blocks/src/donation-form/index.php:852
 msgid "Make my donation anonymous"
 msgstr "Hacer mi donación anónima"
 
-#: blocks/build/donation-form/index.php:851
-#: blocks/src/donation-form/index.php:851
+#: blocks/build/donation-form/index.php:874
+#: blocks/src/donation-form/index.php:874
 msgid "Donations are not available right now. Please check back soon."
 msgstr "Las donaciones no están disponibles en este momento. Vuelve a intentarlo pronto."
 
-#: blocks/build/donation-form/index.php:866
-#: blocks/src/donation-form/index.php:866
+#: blocks/build/donation-form/index.php:889
+#: blocks/src/donation-form/index.php:889
 msgid "Dismiss error"
 msgstr "Descartar el error"
 
-#: blocks/build/donation-form/index.php:880
-#: blocks/src/donation-form/index.php:880
+#: blocks/build/donation-form/index.php:903
+#: blocks/src/donation-form/index.php:903
 msgid "An optional tip keeps this free donation platform running"
 msgstr "Una propina opcional ayuda a mantener en funcionamiento esta plataforma de donaciones gratuita"
 
-#: blocks/build/donation-form/index.php:888
-#: blocks/src/donation-form/index.php:888
+#: blocks/build/donation-form/index.php:911
+#: blocks/src/donation-form/index.php:911
 msgid "Select tip amount"
 msgstr "Selecciona el importe de la propina"
 
-#: blocks/build/donation-form/index.php:914
+#: blocks/build/donation-form/index.php:937
 #: blocks/build/donor-dashboard/parts/recurring.php:190
-#: blocks/src/donation-form/index.php:914
+#: blocks/src/donation-form/index.php:937
 #: blocks/src/donor-dashboard/parts/recurring.php:190
 msgid "Help keep this platform free"
 msgstr "Ayuda a mantener gratuita esta plataforma"
 
-#: blocks/build/donation-form/index.php:917
+#: blocks/build/donation-form/index.php:940
 #: blocks/build/donor-dashboard/parts/recurring.php:193
-#: blocks/src/donation-form/index.php:917
+#: blocks/src/donation-form/index.php:940
 #: blocks/src/donor-dashboard/parts/recurring.php:193
 msgid "Decrease tip"
 msgstr "Reducir la propina"
 
-#: blocks/build/donation-form/index.php:927
+#: blocks/build/donation-form/index.php:950
 #: blocks/build/donor-dashboard/parts/recurring.php:203
-#: blocks/src/donation-form/index.php:927
+#: blocks/src/donation-form/index.php:950
 #: blocks/src/donor-dashboard/parts/recurring.php:203
 msgid "Custom tip amount"
 msgstr "Importe de propina personalizado"
 
-#: blocks/build/donation-form/index.php:930
+#: blocks/build/donation-form/index.php:953
 #: blocks/build/donor-dashboard/parts/recurring.php:206
-#: blocks/src/donation-form/index.php:930
+#: blocks/src/donation-form/index.php:953
 #: blocks/src/donor-dashboard/parts/recurring.php:206
 msgid "Increase tip"
 msgstr "Aumentar la propina"
 
-#: blocks/build/donation-form/index.php:949
-#: blocks/src/donation-form/index.php:949
+#: blocks/build/donation-form/index.php:972
+#: blocks/src/donation-form/index.php:972
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/tabs/AppearanceTab.js:192
 msgid "Donate"
 msgstr "Donar"
 
-#: blocks/build/donation-form/index.php:951
-#: blocks/src/donation-form/index.php:951
+#: blocks/build/donation-form/index.php:974
+#: blocks/src/donation-form/index.php:974
 msgid "Processing"
 msgstr "Procesando"
 
-#: blocks/build/donation-form/index.php:976
-#: blocks/src/donation-form/index.php:976
+#: blocks/build/donation-form/index.php:1006
+#: blocks/src/donation-form/index.php:1006
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/Edit.js:19
 msgid "Thank you!"
 msgstr "¡Gracias!"
 
-#: blocks/build/donation-form/index.php:978
-#: blocks/src/donation-form/index.php:978
+#: blocks/build/donation-form/index.php:1008
+#: blocks/src/donation-form/index.php:1008
 #: blocks/build/donation-form/index.js:3
 #: blocks/src/donation-form/edit/Edit.js:26
 msgid "Your donation has been processed successfully. You will receive a confirmation email shortly."
 msgstr "Tu donación se ha procesado correctamente. Recibirás un correo electrónico de confirmación en breve."
 
-#: blocks/build/donation-form/index.php:981
-#: blocks/src/donation-form/index.php:981
+#: blocks/build/donation-form/index.php:1011
+#: blocks/src/donation-form/index.php:1011
 msgid "Your recurring donation has been set up successfully. You will receive a confirmation email shortly."
 msgstr "Tu donación recurrente se ha configurado correctamente. Recibirás un correo electrónico de confirmación en breve."
 
 #. translators: %s: Mission brand name
-#: blocks/build/donation-form/index.php:1000
-#: blocks/src/donation-form/index.php:1000
+#: blocks/build/donation-form/index.php:1030
+#: blocks/src/donation-form/index.php:1030
 msgid "Secure donation powered by %s"
 msgstr "Donación segura con la tecnología de %s"
 
@@ -914,7 +914,7 @@ msgstr "Mostrar la contraseña"
 
 #: blocks/build/donor-dashboard/index.php:134
 #: blocks/src/donor-dashboard/index.php:134
-#: src/DonorDashboard/DashboardContextBuilder.php:301
+#: src/DonorDashboard/DashboardContextBuilder.php:303
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignTabNav.js:4
 #: blocks/build/donor-dashboard/index.js:1
@@ -1195,15 +1195,15 @@ msgstr "Restableciendo..."
 msgid "Your page is awaiting approval. You can edit it now and it will go live once an organizer approves it."
 msgstr "Tu página está pendiente de aprobación. Puedes editarla ahora y se publicará en cuanto un organizador la apruebe."
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:254
-#: src/DonorDashboard/TeamsContextBuilder.php:237
+#: src/DonorDashboard/FundraisersContextBuilder.php:285
+#: src/DonorDashboard/TeamsContextBuilder.php:241
 #: src/Export/ExportService.php:166
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:200
 #: admin/build/mission-admin.js:206
 #: admin/build/mission-admin.js:216
-#: admin/src/pages/campaigns/CampaignList.js:140
+#: admin/src/pages/campaigns/CampaignList.js:141
 #: admin/src/pages/fundraisers/FundraiserDetail.js:355
 #: admin/src/pages/fundraisers/FundraiserList.js:95
 #: admin/src/pages/teams/TeamDetail.js:394
@@ -1235,7 +1235,7 @@ msgstr "Donantes"
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/build/mission-admin.js:206
-#: admin/src/pages/campaigns/CampaignList.js:155
+#: admin/src/pages/campaigns/CampaignList.js:156
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:147
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:95
 #: admin/src/pages/fundraisers/FundraiserList.js:84
@@ -1353,7 +1353,7 @@ msgstr "Historia del equipo"
 #: admin/build/mission-admin.js:216
 #: admin/src/pages/teams/TeamDetail.js:398
 #: admin/src/pages/teams/TeamList.js:84
-#: admin/src/pages/teams/TeamMembersCard.js:81
+#: admin/src/pages/teams/TeamMembersCard.js:71
 msgid "Members"
 msgstr "Miembros"
 
@@ -1361,9 +1361,9 @@ msgstr "Miembros"
 #: blocks/build/team-members/index.php:84
 #: blocks/src/donor-dashboard/parts/team-detail.php:250
 #: blocks/src/team-members/index.php:84
-#: src/DonorDashboard/FundraisersContextBuilder.php:268
-#: src/DonorDashboard/TeamsContextBuilder.php:220
-#: src/DonorDashboard/TeamsContextBuilder.php:285
+#: src/DonorDashboard/FundraisersContextBuilder.php:299
+#: src/DonorDashboard/TeamsContextBuilder.php:224
+#: src/DonorDashboard/TeamsContextBuilder.php:289
 #: src/Email/TeamEmailListener.php:132
 #: src/Email/TeamEmailListener.php:171
 #: src/Email/templates/p2p-team-approved.php:14
@@ -1376,7 +1376,7 @@ msgstr "Miembros"
 #: admin/src/pages/teams/EditTeamDrawer.js:164
 #: admin/src/pages/teams/TeamDetailsCard.js:34
 #: admin/src/pages/teams/TeamList.js:71
-#: admin/src/pages/teams/TeamMembersCard.js:130
+#: admin/src/pages/teams/TeamMembersCard.js:120
 #: blocks/build/team-members/index.js:1
 #: blocks/src/team-members/index.js:54
 msgid "Captain"
@@ -1385,7 +1385,7 @@ msgstr "Capitán"
 #: blocks/build/donor-dashboard/parts/team-detail.php:258
 #: blocks/src/donor-dashboard/parts/team-detail.php:258
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/teams/TeamMembersCard.js:144
+#: admin/src/pages/teams/TeamMembersCard.js:134
 msgid "Make captain"
 msgstr "Hacer capitán"
 
@@ -1400,8 +1400,8 @@ msgstr "Hacer capitán"
 #: admin/src/components/onboarding/StepCampaign.js:237
 #: admin/src/pages/campaigns/CampaignCreateStepImage.js:66
 #: admin/src/pages/campaigns/tabs/EditPageTab.js:203
-#: admin/src/pages/teams/TeamMembersCard.js:154
-#: admin/src/pages/teams/TeamMembersCard.js:255
+#: admin/src/pages/teams/TeamMembersCard.js:144
+#: admin/src/pages/teams/TeamMembersCard.js:245
 #: admin/src/pages/tools/ImportPanel.js:786
 #: admin/src/pages/transactions/DedicationSection.js:266
 msgid "Remove"
@@ -1577,7 +1577,7 @@ msgstr "Todos los tipos"
 
 #: blocks/build/donor-dashboard/parts/history.php:44
 #: blocks/src/donor-dashboard/parts/history.php:44
-#: src/DonorDashboard/DashboardContextBuilder.php:545
+#: src/DonorDashboard/DashboardContextBuilder.php:547
 #: src/Email/templates/admin-new-donation.php:79
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
@@ -1595,7 +1595,7 @@ msgstr "Única"
 
 #: blocks/build/donor-dashboard/parts/history.php:45
 #: blocks/src/donor-dashboard/parts/history.php:45
-#: src/DonorDashboard/DashboardContextBuilder.php:545
+#: src/DonorDashboard/DashboardContextBuilder.php:547
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
@@ -1650,7 +1650,7 @@ msgstr "Historial de donaciones"
 #: admin/src/components/onboarding/StepDone.js:171
 #: admin/src/components/onboarding/StepNav.js:8
 #: admin/src/components/TransactionsTableCard.js:57
-#: admin/src/pages/campaigns/CampaignList.js:103
+#: admin/src/pages/campaigns/CampaignList.js:104
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:46
 #: admin/src/pages/fundraisers/FundraiserList.js:56
 #: admin/src/pages/settings/email-templates.js:38
@@ -1728,7 +1728,7 @@ msgstr "Tipo"
 #: admin/build/mission-admin.js:211
 #: admin/build/mission-admin.js:269
 #: admin/src/components/TransactionsTableCard.js:108
-#: admin/src/pages/campaigns/CampaignList.js:118
+#: admin/src/pages/campaigns/CampaignList.js:119
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:195
 #: admin/src/pages/donors/DonorSubscriptionsCard.js:23
 #: admin/src/pages/fundraisers/EditFundraiserDrawer.js:156
@@ -1877,7 +1877,7 @@ msgstr "Verificación enviada a"
 #: admin/src/components/NotesCard.js:202
 #: admin/src/components/NotesCard.js:258
 #: admin/src/pages/campaigns/CampaignCreateModal.js:202
-#: admin/src/pages/campaigns/CampaignList.js:367
+#: admin/src/pages/campaigns/CampaignList.js:355
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:88
 #: admin/src/pages/donors/AddDonorDrawer.js:159
 #: admin/src/pages/donors/EditDonorDrawer.js:189
@@ -1887,8 +1887,8 @@ msgstr "Verificación enviada a"
 #: admin/src/pages/Settings.js:526
 #: admin/src/pages/teams/EditTeamDrawer.js:100
 #: admin/src/pages/teams/TeamDetail.js:499
-#: admin/src/pages/teams/TeamMembersCard.js:206
-#: admin/src/pages/teams/TeamMembersCard.js:245
+#: admin/src/pages/teams/TeamMembersCard.js:196
+#: admin/src/pages/teams/TeamMembersCard.js:235
 #: admin/src/pages/tools/ComingSoonPanel.js:314
 #: admin/src/pages/tools/ConfirmationModal.js:60
 #: admin/src/pages/tools/ImportPanel.js:1143
@@ -2056,8 +2056,8 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: blocks/build/donor-dashboard/parts/recurring.php:30
 #: blocks/src/donor-dashboard/parts/recurring.php:18
 #: blocks/src/donor-dashboard/parts/recurring.php:30
-#: src/DonorDashboard/FundraisersContextBuilder.php:334
-#: src/DonorDashboard/TeamsContextBuilder.php:200
+#: src/DonorDashboard/FundraisersContextBuilder.php:365
+#: src/DonorDashboard/TeamsContextBuilder.php:204
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:204
@@ -2065,8 +2065,8 @@ msgstr "Todavía no tienes ninguna donación recurrente. Cuando configures un do
 #: admin/build/mission-admin.js:269
 #: admin/src/constants.js:125
 #: admin/src/constants.js:165
-#: admin/src/pages/campaigns/CampaignList.js:49
-#: admin/src/pages/campaigns/CampaignList.js:127
+#: admin/src/pages/campaigns/CampaignList.js:50
+#: admin/src/pages/campaigns/CampaignList.js:128
 #: admin/src/pages/fundraisers/FundraiserList.js:170
 #: admin/src/pages/subscriptions/SubscriptionList.js:170
 #: admin/src/pages/teams/TeamList.js:180
@@ -2212,16 +2212,16 @@ msgstr "Navegación del panel"
 msgid "Log Out"
 msgstr "Cerrar sesión"
 
-#: blocks/build/donor-wall/index.php:47
-#: blocks/src/donor-wall/index.php:47
+#: blocks/build/donor-wall/index.php:46
+#: blocks/src/donor-wall/index.php:46
 #: blocks/build/donor-wall/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:413
 #: blocks/src/donor-wall/edit/Edit.js:656
 msgid "Read more"
 msgstr "Leer más"
 
-#: blocks/build/donor-wall/index.php:50
-#: blocks/src/donor-wall/index.php:50
+#: blocks/build/donor-wall/index.php:49
+#: blocks/src/donor-wall/index.php:49
 #: blocks/build/donor-wall/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:526
 #: blocks/src/donor-wall/edit/Edit.js:583
@@ -2230,44 +2230,44 @@ msgstr "Mostrar más donaciones"
 
 #. translators: %s: human time diff, e.g. "2 hours"
 #. translators: %s: human-readable time difference (e.g. "3 days")
-#: blocks/build/donor-wall/index.php:99
+#: blocks/build/donor-wall/index.php:98
 #: blocks/build/fundraiser-supporters/index.php:80
-#: blocks/build/recent-donors/index.php:116
-#: blocks/src/donor-wall/index.php:99
+#: blocks/build/recent-donors/index.php:111
+#: blocks/src/donor-wall/index.php:98
 #: blocks/src/fundraiser-supporters/index.php:80
-#: blocks/src/recent-donors/index.php:116
-#: src/DonorDashboard/FundraisersContextBuilder.php:302
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:279
+#: blocks/src/recent-donors/index.php:111
+#: src/DonorDashboard/FundraisersContextBuilder.php:333
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:193
 msgid "%s ago"
 msgstr "hace %s"
 
-#: blocks/build/donor-wall/index.php:110
-#: blocks/build/donor-wall/index.php:133
+#: blocks/build/donor-wall/index.php:109
+#: blocks/build/donor-wall/index.php:132
 #: blocks/build/fundraiser-supporters/index.php:70
 #: blocks/build/fundraiser-supporters/index.php:73
-#: blocks/build/recent-donors/index.php:90
-#: blocks/build/recent-donors/index.php:97
-#: blocks/build/top-donors/index.php:99
-#: blocks/build/top-donors/index.php:103
-#: blocks/src/donor-wall/index.php:110
-#: blocks/src/donor-wall/index.php:133
+#: blocks/build/recent-donors/index.php:85
+#: blocks/build/recent-donors/index.php:92
+#: blocks/build/top-donors/index.php:94
+#: blocks/build/top-donors/index.php:98
+#: blocks/src/donor-wall/index.php:109
+#: blocks/src/donor-wall/index.php:132
 #: blocks/src/fundraiser-supporters/index.php:70
 #: blocks/src/fundraiser-supporters/index.php:73
-#: blocks/src/recent-donors/index.php:90
-#: blocks/src/recent-donors/index.php:97
-#: blocks/src/top-donors/index.php:99
-#: blocks/src/top-donors/index.php:103
-#: src/DonorDashboard/FundraisersContextBuilder.php:297
-#: src/DonorDashboard/FundraisersContextBuilder.php:521
+#: blocks/src/recent-donors/index.php:85
+#: blocks/src/recent-donors/index.php:92
+#: blocks/src/top-donors/index.php:94
+#: blocks/src/top-donors/index.php:98
+#: src/DonorDashboard/FundraisersContextBuilder.php:328
+#: src/DonorDashboard/FundraisersContextBuilder.php:552
 #: src/Email/AdminNotificationListener.php:449
 #: src/Export/ExportService.php:727
 #: src/Reporting/ReportingService.php:642
 #: src/Reporting/ReportingService.php:807
 #: src/Reporting/ReportingService.php:1627
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:272
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:186
 #: src/Rest/Endpoints/DonorWallEndpoint.php:107
 #: src/Rest/Endpoints/DonorWallEndpoint.php:125
-#: src/Rest/Endpoints/FundraisersEndpoint.php:306
+#: src/Rest/Endpoints/FundraisersEndpoint.php:280
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
@@ -2284,42 +2284,42 @@ msgstr "hace %s"
 msgid "Anonymous"
 msgstr "Anónimo"
 
-#: blocks/build/donor-wall/index.php:224
-#: blocks/src/donor-wall/index.php:224
+#: blocks/build/donor-wall/index.php:219
+#: blocks/src/donor-wall/index.php:219
 msgid "Sort donations"
 msgstr "Ordenar donaciones"
 
-#: blocks/build/donor-wall/index.php:227
-#: blocks/src/donor-wall/index.php:227
+#: blocks/build/donor-wall/index.php:222
+#: blocks/src/donor-wall/index.php:222
 #: blocks/build/donor-wall/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:22
 msgid "Most Recent"
 msgstr "Más recientes"
 
-#: blocks/build/donor-wall/index.php:230
-#: blocks/src/donor-wall/index.php:230
+#: blocks/build/donor-wall/index.php:225
+#: blocks/src/donor-wall/index.php:225
 #: blocks/build/donor-wall/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:26
 msgid "Highest Amount"
 msgstr "Mayor importe"
 
-#: blocks/build/donor-wall/index.php:233
-#: blocks/src/donor-wall/index.php:233
+#: blocks/build/donor-wall/index.php:228
+#: blocks/src/donor-wall/index.php:228
 #: blocks/build/donor-wall/index.js:1
 #: blocks/src/donor-wall/edit/Edit.js:29
 msgid "Earliest"
 msgstr "Más antiguas"
 
-#: blocks/build/donor-wall/index.php:242
-#: blocks/src/donor-wall/index.php:242
+#: blocks/build/donor-wall/index.php:237
+#: blocks/src/donor-wall/index.php:237
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/tabs/OverviewTab.js:358
 #: admin/src/pages/dashboard/DonationsChart.js:324
 msgid "No donations yet"
 msgstr "Todavía no hay donaciones"
 
-#: blocks/build/donor-wall/index.php:243
-#: blocks/src/donor-wall/index.php:243
+#: blocks/build/donor-wall/index.php:238
+#: blocks/src/donor-wall/index.php:238
 msgid "Be the first to donate to this campaign!"
 msgstr "¡Sé la primera persona en donar a esta campaña!"
 
@@ -2349,7 +2349,7 @@ msgstr "Sé el primero en contribuir y animar a este recaudador."
 #. translators: %s: donation count toward goal.
 #: blocks/build/fundraiser-supporters/index.php:56
 #: blocks/src/fundraiser-supporters/index.php:56
-#: src/DonorDashboard/FundraisersContextBuilder.php:247
+#: src/DonorDashboard/FundraisersContextBuilder.php:278
 #: admin/build/mission-admin.js:164
 #: admin/src/pages/dashboard/ActivityFeed.js:670
 msgid "%s donation"
@@ -2359,7 +2359,7 @@ msgstr[1] ""
 
 #. translators: %s: person being honored
 #. translators: %s: honoree name
-#: src/Models/Fundraiser.php:407
+#: src/Models/Fundraiser.php:461
 #: admin/build/mission-admin.js:193
 #: admin/src/pages/shared/DetailComponents.js:196
 msgid "In memory of %s"
@@ -2367,7 +2367,7 @@ msgstr "En memoria de %s"
 
 #. translators: %s: person being honored
 #. translators: %s: honoree name
-#: src/Models/Fundraiser.php:409
+#: src/Models/Fundraiser.php:463
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/shared/DetailComponents.js:203
 msgid "In honor of %s"
@@ -2379,20 +2379,20 @@ msgstr "En honor a %s"
 msgid "%1$s is fundraising for %2$s"
 msgstr "%1$s está recaudando fondos para %2$s"
 
-#: blocks/build/recent-donors/index.php:34
-#: blocks/src/recent-donors/index.php:34
+#: blocks/build/recent-donors/index.php:33
+#: blocks/src/recent-donors/index.php:33
 #: blocks/build/recent-donors/index.js:1
 #: blocks/src/recent-donors/edit/Edit.js:190
 msgid "Recent Donors"
 msgstr "Donantes recientes"
 
-#: blocks/build/recent-donors/index.php:67
-#: blocks/src/recent-donors/index.php:67
+#: blocks/build/recent-donors/index.php:62
+#: blocks/src/recent-donors/index.php:62
 msgid "Nothing here yet!"
 msgstr "¡Aún no hay nada por aquí!"
 
-#: blocks/build/recent-donors/index.php:68
-#: blocks/src/recent-donors/index.php:68
+#: blocks/build/recent-donors/index.php:63
+#: blocks/src/recent-donors/index.php:63
 msgid "Your name could be the first one on this list."
 msgstr "Tu nombre podría ser el primero de esta lista."
 
@@ -2618,27 +2618,27 @@ msgstr "Equipo recaudando fondos para %s"
 msgid "Team fundraising"
 msgstr "Recaudación en equipo"
 
-#: blocks/build/top-donors/index.php:35
-#: blocks/src/top-donors/index.php:35
+#: blocks/build/top-donors/index.php:34
+#: blocks/src/top-donors/index.php:34
 #: blocks/build/top-donors/index.js:1
 #: blocks/src/top-donors/edit/Edit.js:184
 msgid "Top Donors"
 msgstr "Principales donantes"
 
-#: blocks/build/top-donors/index.php:69
-#: blocks/src/top-donors/index.php:69
+#: blocks/build/top-donors/index.php:64
+#: blocks/src/top-donors/index.php:64
 msgid "This spot is wide open."
 msgstr "Este puesto está libre."
 
-#: blocks/build/top-donors/index.php:70
-#: blocks/src/top-donors/index.php:70
+#: blocks/build/top-donors/index.php:65
+#: blocks/src/top-donors/index.php:65
 msgid "Make a donation and claim the top of the list."
 msgstr "Haz una donación y hazte con lo más alto de la lista."
 
-#: blocks/build/top-donors/index.php:78
-#: blocks/build/top-donors/index.php:82
-#: blocks/src/top-donors/index.php:78
-#: blocks/src/top-donors/index.php:82
+#: blocks/build/top-donors/index.php:73
+#: blocks/build/top-donors/index.php:77
+#: blocks/src/top-donors/index.php:73
+#: blocks/src/top-donors/index.php:77
 msgid "Be the First Donor"
 msgstr "Sé el primer donante"
 
@@ -2722,11 +2722,11 @@ msgstr "La mayoría de los proveedores de alojamiento pueden actualizar tu versi
 msgid "Learn more about updating PHP →"
 msgstr "Más información sobre cómo actualizar PHP →"
 
-#: mission-donation-platform.php:80
+#: mission-donation-platform.php:81
 msgid "Mission Donation Platform:"
 msgstr "Mission Donation Platform:"
 
-#: mission-donation-platform.php:81
+#: mission-donation-platform.php:82
 msgid "Composer dependencies not found. Please run `composer install` in the plugin directory."
 msgstr "No se han encontrado las dependencias de Composer. Ejecuta `composer install` en el directorio del plugin."
 
@@ -2763,8 +2763,8 @@ msgstr "Panel"
 #: admin/build/mission-admin.js:261
 #: admin/build/mission-admin.js:263
 #: admin/build/mission-admin.js:265
-#: admin/src/pages/campaigns/CampaignList.js:446
-#: admin/src/pages/campaigns/CampaignList.js:502
+#: admin/src/pages/campaigns/CampaignList.js:434
+#: admin/src/pages/campaigns/CampaignList.js:490
 #: admin/src/pages/tools/ExportPanel.js:14
 #: admin/src/pages/tools/ImportPanel.js:24
 #: admin/src/pages/tools/migration/MigrationReport.js:6
@@ -2781,7 +2781,7 @@ msgstr "Campañas"
 #: admin/build/mission-admin.js:263
 #: admin/build/mission-admin.js:265
 #: admin/build/mission-admin.js:269
-#: admin/src/pages/campaigns/CampaignList.js:209
+#: admin/src/pages/campaigns/CampaignList.js:197
 #: admin/src/pages/tools/ExportPanel.js:10
 #: admin/src/pages/tools/ImportPanel.js:20
 #: admin/src/pages/tools/migration/MigrationReport.js:9
@@ -3067,19 +3067,19 @@ msgid "/ year"
 msgstr " / año"
 
 #. translators: 1: current page, 2: total pages
-#: src/DonorDashboard/DashboardContextBuilder.php:308
+#: src/DonorDashboard/DashboardContextBuilder.php:310
 msgid "Page %1$d of %2$d"
 msgstr "Página %1$d de %2$d"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:121
-#: src/DonorDashboard/TeamsContextBuilder.php:130
+#: src/DonorDashboard/TeamsContextBuilder.php:134
 #: admin/build/mission-admin.js:202
 #: admin/src/pages/settings/SaveBar.js:31
 msgid "Save changes"
 msgstr "Guardar cambios"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:122
-#: src/DonorDashboard/TeamsContextBuilder.php:131
+#: src/DonorDashboard/TeamsContextBuilder.php:135
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:204
@@ -3094,7 +3094,7 @@ msgid "Saving…"
 msgstr "Guardando…"
 
 #: src/DonorDashboard/FundraisersContextBuilder.php:123
-#: src/DonorDashboard/TeamsContextBuilder.php:132
+#: src/DonorDashboard/TeamsContextBuilder.php:136
 msgid "Saved"
 msgstr "Guardado"
 
@@ -3106,33 +3106,33 @@ msgstr "Recaudación actualizada"
 msgid "Link copied"
 msgstr "Enlace copiado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:133
+#: src/DonorDashboard/TeamsContextBuilder.php:137
 msgid "Team updated"
 msgstr "Equipo actualizado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:139
+#: src/DonorDashboard/TeamsContextBuilder.php:143
 msgid "Invitation sent"
 msgstr "Invitación enviada"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:140
+#: src/DonorDashboard/TeamsContextBuilder.php:144
 msgid "Member removed"
 msgstr "Miembro eliminado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:141
+#: src/DonorDashboard/TeamsContextBuilder.php:145
 msgid "New captain set"
 msgstr "Nuevo capitán asignado"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:147
+#: src/DonorDashboard/TeamsContextBuilder.php:151
 msgid "Make this member the captain? You will no longer manage the team."
 msgstr "¿Hacer a este miembro el capitán? Dejarás de gestionar el equipo."
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:319
-#: src/DonorDashboard/TeamsContextBuilder.php:201
+#: src/DonorDashboard/FundraisersContextBuilder.php:350
+#: src/DonorDashboard/TeamsContextBuilder.php:205
 msgid "Pending review"
 msgstr "Pendiente de revisión"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:323
-#: src/DonorDashboard/TeamsContextBuilder.php:202
+#: src/DonorDashboard/FundraisersContextBuilder.php:354
+#: src/DonorDashboard/TeamsContextBuilder.php:206
 #: admin/build/mission-admin.js:152
 #: admin/src/constants.js:173
 #: admin/src/constants.js:194
@@ -3140,11 +3140,11 @@ msgid "Inactive"
 msgstr "Inactivo"
 
 #. translators: %s: campaign title
-#: src/DonorDashboard/FundraisersContextBuilder.php:211
+#: src/DonorDashboard/FundraisersContextBuilder.php:242
 msgid "Support my fundraiser for %s"
 msgstr "Apoya mi recaudación para %s"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:212
+#: src/DonorDashboard/FundraisersContextBuilder.php:243
 #: src/P2P/templates/fundraiser-page.php:42
 msgid "Support my fundraiser"
 msgstr "Apoya mi recaudación"
@@ -3168,28 +3168,28 @@ msgstr "%1$s recaudados de la meta de %2$s"
 msgid "%s raised"
 msgstr "%s recaudados"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:438
-#: src/DonorDashboard/DashboardContextBuilder.php:452
-#: src/DonorDashboard/DashboardContextBuilder.php:472
-#: src/DonorDashboard/DashboardContextBuilder.php:521
-#: src/DonorDashboard/DashboardContextBuilder.php:541
+#: src/DonorDashboard/DashboardContextBuilder.php:440
+#: src/DonorDashboard/DashboardContextBuilder.php:454
+#: src/DonorDashboard/DashboardContextBuilder.php:474
+#: src/DonorDashboard/DashboardContextBuilder.php:523
+#: src/DonorDashboard/DashboardContextBuilder.php:543
 #: src/Reporting/ReportingService.php:1514
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:91
 #: src/Rest/Traits/DonorDashboardPrepareTrait.php:118
 msgid "Deleted Campaign"
 msgstr "Campaña eliminada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:481
+#: src/DonorDashboard/DashboardContextBuilder.php:483
 msgid "Card on file"
 msgstr "Tarjeta guardada"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:634
+#: src/DonorDashboard/DashboardContextBuilder.php:636
 msgid "Donation Made"
 msgid_plural "Donations Made"
 msgstr[0] "Donación realizada"
 msgstr[1] "Donaciones realizadas"
 
-#: src/DonorDashboard/DashboardContextBuilder.php:638
+#: src/DonorDashboard/DashboardContextBuilder.php:640
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:69
 msgid "Lifetime Given"
@@ -3197,7 +3197,7 @@ msgstr "Total donado"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:47
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:47
-#: src/DonorDashboard/DashboardContextBuilder.php:642
+#: src/DonorDashboard/DashboardContextBuilder.php:644
 #: admin/build/mission-admin.js:273
 #: admin/src/pages/Dashboard.js:195
 #: blocks/build/donor-dashboard/index.js:1
@@ -3220,9 +3220,9 @@ msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 #: src/DonorDashboard/DonorAuthService.php:98
 #: src/DonorDashboard/DonorAuthService.php:437
 #: src/Email/DonationEmailListener.php:122
-#: src/Email/EmailModule.php:254
-#: src/Email/EmailModule.php:387
-#: src/Email/EmailModule.php:408
+#: src/Email/EmailModule.php:267
+#: src/Email/EmailModule.php:400
+#: src/Email/EmailModule.php:421
 #: src/Email/FundraiserEmailListener.php:120
 #: src/Email/FundraiserEmailListener.php:161
 #: src/Email/FundraiserEmailListener.php:227
@@ -3377,7 +3377,7 @@ msgstr "Hito de campaña: %1$s alcanzó %2$s"
 
 #: src/Email/AdminNotificationListener.php:452
 #: src/Email/DonationEmailListener.php:160
-#: src/Rest/Endpoints/EmailTestEndpoint.php:183
+#: src/Rest/Endpoints/EmailTestEndpoint.php:181
 msgid "in memory of"
 msgstr "en memoria de"
 
@@ -3406,7 +3406,7 @@ msgstr "Alguien"
 #. translators: %s: donor first name
 #. translators: %s: participant first name
 #. translators: %s: captain first name
-#: src/Email/EmailModule.php:412
+#: src/Email/EmailModule.php:425
 #: src/Email/templates/account-activation.php:22
 #: src/Email/templates/donation-receipt.php:22
 #: src/Email/templates/email-change-verification.php:22
@@ -3440,7 +3440,7 @@ msgstr "Acción necesaria: actualiza el pago de tu donación recurrente"
 msgid "Your recurring donation has ended"
 msgstr "Tu donación recurrente ha finalizado"
 
-#: src/Email/SubscriptionEmailListener.php:185
+#: src/Email/SubscriptionEmailListener.php:184
 msgid "N/A"
 msgstr "N/D"
 
@@ -3873,7 +3873,7 @@ msgstr "Total donado"
 #: admin/src/pages/fundraisers/FundraiserDetail.js:359
 #: admin/src/pages/fundraisers/FundraiserDetail.js:378
 #: admin/src/pages/teams/TeamDetail.js:402
-#: admin/src/pages/teams/TeamMembersCard.js:105
+#: admin/src/pages/teams/TeamMembersCard.js:95
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:63
 msgid "Donations"
@@ -4523,10 +4523,9 @@ msgstr "El donante de la donación no se migró, así que la donación se omiti�
 msgid "This donor already has an account."
 msgstr "Este donante ya tiene una cuenta."
 
-#: src/Models/Fundraiser.php:279
+#: src/Models/Fundraiser.php:333
 #: src/P2P/FundraiserPostType.php:73
-#: src/Reporting/ReportingService.php:1994
-#: src/Reporting/ReportingService.php:2271
+#: src/Reporting/ReportingService.php:2028
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
 #: admin/src/pages/fundraisers/FundraiserDetailsCard.js:27
@@ -4562,7 +4561,7 @@ msgstr "El servicio de pago devolvió un error. Inténtalo de nuevo."
 msgid "The payment service returned an unexpected response."
 msgstr "El servicio de pago devolvió una respuesta inesperada."
 
-#: src/Models/Team.php:169
+#: src/Models/Team.php:198
 #: src/P2P/TeamPostType.php:70
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:198
@@ -4574,7 +4573,7 @@ msgstr "El servicio de pago devolvió una respuesta inesperada."
 msgid "Team"
 msgstr "Equipo"
 
-#: src/Models/Team.php:370
+#: src/Models/Team.php:399
 #: admin/build/mission-admin.js:191
 #: admin/build/mission-admin.js:194
 #: admin/build/mission-admin.js:269
@@ -4584,17 +4583,17 @@ msgstr "Equipo"
 msgid "Please enter a valid email address."
 msgstr "Introduce una dirección de correo electrónico válida."
 
-#: src/Models/Team.php:380
+#: src/Models/Team.php:409
 msgid "That person is already on the team."
 msgstr "Esa persona ya está en el equipo."
 
-#: src/Models/Team.php:441
-#: src/Models/Team.php:473
+#: src/Models/Team.php:470
+#: src/Models/Team.php:502
 msgid "That person is not on this team."
 msgstr "Esa persona no está en este equipo."
 
-#: src/Models/Team.php:445
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:317
+#: src/Models/Team.php:474
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:231
 msgid "Promote another member to captain before leaving the team."
 msgstr "Asciende a otro miembro a capitán antes de salir del equipo."
 
@@ -4706,8 +4705,7 @@ msgid "The image could not be saved."
 msgstr "No se ha podido guardar la imagen."
 
 #: src/P2P/FundraiserImageUploader.php:168
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:189
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:232
+#: src/Rest/Traits/CoverPhotoRoutesTrait.php:61
 msgid "No image was uploaded."
 msgstr "No se ha subido ninguna imagen."
 
@@ -4838,7 +4836,7 @@ msgstr "Sin título"
 
 #: src/Reporting/ReportingService.php:1423
 #: src/Rest/Endpoints/DonorDashboard/TransactionsEndpoint.php:271
-#: src/Rest/Endpoints/EmailTestEndpoint.php:153
+#: src/Rest/Endpoints/EmailTestEndpoint.php:151
 #: src/Rest/Endpoints/TransactionsEndpoint.php:754
 msgid "General Fund"
 msgstr "Fondo general"
@@ -4847,19 +4845,19 @@ msgstr "Fondo general"
 msgid "You do not have permission to view the activity feed."
 msgstr "No tienes permiso para ver el feed de actividad."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:187
+#: src/Rest/Endpoints/CampaignsEndpoint.php:169
 msgid "You do not have permission to view campaigns."
 msgstr "No tienes permiso para ver las campañas."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:232
+#: src/Rest/Endpoints/CampaignsEndpoint.php:214
 msgid "The campaign could not be created."
 msgstr "No se ha podido crear la campaña."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:451
+#: src/Rest/Endpoints/CampaignsEndpoint.php:433
 msgid "The campaign could not be deleted."
 msgstr "No se ha podido eliminar la campaña."
 
-#: src/Rest/Endpoints/CampaignsEndpoint.php:530
+#: src/Rest/Endpoints/CampaignsEndpoint.php:512
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignDetail.js:191
 msgid "Goal amount cannot be negative."
@@ -5037,7 +5035,7 @@ msgstr "Dirección de correo electrónico actualizada. Inicia sesión con tu nue
 msgid "Email change cancelled."
 msgstr "Cambio de correo electrónico cancelado."
 
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:345
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:259
 #: src/Rest/RestErrors.php:72
 msgid "Fundraiser not found."
 msgstr "Recaudador no encontrado."
@@ -5064,13 +5062,13 @@ msgstr "El importe de la propina no puede ser negativo."
 msgid "You do not have permission to manage this subscription."
 msgstr "No tienes permiso para gestionar esta suscripción."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:378
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:412
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:297
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:331
 #: src/Rest/Endpoints/TeamMembersEndpoint.php:107
 msgid "Member not found."
 msgstr "Miembro no encontrado."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:443
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:362
 msgid "You are not the captain of this team."
 msgstr "No eres el capitán de este equipo."
 
@@ -5132,11 +5130,11 @@ msgstr "Tipo de correo electrónico desconocido."
 msgid "You do not have permission to send test emails."
 msgstr "No tienes permiso para enviar correos electrónicos de prueba."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:112
+#: src/Rest/Endpoints/EmailTestEndpoint.php:110
 msgid "Failed to render email template."
 msgstr "No se ha podido generar la plantilla de correo electrónico."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:122
+#: src/Rest/Endpoints/EmailTestEndpoint.php:120
 msgid "Failed to send test email. Check your mail configuration."
 msgstr "No se ha podido enviar el correo electrónico de prueba. Comprueba la configuración de tu correo."
 
@@ -5169,15 +5167,15 @@ msgstr "No tienes permiso para ver los recaudadores."
 msgid "Fundraisers can only be added to peer-to-peer campaigns."
 msgstr "Los recaudadores solo se pueden añadir a campañas entre pares."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:264
+#: src/Rest/Endpoints/FundraisersEndpoint.php:238
 msgid "This person is already a fundraiser for this campaign."
 msgstr "Esta persona ya es recaudadora de esta campaña."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:168
+#: src/Rest/Endpoints/FundraisersEndpoint.php:167
 msgid "The fundraiser could not be created."
 msgstr "No se ha podido crear el recaudador."
 
-#: src/Rest/Endpoints/FundraisersEndpoint.php:282
+#: src/Rest/Endpoints/FundraisersEndpoint.php:256
 msgid "The selected team does not belong to this campaign."
 msgstr "El equipo seleccionado no pertenece a esta campaña."
 
@@ -5294,12 +5292,11 @@ msgstr "No tienes permiso para ver los equipos."
 msgid "Teams can only be added to peer-to-peer campaigns."
 msgstr "Los equipos solo se pueden añadir a campañas entre pares."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:195
-#: src/Rest/Endpoints/TeamsEndpoint.php:209
+#: src/Rest/Endpoints/TeamsEndpoint.php:196
 msgid "The team could not be created."
 msgstr "No se ha podido crear el equipo."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:297
+#: src/Rest/Endpoints/TeamsEndpoint.php:283
 msgid "The selected captain is not a fundraiser in this campaign."
 msgstr "El capitán seleccionado no es un recaudador de esta campaña."
 
@@ -5670,53 +5667,53 @@ msgid "Something went wrong. Please try again."
 msgstr "Algo ha salido mal. Inténtalo de nuevo."
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:54
-#: admin/src/pages/campaigns/CampaignList.js:130
+#: admin/src/pages/campaigns/CampaignList.js:55
+#: admin/src/pages/campaigns/CampaignList.js:131
 msgid "Scheduled"
 msgstr "Programada"
 
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/campaigns/CampaignList.js:179
-#: admin/src/pages/teams/TeamMembersCard.js:104
+#: admin/src/pages/campaigns/CampaignList.js:180
+#: admin/src/pages/teams/TeamMembersCard.js:94
 msgid "Progress"
 msgstr "Progreso"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:222
+#: admin/src/pages/campaigns/CampaignList.js:210
 msgid "Starts"
 msgstr "Empieza"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:235
+#: admin/src/pages/campaigns/CampaignList.js:223
 msgid "Ends"
 msgstr "Termina"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:283
+#: admin/src/pages/campaigns/CampaignList.js:271
 msgid "active"
 msgstr "activa"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:284
+#: admin/src/pages/campaigns/CampaignList.js:272
 msgid "ended"
 msgstr "finalizada"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:285
+#: admin/src/pages/campaigns/CampaignList.js:273
 msgid "scheduled"
 msgstr "programada"
 
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:229
-#: admin/src/pages/campaigns/CampaignList.js:289
+#: admin/src/pages/campaigns/CampaignList.js:277
 #: admin/src/pages/tools/ExportPanel.js:231
 #: admin/src/pages/tools/ExportPanel.js:255
 msgid "All"
 msgstr "Todas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:333
+#: admin/src/pages/campaigns/CampaignList.js:321
 msgid "View"
 msgstr "Ver"
 
@@ -5724,8 +5721,8 @@ msgstr "Ver"
 #: admin/build/mission-admin.js:202
 #: admin/build/mission-admin.js:269
 #: admin/build/mission-admin.js:273
-#: admin/src/pages/campaigns/CampaignList.js:342
-#: admin/src/pages/campaigns/CampaignList.js:382
+#: admin/src/pages/campaigns/CampaignList.js:330
+#: admin/src/pages/campaigns/CampaignList.js:370
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:98
 #: admin/src/pages/fundraisers/FundraiserDetail.js:476
 #: admin/src/pages/tools/WebhooksPanel.js:183
@@ -5735,14 +5732,14 @@ msgid "Delete"
 msgstr "Eliminar"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:349
+#: admin/src/pages/campaigns/CampaignList.js:337
 msgid "Are you sure you want to delete this campaign?"
 msgstr "¿Seguro que quieres eliminar esta campaña?"
 
 #: admin/build/mission-admin.js:152
 #: admin/build/mission-admin.js:269
 #: admin/build/mission-admin.js:273
-#: admin/src/pages/campaigns/CampaignList.js:356
+#: admin/src/pages/campaigns/CampaignList.js:344
 #: admin/src/pages/campaigns/tabs/settings/DangerZone.js:77
 #: admin/src/pages/tools/WebhooksPanel.js:181
 #: admin/src/pages/transactions/TransactionDetail.js:570
@@ -5750,49 +5747,49 @@ msgid "This action cannot be undone."
 msgstr "Esta acción no se puede deshacer."
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:403
+#: admin/src/pages/campaigns/CampaignList.js:391
 msgid "Total Campaigns"
 msgstr "Total de campañas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:414
+#: admin/src/pages/campaigns/CampaignList.js:402
 msgid "Avg. per Campaign"
 msgstr "Media por campaña"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:416
+#: admin/src/pages/campaigns/CampaignList.js:404
 msgid "Across active campaigns"
 msgstr "En campañas activas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:424
+#: admin/src/pages/campaigns/CampaignList.js:412
 msgid "Top Campaign"
 msgstr "Campaña destacada"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:449
-#: admin/src/pages/campaigns/CampaignList.js:505
+#: admin/src/pages/campaigns/CampaignList.js:437
+#: admin/src/pages/campaigns/CampaignList.js:493
 msgid "Create and manage your fundraising campaigns."
 msgstr "Crea y gestiona tus campañas de recaudación."
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:463
+#: admin/src/pages/campaigns/CampaignList.js:451
 #: admin/src/pages/dashboard/TopCampaigns.js:41
 msgid "No campaigns yet"
 msgstr "Aún no hay campañas"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:464
+#: admin/src/pages/campaigns/CampaignList.js:452
 msgid "Create your first campaign to start accepting donations."
 msgstr "Crea tu primera campaña para empezar a aceptar donaciones."
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:478
+#: admin/src/pages/campaigns/CampaignList.js:466
 msgid "Create a Campaign"
 msgstr "Crear una campaña"
 
 #: admin/build/mission-admin.js:152
-#: admin/src/pages/campaigns/CampaignList.js:520
+#: admin/src/pages/campaigns/CampaignList.js:508
 msgid "Add Campaign"
 msgstr "Añadir campaña"
 
@@ -8036,10 +8033,10 @@ msgstr "Donante anónimo o eliminado"
 msgid "View profile"
 msgstr "Ver perfil"
 
-#: blocks/build/campaign-progress/index.php:85
+#: blocks/build/campaign-progress/index.php:84
 #: blocks/build/fundraiser-progress/index.php:80
 #: blocks/build/team-progress/index.php:86
-#: blocks/src/campaign-progress/index.php:85
+#: blocks/src/campaign-progress/index.php:84
 #: blocks/src/fundraiser-progress/index.php:80
 #: blocks/src/team-progress/index.php:86
 #: admin/build/mission-admin.js:204
@@ -12436,7 +12433,7 @@ msgstr "Introduce una nueva contraseña."
 msgid "That code didn't work. Request a new one and try again."
 msgstr "Ese código no funcionó. Solicita uno nuevo e inténtalo de nuevo."
 
-#: src/Rest/Endpoints/TeamsEndpoint.php:244
+#: src/Rest/Endpoints/TeamsEndpoint.php:230
 msgid "The selected captain is not a member of this team."
 msgstr "El capitán seleccionado no es miembro de este equipo."
 
@@ -12570,7 +12567,7 @@ msgstr "<captain /> se convirtió en capitán de equipo"
 msgid "Team captain changed"
 msgstr "Cambio de capitán del equipo"
 
-#: src/P2P/FundraiserRegistrationService.php:285
+#: src/P2P/FundraiserRegistrationService.php:274
 msgid "We could not create your fundraising page. Please try again."
 msgstr "No hemos podido crear tu página de recaudación. Inténtalo de nuevo."
 
@@ -12587,48 +12584,48 @@ msgid "This page is part of a larger campaign. Every donation made here counts t
 msgstr "Esta página forma parte de una campaña más amplia. Cada donación realizada aquí cuenta para la meta general de la campaña."
 
 #. translators: %s: goal number
-#: blocks/build/campaign-progress/index.php:84
-#: blocks/src/campaign-progress/index.php:84
+#: blocks/build/campaign-progress/index.php:83
+#: blocks/src/campaign-progress/index.php:83
 msgid "donation of %s goal"
 msgid_plural "donations of %s goal"
 msgstr[0] "donación de la meta de %s"
 msgstr[1] "donaciones de la meta de %s"
 
 #. translators: %s: goal number
-#: blocks/build/campaign-progress/index.php:90
-#: blocks/src/campaign-progress/index.php:90
+#: blocks/build/campaign-progress/index.php:89
+#: blocks/src/campaign-progress/index.php:89
 msgid "donor of %s goal"
 msgid_plural "donors of %s goal"
 msgstr[0] "donante de la meta de %s"
 msgstr[1] "donantes de la meta de %s"
 
-#: blocks/build/campaign-progress/index.php:91
-#: blocks/build/campaign-progress/index.php:136
+#: blocks/build/campaign-progress/index.php:90
+#: blocks/build/campaign-progress/index.php:131
 #: blocks/build/fundraiser-progress/index.php:86
-#: blocks/src/campaign-progress/index.php:91
-#: blocks/src/campaign-progress/index.php:136
+#: blocks/src/campaign-progress/index.php:90
+#: blocks/src/campaign-progress/index.php:131
 #: blocks/src/fundraiser-progress/index.php:86
 msgid "donor"
 msgid_plural "donors"
 msgstr[0] "donante"
 msgstr[1] "donantes"
 
-#: blocks/build/campaign-progress/index.php:142
-#: blocks/src/campaign-progress/index.php:142
+#: blocks/build/campaign-progress/index.php:137
+#: blocks/src/campaign-progress/index.php:137
 msgid "fundraiser"
 msgid_plural "fundraisers"
 msgstr[0] "recaudador"
 msgstr[1] "recaudadores"
 
-#: blocks/build/campaign-progress/index.php:146
-#: blocks/src/campaign-progress/index.php:146
+#: blocks/build/campaign-progress/index.php:141
+#: blocks/src/campaign-progress/index.php:141
 msgid "team"
 msgid_plural "teams"
 msgstr[0] "equipo"
 msgstr[1] "equipos"
 
-#: blocks/build/campaign-progress/index.php:152
-#: blocks/src/campaign-progress/index.php:152
+#: blocks/build/campaign-progress/index.php:147
+#: blocks/src/campaign-progress/index.php:147
 msgid "day remaining"
 msgid_plural "days remaining"
 msgstr[0] "día restante"
@@ -12860,25 +12857,25 @@ msgstr "Finalizadas (%s)"
 
 #. translators: 1: first row number, 2: last row number, 3: total rows
 #: src/DonorDashboard/FundraisersContextBuilder.php:132
-#: src/DonorDashboard/TeamsContextBuilder.php:150
+#: src/DonorDashboard/TeamsContextBuilder.php:154
 msgid "%1$s–%2$s of %3$s"
 msgstr "%1$s–%2$s de %3$s"
 
 #. translators: %s: goal amount
-#: src/DonorDashboard/FundraisersContextBuilder.php:253
+#: src/DonorDashboard/FundraisersContextBuilder.php:284
 msgid "Raised of %s"
 msgstr "Recaudado de %s"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:268
-#: src/DonorDashboard/TeamsContextBuilder.php:143
-#: src/DonorDashboard/TeamsContextBuilder.php:220
-#: src/DonorDashboard/TeamsContextBuilder.php:286
+#: src/DonorDashboard/FundraisersContextBuilder.php:299
+#: src/DonorDashboard/TeamsContextBuilder.php:147
+#: src/DonorDashboard/TeamsContextBuilder.php:224
+#: src/DonorDashboard/TeamsContextBuilder.php:290
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/teams/TeamMembersCard.js:103
+#: admin/src/pages/teams/TeamMembersCard.js:93
 msgid "Member"
 msgstr "Miembro"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:327
+#: src/DonorDashboard/FundraisersContextBuilder.php:358
 msgid "Goal met"
 msgstr "Meta alcanzada"
 
@@ -12893,27 +12890,27 @@ msgid_plural "%s days left"
 msgstr[0] "Queda %s día"
 msgstr[1] "Quedan %s días"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:355
+#: src/DonorDashboard/FundraisersContextBuilder.php:386
 msgid "No End Date"
 msgstr "Sin fecha de fin"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:361
+#: src/DonorDashboard/FundraisersContextBuilder.php:392
 msgid "Day Left"
 msgid_plural "Days Left"
 msgstr[0] "Día restante"
 msgstr[1] "Días restantes"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:367
+#: src/DonorDashboard/FundraisersContextBuilder.php:398
 msgid "Campaign Ends"
 msgstr "Fin de campaña"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:400
+#: src/DonorDashboard/FundraisersContextBuilder.php:431
 msgid "Donation Received"
 msgid_plural "Donations Received"
 msgstr[0] "Donación recibida"
 msgstr[1] "Donaciones recibidas"
 
-#: src/DonorDashboard/FundraisersContextBuilder.php:404
+#: src/DonorDashboard/FundraisersContextBuilder.php:435
 msgid "Active Fundraiser"
 msgid_plural "Active Fundraisers"
 msgstr[0] "Recaudación activa"
@@ -12924,36 +12921,36 @@ msgstr[1] "Recaudaciones activas"
 msgid "%1$s of %2$s team goal"
 msgstr "%1$s de %2$s de la meta del equipo"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:142
+#: src/DonorDashboard/TeamsContextBuilder.php:146
 msgid "You left the team"
 msgstr "Has abandonado el equipo"
 
 #. translators: %s: team captain's name
-#: src/DonorDashboard/TeamsContextBuilder.php:145
-#: src/DonorDashboard/TeamsContextBuilder.php:224
+#: src/DonorDashboard/TeamsContextBuilder.php:149
+#: src/DonorDashboard/TeamsContextBuilder.php:228
 msgid "Captain: %s"
 msgstr "Capitán: %s"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:146
+#: src/DonorDashboard/TeamsContextBuilder.php:150
 msgid "Remove this member from the team? Their fundraiser page stays active but will no longer count toward the team total."
 msgstr "¿Eliminar a este miembro del equipo? Su página de recaudación sigue activa pero ya no contará para el total del equipo."
 
-#: src/DonorDashboard/TeamsContextBuilder.php:148
+#: src/DonorDashboard/TeamsContextBuilder.php:152
 msgid "Leave this team? Your fundraiser page stays active. It will just no longer count toward the team total."
 msgstr "¿Abandonar este equipo? Tu página de recaudación sigue activa. Simplemente ya no contará para el total del equipo."
 
 #. translators: 1: this team's rank, 2: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:188
+#: src/DonorDashboard/TeamsContextBuilder.php:192
 msgid "Rank #%1$s of %2$s teams"
 msgstr "Puesto n.º %1$s de %2$s equipos"
 
 #. translators: %s: team goal
-#: src/DonorDashboard/TeamsContextBuilder.php:236
+#: src/DonorDashboard/TeamsContextBuilder.php:240
 msgid "Of %s Goal"
 msgstr "De la meta de %s"
 
 #. translators: %s: number of teams
-#: src/DonorDashboard/TeamsContextBuilder.php:247
+#: src/DonorDashboard/TeamsContextBuilder.php:251
 msgid "Of %s Teams"
 msgstr "De %s equipos"
 
@@ -12961,34 +12958,34 @@ msgstr "De %s equipos"
 #. translators: 1: amount raised, 2: goal amount
 #: src/DonorDashboard/TeamRoster.php:46
 #: admin/build/mission-admin.js:208
-#: admin/src/pages/teams/TeamMembersCard.js:32
+#: admin/src/pages/teams/TeamMembersCard.js:23
 msgid "%1$s of %2$s"
 msgstr "%1$s de %2$s"
 
 #. translators: %s: amount the team raised
-#: src/DonorDashboard/TeamsContextBuilder.php:289
+#: src/DonorDashboard/TeamsContextBuilder.php:293
 msgid "team raised %s"
 msgstr "el equipo recaudó %s"
 
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:313
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:227
 msgid "You are not on a team."
 msgstr "No formas parte de un equipo."
 
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:321
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:235
 msgid "We could not remove you from the team. Please try again."
 msgstr "No hemos podido eliminarte del equipo. Inténtalo de nuevo."
 
-#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:366
+#: src/Rest/Endpoints/DonorDashboard/FundraiserEndpoint.php:290
 msgid "This campaign has ended, so the page can no longer be edited."
 msgstr "Esta campaña ha finalizado, por lo que la página ya no se puede editar."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:497
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:426
 msgid "This campaign has ended, so the team can no longer be edited."
 msgstr "Esta campaña ha finalizado, por lo que el equipo ya no se puede editar."
 
 #. translators: %s: maximum allowed file size, e.g. "5 MB".
 #: src/DonorDashboard/FundraisersContextBuilder.php:127
-#: src/DonorDashboard/TeamsContextBuilder.php:136
+#: src/DonorDashboard/TeamsContextBuilder.php:140
 #: src/P2P/FundraiserImageUploader.php:180
 msgid "The image is too large. Please upload a file under %s."
 msgstr "La imagen es demasiado grande. Sube un archivo de menos de %s."
@@ -13044,18 +13041,18 @@ msgstr "Directo al equipo"
 
 #. translators: 1: formatted goal amount, 2: goal label ("goal" or "team goal")
 #: admin/build/mission-admin.js:195
-#: admin/src/components/GoalMeter.js:60
+#: admin/src/components/GoalMeter.js:61
 msgid "of %1$s %2$s"
 msgstr "de %1$s de la %2$s"
 
 #: admin/build/mission-admin.js:195
-#: admin/src/components/GoalMeter.js:62
+#: admin/src/components/GoalMeter.js:63
 msgid "goal"
 msgstr "meta"
 
 #. translators: %d: percentage of goal reached
 #: admin/build/mission-admin.js:196
-#: admin/src/components/GoalMeter.js:70
+#: admin/src/components/GoalMeter.js:71
 msgid "%d%% of goal"
 msgstr "%d%% de la meta"
 
@@ -13237,23 +13234,23 @@ msgid "#%1$d of %2$d teams"
 msgstr "N.º %1$d de %2$d equipos"
 
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/teams/TeamMembersCard.js:106
+#: admin/src/pages/teams/TeamMembersCard.js:96
 msgid "Joined"
 msgstr "Se unió"
 
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/teams/TeamMembersCard.js:95
+#: admin/src/pages/teams/TeamMembersCard.js:85
 msgid "No members yet."
 msgstr "Todavía no hay miembros."
 
 #: admin/build/mission-admin.js:210
-#: admin/src/pages/teams/TeamMembersCard.js:224
+#: admin/src/pages/teams/TeamMembersCard.js:214
 msgid "Remove Team Member"
 msgstr "Quitar miembro del equipo"
 
 #. translators: %s: member name
 #: admin/build/mission-admin.js:211
-#: admin/src/pages/teams/TeamMembersCard.js:232
+#: admin/src/pages/teams/TeamMembersCard.js:222
 msgid "Remove %s from this team? Their fundraising page stays active, but their totals no longer count toward the team."
 msgstr "¿Quitar a %s de este equipo? Su página de recaudación seguirá activa, pero sus totales dejarán de contar para el equipo."
 
@@ -13435,42 +13432,42 @@ msgid "Failed to disband team."
 msgstr "No se pudo disolver el equipo."
 
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/teams/TeamMembersCard.js:185
+#: admin/src/pages/teams/TeamMembersCard.js:175
 msgid "Make Team Captain"
 msgstr "Hacer capitán del equipo"
 
 #. translators: %s: member name
 #: admin/build/mission-admin.js:210
-#: admin/src/pages/teams/TeamMembersCard.js:193
+#: admin/src/pages/teams/TeamMembersCard.js:183
 msgid "Make %s the team captain? The current captain becomes a regular member."
 msgstr "¿Hacer a %s capitán del equipo? El capitán actual pasará a ser un miembro normal."
 
 #: admin/build/mission-admin.js:210
-#: admin/src/pages/teams/TeamMembersCard.js:215
+#: admin/src/pages/teams/TeamMembersCard.js:205
 msgid "Make Captain"
 msgstr "Hacer capitán"
 
-#: src/P2P/FundraiserRegistrationService.php:328
+#: src/P2P/FundraiserRegistrationService.php:318
 msgid "Team creation is not available for this campaign."
 msgstr "La creación de equipos no está disponible para esta campaña."
 
-#: src/P2P/FundraiserRegistrationService.php:332
+#: src/P2P/FundraiserRegistrationService.php:322
 msgid "Please enter a team name."
 msgstr "Introduce un nombre de equipo."
 
-#: src/P2P/FundraiserRegistrationService.php:345
+#: src/P2P/FundraiserRegistrationService.php:343
 msgid "Teams are not available for this campaign."
 msgstr "Los equipos no están disponibles para esta campaña."
 
-#: src/P2P/FundraiserRegistrationService.php:351
+#: src/P2P/FundraiserRegistrationService.php:349
 msgid "This team is no longer accepting new members."
 msgstr "Este equipo ya no acepta nuevos miembros."
 
-#: src/P2P/FundraiserRegistrationService.php:480
+#: src/P2P/FundraiserRegistrationService.php:448
 msgid "This invitation was sent to a different email address. Please sign up with the address that received it."
 msgstr "Esta invitación se envió a otra dirección de correo electrónico. Inscríbete con la dirección que la recibió."
 
-#: src/P2P/FundraiserRegistrationService.php:496
+#: src/P2P/FundraiserRegistrationService.php:464
 msgid "This invitation is invalid or has expired. Please ask your team captain to send a new one."
 msgstr "Esta invitación no es válida o ha caducado. Pide al capitán de tu equipo que envíe una nueva."
 
@@ -13489,7 +13486,7 @@ msgstr "No se han podido cargar las estadísticas de resumen."
 
 #. translators: %d: number of days remaining
 #: admin/build/mission-admin.js:197
-#: admin/src/components/GoalMeter.js:78
+#: admin/src/components/GoalMeter.js:79
 msgid "%d day left"
 msgid_plural "%d days left"
 msgstr[0] "Queda %d día"
@@ -13507,7 +13504,7 @@ msgstr "No se pudo reactivar el recaudador."
 
 #. translators: %d: number of team members
 #: admin/build/mission-admin.js:209
-#: admin/src/pages/teams/TeamMembersCard.js:84
+#: admin/src/pages/teams/TeamMembersCard.js:74
 msgid "%d fundraiser"
 msgid_plural "%d fundraisers"
 msgstr[0] "%d recaudador"
@@ -13555,28 +13552,33 @@ msgstr "Error al copiar"
 msgid "Couldn't load supporters. Please try again."
 msgstr "No se han podido cargar los colaboradores. Inténtalo de nuevo."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:177
+#: src/Rest/Endpoints/EmailTestEndpoint.php:175
 msgid "Thank you so much for your generous support. It means the world to us!"
 msgstr "¡Muchas gracias por tu generoso apoyo. Significa muchísimo para nosotros!"
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:185
+#: src/Rest/Endpoints/EmailTestEndpoint.php:183
 msgid "Forever in our hearts."
 msgstr "Siempre en nuestros corazones."
 
-#: src/Rest/Endpoints/EmailTestEndpoint.php:205
-#: src/Rest/Endpoints/EmailTestEndpoint.php:210
-#: src/Rest/Endpoints/EmailTestEndpoint.php:216
+#: src/Rest/Endpoints/EmailTestEndpoint.php:203
+#: src/Rest/Endpoints/EmailTestEndpoint.php:208
+#: src/Rest/Endpoints/EmailTestEndpoint.php:214
 msgid "Team Sunshine"
 msgstr "Equipo Sol"
 
-#: src/DonorDashboard/TeamsContextBuilder.php:151
+#: src/DonorDashboard/TeamsContextBuilder.php:155
 msgid "Couldn't load members. Please try again."
 msgstr "No se han podido cargar los miembros. Inténtalo de nuevo."
 
-#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:476
+#: src/Rest/Endpoints/DonorDashboard/TeamEndpoint.php:405
 msgid "You are not a member of this team."
 msgstr "No eres miembro de este equipo."
 
 #: src/P2P/SignupModal.php:102
 msgid "Please check the highlighted fields."
 msgstr "Revisa los campos resaltados."
+
+#: blocks/build/donation-form/index.php:983
+#: blocks/src/donation-form/index.php:983
+msgid "This is taking longer than expected. If nothing happens shortly, refresh the page and try again. Your card is only charged when a payment completes."
+msgstr "Esto está tardando más de lo esperado. Si no ocurre nada en breve, recarga la página e inténtalo de nuevo. Solo se realizará el cargo en tu tarjeta cuando se complete el pago."

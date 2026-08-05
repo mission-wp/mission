@@ -173,6 +173,7 @@ $context = [
 	'stripeAccountId'      => $attributes['stripeAccountId'] ?? '',
 	'sourcePostId'         => get_the_ID() ?: 0,
 	'isSubmitting'         => false,
+	'confirmTakingLong'    => false,
 	'paymentError'         => '',
 	'paymentSuccess'       => false,
 	'honoreeNameError'     => false,
@@ -974,6 +975,13 @@ $context = [
 			<span class="mission-df-spinner" data-wp-bind--hidden="!state.isSubmitting"></span>
 			<span class="mission-df-btn-arrow" data-wp-bind--hidden="state.isSubmitting"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
 		</button>
+		<p
+			class="mission-df-slow-notice"
+			role="status"
+			data-wp-bind--hidden="!state.confirmTakingLong"
+		>
+			<?php esc_html_e( 'This is taking longer than expected. If nothing happens shortly, refresh the page and try again. Your card is only charged when a payment completes.', 'mission-donation-platform' ); ?>
+		</p>
 		<?php endif; ?>
 	</div>
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.3 (2026-08-05)
+
+* Enhancement: The donation form now shows a clear message when a payment can't start or is taking unusually long, instead of an endless loading spinner
+* Enhancement: The donation form now explains when the payment field can't load, instead of failing silently
+* Fix: Restored reliable checkout on pages that contain more than one donation form
+* Tweak: Stripe.js now loads with Stripe's recommended script tag for maximum compatibility with Stripe's fraud protection
+
 ## 1.3.2 (2026-07-01)
 
 * New: Added a complete Finnish (fi) translation

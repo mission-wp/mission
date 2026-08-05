@@ -221,15 +221,21 @@ class BlocksModule {
 	/**
 	 * Enqueue Stripe.js when a donation form block is rendered.
 	 *
+	 * Stripe.js must load as a classic script tag. Stripe does not support
+	 * type="module" loading, and it breaks the fraud-detection bootstrap on
+	 * iOS Safari. A blocking classic script also guarantees window.Stripe
+	 * exists before any view module runs.
+	 *
 	 * @param string $block_content Rendered block content.
 	 * @return string Unmodified block content.
 	 */
 	public function enqueue_stripe_js( string $block_content ): string {
-		wp_enqueue_script_module(
-			'@mission-donation-platform/stripe-js',
+		wp_enqueue_script(
+			'mission-stripe-js',
 			'https://js.stripe.com/v3/',
 			[],
-			null
+			null, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Stripe requires the evergreen v3 URL with no cache-busting query args.
+			false
 		);
 
 		return $block_content;
