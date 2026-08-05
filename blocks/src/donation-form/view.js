@@ -1,7 +1,12 @@
 /**
  * Donation form frontend — Interactivity API store.
  */
-import { store, getContext, getElement } from '@wordpress/interactivity';
+import {
+  store,
+  getContext,
+  getElement,
+  withScope,
+} from '@wordpress/interactivity';
 import { formatAmount } from '@shared/currency';
 import {
   getEffectiveAmount,
@@ -20,6 +25,36 @@ import {
   minorToMajor,
 } from '@shared/currencies';
 import { PLATFORM_FEE_RATE } from '@shared/fees';
+
+// Deadlines keep the submit spinner from spinning forever if a promise
+// never settles. Only the non-interactive steps get a hard deadline:
+// confirmPayment may show a 3D Secure challenge the donor can legitimately
+// sit on for minutes, so it gets a soft "taking too long" notice instead.
+const PRE_CHARGE_DEADLINE_MS = 30000;
+const CONFIRM_SLOW_NOTICE_MS = 30000;
+const RECORD_DONATION_DEADLINE_MS = 15000;
+const PRE_CHARGE_TIMEOUT_MESSAGE =
+  'The payment could not be started. Please check your connection and try again.';
+
+/**
+ * Race a promise against a deadline that rejects with the given message.
+ *
+ * Exported for unit tests only.
+ *
+ * @param {Promise} promise The promise to guard.
+ * @param {number}  ms      Deadline in milliseconds.
+ * @param {string}  message Error message shown to the donor on timeout.
+ * @return {Promise} The guarded promise.
+ */
+export function withDeadline( promise, ms, message ) {
+  let timer;
+  return Promise.race( [
+    Promise.resolve( promise ).finally( () => clearTimeout( timer ) ),
+    new Promise( ( _resolve, reject ) => {
+      timer = setTimeout( () => reject( new Error( message ) ), ms );
+    } ),
+  ] );
+}
 
 /**
  * Get the platform fee rate for fee recovery calculations.
@@ -161,6 +196,9 @@ store( 'mission-donation-platform/donation-form', {
     },
     get isSubmitting() {
       return getContext().isSubmitting;
+    },
+    get confirmTakingLong() {
+      return getContext().confirmTakingLong;
     },
     get paymentError() {
       return getContext().paymentError;
@@ -594,7 +632,11 @@ store( 'mission-donation-platform/donation-form', {
           ctx.phoneError = ! ctx.phone?.trim();
         }
 
-        const { error: submitError } = yield elementsInstance.submit();
+        const { error: submitError } = yield withDeadline(
+          elementsInstance.submit(),
+          PRE_CHARGE_DEADLINE_MS,
+          PRE_CHARGE_TIMEOUT_MESSAGE
+        );
         const hasOwnErrors =
           ctx.firstNameError ||
           ctx.lastNameError ||
@@ -633,9 +675,8 @@ store( 'mission-donation-platform/donation-form', {
           : 'donations/create-payment-intent';
 
         // Step 2: Create PaymentIntent (one-time) or Subscription (recurring).
-        const intentResponse = yield fetch(
-          `${ ctx.restUrl }${ createEndpoint }`,
-          {
+        const intentResponse = yield withDeadline(
+          fetch( `${ ctx.restUrl }${ createEndpoint }`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -712,10 +753,16 @@ store( 'mission-donation-platform/donation-form', {
               custom_fields: ctx.hasCustomFields ? ctx.customFieldValues : {},
               custom_fields_config: ctx.hasCustomFields ? ctx.customFields : [],
             } ),
-          }
+          } ),
+          PRE_CHARGE_DEADLINE_MS,
+          PRE_CHARGE_TIMEOUT_MESSAGE
         );
 
-        const intentData = yield intentResponse.json();
+        const intentData = yield withDeadline(
+          intentResponse.json(),
+          PRE_CHARGE_DEADLINE_MS,
+          PRE_CHARGE_TIMEOUT_MESSAGE
+        );
 
         if ( ! intentResponse.ok || ! intentData.client_secret ) {
           ctx.paymentError =
@@ -726,25 +773,41 @@ store( 'mission-donation-platform/donation-form', {
 
         // Step 3: Confirm payment (works identically for subscriptions —
         // the first invoice's PaymentIntent is a regular PaymentIntent).
-        const { error } = yield stripeInstance.confirmPayment( {
-          elements: elementsInstance,
-          clientSecret: intentData.client_secret,
-          confirmParams: {
-            payment_method_data: {
-              billing_details: {
-                ...( ! ctx.settings.collectAddress && {
-                  name: `${ ctx.firstName } ${ ctx.lastName }`,
-                } ),
-                email: ctx.email,
+        // No hard deadline here: a 3D Secure challenge can keep this
+        // promise pending for as long as the donor takes. Instead, surface
+        // a notice if it runs long so the donor is never left with a bare
+        // spinner and no guidance.
+        const slowNoticeTimer = setTimeout(
+          withScope( () => {
+            ctx.confirmTakingLong = true;
+          } ),
+          CONFIRM_SLOW_NOTICE_MS
+        );
+        let confirmResult;
+        try {
+          confirmResult = yield stripeInstance.confirmPayment( {
+            elements: elementsInstance,
+            clientSecret: intentData.client_secret,
+            confirmParams: {
+              payment_method_data: {
+                billing_details: {
+                  ...( ! ctx.settings.collectAddress && {
+                    name: `${ ctx.firstName } ${ ctx.lastName }`,
+                  } ),
+                  email: ctx.email,
+                },
               },
+              return_url: window.location.href,
             },
-            return_url: window.location.href,
-          },
-          redirect: 'if_required',
-        } );
+            redirect: 'if_required',
+          } );
+        } finally {
+          clearTimeout( slowNoticeTimer );
+          ctx.confirmTakingLong = false;
+        }
 
-        if ( error ) {
-          ctx.paymentError = error.message;
+        if ( confirmResult.error ) {
+          ctx.paymentError = confirmResult.error.message;
           focusPaymentError( getElement().ref );
           return;
         }
@@ -767,26 +830,34 @@ store( 'mission-donation-platform/donation-form', {
           confirmBody.subscription_id = intentData.subscription_id;
         }
 
-        const confirmResponse = yield fetch(
-          `${ ctx.restUrl }${ confirmEndpoint }`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-WP-Nonce': ctx.restNonce,
-            },
-            body: JSON.stringify( confirmBody ),
-          }
-        );
-
-        if ( ! confirmResponse.ok && confirmResponse.status !== 202 ) {
-          // 402/4xx/5xx — log but proceed to success UI. Stripe.js already
-          // confirmed payment, so the donor's card is charged regardless.
-          // eslint-disable-next-line no-console
-          console.error(
-            'Mission: Unexpected confirm response',
-            confirmResponse.status
+        // The donor is charged at this point, so a slow or failed record
+        // call must never surface as an error or block the success UI.
+        // The payment_intent.succeeded webhook and PaymentIntentVerifier
+        // reconcile the transaction server-side.
+        try {
+          const confirmResponse = yield withDeadline(
+            fetch( `${ ctx.restUrl }${ confirmEndpoint }`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': ctx.restNonce,
+              },
+              body: JSON.stringify( confirmBody ),
+            } ),
+            RECORD_DONATION_DEADLINE_MS,
+            'confirm request timed out'
           );
+
+          if ( ! confirmResponse.ok && confirmResponse.status !== 202 ) {
+            // eslint-disable-next-line no-console
+            console.error(
+              'Mission: Unexpected confirm response',
+              confirmResponse.status
+            );
+          }
+        } catch ( confirmErr ) {
+          // eslint-disable-next-line no-console
+          console.error( 'Mission: Failed to record confirmation', confirmErr );
         }
 
         // Step 5: Handle confirmation — redirect or show success state.
