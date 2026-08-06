@@ -251,7 +251,7 @@ $share_buttons = [
 							<?php endforeach; ?>
 							<button type="button" class="mission-su__share-btn" data-wp-class--is-copied="state.copied" data-wp-on--click="actions.copyLink" aria-label="<?php esc_attr_e( 'Copy link', 'mission-donation-platform' ); ?>"><span class="mission-su__share-icon mission-su__share-icon--copy" aria-hidden="true"></span><span class="mission-su__sr-only" aria-live="polite" data-wp-text="state.copyLabel"></span></button>
 						</div>
-						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
+						<a class="mission-su__btn" data-wp-bind--href="state.successUrl"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
 					</div>
 					<?php else : ?>
 					<!-- Success + first-gift nudge -->
@@ -373,7 +373,7 @@ $share_buttons = [
 							<?php endforeach; ?>
 							<button type="button" class="mission-su__share-btn" data-wp-class--is-copied="state.copied" data-wp-on--click="actions.copyLink" aria-label="<?php esc_attr_e( 'Copy link', 'mission-donation-platform' ); ?>"><span class="mission-su__share-icon mission-su__share-icon--copy" aria-hidden="true"></span><span class="mission-su__sr-only" aria-live="polite" data-wp-text="state.copyLabel"></span></button>
 						</div>
-						<a class="mission-su__btn" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
+						<a class="mission-su__btn" data-wp-bind--href="state.successUrl"><?php esc_html_e( 'View my page', 'mission-donation-platform' ); ?></a>
 					</div>
 					<?php endif; ?>
 
