@@ -710,6 +710,11 @@ a.mission-su__btn {
 // mirroring the donation form's custom-amount treatment.
 .mission-su__amount-other-cell {
   position: relative;
+
+  .mission-su__amount-btn--other {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .mission-su__amount-other-input {
