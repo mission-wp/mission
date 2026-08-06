@@ -10,10 +10,11 @@
 
 const interactivity = require( '@wordpress/interactivity' );
 
-// Import the view module — this calls store() and populates _mockStoreDefinition.
+// Import the view module — this calls store() and populates _mockStores.
 require( '../view' );
 
-const { _mockStoreDefinition: storeDef } = interactivity;
+const storeDef =
+  interactivity._mockStores[ 'mission-donation-platform/p2p-signup' ];
 
 // jsdom never lays out, so offsetParent is always null; the handler uses it
 // to skip hidden buttons. Treat every attached element as visible.

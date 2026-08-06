@@ -13,7 +13,8 @@ const interactivity = require( '@wordpress/interactivity' );
 require( '../view' );
 const { prefetchGiftPaymentConfig, teardownGiftStripe } = require( '../gift' );
 
-const { _mockStoreDefinition: storeDef } = interactivity;
+const storeDef =
+  interactivity._mockStores[ 'mission-donation-platform/p2p-signup' ];
 
 /**
  * Drive a generator action to completion, feeding each yielded step the next

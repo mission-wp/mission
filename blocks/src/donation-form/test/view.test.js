@@ -9,10 +9,11 @@
 
 const interactivity = require( '@wordpress/interactivity' );
 
-// Import the view module — this calls store() and populates _mockStoreDefinition.
+// Import the view module — this calls store() and populates _mockStores.
 require( '../view' );
 
-const { _mockStoreDefinition: storeDef } = interactivity;
+const storeDef =
+  interactivity._mockStores[ 'mission-donation-platform/donation-form' ];
 const ctx = interactivity._mockContext;
 
 /**
