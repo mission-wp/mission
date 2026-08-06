@@ -56,6 +56,11 @@ const giftStripe = { stripe: null, elements: null, appearance: null };
 
 let paymentConfigPromise = null;
 
+// Guards showGiftPayment against overlapping runs: without it, a second click
+// while the config fetch is pending would mount a second Payment Element into
+// the same container.
+let mountingGiftPayment = false;
+
 /**
  * Prefetch the connected Stripe account so the payment view can mount the
  * Payment Element without a loading pause (see CLAUDE.md: prefetch over
@@ -65,11 +70,20 @@ let paymentConfigPromise = null;
  * @return {Promise<string>} Resolves with the connected account ID, or ''.
  */
 export function prefetchGiftPaymentConfig( ctx ) {
-  paymentConfigPromise = fetch( `${ ctx.restUrl }donations/payment-config` )
+  const request = fetch( `${ ctx.restUrl }donations/payment-config` )
     .then( ( response ) => ( response.ok ? response.json() : null ) )
     .then( ( data ) => ( data && data.connected_account_id ) || '' )
-    .catch( () => '' );
-  return paymentConfigPromise;
+    .catch( () => '' )
+    .then( ( accountId ) => {
+      // Never cache a failed lookup: a transient error at register time must
+      // not permanently block the payment view within the session.
+      if ( ! accountId && paymentConfigPromise === request ) {
+        paymentConfigPromise = null;
+      }
+      return accountId;
+    } );
+  paymentConfigPromise = request;
+  return request;
 }
 
 /**
@@ -371,7 +385,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
 
     *showGiftPayment() {
       // A cleared/invalid custom amount falls back to the selected preset so
-      // the payment view never opens with an uncharg�eable zero total.
+      // the payment view never opens with an unchargeable zero total.
       if ( giftEffectiveAmount() <= 0 ) {
         state.isCustomGift = false;
         state.customGiftValue = '';
@@ -388,6 +402,10 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         return;
       }
 
+      if ( mountingGiftPayment ) {
+        return;
+      }
+
       if ( ! state.stripePublishableKey || ! window.Stripe ) {
         state.giftError = i18n(
           'paymentUnavailable',
@@ -397,95 +415,112 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       }
 
       const ctx = getContext();
-      const initError = i18n(
-        'paymentInitFailed',
-        'Payment processing is not available right now. Please try again later.'
-      );
 
-      let accountId = '';
+      mountingGiftPayment = true;
       try {
-        accountId = yield paymentConfigPromise ||
-          prefetchGiftPaymentConfig( ctx );
-      } catch ( e ) {
-        accountId = '';
-      }
-      if ( ! accountId ) {
-        state.giftError = initError;
-        return;
-      }
+        let accountId = '';
+        try {
+          accountId = yield paymentConfigPromise ||
+            prefetchGiftPaymentConfig( ctx );
+        } catch ( e ) {
+          accountId = '';
+        }
 
-      const container = document.querySelector(
-        '.mission-su__payment-element'
-      );
-      if ( ! container ) {
-        return;
-      }
+        // The fetch can outlast the view: the donor may back out, close the
+        // modal, or a rebind may tear the step down. Mount only into a live,
+        // still-empty payment view.
+        if (
+          ! state.isOpen ||
+          state.step3View !== 'payment' ||
+          giftStripe.elements
+        ) {
+          return;
+        }
 
-      giftStripe.stripe = window.Stripe( state.stripePublishableKey, {
-        stripeAccount: accountId,
-        locale: state.locale || 'auto',
-      } );
+        if ( ! accountId ) {
+          state.giftError = i18n(
+            'paymentInitFailed',
+            'Payment processing is not available right now. Please try again later.'
+          );
+          return;
+        }
 
-      const root = container.closest( '.mission-su' );
-      const primaryColor = root
-        ? window
-            .getComputedStyle( root )
-            .getPropertyValue( '--mission-primary' )
-            .trim()
-        : '';
-      const customAppearance = state.stripeAppearance || {};
+        const container = document.querySelector(
+          '.mission-su__payment-element'
+        );
+        if ( ! container ) {
+          return;
+        }
+        container.replaceChildren();
 
-      giftStripe.appearance = {
-        theme: customAppearance.theme || 'stripe',
-        variables: {
-          colorPrimary: primaryColor || '#2FA36B',
-          colorDanger: '#dc2626',
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          borderRadius: '10px',
-          ...( customAppearance.variables || {} ),
-        },
-        rules: {
-          '.Input--invalid': {
-            borderColor: '#dc2626',
-            boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.12)',
+        giftStripe.stripe = window.Stripe( state.stripePublishableKey, {
+          stripeAccount: accountId,
+          locale: state.locale || 'auto',
+        } );
+
+        const root = container.closest( '.mission-su' );
+        const primaryColor = root
+          ? window
+              .getComputedStyle( root )
+              .getPropertyValue( '--mission-primary' )
+              .trim()
+          : '';
+        const customAppearance = state.stripeAppearance || {};
+
+        giftStripe.appearance = {
+          theme: customAppearance.theme || 'stripe',
+          variables: {
+            colorPrimary: primaryColor || '#2FA36B',
+            colorDanger: '#dc2626',
+            fontFamily:
+              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            borderRadius: '10px',
+            ...( customAppearance.variables || {} ),
           },
-          '.Error': {
-            fontSize: '0.8125rem',
+          rules: {
+            '.Input--invalid': {
+              borderColor: '#dc2626',
+              boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.12)',
+            },
+            '.Error': {
+              fontSize: '0.8125rem',
+            },
+            ...( customAppearance.rules || {} ),
           },
-          ...( customAppearance.rules || {} ),
-        },
-      };
+        };
 
-      giftStripe.elements = giftStripe.stripe.elements( {
-        mode: 'payment',
-        amount: giftTotal(),
-        currency: currency().toLowerCase(),
-        paymentMethodTypes: [ 'card' ],
-        appearance: giftStripe.appearance,
-      } );
+        giftStripe.elements = giftStripe.stripe.elements( {
+          mode: 'payment',
+          amount: giftTotal(),
+          currency: currency().toLowerCase(),
+          paymentMethodTypes: [ 'card' ],
+          appearance: giftStripe.appearance,
+        } );
 
-      const paymentElement = giftStripe.elements.create( 'payment', {
-        layout: 'tabs',
-        fields: {
-          billingDetails: {
-            // Name and email come from the step-1 account and are passed at
-            // confirm time, so the element never asks for them.
-            name: 'never',
-            email: 'never',
-            address: 'auto',
+        const paymentElement = giftStripe.elements.create( 'payment', {
+          layout: 'tabs',
+          fields: {
+            billingDetails: {
+              // Name and email come from the step-1 account and are passed at
+              // confirm time, so the element never asks for them.
+              name: 'never',
+              email: 'never',
+              address: 'auto',
+            },
           },
-        },
-        wallets: {
-          link: 'never',
-        },
-      } );
+          wallets: {
+            link: 'never',
+          },
+        } );
 
-      paymentElement.mount( container );
+        paymentElement.mount( container );
 
-      paymentElement.on( 'change', ( event ) => {
-        state.giftError = event.error ? event.error.message : '';
-      } );
+        paymentElement.on( 'change', ( event ) => {
+          state.giftError = event.error ? event.error.message : '';
+        } );
+      } finally {
+        mountingGiftPayment = false;
+      }
     },
 
     *submitGift() {
@@ -637,6 +672,12 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
   callbacks: {
     isGiftPresetActive() {
       return ! state.isCustomGift && getContext().preset === state.giftAmount;
+    },
+    isGiftTipOptionActive() {
+      return (
+        ! state.isCustomGiftTip &&
+        getContext().tipPercent === state.giftTipPercent
+      );
     },
     giftPresetLabel() {
       return formatAmount( getContext().preset, currency(), {

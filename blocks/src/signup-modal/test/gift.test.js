@@ -11,7 +11,7 @@ const interactivity = require( '@wordpress/interactivity' );
 
 // Importing the view module pulls in gift.js and populates the merged store.
 require( '../view' );
-const { teardownGiftStripe } = require( '../gift' );
+const { prefetchGiftPaymentConfig, teardownGiftStripe } = require( '../gift' );
 
 const { _mockStoreDefinition: storeDef } = interactivity;
 
@@ -36,6 +36,7 @@ function drive( generator, feed ) {
 }
 
 const BASE_STATE = {
+  isOpen: true,
   currentStep: 3,
   isPending: false,
   kickoffEnabled: true,
@@ -322,6 +323,78 @@ describe( 'payment flow', () => {
     expect( paymentElement.mount ).toHaveBeenCalled();
   } );
 
+  it( 'overlapping showGiftPayment calls mount a single payment element', () => {
+    const paymentElement = { mount: jest.fn(), on: jest.fn() };
+    const elements = {
+      create: jest.fn( () => paymentElement ),
+      update: jest.fn(),
+    };
+    const stripe = { elements: jest.fn( () => elements ) };
+    window.Stripe = jest.fn( () => stripe );
+    storeDef.state.stripePublishableKey = 'pk_test_1';
+
+    const first = storeDef.actions.showGiftPayment();
+    first.next(); // Suspends on the payment-config yield.
+
+    // A second click while the config fetch is pending bails on the guard.
+    const second = storeDef.actions.showGiftPayment();
+    expect( second.next().done ).toBe( true );
+
+    first.next( 'acct_1' );
+
+    expect( window.Stripe ).toHaveBeenCalledTimes( 1 );
+    expect( paymentElement.mount ).toHaveBeenCalledTimes( 1 );
+  } );
+
+  it( 'does not mount when the modal closes before the config resolves', () => {
+    const paymentElement = { mount: jest.fn(), on: jest.fn() };
+    const stripe = {
+      elements: jest.fn( () => ( {
+        create: jest.fn( () => paymentElement ),
+        update: jest.fn(),
+      } ) ),
+    };
+    window.Stripe = jest.fn( () => stripe );
+    storeDef.state.stripePublishableKey = 'pk_test_1';
+
+    const generator = storeDef.actions.showGiftPayment();
+    generator.next(); // Suspends on the payment-config yield.
+    storeDef.state.isOpen = false; // Donor dismissed the modal mid-fetch.
+    generator.next( 'acct_1' );
+
+    expect( window.Stripe ).not.toHaveBeenCalled();
+
+    // The guard is released, so reopening can mount normally.
+    storeDef.state.isOpen = true;
+    const retry = storeDef.actions.showGiftPayment();
+    retry.next();
+    retry.next( 'acct_1' );
+    expect( window.Stripe ).toHaveBeenCalledTimes( 1 );
+  } );
+
+  it( 'retries the payment-config fetch after a failed prefetch', async () => {
+    global.fetch = jest.fn( () => Promise.resolve( { ok: false } ) );
+    await prefetchGiftPaymentConfig( interactivity._mockContext );
+
+    const paymentElement = { mount: jest.fn(), on: jest.fn() };
+    const elements = {
+      create: jest.fn( () => paymentElement ),
+      update: jest.fn(),
+    };
+    const stripe = { elements: jest.fn( () => elements ) };
+    window.Stripe = jest.fn( () => stripe );
+    storeDef.state.stripePublishableKey = 'pk_test_1';
+
+    const generator = storeDef.actions.showGiftPayment();
+    // The failed prefetch must not have been cached: entering the payment
+    // view kicks off a fresh fetch.
+    generator.next();
+    generator.next( 'acct_2' );
+
+    expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+    expect( paymentElement.mount ).toHaveBeenCalled();
+  } );
+
   it( 'submitGift posts the standard donation body and shows the thanks view', () => {
     const { stripe } = mountStubbedElement();
 
@@ -429,6 +502,20 @@ describe( 'payment flow', () => {
     expect( storeDef.state.giftError ).toBe( 'Amount is below the minimum.' );
     expect( storeDef.state.isSubmittingGift ).toBe( false );
     expect( storeDef.state.step3View ).toBe( 'payment' );
+  } );
+} );
+
+describe( 'tip menu', () => {
+  it( 'marks the selected percentage active until a custom tip takes over', () => {
+    interactivity._mockContext.tipPercent = 15;
+    expect( storeDef.callbacks.isGiftTipOptionActive() ).toBe( true );
+
+    interactivity._mockContext.tipPercent = 20;
+    expect( storeDef.callbacks.isGiftTipOptionActive() ).toBe( false );
+
+    interactivity._mockContext.tipPercent = 15;
+    storeDef.actions.selectGiftCustomTip();
+    expect( storeDef.callbacks.isGiftTipOptionActive() ).toBe( false );
   } );
 } );
 
