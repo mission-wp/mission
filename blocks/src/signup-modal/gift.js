@@ -13,7 +13,7 @@
  * submit), minus the recurring/address/tribute/custom-field branches the
  * wizard never needs — keep fixes to that flow in sync here.
  */
-import { store, getContext } from '@wordpress/interactivity';
+import { store, getContext, getElement } from '@wordpress/interactivity';
 import { formatAmount } from '@shared/currency';
 import { majorToMinor, minorToMajor } from '@shared/currencies';
 import {
@@ -294,13 +294,19 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           minorToMajor( state.giftAmount || 0, currency() ) || ''
         );
       }
-      // The grid stays open; move focus to the revealed input after render.
-      window.requestAnimationFrame( () => {
-        document.querySelector( '.mission-su__kickoff-custom input' )?.focus();
-      } );
     },
     updateCustomGift( event ) {
       state.customGiftValue = event.target.value;
+    },
+    blurCustomGift() {
+      // Leaving the field empty (or nonsense) reverts to the preset button.
+      if (
+        ! state.customGiftValue ||
+        ! ( parseFloat( state.customGiftValue ) > 0 )
+      ) {
+        state.isCustomGift = false;
+        state.customGiftValue = '';
+      }
     },
     backToNudge() {
       state.step3View = 'nudge';
@@ -641,6 +647,14 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       return state.customGiftTipAmount
         ? minorToMajor( state.customGiftTipAmount, currency() )
         : '';
+    },
+    focusCustomGiftInput() {
+      if ( state.isCustomGift ) {
+        const { ref } = getElement();
+        if ( ref && ref.tagName === 'INPUT' ) {
+          ref.focus();
+        }
+      }
     },
     watchGiftAmounts() {
       // Read reactive properties before the early return so the Interactivity

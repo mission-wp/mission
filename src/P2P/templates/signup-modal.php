@@ -270,18 +270,18 @@ $share_buttons = [
 								<?php foreach ( $payload['kickoffAmounts'] as $kickoff_amount ) : ?>
 									<button type="button" class="mission-su__amount-btn" data-wp-each-child="mission-donation-platform/p2p-signup::state.kickoffAmounts" data-wp-context='<?php echo esc_attr( wp_json_encode( [ 'preset' => $kickoff_amount ] ) ); ?>' data-wp-class--is-active="callbacks.isGiftPresetActive" data-wp-on--click="actions.selectGiftPreset" data-wp-text="callbacks.giftPresetLabel"><?php echo esc_html( $payload['currencySymbol'] . Currency::minor_to_major( $kickoff_amount, $payload['currency'] ) ); ?></button>
 								<?php endforeach; ?>
-								<button type="button" class="mission-su__amount-btn" data-wp-class--is-active="state.isCustomGift" data-wp-on--click="actions.chooseOtherGift"><?php esc_html_e( 'Other', 'mission-donation-platform' ); ?></button>
-							</div>
-							<div class="mission-su__kickoff-custom" data-wp-bind--hidden="!state.isCustomGift" hidden>
-								<span class="mission-su__prefix-wrap">
-									<span class="mission-su__prefix" data-wp-text="state.currencySymbol"><?php echo esc_html( $payload['currencySymbol'] ); ?></span>
-									<input type="number" min="1" step="1" aria-label="<?php esc_attr_e( 'Custom amount', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.customGiftValue" data-wp-on--input="actions.updateCustomGift" />
-								</span>
+								<div class="mission-su__amount-other-cell">
+									<button type="button" class="mission-su__amount-btn mission-su__amount-btn--other" data-wp-bind--hidden="state.isCustomGift" data-wp-on--click="actions.chooseOtherGift"><?php esc_html_e( 'Other', 'mission-donation-platform' ); ?></button>
+									<div class="mission-su__amount-other-input" hidden data-wp-bind--hidden="!state.isCustomGift">
+										<span class="mission-su__amount-other-prefix" data-wp-text="state.currencySymbol"><?php echo esc_html( $payload['currencySymbol'] ); ?></span>
+										<input type="number" class="mission-su__amount-other-field" placeholder="0.00" min="0" step="0.01" aria-label="<?php esc_attr_e( 'Custom amount', 'mission-donation-platform' ); ?>" data-wp-bind--value="state.customGiftValue" data-wp-on--input="actions.updateCustomGift" data-wp-on--blur="actions.blurCustomGift" data-wp-watch="callbacks.focusCustomGiftInput" />
+									</div>
+								</div>
 							</div>
 						</div>
 
 						<button type="button" class="mission-su__btn mission-su__btn--inline" data-wp-on--click="actions.showGiftPayment"><?php esc_html_e( 'Make the first gift', 'mission-donation-platform' ); ?></button>
-						<p class="mission-su__note"><a class="mission-su__skip" data-wp-bind--href="state.successUrl" target="_blank" rel="noopener"><?php esc_html_e( 'Skip for now and view my page', 'mission-donation-platform' ); ?></a></p>
+						<p class="mission-su__note"><a class="mission-su__skip" data-wp-bind--href="state.successUrl"><?php esc_html_e( 'Skip for now and view my page', 'mission-donation-platform' ); ?></a></p>
 					</div>
 
 					<!-- First-gift payment -->
@@ -343,12 +343,13 @@ $share_buttons = [
 										<?php esc_html_e( 'Help keep this platform free', 'mission-donation-platform' ); ?>
 									</span>
 									<span class="mission-su__tip-stepper">
-										<button type="button" class="mission-su__tip-step-btn" data-wp-on--click="actions.giftTipDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'mission-donation-platform' ); ?>">&minus;</button>
+										<?php // Literal characters: kses does not recognize the &plus;/&minus; entities. ?>
+										<button type="button" class="mission-su__tip-step-btn" data-wp-on--click="actions.giftTipDown" aria-label="<?php esc_attr_e( 'Decrease tip', 'mission-donation-platform' ); ?>">−</button>
 										<span class="mission-su__tip-input-wrap">
 											<span class="mission-su__tip-input-prefix" data-wp-text="state.currencySymbol"><?php echo esc_html( $payload['currencySymbol'] ); ?></span>
 											<input type="number" class="mission-su__tip-input" min="0" step="1" data-wp-bind--value="callbacks.customGiftTipDisplay" data-wp-on--input="actions.updateGiftCustomTip" aria-label="<?php esc_attr_e( 'Custom tip amount', 'mission-donation-platform' ); ?>" />
 										</span>
-										<button type="button" class="mission-su__tip-step-btn" data-wp-on--click="actions.giftTipUp" aria-label="<?php esc_attr_e( 'Increase tip', 'mission-donation-platform' ); ?>">&plus;</button>
+										<button type="button" class="mission-su__tip-step-btn" data-wp-on--click="actions.giftTipUp" aria-label="<?php esc_attr_e( 'Increase tip', 'mission-donation-platform' ); ?>">+</button>
 									</span>
 								</div>
 							</div>

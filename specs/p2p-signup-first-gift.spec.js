@@ -217,7 +217,7 @@ test.describe( 'Peer-to-peer sign-up: first-gift nudge', () => {
     // Other: keeps the grid open and reveals the custom input.
     await modal.getByRole( 'button', { name: 'Change amount' } ).click();
     await modal.getByRole( 'button', { name: 'Other' } ).click();
-    const custom = modal.locator( '.mission-su__kickoff-custom input' );
+    const custom = modal.locator( '.mission-su__amount-other-field' );
     await expect( custom ).toBeVisible();
     await expect(
       modal.getByRole( 'button', { name: '$100', exact: true } )

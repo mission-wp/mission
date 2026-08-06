@@ -706,8 +706,51 @@ a.mission-su__btn {
   }
 }
 
-.mission-su__kickoff-custom {
-  margin-bottom: 14px;
+// The "Other" grid cell swaps its button for an inline amount input,
+// mirroring the donation form's custom-amount treatment.
+.mission-su__amount-other-cell {
+  position: relative;
+}
+
+.mission-su__amount-other-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mission-su__amount-other-prefix {
+  position: absolute;
+  left: 12px;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mission-text-secondary);
+  pointer-events: none;
+}
+
+.mission-su__amount-other-field {
+  width: 100%;
+  height: 48px;
+  padding: 0 10px 0 26px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-text);
+  background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+  border: 1.5px solid var(--mission-primary);
+  border-radius: var(--mission-radius);
+  outline: none;
+  appearance: textfield;
+
+  &:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
 }
 
 // Inline (not full-width) primary button, e.g. "Make the first gift".

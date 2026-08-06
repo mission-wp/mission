@@ -128,6 +128,23 @@ describe( 'nudge amount picker', () => {
       'Give $12.34 to kick off your page'
     );
   } );
+
+  it( 'blurring an empty custom amount reverts to the preset button', () => {
+    storeDef.actions.chooseOtherGift();
+    storeDef.actions.updateCustomGift( { target: { value: '' } } );
+    storeDef.actions.blurCustomGift();
+
+    expect( storeDef.state.isCustomGift ).toBe( false );
+    expect( storeDef.state.kickoffHeadlineText ).toBe(
+      'Give $25 to kick off your page'
+    );
+
+    // A valid value survives the blur.
+    storeDef.actions.chooseOtherGift();
+    storeDef.actions.updateCustomGift( { target: { value: '40' } } );
+    storeDef.actions.blurCustomGift();
+    expect( storeDef.state.isCustomGift ).toBe( true );
+  } );
 } );
 
 describe( 'totals', () => {
