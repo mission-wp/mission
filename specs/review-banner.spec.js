@@ -374,11 +374,16 @@ test.describe( 'Review Banner', () => {
     const banner = page.locator( '.mission-review-banner' );
     await expect( banner ).toBeVisible( { timeout: 10_000 } );
 
+    // The dismiss POST is fire-and-forget, so wait for the request itself
+    // rather than a fixed timeout.
+    const dismissRequest = page.waitForRequest(
+      ( request ) =>
+        request.url().includes( 'review-banner/dismiss' ) &&
+        request.method() === 'POST'
+    );
     await banner.locator( '.mission-review-banner__dismiss-text' ).click();
     await expect( banner ).not.toBeVisible();
-
-    // Give any pending requests a moment to fire.
-    await page.waitForTimeout( 500 );
+    await dismissRequest;
 
     expect( dismissCalled ).toBe( true );
     expect( rateCalled ).toBe( false );

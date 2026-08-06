@@ -17,6 +17,7 @@ const {
   fillAccount,
   fillOtp,
 } = require( './helpers/p2p' );
+const { snapshotSettings } = require( './helpers/settings' );
 
 /**
  * Create a donor with a login account directly, for the existing-account branch.
@@ -35,11 +36,15 @@ function createDonorAccount( email, password ) {
 test.describe( 'Peer-to-peer fundraiser sign-up', () => {
   let campaign;
   let url;
+  let settingsSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
     clearP2PRateLimits();
     // These specs cover the share-only success screen; the first-gift nudge
     // (charges enabled) is covered by p2p-signup-first-gift.spec.js.
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'stripe_charges_enabled',
+    ] );
     await setChargesEnabled( requestUtils, false );
 
     ( { campaign, url } = await createP2PCampaign(
@@ -58,6 +63,8 @@ test.describe( 'Peer-to-peer fundraiser sign-up', () => {
       path: `/mission-donation-platform/v1/campaigns/${ campaign.id }`,
       method: 'DELETE',
     } );
+
+    await settingsSnapshot.restore();
   } );
 
   test( 'a new participant verifies by code and reaches the success screen', async ( {

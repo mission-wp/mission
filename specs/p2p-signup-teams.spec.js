@@ -15,16 +15,21 @@ const {
   setChargesEnabled,
   advanceToSetup,
 } = require( './helpers/p2p' );
+const { snapshotSettings } = require( './helpers/settings' );
 
 test.describe( 'Peer-to-peer team sign-up', () => {
   let campaign;
   let url;
   let teamName;
   let teamUrl;
+  let settingsSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
     clearP2PRateLimits();
     // Pin the share-only success screen (the nudge has its own spec).
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'stripe_charges_enabled',
+    ] );
     await setChargesEnabled( requestUtils, false );
 
     ( { campaign, url } = await createP2PCampaign(
@@ -51,6 +56,8 @@ test.describe( 'Peer-to-peer team sign-up', () => {
       path: `/mission-donation-platform/v1/campaigns/${ campaign.id }`,
       method: 'DELETE',
     } );
+
+    await settingsSnapshot.restore();
   } );
 
   test( 'a new participant joins an existing team and appears on its page', async ( {

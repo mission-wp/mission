@@ -15,12 +15,24 @@ const {
   enableTestMode,
   configureStripe,
 } = require( './helpers/campaign-factory' );
+const {
+  snapshotSettings,
+  snapshotStripeSiteToken,
+} = require( '../helpers/settings' );
 const { DonationFormPage } = require( './helpers/donation-form-page' );
 
 test.describe( 'Donation Form: Payment', () => {
-  let campaign, url, stripeReady;
+  let campaign, url, stripeReady, settingsSnapshot, siteTokenSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'test_mode',
+      'stripe_charges_enabled',
+      'stripe_connection_status',
+      'stripe_account_id',
+    ] );
+    siteTokenSnapshot = snapshotStripeSiteToken();
+
     await enableTestMode( requestUtils );
     stripeReady = await configureStripe( requestUtils );
 
@@ -32,6 +44,18 @@ test.describe( 'Donation Form: Payment', () => {
 
   test.afterAll( async ( { requestUtils } ) => {
     await deleteCampaign( requestUtils, campaign.id );
+
+    // The paying tests leave is_test transaction rows behind; campaign
+    // deletion doesn't cascade to transactions.
+    if ( stripeReady ) {
+      await requestUtils.rest( {
+        path: '/mission-donation-platform/v1/cleanup/delete_test_transactions',
+        method: 'POST',
+      } );
+    }
+
+    await settingsSnapshot.restore();
+    siteTokenSnapshot.restore();
   } );
 
   test( 'one-time donation with test card completes successfully', async ( {

@@ -15,15 +15,20 @@ const {
   setChargesEnabled,
   advanceToSetup,
 } = require( './helpers/p2p' );
+const { snapshotSettings } = require( './helpers/settings' );
 
 test.describe( 'Peer-to-peer sign-up with approval required', () => {
   let campaign;
   let url;
+  let settingsSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
     clearP2PRateLimits();
     // Pin the share-only success screen (the nudge has its own spec, which
     // also covers the pending outcome with charges enabled).
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'stripe_charges_enabled',
+    ] );
     await setChargesEnabled( requestUtils, false );
 
     ( { campaign, url } = await createP2PCampaign(
@@ -43,6 +48,8 @@ test.describe( 'Peer-to-peer sign-up with approval required', () => {
       path: `/mission-donation-platform/v1/campaigns/${ campaign.id }`,
       method: 'DELETE',
     } );
+
+    await settingsSnapshot.restore();
   } );
 
   test( 'a completed sign-up lands on the pending screen without a live share link', async ( {

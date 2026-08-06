@@ -26,6 +26,10 @@ const {
   clearP2PRateLimits,
   advanceToSetup,
 } = require( './helpers/p2p' );
+const {
+  snapshotSettings,
+  snapshotStripeSiteToken,
+} = require( './helpers/settings' );
 
 /**
  * Complete the sign-up through "Create fundraiser" and land on the nudge.
@@ -130,6 +134,8 @@ test.describe( 'Peer-to-peer sign-up: first-gift nudge', () => {
   let approvalCampaign;
   let approvalUrl;
   let stripeReady;
+  let settingsSnapshot;
+  let siteTokenSnapshot;
 
   // This spec signs up more participants than the send-code limiter's window
   // allows (5 per 5 minutes), so the counters reset before every test.
@@ -138,6 +144,14 @@ test.describe( 'Peer-to-peer sign-up: first-gift nudge', () => {
   } );
 
   test.beforeAll( async ( { requestUtils } ) => {
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'test_mode',
+      'stripe_charges_enabled',
+      'stripe_connection_status',
+      'stripe_account_id',
+    ] );
+    siteTokenSnapshot = snapshotStripeSiteToken();
+
     // The nudge renders only when Stripe charges are enabled.
     await enableTestMode( requestUtils );
     stripeReady = await configureStripe( requestUtils );
@@ -162,6 +176,18 @@ test.describe( 'Peer-to-peer sign-up: first-gift nudge', () => {
         method: 'DELETE',
       } );
     }
+
+    // The paying tests leave is_test transaction rows behind; campaign
+    // deletion doesn't cascade to transactions.
+    if ( stripeReady ) {
+      await requestUtils.rest( {
+        path: '/mission-donation-platform/v1/cleanup/delete_test_transactions',
+        method: 'POST',
+      } );
+    }
+
+    await settingsSnapshot.restore();
+    siteTokenSnapshot.restore();
   } );
 
   test( 'sign-up lands on the nudge with a skip link and no share row', async ( {

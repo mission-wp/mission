@@ -10,6 +10,10 @@ const {
   enableTestMode,
   configureStripe,
 } = require( './helpers/campaign-factory' );
+const {
+  snapshotSettings,
+  snapshotStripeSiteToken,
+} = require( '../helpers/settings' );
 
 const SHORTCODE =
   '[mission_donation_form recurring_enabled="false" collect_address="false" amounts="10,25,50"]';
@@ -71,9 +75,17 @@ async function completeDonation( form, email ) {
 }
 
 test.describe( 'Donation Form: Multiple forms on one page', () => {
-  let pageId, pageUrl, stripeReady;
+  let pageId, pageUrl, stripeReady, settingsSnapshot, siteTokenSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'test_mode',
+      'stripe_charges_enabled',
+      'stripe_connection_status',
+      'stripe_account_id',
+    ] );
+    siteTokenSnapshot = snapshotStripeSiteToken();
+
     await enableTestMode( requestUtils );
     stripeReady = await configureStripe( requestUtils );
 
@@ -96,6 +108,17 @@ test.describe( 'Donation Form: Multiple forms on one page', () => {
       method: 'DELETE',
       params: { force: true },
     } );
+
+    // The paying tests leave is_test transaction rows behind.
+    if ( stripeReady ) {
+      await requestUtils.rest( {
+        path: '/mission-donation-platform/v1/cleanup/delete_test_transactions',
+        method: 'POST',
+      } );
+    }
+
+    await settingsSnapshot.restore();
+    siteTokenSnapshot.restore();
   } );
 
   test( 'first form completes checkout', async ( { page } ) => {
