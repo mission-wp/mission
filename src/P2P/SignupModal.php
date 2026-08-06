@@ -106,11 +106,9 @@ class SignupModal {
 			]
 		);
 
-		// The first-gift success screen also offers a mailto share; email is
-		// surface-opt-in (not in Sharing::DEFAULT_NETWORKS), appended after the
-		// filterable networks.
-		$share_networks   = Sharing::networks( 'signup-modal' );
-		$share_networks[] = 'email';
+		// The modal's success screens also offer a mailto share; email is
+		// surface-opt-in (not in Sharing::DEFAULT_NETWORKS).
+		$share_networks = Sharing::networks( 'signup-modal', [ 'email' ] );
 
 		// Campaign-independent, request-scoped data lives on the shell's own context.
 		$context = [

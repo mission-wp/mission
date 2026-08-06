@@ -55,22 +55,29 @@ class Sharing {
 	/**
 	 * Get the enabled share networks for a rendering surface.
 	 *
-	 * @param string $context Rendering surface (e.g. 'signup-modal', 'donor-dashboard').
+	 * @param string   $context        Rendering surface (e.g. 'signup-modal', 'donor-dashboard').
+	 * @param string[] $extra_networks Networks the surface opts into beyond the
+	 *                                 defaults (e.g. 'email'), appended after them.
 	 * @return string[] Enabled network keys, in display order.
 	 */
-	public static function networks( string $context ): array {
+	public static function networks( string $context, array $extra_networks = [] ): array {
+		$defaults = array_merge( self::DEFAULT_NETWORKS, $extra_networks );
+
 		/**
 		 * Filters the social share networks rendered by share UIs.
 		 *
-		 * Return a subset of the defaults to drop networks (e.g. remove 'x'),
-		 * or an empty array to render no social share buttons at all.
-		 * Copy-link controls are not affected by this filter.
+		 * Return a subset to drop networks (e.g. remove 'x'), or an empty
+		 * array to render no social share buttons at all. Surfaces may opt
+		 * into extra networks beyond the defaults (the signup modal appends
+		 * 'email'); those pass through this filter too and can be removed.
+		 * Networks not offered for the surface are discarded from the return
+		 * value. Copy-link controls are not affected by this filter.
 		 *
-		 * @param string[] $networks Network keys in display order. Default: 'facebook', 'x', 'bluesky'.
+		 * @param string[] $networks Network keys in display order. Defaults: 'facebook', 'x', 'bluesky', plus any surface extras.
 		 * @param string   $context  Rendering surface: 'signup-modal' or 'donor-dashboard'.
 		 */
-		$networks = apply_filters( 'mission_share_networks', self::DEFAULT_NETWORKS, $context );
+		$networks = apply_filters( 'mission_share_networks', $defaults, $context );
 
-		return array_values( array_intersect( (array) $networks, self::DEFAULT_NETWORKS ) );
+		return array_values( array_intersect( (array) $networks, $defaults ) );
 	}
 }
