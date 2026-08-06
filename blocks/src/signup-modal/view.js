@@ -323,6 +323,12 @@ const { state, actions } = store( 'mission-donation-platform/p2p-signup', {
       focusIntoDialog();
     },
     close() {
+      // Never dismiss mid-charge (3DS can hold confirmPayment open for
+      // minutes): closing would hide the outcome, and reopening would reset
+      // the submit guard while the charge is still in flight.
+      if ( state.isSubmittingGift ) {
+        return;
+      }
       state.isOpen = false;
       document.body.style.overflow = '';
       restoreFocus();

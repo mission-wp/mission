@@ -63,7 +63,7 @@ $share_buttons = [
 		<div class="mission-su__dialog" role="dialog" aria-modal="true" aria-label="<?php echo esc_attr( $payload['brandline'] ); ?>" data-wp-bind--aria-label="state.brandline" tabindex="-1">
 			<div class="mission-su__head">
 				<span class="mission-su__brand" data-wp-text="state.brandline"><?php echo esc_html( $payload['brandline'] ); ?></span>
-				<button type="button" class="mission-su__close" aria-label="<?php esc_attr_e( 'Close', 'mission-donation-platform' ); ?>" data-wp-on--click="actions.close">&times;</button>
+				<button type="button" class="mission-su__close" aria-label="<?php esc_attr_e( 'Close', 'mission-donation-platform' ); ?>" data-wp-bind--disabled="state.isSubmittingGift" data-wp-on--click="actions.close">&times;</button>
 			</div>
 
 			<div class="mission-su__progress" aria-hidden="true">

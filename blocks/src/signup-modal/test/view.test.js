@@ -344,3 +344,24 @@ describe( 'continueAccount validation', () => {
     expect( storeDef.state.emailError ).toBe( false );
   } );
 } );
+
+describe( 'close guard while a gift charge is in flight', () => {
+  afterEach( () => {
+    storeDef.state.isSubmittingGift = false;
+    document.body.style.overflow = '';
+  } );
+
+  it( 'ignores close and Escape until the submission settles', () => {
+    Object.assign( storeDef.state, { isOpen: true, isSubmittingGift: true } );
+
+    storeDef.actions.close();
+    expect( storeDef.state.isOpen ).toBe( true );
+
+    storeDef.actions.onKeydown( { key: 'Escape' } );
+    expect( storeDef.state.isOpen ).toBe( true );
+
+    storeDef.state.isSubmittingGift = false;
+    storeDef.actions.close();
+    expect( storeDef.state.isOpen ).toBe( false );
+  } );
+} );
