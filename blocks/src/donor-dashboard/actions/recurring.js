@@ -12,6 +12,7 @@ import {
   roundToCurrency,
 } from '@shared/currencies';
 import { formatAmount } from '@shared/currency';
+import { buildAppearance } from '@shared/stripe';
 import {
   calculateFee,
   calculateTip,
@@ -783,21 +784,14 @@ export const recurringActions = {
 
       clientSecret = intentData.client_secret;
 
+      const primaryColor = window
+        .getComputedStyle( document.documentElement )
+        .getPropertyValue( '--mission-primary' )
+        .trim();
+
       elementsInstance = stripeInstance.elements( {
         clientSecret,
-        appearance: {
-          theme: 'stripe',
-          variables: {
-            colorPrimary:
-              window
-                .getComputedStyle( document.documentElement )
-                .getPropertyValue( '--mission-primary' )
-                .trim() || '#2FA36B',
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            borderRadius: '6px',
-          },
-        },
+        appearance: buildAppearance( primaryColor, ctx.stripeAppearance || {} ),
       } );
 
       paymentElement = elementsInstance.create( 'payment', {

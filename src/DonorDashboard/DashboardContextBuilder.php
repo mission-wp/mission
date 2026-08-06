@@ -263,6 +263,7 @@ class DashboardContextBuilder {
 			'nonce'                => wp_create_nonce( 'wp_rest' ),
 			'dashboardUrl'         => get_permalink(),
 			'stripePublishableKey' => ! empty( $this->settings['test_mode'] ) ? MISSIONDP_STRIPE_PK_TEST : MISSIONDP_STRIPE_PK_LIVE,
+			'stripeAppearance'     => apply_filters( 'mission_stripe_appearance', [] ),
 			'validPanels'          => array_values( array_keys( $panels ) ),
 			'panelLabels'          => $panel_labels,
 			'toast'                => [
