@@ -7,6 +7,9 @@
   --mission-error: #dc2626;
   --mission-radius: 12px;
   --mission-transition: 200ms ease;
+  // Derived here rather than inlined from PHP: kses strips function values
+  // from inline custom properties.
+  --mission-primary-light: color-mix(in srgb, var(--mission-primary) 10%, transparent);
   --mission-df-padding-y: 28px;
   --mission-df-padding-x: 32px;
 

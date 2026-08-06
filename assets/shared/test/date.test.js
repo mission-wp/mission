@@ -48,7 +48,6 @@ describe( 'formatDateOnly', () => {
   it( 'uses date-only format in title (no time components)', () => {
     const result = formatDateOnly( '2026-06-15' );
     expect( result.type ).toBe( 'time' );
-    // FULL_DATE_ONLY format has no hour/minute/second, so no ":" in title
     expect( result.props.title ).not.toMatch( /\d+:\d+/ );
   } );
 } );

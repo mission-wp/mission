@@ -303,7 +303,6 @@ function ActionRow( {
   onRun,
   sectionVariant,
 } ) {
-  // Show skeleton for description if stats are still loading and this action uses dynamic stats.
   const showDescSkeleton = loadingStats && action.getDescription;
   let desc = action.description;
   if ( ! showDescSkeleton && action.getDescription ) {

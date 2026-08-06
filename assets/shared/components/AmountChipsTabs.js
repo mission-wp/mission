@@ -25,7 +25,6 @@ export default function AmountChipsTabs( {
 
   const symbol = currencySymbol || getCurrencySymbol();
 
-  // Switch to first enabled tab if current is disabled.
   const isActiveEnabled = selectedFrequencies.includes( activeTab );
   const effectiveTab = isActiveEnabled
     ? activeTab
@@ -53,11 +52,9 @@ export default function AmountChipsTabs( {
       freqId,
       current.filter( ( a ) => a !== amount )
     );
-    // If removed amount was default, clear it.
     if ( defaultAmounts[ freqId ] === amount ) {
       onDefaultChange( freqId, null );
     }
-    // Clean up description for removed amount.
     if (
       onDescriptionChange &&
       amountDescriptions?.[ freqId ]?.[ String( amount ) ]

@@ -1,0 +1,21 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-title\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Fundraiser name is fundraising for": [
+                "Nombre del recaudador est\u00e1 recaudando fondos para"
+            ],
+            "Your Campaign": [
+                "Tu campa\u00f1a"
+            ]
+        }
+    }
+}

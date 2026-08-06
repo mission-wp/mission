@@ -55,9 +55,6 @@
             "Full Size": [
                 "Tama\u00f1o completo"
             ],
-            "If empty, the campaign will be detected from the current post.": [
-                "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."
-            ],
             "Alternative text": [
                 "Texto alternativo"
             ],
@@ -96,6 +93,9 @@
             ],
             "Select the size of the source image.": [
                 "Selecciona el tama\u00f1o de la imagen de origen."
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."
             ],
             "No campaign image set.": [
                 "No se ha establecido ninguna imagen de campa\u00f1a."

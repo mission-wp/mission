@@ -70,17 +70,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = sprintf(
-			/* translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly") */
-			__( 'Thank you for your %1$s %2$s donation', 'mission-donation-platform' ),
-			$data['amount_formatted'],
-			strtolower( $data['frequency_label'] ),
-		);
-
-		$custom_subject = $this->email->get_custom_subject( 'subscription_activated' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags( $custom_subject, $this->build_subject_tags( $data, $donor ) );
-		}
+		$subject = $this->email->subject( 'subscription_activated', $this->build_subject_tags( $data, $donor ) );
 
 		$html = $this->email->render_template( 'subscription-activated', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );
@@ -106,20 +96,11 @@ class SubscriptionEmailListener {
 		$data                = $this->build_email_data( $subscription, $donor );
 		$data['transaction'] = $transaction;
 
-		$subject = sprintf(
-			/* translators: 1: frequency label (e.g. "monthly"), 2: formatted donation amount */
-			__( 'Thank you for your %1$s gift of %2$s', 'mission-donation-platform' ),
-			strtolower( $data['frequency_label'] ),
-			$data['amount_formatted'],
-		);
+		$tags                 = $this->build_subject_tags( $data, $donor );
+		$tags['{date}']       = wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ) );
+		$tags['{receipt_id}'] = (string) $transaction->id;
 
-		$custom_subject = $this->email->get_custom_subject( 'renewal_receipt' );
-		if ( $custom_subject ) {
-			$tags                 = $this->build_subject_tags( $data, $donor );
-			$tags['{date}']       = wp_date( get_option( 'date_format' ), strtotime( $transaction->date_completed ) );
-			$tags['{receipt_id}'] = (string) $transaction->id;
-			$subject              = $this->email->replace_subject_tags( $custom_subject, $tags );
-		}
+		$subject = $this->email->subject( 'renewal_receipt', $tags );
 
 		$html = $this->email->render_template( 'renewal-receipt', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );
@@ -143,12 +124,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' );
-
-		$custom_subject = $this->email->get_custom_subject( 'payment_failed' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags( $custom_subject, $this->build_subject_tags( $data, $donor ) );
-		}
+		$subject = $this->email->subject( 'payment_failed', $this->build_subject_tags( $data, $donor ) );
 
 		$html = $this->email->render_template( 'payment-failed', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );
@@ -172,12 +148,7 @@ class SubscriptionEmailListener {
 
 		$data = $this->build_email_data( $subscription, $donor );
 
-		$subject = __( 'Your recurring donation has ended', 'mission-donation-platform' );
-
-		$custom_subject = $this->email->get_custom_subject( 'subscription_cancelled' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags( $custom_subject, $this->build_subject_tags( $data, $donor ) );
-		}
+		$subject = $this->email->subject( 'subscription_cancelled', $this->build_subject_tags( $data, $donor ) );
 
 		$html = $this->email->render_template( 'subscription-cancelled', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );

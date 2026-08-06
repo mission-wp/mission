@@ -163,7 +163,6 @@ class DashboardEndpoint {
 			]
 		);
 
-		// System events that should always appear despite their object_type.
 		$always_show = [ 'plugin_installed', 'plugin_activated', 'plugin_updated' ];
 
 		$entries = array_filter(

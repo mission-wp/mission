@@ -123,7 +123,6 @@ export default function MigrationPanel( { onSwitchTab } ) {
     };
   }, [] );
 
-  // Poll status while a job is in flight.
   const jobId = job?.job_id;
   const jobStatus = job?.status;
   useEffect( () => {
@@ -147,7 +146,6 @@ export default function MigrationPanel( { onSwitchTab } ) {
     return () => stopPolling();
   }, [ jobId, jobStatus, stopPolling ] );
 
-  // Route to the right view when a job reaches a terminal state.
   useEffect( () => {
     if ( ! jobStatus || ! TERMINAL_STATUSES.includes( jobStatus ) ) {
       return;

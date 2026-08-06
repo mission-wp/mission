@@ -1,0 +1,598 @@
+// Donor Dashboard — Fundraiser/team cards, detail views, and person lists.
+// Shared by the My Fundraisers and My Teams panels and their drill-in views.
+
+// ── Cards ──
+
+:where(.mission-dd-fr-card) {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--mission-text);
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #eee);
+  border-radius: var(--mission-radius, 8px);
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: var(--mission-transition, 0.15s ease);
+
+  &:hover {
+    border-color: var(--mission-primary);
+    box-shadow: 0 1px 6px color-mix(in srgb, var(--mission-primary) 10%, transparent);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 24px;
+    right: 18px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid var(--mission-text-light, #999);
+    border-right: 2px solid var(--mission-text-light, #999);
+    transform: rotate(45deg);
+  }
+
+  &.is-ended {
+    background: var(--mission-bg-secondary, #f7f7f7);
+  }
+}
+
+:where(.mission-dd-fr-card-top) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-right: 20px;
+}
+
+:where(.mission-dd-fr-campaign) {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+:where(.mission-dd-fr-title) {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--mission-text);
+}
+
+:where(.mission-dd-fr-tribute) {
+  display: block;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--mission-text-secondary, #6b7280);
+  margin-top: 2px;
+}
+
+:where(.mission-dd-fr-foot) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+// ── Status badges (by data-badge type) ──
+
+:where(.mission-dd-badge[data-badge="active"]) {
+  background: var(--mission-primary-light);
+  color: var(--mission-primary-text-on-light);
+}
+
+:where(.mission-dd-badge[data-badge="goal-met"]) {
+  background: var(--mission-primary-light);
+  color: var(--mission-primary-text-on-light);
+}
+
+:where(.mission-dd-badge[data-badge="pending"]) {
+  background: color-mix(in srgb, var(--mission-text-secondary, #6b7280) 12%, transparent);
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+:where(.mission-dd-badge[data-badge="inactive"]),
+:where(.mission-dd-badge[data-badge="ended"]) {
+  background: var(--mission-bg-secondary, #f7f7f7);
+  color: var(--mission-text-secondary, #6b7280);
+  border: 1px solid var(--mission-border, #eee);
+}
+
+// ── Role badges + team chips ──
+
+:where(.mission-dd-role-badge) {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid var(--mission-border, #eee);
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--mission-text-secondary, #6b7280);
+  background: none;
+}
+
+:where(.mission-dd-role-badge-captain) {
+  background: var(--mission-primary);
+  border-color: var(--mission-primary);
+  color: var(--mission-primary-text, #fff);
+}
+
+:where(.mission-dd-team-chip) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+// ── Progress ──
+
+:where(.mission-dd-progress-track) {
+  display: block;
+  height: 8px;
+  margin-top: 12px;
+  border-radius: 9999px;
+  background: var(--mission-bg-secondary, #f7f7f7);
+  overflow: hidden;
+}
+
+:where(.mission-dd-progress-fill) {
+  display: block;
+  height: 100%;
+  width: var(--bar-width, 0);
+  border-radius: 9999px;
+  background: var(--mission-primary);
+  transition: width 0.4s ease;
+
+  &.is-ended {
+    background: color-mix(in srgb, var(--mission-primary) 40%, var(--mission-bg-secondary, #f7f7f7));
+  }
+}
+
+:where(.mission-dd-progress-meta) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+// Empty items would otherwise contribute a stray dot separator.
+:where(.mission-dd-progress-meta > :empty) {
+  display: none;
+}
+
+:where(.mission-dd-progress-meta > * + *)::before {
+  content: "·";
+  margin-right: 6px;
+}
+
+// ── Detail views ──
+
+:where(.mission-dd-detail-back) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mission-primary-text-on-light);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:where(.mission-dd-detail-hero) {
+  background: var(--mission-bg-secondary, #f7f7f7);
+  border: 1px solid var(--mission-border, #eee);
+  border-radius: var(--mission-radius, 8px);
+  padding: 20px;
+  margin-bottom: 8px;
+}
+
+// No chevron in the hero, so no need for the card-top's right padding.
+:where(.mission-dd-detail-hero .mission-dd-fr-card-top) {
+  padding-right: 0;
+}
+
+:where(.mission-dd-detail-stats) {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+:where(.mission-dd-detail-stat-value) {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--mission-text);
+}
+
+:where(.mission-dd-detail-stat-label) {
+  font-size: 12px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+:where(.mission-dd-card-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+:where(.mission-dd-readonly-note) {
+  font-size: 13px;
+  color: var(--mission-text-secondary, #6b7280);
+  background: var(--mission-bg, #fff);
+  border: 1px solid var(--mission-border, #eee);
+  border-radius: var(--mission-radius, 8px);
+  padding: 10px 14px;
+  margin-top: 16px;
+}
+
+:where(.mission-dd-fr-section) {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--mission-border, #eee);
+}
+
+:where(.mission-dd-section-title-spaced) {
+  margin-top: 32px;
+}
+
+:where(.mission-dd-notice) {
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--mission-primary) 25%, transparent);
+  border-radius: var(--mission-radius, 8px);
+  background: var(--mission-primary-light);
+  color: var(--mission-primary-text-on-light);
+  font-size: 14px;
+}
+
+:where(.mission-dd-help) {
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+
+// ── Spotlight (Overview) ──
+
+:where(.mission-dd-spotlight) {
+  background: var(--mission-bg-secondary, #f7f7f7);
+  border: 1px solid var(--mission-border, #eee);
+  border-radius: var(--mission-radius, 8px);
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+:where(.mission-dd-spotlight-secondary) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  border-top: 1px solid var(--mission-border, #eee);
+  margin-top: 16px;
+  padding-top: 14px;
+  font-size: 13px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+:where(.mission-dd-spotlight-other) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  strong {
+    color: var(--mission-text);
+    font-weight: 600;
+  }
+}
+
+// ── Past teams ──
+
+:where(.mission-dd-past-list) {
+  border-top: 1px solid var(--mission-border, #eee);
+  margin-top: 8px;
+}
+
+:where(.mission-dd-past-item) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--mission-border, #eee);
+  font-size: 14px;
+  color: var(--mission-text-secondary, #6b7280);
+
+  strong {
+    color: var(--mission-text);
+    font-weight: 600;
+  }
+}
+
+// ── Person lists (supporters + members) ──
+
+:where(.mission-dd-person-item) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--mission-border, #eee);
+}
+
+:where(.mission-dd-person-avatar) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--mission-primary-light);
+  color: var(--mission-primary-text-on-light);
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+:where(.mission-dd-person-body) {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+:where(.mission-dd-person-name) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mission-text);
+}
+
+:where(.mission-dd-person-note) {
+  display: block;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--mission-text-secondary, #6b7280);
+  margin-top: 2px;
+}
+
+:where(.mission-dd-person-sub) {
+  display: block;
+  font-size: 12px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+:where(.mission-dd-person-amount) {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--mission-text);
+}
+
+:where(.mission-dd-person-actions) {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+:where(.mission-dd-member-bar) {
+  display: block;
+  height: 5px;
+  max-width: 220px;
+  margin-top: 6px;
+  border-radius: 9999px;
+  background: var(--mission-bg-secondary, #f7f7f7);
+  overflow: hidden;
+}
+
+:where(.mission-dd-member-bar-fill) {
+  display: block;
+  height: 100%;
+  width: var(--bar-width, 0);
+  border-radius: 9999px;
+  background: var(--mission-primary);
+}
+
+// ── Skeleton rows (supporters loading) ──
+
+:where(.mission-dd-person-skeleton .mission-dd-person-avatar) {
+  background: var(--mission-bg-secondary, #f7f7f7);
+}
+
+:where(.mission-dd-skeleton-line) {
+  display: block;
+  height: 12px;
+  width: 60%;
+  margin: 4px 0;
+  border-radius: 9999px;
+  background: var(--mission-bg-secondary, #f7f7f7);
+}
+
+:where(.mission-dd-skeleton-line-short) {
+  width: 30%;
+}
+
+// ── Pagination ──
+
+:where(.mission-dd-pagination) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 14px;
+}
+
+:where(.mission-dd-pagination-info) {
+  font-size: 13px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+:where(.mission-dd-pagination-buttons) {
+  display: flex;
+  gap: 6px;
+}
+
+// ── Forms shared by the detail views ──
+
+:where(.mission-dd-goal-input) {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+:where(.mission-dd-goal-prefix) {
+  position: absolute;
+  left: 12px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--mission-text-secondary, #6b7280);
+  pointer-events: none;
+}
+
+.mission-donor-dashboard .mission-dd-goal-input .mission-dd-profile-input {
+  padding-left: 28px;
+}
+
+:where(.mission-dd-story) {
+  resize: vertical;
+  min-height: 160px;
+}
+
+:where(.mission-dd-cover) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+:where(.mission-dd-cover-buttons) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:where(.mission-dd-cover-preview) {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  border-radius: var(--mission-radius, 8px);
+}
+
+:where(.mission-dd-cover-placeholder) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  min-height: 140px;
+  border: 1px dashed var(--mission-border, #eee);
+  border-radius: var(--mission-radius, 8px);
+  background: var(--mission-bg-secondary, #f7f7f7);
+  color: var(--mission-text-secondary, #6b7280);
+  font-size: 14px;
+}
+
+:where(.mission-dd-share-url) {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+:where(.mission-dd-share-url .mission-dd-profile-input) {
+  flex: 1;
+}
+
+:where(.mission-dd-share-links) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:where(.mission-dd-invite) {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+:where(.mission-dd-invite .mission-dd-profile-input) {
+  flex: 1;
+}
+
+:where(.mission-dd-invitations) {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+:where(.mission-dd-invitation) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--mission-border, #eee);
+}
+
+:where(.mission-dd-invitation-status) {
+  font-size: 12px;
+  color: var(--mission-text-secondary, #6b7280);
+}
+
+// ── Danger zone (leave team) ──
+
+:where(.mission-dd-danger-link) {
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--mission-error, #b85c5c);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+:where(.mission-dd-danger-desc) {
+  font-size: 12px;
+  color: var(--mission-text-light, #999);
+  margin: 4px 0 0;
+}
+
+// ── Narrow container ──
+
+@container (max-width: 600px) {
+
+  :where(.mission-dd-detail-stats) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  :where(.mission-dd-share-url),
+  :where(.mission-dd-invite) {
+    flex-direction: column;
+  }
+}

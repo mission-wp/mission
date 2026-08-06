@@ -1,27 +1,27 @@
 === Mission - Donation Plugin for WordPress - Fundraising & Recurring Donations ===
 Contributors: missionwp
-Tags: donations, fundraising, recurring donations, nonprofit, stripe
+Tags: crowdfunding, donate, donation, fundraising, recurring donations
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable Tag: 1.3.3
+Stable Tag: 1.4.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Accept donations, manage recurring giving, easy donor management, and grow fundraising with Mission, a free WordPress donation plugin for nonprofits
+Accept donations, manage recurring giving, and run peer-to-peer fundraising with Mission, a free WordPress donation plugin for nonprofits
 
 == Description ==
 
-Mission is a free WordPress donation plugin built for nonprofits. Accept one-time and recurring donations, manage donors and campaigns, give your supporters a self-service dashboard, and track everything from a modern admin, without paying for a single add-on.
+Mission is a free WordPress donation plugin built for nonprofits. Accept one-time and recurring donations, let supporters fundraise for you with peer-to-peer crowdfunding campaigns, manage donors and campaigns, give your supporters a self-service dashboard, and track everything from a modern admin, without paying for a single add-on.
 
-Most donation plugins lock the features you actually need behind a paid tier. Recurring donations? Add-on. Custom fields? Add-on. Donor dashboards, fee recovery, exports? Add-on, add-on, add-on. Mission takes a different approach: every feature ships in the free plugin, and we're funded by an optional tip donors can choose to add at checkout. Donors can change the tip, lower it, or set it to zero. 100% of the donation amount always reaches your nonprofit.
+Most donation plugins lock the features you actually need behind a paid tier. Recurring donations? Add-on. Custom fields? Add-on. Peer-to-peer fundraising? That one costs hundreds per year. Donor dashboards, fee recovery, exports? Add-on, add-on, add-on. Mission takes a different approach: every feature ships in the free plugin, and we're funded by an optional tip donors can choose to add at checkout. Donors can change the tip, lower it, or set it to zero. 100% of the donation amount always reaches your nonprofit.
 
 The result is a donation platform that grows with your organization without surprise upgrade prompts. The plugin you install today is the plugin handling your donations next year, with no upsell screens between you and your supporters.
 
 === ✨ Why Mission ===
 
 **No paid add-ons. Ever.**
-Recurring donations, donor dashboards, campaign management, custom fields, tribute donations, fee recovery, exports, activity logs. All included in the free plugin. There is no "Mission Pro" version, no premium tier, and no upsell at checkout.
+Recurring donations, peer-to-peer fundraising, donor dashboards, campaign management, custom fields, tribute donations, fee recovery, exports, activity logs. All included in the free plugin. There is no "Mission Pro" version, no premium tier, and no upsell at checkout.
 
 **Modern donation forms that convert.**
 Multi-step forms with suggested amounts, custom amounts, tribute dedications, anonymous donations, optional fee recovery. Built to feel quick and trustworthy on every device.
@@ -76,7 +76,22 @@ Run a single ongoing campaign or dozens of named campaigns side by side:
 * Active, draft, and archived statuses
 * Real-time aggregates that update as donations complete
 
-Mission ships eleven campaign and donation blocks: donation form, donate button, campaign card, campaign grid, campaign image, campaign progress bar, campaign statistic, donor wall, recent donors, top donors, and donor dashboard. Mix and match them to build campaign pages that match your brand. Not using the block editor? Every block has a shortcode equivalent that works in page builders like Elementor and Bricks.
+Mission ships twelve campaign and donation blocks: donation form, donate button, campaign card, campaign grid, campaign image, campaign description, campaign progress bar, campaign statistic, donor wall, recent donors, top donors, and donor dashboard. Mix and match them to build campaign pages that match your brand. Not using the block editor? Every block has a shortcode equivalent that works in page builders like Elementor and Bricks.
+
+=== 🤝 Peer-to-peer fundraising ===
+
+Let your supporters fundraise for you. Mark a campaign as peer-to-peer and anyone can sign up, on their own or as part of a team, and get a personal crowdfunding page to share:
+
+* Supporters sign up right on the campaign page, verify their email, and their page is live in minutes
+* Personal pages with a story, cover photo, goal, and live progress bar
+* Teams, with captains who can invite members by email, keep the team private, promote a new captain, and manage the roster
+* Approve every sign-up manually, or let pages go live instantly
+* A fundraiser dashboard where participants edit their page, track progress, see their donors, and grab share links
+* Donations automatically credit the fundraiser and their team, including recurring renewals
+* Milestone emails celebrate 25%, 50%, 75%, and 100% of each fundraiser's goal
+* Twelve more blocks for fundraiser and team pages, including Top Fundraisers and Top Teams leaderboards, with both page layouts editable as Site Editor templates
+
+Peer-to-peer crowdfunding is the feature other donation platforms charge hundreds of dollars a year for. In Mission it's free, like everything else.
 
 === 📊 Reports and exports you can actually use ===
 
@@ -96,7 +111,7 @@ Mission is built to fit any organization or individual raising money online:
 * Schools, PTAs, and education nonprofits
 * Political campaigns and advocacy groups
 * Community groups and mutual aid funds
-* Individuals raising for a specific cause
+* Individuals crowdfunding for a specific cause
 
 === 🫙 How the optional tip model works ===
 
@@ -119,7 +134,7 @@ See the README in the repository for full development setup, contribution guidel
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Open the new **Mission** menu and click **Connect Stripe** to link your Stripe account. Onboarding takes about two minutes through Stripe Connect.
 4. Create your first campaign under **Mission → Campaigns**, set a goal, and customize the donation form.
-5. Add the Donation Form block (or any of Mission's eleven blocks) to a page, and you are ready to accept donations.
+5. Add the Donation Form block (or any of Mission's blocks) to a page, and you are ready to accept donations.
 
 == Frequently Asked Questions ==
 
@@ -138,6 +153,10 @@ Mission currently supports Stripe via Stripe Connect for credit and debit card d
 = Does Mission support recurring donations? =
 
 Yes. Recurring donations are included free, with no add-on required. Donors can choose weekly, monthly, quarterly, or annual frequencies (configurable per form). Renewals are processed automatically via Stripe with retry on failure, and donors can pause, resume, or cancel their own subscriptions from the donor dashboard.
+
+= Does Mission support peer-to-peer fundraising? =
+
+Yes, and it's free. Mark a campaign as peer-to-peer and supporters can sign up to fundraise for you with their own personal pages, individually or in teams, like a crowdfunding platform running on your own site. You choose whether sign-ups go live instantly or wait for your approval, fundraisers get a dashboard to manage their page and track progress, and every donation automatically credits the right fundraiser and team.
 
 = Do donors need an account to donate? =
 
@@ -174,6 +193,7 @@ Please report security issues privately by emailing hello@missionwp.com rather t
 5. The donor profile in the admin with donation history, recurring subscriptions, and contact details.
 6. The campaign detail screen in the admin with stats, progress bar, goal info, and campaign image.
 7. Public-facing campaign page built from blocks for progress tracking, donor wall, and an inline donation form.
+8. A peer-to-peer campaign landing page with live progress, fundraiser and team counts, and one-click sign-up.
 
 == External Services ==
 
@@ -186,6 +206,18 @@ This plugin connects to the following third-party services:
 **Gravatar** supplies donor avatars in the admin and on the Donor Wall block. Email addresses are hashed before being sent. See Gravatar's [Terms](https://wordpress.com/tos/) and [Privacy Policy](https://automattic.com/privacy/).
 
 == Changelog ==
+
+= 1.4.0 =
+* Security: User-supplied names and titles in admin activity feed messages are now escaped before display
+* New: Peer-to-peer fundraising! Create a P2P campaign and let supporters raise money for your cause with their own personal fundraising pages, on their own or in teams
+* New: Fundraisers sign up right on the campaign page and manage their story, photo, goal, and sharing from a new dashboard, while admins review and manage everyone from new Fundraisers and Teams screens with an optional approval workflow
+* New: Donations through a fundraiser page credit the fundraiser and their team on live progress bars and leaderboards, and seven new editable emails cover the lifecycle from welcome to goal milestones
+* Enhancement: The donor dashboard is now a full account area with separate Donations and Fundraising sections that appear based on each person's role
+* Enhancement: Donation form amounts now follow the site's language for number formatting instead of the browser's
+* Enhancement: Database updates now run on any visit, so a background plugin update can never stall donation processing
+* Fix: Block cards and buttons no longer overflow their containers in themes without a border-box reset
+* Tweak: Sites behind a proxy other than Cloudflare can declare trusted client-IP headers with the mission_trusted_proxy_headers filter so rate limits see real visitor addresses
+* Tweak: Updated the Spanish and Finnish translations with all of the new peer-to-peer strings
 
 = 1.3.3 =
 * Enhancement: The donation form now shows a clear message when a payment can't start or is taking unusually long, instead of an endless loading spinner
@@ -218,19 +250,5 @@ This plugin connects to the following third-party services:
 * Fix: The "delete test data" tools now also remove the meta rows belonging to deleted test transactions, donors, and subscriptions (the cleanup previously referenced the wrong meta column and silently skipped them)
 * Tweak: Renamed all developer hooks (actions and filters) from missiondp_ to mission_. If you have custom code hooking into Mission, update the hook names. Scheduled task hooks, options, and database tables are unchanged.
 * Tweak: REST API parameters that declare allowed values or numeric ranges now reject invalid input with a clear 400 error instead of silently accepting it
-
-= 1.2.0 =
-* New: Added a data import tool for donors, transactions, campaigns, subscriptions, and dedications, with CSV and JSON support
-* New: Preview and validate your file before importing, with per-row warnings and the choice to skip or update existing records
-* New: Large imports run in the background so they don't time out
-* New: Mission is now fully translatable and ships with a complete Spanish (es_ES) translation
-* New: Every block now has a shortcode equivalent, so Mission can be used with page builders like Elementor and Bricks and in the Classic Editor
-* Enhancement: Improved support for international currencies, with correct amounts, fees, and decimals for currencies like the Japanese yen and Kuwaiti dinar
-* Enhancement: Donation minimums now follow Stripe's per-currency minimums, with clearer messages when an amount is too low
-* Enhancement: The Dedications export now includes a Charge ID column so dedications can be matched back to their transactions when re-imported
-* Enhancement: The activity log now shows who ran an import and how many records were imported or updated
-* Enhancement: Improved the donation form layout on small screens and in narrow spaces like sidebars
-* Tweak: Updated the currency list to match the currencies Stripe currently supports
-* Tweak: Internal code quality and maintainability improvements
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

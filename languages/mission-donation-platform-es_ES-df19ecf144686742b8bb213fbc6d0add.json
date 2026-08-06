@@ -1,0 +1,30 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/team-members\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "of %s": [
+                "de %s"
+            ],
+            "Captain": [
+                "Capit\u00e1n"
+            ],
+            "Member name": [
+                "Nombre del miembro"
+            ],
+            "Preview uses sample data.": [
+                "La vista previa usa datos de ejemplo."
+            ],
+            "Team captain": [
+                "Capit\u00e1n del equipo"
+            ]
+        }
+    }
+}

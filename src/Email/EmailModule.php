@@ -20,6 +20,33 @@ defined( 'ABSPATH' ) || exit;
 class EmailModule {
 
 	/**
+	 * Template file name per editable email type (hyphenated).
+	 *
+	 * The single source for the admin editor preview and test-send endpoints.
+	 * The OTP email (p2p_otp_code) is intentionally absent: it has no editor UI.
+	 *
+	 * @var array<string, string>
+	 */
+	public const TEMPLATE_MAP = [
+		'donation_receipt'                 => 'donation-receipt',
+		'subscription_activated'           => 'subscription-activated',
+		'renewal_receipt'                  => 'renewal-receipt',
+		'payment_failed'                   => 'payment-failed',
+		'subscription_cancelled'           => 'subscription-cancelled',
+		'account_activation'               => 'account-activation',
+		'password_reset'                   => 'password-reset',
+		'email_change_verification'        => 'email-change-verification',
+		'donor_note'                       => 'donor-note',
+		'tribute_notification'             => 'tribute-notification',
+		'p2p_fundraiser_approved'          => 'p2p-fundraiser-approved',
+		'p2p_fundraiser_received_donation' => 'p2p-fundraiser-received-donation',
+		'p2p_fundraiser_milestone'         => 'p2p-fundraiser-milestone',
+		'p2p_team_invitation'              => 'p2p-team-invitation',
+		'p2p_team_member_joined'           => 'p2p-team-member-joined',
+		'p2p_team_approved'                => 'p2p-team-approved',
+	];
+
+	/**
 	 * Template directory path.
 	 *
 	 * @var string
@@ -80,6 +107,66 @@ class EmailModule {
 	}
 
 	/**
+	 * Default subject per email type, with merge tags as literal placeholders.
+	 *
+	 * The single source for both the send path and the admin editor preview.
+	 * Wrapped in a method instead of a const so strings can be translated.
+	 *
+	 * @param string $email_type Email type key.
+	 * @return string Default subject, or empty string for an unknown type.
+	 */
+	public function default_subject( string $email_type ): string {
+		$subjects = [
+			'donation_receipt'                 => __( 'Thank you for your {amount} donation', 'mission-donation-platform' ),
+			'subscription_activated'           => __( 'Thank you for your {amount} {frequency} donation', 'mission-donation-platform' ),
+			'renewal_receipt'                  => __( 'Thank you for your {frequency} gift of {amount}', 'mission-donation-platform' ),
+			'payment_failed'                   => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
+			'subscription_cancelled'           => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
+			'account_activation'               => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
+			'password_reset'                   => __( 'Reset your password', 'mission-donation-platform' ),
+			'email_change_verification'        => __( 'Verify your new email address', 'mission-donation-platform' ),
+			'donor_note'                       => __( 'A note about your donation', 'mission-donation-platform' ),
+			'tribute_notification'             => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
+			'p2p_otp_code'                     => __( 'Your verification code', 'mission-donation-platform' ),
+			'p2p_fundraiser_approved'          => __( 'Your fundraising page is live', 'mission-donation-platform' ),
+			'p2p_fundraiser_received_donation' => __( 'You received a {amount} donation!', 'mission-donation-platform' ),
+			'p2p_fundraiser_milestone'         => __( "You've reached {milestone} of your goal!", 'mission-donation-platform' ),
+			'p2p_team_invitation'              => __( "You're invited to join {team_name}", 'mission-donation-platform' ),
+			'p2p_team_member_joined'           => __( 'A new member joined {team_name}', 'mission-donation-platform' ),
+			'p2p_team_approved'                => __( 'Your team {team_name} has been approved', 'mission-donation-platform' ),
+		];
+
+		return $subjects[ $email_type ] ?? '';
+	}
+
+	/**
+	 * Resolve the subject for an email type: custom if set, default otherwise,
+	 * with merge tags replaced either way.
+	 *
+	 * Custom subjects get the tag values as-is, keeping the case the admin
+	 * saw when writing them. The default subjects embed {frequency}
+	 * mid-sentence ("your {amount} {frequency} donation"), so its value is
+	 * lowercased on the default path only.
+	 *
+	 * @param string               $email_type Email type key.
+	 * @param array<string,string> $tags       Map of '{tag}' => 'replacement'.
+	 * @return string
+	 */
+	public function subject( string $email_type, array $tags = [] ): string {
+		$custom = $this->get_custom_subject( $email_type );
+
+		if ( $custom ) {
+			return $this->replace_subject_tags( $custom, $tags );
+		}
+
+		if ( isset( $tags['{frequency}'] ) ) {
+			$tags['{frequency}'] = strtolower( $tags['{frequency}'] );
+		}
+
+		return $this->replace_subject_tags( $this->default_subject( $email_type ), $tags );
+	}
+
+	/**
 	 * Render a partial template.
 	 *
 	 * @param string $partial Partial name (e.g., 'header', 'footer').
@@ -112,7 +199,6 @@ class EmailModule {
 		$header      = $this->render_partial( 'header', $header_data );
 		$footer      = $this->render_partial( 'footer', $data );
 
-		// Check for custom body in settings.
 		$settings_key = str_replace( '-', '_', $template );
 		$custom_body  = $this->get_custom_body( $settings_key );
 
@@ -182,8 +268,8 @@ class EmailModule {
 			'{organization}'       => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
 			'{site_url}'           => home_url(),
 
-			// Donation / transaction.
-			'{amount}'             => $data['amount_formatted'] ?? '',
+			// Donation / transaction. Milestone emails pass the raised total.
+			'{amount}'             => $data['amount_formatted'] ?? $data['raised_formatted'] ?? '',
 			'{date}'               => $data['date_formatted'] ?? '',
 			'{campaign}'           => $data['campaign_name'] ?? '',
 			'{receipt_id}'         => isset( $data['transaction'] ) ? (string) $data['transaction']->id : '',
@@ -208,6 +294,16 @@ class EmailModule {
 			'{tribute_type_label}' => $data['tribute_type_label'] ?? '',
 			'{honoree_name}'       => $data['honoree_name'] ?? '',
 			'{message}'            => $data['message'] ?? '',
+
+			// Peer-to-peer. The donor in team emails is the captain.
+			'{page_url}'           => $data['page_url'] ?? '',
+			'{giver_name}'         => $data['giver_name'] ?? '',
+			'{milestone}'          => $data['milestone_label'] ?? '',
+			'{goal}'               => $data['goal_formatted'] ?? '',
+			'{team_name}'          => isset( $data['team'] ) ? (string) $data['team']->name : '',
+			'{member_name}'        => $data['member_name'] ?? '',
+			'{captain_name}'       => $donor->first_name ?? '',
+			'{accept_url}'         => $data['accept_url'] ?? '',
 		];
 	}
 
@@ -298,26 +394,17 @@ class EmailModule {
 			'campaign_name'    => $campaign?->title,
 		];
 
-		$subject = sprintf(
-			/* translators: %s: formatted donation amount */
-			__( 'Thank you for your %s donation', 'mission-donation-platform' ),
-			$data['amount_formatted'],
+		$subject = $this->subject(
+			'donation_receipt',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{amount}'       => $data['amount_formatted'],
+				'{campaign}'     => $data['campaign_name'] ?? '',
+				'{date}'         => $data['date_formatted'],
+				'{organization}' => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
+				'{receipt_id}'   => (string) $transaction->id,
+			]
 		);
-
-		$custom_subject = $this->get_custom_subject( 'donation_receipt' );
-		if ( $custom_subject ) {
-			$subject = $this->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{amount}'       => $data['amount_formatted'],
-					'{campaign}'     => $data['campaign_name'] ?? '',
-					'{date}'         => $data['date_formatted'],
-					'{organization}' => $this->settings->get( 'org_name', get_bloginfo( 'name' ) ),
-					'{receipt_id}'   => (string) $transaction->id,
-				]
-			);
-		}
 
 		$html = $this->render_template( 'donation-receipt', array_merge( $data, [ 'subject' => $subject ] ) );
 

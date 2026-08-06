@@ -24,11 +24,23 @@ defined( 'ABSPATH' ) || exit;
 class ReportingService {
 
 	/**
+	 * SQL expression netting refunds out of a transaction's amount.
+	 */
+	private const TX_NET_AMOUNT_SQL = 'amount - LEAST(amount_refunded, amount)';
+
+	/**
 	 * Settings service.
 	 *
 	 * @var SettingsService
 	 */
 	private SettingsService $settings;
+
+	/**
+	 * Per-instance memo of team_totals() results, keyed by "{team_id}:{is_test}".
+	 *
+	 * @var array<string, array{raised:int, donations:int, member_count:int}>
+	 */
+	private array $team_totals_memo = [];
 
 	/**
 	 * Constructor.
@@ -87,7 +99,6 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		// Previous month comparison.
 		$now            = new \DateTimeImmutable( 'now', wp_timezone() );
 		$prev_start     = $now->modify( 'first day of last month' )->format( 'Y-m-d 00:00:00' );
 		$prev_end       = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
@@ -454,7 +465,7 @@ class ReportingService {
 				'SELECT c.id, c.title, c.%i AS raised, c.goal_amount, c.goal_type,
 					c.%i AS txn_count, c.%i AS dn_count
 				FROM %i c
-				ORDER BY c.%i DESC
+				ORDER BY c.%i DESC, c.id ASC
 				LIMIT %d',
 				$raised_col,
 				$txn_count_col,
@@ -496,7 +507,7 @@ class ReportingService {
 	/**
 	 * Get transactions with donor names for listings.
 	 *
-	 * @param array<string, mixed> $args Query args: status, campaign_id, donor_id, search, orderby, order, per_page, page.
+	 * @param array<string, mixed> $args Query args: status, campaign_id, donor_id, fundraiser_id, team_id, search, orderby, order, per_page, page.
 	 * @return array{items: array, total: int}
 	 */
 	public function transactions_with_donors( array $args = [] ): array {
@@ -505,6 +516,7 @@ class ReportingService {
 		$txn_table     = $wpdb->prefix . 'missiondp_transactions';
 		$donor_table   = $wpdb->prefix . 'missiondp_donors';
 		$tribute_table = $wpdb->prefix . 'missiondp_tributes';
+		$fr_table      = $wpdb->prefix . 'missiondp_fundraisers';
 
 		$per_page = (int) ( $args['per_page'] ?? 25 );
 		$page     = (int) ( $args['page'] ?? 1 );
@@ -522,9 +534,11 @@ class ReportingService {
 		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
 		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
 
-		// Build the search WHERE fragment. The helper produces a multi-token
-		// AND-of-OR clause across name/email columns; we OR an exact match on
-		// the transaction ID so numeric searches still hit t.id directly.
+		$has_fundraiser = ! empty( $args['fundraiser_id'] ) ? 1 : 0;
+		$fundraiser_id  = $has_fundraiser ? (int) $args['fundraiser_id'] : 0;
+		$has_team       = ! empty( $args['team_id'] ) ? 1 : 0;
+		$team_id        = $has_team ? (int) $args['team_id'] : 0;
+
 		$search_clause = SearchClauseBuilder::build_like_clause(
 			(string) ( $args['search'] ?? '' ),
 			[ 'd.first_name', 'd.last_name', 'd.email' ]
@@ -539,7 +553,6 @@ class ReportingService {
 			$search_where_sql = '';
 		}
 
-		// Dedication mode flags — at most one is set to 1.
 		$dedication      = $args['dedication'] ?? '';
 		$has_dedication  = '' !== $dedication ? 1 : 0;
 		$is_mail_pending = 'mail_pending' === $dedication ? 1 : 0;
@@ -548,15 +561,16 @@ class ReportingService {
 
 		$offset = ( $page - 1 ) * $per_page;
 
-		// Shared WHERE clause body. Search fragment is spliced in as already-
-		// validated SQL (the helper emits only %s placeholders + trusted column
-		// names; the t.id branch uses an int-cast value). The dedication filter
-		// uses an EXISTS subquery so the LEFT JOIN to donors does not multiply
-		// rows when a transaction has multiple tributes.
+		// The spliced search fragment is safe SQL: the helper emits only %s
+		// placeholders and trusted column names, and the t.id branch is int-cast.
 		$where = 'WHERE t.is_test = %d
 				   AND ( %d = 0 OR t.status = %s )
 				   AND ( %d = 0 OR t.campaign_id = %d )
-				   AND ( %d = 0 OR t.donor_id = %d )' . $search_where_sql . '
+				   AND ( %d = 0 OR t.donor_id = %d )
+				   AND ( %d = 0 OR t.fundraiser_id = %d )
+				   AND ( %d = 0 OR t.team_id = %d OR t.fundraiser_id IN (
+						SELECT f.id FROM %i AS f WHERE f.team_id = %d
+					) )' . $search_where_sql . '
 				   AND ( %d = 0 OR EXISTS (
 						SELECT 1 FROM %i AS tr
 						WHERE tr.transaction_id = t.id
@@ -565,15 +579,14 @@ class ReportingService {
 						  AND ( %d = 0 OR ( tr.notify_method = \'email\' AND tr.notification_sent_at IS NOT NULL ) )
 					) )';
 
-		// Args that align with placeholders inside $where. Search params slot
-		// into the position the search fragment occupies in the WHERE string.
+		// Order must match the placeholders in $where, with search params at the splice point.
 		$where_args = array_merge(
 			[ $is_test, $has_status, $status, $has_campaign, $campaign_id, $has_donor, $donor_id ],
+			[ $has_fundraiser, $fundraiser_id, $has_team, $team_id, $fr_table, $team_id ],
 			$search_params,
 			[ $has_dedication, $tribute_table, $is_mail_pending, $is_mail_sent, $is_email_sent ]
 		);
 
-		// Count total.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS t
@@ -583,14 +596,13 @@ class ReportingService {
 			)
 		);
 
-		// Fetch rows.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT t.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
 				 FROM %i AS t
 				 LEFT JOIN %i AS d ON t.donor_id = d.id
 				 ' . $where . "
-				 ORDER BY t.%i {$direction}
+				 ORDER BY t.%i {$direction}, t.id {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
 					[ $txn_table, $donor_table ],
@@ -601,7 +613,6 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		// Batch-fetch campaign titles from the campaigns table.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
@@ -617,21 +628,28 @@ class ReportingService {
 			}
 		}
 
+		$fundraiser_map = $this->batch_fetch_fundraiser_names(
+			array_unique( array_filter( array_column( $rows ?: [], 'fundraiser_id' ) ) )
+		);
+
 		$items = [];
 		foreach ( $rows ?: [] as $row ) {
 			$donor_name = trim( ( $row['donor_first_name'] ?? '' ) . ' ' . ( $row['donor_last_name'] ?? '' ) );
 
 			$items[] = [
-				'id'             => (int) $row['id'],
-				'donor_name'     => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
-				'donor_email'    => $row['donor_email'] ?? '',
-				'amount'         => (int) $row['amount'],
-				'currency'       => $row['currency'],
-				'status'         => $row['status'],
-				'type'           => $row['type'],
-				'campaign_id'    => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
-				'campaign_title' => $campaign_map[ $row['campaign_id'] ?? 0 ] ?? '',
-				'date_created'   => $row['date_created'],
+				'id'              => (int) $row['id'],
+				'donor_id'        => $row['donor_id'] ? (int) $row['donor_id'] : null,
+				'donor_name'      => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
+				'donor_email'     => $row['donor_email'] ?? '',
+				'amount'          => (int) $row['amount'],
+				'currency'        => $row['currency'],
+				'status'          => $row['status'],
+				'type'            => $row['type'],
+				'campaign_id'     => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
+				'campaign_title'  => $campaign_map[ $row['campaign_id'] ?? 0 ] ?? '',
+				'fundraiser_id'   => $row['fundraiser_id'] ? (int) $row['fundraiser_id'] : null,
+				'fundraiser_name' => $fundraiser_map[ $row['fundraiser_id'] ?? 0 ] ?? '',
+				'date_created'    => $row['date_created'],
 			];
 		}
 
@@ -639,6 +657,41 @@ class ReportingService {
 			'items' => $items,
 			'total' => $total,
 		];
+	}
+
+	/**
+	 * Batch-fetch fundraiser display names (their donor's name) keyed by fundraiser ID.
+	 *
+	 * @param array<int|string> $fundraiser_ids Fundraiser IDs.
+	 * @return array<int, string> Map of fundraiser ID to donor name.
+	 */
+	private function batch_fetch_fundraiser_names( array $fundraiser_ids ): array {
+		global $wpdb;
+
+		if ( ! $fundraiser_ids ) {
+			return [];
+		}
+
+		$fundraiser_ids = array_map( 'intval', $fundraiser_ids );
+		$placeholders   = implode( ', ', array_fill( 0, count( $fundraiser_ids ), '%d' ) );
+		$sql            = "SELECT f.id, d.first_name, d.last_name
+			 FROM %i AS f
+			 LEFT JOIN %i AS d ON f.donor_id = d.id
+			 WHERE f.id IN ( {$placeholders} )";
+		$prepare_args   = array_merge(
+			[ $wpdb->prefix . 'missiondp_fundraisers', $wpdb->prefix . 'missiondp_donors' ],
+			$fundraiser_ids
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- tables via %i, ids via %d placeholders built from a counted array.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+
+		$map = [];
+		foreach ( $rows ?: [] as $row ) {
+			$map[ (int) $row['id'] ] = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
+		}
+
+		return $map;
 	}
 
 	/**
@@ -669,9 +722,6 @@ class ReportingService {
 		$has_donor    = ! empty( $args['donor_id'] ) ? 1 : 0;
 		$donor_id     = $has_donor ? (int) $args['donor_id'] : 0;
 
-		// Build the search WHERE fragment. Multi-token AND across name/email
-		// columns, plus a LIKE on the gateway subscription ID so partial
-		// matches like "sub_1abc" still resolve.
 		$search_clause = SearchClauseBuilder::build_like_clause(
 			(string) ( $args['search'] ?? '' ),
 			[ 'd.first_name', 'd.last_name', 'd.email', 's.gateway_subscription_id' ]
@@ -696,7 +746,6 @@ class ReportingService {
 			$search_params
 		);
 
-		// Count total.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS s
@@ -706,14 +755,13 @@ class ReportingService {
 			)
 		);
 
-		// Fetch rows.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT s.*, d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email
 				 FROM %i AS s
 				 LEFT JOIN %i AS d ON s.donor_id = d.id
 				 ' . $where . "
-				 ORDER BY s.%i {$direction}
+				 ORDER BY s.%i {$direction}, s.id {$direction}
 				 LIMIT %d OFFSET %d",
 				array_merge(
 					[ $sub_table, $donor_table ],
@@ -724,7 +772,6 @@ class ReportingService {
 			ARRAY_A
 		);
 
-		// Batch-fetch campaign titles.
 		$campaign_ids = array_unique( array_filter( array_column( $rows ?: [], 'campaign_id' ) ) );
 		$campaign_map = [];
 		if ( $campaign_ids ) {
@@ -784,7 +831,6 @@ class ReportingService {
 		$now         = new \DateTimeImmutable( 'now', wp_timezone() );
 		$month_start = $now->modify( 'first day of this month' )->format( 'Y-m-d 00:00:00' );
 
-		// MRR: sum of active subscriptions normalized to monthly.
 		$mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COALESCE(SUM(CASE frequency
@@ -801,7 +847,6 @@ class ReportingService {
 			)
 		);
 
-		// Previous MRR: subscriptions that were active at start of current month.
 		$prev_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COALESCE(SUM(CASE frequency
@@ -822,7 +867,6 @@ class ReportingService {
 			)
 		);
 
-		// Active count.
 		$active = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i WHERE status = \'active\' AND is_test = %d',
@@ -831,7 +875,6 @@ class ReportingService {
 			)
 		);
 
-		// New this month: active subscriptions created since first of month.
 		$new_this_month = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i
@@ -842,7 +885,6 @@ class ReportingService {
 			)
 		);
 
-		// Churned: subscriptions cancelled this month.
 		$churned = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i
@@ -853,7 +895,6 @@ class ReportingService {
 			)
 		);
 
-		// Churned MRR: normalized monthly amount lost from churned subscriptions.
 		$churned_mrr = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COALESCE(SUM(CASE frequency
@@ -969,7 +1010,6 @@ class ReportingService {
 			return [];
 		}
 
-		// Batch-fetch tributes: get the most recent transaction per donor, then load tributes.
 		$donor_ids   = array_column( $rows, 'donor_id' );
 		$tribute_map = $this->batch_fetch_tributes_for_donors( $donor_ids, $campaign_id );
 
@@ -1012,7 +1052,7 @@ class ReportingService {
 				FROM %i AS t
 				INNER JOIN %i AS d ON t.donor_id = d.id
 				WHERE t.campaign_id = %d AND t.status = \'completed\' AND t.is_test = %d
-				ORDER BY t.date_created DESC
+				ORDER BY t.date_created DESC, t.id DESC
 				LIMIT %d',
 				$txn_table,
 				$donor_table,
@@ -1027,7 +1067,6 @@ class ReportingService {
 			return [];
 		}
 
-		// Batch-fetch tributes for the transaction IDs.
 		$txn_ids     = array_column( $rows, 'transaction_id' );
 		$tribute_map = $this->batch_fetch_tributes_by_transaction( $txn_ids );
 
@@ -1086,7 +1125,6 @@ class ReportingService {
 
 		$prepare_args = array_merge( [ $txn_table ], $donor_ids, [ $campaign_id, $is_test, $tribute_table ] );
 
-		// Get the most recent transaction ID per donor, then join tributes.
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
 		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
@@ -1159,7 +1197,6 @@ class ReportingService {
 		$donor_table = $wpdb->prefix . 'missiondp_donors';
 		$offset      = ( $page - 1 ) * $per_page;
 
-		// Validate orderby.
 		$allowed_orderby = [ 'date_completed', 'amount' ];
 		$orderby         = in_array( $orderby, $allowed_orderby, true ) ? $orderby : 'date_completed';
 		$order_asc       = 'ASC' === strtoupper( $order );
@@ -1168,7 +1205,6 @@ class ReportingService {
 		$has_campaign = $campaign_id > 0 ? 1 : 0;
 		$exclude_anon = $show_anonymous ? 0 : 1;
 
-		// Count query.
 		$total = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT COUNT(*) FROM %i AS t
@@ -1184,7 +1220,6 @@ class ReportingService {
 			)
 		);
 
-		// Main query.
 		if ( $order_asc ) {
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
@@ -1196,7 +1231,7 @@ class ReportingService {
 					   AND t.is_test = %d
 					   AND ( %d = 0 OR t.campaign_id = %d )
 					   AND ( %d = 0 OR t.is_anonymous = 0 )
-					 ORDER BY t.%i ASC
+					 ORDER BY t.%i ASC, t.id ASC
 					 LIMIT %d OFFSET %d',
 					$txn_table,
 					$donor_table,
@@ -1221,7 +1256,7 @@ class ReportingService {
 					   AND t.is_test = %d
 					   AND ( %d = 0 OR t.campaign_id = %d )
 					   AND ( %d = 0 OR t.is_anonymous = 0 )
-					 ORDER BY t.%i DESC
+					 ORDER BY t.%i DESC, t.id DESC
 					 LIMIT %d OFFSET %d',
 					$txn_table,
 					$donor_table,
@@ -1244,7 +1279,6 @@ class ReportingService {
 			];
 		}
 
-		// Batch-fetch donor comments from transaction meta.
 		$txn_ids     = array_column( $rows, 'transaction_id' );
 		$comment_map = $this->batch_fetch_donor_comments( $txn_ids );
 
@@ -1492,6 +1526,797 @@ class ReportingService {
 				'name' => $row['name'],
 			],
 			$rows ?: []
+		);
+	}
+
+	/**
+	 * Get fundraisers with participant, campaign, and team names for listings.
+	 *
+	 * @param array<string, mixed> $args Query args: campaign_id, team_id, status, search, orderby, order, per_page, page.
+	 * @return array{items: array<int, array<string, mixed>>, total: int}
+	 */
+	public function fundraisers_with_relations( array $args = [] ): array {
+		global $wpdb;
+
+		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
+		$d_table = $wpdb->prefix . 'missiondp_donors';
+		$c_table = $wpdb->prefix . 'missiondp_campaigns';
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+
+		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
+		$dcount_col = $this->is_test_mode() ? 'test_donor_count' : 'donor_count';
+		$tcount_col = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
+
+		$per_page = (int) ( $args['per_page'] ?? 25 );
+		$page     = (int) ( $args['page'] ?? 1 );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		$allowed_orderby = [ 'date_created', 'goal', 'status', 'total_raised' ];
+		$orderby_in      = 'raised' === ( $args['orderby'] ?? '' ) ? 'total_raised' : ( $args['orderby'] ?? '' );
+		$orderby         = in_array( $orderby_in, $allowed_orderby, true ) ? $orderby_in : 'date_created';
+		if ( 'total_raised' === $orderby ) {
+			$orderby = $raised_col;
+		}
+		$direction = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
+
+		$has_campaign = ! empty( $args['campaign_id'] ) ? 1 : 0;
+		$campaign_id  = (int) ( $args['campaign_id'] ?? 0 );
+		$has_team     = ! empty( $args['team_id'] ) ? 1 : 0;
+		$team_id      = (int) ( $args['team_id'] ?? 0 );
+		$has_status   = ! empty( $args['status'] ) ? 1 : 0;
+		$status       = (string) ( $args['status'] ?? '' );
+
+		$search_clause = SearchClauseBuilder::build_like_clause(
+			(string) ( $args['search'] ?? '' ),
+			[ 'd.first_name', 'd.last_name', 'd.email', 'f.headline' ]
+		);
+		if ( $search_clause ) {
+			$search_where_sql = ' AND ( ' . $search_clause['sql'] . ' )';
+			$search_params    = $search_clause['params'];
+		} else {
+			$search_where_sql = '';
+			$search_params    = [];
+		}
+
+		$where = 'WHERE ( %d = 0 OR f.campaign_id = %d )
+				   AND ( %d = 0 OR f.team_id = %d )
+				   AND ( %d = 0 OR f.status = %s )' . $search_where_sql;
+
+		$where_args = array_merge(
+			[ $has_campaign, $campaign_id, $has_team, $team_id, $has_status, $status ],
+			$search_params
+		);
+
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS f
+				 LEFT JOIN %i AS d ON f.donor_id = d.id ' . $where,
+				array_merge( [ $f_table, $d_table ], $where_args )
+			)
+		);
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT f.id, f.campaign_id, f.team_id, f.goal, f.status, f.date_created,
+						CASE WHEN f.id = tm.captain_id THEN 1 ELSE 0 END AS is_team_captain,
+						f.%i AS raised, f.%i AS donor_count, f.%i AS transaction_count,
+						d.first_name AS donor_first_name, d.last_name AS donor_last_name, d.email AS donor_email,
+						c.title AS campaign_title, tm.name AS team_name
+				 FROM %i AS f
+				 LEFT JOIN %i AS d ON f.donor_id = d.id
+				 LEFT JOIN %i AS c ON f.campaign_id = c.id
+				 LEFT JOIN %i AS tm ON f.team_id = tm.id
+				 ' . $where . "
+				 ORDER BY f.%i {$direction}, f.id {$direction}
+				 LIMIT %d OFFSET %d",
+				array_merge(
+					[ $raised_col, $dcount_col, $tcount_col, $f_table, $d_table, $c_table, $t_table ],
+					$where_args,
+					[ $orderby, $per_page, $offset ]
+				)
+			),
+			ARRAY_A
+		);
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$donor_name = trim( ( $row['donor_first_name'] ?? '' ) . ' ' . ( $row['donor_last_name'] ?? '' ) );
+
+			$items[] = [
+				'id'                => (int) $row['id'],
+				'donor_name'        => $donor_name ?: __( 'Anonymous', 'mission-donation-platform' ),
+				'donor_email'       => $row['donor_email'] ?? '',
+				'campaign_id'       => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
+				'campaign_title'    => $row['campaign_title'] ?? '',
+				'team_id'           => $row['team_id'] ? (int) $row['team_id'] : null,
+				'team_name'         => $row['team_name'] ?? '',
+				'goal'              => (int) $row['goal'],
+				'raised'            => (int) $row['raised'],
+				'donor_count'       => (int) $row['donor_count'],
+				'transaction_count' => (int) $row['transaction_count'],
+				'status'            => $row['status'],
+				'is_team_captain'   => (bool) (int) $row['is_team_captain'],
+				'date_created'      => $row['date_created'],
+			];
+		}
+
+		return [
+			'items' => $items,
+			'total' => $total,
+		];
+	}
+
+	/**
+	 * Get teams with campaign title, captain name, member count, and raised totals.
+	 *
+	 * Member count and raised use correlated subqueries (portable, no GROUP BY)
+	 * so the join to the campaigns/captain tables never multiplies rows.
+	 *
+	 * @param array<string, mixed> $args Query args: campaign_id, status, search, orderby, order, per_page, page.
+	 * @return array{items: array<int, array<string, mixed>>, total: int}
+	 */
+	public function teams_with_relations( array $args = [] ): array {
+		global $wpdb;
+
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+		$c_table = $wpdb->prefix . 'missiondp_campaigns';
+		$f_table = $wpdb->prefix . 'missiondp_fundraisers';
+		$d_table = $wpdb->prefix . 'missiondp_donors';
+
+		$per_page = (int) ( $args['per_page'] ?? 25 );
+		$page     = (int) ( $args['page'] ?? 1 );
+		$offset   = ( $page - 1 ) * $per_page;
+
+		$allowed_orderby = [ 'date_created', 'name', 'goal', 'status' ];
+		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
+		$direction       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
+
+		$has_campaign = ! empty( $args['campaign_id'] ) ? 1 : 0;
+		$campaign_id  = (int) ( $args['campaign_id'] ?? 0 );
+		$has_status   = ! empty( $args['status'] ) ? 1 : 0;
+		$status       = (string) ( $args['status'] ?? '' );
+
+		$search_clause = SearchClauseBuilder::build_like_clause(
+			(string) ( $args['search'] ?? '' ),
+			[ 't.name' ]
+		);
+		if ( $search_clause ) {
+			$search_where_sql = ' AND ( ' . $search_clause['sql'] . ' )';
+			$search_params    = $search_clause['params'];
+		} else {
+			$search_where_sql = '';
+			$search_params    = [];
+		}
+
+		$where = 'WHERE ( %d = 0 OR t.campaign_id = %d )
+				   AND ( %d = 0 OR t.status = %s )' . $search_where_sql;
+
+		$where_args = array_merge(
+			[ $has_campaign, $campaign_id, $has_status, $status ],
+			$search_params
+		);
+
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS t ' . $where,
+				array_merge( [ $t_table ], $where_args )
+			)
+		);
+
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( 't.id', $this->is_test_mode() );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.id, t.campaign_id, t.name, t.goal, t.status, t.access, t.date_created,
+						c.title AS campaign_title,
+						cd.first_name AS captain_first_name, cd.last_name AS captain_last_name,
+						( SELECT COUNT(*) FROM %i AS m WHERE m.team_id = t.id ) AS member_count,
+						{$raised_sql} AS raised
+				 FROM %i AS t
+				 LEFT JOIN %i AS c ON t.campaign_id = c.id
+				 LEFT JOIN %i AS cap ON t.captain_id = cap.id
+				 LEFT JOIN %i AS cd ON cap.donor_id = cd.id
+				 " . $where . "
+				 ORDER BY t.%i {$direction}, t.id {$direction}
+				 LIMIT %d OFFSET %d",
+				array_merge(
+					[ $f_table ],
+					$raised_args,
+					[ $t_table, $c_table, $f_table, $d_table ],
+					$where_args,
+					[ $orderby, $per_page, $offset ]
+				)
+			),
+			ARRAY_A
+		);
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$captain_name = trim( ( $row['captain_first_name'] ?? '' ) . ' ' . ( $row['captain_last_name'] ?? '' ) );
+
+			$items[] = [
+				'id'             => (int) $row['id'],
+				'name'           => $row['name'],
+				'campaign_id'    => $row['campaign_id'] ? (int) $row['campaign_id'] : null,
+				'campaign_title' => $row['campaign_title'] ?? '',
+				'captain_name'   => $captain_name,
+				'member_count'   => (int) $row['member_count'],
+				'goal'           => (int) $row['goal'],
+				'raised'         => (int) $row['raised'],
+				'status'         => $row['status'],
+				'access'         => $row['access'],
+				'date_created'   => $row['date_created'],
+			];
+		}
+
+		return [
+			'items' => $items,
+			'total' => $total,
+		];
+	}
+
+	/**
+	 * Aggregate stats for the Fundraisers admin list.
+	 *
+	 * @return array{total_fundraisers: int, active_count: int, pending_count: int, total_raised: int}
+	 */
+	public function fundraiser_summary(): array {
+		global $wpdb;
+
+		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT COUNT(*) AS total,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS active,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS pending,
+						COALESCE(SUM(%i), 0) AS raised
+				 FROM %i',
+				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
+				\MissionDP\Models\Fundraiser::STATUS_PENDING,
+				$raised_col,
+				$wpdb->prefix . 'missiondp_fundraisers'
+			),
+			ARRAY_A
+		);
+
+		return [
+			'total_fundraisers' => (int) ( $row['total'] ?? 0 ),
+			'active_count'      => (int) ( $row['active'] ?? 0 ),
+			'pending_count'     => (int) ( $row['pending'] ?? 0 ),
+			'total_raised'      => (int) ( $row['raised'] ?? 0 ),
+		];
+	}
+
+	/**
+	 * Completed donations attributed to a single fundraiser.
+	 *
+	 * Powers the dashboard "My Donors" and "Activity" sections: the people who
+	 * gave through this fundraiser's page, newest first. Test/live scoped by the
+	 * current mode so a fundraiser sees totals matching their dashboard cards.
+	 *
+	 * @param int $fundraiser_id Fundraiser ID.
+	 * @param int $per_page      Results per page.
+	 * @param int $page          Page number (1-based).
+	 * @return array{items: array<int, array<string, mixed>>, total: int}
+	 */
+	public function fundraiser_donations_query( int $fundraiser_id, int $per_page = 10, int $page = 1 ): array {
+		global $wpdb;
+
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
+		$offset      = ( max( 1, $page ) - 1 ) * $per_page;
+		$is_test     = (int) $this->is_test_mode();
+
+		$total = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i AS t
+				 WHERE t.fundraiser_id = %d AND t.status = \'completed\' AND t.is_test = %d',
+				$txn_table,
+				$fundraiser_id,
+				$is_test
+			)
+		);
+
+		if ( 0 === $total ) {
+			return [
+				'items' => [],
+				'total' => 0,
+			];
+		}
+
+		// LEFT JOIN so rows match the un-joined COUNT above even if a donor row
+		// was deleted; consumers render the missing name as "Anonymous".
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.id AS transaction_id, t.amount, t.type, t.is_anonymous,
+						t.date_completed, t.currency, d.first_name, d.last_name
+				 FROM %i AS t
+				 LEFT JOIN %i AS d ON t.donor_id = d.id
+				 WHERE t.fundraiser_id = %d AND t.status = \'completed\' AND t.is_test = %d
+				 ORDER BY t.date_completed DESC, t.id DESC
+				 LIMIT %d OFFSET %d',
+				$txn_table,
+				$donor_table,
+				$fundraiser_id,
+				$is_test,
+				$per_page,
+				$offset
+			),
+			ARRAY_A
+		);
+
+		$txn_ids     = array_column( $rows ?: [], 'transaction_id' );
+		$comment_map = $txn_ids ? $this->batch_fetch_donor_comments( $txn_ids ) : [];
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$txn_id  = (int) $row['transaction_id'];
+			$items[] = [
+				'first_name'   => $row['first_name'],
+				'last_name'    => $row['last_name'],
+				'is_anonymous' => (bool) $row['is_anonymous'],
+				'amount'       => (int) $row['amount'],
+				'type'         => $row['type'],
+				'date'         => $row['date_completed'],
+				'currency'     => $row['currency'],
+				'comment'      => $comment_map[ $txn_id ] ?? null,
+			];
+		}
+
+		return [
+			'items' => $items,
+			'total' => $total,
+		];
+	}
+
+	/**
+	 * Recent completed donations across all of a donor's fundraiser pages.
+	 *
+	 * Powers the fundraiser-persona dashboard Overview: the latest gifts made
+	 * through any page this donor owns, newest first, test/live scoped by the
+	 * current mode.
+	 *
+	 * @param int $donor_id Owning donor ID.
+	 * @param int $limit    Maximum rows.
+	 * @return array<int, array{first_name:string, last_name:string, is_anonymous:bool, amount:int, currency:string, date:string, fundraiser_id:int, headline:string}>
+	 */
+	public function donor_pages_recent_donations( int $donor_id, int $limit = 5 ): array {
+		global $wpdb;
+
+		$txn_table   = $wpdb->prefix . 'missiondp_transactions';
+		$f_table     = $wpdb->prefix . 'missiondp_fundraisers';
+		$donor_table = $wpdb->prefix . 'missiondp_donors';
+		$is_test     = (int) $this->is_test_mode();
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT t.amount, t.currency, t.is_anonymous, t.date_completed,
+						d.first_name, d.last_name, f.id AS fundraiser_id, f.headline
+				 FROM %i AS t
+				 INNER JOIN %i AS f ON t.fundraiser_id = f.id
+				 INNER JOIN %i AS d ON t.donor_id = d.id
+				 WHERE f.donor_id = %d AND t.status = \'completed\' AND t.is_test = %d
+				 ORDER BY t.date_completed DESC, t.id DESC
+				 LIMIT %d',
+				$txn_table,
+				$f_table,
+				$donor_table,
+				$donor_id,
+				$is_test,
+				max( 1, $limit )
+			),
+			ARRAY_A
+		);
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$items[] = [
+				'first_name'    => $row['first_name'],
+				'last_name'     => $row['last_name'],
+				'is_anonymous'  => (bool) $row['is_anonymous'],
+				'amount'        => (int) $row['amount'],
+				'currency'      => $row['currency'],
+				'date'          => $row['date_completed'],
+				'fundraiser_id' => (int) $row['fundraiser_id'],
+				'headline'      => $row['headline'] ?? '',
+			];
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Aggregate stats for the Teams admin list.
+	 *
+	 * @return array{total_teams: int, active_count: int, pending_count: int, total_raised: int}
+	 */
+	public function team_summary(): array {
+		global $wpdb;
+
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( 'any', $this->is_test_mode() );
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				'SELECT COUNT(*) AS total,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS active,
+						COALESCE(SUM(CASE WHEN status = %s THEN 1 ELSE 0 END), 0) AS pending
+				 FROM %i',
+				\MissionDP\Models\Team::STATUS_ACTIVE,
+				\MissionDP\Models\Team::STATUS_PENDING,
+				$wpdb->prefix . 'missiondp_teams'
+			),
+			ARRAY_A
+		);
+
+		// Raised comes from the transactions roll-up, not the teams table, so it
+		// stays a separate query.
+		// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- the fragment is literal SQL whose %i/%d placeholders are matched by $raised_args.
+		$raised = (int) $wpdb->get_var( $wpdb->prepare( "SELECT {$raised_sql}", $raised_args ) );
+
+		return [
+			'total_teams'   => (int) ( $row['total'] ?? 0 ),
+			'active_count'  => (int) ( $row['active'] ?? 0 ),
+			'pending_count' => (int) ( $row['pending'] ?? 0 ),
+			'total_raised'  => $raised,
+		];
+	}
+
+	/**
+	 * Top active fundraisers in a campaign, ordered by amount raised.
+	 *
+	 * For the campaign-page leaderboard. Returns post_id so the caller can build
+	 * the page URL without an N+1 model lookup.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 * @param int $limit       Maximum rows.
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
+	 */
+	public function top_fundraisers( int $campaign_id, int $limit = 10 ): array {
+		return $this->fundraiser_leaderboard( 'campaign_id', $campaign_id, $limit, 0 );
+	}
+
+	/**
+	 * Active fundraisers in one scope with per-fundraiser progress, by raised.
+	 *
+	 * The single query and item shape behind top_fundraisers() and
+	 * team_members(), so the two leaderboards can't drift.
+	 *
+	 * @param string $scope_col Fundraisers column to scope by: 'campaign_id' or 'team_id'.
+	 * @param int    $scope_id  Campaign or team ID.
+	 * @param int    $limit     Maximum rows.
+	 * @param int    $offset    Rows to skip.
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
+	 */
+	private function fundraiser_leaderboard( string $scope_col, int $scope_id, int $limit, int $offset ): array {
+		global $wpdb;
+
+		$raised_col = $this->is_test_mode() ? 'test_total_raised' : 'total_raised';
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				'SELECT f.id, f.post_id, f.donor_id, f.goal, f.%i AS raised,
+						CASE WHEN f.id = tm.captain_id THEN 1 ELSE 0 END AS is_team_captain,
+						d.first_name, d.last_name, tm.name AS team_name
+				 FROM %i AS f
+				 LEFT JOIN %i AS d ON f.donor_id = d.id
+				 LEFT JOIN %i AS tm ON f.team_id = tm.id
+				 WHERE f.%i = %d AND f.status = %s
+				 ORDER BY raised DESC, f.id ASC
+				 LIMIT %d OFFSET %d',
+				$raised_col,
+				$wpdb->prefix . 'missiondp_fundraisers',
+				$wpdb->prefix . 'missiondp_donors',
+				$wpdb->prefix . 'missiondp_teams',
+				$scope_col,
+				$scope_id,
+				\MissionDP\Models\Fundraiser::STATUS_ACTIVE,
+				$limit,
+				$offset
+			),
+			ARRAY_A
+		);
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$name = trim( ( $row['first_name'] ?? '' ) . ' ' . ( $row['last_name'] ?? '' ) );
+
+			$items[] = [
+				'id'         => (int) $row['id'],
+				'post_id'    => (int) $row['post_id'],
+				'donor_id'   => (int) $row['donor_id'],
+				'name'       => $name ?: __( 'Fundraiser', 'mission-donation-platform' ),
+				'first_name' => (string) ( $row['first_name'] ?? '' ),
+				'last_name'  => (string) ( $row['last_name'] ?? '' ),
+				'team_name'  => $row['team_name'] ?? '',
+				'goal'       => (int) $row['goal'],
+				'raised'     => (int) $row['raised'],
+				'is_captain' => (bool) (int) $row['is_team_captain'],
+			];
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Top active teams in a campaign, ordered by amount raised.
+	 *
+	 * Raised is summed live: member fundraisers' totals plus any gifts made
+	 * directly to the team. Refunds are netted on the direct gifts.
+	 *
+	 * @param int $campaign_id Campaign ID.
+	 * @param int $limit       Maximum rows.
+	 * @return array<int, array{id:int, post_id:int, name:string, goal:int, raised:int, member_count:int}>
+	 */
+	public function top_teams( int $campaign_id, int $limit = 10 ): array {
+		global $wpdb;
+
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+
+		[ $joins_sql, $joins_args ] = self::team_raised_joins_sql( $campaign_id, $this->is_test_mode() );
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT t.id, t.post_id, t.name, t.goal,
+						COALESCE(f.raised, 0) + COALESCE(x.raised, 0) AS raised,
+						COALESCE(f.member_count, 0) AS member_count
+				 FROM %i AS t
+				 {$joins_sql}
+				 WHERE t.campaign_id = %d AND t.status = %s AND t.access = %s
+				 ORDER BY raised DESC, t.id ASC
+				 LIMIT %d",
+				array_merge(
+					[ $t_table ],
+					$joins_args,
+					[
+						$campaign_id,
+						\MissionDP\Models\Team::STATUS_ACTIVE,
+						\MissionDP\Models\Team::ACCESS_PUBLIC,
+						$limit,
+					]
+				)
+			),
+			ARRAY_A
+		);
+
+		$items = [];
+		foreach ( $rows ?: [] as $row ) {
+			$items[] = [
+				'id'           => (int) $row['id'],
+				'post_id'      => (int) $row['post_id'],
+				'name'         => $row['name'],
+				'goal'         => (int) $row['goal'],
+				'raised'       => (int) $row['raised'],
+				'member_count' => (int) $row['member_count'],
+			];
+		}
+
+		return $items;
+	}
+
+	/**
+	 * SQL fragment (and its prepare() args) for a team's raised total.
+	 *
+	 * The single definition of the team roll-up rule: member fundraisers'
+	 * stored aggregate totals plus completed direct team gifts netted for
+	 * refunds. Static so TeamDataStore::sum_amount_raised() shares it.
+	 *
+	 * @param int|string $team    Team scope: a team ID, a trusted outer-column
+	 *                            reference like 't.id' (correlated per row), or
+	 *                            'any' for all teams (team_id IS NOT NULL).
+	 * @param bool       $is_test Whether to sum test-mode amounts.
+	 * @return array{0: string, 1: array} Fragment with %i/%d placeholders and
+	 *                                    the args to merge into prepare().
+	 */
+	public static function team_raised_sql( int|string $team, bool $is_test ): array {
+		global $wpdb;
+
+		$f_table    = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table   = $wpdb->prefix . 'missiondp_transactions';
+		$raised_col = $is_test ? 'test_total_raised' : 'total_raised';
+		$net        = self::TX_NET_AMOUNT_SQL;
+
+		if ( is_int( $team ) ) {
+			$match = '= %d';
+			$args  = [ $raised_col, $f_table, $team, $tx_table, $team, $is_test ? 1 : 0 ];
+		} else {
+			$match = 'any' === $team ? 'IS NOT NULL' : "= {$team}";
+			$args  = [ $raised_col, $f_table, $tx_table, $is_test ? 1 : 0 ];
+		}
+
+		$sql = "( SELECT COALESCE(SUM(fr.%i), 0) FROM %i AS fr WHERE fr.team_id {$match} )
+			+ ( SELECT COALESCE(SUM({$net}), 0)
+				FROM %i AS tg WHERE tg.team_id {$match} AND tg.status = 'completed' AND tg.is_test = %d )";
+
+		return [ $sql, $args ];
+	}
+
+	/**
+	 * LEFT JOIN clauses (and their prepare() args) for per-team raised sums.
+	 *
+	 * The grouped derived-table form of the team_raised_sql() roll-up rule:
+	 * two grouped scans over a campaign's teams regardless of team count,
+	 * instead of correlated subqueries per team. Joins `f` (member
+	 * fundraisers: raised plus member_count) and `x` (direct team gifts,
+	 * refund-netted) onto an outer teams table aliased `t`.
+	 *
+	 * @param int  $campaign_id Campaign whose teams to aggregate.
+	 * @param bool $is_test     Whether to sum test-mode amounts.
+	 * @return array{0: string, 1: array} Fragment with %i/%d placeholders and
+	 *                                    the args to merge into prepare().
+	 */
+	private static function team_raised_joins_sql( int $campaign_id, bool $is_test ): array {
+		global $wpdb;
+
+		$t_table  = $wpdb->prefix . 'missiondp_teams';
+		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+
+		$raised_col = $is_test ? 'test_total_raised' : 'total_raised';
+		$net        = self::TX_NET_AMOUNT_SQL;
+
+		$sql = "LEFT JOIN ( SELECT team_id, SUM(%i) AS raised, COUNT(*) AS member_count
+				FROM %i WHERE team_id IN ( SELECT id FROM %i WHERE campaign_id = %d )
+				GROUP BY team_id ) AS f ON f.team_id = t.id
+			 LEFT JOIN ( SELECT team_id, SUM({$net}) AS raised
+				FROM %i WHERE team_id IN ( SELECT id FROM %i WHERE campaign_id = %d )
+					AND status = 'completed' AND is_test = %d
+				GROUP BY team_id ) AS x ON x.team_id = t.id";
+
+		return [
+			$sql,
+			[ $raised_col, $f_table, $t_table, $campaign_id, $tx_table, $t_table, $campaign_id, $is_test ? 1 : 0 ],
+		];
+	}
+
+	/**
+	 * Live totals for a single team page (member fundraisers + direct gifts).
+	 *
+	 * Memoized per instance: dashboard context builders resolve the same
+	 * team's totals several times in one request.
+	 *
+	 * @param int $team_id Team ID.
+	 * @return array{raised:int, donations:int, member_count:int}
+	 */
+	public function team_totals( int $team_id ): array {
+		global $wpdb;
+
+		$f_table  = $wpdb->prefix . 'missiondp_fundraisers';
+		$tx_table = $wpdb->prefix . 'missiondp_transactions';
+
+		$tcount_col = $this->is_test_mode() ? 'test_transaction_count' : 'transaction_count';
+		$is_test    = $this->is_test_mode() ? 1 : 0;
+
+		$memo_key = $team_id . ':' . $is_test;
+
+		if ( isset( $this->team_totals_memo[ $memo_key ] ) ) {
+			return $this->team_totals_memo[ $memo_key ];
+		}
+
+		[ $raised_sql, $raised_args ] = self::team_raised_sql( $team_id, $this->is_test_mode() );
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT
+					{$raised_sql} AS raised,
+					( SELECT COALESCE(SUM(m2.%i), 0) FROM %i AS m2 WHERE m2.team_id = %d )
+					+ ( SELECT COUNT(*) FROM %i AS tx2 WHERE tx2.team_id = %d AND tx2.status = 'completed' AND tx2.is_test = %d ) AS donations,
+					( SELECT COUNT(*) FROM %i AS m3 WHERE m3.team_id = %d ) AS member_count",
+				array_merge(
+					$raised_args,
+					[
+						$tcount_col,
+						$f_table,
+						$team_id,
+						$tx_table,
+						$team_id,
+						$is_test,
+						$f_table,
+						$team_id,
+					]
+				)
+			),
+			ARRAY_A
+		);
+
+		$this->team_totals_memo[ $memo_key ] = [
+			'raised'       => (int) ( $row['raised'] ?? 0 ),
+			'donations'    => (int) ( $row['donations'] ?? 0 ),
+			'member_count' => (int) ( $row['member_count'] ?? 0 ),
+		];
+
+		return $this->team_totals_memo[ $memo_key ];
+	}
+
+	/**
+	 * A team's leaderboard rank among the active teams in its campaign.
+	 *
+	 * Competition ranking on amount raised (member fundraisers plus direct team
+	 * gifts): rank = 1 + the number of active teams that raised strictly more.
+	 * Private teams count — this powers the owner-facing dashboard, not the
+	 * public leaderboard.
+	 *
+	 * The team's own raised comes from team_totals() (memoized; both call
+	 * sites resolve it just before ranking), and the campaign-wide comparison
+	 * is a single pass over pre-grouped per-team sums rather than correlated
+	 * subqueries per team.
+	 *
+	 * @param int $team_id Team ID.
+	 * @return array{rank: int, total: int} Zeroes when the team does not exist.
+	 */
+	public function team_rank( int $team_id ): array {
+		global $wpdb;
+
+		$team = \MissionDP\Models\Team::find( $team_id );
+
+		if ( ! $team ) {
+			return [
+				'rank'  => 0,
+				'total' => 0,
+			];
+		}
+
+		$t_table = $wpdb->prefix . 'missiondp_teams';
+		$raised  = $this->team_totals( $team_id )['raised'];
+
+		[ $joins_sql, $joins_args ] = self::team_raised_joins_sql( $team->campaign_id, $this->is_test_mode() );
+
+		$row = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(*) AS total,
+					COALESCE(SUM(CASE WHEN COALESCE(f.raised, 0) + COALESCE(x.raised, 0) > %d THEN 1 ELSE 0 END), 0) AS higher
+				 FROM %i AS t
+				 {$joins_sql}
+				 WHERE t.campaign_id = %d AND t.status = %s",
+				array_merge(
+					[ $raised, $t_table ],
+					$joins_args,
+					[
+						$team->campaign_id,
+						\MissionDP\Models\Team::STATUS_ACTIVE,
+					]
+				)
+			),
+			ARRAY_A
+		);
+
+		return [
+			'rank'  => 1 + (int) ( $row['higher'] ?? 0 ),
+			'total' => (int) ( $row['total'] ?? 0 ),
+		];
+	}
+
+	/**
+	 * A team's member fundraisers with per-member progress, ordered by raised.
+	 *
+	 * @param int $team_id Team ID.
+	 * @param int $limit   Maximum members to return.
+	 * @param int $offset  Rows to skip, for pagination.
+	 * @return array<int, array{id:int, post_id:int, donor_id:int, name:string, first_name:string, last_name:string, team_name:string, goal:int, raised:int, is_captain:bool}>
+	 */
+	public function team_members( int $team_id, int $limit = 100, int $offset = 0 ): array {
+		return $this->fundraiser_leaderboard( 'team_id', $team_id, max( 1, $limit ), max( 0, $offset ) );
+	}
+
+	/**
+	 * Count a team's active member fundraisers.
+	 *
+	 * The companion to team_members(): the roster is paginated, so counts and
+	 * labels must come from this full count, never from a fetched page.
+	 *
+	 * @param int $team_id Team ID.
+	 * @return int
+	 */
+	public function team_member_count( int $team_id ): int {
+		global $wpdb;
+
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT COUNT(*) FROM %i WHERE team_id = %d AND status = %s',
+				$wpdb->prefix . 'missiondp_fundraisers',
+				$team_id,
+				\MissionDP\Models\Fundraiser::STATUS_ACTIVE
+			)
 		);
 	}
 }

@@ -4,7 +4,6 @@ import { darkenColor, computePrimaryColorVars } from '../color';
 
 describe( 'darkenColor', () => {
   it( 'darkens each channel by the given percentage', () => {
-    // 0x2f=47 -> 41, 0xa3=163 -> 143, 0x6b=107 -> 94.
     expect( darkenColor( '#2fa36b', 12 ) ).toBe( '#298f5e' );
   } );
 
@@ -28,9 +27,9 @@ describe( 'computePrimaryColorVars', () => {
     expect( vars[ '--mission-primary-text' ] ).toBe( '#ffffff' );
     expect( vars[ '--mission-primary-text-on-light' ] ).toBe( '#2fa36b' );
     expect( vars[ '--mission-primary-hover' ] ).toBe( '#298f5e' );
-    expect( vars[ '--mission-primary-light' ] ).toBe(
-      'rgba(47, 163, 107, 0.08)'
-    );
+    // Stylesheets derive --mission-primary-light with color-mix; it must not
+    // be emitted inline where kses would strip function values.
+    expect( vars ).not.toHaveProperty( '--mission-primary-light' );
   } );
 
   it( 'gives light colors dark text and a darkened on-light variant', () => {
@@ -40,7 +39,6 @@ describe( 'computePrimaryColorVars', () => {
   } );
 
   it( 'flips text color at the luminance threshold', () => {
-    // 128/255 is just above 0.5; 127/255 just below.
     expect(
       computePrimaryColorVars( '#808080' )[ '--mission-primary-text' ]
     ).toBe( '#1e1e1e' );

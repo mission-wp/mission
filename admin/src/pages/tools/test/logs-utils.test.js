@@ -127,6 +127,59 @@ describe( 'buildLogMessage', () => {
     );
   } );
 
+  it( 'escapes HTML in donor names', () => {
+    const msg = buildLogMessage( {
+      event: 'donation_completed',
+      data: { amount: 5000, donor_name: '<img src=x onerror=alert(1)>' },
+    } );
+    expect( msg ).toBe(
+      'Payment of <strong>$50.00</strong> completed for &lt;img src=x onerror=alert(1)&gt;'
+    );
+  } );
+
+  it( 'escapes HTML in email recipients and campaign titles', () => {
+    expect(
+      buildLogMessage( {
+        event: 'email_sent',
+        data: { recipient: '"><script>x</script>' },
+      } )
+    ).toBe(
+      'Email sent to <strong>&quot;&gt;&lt;script&gt;x&lt;/script&gt;</strong>'
+    );
+
+    expect(
+      buildLogMessage( {
+        event: 'campaign_goal_reached',
+        data: { title: '<b>Gala</b> & Auction' },
+      } )
+    ).toBe(
+      '<strong>&lt;b&gt;Gala&lt;/b&gt; &amp; Auction</strong> reached its goal'
+    );
+  } );
+
+  it( 'escapes HTML in actor names and migration data', () => {
+    expect(
+      buildLogMessage( {
+        event: 'data_imported',
+        data: {
+          type: 'donors',
+          imported: 3,
+          updated: 0,
+          actor_name: "<svg onload='x'>",
+        },
+      } )
+    ).toBe(
+      '&lt;svg onload=&#039;x&#039;&gt; imported <strong>3 donors</strong>'
+    );
+
+    expect(
+      buildLogMessage( {
+        event: 'migration_failed',
+        data: { source: '<i>evil</i>', reason: 'a < b' },
+      } )
+    ).toBe( 'Migration from &lt;i&gt;evil&lt;/i&gt; failed: a &lt; b' );
+  } );
+
   it( 'formats settings updates with changed keys', () => {
     const msg = buildLogMessage( {
       event: 'settings_updated',

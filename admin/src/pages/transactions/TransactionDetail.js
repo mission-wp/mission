@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDateTime } from '@shared/date';
 import {
   Button,
@@ -16,6 +16,15 @@ import { __, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { minorToMajor, majorToMinor } from '@shared/currencies';
 import Toast from '../../components/Toast';
+import StatusBadge from '../../components/StatusBadge';
+import ActionsDropdown from '../../components/ActionsDropdown';
+import {
+  MailIcon,
+  RefundIcon,
+  DownloadIcon,
+  FileIcon,
+  TrashIcon,
+} from '../shared/DetailComponents';
 import TransactionDetailsCard from './TransactionDetailsCard';
 import TransactionDonorCard from './TransactionDonorCard';
 import TransactionActivityCard from './TransactionActivityCard';
@@ -49,177 +58,6 @@ function TransactionSubscriptionLink( { subscriptionId } ) {
         </div>
       </CardBody>
     </Card>
-  );
-}
-
-function StatusBadge( { status } ) {
-  const label = status
-    ? status.charAt( 0 ).toUpperCase() + status.slice( 1 )
-    : __( 'Pending', 'mission-donation-platform' );
-  return (
-    <span className={ `mission-status-badge is-${ status || 'pending' }` }>
-      { label }
-    </span>
-  );
-}
-
-function ActionsDropdown( {
-  onResendReceipt,
-  onRefund,
-  onDownloadPdf,
-  onExportCsv,
-  onDelete,
-} ) {
-  const [ isOpen, setIsOpen ] = useState( false );
-  const ref = useRef();
-
-  useEffect( () => {
-    if ( ! isOpen ) {
-      return;
-    }
-    const close = ( e ) => {
-      if ( ref.current && ! ref.current.contains( e.target ) ) {
-        setIsOpen( false );
-      }
-    };
-    document.addEventListener( 'click', close, true );
-    return () => document.removeEventListener( 'click', close, true );
-  }, [ isOpen ] );
-
-  return (
-    <div className="mission-dropdown" ref={ ref }>
-      <button
-        className="mission-dropdown__toggle"
-        onClick={ () => setIsOpen( ! isOpen ) }
-      >
-        { __( 'Actions', 'mission-donation-platform' ) }
-        <svg
-          width="10"
-          height="6"
-          viewBox="0 0 10 6"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M1 1l4 4 4-4" />
-        </svg>
-      </button>
-      { isOpen && (
-        <div className="mission-dropdown__menu">
-          <button
-            className="mission-dropdown__item"
-            onClick={ () => {
-              setIsOpen( false );
-              onResendReceipt();
-            } }
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M1 3.5l6 4 6-4" />
-              <rect x="1" y="2" width="12" height="10" rx="1.5" />
-            </svg>
-            { __( 'Resend Receipt', 'mission-donation-platform' ) }
-          </button>
-          <button
-            className="mission-dropdown__item"
-            onClick={ () => {
-              setIsOpen( false );
-              onRefund();
-            } }
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M2 7h8M6 3l-4 4 4 4" />
-            </svg>
-            { __( 'Refund', 'mission-donation-platform' ) }
-          </button>
-          <button
-            className="mission-dropdown__item"
-            onClick={ () => {
-              setIsOpen( false );
-              onDownloadPdf();
-            } }
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M7 1v9M4 7l3 3 3-3" />
-              <path d="M1 11v1.5a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V11" />
-            </svg>
-            { __( 'Download PDF', 'mission-donation-platform' ) }
-          </button>
-          <button
-            className="mission-dropdown__item"
-            onClick={ () => {
-              setIsOpen( false );
-              onExportCsv();
-            } }
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M8 1H3.5A1.5 1.5 0 0 0 2 2.5v9A1.5 1.5 0 0 0 3.5 13h7a1.5 1.5 0 0 0 1.5-1.5V5L8 1z" />
-              <path d="M8 1v4h4" />
-            </svg>
-            { __( 'Export CSV', 'mission-donation-platform' ) }
-          </button>
-          <div className="mission-dropdown__divider" />
-          <button
-            className="mission-dropdown__item mission-dropdown__item--danger"
-            onClick={ () => {
-              setIsOpen( false );
-              onDelete();
-            } }
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M2 3.5h10M4.5 3.5V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1M10 3.5l-.5 8.5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1L4 3.5" />
-            </svg>
-            { __( 'Delete Transaction', 'mission-donation-platform' ) }
-          </button>
-        </div>
-      ) }
-    </div>
   );
 }
 
@@ -417,61 +255,86 @@ export default function TransactionDetail( { id } ) {
             &larr; { __( 'Back to Transactions', 'mission-donation-platform' ) }
           </a>
           <ActionsDropdown
-            onResendReceipt={ async () => {
-              try {
-                const result = await apiFetch( {
-                  path: `/mission-donation-platform/v1/transactions/${ id }/resend-receipt`,
-                  method: 'POST',
-                } );
-                setToastKey( ( k ) => k + 1 );
-                setToast( {
-                  type: 'success',
-                  message: sprintf(
-                    /* translators: %s: recipient email address */
-                    __( 'Receipt sent to %s', 'mission-donation-platform' ),
-                    result.sent_to
-                  ),
-                } );
-              } catch ( err ) {
-                setToastKey( ( k ) => k + 1 );
-                setToast( {
-                  type: 'error',
-                  message:
-                    err.message ||
-                    __(
-                      'Failed to send receipt.',
-                      'mission-donation-platform'
-                    ),
-                } );
-              }
-            } }
-            onRefund={ () => {
-              const refundable =
-                transaction.total_amount - ( transaction.amount_refunded || 0 );
-              setRefundAmount(
-                String( minorToMajor( refundable, transaction.currency ) )
-              );
-              setRefundError( '' );
-              setShowRefundModal( true );
-            } }
-            onDownloadPdf={ () => {
-              window.open(
-                `${ window.missiondpAdmin.restUrl }transactions/${ id }/receipt-pdf?_wpnonce=${ window.missiondpAdmin.restNonce }`,
-                '_blank'
-              );
-            } }
-            onExportCsv={ () => {
-              window.open(
-                `${ window.missiondpAdmin.restUrl }export/download?type=transactions&id=${ id }&format=csv&_wpnonce=${ window.missiondpAdmin.restNonce }`,
-                '_blank'
-              );
-            } }
-            onDelete={ () => setShowDeleteConfirm( true ) }
+            items={ [
+              {
+                label: __( 'Resend Receipt', 'mission-donation-platform' ),
+                icon: <MailIcon />,
+                onClick: async () => {
+                  try {
+                    const result = await apiFetch( {
+                      path: `/mission-donation-platform/v1/transactions/${ id }/resend-receipt`,
+                      method: 'POST',
+                    } );
+                    setToastKey( ( k ) => k + 1 );
+                    setToast( {
+                      type: 'success',
+                      message: sprintf(
+                        /* translators: %s: recipient email address */
+                        __( 'Receipt sent to %s', 'mission-donation-platform' ),
+                        result.sent_to
+                      ),
+                    } );
+                  } catch ( err ) {
+                    setToastKey( ( k ) => k + 1 );
+                    setToast( {
+                      type: 'error',
+                      message:
+                        err.message ||
+                        __(
+                          'Failed to send receipt.',
+                          'mission-donation-platform'
+                        ),
+                    } );
+                  }
+                },
+              },
+              {
+                label: __( 'Refund', 'mission-donation-platform' ),
+                icon: <RefundIcon />,
+                onClick: () => {
+                  const refundable =
+                    transaction.total_amount -
+                    ( transaction.amount_refunded || 0 );
+                  setRefundAmount(
+                    String( minorToMajor( refundable, transaction.currency ) )
+                  );
+                  setRefundError( '' );
+                  setShowRefundModal( true );
+                },
+              },
+              {
+                label: __( 'Download PDF', 'mission-donation-platform' ),
+                icon: <DownloadIcon />,
+                onClick: () => {
+                  window.open(
+                    `${ window.missiondpAdmin.restUrl }transactions/${ id }/receipt-pdf?_wpnonce=${ window.missiondpAdmin.restNonce }`,
+                    '_blank'
+                  );
+                },
+              },
+              {
+                label: __( 'Export CSV', 'mission-donation-platform' ),
+                icon: <FileIcon />,
+                onClick: () => {
+                  window.open(
+                    `${ window.missiondpAdmin.restUrl }export/download?type=transactions&id=${ id }&format=csv&_wpnonce=${ window.missiondpAdmin.restNonce }`,
+                    '_blank'
+                  );
+                },
+              },
+              { divider: true },
+              {
+                label: __( 'Delete Transaction', 'mission-donation-platform' ),
+                icon: <TrashIcon />,
+                isDanger: true,
+                onClick: () => setShowDeleteConfirm( true ),
+              },
+            ] }
           />
         </HStack>
 
         { /* Two-column grid */ }
-        <div className="mission-donor-detail-grid">
+        <div className="mission-detail-grid">
           <VStack spacing={ 4 }>
             { /* Header */ }
             <div

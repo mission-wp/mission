@@ -191,7 +191,6 @@ class TransactionHistoryModule {
 	 * @return void
 	 */
 	public function on_refund_applied( object $transaction, int $refund_delta ): void {
-		// Full refunds are logged by on_refund_completed via the status transition.
 		if ( Transaction::STATUS_REFUNDED === $transaction->status ) {
 			return;
 		}

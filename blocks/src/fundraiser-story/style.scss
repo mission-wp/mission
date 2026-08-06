@@ -1,0 +1,16 @@
+// Fundraiser Story — frontend styles.
+
+.mission-fs-story {
+  --mission-text: #1e1e1e;
+
+  color: var(--mission-text);
+  line-height: 1.6;
+
+  p {
+    margin: 0 0 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

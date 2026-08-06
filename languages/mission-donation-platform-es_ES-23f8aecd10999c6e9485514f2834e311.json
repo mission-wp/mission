@@ -1,0 +1,51 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-progress\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "donors": [
+                "donantes"
+            ],
+            "raised of %s goal": [
+                "recaudado de la meta de %s"
+            ],
+            "donations": [
+                "donaciones"
+            ],
+            "Donate Now": [
+                "Donar ahora"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "Scroll to donation form": [
+                "Desplazarse al formulario de donaci\u00f3n"
+            ],
+            "Custom URL": [
+                "URL personalizada"
+            ],
+            "Hide": [
+                "Ocultar"
+            ],
+            "Donate button": [
+                "Bot\u00f3n de donaci\u00f3n"
+            ],
+            "Donate URL": [
+                "URL de donaci\u00f3n"
+            ],
+            "Show donors": [
+                "Mostrar donantes"
+            ],
+            "Show donations": [
+                "Mostrar donaciones"
+            ]
+        }
+    }
+}

@@ -7,8 +7,10 @@
 
 namespace MissionDP\Email;
 
+use MissionDP\Admin\AdminModule;
 use MissionDP\Constants\Frequency;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
@@ -57,33 +59,55 @@ class AdminNotificationListener {
 		$this->notifier = $notifier;
 		$this->email    = $email;
 
-		// New donation (one-time).
 		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
 		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
-		// New donation (first recurring).
 		add_action( 'mission_subscription_status_pending_to_active', [ $this, 'on_first_recurring_donation' ] );
 
-		// Recurring renewal.
 		add_action( 'mission_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
 
-		// Refund processed.
 		add_action( 'mission_transaction_refund_applied', [ $this, 'on_refund_applied' ], 10, 2 );
 
-		// Failed payment.
 		add_action( 'mission_subscription_payment_failed', [ $this, 'on_payment_failed' ] );
 
-		// Subscription cancelled.
 		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
-		// Campaign milestone.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone' ], 10, 3 );
 
-		// Mail dedication pending.
 		add_action( 'mission_tribute_created', [ $this, 'on_mail_dedication' ] );
+
+		add_action( 'mission_fundraiser_created', [ $this, 'on_fundraiser_registered' ] );
+	}
+
+	/**
+	 * Send admin notification when a new fundraiser registers.
+	 *
+	 * @param Fundraiser $fundraiser The new fundraiser.
+	 * @return void
+	 */
+	public function on_fundraiser_registered( Fundraiser $fundraiser ): void {
+		$donor      = $fundraiser->donor();
+		$campaign   = $fundraiser->campaign();
+		$donor_name = $donor ? ( trim( $donor->first_name . ' ' . $donor->last_name ) ?: $donor->email ) : __( 'A participant', 'mission-donation-platform' );
+
+		$data = [
+			'fundraiser'        => $fundraiser,
+			'donor_name'        => $donor_name,
+			'campaign_name'     => $campaign?->title ?: '',
+			'approval_required' => Fundraiser::STATUS_PENDING === $fundraiser->status,
+			'admin_url'         => admin_url( 'admin.php?page=' . AdminModule::FUNDRAISERS_SLUG ),
+		];
+
+		$subject = sprintf(
+			/* translators: %s: participant name */
+			__( 'New fundraiser registered: %s', 'mission-donation-platform' ),
+			$donor_name,
+		);
+
+		$this->notifier->notify( 'admin_new_fundraiser', $subject, $data );
 	}
 
 	/**

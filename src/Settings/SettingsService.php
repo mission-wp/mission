@@ -67,8 +67,7 @@ class SettingsService {
 		$current = $this->get_all();
 
 		// A stored fixed fee is denominated in the old currency's minor units,
-		// so it is meaningless after a currency change. Reset it to the new
-		// currency's default unless the same request sets it explicitly.
+		// so reset it on currency change unless the same request sets it explicitly.
 		if (
 			isset( $values['currency'] )
 			&& strtoupper( (string) $values['currency'] ) !== strtoupper( (string) $current['currency'] )
@@ -108,14 +107,8 @@ class SettingsService {
 			$accounts = [];
 		}
 
-		// Migrate from the legacy single-account flat keys. Migration is
-		// gated on the site_token because that's what actually routes to
-		// Stripe — capturing a half-written state (e.g. account_id set
-		// before the token has been persisted) would lock in an account
-		// record with an empty token that subsequent token writes can't
-		// fix. account_id is allowed to be empty here: some old connect
-		// responses left it blank and the upstream API still routed by
-		// site_token alone.
+		// Gate legacy migration on site_token, not account_id: capturing a half-written
+		// state would lock in an empty token, and old connects could leave account_id blank.
 		if ( empty( $accounts ) && $this->get( 'stripe_site_token' ) ) {
 			$accounts = [
 				$this->build_legacy_account_record(),
@@ -177,7 +170,6 @@ class SettingsService {
 	public function add_stripe_account( array $account ): void {
 		$accounts = $this->get_stripe_accounts();
 
-		// Replace any existing record with the same account_id.
 		$accounts = array_values(
 			array_filter(
 				$accounts,
@@ -374,7 +366,6 @@ class SettingsService {
 			return (string) $default['site_token'];
 		}
 
-		// Legacy single-account fallback.
 		return (string) $this->get( 'stripe_site_token', '' );
 	}
 
@@ -449,9 +440,8 @@ class SettingsService {
 			'show_powered_by'          => false,
 			'test_mode'                => true,
 			'campaign_url_slug'        => 'campaigns',
-			// Connected Stripe accounts. Each record:
-			// site_id, site_token, account_id, display_name, connection_status,
-			// charges_enabled, webhook_secret, is_default, connected_at.
+			// Each record: site_id, site_token, account_id, display_name,
+			// connection_status, charges_enabled, webhook_secret, is_default, connected_at.
 			'stripe_accounts'          => [],
 			// Legacy single-account fields, kept for backward-compat reads only.
 			// New code reads/writes stripe_accounts; these are migrated on first read.

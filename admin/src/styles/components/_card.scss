@@ -6,6 +6,11 @@
   padding: 24px;
 }
 
+// Flush card — sections own their padding (tables, detail lists).
+.mission-card--flush {
+  padding: 0;
+}
+
 // Card heading — for cards with padding: 0 that need a consistent title.
 .mission-card__heading {
   font-size: 15.75px;
@@ -33,6 +38,57 @@
   font-size: 12px;
   color: #c0bfca;
   margin: 4px 0 0;
+}
+
+// Detail-card header row — title left, count badge / action right.
+.mission-card__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e6e1;
+
+  h2 {
+    font-size: 15.75px;
+    font-weight: 500;
+    color: #1e1e1e;
+    margin: 0;
+  }
+}
+
+.mission-card__header-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mission-card__count-badge {
+  font-size: 12px;
+  color: #9b9ba8;
+  background: #fafaf7;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.mission-card__footer {
+  border-top: 1px solid #e8e6e1;
+}
+
+.mission-card__footer-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: none;
+  border-radius: 0 0 10px 10px;
+  color: #2fa36b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    background: #fafaf7;
+  }
 }
 
 // Dashboard card.

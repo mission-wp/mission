@@ -68,7 +68,6 @@ trait MinimumAmountTrait {
 			);
 		}
 
-		// Look up the block-level minimum when we can identify the form.
 		if ( $source_post_id < 1 || '' === $form_id ) {
 			return true;
 		}

@@ -72,7 +72,6 @@ function getProgressDisplay( campaign ) {
     };
   }
 
-  // donations or donors goal type.
   const count = goalProgress.toLocaleString();
   const label = goalType === 'donations' ? 'donations' : 'donors';
   return {
@@ -119,7 +118,6 @@ export default function Edit( { attributes, setAttributes } ) {
       .finally( () => setIsLoadingList( false ) );
   }, [] );
 
-  // Resolve effective campaign ID.
   let effectiveId = campaignId;
   if (
     ! effectiveId &&
@@ -160,33 +158,33 @@ export default function Edit( { attributes, setAttributes } ) {
   function renderPreview() {
     if ( isLoadingList ) {
       return (
-        <div className="mission-campaign-progress mission-cp-skeleton">
-          <div className="mission-cp-header">
+        <div className="mission-progress mission-progress-skeleton">
+          <div className="mission-progress__header">
             <div
-              className="mission-cp-skeleton-bar"
+              className="mission-progress-skeleton-bar"
               style={ { width: '60%', height: 28 } }
             />
             <div
-              className="mission-cp-skeleton-bar"
+              className="mission-progress-skeleton-bar"
               style={ { width: 40, height: 20 } }
             />
           </div>
           <div
-            className="mission-cp-skeleton-bar"
+            className="mission-progress-skeleton-bar"
             style={ { width: '100%', height: 12, borderRadius: 6 } }
           />
-          <div className="mission-cp-stats">
+          <div className="mission-progress__stats">
             <div
-              className="mission-cp-skeleton-bar"
+              className="mission-progress-skeleton-bar"
               style={ { width: 80, height: 16 } }
             />
             <div
-              className="mission-cp-skeleton-bar"
+              className="mission-progress-skeleton-bar"
               style={ { width: 100, height: 16 } }
             />
           </div>
           <div
-            className="mission-cp-skeleton-bar"
+            className="mission-progress-skeleton-bar"
             style={ { width: '100%', height: 44, borderRadius: 8 } }
           />
         </div>
@@ -195,7 +193,7 @@ export default function Edit( { attributes, setAttributes } ) {
 
     if ( ! campaign ) {
       return (
-        <div className="mission-campaign-progress mission-cp-empty">
+        <div className="mission-progress mission-progress-empty">
           <svg
             width="28"
             height="28"
@@ -226,40 +224,42 @@ export default function Edit( { attributes, setAttributes } ) {
     const barPercent = hasGoal ? Math.min( 100, percentage ) : 0;
 
     return (
-      <div className="mission-campaign-progress" style={ primaryColorVars }>
-        <div className="mission-cp-header">
-          <span className="mission-cp-raised">{ progressText }</span>
-          <span className="mission-cp-goal">{ goalText }</span>
+      <div className="mission-progress" style={ primaryColorVars }>
+        <div className="mission-progress__header">
+          <span className="mission-progress__raised">{ progressText }</span>
+          <span className="mission-progress__goal">{ goalText }</span>
           { hasGoal && (
-            <span className="mission-cp-percentage">{ percentage + '%' }</span>
+            <span className="mission-progress__percentage">
+              { percentage + '%' }
+            </span>
           ) }
         </div>
         { hasGoal && (
-          <div className="mission-cp-bar">
+          <div className="mission-progress__bar">
             <div
-              className="mission-cp-bar__fill"
+              className="mission-progress__bar-fill"
               style={ { '--bar-width': barPercent + '%' } }
             />
           </div>
         ) }
         { ( showDonors || ( showDaysRemaining && hasEndDate ) ) && (
-          <div className="mission-cp-stats">
+          <div className="mission-progress__stats">
             { showDonors && (
-              <div className="mission-cp-stat">
-                <span className="mission-cp-stat__value">
+              <div className="mission-progress__stat">
+                <span className="mission-progress__stat-value">
                   { ( campaign.donor_count || 0 ).toLocaleString() }
                 </span>
-                <span className="mission-cp-stat__label">
+                <span className="mission-progress__stat-label">
                   { __( 'donors', 'mission-donation-platform' ) }
                 </span>
               </div>
             ) }
             { showDaysRemaining && hasEndDate && (
-              <div className="mission-cp-stat">
-                <span className="mission-cp-stat__value">
+              <div className="mission-progress__stat">
+                <span className="mission-progress__stat-value">
                   { daysRemaining.toLocaleString() }
                 </span>
-                <span className="mission-cp-stat__label">
+                <span className="mission-progress__stat-label">
                   { __( 'days remaining', 'mission-donation-platform' ) }
                 </span>
               </div>
@@ -267,7 +267,7 @@ export default function Edit( { attributes, setAttributes } ) {
           </div>
         ) }
         { donateButtonAction !== 'hide' && (
-          <div className="mission-cp-donate-btn">
+          <div className="mission-progress__btn">
             { __( 'Donate Now', 'mission-donation-platform' ) }
           </div>
         ) }

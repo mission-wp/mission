@@ -46,6 +46,8 @@ class Transaction extends Model {
 	public ?int $parent_id;
 	public int $source_post_id;
 	public ?int $campaign_id;
+	public ?int $fundraiser_id;
+	public ?int $team_id;
 	public int $amount;
 	public int $fee_amount;
 	public int $tip_amount;
@@ -79,6 +81,8 @@ class Transaction extends Model {
 		$this->parent_id               = isset( $data['parent_id'] ) ? (int) $data['parent_id'] : null;
 		$this->source_post_id          = (int) ( $data['source_post_id'] ?? 0 );
 		$this->campaign_id             = isset( $data['campaign_id'] ) ? (int) $data['campaign_id'] : null;
+		$this->fundraiser_id           = isset( $data['fundraiser_id'] ) ? (int) $data['fundraiser_id'] : null;
+		$this->team_id                 = isset( $data['team_id'] ) ? (int) $data['team_id'] : null;
 		$this->amount                  = (int) ( $data['amount'] ?? 0 );
 		$this->fee_amount              = (int) ( $data['fee_amount'] ?? 0 );
 		$this->tip_amount              = (int) ( $data['tip_amount'] ?? 0 );
@@ -177,6 +181,36 @@ class Transaction extends Model {
 	}
 
 	/**
+	 * Re-assign this transaction to a different campaign.
+	 *
+	 * A fundraiser or team is authoritative for its campaign (see
+	 * DonationAttribution), so attribution that doesn't belong to the new
+	 * campaign is cleared rather than left crediting a fundraiser or team on
+	 * the old campaign. The data store rebuilds the previous fundraiser's
+	 * stored totals when the change is saved.
+	 *
+	 * @param int|null $campaign_id New campaign ID, or null to unassign.
+	 * @return void
+	 */
+	public function set_campaign( ?int $campaign_id ): void {
+		$campaign_id = $campaign_id ?: null;
+
+		if ( ( $this->campaign_id ?: null ) === $campaign_id ) {
+			return;
+		}
+
+		$this->campaign_id = $campaign_id;
+
+		if ( $this->fundraiser_id && $this->fundraiser()?->campaign_id !== $campaign_id ) {
+			$this->fundraiser_id = null;
+		}
+
+		if ( $this->team_id && $this->team()?->campaign_id !== $campaign_id ) {
+			$this->team_id = null;
+		}
+	}
+
+	/**
 	 * Get the donor for this transaction.
 	 *
 	 * @return Donor|null
@@ -192,6 +226,27 @@ class Transaction extends Model {
 	 */
 	public function campaign(): ?Campaign {
 		return $this->campaign_id ? Campaign::find( $this->campaign_id ) : null;
+	}
+
+	/**
+	 * Get the fundraiser this transaction is attributed to, if any.
+	 *
+	 * @return Fundraiser|null
+	 */
+	public function fundraiser(): ?Fundraiser {
+		return $this->fundraiser_id ? Fundraiser::find( $this->fundraiser_id ) : null;
+	}
+
+	/**
+	 * Get the team this transaction is attributed to, if any.
+	 *
+	 * Set when a donor gives directly to a team rather than to a specific
+	 * member's fundraising page.
+	 *
+	 * @return Team|null
+	 */
+	public function team(): ?Team {
+		return $this->team_id ? Team::find( $this->team_id ) : null;
 	}
 
 	/**

@@ -30,7 +30,6 @@ export default function FormPreview( { attributes = {} } ) {
 
   const isLoading = ! settings;
 
-  // Merge block attributes over plugin defaults.
   const recurringEnabled =
     attributes.recurringEnabled ?? settings?.recurringEnabled ?? true;
   const customAmount =
@@ -41,7 +40,6 @@ export default function FormPreview( { attributes = {} } ) {
   const amountDescriptions =
     attributes.amountDescriptions ?? settings?.amountDescriptions ?? {};
 
-  // Determine primary color: per-form > global setting > fallback.
   const primaryColor =
     attributes.primaryColor || settings?.globalPrimaryColor || '#2fa36b';
   const formCssVars = {
@@ -53,7 +51,6 @@ export default function FormPreview( { attributes = {} } ) {
     ? SKELETON_AMOUNTS
     : amountsByFrequency.one_time || amountsByFrequency.monthly || [];
 
-  // Determine if the displayed frequency has any descriptions.
   const displayedFreqDescs = amountDescriptions.one_time || {};
   const hasDescriptions =
     ! isLoading &&

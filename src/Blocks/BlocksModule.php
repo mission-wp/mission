@@ -18,6 +18,17 @@ defined( 'ABSPATH' ) || exit;
 class BlocksModule {
 
 	/**
+	 * Build directories that are asset bundles, not registerable blocks.
+	 *
+	 * signup-modal is the P2P sign-up dialog shell: its directory only exists
+	 * so wp-scripts builds the view module and stylesheet, which
+	 * SignupModal::render() enqueues directly.
+	 *
+	 * @var string[]
+	 */
+	private const UNREGISTERED_BUNDLES = [ 'signup-modal' ];
+
+	/**
 	 * Initialize the blocks module.
 	 *
 	 * @return void
@@ -89,7 +100,6 @@ class BlocksModule {
 		$campaign = null;
 
 		if ( CampaignPostType::POST_TYPE === $screen->post_type ) {
-			// Standard campaign post edit screen.
 			$post_id = get_the_ID();
 			if ( $post_id ) {
 				$campaign = Campaign::find_by_post_id( $post_id );
@@ -249,6 +259,9 @@ class BlocksModule {
 		$blocks = glob( $blocks_dir . '/*', GLOB_ONLYDIR );
 
 		foreach ( $blocks as $block ) {
+			if ( in_array( basename( $block ), self::UNREGISTERED_BUNDLES, true ) ) {
+				continue;
+			}
 			register_block_type_from_metadata( $block );
 		}
 	}

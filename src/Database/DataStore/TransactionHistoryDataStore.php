@@ -142,7 +142,7 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 					'SELECT * FROM %i
 					 WHERE ( %d = 0 OR transaction_id = %d )
 					   AND ( %d = 0 OR event_type = %s )
-					 ORDER BY created_at ASC
+					 ORDER BY created_at ASC, id ASC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_transaction_id,
@@ -160,7 +160,7 @@ class TransactionHistoryDataStore implements DataStoreInterface {
 					'SELECT * FROM %i
 					 WHERE ( %d = 0 OR transaction_id = %d )
 					   AND ( %d = 0 OR event_type = %s )
-					 ORDER BY created_at DESC
+					 ORDER BY created_at DESC, id DESC
 					 LIMIT %d OFFSET %d',
 					$this->get_table_name(),
 					$has_transaction_id,

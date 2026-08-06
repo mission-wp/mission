@@ -1,0 +1,74 @@
+<?php
+/**
+ * Peer-to-peer frontend module.
+ *
+ * @package MissionDP
+ */
+
+namespace MissionDP\P2P;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Boots the peer-to-peer public surface: the fundraiser/team shell post types
+ * (and, in later steps, their nested URLs, page rendering, and sign-up modal).
+ */
+class P2PModule {
+
+	/**
+	 * Fundraiser post type instance.
+	 *
+	 * @var FundraiserPostType
+	 */
+	private FundraiserPostType $fundraiser_post_type;
+
+	/**
+	 * Team post type instance.
+	 *
+	 * @var TeamPostType
+	 */
+	private TeamPostType $team_post_type;
+
+	/**
+	 * Nested-URL rewrites instance.
+	 *
+	 * @var P2PRewrites
+	 */
+	private P2PRewrites $rewrites;
+
+	/**
+	 * Page renderer instance.
+	 *
+	 * @var P2PPageRenderer
+	 */
+	private P2PPageRenderer $page_renderer;
+
+	/**
+	 * Shell-post status guard instance.
+	 *
+	 * @var ShellPostStatusGuard
+	 */
+	private ShellPostStatusGuard $status_guard;
+
+	/**
+	 * Constructor.
+	 */
+	public function __construct() {
+		$this->fundraiser_post_type = new FundraiserPostType();
+		$this->team_post_type       = new TeamPostType();
+		$this->rewrites             = new P2PRewrites();
+		$this->page_renderer        = new P2PPageRenderer();
+		$this->status_guard         = new ShellPostStatusGuard();
+	}
+
+	/**
+	 * Register hooks for all P2P frontend components.
+	 */
+	public function init(): void {
+		$this->fundraiser_post_type->init();
+		$this->team_post_type->init();
+		$this->rewrites->init();
+		$this->page_renderer->init();
+		$this->status_guard->init();
+	}
+}

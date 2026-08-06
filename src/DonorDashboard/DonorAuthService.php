@@ -62,7 +62,6 @@ class DonorAuthService {
 			throw new \RuntimeException( esc_html__( 'An account already exists for this email. Please log in instead.', 'mission-donation-platform' ) );
 		}
 
-		// Generate a secure random token and store its hash.
 		$token      = wp_generate_password( 32, false );
 		$token_hash = wp_hash_password( $token );
 
@@ -72,7 +71,6 @@ class DonorAuthService {
 			gmdate( 'Y-m-d H:i:s', time() + self::TOKEN_EXPIRY_HOURS * HOUR_IN_SECONDS )
 		);
 
-		// Build the verification URL.
 		$dashboard_url    = $this->get_dashboard_url();
 		$verification_url = add_query_arg(
 			[
@@ -94,18 +92,13 @@ class DonorAuthService {
 			'expiry_hours'     => self::TOKEN_EXPIRY_HOURS,
 		];
 
-		$subject = __( 'Verify your email to activate your donor account', 'mission-donation-platform' );
-
-		$custom_subject = $email_module->get_custom_subject( 'account_activation' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
-				]
-			);
-		}
+		$subject = $email_module->subject(
+			'account_activation',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+			]
+		);
 
 		$html = $email_module->render_template( 'account-activation', array_merge( $data, [ 'subject' => $subject ] ) );
 		$email_module->send( $donor->email, $subject, $html );
@@ -142,12 +135,10 @@ class DonorAuthService {
 			return null;
 		}
 
-		// Check expiration.
 		if ( strtotime( $expires ) < time() ) {
 			return null;
 		}
 
-		// Verify the token hash.
 		if ( ! wp_check_password( $token, $stored_hash ) ) {
 			return null;
 		}
@@ -180,7 +171,6 @@ class DonorAuthService {
 
 		$user_id = $donor->create_user_account( $password );
 
-		// Clean up token meta.
 		$donor->delete_meta( 'activation_token' );
 		$donor->delete_meta( 'activation_token_expires' );
 
@@ -215,6 +205,8 @@ class DonorAuthService {
 	 * @throws \RuntimeException If credentials are invalid or the user is not a donor.
 	 */
 	public function login( string $email, string $password, bool $remember = false ): Donor {
+		$this->persist_cookie_for_nonce();
+
 		$user = wp_signon(
 			[
 				'user_login'    => $email,
@@ -240,7 +232,129 @@ class DonorAuthService {
 			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
+		// wp_signon() doesn't set the current user for the rest of the request;
+		// do it so a nonce minted now is valid for this user's next request.
+		wp_set_current_user( $user->ID );
+
 		return $donor;
+	}
+
+	/**
+	 * Establish a session for an already-resolved donor user.
+	 *
+	 * Used after email ownership has been proven by a one-time code (signup or
+	 * reset), where there is no password to sign in with.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return Donor The logged-in donor.
+	 *
+	 * @throws \RuntimeException If the user is missing or is not a donor.
+	 */
+	public function login_user( int $user_id ): Donor {
+		if ( ! $this->is_donor_user( $user_id ) ) {
+			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
+		}
+
+		$user  = get_userdata( $user_id );
+		$donor = Donor::find_by_user_id( $user_id );
+
+		if ( ! $donor ) {
+			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
+		}
+
+		$this->persist_cookie_for_nonce();
+		wp_set_current_user( $user_id );
+		wp_set_auth_cookie( $user_id, true, is_ssl() );
+		do_action( 'wp_login', $user->user_login, $user );
+
+		return $donor;
+	}
+
+	/**
+	 * Issue a fresh REST nonce for the current (just-logged-in) user.
+	 *
+	 * The signup modal logs the participant in mid-flow without a page reload,
+	 * so it must replace the page's anonymous nonce before the authenticated
+	 * register request, or WordPress rejects it as an invalid cookie nonce.
+	 *
+	 * @return string
+	 */
+	public function rest_nonce(): string {
+		return wp_create_nonce( 'wp_rest' );
+	}
+
+	/**
+	 * Make the just-issued auth cookie readable within this request.
+	 *
+	 * wp_set_auth_cookie() only sends the cookie to the browser; it does not
+	 * populate $_COOKIE. Capturing it here lets wp_get_session_token() (and thus
+	 * a nonce minted later in the same request) match the cookie the next
+	 * request will send.
+	 *
+	 * @return void
+	 */
+	private function persist_cookie_for_nonce(): void {
+		add_action(
+			'set_logged_in_cookie',
+			static function ( $logged_in_cookie ) {
+				$_COOKIE[ LOGGED_IN_COOKIE ] = $logged_in_cookie;
+			}
+		);
+	}
+
+	/**
+	 * Create a WordPress account for a donor without logging them in.
+	 *
+	 * The donor record must already exist (new or matched by email) and have no
+	 * linked user. Validates the password, then delegates user creation to the
+	 * Donor model (role `missiondp_donor`, email as login).
+	 *
+	 * @param Donor  $donor    Donor to attach the account to.
+	 * @param string $password Plain-text password.
+	 * @return Donor The donor, now linked to a user.
+	 */
+	public function create_account( Donor $donor, string $password ): Donor {
+		$this->validate_password_length( $password );
+
+		$donor->create_user_account( $password );
+
+		return $donor;
+	}
+
+	/**
+	 * Whether a user ID belongs to a donor-role account.
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return bool
+	 */
+	public function is_donor_user( int $user_id ): bool {
+		$user = get_userdata( $user_id );
+
+		return $user && in_array( 'missiondp_donor', $user->roles, true );
+	}
+
+	/**
+	 * Set a new password on an existing user (after a verified reset grant).
+	 *
+	 * Refuses non-donor accounts: a donor record can be linked to a privileged
+	 * user (an admin who donated), and the OTP reset flow must never become a
+	 * password-change path for those accounts.
+	 *
+	 * @param int    $user_id  WordPress user ID.
+	 * @param string $password New plain-text password.
+	 * @return void
+	 *
+	 * @throws \RuntimeException If the password is too weak or the user is not a donor.
+	 */
+	public function set_password( int $user_id, string $password ): void {
+		$this->validate_password_length( $password );
+
+		if ( ! $this->is_donor_user( $user_id ) ) {
+			throw new \RuntimeException( esc_html__( 'This account cannot be used here.', 'mission-donation-platform' ) );
+		}
+
+		// Destroys other sessions for the user, which is the intended behavior.
+		wp_set_password( $password, $user_id );
 	}
 
 	/**
@@ -317,18 +431,13 @@ class DonorAuthService {
 			return;
 		}
 
-		$subject = __( 'Reset your password', 'mission-donation-platform' );
-
-		$custom_subject = $email_module->get_custom_subject( 'password_reset' );
-		if ( $custom_subject ) {
-			$subject = $email_module->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
-				]
-			);
-		}
+		$subject = $email_module->subject(
+			'password_reset',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{organization}' => ( new \MissionDP\Settings\SettingsService() )->get( 'org_name', get_bloginfo( 'name' ) ),
+			]
+		);
 
 		$data = [
 			'donor'        => $donor,
@@ -379,7 +488,7 @@ class DonorAuthService {
 			throw new \RuntimeException( esc_html__( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
-		// Set the new password (destroys all existing sessions).
+		// wp_set_password() destroys all existing sessions, which is intended.
 		wp_set_password( $new_password, $user->ID );
 
 		wp_signon(
@@ -441,6 +550,21 @@ class DonorAuthService {
 			'total_donated'     => $donor->total_donated,
 			'transaction_count' => $donor->transaction_count,
 		];
+	}
+
+	/**
+	 * Validate a password meets the requirements.
+	 *
+	 * Exposed so the signup flow can reject a weak password before sending a
+	 * verification code (rather than after the donor has entered it).
+	 *
+	 * @param string $password Password to validate.
+	 * @return void
+	 *
+	 * @throws \RuntimeException If the password is too short.
+	 */
+	public function validate_password( string $password ): void {
+		$this->validate_password_length( $password );
 	}
 
 	/**

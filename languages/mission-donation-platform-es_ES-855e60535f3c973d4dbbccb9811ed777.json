@@ -1,0 +1,33 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-story\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Settings": [
+                "Ajustes"
+            ],
+            "Your fundraiser's story appears here. Share why this cause matters to you and what donations will make possible.": [
+                "Aqu\u00ed aparece la historia de tu recaudaci\u00f3n. Cuenta por qu\u00e9 esta causa te importa y qu\u00e9 har\u00e1n posible las donaciones."
+            ],
+            "Supporters read this before they give, so make it personal.": [
+                "Los colaboradores leen esto antes de donar, as\u00ed que hazlo personal."
+            ],
+            "I am raising money for a cause that means a lot to me. Every donation, big or small, helps me get closer to my goal. Thank you for your support!": [
+                "Estoy recaudando fondos para una causa que significa mucho para m\u00ed. Cada donaci\u00f3n, grande o peque\u00f1a, me acerca m\u00e1s a mi meta. \u00a1Gracias por tu apoyo!"
+            ],
+            "Fallback text": [
+                "Texto predeterminado"
+            ],
+            "Shown when a fundraiser has not written a story yet.": [
+                "Se muestra cuando un recaudador a\u00fan no ha escrito su historia."
+            ]
+        }
+    }
+}

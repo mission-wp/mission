@@ -303,7 +303,7 @@ class SubscriptionDataStore implements DataStoreInterface {
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order} LIMIT %d OFFSET %d";
+		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order}, id {$order} LIMIT %d OFFSET %d";
 		$prepare_args = array_merge( [ $this->get_table_name() ], $values, [ $orderby, $per_page, $offset ] );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via placeholders built from counted arrays, direction whitelisted.
@@ -408,6 +408,8 @@ class SubscriptionDataStore implements DataStoreInterface {
 			'donor_id'                => $model->donor_id,
 			'source_post_id'          => $model->source_post_id,
 			'campaign_id'             => $model->campaign_id,
+			'fundraiser_id'           => $model->fundraiser_id,
+			'team_id'                 => $model->team_id,
 			'initial_transaction_id'  => $model->initial_transaction_id,
 			'amount'                  => $model->amount,
 			'fee_amount'              => $model->fee_amount,

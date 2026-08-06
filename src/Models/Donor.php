@@ -133,7 +133,6 @@ class Donor extends Model {
 			throw new \RuntimeException( esc_html__( 'This donor already has an account.', 'mission-donation-platform' ) );
 		}
 
-		// Use the donor email as the username.
 		$user_id = wp_insert_user(
 			[
 				'user_login' => $this->email,
@@ -245,6 +244,16 @@ class Donor extends Model {
 	}
 
 	/**
+	 * Get the fundraisers (campaign participations) for this donor.
+	 *
+	 * @param array<string, mixed> $args Additional query args.
+	 * @return Fundraiser[]
+	 */
+	public function fundraisers( array $args = [] ): array {
+		return Fundraiser::query( array_merge( $args, [ 'donor_id' => $this->id ] ) );
+	}
+
+	/**
 	 * Get the notes for this donor.
 	 *
 	 * @param array<string, mixed> $args Additional query args.
@@ -260,5 +269,22 @@ class Donor extends Model {
 				]
 			)
 		);
+	}
+
+	/**
+	 * Delete the donor, cascading to their fundraiser records.
+	 *
+	 * A fundraiser record is one person's participation in one campaign; without
+	 * the person it has no meaning, and its shell post would otherwise stay
+	 * published. Model-level deletes so each shell post and detach logic runs.
+	 *
+	 * @return bool
+	 */
+	public function delete(): bool {
+		foreach ( $this->fundraisers( [ 'per_page' => -1 ] ) as $fundraiser ) {
+			$fundraiser->delete();
+		}
+
+		return parent::delete();
 	}
 }

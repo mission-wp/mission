@@ -192,7 +192,6 @@ function getInnerClassNames( attributes ) {
 export default function Edit( { attributes, setAttributes } ) {
   const { text, donateButtonAction, donateButtonUrl } = attributes;
 
-  // Width handling — preset percentages use classes, custom values use inline style.
   const dimensionWidth = attributes.style?.dimensions?.width;
   let widthClass = '';
   let wrapperWidth;

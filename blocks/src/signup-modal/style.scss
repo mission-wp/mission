@@ -1,0 +1,1111 @@
+// Fundraiser sign-up modal — frontend styles.
+
+.mission-su {
+  --mission-text: #1e1e1e;
+  --mission-text-secondary: #6b7280;
+  --mission-border: #ddd;
+  --mission-bg: #fff;
+  --mission-bg-secondary: #f7f7f7;
+  --mission-error: #dc2626;
+  --mission-radius: 10px;
+
+  // Derived here rather than inlined from PHP: kses strips function values
+  // from inline custom properties.
+  --mission-primary-light: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none;
+  }
+}
+
+.mission-su__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  background: rgba(20, 30, 25, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s 0.25s;
+
+  &.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.25s ease;
+  }
+}
+
+.mission-su__dialog {
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
+  background: var(--mission-bg);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.25s ease;
+
+  .is-open & {
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mission-su__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px 0;
+}
+
+.mission-su__brand {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mission-primary);
+}
+
+.mission-su__close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--mission-text-secondary);
+  cursor: pointer;
+}
+
+.mission-su__progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 14px 0 6px;
+}
+
+.mission-su__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mission-border);
+
+  &.is-active {
+    background: var(--mission-primary);
+    width: 10px;
+    height: 10px;
+  }
+}
+
+.mission-su__line {
+  width: 28px;
+  height: 1.5px;
+  background: var(--mission-border);
+}
+
+.mission-su__body {
+  padding: 12px 28px 28px;
+}
+
+.mission-su__step {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+.mission-su__title {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.01em;
+  color: var(--mission-text);
+  margin: 0 0 4px;
+}
+
+.mission-su__title--success {
+  margin-bottom: 12px;
+}
+
+.mission-su__subtitle {
+  font-size: 14px;
+  text-align: center;
+  color: var(--mission-text-secondary);
+  margin: 0 0 22px;
+}
+
+.mission-su__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.mission-su__field {
+  display: block;
+  margin-bottom: 16px;
+
+  span {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--mission-text);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--mission-text);
+    background: var(--mission-bg);
+    border: 1.5px solid var(--mission-border);
+    border-radius: var(--mission-radius);
+
+    &:focus {
+      outline: none;
+      border-color: var(--mission-primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+    }
+
+    &.mission-su__input--error {
+      border-color: var(--mission-error);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-error) 8%, transparent);
+
+      &:focus {
+        border-color: var(--mission-error);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-error) 15%, transparent);
+      }
+    }
+  }
+
+  // stylelint-disable-next-line no-descending-specificity
+  textarea {
+    resize: vertical;
+    min-height: 88px;
+  }
+}
+
+.mission-su__prefix-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  // stylelint-disable-next-line no-descending-specificity
+  input {
+    padding-left: 28px;
+  }
+}
+
+.mission-su__prefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mission-text-secondary);
+  pointer-events: none;
+}
+
+.mission-su__toggle {
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  margin-bottom: 18px;
+  background: var(--mission-bg-secondary);
+  border-radius: 9999px;
+}
+
+.mission-su__toggle-btn {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--mission-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+
+  &.is-active {
+    color: var(--mission-text);
+    font-weight: 600;
+    background: var(--mission-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.mission-su__panel {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
+
+.mission-su__locked {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  background: var(--mission-primary-light);
+  border: 1px solid color-mix(in srgb, var(--mission-primary) 18%, transparent);
+  border-radius: var(--mission-radius);
+
+  strong {
+    font-size: 14px;
+    color: var(--mission-text);
+  }
+
+  span {
+    font-size: 12px;
+    color: var(--mission-text-secondary);
+  }
+}
+
+.mission-su__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--mission-text);
+  cursor: pointer;
+  margin-bottom: 16px;
+
+  // stylelint-disable-next-line no-descending-specificity
+  input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    accent-color: var(--mission-primary);
+    flex-shrink: 0;
+  }
+}
+
+.mission-su__btn {
+  display: block;
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-primary-text, #fff);
+  background: var(--mission-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 200ms ease;
+
+  &:hover {
+    background: var(--mission-primary-hover);
+  }
+}
+
+.mission-su__btn--ghost {
+  margin-top: 10px;
+  color: var(--mission-primary);
+  background: transparent;
+  border: 1.5px solid var(--mission-border);
+
+  &:hover {
+    background: var(--mission-primary-light);
+    border-color: var(--mission-primary);
+  }
+}
+
+.mission-su__spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid color-mix(in srgb, var(--mission-primary-text, #fff) 35%, transparent);
+  border-top-color: var(--mission-primary-text, #fff);
+  border-radius: 50%;
+  animation: mission-su-spin 0.6s linear infinite;
+}
+
+@keyframes mission-su-spin {
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mission-su__field .mission-su__optional {
+  display: inline;
+  font-weight: 400;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__hint {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--mission-text-secondary);
+}
+
+// Team access toggle — a sliding pill whose track sizes to the longest label
+// (both labels share one grid cell), so translations of any length fit.
+.mission-su__access {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .mission-su__hint {
+    margin: 0;
+  }
+}
+
+.mission-su__access .mission-su__access-toggle {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.mission-su__access .mission-su__access-track {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 30px;
+  border-radius: 8px;
+  background: var(--mission-primary);
+  transition: background 0.25s ease;
+  pointer-events: none;
+}
+
+.mission-su__access .mission-su__access-knob {
+  position: absolute;
+  top: 3px;
+  inset-inline-start: 3px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  background: var(--mission-bg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: inset-inline-start 0.25s ease;
+}
+
+.mission-su__access .mission-su__access-labels {
+  display: grid;
+  margin: 0;
+  transform: translateX(10px);
+  transition: transform 0.25s ease;
+}
+
+.mission-su__access .mission-su__access-text {
+  grid-area: 1 / 1;
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--mission-primary-text);
+  transition: opacity 0.18s ease;
+}
+
+.mission-su__access .mission-su__access-text--private {
+  opacity: 0;
+}
+
+.mission-su__access input:checked ~ .mission-su__access-track {
+  background: var(--mission-error);
+}
+
+.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-knob {
+  inset-inline-start: calc(100% - 27px);
+}
+
+.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-labels {
+  transform: translateX(-10px);
+}
+
+.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-text--public {
+  opacity: 0;
+}
+
+.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-text--private {
+  opacity: 1;
+}
+
+.mission-su__note {
+  margin: 14px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__link {
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: var(--mission-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:disabled {
+    color: var(--mission-text-secondary);
+    cursor: default;
+  }
+}
+
+.mission-su__warning,
+.mission-su__error {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--mission-error, #9c3b3b);
+  background: color-mix(in srgb, var(--mission-error, #b85c5c) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mission-error, #b85c5c) 22%, transparent);
+  border-radius: 8px;
+}
+
+.mission-su__back {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--mission-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &::before {
+    content: "\2190";
+    margin-right: 4px;
+  }
+
+  &:hover {
+    color: var(--mission-text);
+  }
+}
+
+.mission-su__identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: var(--mission-bg-secondary);
+  border: 1px solid var(--mission-border);
+  border-radius: var(--mission-radius);
+
+  strong {
+    font-size: 15px;
+    color: var(--mission-text);
+  }
+
+  span {
+    font-size: 13px;
+    color: var(--mission-text-secondary);
+  }
+}
+
+.mission-su__otp {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 6px 0 16px;
+}
+
+.mission-su__otp-input {
+  width: 46px;
+  height: 54px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--mission-text);
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: 10px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--mission-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+  }
+}
+
+.mission-su__resend {
+  margin: 16px 0 0;
+  font-size: 13px;
+  text-align: center;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__success {
+  text-align: center;
+  padding: 12px 0;
+}
+
+.mission-su__share {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 18px 0;
+}
+
+.mission-su__share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--mission-text-secondary);
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:hover,
+  &.is-copied {
+    color: var(--mission-primary);
+    border-color: var(--mission-primary);
+  }
+}
+
+// Share icons are CSS masks colored by the button's currentcolor — inline
+// SVGs break the Interactivity API's HTML processor.
+.mission-su__share-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background-color: currentcolor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.mission-su__share-icon--facebook {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z'/%3E%3C/svg%3E");
+}
+
+.mission-su__share-icon--x {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z'/%3E%3C/svg%3E");
+}
+
+.mission-su__share-icon--copy {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' ry='2'/%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='9' width='13' height='13' rx='2' ry='2'/%3E%3Cpath d='M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'/%3E%3C/svg%3E");
+}
+
+.mission-su__share-icon--bluesky {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z'/%3E%3C/svg%3E");
+}
+
+// While the copied state is active, the copy icon becomes a checkmark.
+.mission-su__share-btn.is-copied .mission-su__share-icon--copy {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+}
+
+.mission-su__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// The "View my page" button is an anchor; keep it looking like a button.
+a.mission-su__btn {
+  text-align: center;
+  text-decoration: none;
+}
+
+// ─────────────────────────────────────────────
+// Step 3: first-gift nudge, payment, and thanks
+// ─────────────────────────────────────────────
+
+.mission-su__kickoff-heading {
+  margin: 18px 0 2px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--mission-text);
+}
+
+.mission-su__kickoff-change {
+  display: block;
+  margin: 0 auto 16px;
+  font-size: 13px;
+}
+
+.mission-su__amounts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.mission-su__amount-btn {
+  height: 48px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-text);
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: var(--mission-radius);
+  cursor: pointer;
+  transition: border-color var(--mission-transition, 0.15s ease), background var(--mission-transition, 0.15s ease);
+
+  &:hover {
+    border-color: var(--mission-primary);
+    background: var(--mission-primary-light);
+  }
+
+  &.is-active {
+    border-color: var(--mission-primary);
+    background: var(--mission-primary);
+    color: var(--mission-primary-text, #fff);
+  }
+}
+
+// The "Other" grid cell swaps its button for an inline amount input,
+// mirroring the donation form's custom-amount treatment.
+.mission-su__amount-other-cell {
+  position: relative;
+
+  .mission-su__amount-btn--other {
+    width: 100%;
+  }
+}
+
+.mission-su__amount-other-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mission-su__amount-other-prefix {
+  position: absolute;
+  left: 12px;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mission-text-secondary);
+  pointer-events: none;
+}
+
+.mission-su__amount-other-field {
+  width: 100%;
+  height: 48px;
+  padding: 0 10px 0 26px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-text);
+  background: var(--mission-primary-light);
+  border: 1.5px solid var(--mission-primary);
+  border-radius: var(--mission-radius);
+  outline: none;
+  appearance: textfield;
+
+  &:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+}
+
+// Inline (not full-width) primary button, e.g. "Make the first gift".
+.mission-su__btn--inline {
+  display: inline-block;
+  width: auto;
+  margin: 4px auto 0;
+}
+
+.mission-su__skip {
+  font-size: 14px;
+  color: var(--mission-text-secondary);
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--mission-text);
+  }
+}
+
+.mission-su__pay {
+  text-align: left;
+}
+
+.mission-su__pay-amount {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--mission-text);
+  margin-bottom: 2px;
+}
+
+.mission-su__pay-fee {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__pay-fee-text.is-uncovered {
+  text-decoration: line-through;
+}
+
+.mission-su__pay-fee-edit {
+  margin-left: 4px;
+  font-size: 13px;
+}
+
+.mission-su__pay-fee-details {
+  margin: 0 0 16px;
+
+  p {
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mission-text-secondary);
+  }
+
+  .mission-su__check {
+    margin-bottom: 0;
+  }
+}
+
+.mission-su__pay-identity {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: var(--mission-text-secondary);
+
+  strong {
+    font-weight: 600;
+    color: var(--mission-text);
+  }
+}
+
+.mission-su__pay-testmode {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--mission-text-secondary);
+  border: 1px dashed var(--mission-border);
+  border-radius: 8px;
+}
+
+// Reserve space so the modal doesn't jump while Stripe's iframe loads.
+.mission-su__payment-element {
+  min-height: 180px;
+  margin-bottom: 16px;
+
+  &:empty {
+    border: 1.5px dashed var(--mission-border);
+    border-radius: var(--mission-radius);
+  }
+}
+
+.mission-su__pay-slow {
+  margin-bottom: 12px;
+}
+
+.mission-su__tip {
+  margin-bottom: 18px;
+}
+
+.mission-su__tip-card {
+  padding: 16px;
+  background: var(--mission-bg-secondary);
+  border-radius: var(--mission-radius);
+}
+
+.mission-su__tip-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mission-su__tip-text {
+  // The basis floor wraps the percent trigger onto its own line when the
+  // card is too narrow to fit both comfortably.
+  flex: 1 1 220px;
+  min-width: 0;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__tip-trigger-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mission-su__tip-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mission-su__tip-value {
+  min-width: 36px;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  color: var(--mission-primary-text-on-light);
+}
+
+.mission-su__tip-chevron {
+  display: inline-block;
+  width: 10px;
+  height: 6px;
+  background-color: var(--mission-text-secondary);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.mission-su__tip-chevron--up {
+  transform: rotate(180deg);
+}
+
+.mission-su__tip-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 10;
+  min-width: 100px;
+  overflow: hidden;
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: var(--mission-radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.mission-su__tip-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  text-align: left;
+  color: var(--mission-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mission-bg-secondary);
+  }
+
+  &.is-active {
+    color: var(--mission-primary-text-on-light);
+    font-weight: 600;
+  }
+}
+
+.mission-su__tip-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.mission-su__tip-custom-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__tip-heart {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-color: var(--mission-error);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23000'%3E%3Cpath d='M2 9.1371C2 14 6.01943 16.5914 8.96173 18.9109C10 19.7294 11 20.5 12 20.5C13 20.5 14 19.7294 15.0383 18.9109C17.9806 16.5914 22 14 22 9.1371C22 4.27416 16.4998 0.825464 12 5.50063C7.50016 0.825464 2 4.27416 2 9.1371Z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+.mission-su__tip-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  background: var(--mission-bg);
+  border: 1.5px solid var(--mission-border);
+  border-radius: var(--mission-radius);
+
+  &:focus-within {
+    border-color: var(--mission-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mission-primary) 12%, transparent);
+  }
+}
+
+.mission-su__tip-step-btn {
+  width: 40px;
+  font-size: 18px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--mission-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--mission-text);
+    background: var(--mission-bg-secondary);
+  }
+}
+
+.mission-su__tip-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  border-left: 1px solid var(--mission-border);
+  border-right: 1px solid var(--mission-border);
+}
+
+.mission-su__tip-input-prefix {
+  padding-left: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mission-text-secondary);
+}
+
+.mission-su__tip-input {
+  width: 64px;
+  padding: 10px 10px 10px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--mission-text);
+  background: none;
+  border: none;
+  appearance: textfield;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+}
+
+.mission-su__success-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  background: var(--mission-primary);
+  border-radius: 50%;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 26px;
+    height: 26px;
+    background-color: var(--mission-primary-text, #fff);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5l5 5L20 6.5'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+  }
+}
+
+.mission-su__share-icon--email {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M3 7l9 6 9-6'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M3 7l9 6 9-6'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 600px) {
+
+  .mission-su__row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .mission-su__tip-custom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

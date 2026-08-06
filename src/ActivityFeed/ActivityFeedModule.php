@@ -73,85 +73,73 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	private function register_event_listeners(): void {
-		// Donation completed (via status transition or created directly as completed).
 		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
 		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
-		// Donation refunded.
 		add_action( 'mission_transaction_status_completed_to_refunded', [ $this, 'on_donation_refunded' ] );
 
-		// Subscription created.
 		add_action( 'mission_subscription_created', [ $this, 'on_subscription_created' ] );
 
-		// Subscription cancelled.
 		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
-		// Subscription failed.
 		add_action( 'mission_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
 		add_action( 'mission_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
 
-		// Subscription amount changed.
 		add_action( 'mission_subscription_amount_changed', [ $this, 'on_subscription_amount_changed' ], 10, 3 );
 
-		// Campaign created.
 		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
 
-		// Campaign milestone reached.
-		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
+		add_action( 'mission_fundraiser_created', [ $this, 'on_fundraiser_registered' ] );
+		add_action( 'mission_fundraiser_approved', [ $this, 'on_fundraiser_approved' ] );
+		add_action( 'mission_fundraiser_reactivated', [ $this, 'on_fundraiser_reactivated' ] );
+		add_action( 'mission_team_created', [ $this, 'on_team_created' ] );
+		add_action( 'mission_team_approved', [ $this, 'on_team_approved' ] );
+		add_action( 'mission_team_reactivated', [ $this, 'on_team_reactivated' ] );
+		add_action( 'mission_team_joined', [ $this, 'on_team_joined' ], 10, 2 );
+		add_action( 'mission_team_invitation_created', [ $this, 'on_team_invited' ] );
+		add_action( 'mission_team_captain_promoted', [ $this, 'on_team_captain_promoted' ], 10, 3 );
 
-		// Plugin updated.
+		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
+		add_action( 'mission_fundraiser_milestone_reached', [ $this, 'on_fundraiser_milestone_reached' ], 10, 3 );
+
 		add_action( 'upgrader_process_complete', [ $this, 'on_upgrader_complete' ], 10, 2 );
 
-		// Plugin deactivated.
 		add_action( 'mission_plugin_deactivating', [ $this, 'on_plugin_deactivating' ] );
 
-		// Admin notification sent.
 		add_action( 'mission_admin_notification_sent', [ $this, 'on_admin_notification_sent' ], 10, 3 );
 
-		// Payment failed.
 		add_action( 'mission_transaction_status_pending_to_failed', [ $this, 'on_payment_failed' ] );
 
-		// Webhook processed.
 		add_action( 'mission_webhook_event_processed', [ $this, 'on_webhook_processed' ], 10, 3 );
 
-		// Email sent / failed.
 		add_action( 'mission_email_sent', [ $this, 'on_email_sent' ], 10, 2 );
 		add_action( 'mission_email_failed', [ $this, 'on_email_failed' ], 10, 2 );
 
-		// Settings updated.
 		add_action( 'mission_settings_updated', [ $this, 'on_settings_updated' ], 10, 3 );
 
-		// Stripe account fallback (form requested a disconnected account, used default instead).
 		add_action( 'mission_stripe_account_fallback', [ $this, 'on_stripe_account_fallback' ], 10, 2 );
 
-		// Outgoing webhooks.
 		add_action( 'mission_outgoing_webhook_created', [ $this, 'on_outgoing_webhook_created' ] );
 		add_action( 'mission_outgoing_webhook_deleted', [ $this, 'on_outgoing_webhook_deleted' ], 10, 2 );
 		add_action( 'mission_outgoing_webhook_auto_paused', [ $this, 'on_outgoing_webhook_auto_paused' ] );
 
-		// Migration runs.
 		add_action( 'mission_migration_completed', [ $this, 'on_migration_completed' ], 10, 2 );
 		add_action( 'mission_migration_rolled_back', [ $this, 'on_migration_rolled_back' ], 10, 2 );
 		add_action( 'mission_migration_failed', [ $this, 'on_migration_failed' ], 10, 3 );
 
-		// Mission API call failures.
 		add_action( 'mission_subscription_api_call_failed', [ $this, 'on_subscription_api_failed' ], 10, 4 );
 		add_action( 'mission_refund_api_call_failed', [ $this, 'on_refund_api_failed' ], 10, 3 );
 
-		// Campaign status transitions.
 		add_action( 'mission_campaign_status_changed', [ $this, 'on_campaign_status_changed' ], 10, 3 );
 
-		// Data import / export.
 		add_action( 'mission_import_completed', [ $this, 'on_import_completed' ] );
 		add_action( 'mission_data_exported', [ $this, 'on_data_exported' ], 10, 3 );
 
-		// Cleanup operations.
 		add_action( 'mission_cleanup_performed', [ $this, 'on_cleanup_performed' ], 10, 2 );
 
-		// Donor auth email failures (suppressed to prevent email enumeration).
 		add_action( 'mission_donor_activation_email_suppressed', [ $this, 'on_donor_activation_suppressed' ], 10, 2 );
 		add_action( 'mission_donor_password_reset_email_suppressed', [ $this, 'on_donor_password_reset_suppressed' ], 10, 2 );
 	}
@@ -357,7 +345,6 @@ class ActivityFeedModule {
 	private function register_pruning(): void {
 		add_action( 'missiondp_daily_cleanup', [ $this, 'run_prune' ] );
 
-		// Ensure the cron is scheduled.
 		add_action( 'init', [ $this, 'ensure_cron_scheduled' ] );
 	}
 
@@ -605,6 +592,211 @@ class ActivityFeedModule {
 	}
 
 	/**
+	 * Handle a fundraiser registering for a peer-to-peer campaign.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_registered( object $fundraiser ): void {
+		$this->log(
+			'fundraiser_registered',
+			'fundraiser',
+			(int) $fundraiser->id,
+			$this->fundraiser_log_data( $fundraiser )
+		);
+	}
+
+	/**
+	 * Handle a fundraiser being approved.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_approved( object $fundraiser ): void {
+		$this->log(
+			'fundraiser_approved',
+			'fundraiser',
+			(int) $fundraiser->id,
+			$this->fundraiser_log_data( $fundraiser )
+		);
+	}
+
+	/**
+	 * Handle a team being created.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_created( object $team ): void {
+		$this->log(
+			'team_created',
+			'team',
+			(int) $team->id,
+			$this->team_log_data( $team )
+		);
+	}
+
+	/**
+	 * Handle a team being approved.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_approved( object $team ): void {
+		$this->log(
+			'team_approved',
+			'team',
+			(int) $team->id,
+			$this->team_log_data( $team )
+		);
+	}
+
+	/**
+	 * Handle a deactivated fundraiser being made active again.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_reactivated( object $fundraiser ): void {
+		$this->log(
+			'fundraiser_reactivated',
+			'fundraiser',
+			(int) $fundraiser->id,
+			$this->fundraiser_log_data( $fundraiser )
+		);
+	}
+
+	/**
+	 * Handle a deactivated team being made active again.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_reactivated( object $team ): void {
+		$this->log(
+			'team_reactivated',
+			'team',
+			(int) $team->id,
+			$this->team_log_data( $team )
+		);
+	}
+
+	/**
+	 * Handle a fundraiser joining a team.
+	 *
+	 * @param object $fundraiser Fundraiser model (the member who joined).
+	 * @param object $team       Team model.
+	 *
+	 * @return void
+	 */
+	public function on_team_joined( object $fundraiser, object $team ): void {
+		// Skip the captain's founding join; it's already logged as team_created.
+		if ( (int) $fundraiser->id === (int) $team->captain_id ) {
+			return;
+		}
+
+		$donor = $fundraiser->donor();
+
+		$this->log(
+			'team_joined',
+			'team',
+			(int) $team->id,
+			[
+				'team_name'     => $team->name,
+				'fundraiser_id' => (int) $fundraiser->id,
+				'donor_id'      => $fundraiser->donor_id,
+				'donor_name'    => $donor?->full_name() ?: '',
+			]
+		);
+	}
+
+	/**
+	 * Handle an invitation being sent to join a team.
+	 *
+	 * @param object $invitation TeamInvitation model.
+	 *
+	 * @return void
+	 */
+	public function on_team_invited( object $invitation ): void {
+		$team = $invitation->team();
+
+		$this->log(
+			'team_invited',
+			'team',
+			(int) $invitation->team_id,
+			[
+				'team_name' => $team?->name ?: '',
+				'email'     => $invitation->email,
+			]
+		);
+	}
+
+	/**
+	 * Handle a team captain being changed.
+	 *
+	 * @param object      $team     Team model.
+	 * @param object      $captain  The new captain fundraiser.
+	 * @param object|null $previous The previous captain fundraiser, if any.
+	 *
+	 * @return void
+	 */
+	public function on_team_captain_promoted( object $team, object $captain, ?object $previous = null ): void {
+		$this->log(
+			'team_captain_promoted',
+			'team',
+			(int) $team->id,
+			[
+				'team_name'        => $team->name,
+				'captain_id'       => (int) $captain->id,
+				'captain_name'     => $captain->donor()?->full_name() ?: '',
+				'previous_captain' => $previous?->donor()?->full_name() ?: '',
+			]
+		);
+	}
+
+	/**
+	 * Build the log data payload for a fundraiser event.
+	 *
+	 * @param object $fundraiser Fundraiser model.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function fundraiser_log_data( object $fundraiser ): array {
+		$donor    = $fundraiser->donor();
+		$campaign = $fundraiser->campaign();
+
+		return [
+			'donor_id'       => $fundraiser->donor_id,
+			'donor_name'     => $donor?->full_name() ?: '',
+			'campaign_id'    => $fundraiser->campaign_id,
+			'campaign_title' => $campaign?->title ?: '',
+		];
+	}
+
+	/**
+	 * Build the log data payload for a team event.
+	 *
+	 * @param object $team Team model.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function team_log_data( object $team ): array {
+		$campaign = $team->campaign();
+
+		return [
+			'name'           => $team->name,
+			'campaign_id'    => $team->campaign_id,
+			'campaign_title' => $campaign?->title ?: '',
+		];
+	}
+
+	/**
 	 * Handle campaign milestone reached.
 	 *
 	 * Logs percentage-based milestones (25%, 50%, 75%, 100%) to the activity
@@ -642,6 +834,39 @@ class ActivityFeedModule {
 				'goal_type'   => $campaign->goal_type ?? 'amount',
 				'percentage'  => $pct_milestones[ $milestone_id ],
 			],
+			$is_test
+		);
+	}
+
+	/**
+	 * Handle a fundraiser reaching a goal milestone.
+	 *
+	 * @param object $fundraiser   Fundraiser model.
+	 * @param string $milestone_id Milestone ID ('25-pct', '50-pct', '75-pct', '100-pct').
+	 * @param bool   $is_test      Whether from a test-mode transaction.
+	 *
+	 * @return void
+	 */
+	public function on_fundraiser_milestone_reached( object $fundraiser, string $milestone_id, bool $is_test = false ): void {
+		$pct_milestones = [
+			'25-pct'  => 25,
+			'50-pct'  => 50,
+			'75-pct'  => 75,
+			'100-pct' => 100,
+		];
+
+		if ( ! isset( $pct_milestones[ $milestone_id ] ) ) {
+			return;
+		}
+
+		$this->log(
+			'fundraiser_milestone',
+			'fundraiser',
+			(int) $fundraiser->id,
+			array_merge(
+				$this->fundraiser_log_data( $fundraiser ),
+				[ 'percentage' => $pct_milestones[ $milestone_id ] ]
+			),
 			$is_test
 		);
 	}
@@ -949,14 +1174,10 @@ class ActivityFeedModule {
 	 * @return void
 	 */
 	public function on_import_completed( object $job ): void {
-		// Nothing was written (e.g. an update run where every row was unchanged
-		// or skipped), so there is nothing worth recording.
 		if ( 0 === $job->imported && 0 === $job->updated ) {
 			return;
 		}
 
-		// The import runs in a background job, so there's no current user to
-		// attribute it to. Resolve the importer from the job and store the name.
 		$this->log(
 			'data_imported',
 			$job->type,

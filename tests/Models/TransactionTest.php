@@ -34,6 +34,8 @@ class TransactionTest extends WP_UnitTestCase {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		// phpcs:enable
@@ -410,6 +412,23 @@ class TransactionTest extends WP_UnitTestCase {
 		$this->assertEmpty( array_intersect( $page1_ids, $page2_ids ) );
 	}
 
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$donor  = $this->create_donor();
+		$first  = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+		$second = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+		$third  = $this->create_transaction( [ 'donor_id' => $donor->id ] );
+
+		$found = Transaction::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
+	}
+
 	// -------------------------------------------------------------------------
 	// Hook tests.
 	// -------------------------------------------------------------------------
@@ -493,5 +512,179 @@ class TransactionTest extends WP_UnitTestCase {
 
 		$this->assertTrue( $result );
 		$this->assertSame( 7500, $transaction->fresh()->amount );
+	}
+
+	// -------------------------------------------------------------------------
+	// fundraiser_id attribution tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test fundraiser_id defaults to null and persists when set.
+	 */
+	public function test_fundraiser_id_defaults_null_and_persists(): void {
+		$direct = new Transaction();
+		$this->assertNull( $direct->fundraiser_id );
+
+		$attributed = $this->create_transaction( [ 'fundraiser_id' => 42 ] );
+		$this->assertSame( 42, $attributed->fresh()->fundraiser_id );
+	}
+
+	/**
+	 * Test query() filters by fundraiser_id.
+	 */
+	public function test_query_filters_by_fundraiser_id(): void {
+		$this->create_transaction( [ 'fundraiser_id' => 7 ] );
+		$this->create_transaction();
+
+		$this->assertCount( 1, Transaction::query( [ 'fundraiser_id' => 7 ] ) );
+		$this->assertSame( 1, Transaction::count( [ 'fundraiser_id' => 7 ] ) );
+	}
+
+	/**
+	 * Test fundraiser() returns the attributed Fundraiser, or null when unattributed.
+	 */
+	public function test_fundraiser_relationship(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$attributed = $this->create_transaction( [ 'fundraiser_id' => $fundraiser->id ] );
+		$this->assertSame( $fundraiser->id, $attributed->fundraiser()->id );
+
+		$direct = $this->create_transaction();
+		$this->assertNull( $direct->fundraiser() );
+	}
+
+	// -------------------------------------------------------------------------
+	// team_id attribution tests (direct-to-team donations).
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test team_id defaults to null and persists when set.
+	 */
+	public function test_team_id_defaults_null_and_persists(): void {
+		$direct = new Transaction();
+		$this->assertNull( $direct->team_id );
+
+		$attributed = $this->create_transaction( [ 'team_id' => 9 ] );
+		$this->assertSame( 9, $attributed->fresh()->team_id );
+	}
+
+	/**
+	 * Test query() filters by team_id.
+	 */
+	public function test_query_filters_by_team_id(): void {
+		$this->create_transaction( [ 'team_id' => 3 ] );
+		$this->create_transaction();
+
+		$this->assertCount( 1, Transaction::query( [ 'team_id' => 3 ] ) );
+		$this->assertSame( 1, Transaction::count( [ 'team_id' => 3 ] ) );
+	}
+
+	/**
+	 * Test team() returns the attributed Team, or null when unattributed.
+	 */
+	public function test_team_relationship(): void {
+		$team = new \MissionDP\Models\Team( [ 'campaign_id' => 1, 'name' => 'Team Test' ] );
+		$team->save();
+
+		$attributed = $this->create_transaction( [ 'team_id' => $team->id ] );
+		$this->assertSame( $team->id, $attributed->team()->id );
+
+		$direct = $this->create_transaction();
+		$this->assertNull( $direct->team() );
+	}
+
+	// -------------------------------------------------------------------------
+	// set_campaign() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test set_campaign() clears fundraiser attribution from another campaign.
+	 */
+	public function test_set_campaign_clears_fundraiser_from_other_campaign(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( 2 );
+
+		$this->assertSame( 2, $transaction->campaign_id );
+		$this->assertNull( $transaction->fundraiser_id );
+	}
+
+	/**
+	 * Test set_campaign() clears team attribution from another campaign.
+	 */
+	public function test_set_campaign_clears_team_from_other_campaign(): void {
+		$team = new \MissionDP\Models\Team( [ 'campaign_id' => 1, 'name' => 'Team Test' ] );
+		$team->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id' => 1,
+			'team_id'     => $team->id,
+		] );
+
+		$transaction->set_campaign( 2 );
+
+		$this->assertSame( 2, $transaction->campaign_id );
+		$this->assertNull( $transaction->team_id );
+	}
+
+	/**
+	 * Test set_campaign() keeps attribution when the campaign is unchanged.
+	 */
+	public function test_set_campaign_keeps_attribution_when_unchanged(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( 1 );
+
+		$this->assertSame( 1, $transaction->campaign_id );
+		$this->assertSame( $fundraiser->id, $transaction->fundraiser_id );
+	}
+
+	/**
+	 * Test set_campaign() keeps attribution that belongs to the new campaign.
+	 */
+	public function test_set_campaign_keeps_attribution_matching_new_campaign(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 2, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( 2 );
+
+		$this->assertSame( 2, $transaction->campaign_id );
+		$this->assertSame( $fundraiser->id, $transaction->fundraiser_id );
+	}
+
+	/**
+	 * Test set_campaign( null ) unassigns the campaign and clears attribution.
+	 */
+	public function test_set_campaign_null_clears_attribution(): void {
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => 1 ] );
+		$fundraiser->save();
+
+		$transaction = $this->create_transaction( [
+			'campaign_id'   => 1,
+			'fundraiser_id' => $fundraiser->id,
+		] );
+
+		$transaction->set_campaign( null );
+
+		$this->assertNull( $transaction->campaign_id );
+		$this->assertNull( $transaction->fundraiser_id );
 	}
 }

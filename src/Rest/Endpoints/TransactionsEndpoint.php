@@ -194,15 +194,17 @@ class TransactionsEndpoint {
 
 		$result = $this->reporting->transactions_with_donors(
 			[
-				'per_page'    => $per_page,
-				'page'        => $request->get_param( 'page' ) ?? 1,
-				'orderby'     => $request->get_param( 'orderby' ) ?? 'date_created',
-				'order'       => $request->get_param( 'order' ) ?? 'DESC',
-				'status'      => $request->get_param( 'status' ),
-				'campaign_id' => $request->get_param( 'campaign_id' ),
-				'donor_id'    => $request->get_param( 'donor_id' ),
-				'search'      => $request->get_param( 'search' ),
-				'dedication'  => $request->get_param( 'dedication' ),
+				'per_page'      => $per_page,
+				'page'          => $request->get_param( 'page' ) ?? 1,
+				'orderby'       => $request->get_param( 'orderby' ) ?? 'date_created',
+				'order'         => $request->get_param( 'order' ) ?? 'DESC',
+				'status'        => $request->get_param( 'status' ),
+				'campaign_id'   => $request->get_param( 'campaign_id' ),
+				'donor_id'      => $request->get_param( 'donor_id' ),
+				'fundraiser_id' => $request->get_param( 'fundraiser_id' ),
+				'team_id'       => $request->get_param( 'team_id' ),
+				'search'        => $request->get_param( 'search' ),
+				'dedication'    => $request->get_param( 'dedication' ),
 			]
 		);
 
@@ -264,8 +266,8 @@ class TransactionsEndpoint {
 		}
 
 		if ( $request->has_param( 'campaign_id' ) ) {
-			$campaign_id              = $request->get_param( 'campaign_id' );
-			$transaction->campaign_id = $campaign_id ? (int) $campaign_id : null;
+			$campaign_id = $request->get_param( 'campaign_id' );
+			$transaction->set_campaign( $campaign_id ? (int) $campaign_id : null );
 		}
 
 		$transaction->save();
@@ -308,7 +310,6 @@ class TransactionsEndpoint {
 			);
 		}
 
-		// Upsert donor.
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor ) {
@@ -347,7 +348,6 @@ class TransactionsEndpoint {
 
 		$transaction->save();
 
-		// Store optional meta.
 		$notes = $request->get_param( 'notes' );
 		if ( $notes ) {
 			$transaction->add_meta( 'notes', $notes );
@@ -357,7 +357,6 @@ class TransactionsEndpoint {
 			$transaction->add_meta( 'skip_receipt', '1' );
 		}
 
-		// Store billing address on transaction meta and update donor record.
 		$address_fields = [ 'address_1', 'address_2', 'city', 'state', 'zip', 'country' ];
 
 		foreach ( $address_fields as $field ) {
@@ -367,7 +366,6 @@ class TransactionsEndpoint {
 			}
 		}
 
-		// Update donor address if any address fields were provided.
 		$has_address = false;
 		foreach ( $address_fields as $field ) {
 			$value = $request->get_param( $field );
@@ -398,7 +396,6 @@ class TransactionsEndpoint {
 			return $fallback;
 		}
 
-		// Bare date like "2026-03-05" — append current time.
 		if ( preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
 			return $date . ' ' . gmdate( 'H:i:s' );
 		}
@@ -556,10 +553,12 @@ class TransactionsEndpoint {
 		return array_merge(
 			CollectionParams::base( orderby: [ 'date_created', 'amount' ], default_orderby: 'date_created' ),
 			[
-				'status'      => Args::enum( Transaction::STATUSES ),
-				'campaign_id' => Args::integer(),
-				'donor_id'    => Args::integer(),
-				'dedication'  => Args::enum( [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ] ),
+				'status'        => Args::enum( Transaction::STATUSES ),
+				'campaign_id'   => Args::integer(),
+				'donor_id'      => Args::integer(),
+				'fundraiser_id' => Args::integer(),
+				'team_id'       => Args::integer(),
+				'dedication'    => Args::enum( [ 'mail_pending', 'mail_sent', 'email_sent', 'any' ] ),
 			]
 		);
 	}

@@ -105,7 +105,6 @@ class SettingsEndpoint {
 		$defaults = $this->settings->get_defaults();
 		$values   = [];
 
-		// Handle the dashboard page ID separately — it's a standalone option.
 		if ( array_key_exists( 'donor_portal_page_id', $params ) ) {
 			$page_id = absint( $params['donor_portal_page_id'] );
 
@@ -114,11 +113,9 @@ class SettingsEndpoint {
 			}
 		}
 
-		// Remove virtual/read-only keys before processing.
 		unset( $params['donor_portal_page_id'], $params['donor_portal_page_title'] );
 
 		foreach ( $params as $key => $value ) {
-			// Only accept known setting keys.
 			if ( ! array_key_exists( $key, $defaults ) ) {
 				continue;
 			}
@@ -132,13 +129,11 @@ class SettingsEndpoint {
 			$values[ $key ] = $this->sanitize_value( $key, $value );
 		}
 
-		// Clamp the fixed fee against the currency it will be denominated in.
 		if ( isset( $values['stripe_fee_fixed'] ) ) {
 			$currency                   = (string) ( $values['currency'] ?? $this->settings->get( 'currency', 'USD' ) );
 			$values['stripe_fee_fixed'] = min( $values['stripe_fee_fixed'], TipCalculator::max_fixed_fee( $currency ) );
 		}
 
-		// Reject the whole save if the campaign slug would break an existing page.
 		if ( array_key_exists( 'campaign_url_slug', $values ) ) {
 			$error = $this->validate_campaign_slug( (string) $values['campaign_url_slug'] );
 
@@ -185,7 +180,6 @@ class SettingsEndpoint {
 			);
 		}
 
-		// Saving the current slug again is a no-op, never a conflict.
 		if ( $slug === (string) $this->settings->get( 'campaign_url_slug', CampaignSlug::DEFAULT_SLUG ) ) {
 			return null;
 		}
@@ -216,7 +210,6 @@ class SettingsEndpoint {
 	 * @return mixed Sanitized value.
 	 */
 	private function sanitize_value( string $key, mixed $value ): mixed {
-		// Enforce allowed values.
 		if ( isset( self::ALLOWED_VALUES[ $key ] ) ) {
 			return in_array( $value, self::ALLOWED_VALUES[ $key ], true ) ? $value : '';
 		}

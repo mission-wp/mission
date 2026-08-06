@@ -29,7 +29,6 @@ class CampaignWriter extends AbstractWriter {
 	public function write_batch( array $records ): array {
 		$result = $this->empty_result();
 
-		// Records in one run share a stamp key, but group defensively anyway.
 		$maps = [];
 		foreach ( $records as $record ) {
 			$maps[ (string) $record['source_meta_key'] ][] = $record['source_id'];

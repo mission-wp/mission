@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.0 (2026-08-06)
+
+* Security: User-supplied names and titles in admin activity feed messages are now escaped before display
+* New: Peer-to-peer fundraising! Create a P2P campaign and let supporters raise money for your cause with their own personal fundraising pages, on their own or in teams
+* New: Fundraisers sign up right on the campaign page and manage their story, photo, goal, and sharing from a new dashboard, while admins review and manage everyone from new Fundraisers and Teams screens with an optional approval workflow
+* New: Donations through a fundraiser page credit the fundraiser and their team on live progress bars and leaderboards, and seven new editable emails cover the lifecycle from welcome to goal milestones
+* Enhancement: The donor dashboard is now a full account area with separate Donations and Fundraising sections that appear based on each person's role
+* Enhancement: Donation form amounts now follow the site's language for number formatting instead of the browser's
+* Enhancement: Database updates now run on any visit, so a background plugin update can never stall donation processing
+* Fix: Block cards and buttons no longer overflow their containers in themes without a border-box reset
+* Tweak: Sites behind a proxy other than Cloudflare can declare trusted client-IP headers with the mission_trusted_proxy_headers filter so rate limits see real visitor addresses
+* Tweak: Updated the Spanish and Finnish translations with all of the new peer-to-peer strings
+
 ## 1.3.3 (2026-08-05)
 
 * Enhancement: The donation form now shows a clear message when a payment can't start or is taking unusually long, instead of an endless loading spinner

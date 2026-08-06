@@ -23,14 +23,12 @@ export default function SlidePanel( {
     }
   }, [ isOpen ] );
 
-  // Unmount after the slide-out transition ends.
   function handleTransitionEnd( e ) {
     if ( e.target === panelRef.current && ! isOpen ) {
       setMounted( false );
     }
   }
 
-  // Close on Escape key.
   useEffect( () => {
     if ( ! isOpen ) {
       return;
@@ -46,7 +44,6 @@ export default function SlidePanel( {
     return () => document.removeEventListener( 'keydown', handleKeyDown );
   }, [ isOpen, onClose ] );
 
-  // Prevent body scroll when open.
   useEffect( () => {
     if ( isOpen ) {
       document.body.style.overflow = 'hidden';

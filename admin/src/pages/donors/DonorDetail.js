@@ -11,27 +11,12 @@ import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { BRAND_COLOR } from '@shared/color';
 import DonorAvatar from '../../components/DonorAvatar';
-import DonationHistoryTable from './DonationHistoryTable';
+import ProfileHeader from '../../components/ProfileHeader';
+import TransactionsTableCard from '../../components/TransactionsTableCard';
 import DonorSubscriptionsCard from './DonorSubscriptionsCard';
 import DonorDetailsCard from './DonorDetailsCard';
 import NotesCard from '../../components/NotesCard';
 import EditDonorDrawer from './EditDonorDrawer';
-
-function Badge( { children, style } ) {
-  return (
-    <span
-      style={ {
-        padding: '2px 10px',
-        borderRadius: '20px',
-        fontSize: '11px',
-        fontWeight: 500,
-        ...style,
-      } }
-    >
-      { children }
-    </span>
-  );
-}
 
 export default function DonorDetail( { id } ) {
   const [ donor, setDonor ] = useState( null );
@@ -141,69 +126,68 @@ export default function DonorDetail( { id } ) {
         </HStack>
 
         { /* Profile card */ }
-        <div className="mission-donor-profile">
-          <div className="mission-donor-profile__main">
+        <ProfileHeader
+          avatar={
             <DonorAvatar
               firstName={ donor.first_name }
               lastName={ donor.last_name }
               gravatarHash={ donor.gravatar_hash }
               size="xl"
             />
-            <div className="mission-donor-profile__info">
-              <h1 className="mission-donor-profile__name">{ fullName }</h1>
-              <p className="mission-donor-profile__email">{ donor.email }</p>
-              <div className="mission-donor-profile__tags">
-                { donor.is_recurring && (
-                  <Badge style={ { background: '#e2f4eb', color: '#2fa36b' } }>
-                    { __( 'Recurring', 'mission-donation-platform' ) }
-                  </Badge>
-                ) }
-                { donor.is_top_donor && (
-                  <Badge style={ { background: '#fef3cd', color: '#856404' } }>
-                    { __( 'Top Donor', 'mission-donation-platform' ) }
-                  </Badge>
-                ) }
-                { donor.since_label && (
-                  <Badge style={ { background: '#f0ede8', color: '#6b6b7b' } }>
-                    { __( 'Since', 'mission-donation-platform' ) }{ ' ' }
-                    { donor.since_label }
-                  </Badge>
-                ) }
-              </div>
-            </div>
-          </div>
-          <div className="mission-donor-profile__stats">
-            <div className="mission-donor-profile__stat">
-              <span className="mission-donor-profile__stat-value">
-                { formatAmount( donor.total_donated ) }
-              </span>
-              <span className="mission-donor-profile__stat-label">
-                { __( 'Lifetime given', 'mission-donation-platform' ) }
-              </span>
-            </div>
-            <div className="mission-donor-profile__stat">
-              <span className="mission-donor-profile__stat-value">
-                { donor.transaction_count }
-              </span>
-              <span className="mission-donor-profile__stat-label">
-                { __( 'Donations', 'mission-donation-platform' ) }
-              </span>
-            </div>
-            <div className="mission-donor-profile__stat">
-              <span className="mission-donor-profile__stat-value">
-                { formatAmount( avgDonation ) }
-              </span>
-              <span className="mission-donor-profile__stat-label">
-                { __( 'Avg. donation', 'mission-donation-platform' ) }
-              </span>
-            </div>
-          </div>
-        </div>
+          }
+          name={ fullName }
+          subtitle={ donor.email }
+          badges={
+            <>
+              { donor.is_recurring && (
+                <span className="mission-chip mission-chip--success">
+                  { __( 'Recurring', 'mission-donation-platform' ) }
+                </span>
+              ) }
+              { donor.is_top_donor && (
+                <span className="mission-chip mission-chip--warning">
+                  { __( 'Top Donor', 'mission-donation-platform' ) }
+                </span>
+              ) }
+              { donor.since_label && (
+                <span className="mission-chip">
+                  { __( 'Since', 'mission-donation-platform' ) }{ ' ' }
+                  { donor.since_label }
+                </span>
+              ) }
+            </>
+          }
+          stats={ [
+            {
+              value: formatAmount( donor.total_donated ),
+              label: __( 'Lifetime given', 'mission-donation-platform' ),
+            },
+            {
+              value: donor.transaction_count,
+              label: __( 'Donations', 'mission-donation-platform' ),
+            },
+            {
+              value: formatAmount( avgDonation ),
+              label: __( 'Avg. donation', 'mission-donation-platform' ),
+            },
+          ] }
+        />
 
         { /* Two-column grid */ }
-        <div className="mission-donor-detail-grid">
+        <div className="mission-detail-grid">
           <VStack spacing={ 4 }>
-            <DonationHistoryTable transactions={ transactions } />
+            <TransactionsTableCard
+              title={ __( 'Donation History', 'mission-donation-platform' ) }
+              transactions={ transactions }
+              columns={ [
+                'id',
+                'date',
+                'amount',
+                'campaign',
+                'type',
+                'status',
+              ] }
+            />
             { subscriptions.length > 0 && (
               <DonorSubscriptionsCard subscriptions={ subscriptions } />
             ) }

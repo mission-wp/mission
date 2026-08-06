@@ -8,22 +8,26 @@ export default function DonorAvatar( {
   firstName,
   lastName,
   gravatarHash,
+  imageUrl,
   size,
 } ) {
   const initials = getInitials( firstName, lastName );
   const sizeClass = size ? `mission-donor-avatar--${ size }` : '';
   const baseClass = `mission-donor-avatar ${ sizeClass }`.trim();
 
-  if ( ! gravatarHash ) {
+  const src = imageUrl
+    ? imageUrl
+    : gravatarHash &&
+      `https://www.gravatar.com/avatar/${ gravatarHash }?s=80&d=blank`;
+
+  if ( ! src ) {
     return <span className={ baseClass }>{ initials }</span>;
   }
-
-  const gravatarUrl = `https://www.gravatar.com/avatar/${ gravatarHash }?s=80&d=blank`;
 
   return (
     <span className={ baseClass } aria-hidden="true">
       { initials }
-      <img className="mission-donor-avatar__img" src={ gravatarUrl } alt="" />
+      <img className="mission-donor-avatar__img" src={ src } alt="" />
     </span>
   );
 }

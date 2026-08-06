@@ -49,12 +49,16 @@ class PrimaryColorResolverTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test the light variant is a color-mix expression on the raw hex.
+	 * Test the light variant is not emitted inline.
+	 *
+	 * kses strips function values (color-mix, rgba) from inline custom
+	 * properties, so stylesheets derive --mission-primary-light from
+	 * --mission-primary with color-mix instead.
 	 */
-	public function test_light_variant_uses_color_mix(): void {
+	public function test_light_variant_is_not_inlined(): void {
 		$vars = PrimaryColorResolver::compute( '#2fa36b' );
 
-		$this->assertSame( 'color-mix(in srgb, #2fa36b 10%, transparent)', $vars['--mission-primary-light'] );
+		$this->assertArrayNotHasKey( '--mission-primary-light', $vars );
 	}
 
 	/**
@@ -77,7 +81,7 @@ class PrimaryColorResolverTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( '--mission-primary:#2fa36b', $style );
 		$this->assertStringContainsString( '--mission-primary-hover:#298f5e', $style );
 		$this->assertStringContainsString( '--mission-primary-text:#ffffff', $style );
-		// Five declarations joined by semicolons.
-		$this->assertCount( 5, explode( ';', $style ) );
+		// Four declarations joined by semicolons.
+		$this->assertCount( 4, explode( ';', $style ) );
 	}
 }

@@ -31,7 +31,6 @@ export default function WebhookModal( { webhook, onClose, onSave } ) {
       .catch( () => setAvailableEvents( {} ) );
   }, [] );
 
-  // Close on Escape.
   useEffect( () => {
     const handleKey = ( e ) => {
       if ( e.key === 'Escape' ) {
@@ -42,7 +41,6 @@ export default function WebhookModal( { webhook, onClose, onSave } ) {
     return () => document.removeEventListener( 'keydown', handleKey );
   }, [ onClose ] );
 
-  // Close dropdown on outside click.
   useEffect( () => {
     if ( ! dropdownOpen ) {
       return;
@@ -56,13 +54,11 @@ export default function WebhookModal( { webhook, onClose, onSave } ) {
     return () => document.removeEventListener( 'click', close, true );
   }, [ dropdownOpen ] );
 
-  // Focus URL field on mount.
   useEffect( () => {
     const timer = setTimeout( () => urlRef.current?.focus(), 100 );
     return () => clearTimeout( timer );
   }, [] );
 
-  // Flatten all events for search and lookup.
   const allEvents = availableEvents
     ? Object.values( availableEvents ).flatMap( ( cat ) =>
         Object.entries( cat.events ).map( ( [ key, info ] ) => ( {

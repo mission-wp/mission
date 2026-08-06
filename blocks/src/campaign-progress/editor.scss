@@ -1,15 +1,15 @@
 .wp-block-mission-donation-platform-campaign-progress {
 
-  .mission-cp-bar__fill {
+  .mission-progress__bar-fill {
     width: var(--bar-width);
     animation: none;
   }
 
-  .mission-cp-donate-btn {
+  .mission-progress__btn {
     pointer-events: none;
   }
 
-  .mission-cp-empty {
+  .mission-progress-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -25,19 +25,19 @@
     }
   }
 
-  .mission-cp-skeleton {
+  .mission-progress-skeleton {
     display: flex;
     flex-direction: column;
     gap: 16px;
   }
 
-  .mission-cp-skeleton-bar {
+  .mission-progress-skeleton-bar {
     background: #e0e0e0;
     border-radius: 4px;
-    animation: mission-cp-pulse 1.5s ease-in-out infinite;
+    animation: mission-progress-pulse 1.5s ease-in-out infinite;
   }
 
-  @keyframes mission-cp-pulse {
+  @keyframes mission-progress-pulse {
 
     0%,
     100% {

@@ -341,9 +341,19 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		] );
 		$txn->save();
 
-		$campaign->transaction_count = 1;
-		$campaign->total_raised      = 3000;
-		$campaign->save();
+		// Seed aggregates directly; update() deliberately never writes them.
+		global $wpdb;
+		$wpdb->update(
+			"{$wpdb->prefix}missiondp_campaigns",
+			[
+				'transaction_count' => 1,
+				'total_raised'      => 3000,
+			],
+			[ 'id' => $campaign->id ]
+		);
+		wp_cache_flush();
+
+		$before_race = $campaign->get_meta( 'milestones' );
 
 		$this->tracker->recompile( $campaign->id );
 
@@ -355,6 +365,14 @@ class MilestoneTrackerTest extends WP_UnitTestCase {
 		$fired = [];
 		$this->tracker->recompile( $campaign->id );
 		$this->assertEmpty( $fired, 'Already-reached milestones should not fire again.' );
+
+		// Simulate the webhook race: restore the pre-race milestones meta so this
+		// recompile sees the same "newly reached" list a concurrent reader would
+		// have. The atomic claim must keep it from firing a second time.
+		$campaign->update_meta( 'milestones', $before_race );
+		$fired = [];
+		$this->tracker->recompile( $campaign->id );
+		$this->assertEmpty( $fired, 'Claimed milestones must not fire again from a concurrent recompute.' );
 	}
 
 	/**

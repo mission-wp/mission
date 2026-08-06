@@ -1,0 +1,52 @@
+.wp-block-mission-donation-platform-top-teams {
+
+  .mission-donor-empty__btn {
+    pointer-events: none;
+  }
+
+  .mission-tt-empty-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    color: #949494;
+    text-align: center;
+    gap: 8px;
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+  }
+
+  .mission-tt-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mission-tt-skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mission-tt-skeleton-bar {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: mission-tt-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes mission-tt-pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+}

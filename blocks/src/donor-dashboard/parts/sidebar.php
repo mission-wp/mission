@@ -11,13 +11,16 @@ defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $donor, $initials, $nav_items ): void {
-// Map panel IDs to their Interactivity API state getter names.
+// Map panel IDs to their Interactivity API state getter names. The list
+// panels use the *Nav getters so they stay highlighted on drill-in views.
 $panel_state_map = [
-	'overview'  => 'state.isOverview',
-	'history'   => 'state.isHistory',
-	'recurring' => 'state.isRecurring',
-	'receipts'  => 'state.isReceipts',
-	'profile'   => 'state.isProfile',
+	'overview'    => 'state.isOverview',
+	'fundraisers' => 'state.isFundraisersNav',
+	'teams'       => 'state.isTeamsNav',
+	'history'     => 'state.isHistory',
+	'recurring'   => 'state.isRecurring',
+	'receipts'    => 'state.isReceipts',
+	'profile'     => 'state.isProfile',
 ];
 ?>
 <aside class="mission-dd-sidebar">
@@ -43,10 +46,19 @@ $panel_state_map = [
 		<!-- Nav -->
 		<nav aria-label="<?php esc_attr_e( 'Dashboard navigation', 'mission-donation-platform' ); ?>">
 			<ul class="mission-dd-nav">
+				<?php $current_group = ''; ?>
 				<?php foreach ( $nav_items as $item ) : ?>
 					<?php
 					$state_binding = $panel_state_map[ $item['id'] ] ?? '';
 					$icon_class    = 'mission-dd-icon mission-dd-icon-' . esc_attr( $item['icon'] );
+					$item_group    = $item['group'] ?? '';
+
+					if ( '' !== $item_group && $item_group !== $current_group ) :
+						?>
+						<li class="mission-dd-nav-group-label" aria-hidden="true"><?php echo esc_html( $item_group ); ?></li>
+						<?php
+					endif;
+					$current_group = $item_group;
 					?>
 					<li class="mission-dd-nav-item">
 						<button

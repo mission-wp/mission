@@ -69,7 +69,6 @@ export function getFeeParams( ctx ) {
   return { rate: percent / 100, fixed };
 }
 
-// Re-export shared fee/tip calculation utilities.
 export { calculateFee, calculateTip } from '@shared/fees';
 
 /**

@@ -8,7 +8,6 @@
  * @package MissionDP
  */
 
-// Exit if not called by WordPress.
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
@@ -43,6 +42,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		'missiondp_dashboard_page_id',
 		'missiondp_installed_at',
 		'missiondp_migration_lock',
+		'missiondp_db_migrating',
 		'missiondp_flush_rewrite_rules',
 	];
 
@@ -59,16 +59,24 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 		OR option_name LIKE '_transient_timeout_missiondp_%'"
 	);
 
+	// Atomic attempt-counter rows (OTP guess caps, REST rate limits).
+	$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'missiondp_attempts_%'" );
+
 	// -------------------------------------------------------------------------
-	// Campaign CPT posts and meta
+	// Plugin CPT posts and meta (campaigns + P2P fundraiser/team shell posts)
 	// -------------------------------------------------------------------------
-	$wpdb->query( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = 'missiondp_campaign'" );
-	$wpdb->query( "DELETE FROM {$wpdb->posts} WHERE post_type = 'missiondp_campaign'" );
+	$post_types = [ 'missiondp_campaign', 'missiondp_fundraiser', 'missiondp_team' ];
+	foreach ( $post_types as $post_type ) {
+		$wpdb->query( $wpdb->prepare( "DELETE meta FROM {$wpdb->postmeta} meta INNER JOIN {$wpdb->posts} posts ON posts.ID = meta.post_id WHERE posts.post_type = %s", $post_type ) );
+		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->posts} WHERE post_type = %s", $post_type ) );
+	}
+
+	// P2P upload markers live on attachment posts, not plugin CPTs.
+	$wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_key = '_missiondp_p2p_upload'" );
 
 	// -------------------------------------------------------------------------
 	// Custom tables
 	// -------------------------------------------------------------------------
-	// Load the Schema class to get table names dynamically.
 	$autoloader = __DIR__ . '/vendor/autoload.php';
 	if ( file_exists( $autoloader ) ) {
 		require_once $autoloader;
@@ -99,7 +107,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	// -------------------------------------------------------------------------
 	// Donor role (plugin-defined)
 	// -------------------------------------------------------------------------
-	// Donor user accounts are intentionally preserved — site owners may have repurposed them or other plugins may reference them.
+	// Donor user accounts are intentionally preserved; other plugins may reference them.
 	remove_role( 'missiondp_donor' );
 
 	// -------------------------------------------------------------------------
@@ -114,13 +122,11 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	wp_clear_scheduled_hook( 'missiondp_check_recurring_payments' );
 	wp_clear_scheduled_hook( 'missiondp_campaign_lifecycle' );
 
-	// Action Scheduler actions.
 	if ( function_exists( 'as_unschedule_all_actions' ) ) {
 		as_unschedule_all_actions( 'missiondp_import_tick' );
 		as_unschedule_all_actions( 'missiondp_migration_tick' );
 		as_unschedule_all_actions( 'missiondp_deliver_webhook' );
 	}
 
-	// Clear the cache to ensure stale data isn't served.
 	wp_cache_flush();
 } )();

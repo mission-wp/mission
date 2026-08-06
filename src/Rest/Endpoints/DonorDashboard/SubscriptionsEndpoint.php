@@ -274,7 +274,6 @@ class SubscriptionsEndpoint {
 		$tip_amount      = (int) $request->get_param( 'tip_amount' );
 		$fee_amount      = (int) $request->get_param( 'fee_amount' );
 
-		// One major unit, raised to Stripe's published minimum where higher.
 		$minimum = Currency::minimum_charge( $subscription->currency );
 
 		if ( $donation_amount < $minimum ) {

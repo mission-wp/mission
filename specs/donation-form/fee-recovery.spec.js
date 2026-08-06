@@ -7,12 +7,17 @@ const {
   deleteCampaign,
   enableTestMode,
 } = require( './helpers/campaign-factory' );
+const { snapshotSettings } = require( '../helpers/settings' );
 const { DonationFormPage } = require( './helpers/donation-form-page' );
 
 test.describe( 'Donation Form: Fee Recovery', () => {
-  let campaign, url;
+  let campaign, url, settingsSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'test_mode',
+      'stripe_charges_enabled',
+    ] );
     await enableTestMode( requestUtils );
     ( { campaign, url } = await createCampaignWithForm( requestUtils, {
       feeRecovery: true,
@@ -22,6 +27,7 @@ test.describe( 'Donation Form: Fee Recovery', () => {
 
   test.afterAll( async ( { requestUtils } ) => {
     await deleteCampaign( requestUtils, campaign.id );
+    await settingsSnapshot.restore();
   } );
 
   test( 'fee recovery section is visible on the payment step', async ( {

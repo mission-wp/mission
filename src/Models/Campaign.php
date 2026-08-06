@@ -42,11 +42,52 @@ class Campaign extends Model {
 		self::STATUS_ENDED,
 	];
 
+	public const TYPE_STANDARD = 'standard';
+	public const TYPE_P2P      = 'p2p';
+	public const TYPE_EVENT    = 'event';
+
+	/**
+	 * Every campaign type. Immutable after creation.
+	 *
+	 * @var string[]
+	 */
+	public const TYPES = [
+		self::TYPE_STANDARD,
+		self::TYPE_P2P,
+		self::TYPE_EVENT,
+	];
+
+	/**
+	 * Default peer-to-peer settings, applied as meta when a P2P campaign is
+	 * created. Booleans seed the moderation toggles; the two goals are minor
+	 * units; the placeholders suggest copy for the fundraiser/team story fields.
+	 *
+	 * @var array<string, bool|int|string>
+	 */
+	public const P2P_DEFAULT_SETTINGS = [
+		'registration_open'       => true,
+		'approval_required'       => false,
+		'teams_enabled'           => false,
+		'team_creation_enabled'   => false,
+		'team_approval_required'  => false,
+		'default_fundraiser_goal' => 50000,
+		'default_team_goal'       => 200000,
+		'story_placeholder'       => '',
+		'team_story_placeholder'  => '',
+	];
+
 	public int $post_id;
 	public string $title;
 	public string $description;
 	public int $goal_amount;
 	public string $goal_type;
+	/**
+	 * Campaign type (standard/p2p/event). Immutable after creation — the data
+	 * store never rewrites it on update.
+	 *
+	 * @var string
+	 */
+	public string $type;
 	public int $total_raised;
 	public int $transaction_count;
 	public int $donor_count;
@@ -91,6 +132,7 @@ class Campaign extends Model {
 		$this->description            = $data['description'] ?? '';
 		$this->goal_amount            = (int) ( $data['goal_amount'] ?? 0 );
 		$this->goal_type              = $data['goal_type'] ?? 'amount';
+		$this->type                   = $data['type'] ?? self::TYPE_STANDARD;
 		$this->total_raised           = (int) ( $data['total_raised'] ?? 0 );
 		$this->transaction_count      = (int) ( $data['transaction_count'] ?? 0 );
 		$this->donor_count            = (int) ( $data['donor_count'] ?? 0 );
@@ -195,7 +237,6 @@ class Campaign extends Model {
 	public function save(): int|bool {
 		$is_new = ! $this->id && ! $this->post_id;
 
-		// New campaign without a post — create one.
 		if ( $is_new ) {
 			$post_id = wp_insert_post(
 				[
@@ -216,7 +257,7 @@ class Campaign extends Model {
 
 		$result = parent::save();
 
-		// Set default page content for new campaigns (needs $this->id from the insert).
+		// Runs after parent::save() because the page template needs $this->id.
 		if ( $is_new && $result ) {
 			wp_update_post(
 				[
@@ -240,7 +281,11 @@ class Campaign extends Model {
 		$description = $this->description ?? '';
 
 		ob_start();
-		include __DIR__ . '/../Campaigns/templates/campaign-page.php';
+		if ( $this->is_p2p() ) {
+			include __DIR__ . '/../Campaigns/templates/campaign-page-p2p.php';
+		} else {
+			include __DIR__ . '/../Campaigns/templates/campaign-page.php';
+		}
 		$content = ob_get_clean();
 
 		/**
@@ -328,6 +373,159 @@ class Campaign extends Model {
 	 */
 	public function transactions( array $args = [] ): array {
 		return Transaction::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
+	}
+
+	/**
+	 * Whether this campaign has ended.
+	 *
+	 * @return bool
+	 */
+	public function has_ended(): bool {
+		return self::STATUS_ENDED === $this->status;
+	}
+
+	/**
+	 * Whole days from today until the campaign's end date.
+	 *
+	 * Uses the same date-only, site-timezone comparison as the lifecycle
+	 * transitions, so 0 means the campaign ends today.
+	 *
+	 * @return int|null Days remaining, or null when no end date is set or the end date has passed.
+	 */
+	public function days_left(): ?int {
+		if ( ! $this->date_end ) {
+			return null;
+		}
+
+		$end   = strtotime( substr( $this->date_end, 0, 10 ) );
+		$today = strtotime( wp_date( 'Y-m-d' ) );
+
+		if ( false === $end || false === $today ) {
+			return null;
+		}
+
+		$days = (int) round( ( $end - $today ) / DAY_IN_SECONDS );
+
+		return $days < 0 ? null : $days;
+	}
+
+	/**
+	 * Whether this is a peer-to-peer fundraising campaign.
+	 *
+	 * @return bool
+	 */
+	public function is_p2p(): bool {
+		return self::TYPE_P2P === $this->type;
+	}
+
+	/**
+	 * Whether this is a ticketed event campaign.
+	 *
+	 * @return bool
+	 */
+	public function is_event(): bool {
+		return self::TYPE_EVENT === $this->type;
+	}
+
+	/**
+	 * Whether this campaign is accepting new fundraiser sign-ups.
+	 *
+	 * The single registration gate: an active P2P campaign with the
+	 * registration toggle on. Scheduled and ended campaigns never accept
+	 * sign-ups regardless of the toggle.
+	 *
+	 * @return bool
+	 */
+	public function is_registration_open(): bool {
+		return $this->is_p2p()
+			&& self::STATUS_ACTIVE === $this->status
+			&& ! empty( $this->p2p_settings()['registration_open'] );
+	}
+
+	/**
+	 * Get the fundraisers for this campaign (peer-to-peer only).
+	 *
+	 * @param array<string, mixed> $args Additional query args.
+	 * @return Fundraiser[]
+	 */
+	public function fundraisers( array $args = [] ): array {
+		return Fundraiser::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
+	}
+
+	/**
+	 * Get the teams for this campaign (peer-to-peer only).
+	 *
+	 * @param array<string, mixed> $args Additional query args.
+	 * @return Team[]
+	 */
+	public function teams( array $args = [] ): array {
+		return Team::query( array_merge( $args, [ 'campaign_id' => $this->id ] ) );
+	}
+
+	/**
+	 * Get this campaign's peer-to-peer settings with defaults applied.
+	 *
+	 * Reads the settings meta, falling back to P2P_DEFAULT_SETTINGS for any key
+	 * never saved, and casts each value to its native type (booleans, the two
+	 * goal amounts as minor-unit ints, placeholders as strings).
+	 *
+	 * @return array<string, bool|int|string>
+	 */
+	public function p2p_settings(): array {
+		$all      = $this->get_all_meta();
+		$settings = [];
+
+		foreach ( self::P2P_DEFAULT_SETTINGS as $key => $default ) {
+			if ( ! array_key_exists( $key, $all ) ) {
+				$settings[ $key ] = $default;
+				continue;
+			}
+
+			$settings[ $key ] = match ( true ) {
+				is_bool( $default ) => (bool) (int) $all[ $key ],
+				is_int( $default )  => (int) $all[ $key ],
+				default             => (string) $all[ $key ],
+			};
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Seed the default peer-to-peer settings as meta. Called once when a P2P
+	 * campaign is created so the settings panel opens with sensible values.
+	 */
+	public function apply_p2p_default_settings(): void {
+		foreach ( self::P2P_DEFAULT_SETTINGS as $key => $default ) {
+			$this->update_meta( $key, $default );
+		}
+	}
+
+	/**
+	 * Update peer-to-peer settings meta from a partial settings array.
+	 *
+	 * Owns the key list, casts, and clamping for every writer: keys come from
+	 * P2P_DEFAULT_SETTINGS, values are cast to the default's native type, and
+	 * the goal amounts are clamped to zero or more. Keys absent from the input
+	 * are left untouched; unknown keys are ignored.
+	 *
+	 * @param array<string, mixed> $settings New values, keyed like P2P_DEFAULT_SETTINGS.
+	 */
+	public function update_p2p_settings( array $settings ): void {
+		foreach ( self::P2P_DEFAULT_SETTINGS as $key => $default ) {
+			if ( ! array_key_exists( $key, $settings ) ) {
+				continue;
+			}
+
+			$this->update_meta(
+				$key,
+				match ( true ) {
+					is_bool( $default ) => (bool) $settings[ $key ],
+					is_int( $default )  => max( 0, (int) $settings[ $key ] ),
+					default             => (string) $settings[ $key ],
+				}
+			);
+		}
 	}
 
 	/**
@@ -443,6 +641,38 @@ class Campaign extends Model {
 		}
 
 		return $this->delete();
+	}
+
+	/**
+	 * Delete the campaign, cascading to its P2P children.
+	 *
+	 * Fundraisers and teams (and their shell posts, meta, and invitations) can't
+	 * outlive their campaign — a live fundraising page pointing at a deleted
+	 * campaign would keep collecting donations for nothing. Model-level deletes
+	 * so each child's shell post and detach logic runs.
+	 *
+	 * @return bool
+	 */
+	public function delete(): bool {
+		foreach ( Team::query(
+			[
+				'campaign_id' => $this->id,
+				'per_page'    => -1,
+			]
+		) as $team ) {
+			$team->delete();
+		}
+
+		foreach ( Fundraiser::query(
+			[
+				'campaign_id' => $this->id,
+				'per_page'    => -1,
+			]
+		) as $fundraiser ) {
+			$fundraiser->delete();
+		}
+
+		return parent::delete();
 	}
 
 	/**

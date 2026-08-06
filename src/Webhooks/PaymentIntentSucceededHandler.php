@@ -35,8 +35,6 @@ class PaymentIntentSucceededHandler {
 			return;
 		}
 
-		// Find the transaction created by the corresponding create-payment-intent
-		// or create-subscription request.
 		$transactions = Transaction::query(
 			[
 				'gateway_transaction_id' => $payment_intent_id,
@@ -50,17 +48,13 @@ class PaymentIntentSucceededHandler {
 
 		$transaction = $transactions[0];
 
-		// Complete the transaction if still pending. Idempotent — webhook may
-		// be redelivered; subsequent deliveries see a non-pending status and
-		// skip the transition. `save()` fires the status transition hooks
-		// that update donor/campaign aggregates and send receipt emails.
+		// Idempotent: webhooks can be redelivered, so only a pending status transitions.
 		if ( Transaction::STATUS_PENDING === $transaction->status ) {
 			$transaction->status         = Transaction::STATUS_COMPLETED;
 			$transaction->date_completed = current_time( 'mysql', true );
 			$transaction->save();
 		}
 
-		// Activate the subscription if this was the initial payment for one.
 		if ( $transaction->subscription_id ) {
 			$subscription = Subscription::find( $transaction->subscription_id );
 
@@ -69,9 +63,6 @@ class PaymentIntentSucceededHandler {
 			}
 		}
 
-		// Store card metadata on the transaction and (if applicable) on the
-		// subscription so the donor dashboard can display "Visa ending in 4242"
-		// rather than "Stripe".
 		$payment_method = $data['payment_method'] ?? [];
 		$brand          = $payment_method['brand'] ?? '';
 		$last4          = $payment_method['last4'] ?? '';

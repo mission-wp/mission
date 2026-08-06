@@ -197,6 +197,20 @@ class Currency {
 	}
 
 	/**
+	 * Convert a major-units value (what a person enters) to a minor-units integer.
+	 *
+	 * @param float  $major_units Display value (e.g. 45.00 for USD, 500 for JPY).
+	 * @param string $code        ISO 4217 currency code.
+	 *
+	 * @return int Amount in the smallest currency unit (e.g. 45.00 → 4500 for USD).
+	 */
+	public static function major_to_minor( float $major_units, string $code ): int {
+		$decimals = self::get_decimals( $code );
+
+		return (int) round( $major_units * ( 10 ** $decimals ) );
+	}
+
+	/**
 	 * Format a minor-unit amount as a currency string.
 	 *
 	 * @param int    $minor_units   Amount in minor units (e.g. 5000 = $50.00).
@@ -211,5 +225,39 @@ class Currency {
 		$major         = self::minor_to_major( $minor_units, $currency_code );
 
 		return $symbol . number_format( $major, $decimals );
+	}
+
+	/**
+	 * Format a minor-unit amount for the current site locale.
+	 *
+	 * Mirrors the JS formatAmount() helper (assets/shared/currency.js) so
+	 * server-rendered amounts match what Intl.NumberFormat produces after
+	 * hydration. Uses the PHP intl extension when available, otherwise falls
+	 * back to a symbol-prefixed number_format_i18n().
+	 *
+	 * @param int    $minor_units      Amount in minor units (e.g. 5000 = $50.00).
+	 * @param string $currency_code    Uppercase ISO 4217 currency code.
+	 * @param bool   $strip_zero_cents Drop the ".00" when the amount is a whole number.
+	 *
+	 * @return string Formatted amount with symbol (e.g. "$50.00", "50,00 €").
+	 */
+	public static function format_amount_i18n( int $minor_units, string $currency_code, bool $strip_zero_cents = false ): string {
+		$currency_code = strtoupper( $currency_code );
+		$decimals      = self::get_decimals( $currency_code );
+		$major         = self::minor_to_major( $minor_units, $currency_code );
+		$digits        = $strip_zero_cents && floor( $major ) === $major ? 0 : $decimals;
+
+		if ( class_exists( \NumberFormatter::class ) ) {
+			$formatter = new \NumberFormatter( get_locale(), \NumberFormatter::CURRENCY );
+			$formatter->setAttribute( \NumberFormatter::MIN_FRACTION_DIGITS, $digits );
+			$formatter->setAttribute( \NumberFormatter::MAX_FRACTION_DIGITS, $digits );
+
+			$formatted = $formatter->formatCurrency( $major, $currency_code );
+			if ( false !== $formatted ) {
+				return $formatted;
+			}
+		}
+
+		return self::get_symbol( $currency_code ) . number_format_i18n( $major, $digits );
 	}
 }

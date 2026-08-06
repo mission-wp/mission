@@ -1,0 +1,30 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/campaign-description\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Settings": [
+                "Ajustes"
+            ],
+            "The campaign's description appears here on the live page.": [
+                "La descripci\u00f3n de la campa\u00f1a aparece aqu\u00ed en la p\u00e1gina publicada."
+            ],
+            "This page is part of a larger campaign. Every donation made here counts toward the campaign's overall goal.": [
+                "Esta p\u00e1gina forma parte de una campa\u00f1a m\u00e1s amplia. Cada donaci\u00f3n realizada aqu\u00ed cuenta para la meta general de la campa\u00f1a."
+            ],
+            "Fallback text": [
+                "Texto predeterminado"
+            ],
+            "Shown when the campaign has no description.": [
+                "Se muestra cuando la campa\u00f1a no tiene descripci\u00f3n."
+            ]
+        }
+    }
+}

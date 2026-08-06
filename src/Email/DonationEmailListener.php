@@ -116,21 +116,16 @@ class DonationEmailListener {
 			'amount_formatted' => $this->email->format_amount( $transaction->amount, $transaction->currency ),
 		];
 
-		$subject = __( 'A note about your donation', 'mission-donation-platform' );
-
-		$custom_subject = $this->email->get_custom_subject( 'donor_note' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
-					'{organization}' => $org_name,
-					'{note_content}' => $note->content,
-					'{amount}'       => $data['amount_formatted'],
-					'{receipt_id}'   => (string) $transaction->id,
-				]
-			);
-		}
+		$subject = $this->email->subject(
+			'donor_note',
+			[
+				'{donor_name}'   => $donor->first_name ?: __( 'Friend', 'mission-donation-platform' ),
+				'{organization}' => $org_name,
+				'{note_content}' => $note->content,
+				'{amount}'       => $data['amount_formatted'],
+				'{receipt_id}'   => (string) $transaction->id,
+			]
+		);
 
 		$html = $this->email->render_template( 'donor-note', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $donor->email, $subject, $html );
@@ -175,31 +170,20 @@ class DonationEmailListener {
 			'message'            => $tribute->message,
 		];
 
-		$subject = sprintf(
-			/* translators: 1: tribute type label (e.g. "in honor of"), 2: honoree name */
-			__( 'A donation has been made %1$s %2$s', 'mission-donation-platform' ),
-			$type_label,
-			$tribute->honoree_name,
+		$subject = $this->email->subject(
+			'tribute_notification',
+			[
+				'{donor_name}'         => $donor?->first_name ?: __( 'Someone', 'mission-donation-platform' ),
+				'{organization}'       => $org_name,
+				'{tribute_type_label}' => $type_label,
+				'{honoree_name}'       => $tribute->honoree_name,
+				'{message}'            => $tribute->message,
+			]
 		);
-
-		$custom_subject = $this->email->get_custom_subject( 'tribute_notification' );
-		if ( $custom_subject ) {
-			$subject = $this->email->replace_subject_tags(
-				$custom_subject,
-				[
-					'{donor_name}'         => $donor?->first_name ?: __( 'Someone', 'mission-donation-platform' ),
-					'{organization}'       => $org_name,
-					'{tribute_type_label}' => $type_label,
-					'{honoree_name}'       => $tribute->honoree_name,
-					'{message}'            => $tribute->message,
-				]
-			);
-		}
 
 		$html = $this->email->render_template( 'tribute-notification', array_merge( $data, [ 'subject' => $subject ] ) );
 		$this->email->send( $tribute->notify_email, $subject, $html );
 
-		// Mark notification as sent.
 		$tribute->notification_sent_at = current_time( 'mysql', true );
 		$tribute->save();
 	}

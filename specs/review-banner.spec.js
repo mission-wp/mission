@@ -66,6 +66,7 @@ function resetDismissal() {
 
 test.describe( 'Review Banner', () => {
   let campaignId;
+  let expectedTotalText;
 
   test.beforeAll( async ( { requestUtils } ) => {
     // Clean up any stale "Review Banner Test" campaigns left over from a
@@ -79,6 +80,26 @@ test.describe( 'Review Banner', () => {
     dbQuery(
       "DELETE FROM wp_missiondp_campaigns WHERE title = 'Review Banner Test'"
     );
+
+    // The banner sums ALL live completed donations site-wide and floors the
+    // displayed figure to the nearest $100 (see DashboardEndpoint), so
+    // compute the expectation from whatever already exists plus our fixtures
+    // instead of hard-coding $13,000.
+    const preexisting = parseInt(
+      dbQuery(
+        'SELECT COALESCE(SUM(amount), 0) AS total FROM wp_missiondp_transactions' +
+          " WHERE status = 'completed' AND is_test = 0 AND import_job_id = 0"
+      )
+        .split( '\n' )
+        .pop(),
+      10
+    );
+    const displayedCents =
+      Math.floor( ( preexisting + TOTAL_RAISED ) / 10000 ) * 10000;
+    expectedTotalText = new Intl.NumberFormat( 'en-US', {
+      style: 'currency',
+      currency: 'USD',
+    } ).format( displayedCents / 100 );
 
     // Set the install date to 30 days ago so the 14-day gate passes.
     const thirtyDaysAgo = new Date( Date.now() - 30 * 24 * 60 * 60 * 1000 );
@@ -165,7 +186,7 @@ test.describe( 'Review Banner', () => {
     const banner = page.locator( '.mission-review-banner' );
     await expect( banner ).toBeVisible( { timeout: 10_000 } );
     await expect( banner.getByText( 'Enjoying Mission?' ) ).toBeVisible();
-    await expect( banner.getByText( /\$13,000/ ) ).toBeVisible();
+    await expect( banner.getByText( expectedTotalText ) ).toBeVisible();
     await expect(
       banner.getByText( 'How would you rate your experience?' )
     ).toBeVisible();
@@ -310,7 +331,7 @@ test.describe( 'Review Banner', () => {
     const popup = await popupPromise;
 
     expect( popup.url() ).toContain(
-      'wordpress.org/support/plugin/mission/reviews'
+      'wordpress.org/support/plugin/mission-donation-platform/reviews'
     );
     await popup.close();
 
@@ -353,11 +374,16 @@ test.describe( 'Review Banner', () => {
     const banner = page.locator( '.mission-review-banner' );
     await expect( banner ).toBeVisible( { timeout: 10_000 } );
 
+    // The dismiss POST is fire-and-forget, so wait for the request itself
+    // rather than a fixed timeout.
+    const dismissRequest = page.waitForRequest(
+      ( request ) =>
+        request.url().includes( 'review-banner/dismiss' ) &&
+        request.method() === 'POST'
+    );
     await banner.locator( '.mission-review-banner__dismiss-text' ).click();
     await expect( banner ).not.toBeVisible();
-
-    // Give any pending requests a moment to fire.
-    await page.waitForTimeout( 500 );
+    await dismissRequest;
 
     expect( dismissCalled ).toBe( true );
     expect( rateCalled ).toBe( false );

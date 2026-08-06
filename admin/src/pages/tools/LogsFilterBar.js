@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { LEVEL_OPTIONS, CATEGORY_OPTIONS } from './logs-utils';
 
 const searchIcon = (
@@ -28,7 +28,6 @@ export default function LogsFilterBar( {
   const [ searchValue, setSearchValue ] = useState( filters.search || '' );
   const debounceRef = useRef( null );
 
-  // Debounce search input.
   useEffect( () => {
     clearTimeout( debounceRef.current );
     debounceRef.current = setTimeout( () => {
@@ -43,14 +42,11 @@ export default function LogsFilterBar( {
     onFilterChange( { [ key ]: e.target.value } );
   };
 
-  const countText =
-    total === 1
-      ? __( '1 entry', 'mission-donation-platform' )
-      : sprintf(
-          // translators: %s: number of log entries.
-          __( '%s entries', 'mission-donation-platform' ),
-          total.toLocaleString()
-        );
+  const countText = sprintf(
+    // translators: %s: number of log entries.
+    _n( '%s entry', '%s entries', total, 'mission-donation-platform' ),
+    total.toLocaleString()
+  );
 
   return (
     <div className="mission-logs-filters">

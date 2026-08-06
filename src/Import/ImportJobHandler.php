@@ -55,7 +55,6 @@ class ImportJobHandler {
 		}
 
 		if ( $job->is_terminal() ) {
-			// Cleanup is idempotent; safe to run again.
 			$this->import->delete_job_file( $job );
 			return;
 		}
@@ -88,7 +87,6 @@ class ImportJobHandler {
 			return;
 		}
 
-		// Atomic counter update — defensive against concurrent worker overlap.
 		$job->increment_counts(
 			[
 				'processed_rows' => $result['processed'],
@@ -107,14 +105,12 @@ class ImportJobHandler {
 			}
 		}
 
-		// Reload the job so percentage/counts reflect the latest state.
 		$fresh = $job->fresh();
 
 		if ( ! $fresh ) {
 			return;
 		}
 
-		// Mid-flight cancellation by the user.
 		if ( ImportJob::STATUS_CANCELLED === $fresh->status ) {
 			$this->import->delete_job_file( $fresh );
 			return;
@@ -144,7 +140,6 @@ class ImportJobHandler {
 			return;
 		}
 
-		// More work to do — schedule the next tick.
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
 			as_enqueue_async_action( self::HOOK, [ $job_id ], 'mission-import' );
 			// Kick in case this tick fired from a /status poll rather than from

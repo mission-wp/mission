@@ -285,7 +285,6 @@ class ExportService {
 		$preview_columns = $this->get_preview_columns( $type );
 		$currency        = strtoupper( $this->settings->get( 'currency', 'USD' ) );
 
-		// Batch-load related models for relationship columns.
 		$related = $this->resolve_relationships( $type, $models );
 
 		$columns = array_column( $preview_columns, 'label' );
@@ -325,10 +324,8 @@ class ExportService {
 		$columns     = $this->get_columns( $type );
 		$currency    = strtoupper( $this->settings->get( 'currency', 'USD' ) );
 
-		// Discover meta keys across all records.
 		$meta_keys = $this->collect_meta_keys( $type, $models );
 
-		// Append meta columns.
 		$meta_columns = [];
 		foreach ( $meta_keys as $key ) {
 			$meta_columns[] = [
@@ -340,9 +337,8 @@ class ExportService {
 
 		$all_columns = array_merge( $columns, $meta_columns );
 
-		// Dedications carry the linked transaction's Charge ID so the export can be
-		// re-imported after transactions are re-imported with fresh IDs. Resolve all
-		// of them in one query to avoid an N+1.
+		// Dedications carry the linked Charge ID so the export can be re-imported
+		// after transactions are re-imported with fresh IDs.
 		$tribute_charge_ids = [];
 		if ( 'tributes' === $type && ! empty( $models ) ) {
 			$tribute_charge_ids = Transaction::gateway_ids_for(
@@ -350,7 +346,6 @@ class ExportService {
 			);
 		}
 
-		// Build rows.
 		$rows = [];
 		foreach ( $models as $model ) {
 			$row = [];
@@ -359,8 +354,6 @@ class ExportService {
 				$row[ $col['key'] ] = $model->{$col['key']} ?? null;
 			}
 
-			// Fill the dedication's Charge ID from the resolved map (virtual column —
-			// not a property on the Tribute model).
 			if ( 'tributes' === $type ) {
 				$row['gateway_transaction_id'] = $tribute_charge_ids[ (int) $model->transaction_id ] ?? '';
 			}
@@ -368,7 +361,6 @@ class ExportService {
 			// Add currency hint for CSV formatter.
 			$row['_currency'] = $model->currency ?? $currency;
 
-			// Append meta values.
 			if ( ! empty( $meta_keys ) ) {
 				$meta = $model->get_all_meta();
 				foreach ( $meta_keys as $key ) {
@@ -428,12 +420,10 @@ class ExportService {
 		$is_test    = $this->is_test_mode();
 		$query_args = [];
 
-		// Single-record export.
 		if ( ! empty( $params['id'] ) ) {
 			$query_args['id'] = (int) $params['id'];
 		}
 
-		// Test mode filtering.
 		if ( in_array( $type, [ 'transactions', 'subscriptions' ], true ) ) {
 			$query_args['is_test'] = $is_test;
 		}
@@ -442,7 +432,6 @@ class ExportService {
 			$query_args['has_transactions'] = $is_test ? 'test_transaction_count' : 'transaction_count';
 		}
 
-		// Date range.
 		if ( ! empty( $params['date_from'] ) ) {
 			$query_args['date_after'] = sanitize_text_field( $params['date_from'] );
 		}
@@ -451,7 +440,6 @@ class ExportService {
 			$query_args['date_before'] = sanitize_text_field( $params['date_to'] );
 		}
 
-		// Tribute-specific filters.
 		if ( 'tributes' === $type ) {
 			if ( ! empty( $params['notify_method'] ) ) {
 				$query_args['notify_method'] = sanitize_text_field( $params['notify_method'] );
@@ -1113,7 +1101,6 @@ class ExportService {
 	 * @return mixed
 	 */
 	private function get_preview_value( string $key, Model $model, string $type, array $related ): mixed {
-		// Virtual keys.
 		if ( 'name' === $key && 'donors' === $type ) {
 			return trim( $model->first_name . ' ' . $model->last_name );
 		}

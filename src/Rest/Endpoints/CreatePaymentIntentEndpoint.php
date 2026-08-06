@@ -9,10 +9,10 @@ namespace MissionDP\Rest\Endpoints;
 
 use MissionDP\Constants\Frequency;
 use MissionDP\Currency\Currency;
-use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
+use MissionDP\Rest\DonationAttribution;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\MinimumAmountTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
@@ -60,10 +60,8 @@ class CreatePaymentIntentEndpoint {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle' ],
-				// Public — donors are unauthenticated when initiating a donation.
-				// Abuse is mitigated by rate limiting, input validation, and the
-				// fact that PaymentIntent creation happens server-side via the
-				// Mission API (a malicious caller cannot mint usable Stripe state).
+				// Public: donors are unauthenticated. Abuse is mitigated by rate
+				// limiting and server-side PaymentIntent creation via the Mission API.
 				'permission_callback' => '__return_true',
 				'args'                => [
 					'donation_amount'      => [
@@ -105,6 +103,18 @@ class CreatePaymentIntentEndpoint {
 						'sanitize_callback' => 'sanitize_text_field',
 					],
 					'campaign_id'          => [
+						'required'          => false,
+						'type'              => 'integer',
+						'default'           => 0,
+						'sanitize_callback' => 'absint',
+					],
+					'fundraiser_id'        => [
+						'required'          => false,
+						'type'              => 'integer',
+						'default'           => 0,
+						'sanitize_callback' => 'absint',
+					],
+					'team_id'              => [
 						'required'          => false,
 						'type'              => 'integer',
 						'default'           => 0,
@@ -239,7 +249,6 @@ class CreatePaymentIntentEndpoint {
 			return $rate_error;
 		}
 
-		// Validate email early, before any external calls.
 		$email = $request->get_param( 'donor_email' );
 
 		if ( ! is_email( $email ) ) {
@@ -267,11 +276,8 @@ class CreatePaymentIntentEndpoint {
 			);
 		}
 
-		// Preserve the original donation amount (before fee inclusion) for the description.
 		$original_donation = $donation_amount - $fee_amount;
 
-		// Validate the donor's chosen donation, before fee recovery and fee
-		// absorption inflate it.
 		$minimum_check = $this->validate_minimum_amount(
 			$original_donation,
 			$request->get_param( 'source_post_id' ),
@@ -283,8 +289,6 @@ class CreatePaymentIntentEndpoint {
 			return $minimum_check;
 		}
 
-		// Mission absorbs the Stripe fee on its own tip so the nonprofit never
-		// pays higher fees because of our tip.
 		[ $fee_rate, $fee_fixed ] = TipCalculator::get_fee_params_from_settings( $this->settings );
 		TipCalculator::absorb_fee( $donation_amount, $tip_amount, $fee_rate, $fee_fixed, $currency );
 
@@ -309,8 +313,6 @@ class CreatePaymentIntentEndpoint {
 			);
 		}
 
-		// If the form requested a specific account but it could not be honored,
-		// log a fallback event so the admin can spot the misconfig.
 		if (
 			'' !== $requested_account_id
 			&& ( $resolved_account['account_id'] ?? '' ) !== $requested_account_id
@@ -363,7 +365,6 @@ class CreatePaymentIntentEndpoint {
 
 		$connected_account_id = (string) $body['connected_account_id'];
 
-		// Upsert donor.
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor ) {
@@ -376,13 +377,11 @@ class CreatePaymentIntentEndpoint {
 			);
 		}
 
-		// Update phone if provided.
 		$phone = $request->get_param( 'phone' );
 		if ( $phone ) {
 			$donor->phone = $phone;
 		}
 
-		// Update address if provided (new or returning donor).
 		$address_1 = $request->get_param( 'address_1' );
 		if ( $address_1 ) {
 			$donor->address_1 = $address_1;
@@ -398,10 +397,11 @@ class CreatePaymentIntentEndpoint {
 		// Extract the PaymentIntent ID from the client secret.
 		$payment_intent_id = explode( '_secret_', $body['client_secret'] )[0];
 
-		// Resolve campaign from the provided campaign table ID.
-		$campaign_id = $request->get_param( 'campaign_id' );
-		$campaign    = $campaign_id ? Campaign::find( $campaign_id ) : null;
-		$campaign_id = $campaign?->id;
+		$attribution = DonationAttribution::resolve(
+			(int) $request->get_param( 'campaign_id' ),
+			(int) $request->get_param( 'fundraiser_id' ),
+			(int) $request->get_param( 'team_id' )
+		);
 
 		// Use the original request amounts for the transaction record (before fee absorption math).
 		$req_donation_amount = $request->get_param( 'donation_amount' );
@@ -415,7 +415,9 @@ class CreatePaymentIntentEndpoint {
 				'type'                   => $request->get_param( 'frequency' ),
 				'donor_id'               => $donor->id,
 				'source_post_id'         => $request->get_param( 'source_post_id' ),
-				'campaign_id'            => $campaign_id,
+				'campaign_id'            => $attribution['campaign_id'],
+				'fundraiser_id'          => $attribution['fundraiser_id'],
+				'team_id'                => $attribution['team_id'],
 				'amount'                 => $req_donation_amount - $req_fee_amount,
 				'fee_amount'             => $req_fee_amount,
 				'tip_amount'             => $req_tip_amount,
@@ -431,19 +433,13 @@ class CreatePaymentIntentEndpoint {
 
 		$transaction->save();
 
-		// Store the Stripe account this transaction was charged against, so
-		// later operations (verification, refunds, subscription management) can
-		// route to the right account when multiple are connected.
 		$transaction->add_meta( 'stripe_account_id', $connected_account_id );
 
-		// Store the fee rate at time of transaction for accurate historical reporting.
 		$transaction->add_meta( 'stripe_fee_percent', (string) $this->settings->get( 'stripe_fee_percent', 2.9 ) );
 		$transaction->add_meta( 'stripe_fee_fixed', (string) $fee_fixed );
 
-		// Store the platform fee mode so historical records are accurate.
 		$transaction->add_meta( 'fee_mode', $fee_mode );
 
-		// Store tribute if provided.
 		$tribute_type = $request->get_param( 'tribute_type' );
 		if ( ! empty( $tribute_type ) ) {
 			$tribute = new Tribute(
@@ -465,13 +461,11 @@ class CreatePaymentIntentEndpoint {
 			$tribute->save();
 		}
 
-		// Store donor comment as transaction meta.
 		$comment = $request->get_param( 'comment' );
 		if ( ! empty( $comment ) ) {
 			$transaction->add_meta( 'donor_comment', $comment );
 		}
 
-		// Store billing address as transaction meta (point-in-time snapshot).
 		$address_meta = [
 			'address_1' => $request->get_param( 'address_1' ),
 			'address_2' => $request->get_param( 'address_2' ),
@@ -487,7 +481,6 @@ class CreatePaymentIntentEndpoint {
 			}
 		}
 
-		// Store custom field responses.
 		$custom_fields = $request->get_param( 'custom_fields' );
 		$custom_config = $request->get_param( 'custom_fields_config' );
 
@@ -506,7 +499,6 @@ class CreatePaymentIntentEndpoint {
 		}
 
 		if ( ! empty( $custom_config ) && is_array( $custom_config ) ) {
-			// Whitelist config to id, type, label only.
 			$sanitized_config = array_map(
 				static fn( $field ) => [
 					'id'    => sanitize_key( $field['id'] ?? '' ),
@@ -607,16 +599,5 @@ class CreatePaymentIntentEndpoint {
 		}
 
 		return $this->settings->get_default_stripe_account();
-	}
-
-	/**
-	 * Get the client IP address.
-	 *
-	 * @return string
-	 */
-	private function get_client_ip(): string {
-		$ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
-
-		return sanitize_text_field( $ip );
 	}
 }

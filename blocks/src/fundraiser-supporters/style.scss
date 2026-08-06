@@ -1,0 +1,24 @@
+@use "../../../assets/shared/styles/donor-list";
+
+.mission-supporters {
+  --mission-text: #1e1e1e;
+  --mission-text-secondary: #6b7280;
+  --mission-text-light: #999;
+  --mission-bg-secondary: #f7f7f7;
+  --mission-border: #f0f0f0;
+  --mission-radius: 8px;
+
+  line-height: 1.5;
+}
+
+.mission-supporters__count {
+  font-size: 13px;
+  color: var(--mission-text-secondary);
+  margin: 0 0 12px;
+}
+
+.mission-supporters__time {
+  font-size: 12px;
+  color: var(--mission-text-light);
+  margin-top: 1px;
+}

@@ -35,7 +35,7 @@ class SchemaTest extends WP_UnitTestCase {
 	public function test_get_table_schemas_returns_all_tables(): void {
 		$schemas = $this->schema->get_table_schemas();
 
-		$this->assertCount( 16, $schemas );
+		$this->assertCount( 21, $schemas );
 
 		global $wpdb;
 		$prefix = $wpdb->prefix . 'missiondp_';
@@ -49,6 +49,11 @@ class SchemaTest extends WP_UnitTestCase {
 			"{$prefix}subscriptionmeta",
 			"{$prefix}campaignmeta",
 			"{$prefix}campaigns",
+			"{$prefix}fundraisers",
+			"{$prefix}fundraisermeta",
+			"{$prefix}teams",
+			"{$prefix}teammeta",
+			"{$prefix}team_invitations",
 			"{$prefix}notes",
 			"{$prefix}transaction_history",
 			"{$prefix}tributes",
@@ -128,6 +133,30 @@ class SchemaTest extends WP_UnitTestCase {
 				);
 			}
 		}
+	}
+
+	/**
+	 * Test that dbDelta adds the subscription attribution columns to a
+	 * pre-existing table (the 1.4.4 upgrade path).
+	 */
+	public function test_dbdelta_adds_subscription_attribution_columns(): void {
+		global $wpdb;
+
+		DatabaseModule::create_tables();
+
+		$table = $wpdb->prefix . 'missiondp_subscriptions';
+
+		// Simulate a pre-1.4.4 table (dropping a column drops its index too).
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP COLUMN fundraiser_id, DROP COLUMN team_id', $table ) );
+
+		DatabaseModule::create_tables();
+
+		$columns = $wpdb->get_col( $wpdb->prepare( 'SHOW COLUMNS FROM %i', $table ) );
+		// phpcs:enable
+
+		$this->assertContains( 'fundraiser_id', $columns );
+		$this->assertContains( 'team_id', $columns );
 	}
 
 	/**

@@ -43,6 +43,8 @@ class Schema {
   parent_id bigint(20) unsigned DEFAULT NULL,
   source_post_id bigint(20) unsigned NOT NULL DEFAULT 0,
   campaign_id bigint(20) unsigned DEFAULT NULL,
+  fundraiser_id bigint(20) unsigned DEFAULT NULL,
+  team_id bigint(20) unsigned DEFAULT NULL,
   amount bigint(20) NOT NULL DEFAULT 0,
   fee_amount bigint(20) NOT NULL DEFAULT 0,
   tip_amount bigint(20) NOT NULL DEFAULT 0,
@@ -66,6 +68,8 @@ class Schema {
   KEY donor_id (donor_id),
   KEY subscription_id (subscription_id),
   KEY campaign_id (campaign_id),
+  KEY fundraiser_id (fundraiser_id),
+  KEY team_id (team_id),
   KEY gateway_transaction_id (gateway_transaction_id),
   KEY date_created (date_created),
   KEY is_test (is_test),
@@ -142,6 +146,8 @@ class Schema {
   donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
   source_post_id bigint(20) unsigned NOT NULL DEFAULT 0,
   campaign_id bigint(20) unsigned DEFAULT NULL,
+  fundraiser_id bigint(20) unsigned DEFAULT NULL,
+  team_id bigint(20) unsigned DEFAULT NULL,
   initial_transaction_id bigint(20) unsigned DEFAULT NULL,
   amount bigint(20) NOT NULL DEFAULT 0,
   fee_amount bigint(20) NOT NULL DEFAULT 0,
@@ -163,6 +169,8 @@ class Schema {
   KEY status (status),
   KEY donor_id (donor_id),
   KEY campaign_id (campaign_id),
+  KEY fundraiser_id (fundraiser_id),
+  KEY team_id (team_id),
   KEY gateway_subscription_id (gateway_subscription_id),
   KEY date_created (date_created),
   KEY date_next_renewal (date_next_renewal),
@@ -206,6 +214,7 @@ class Schema {
   description text NOT NULL,
   goal_amount bigint(20) NOT NULL DEFAULT 0,
   goal_type varchar(20) NOT NULL DEFAULT 'amount',
+  type varchar(20) NOT NULL DEFAULT 'standard',
   total_raised bigint(20) NOT NULL DEFAULT 0,
   transaction_count int(10) unsigned NOT NULL DEFAULT 0,
   donor_count int(10) unsigned NOT NULL DEFAULT 0,
@@ -221,7 +230,104 @@ class Schema {
   date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY  (id),
   UNIQUE KEY post_id (post_id),
-  KEY status (status)
+  KEY status (status),
+  KEY type (type)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Fundraisers (peer-to-peer participants)
+			// ----------------------------------------------------------------
+			"{$prefix}fundraisers"         => "CREATE TABLE {$prefix}fundraisers (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  campaign_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  donor_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  team_id bigint(20) unsigned DEFAULT NULL,
+  post_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  status varchar(20) NOT NULL DEFAULT 'pending',
+  goal bigint(20) unsigned NOT NULL DEFAULT 0,
+  headline varchar(255) NOT NULL DEFAULT '',
+  story text NOT NULL,
+  cover_image varchar(255) NOT NULL DEFAULT '',
+  profile_image varchar(255) NOT NULL DEFAULT '',
+  total_raised bigint(20) NOT NULL DEFAULT 0,
+  transaction_count int(10) unsigned NOT NULL DEFAULT 0,
+  donor_count int(10) unsigned NOT NULL DEFAULT 0,
+  test_total_raised bigint(20) NOT NULL DEFAULT 0,
+  test_transaction_count int(10) unsigned NOT NULL DEFAULT 0,
+  test_donor_count int(10) unsigned NOT NULL DEFAULT 0,
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  UNIQUE KEY campaign_donor (campaign_id, donor_id),
+  KEY donor_id (donor_id),
+  KEY team_id (team_id),
+  KEY status (status),
+  UNIQUE KEY post_id (post_id)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Fundraiser Meta
+			// ----------------------------------------------------------------
+			"{$prefix}fundraisermeta"      => "CREATE TABLE {$prefix}fundraisermeta (
+  meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  missiondp_fundraiser_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  meta_key varchar(255) DEFAULT NULL,
+  meta_value longtext,
+  PRIMARY KEY  (meta_id),
+  KEY missiondp_fundraiser_id (missiondp_fundraiser_id),
+  KEY meta_key (meta_key(191))
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Teams (peer-to-peer fundraising teams)
+			// ----------------------------------------------------------------
+			"{$prefix}teams"               => "CREATE TABLE {$prefix}teams (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  campaign_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  captain_id bigint(20) unsigned DEFAULT NULL,
+  post_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  name varchar(200) NOT NULL DEFAULT '',
+  description text NOT NULL,
+  goal bigint(20) unsigned NOT NULL DEFAULT 0,
+  cover_image varchar(255) NOT NULL DEFAULT '',
+  status varchar(20) NOT NULL DEFAULT 'pending',
+  access varchar(20) NOT NULL DEFAULT 'public',
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  date_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY  (id),
+  KEY campaign_id (campaign_id),
+  KEY status (status),
+  UNIQUE KEY post_id (post_id)
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Team Meta
+			// ----------------------------------------------------------------
+			"{$prefix}teammeta"            => "CREATE TABLE {$prefix}teammeta (
+  meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  missiondp_team_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  meta_key varchar(255) DEFAULT NULL,
+  meta_value longtext,
+  PRIMARY KEY  (meta_id),
+  KEY missiondp_team_id (missiondp_team_id),
+  KEY meta_key (meta_key(191))
+) {$charset_collate};",
+
+			// ----------------------------------------------------------------
+			// Team Invitations
+			// ----------------------------------------------------------------
+			"{$prefix}team_invitations"    => "CREATE TABLE {$prefix}team_invitations (
+  id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  team_id bigint(20) unsigned NOT NULL DEFAULT 0,
+  email varchar(255) NOT NULL DEFAULT '',
+  token varchar(64) NOT NULL DEFAULT '',
+  status varchar(20) NOT NULL DEFAULT 'pending',
+  date_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  sent_at datetime DEFAULT NULL,
+  PRIMARY KEY  (id),
+  UNIQUE KEY token (token),
+  KEY team_id (team_id),
+  KEY email (email)
 ) {$charset_collate};",
 
 			// ----------------------------------------------------------------

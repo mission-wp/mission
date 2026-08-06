@@ -1,0 +1,23 @@
+// Two-column detail-page grid (main content + sidebar).
+
+.mission-detail-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 16px;
+  align-items: start;
+
+  > * {
+    min-width: 0;
+  }
+
+  .mission-txn-sidebar {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 1024px) {
+
+  .mission-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

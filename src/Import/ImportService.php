@@ -277,7 +277,6 @@ class ImportService {
 			return new WP_Error( 'unsupported_type', __( 'This import type is not yet supported.', 'mission-donation-platform' ), [ 'status' => 400 ] );
 		}
 
-		// Concurrency guard: refuse a second import while one is in flight.
 		$active = ImportJob::find_active_for_user( $user_id, $type );
 
 		if ( $active ) {
@@ -300,7 +299,6 @@ class ImportService {
 			return $stable;
 		}
 
-		// Single pass to count rows so the UI can show real percentages.
 		$total_rows = $this->reader->count_rows( $stable, $extension );
 
 		if ( is_wp_error( $total_rows ) ) {
@@ -323,7 +321,6 @@ class ImportService {
 		);
 		$job->save();
 
-		// Drop the upload transient now that we own the file at a stable path.
 		delete_transient( $file_id );
 
 		/**
@@ -336,12 +333,10 @@ class ImportService {
 		 */
 		do_action( "mission_import_{$type}_before", $type, $total_rows, $duplicate_strategy, $job_id );
 
-		// Enqueue the first tick. Each tick reschedules itself until done.
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
 			as_enqueue_async_action( 'missiondp_import_tick', [ $job_id ], 'mission-import' );
 			$this->kick_queue_runner();
 		} else {
-			// Fallback for environments without Action Scheduler (e.g. tests).
 			do_action( 'missiondp_import_tick', $job_id );
 		}
 

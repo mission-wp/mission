@@ -9,10 +9,11 @@
 
 const interactivity = require( '@wordpress/interactivity' );
 
-// Import the view module — this calls store() and populates _mockStoreDefinition.
+// Import the view module — this calls store() and populates _mockStores.
 require( '../view' );
 
-const { _mockStoreDefinition: storeDef } = interactivity;
+const storeDef =
+  interactivity._mockStores[ 'mission-donation-platform/donation-form' ];
 const ctx = interactivity._mockContext;
 
 /**
@@ -420,38 +421,5 @@ describe( 'frequency switching resets amount', () => {
     ctx.frequency = 'annually';
     storeDef.actions.selectRecurringFrequency( fakeEvent );
     expect( ctx.selectedAmount ).toBe( 5000 ); // annually[0], no default set
-  } );
-} );
-
-describe( 'withDeadline', () => {
-  const { withDeadline } = require( '../view' );
-
-  beforeEach( () => {
-    jest.useFakeTimers();
-  } );
-
-  afterEach( () => {
-    jest.useRealTimers();
-  } );
-
-  it( 'resolves with the promise value when it settles in time', async () => {
-    const result = withDeadline( Promise.resolve( 'ok' ), 1000, 'too slow' );
-    await expect( result ).resolves.toBe( 'ok' );
-  } );
-
-  it( 'rejects with the deadline message when the promise never settles', async () => {
-    const result = withDeadline( new Promise( () => {} ), 1000, 'too slow' );
-    const assertion = expect( result ).rejects.toThrow( 'too slow' );
-    jest.advanceTimersByTime( 1001 );
-    await assertion;
-  } );
-
-  it( 'propagates the underlying rejection before the deadline', async () => {
-    const result = withDeadline(
-      Promise.reject( new Error( 'card declined' ) ),
-      1000,
-      'too slow'
-    );
-    await expect( result ).rejects.toThrow( 'card declined' );
   } );
 } );

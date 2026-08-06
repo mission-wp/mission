@@ -62,6 +62,7 @@
 
 // Individual card.
 :where(.mission-dw-card) {
+  box-sizing: border-box;
   animation: mission-dw-fade-up 0.45s ease forwards;
   background: var(--mission-bg, #fff);
   border: 1px solid var(--mission-border, #e5e7eb);

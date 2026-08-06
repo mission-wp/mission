@@ -28,45 +28,6 @@ class EmailTestEndpoint {
 	use AdminPermissionTrait;
 
 	/**
-	 * Default subjects per email type (mirrors listener hardcoded defaults).
-	 *
-	 * Method instead of const so strings can be translated.
-	 *
-	 * @return array<string, string>
-	 */
-	private function default_subjects(): array {
-		return [
-			// translators: %s: formatted donation amount
-			'donation_receipt'          => __( 'Thank you for your %s donation', 'mission-donation-platform' ),
-			// translators: 1: formatted donation amount, 2: frequency label (e.g. "monthly")
-			'subscription_activated'    => __( 'Thank you for your %1$s %2$s donation', 'mission-donation-platform' ),
-			// translators: 1: frequency label (e.g. "monthly"), 2: formatted donation amount
-			'renewal_receipt'           => __( 'Thank you for your %1$s gift of %2$s', 'mission-donation-platform' ),
-			'payment_failed'            => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
-			'subscription_cancelled'    => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
-			'account_activation'        => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
-			'password_reset'            => __( 'Reset your password', 'mission-donation-platform' ),
-			'email_change_verification' => __( 'Verify your new email address', 'mission-donation-platform' ),
-		];
-	}
-
-	/**
-	 * Template file name per email type (hyphenated).
-	 *
-	 * @var array<string, string>
-	 */
-	private const TEMPLATE_MAP = [
-		'donation_receipt'          => 'donation-receipt',
-		'subscription_activated'    => 'subscription-activated',
-		'renewal_receipt'           => 'renewal-receipt',
-		'payment_failed'            => 'payment-failed',
-		'subscription_cancelled'    => 'subscription-cancelled',
-		'account_activation'        => 'account-activation',
-		'password_reset'            => 'password-reset',
-		'email_change_verification' => 'email-change-verification',
-	];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param SettingsService $settings Settings service.
@@ -121,7 +82,7 @@ class EmailTestEndpoint {
 		$email_type = $request->get_param( 'email_type' );
 		$to         = $request->get_param( 'to' );
 
-		if ( ! isset( self::TEMPLATE_MAP[ $email_type ] ) ) {
+		if ( ! isset( EmailModule::TEMPLATE_MAP[ $email_type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
 				__( 'Unknown email type.', 'mission-donation-platform' ),
@@ -135,16 +96,11 @@ class EmailTestEndpoint {
 
 		$email_module = $this->email;
 		$data         = $this->build_sample_data( $email_type, $to );
-		$template     = self::TEMPLATE_MAP[ $email_type ];
+		$template     = EmailModule::TEMPLATE_MAP[ $email_type ];
 
-		// Build subject.
-		$subject        = $this->get_default_subject( $email_type, $data );
-		$custom_subject = $email_module->get_custom_subject( $email_type );
+		$tags = $email_module->build_merge_tags( $data );
 
-		if ( $custom_subject ) {
-			$tags    = $email_module->build_merge_tags( $data );
-			$subject = $email_module->replace_subject_tags( $custom_subject, $tags );
-		}
+		$subject = $email_module->subject( $email_type, $tags );
 
 		$html = $email_module->render_template( $template, array_merge( $data, [ 'subject' => $subject ] ) );
 
@@ -197,7 +153,6 @@ class EmailTestEndpoint {
 			'next_renewal_formatted' => wp_date( get_option( 'date_format' ), strtotime( '+1 month' ) ),
 		];
 
-		// Add type-specific sample data.
 		switch ( $email_type ) {
 			case 'account_activation':
 				$base['verification_url'] = home_url( '/?action=activate&token=sample-test-token' );
@@ -214,26 +169,53 @@ class EmailTestEndpoint {
 				$base['verification_url'] = home_url( '/?action=verify-email&token=sample-test-token' );
 				$base['expiry_hours']     = 24;
 				break;
+
+			case 'donor_note':
+				$base['note'] = (object) [
+					'content' => __( 'Thank you so much for your generous support. It means the world to us!', 'mission-donation-platform' ),
+				];
+				break;
+
+			case 'tribute_notification':
+				$base['organization']       = $this->settings->get( 'org_name', get_bloginfo( 'name' ) );
+				$base['tribute_type_label'] = __( 'in memory of', 'mission-donation-platform' );
+				$base['honoree_name']       = 'Robert Johnson';
+				$base['message']            = __( 'Forever in our hearts.', 'mission-donation-platform' );
+				break;
+
+			case 'p2p_fundraiser_approved':
+				$base['page_url'] = home_url( '/fundraisers/sample-fundraiser/' );
+				break;
+
+			case 'p2p_fundraiser_received_donation':
+				$base['page_url']   = home_url( '/fundraisers/sample-fundraiser/' );
+				$base['giver_name'] = 'Alex Rivera';
+				break;
+
+			case 'p2p_fundraiser_milestone':
+				$base['page_url']         = home_url( '/fundraisers/sample-fundraiser/' );
+				$base['milestone_label']  = '50%';
+				$base['raised_formatted'] = Currency::format_amount( 25000, $currency );
+				$base['goal_formatted']   = Currency::format_amount( 50000, $currency );
+				break;
+
+			case 'p2p_team_invitation':
+				$base['team']       = (object) [ 'name' => __( 'Team Sunshine', 'mission-donation-platform' ) ];
+				$base['accept_url'] = add_query_arg( 'team_invite', 'sample-test-token', home_url( '/teams/sample-team/' ) );
+				break;
+
+			case 'p2p_team_member_joined':
+				$base['team']        = (object) [ 'name' => __( 'Team Sunshine', 'mission-donation-platform' ) ];
+				$base['member_name'] = 'Alex Rivera';
+				$base['page_url']    = home_url( '/teams/sample-team/' );
+				break;
+
+			case 'p2p_team_approved':
+				$base['team']     = (object) [ 'name' => __( 'Team Sunshine', 'mission-donation-platform' ) ];
+				$base['page_url'] = home_url( '/teams/sample-team/' );
+				break;
 		}
 
 		return $base;
-	}
-
-	/**
-	 * Get the default subject for an email type with sample data interpolated.
-	 *
-	 * @param string $email_type Email type key.
-	 * @param array  $data       Sample data.
-	 * @return string
-	 */
-	private function get_default_subject( string $email_type, array $data ): string {
-		$subjects = $this->default_subjects();
-
-		return match ( $email_type ) {
-			'donation_receipt'       => sprintf( $subjects[ $email_type ], $data['amount_formatted'] ),
-			'subscription_activated' => sprintf( $subjects[ $email_type ], $data['amount_formatted'], strtolower( $data['frequency_label'] ) ),
-			'renewal_receipt'        => sprintf( $subjects[ $email_type ], strtolower( $data['frequency_label'] ), $data['amount_formatted'] ),
-			default                  => $subjects[ $email_type ] ?? '',
-		};
 	}
 }

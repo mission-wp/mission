@@ -11,7 +11,7 @@
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
             "Ongoing": [
-                "K\u00e4ynniss\u00e4"
+                "Toistuva"
             ],
             "One Time": [
                 "Kertaluontoinen"
@@ -29,7 +29,7 @@
                 "Vuosittain"
             ],
             "Choose Your Gift": [
-                "Valitse lahjasi"
+                "Valitse lahjoituksesi"
             ],
             "Other": [
                 "Muu"
@@ -155,7 +155,7 @@
                 "Salli omistukset"
             ],
             "Let donors dedicate their gift in honor or memory of someone": [
-                "Anna lahjoittajien omistaa lahjansa jonkun kunniaksi tai muistoksi"
+                "Anna lahjoittajien omistaa lahjoituksensa jonkun kunniaksi tai muistoksi"
             ],
             "Default account (%s)": [
                 "Oletustili (%s)"

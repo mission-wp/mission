@@ -20,9 +20,9 @@
 
 .mission-status-badge {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 500;
   vertical-align: middle;
   background-color: #f0f0f0;
@@ -68,4 +68,71 @@
     color: #92400e;
   }
 
+  // Amber "awaiting approval" tone (P2P pending).
+  &.is-warning {
+    background-color: #fef5e7;
+    color: #a06000;
+  }
+
+  &.is-inactive {
+    background-color: #f0f0f5;
+    color: #6b6b7b;
+  }
+}
+
+// Small pill chips (profile-header tags).
+
+.mission-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: #f0ede8;
+  color: #6b6b7b;
+
+  &--success {
+    background: #e2f4eb;
+    color: #2fa36b;
+  }
+
+  &--warning {
+    background: #fef3cd;
+    color: #856404;
+  }
+
+  &--tribute {
+    background: #f5e8e8;
+    color: #b85c5c;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+a.mission-chip {
+  text-decoration: none;
+
+  &:hover {
+    background: #e8e6e1;
+  }
+}
+
+// Role badge (team captain).
+
+.mission-role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.6;
+  background: #2fa36b;
+  color: #fff;
+  white-space: nowrap;
 }

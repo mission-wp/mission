@@ -61,6 +61,15 @@ trait DonorDashboardPrepareTrait {
 	}
 
 	/**
+	 * The store currency code for dashboard responses.
+	 *
+	 * @return string Uppercase ISO currency code.
+	 */
+	private function dashboard_currency(): string {
+		return strtoupper( (string) ( $this->settings->get( 'currency' ) ?: 'USD' ) );
+	}
+
+	/**
 	 * Prepare a transaction for REST response.
 	 *
 	 * @param Transaction $transaction Transaction model.

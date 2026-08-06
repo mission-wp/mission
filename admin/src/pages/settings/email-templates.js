@@ -249,6 +249,139 @@ export const ADMIN_EMAILS = [
     ),
     iconType: 'admin',
   },
+  {
+    id: 'admin_new_fundraiser',
+    name: __( 'New fundraiser', 'mission-donation-platform' ),
+    desc: __(
+      'Sent when someone registers as a peer-to-peer fundraiser',
+      'mission-donation-platform'
+    ),
+    iconType: 'admin',
+  },
+];
+
+export const FUNDRAISER_EMAILS = [
+  {
+    id: 'p2p_fundraiser_approved',
+    name: __( 'Fundraiser approved', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a participant when their fundraising page goes live',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: 'Your fundraising page is live',
+    mergeTags: [ ...GLOBAL_TAGS ],
+  },
+  {
+    id: 'p2p_fundraiser_received_donation',
+    name: __( 'Fundraiser received a donation', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a participant when a gift is credited to their page',
+      'mission-donation-platform'
+    ),
+    iconType: 'donation',
+    defaultSubject: 'You received a {amount} donation!',
+    mergeTags: [
+      ...GLOBAL_TAGS,
+      {
+        tag: '{giver_name}',
+        label: __( 'Giver name', 'mission-donation-platform' ),
+      },
+      { tag: '{amount}', label: __( 'Amount', 'mission-donation-platform' ) },
+    ],
+  },
+  {
+    id: 'p2p_fundraiser_milestone',
+    name: __( 'Fundraiser milestone', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a participant when they reach 25%, 50%, 75%, or 100% of their goal',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: "You've reached {milestone} of your goal!",
+    mergeTags: [
+      ...GLOBAL_TAGS,
+      {
+        tag: '{milestone}',
+        label: __( 'Milestone reached', 'mission-donation-platform' ),
+      },
+    ],
+  },
+];
+
+export const TEAM_EMAILS = [
+  {
+    id: 'p2p_team_invitation',
+    name: __( 'Team invitation', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to someone a captain invites to join a private team',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: "You're invited to join {team_name}",
+    mergeTags: [
+      {
+        tag: '{team_name}',
+        label: __( 'Team name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{organization}',
+        label: __( 'Organization', 'mission-donation-platform' ),
+      },
+    ],
+  },
+  {
+    id: 'p2p_team_member_joined',
+    name: __( 'Team member joined', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a captain when a new member joins their team',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: 'A new member joined {team_name}',
+    mergeTags: [
+      {
+        tag: '{captain_name}',
+        label: __( 'Captain name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{member_name}',
+        label: __( 'Member name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{team_name}',
+        label: __( 'Team name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{organization}',
+        label: __( 'Organization', 'mission-donation-platform' ),
+      },
+    ],
+  },
+  {
+    id: 'p2p_team_approved',
+    name: __( 'Team approved', 'mission-donation-platform' ),
+    desc: __(
+      'Sent to a captain when their team page goes live',
+      'mission-donation-platform'
+    ),
+    iconType: 'account',
+    defaultSubject: 'Your team {team_name} has been approved',
+    mergeTags: [
+      {
+        tag: '{captain_name}',
+        label: __( 'Captain name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{team_name}',
+        label: __( 'Team name', 'mission-donation-platform' ),
+      },
+      {
+        tag: '{organization}',
+        label: __( 'Organization', 'mission-donation-platform' ),
+      },
+    ],
+  },
 ];
 
 export const ACCOUNT_EMAILS = [
@@ -299,6 +432,8 @@ export const ACCOUNT_EMAILS = [
 export const ALL_EMAILS = [
   ...DONATION_EMAILS,
   ...ACCOUNT_EMAILS,
+  ...FUNDRAISER_EMAILS,
+  ...TEAM_EMAILS,
   ...ADMIN_EMAILS,
 ];
 

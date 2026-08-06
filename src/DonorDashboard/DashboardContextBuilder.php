@@ -43,6 +43,17 @@ class DashboardContextBuilder {
 	private bool $is_test;
 	private ReportingService $reporting;
 
+	/** @var \MissionDP\Models\Fundraiser[]|null */
+	private ?array $fundraisers_cache = null;
+
+	/** @var Subscription[]|null */
+	private ?array $active_subscriptions_cache = null;
+
+	/** @var Subscription[]|null */
+	private ?array $cancelled_subscriptions_cache = null;
+
+	private ?int $history_total_cache = null;
+
 	/** @var array<string, string> */
 	private array $frequency_suffix;
 
@@ -82,6 +93,43 @@ class DashboardContextBuilder {
 	}
 
 	/**
+	 * Whether the donor has any giving history (transactions or subscriptions).
+	 *
+	 * Uses the raw transaction count rather than the completed-only aggregates,
+	 * so a donor whose only gifts were refunded still sees their history.
+	 *
+	 * @return bool
+	 */
+	public function has_giving(): bool {
+		return $this->count_history_transactions() > 0
+			|| count( $this->query_active_subscriptions() ) + count( $this->query_cancelled_subscriptions() ) > 0;
+	}
+
+	/**
+	 * Whether the donor has any peer-to-peer fundraising pages.
+	 *
+	 * @return bool
+	 */
+	public function has_fundraising(): bool {
+		return ! empty( $this->fundraisers() );
+	}
+
+	/**
+	 * Whether the donor belongs to any team, past or present.
+	 *
+	 * @return bool
+	 */
+	public function has_teams(): bool {
+		foreach ( $this->fundraisers() as $fundraiser ) {
+			if ( null !== $fundraiser->team_id ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Build the full Interactivity API context array.
 	 *
 	 * @param array $panels      Panel definitions (keyed by panel ID).
@@ -99,8 +147,8 @@ class DashboardContextBuilder {
 		$history_total           = $this->count_history_transactions();
 		$history_years           = $this->reporting->donor_transaction_years( $donor->id, $this->is_test );
 		$history_campaigns       = $this->reporting->donor_transaction_campaigns( $donor->id, $this->is_test );
+		$has_giving              = $this->has_giving();
 
-		// Batch-load all campaigns (avoids N+1 queries).
 		$this->preload_campaigns(
 			$recent_transactions,
 			$active_subscriptions,
@@ -133,6 +181,8 @@ class DashboardContextBuilder {
 		$context = [
 			'activePanel'          => 'overview',
 			'sidebarOpen'          => false,
+			'hasGiving'            => $has_giving,
+			'hasFundraising'       => $this->has_fundraising(),
 			'donor'                => [
 				'firstName' => $donor->first_name,
 				'lastName'  => $donor->last_name,
@@ -176,6 +226,12 @@ class DashboardContextBuilder {
 				'activeSubscriptions' => $prepared_subscriptions,
 				'hasTransactions'     => $transaction_count > 0,
 				'hasSubscriptions'    => count( $active_subscriptions ) > 0,
+				// Fundraising defaults; FundraisersContextBuilder overrides them below.
+				'isFundraiserVariant' => false,
+				'fundraiserStats'     => [],
+				'spotlight'           => null,
+				'recentPageDonations' => [],
+				'hasPageDonations'    => false,
 			],
 			'recurring'            => [
 				'activeSubscriptions'    => $prepared_active_recurring,
@@ -207,6 +263,7 @@ class DashboardContextBuilder {
 			'nonce'                => wp_create_nonce( 'wp_rest' ),
 			'dashboardUrl'         => get_permalink(),
 			'stripePublishableKey' => ! empty( $this->settings['test_mode'] ) ? MISSIONDP_STRIPE_PK_TEST : MISSIONDP_STRIPE_PK_LIVE,
+			'stripeAppearance'     => apply_filters( 'mission_stripe_appearance', [] ),
 			'validPanels'          => array_values( array_keys( $panels ) ),
 			'panelLabels'          => $panel_labels,
 			'toast'                => [
@@ -217,12 +274,33 @@ class DashboardContextBuilder {
 			],
 		];
 
+		$fundraisers_builder = new FundraisersContextBuilder( $donor, $this->settings, $this->reporting, $this->fundraisers() );
+		$fundraisers_context = $fundraisers_builder->build();
+
+		if ( null !== $fundraisers_context ) {
+			$context['fundraisers'] = $fundraisers_context;
+			$context['overview']    = array_merge( $context['overview'], $fundraisers_builder->overview_extras( $has_giving ) );
+
+			[ $campaigns, $teams ] = $fundraisers_builder->preloaded_relations();
+
+			$teams_context = ( new TeamsContextBuilder( $donor, $this->settings, $this->reporting, $this->fundraisers(), $teams, $campaigns ) )->build();
+			if ( null !== $teams_context ) {
+				$context['teams'] = $teams_context;
+			}
+		}
+
 		$state = [
 			'isOverview'             => true,
 			'isHistory'              => false,
 			'isRecurring'            => false,
 			'isReceipts'             => false,
 			'isProfile'              => false,
+			'isFundraisers'          => false,
+			'isFundraiserDetail'     => false,
+			'isFundraisersNav'       => false,
+			'isTeams'                => false,
+			'isTeamDetail'           => false,
+			'isTeamsNav'             => false,
 			'panelTitle'             => __( 'Overview', 'mission-donation-platform' ),
 			'historyIsEmpty'         => 0 === $history_total,
 			'historyHasOnePage'      => $history_total <= $history_per_page,
@@ -260,7 +338,7 @@ class DashboardContextBuilder {
 	 * @return Subscription[]
 	 */
 	private function query_active_subscriptions(): array {
-		return $this->donor->subscriptions(
+		return $this->active_subscriptions_cache ??= $this->donor->subscriptions(
 			[
 				'status__in' => [ Subscription::STATUS_ACTIVE, Subscription::STATUS_PAUSED ],
 				'is_test'    => $this->is_test,
@@ -272,11 +350,25 @@ class DashboardContextBuilder {
 	 * @return Subscription[]
 	 */
 	private function query_cancelled_subscriptions(): array {
-		return $this->donor->subscriptions(
+		return $this->cancelled_subscriptions_cache ??= $this->donor->subscriptions(
 			[
 				'status'  => Subscription::STATUS_CANCELLED,
 				'is_test' => $this->is_test,
 				'orderby' => 'date_cancelled',
+				'order'   => 'DESC',
+			]
+		);
+	}
+
+	/**
+	 * The donor's fundraisers, newest first, queried once.
+	 *
+	 * @return \MissionDP\Models\Fundraiser[]
+	 */
+	private function fundraisers(): array {
+		return $this->fundraisers_cache ??= $this->donor->fundraisers(
+			[
+				'orderby' => 'date_created',
 				'order'   => 'DESC',
 			]
 		);
@@ -299,7 +391,7 @@ class DashboardContextBuilder {
 	}
 
 	private function count_history_transactions(): int {
-		return Transaction::count(
+		return $this->history_total_cache ??= Transaction::count(
 			[
 				'donor_id' => $this->donor->id,
 				'is_test'  => $this->is_test,

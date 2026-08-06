@@ -43,37 +43,28 @@ class OutgoingWebhookModule {
 	 * @return void
 	 */
 	private function register_event_listeners(): void {
-		// Donation completed.
 		add_action( 'mission_transaction_status_pending_to_completed', [ $this, 'on_donation_completed' ] );
 		add_action( 'mission_transaction_created', [ $this, 'on_transaction_created' ] );
 
-		// Donation refunded.
 		add_action( 'mission_transaction_refund_applied', [ $this, 'on_donation_refunded' ] );
 
-		// Subscription created.
 		add_action( 'mission_subscription_created', [ $this, 'on_subscription_created' ] );
 
-		// Subscription renewed.
 		add_action( 'mission_subscription_renewed', [ $this, 'on_subscription_renewed' ], 10, 2 );
 
-		// Subscription cancelled.
 		add_action( 'mission_subscription_status_active_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_pending_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_paused_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 		add_action( 'mission_subscription_status_past_due_to_cancelled', [ $this, 'on_subscription_cancelled' ] );
 
-		// Subscription failed.
 		add_action( 'mission_subscription_status_active_to_failed', [ $this, 'on_subscription_failed' ] );
 		add_action( 'mission_subscription_status_pending_to_failed', [ $this, 'on_subscription_failed' ] );
 
-		// Donor created / updated.
 		add_action( 'mission_donor_created', [ $this, 'on_donor_created' ] );
 		add_action( 'mission_donor_updated', [ $this, 'on_donor_updated' ] );
 
-		// Campaign created.
 		add_action( 'mission_campaign_created', [ $this, 'on_campaign_created' ] );
 
-		// Campaign goal reached.
 		add_action( 'mission_campaign_milestone_reached', [ $this, 'on_campaign_milestone_reached' ], 10, 3 );
 	}
 

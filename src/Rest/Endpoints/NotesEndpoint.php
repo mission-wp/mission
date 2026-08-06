@@ -270,7 +270,6 @@ class NotesEndpoint {
 			'object_id' => Args::integer( [ 'required' => true ] ),
 		];
 
-		// Only transactions support type filtering (internal vs donor).
 		if ( 'transaction' === $object_type ) {
 			$args['type'] = Args::enum( [ 'internal', 'donor' ] );
 		}
@@ -294,7 +293,6 @@ class NotesEndpoint {
 			],
 		];
 
-		// Only transactions support type selection.
 		if ( 'transaction' === $object_type ) {
 			$args['type'] = Args::enum( [ 'internal', 'donor' ], [ 'required' => true ] );
 		}

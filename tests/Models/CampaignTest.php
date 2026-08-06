@@ -9,6 +9,8 @@ namespace MissionDP\Tests\Models;
 
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
@@ -33,6 +35,8 @@ class CampaignTest extends WP_UnitTestCase {
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_teams" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaigns" );
 		// phpcs:enable
@@ -370,6 +374,22 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertNull( Campaign::find_by_post_id( 99999 ) );
 	}
 
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$first  = $this->create_campaign( [ 'title' => 'First' ] );
+		$second = $this->create_campaign( [ 'title' => 'Second' ] );
+		$third  = $this->create_campaign( [ 'title' => 'Third' ] );
+
+		$found = Campaign::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
+	}
+
 	// -------------------------------------------------------------------------
 	// __get() proxy tests.
 	// -------------------------------------------------------------------------
@@ -663,5 +683,263 @@ class CampaignTest extends WP_UnitTestCase {
 		$this->assertSame( 9999, $fresh->test_total_raised );
 		$this->assertSame( 1, $fresh->test_transaction_count );
 		$this->assertSame( 1, $fresh->test_donor_count );
+	}
+
+	// -------------------------------------------------------------------------
+	// Campaign type tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test type defaults to "standard".
+	 */
+	public function test_type_defaults_to_standard(): void {
+		$campaign = new Campaign();
+
+		$this->assertSame( 'standard', $campaign->type );
+		$this->assertFalse( $campaign->is_p2p() );
+		$this->assertFalse( $campaign->is_event() );
+	}
+
+	/**
+	 * Test type persists through save and find.
+	 */
+	public function test_type_persists_through_save_and_find(): void {
+		$campaign = $this->create_campaign( [ 'type' => 'p2p' ] );
+
+		$found = Campaign::find( $campaign->id );
+		$this->assertSame( 'p2p', $found->type );
+		$this->assertTrue( $found->is_p2p() );
+		$this->assertFalse( $found->is_event() );
+	}
+
+	/**
+	 * Test query() filters by type.
+	 */
+	public function test_query_filters_by_type(): void {
+		$this->create_campaign( [ 'title' => 'Standard' ] );
+		$this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		$p2p = Campaign::query( [ 'type' => 'p2p' ] );
+
+		$this->assertCount( 1, $p2p );
+		$this->assertSame( 'p2p', $p2p[0]->type );
+	}
+
+	/**
+	 * Test p2p_settings() returns the documented defaults, with native types,
+	 * when no settings meta has ever been saved.
+	 */
+	public function test_p2p_settings_returns_typed_defaults_when_unset(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		// assertSame on the full array checks values, types, and key order.
+		$this->assertSame( Campaign::P2P_DEFAULT_SETTINGS, $campaign->p2p_settings() );
+	}
+
+	/**
+	 * Test p2p_settings() casts stored string meta back to native types.
+	 */
+	public function test_p2p_settings_casts_stored_string_meta(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		// Meta round-trips as strings; p2p_settings() must cast them back.
+		$campaign->update_meta( 'registration_open', '0' );
+		$campaign->update_meta( 'approval_required', '1' );
+		$campaign->update_meta( 'default_fundraiser_goal', '75000' );
+		$campaign->update_meta( 'story_placeholder', 'Tell your story' );
+
+		$settings = $campaign->p2p_settings();
+
+		$this->assertFalse( $settings['registration_open'] );
+		$this->assertTrue( $settings['approval_required'] );
+		$this->assertSame( 75000, $settings['default_fundraiser_goal'] );
+		$this->assertSame( 'Tell your story', $settings['story_placeholder'] );
+
+		// Keys never saved still resolve to their typed defaults.
+		$this->assertSame( 200000, $settings['default_team_goal'] );
+		$this->assertFalse( $settings['teams_enabled'] );
+	}
+
+	/**
+	 * Test update_p2p_settings() casts to native types and clamps the goals.
+	 */
+	public function test_update_p2p_settings_casts_and_clamps(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+
+		$campaign->update_p2p_settings(
+			[
+				'registration_open'       => '0',
+				'teams_enabled'           => 1,
+				'default_fundraiser_goal' => '-500',
+				'default_team_goal'       => '300000',
+				'story_placeholder'       => 'Tell your story',
+			]
+		);
+
+		$settings = $campaign->p2p_settings();
+
+		$this->assertFalse( $settings['registration_open'] );
+		$this->assertTrue( $settings['teams_enabled'] );
+		$this->assertSame( 0, $settings['default_fundraiser_goal'] );
+		$this->assertSame( 300000, $settings['default_team_goal'] );
+		$this->assertSame( 'Tell your story', $settings['story_placeholder'] );
+	}
+
+	/**
+	 * Test update_p2p_settings() leaves absent keys alone and ignores unknown keys.
+	 */
+	public function test_update_p2p_settings_partial_and_unknown_keys(): void {
+		$campaign = $this->create_campaign( [ 'title' => 'P2P', 'type' => 'p2p' ] );
+		$campaign->update_meta( 'approval_required', '1' );
+
+		$campaign->update_p2p_settings(
+			[
+				'teams_enabled' => true,
+				'not_a_setting' => 'ignored',
+			]
+		);
+
+		$settings = $campaign->p2p_settings();
+
+		$this->assertTrue( $settings['approval_required'] );
+		$this->assertTrue( $settings['teams_enabled'] );
+		$this->assertArrayNotHasKey( 'not_a_setting', $settings );
+		$this->assertSame( '', $campaign->get_meta( 'not_a_setting' ) );
+	}
+
+	/**
+	 * Test fundraisers() and teams() return records scoped to the campaign.
+	 */
+	public function test_fundraisers_and_teams_relationships(): void {
+		$campaign = $this->create_campaign( [ 'type' => 'p2p' ] );
+		$other    = $this->create_campaign( [ 'title' => 'Other', 'type' => 'p2p' ] );
+
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1 ] );
+		$fundraiser->save();
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A' ] );
+		$team->save();
+
+		// Records on another campaign must not leak in.
+		$other_fundraiser = new Fundraiser( [ 'campaign_id' => $other->id, 'donor_id' => 1 ] );
+		$other_fundraiser->save();
+
+		$this->assertCount( 1, $campaign->fundraisers() );
+		$this->assertCount( 1, $campaign->teams() );
+		$this->assertSame( $fundraiser->id, $campaign->fundraisers()[0]->id );
+	}
+
+	/**
+	 * Test deleting a P2P campaign removes its fundraisers, teams, and their
+	 * shell posts — no orphaned fundraising pages left live on the site.
+	 */
+	public function test_delete_cascades_p2p_children(): void {
+		$campaign = $this->create_campaign( [ 'type' => 'p2p' ] );
+		$survivor = $this->create_campaign( [ 'title' => 'Other', 'type' => 'p2p' ] );
+
+		$fundraiser = new Fundraiser( [ 'campaign_id' => $campaign->id, 'donor_id' => 1, 'status' => 'active' ] );
+		$fundraiser->save();
+		$team = new Team( [ 'campaign_id' => $campaign->id, 'name' => 'Team A', 'status' => 'active' ] );
+		$team->save();
+
+		$other_fundraiser = new Fundraiser( [ 'campaign_id' => $survivor->id, 'donor_id' => 1 ] );
+		$other_fundraiser->save();
+
+		$fundraiser_post = $fundraiser->post_id;
+		$team_post       = $team->post_id;
+
+		$campaign->trash();
+
+		$this->assertNull( Fundraiser::find( $fundraiser->id ) );
+		$this->assertNull( Team::find( $team->id ) );
+		$this->assertNull( get_post( $fundraiser_post ) );
+		$this->assertNull( get_post( $team_post ) );
+
+		// Another campaign's records are untouched.
+		$this->assertNotNull( Fundraiser::find( $other_fundraiser->id ) );
+	}
+
+	// -------------------------------------------------------------------------
+	// Lifecycle helpers.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test has_ended() reflects the ended status only.
+	 */
+	public function test_has_ended_reflects_status(): void {
+		$active = $this->create_campaign();
+		$ended  = $this->create_campaign(
+			[
+				'title'  => 'Done',
+				'status' => Campaign::STATUS_ENDED,
+			]
+		);
+
+		$this->assertFalse( $active->has_ended() );
+		$this->assertTrue( $ended->has_ended() );
+	}
+
+	/**
+	 * Test is_registration_open() requires an active P2P campaign with the toggle on.
+	 */
+	public function test_is_registration_open_requires_active_p2p_with_toggle(): void {
+		$active = $this->create_campaign( [ 'type' => Campaign::TYPE_P2P ] );
+		$this->assertTrue( $active->is_registration_open() );
+
+		$toggled_off = $this->create_campaign( [ 'type' => Campaign::TYPE_P2P ] );
+		$toggled_off->update_meta( 'registration_open', '0' );
+		$this->assertFalse( $toggled_off->is_registration_open() );
+
+		$scheduled = $this->create_campaign(
+			[
+				'type'   => Campaign::TYPE_P2P,
+				'status' => Campaign::STATUS_SCHEDULED,
+			]
+		);
+		$this->assertFalse( $scheduled->is_registration_open() );
+
+		$ended = $this->create_campaign(
+			[
+				'type'   => Campaign::TYPE_P2P,
+				'status' => Campaign::STATUS_ENDED,
+			]
+		);
+		$this->assertFalse( $ended->is_registration_open() );
+
+		$standard = $this->create_campaign();
+		$this->assertFalse( $standard->is_registration_open() );
+	}
+
+	/**
+	 * Test days_left() counts whole days to the end date.
+	 */
+	public function test_days_left_counts_days_to_end_date(): void {
+		$campaign = $this->create_campaign(
+			[ 'date_end' => wp_date( 'Y-m-d', strtotime( '+10 days' ) ) . ' 00:00:00' ]
+		);
+
+		$this->assertSame( 10, $campaign->days_left() );
+	}
+
+	/**
+	 * Test days_left() is null without an end date or once the end date has passed.
+	 */
+	public function test_days_left_null_without_end_date_or_after_end(): void {
+		$open = $this->create_campaign();
+		$past = $this->create_campaign(
+			[
+				'title'    => 'Past',
+				'date_end' => '2020-01-01 00:00:00',
+			]
+		);
+		$today = $this->create_campaign(
+			[
+				'title'    => 'Ends today',
+				'date_end' => wp_date( 'Y-m-d' ) . ' 23:59:59',
+			]
+		);
+
+		$this->assertNull( $open->days_left() );
+		$this->assertNull( $past->days_left() );
+		$this->assertSame( 0, $today->days_left() );
 	}
 }

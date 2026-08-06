@@ -47,6 +47,8 @@ class Subscription extends Model {
 	public int $donor_id;
 	public int $source_post_id;
 	public ?int $campaign_id;
+	public ?int $fundraiser_id;
+	public ?int $team_id;
 	public ?int $initial_transaction_id;
 	public int $amount;
 	public int $fee_amount;
@@ -76,6 +78,8 @@ class Subscription extends Model {
 		$this->donor_id                = (int) ( $data['donor_id'] ?? 0 );
 		$this->source_post_id          = (int) ( $data['source_post_id'] ?? 0 );
 		$this->campaign_id             = isset( $data['campaign_id'] ) ? (int) $data['campaign_id'] : null;
+		$this->fundraiser_id           = isset( $data['fundraiser_id'] ) ? (int) $data['fundraiser_id'] : null;
+		$this->team_id                 = isset( $data['team_id'] ) ? (int) $data['team_id'] : null;
 		$this->initial_transaction_id  = isset( $data['initial_transaction_id'] ) ? (int) $data['initial_transaction_id'] : null;
 		$this->amount                  = (int) ( $data['amount'] ?? 0 );
 		$this->fee_amount              = (int) ( $data['fee_amount'] ?? 0 );
@@ -155,6 +159,35 @@ class Subscription extends Model {
 	}
 
 	/**
+	 * Re-assign this subscription to a different campaign.
+	 *
+	 * A fundraiser or team is authoritative for its campaign (see
+	 * DonationAttribution), so attribution that doesn't belong to the new
+	 * campaign is cleared rather than left crediting a fundraiser or team on
+	 * the old campaign through every future renewal.
+	 *
+	 * @param int|null $campaign_id New campaign ID, or null to unassign.
+	 * @return void
+	 */
+	public function set_campaign( ?int $campaign_id ): void {
+		$campaign_id = $campaign_id ?: null;
+
+		if ( ( $this->campaign_id ?: null ) === $campaign_id ) {
+			return;
+		}
+
+		$this->campaign_id = $campaign_id;
+
+		if ( $this->fundraiser_id && $this->fundraiser()?->campaign_id !== $campaign_id ) {
+			$this->fundraiser_id = null;
+		}
+
+		if ( $this->team_id && $this->team()?->campaign_id !== $campaign_id ) {
+			$this->team_id = null;
+		}
+	}
+
+	/**
 	 * Get the donor for this subscription.
 	 *
 	 * @return Donor|null
@@ -170,6 +203,24 @@ class Subscription extends Model {
 	 */
 	public function campaign(): ?Campaign {
 		return $this->campaign_id ? Campaign::find( $this->campaign_id ) : null;
+	}
+
+	/**
+	 * Get the fundraiser this subscription is attributed to.
+	 *
+	 * @return Fundraiser|null
+	 */
+	public function fundraiser(): ?Fundraiser {
+		return $this->fundraiser_id ? Fundraiser::find( $this->fundraiser_id ) : null;
+	}
+
+	/**
+	 * Get the team this subscription is attributed to.
+	 *
+	 * @return Team|null
+	 */
+	public function team(): ?Team {
+		return $this->team_id ? Team::find( $this->team_id ) : null;
 	}
 
 	/**
@@ -631,6 +682,8 @@ class Subscription extends Model {
 					'subscription_id' => $this->id,
 					'source_post_id'  => $this->source_post_id,
 					'campaign_id'     => $this->campaign_id,
+					'fundraiser_id'   => $this->fundraiser_id,
+					'team_id'         => $this->team_id,
 					'amount'          => $this->amount,
 					'fee_amount'      => $this->fee_amount,
 					'tip_amount'      => $this->tip_amount,
@@ -646,7 +699,6 @@ class Subscription extends Model {
 
 		$transaction->save();
 
-		// Copy platform fee mode from subscription to renewal transaction.
 		$fee_mode = $this->get_meta( 'fee_mode' );
 		if ( $fee_mode ) {
 			$transaction->add_meta( 'fee_mode', $fee_mode );

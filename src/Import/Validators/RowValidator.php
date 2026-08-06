@@ -146,7 +146,6 @@ class RowValidator {
 				Subscription::STATUS_CANCELLED,
 			];
 
-			// Missing status is already caught by the required-field check above.
 			if ( '' !== $status && ! in_array( strtolower( $status ), $allowed, true ) ) {
 				$warnings[] = [
 					'row'      => $row_number,
@@ -239,8 +238,6 @@ class RowValidator {
 			}
 
 			if ( ! $this->looks_like_number( $value ) ) {
-				// Amount is core to a transaction or subscription, so a bad value
-				// skips the row; secondary amounts just import as zero.
 				$is_error = $is_transactions || ( $is_subscriptions && 'amount' === $numeric );
 
 				$warnings[] = [
@@ -263,9 +260,8 @@ class RowValidator {
 			}
 
 			if ( $this->is_negative_number( $value ) ) {
-				// Mission models refunds as a refunded status plus amount_refunded,
-				// so a negative primary amount has no meaning and would corrupt
-				// donor/campaign aggregates. Secondary amounts only warn.
+				// Refunds are modeled as a refunded status plus amount_refunded, so a
+				// negative primary amount would corrupt donor/campaign aggregates.
 				$is_error = in_array( $numeric, [ 'amount', 'total_amount' ], true ) && ( $is_transactions || $is_subscriptions );
 
 				$warnings[] = [

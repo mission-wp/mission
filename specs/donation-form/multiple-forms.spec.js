@@ -10,6 +10,10 @@ const {
   enableTestMode,
   configureStripe,
 } = require( './helpers/campaign-factory' );
+const {
+  snapshotSettings,
+  snapshotStripeSiteToken,
+} = require( '../helpers/settings' );
 
 const SHORTCODE =
   '[mission_donation_form recurring_enabled="false" collect_address="false" amounts="10,25,50"]';
@@ -22,11 +26,17 @@ const TWO_FORMS_CONTENT =
 /**
  * Complete a $25 card donation on the given form root.
  *
- * @param {import('@playwright/test').Locator} form Form root locator.
+ * @param {import('@playwright/test').Locator} form  Form root locator.
  * @param {string}                             email Donor email.
  */
 async function completeDonation( form, email ) {
-  await form.getByRole( 'button', { name: '$25.00', exact: true } ).click();
+  // Presets are server-rendered: click until the active state confirms the
+  // handler was attached and the selection took (hydration race).
+  const amountBtn = form.getByRole( 'button', { name: '$25.00', exact: true } );
+  await expect( async () => {
+    await amountBtn.click();
+    await expect( amountBtn ).toHaveClass( /active/, { timeout: 1500 } );
+  } ).toPass( { timeout: 15000 } );
   await form.locator( '.mission-df-btn--primary' ).first().click();
 
   await form.locator( 'input[id$="first-name"]' ).fill( 'Multi' );
@@ -65,9 +75,17 @@ async function completeDonation( form, email ) {
 }
 
 test.describe( 'Donation Form: Multiple forms on one page', () => {
-  let pageId, pageUrl, stripeReady;
+  let pageId, pageUrl, stripeReady, settingsSnapshot, siteTokenSnapshot;
 
   test.beforeAll( async ( { requestUtils } ) => {
+    settingsSnapshot = await snapshotSettings( requestUtils, [
+      'test_mode',
+      'stripe_charges_enabled',
+      'stripe_connection_status',
+      'stripe_account_id',
+    ] );
+    siteTokenSnapshot = snapshotStripeSiteToken();
+
     await enableTestMode( requestUtils );
     stripeReady = await configureStripe( requestUtils );
 
@@ -90,6 +108,17 @@ test.describe( 'Donation Form: Multiple forms on one page', () => {
       method: 'DELETE',
       params: { force: true },
     } );
+
+    // The paying tests leave is_test transaction rows behind.
+    if ( stripeReady ) {
+      await requestUtils.rest( {
+        path: '/mission-donation-platform/v1/cleanup/delete_test_transactions',
+        method: 'POST',
+      } );
+    }
+
+    await settingsSnapshot.restore();
+    siteTokenSnapshot.restore();
   } );
 
   test( 'first form completes checkout', async ( { page } ) => {

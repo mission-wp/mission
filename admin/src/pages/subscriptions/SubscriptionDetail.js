@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback } from '@wordpress/element';
 import { formatDateTime } from '@shared/date';
 import {
   Button,
@@ -12,6 +12,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import Toast from '../../components/Toast';
+import StatusBadge from '../../components/StatusBadge';
+import ActionsDropdown from '../../components/ActionsDropdown';
+import { MenuIcon } from '../shared/DetailComponents';
 import TransactionDonorCard from '../transactions/TransactionDonorCard';
 import SubscriptionDetailsCard from './SubscriptionDetailsCard';
 import SubscriptionActivityCard from './SubscriptionActivityCard';
@@ -22,132 +25,25 @@ import {
   TRANSACTION_STATUS,
 } from '../../constants';
 
-function StatusBadge( { status } ) {
-  const label = status
-    ? status.replace( '_', ' ' ).replace( /\b\w/g, ( c ) => c.toUpperCase() )
-    : __( 'Pending', 'mission-donation-platform' );
-  return (
-    <span className={ `mission-status-badge is-${ status || 'pending' }` }>
-      { label }
-    </span>
-  );
-}
+const ResumeIcon = () => (
+  <MenuIcon>
+    <polygon points="4.5,3 11,7 4.5,11" />
+  </MenuIcon>
+);
 
-function ActionsDropdown( { status, onPause, onResume, onCancel } ) {
-  const [ isOpen, setIsOpen ] = useState( false );
-  const ref = useRef();
+const PauseIcon = () => (
+  <MenuIcon>
+    <rect x="3" y="3" width="3" height="8" rx="0.5" />
+    <rect x="8" y="3" width="3" height="8" rx="0.5" />
+  </MenuIcon>
+);
 
-  useEffect( () => {
-    if ( ! isOpen ) {
-      return;
-    }
-    const close = ( e ) => {
-      if ( ref.current && ! ref.current.contains( e.target ) ) {
-        setIsOpen( false );
-      }
-    };
-    document.addEventListener( 'click', close, true );
-    return () => document.removeEventListener( 'click', close, true );
-  }, [ isOpen ] );
-
-  const isPaused = status === SUBSCRIPTION_STATUS.PAUSED;
-
-  return (
-    <div className="mission-dropdown" ref={ ref }>
-      <button
-        className="mission-dropdown__toggle"
-        onClick={ () => setIsOpen( ! isOpen ) }
-      >
-        { __( 'Actions', 'mission-donation-platform' ) }
-        <svg
-          width="10"
-          height="6"
-          viewBox="0 0 10 6"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M1 1l4 4 4-4" />
-        </svg>
-      </button>
-      { isOpen && (
-        <div className="mission-dropdown__menu">
-          { isPaused ? (
-            <button
-              className="mission-dropdown__item"
-              onClick={ () => {
-                setIsOpen( false );
-                onResume();
-              } }
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polygon points="4.5,3 11,7 4.5,11" />
-              </svg>
-              { __( 'Resume Subscription', 'mission-donation-platform' ) }
-            </button>
-          ) : (
-            <button
-              className="mission-dropdown__item"
-              onClick={ () => {
-                setIsOpen( false );
-                onPause();
-              } }
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="3" width="3" height="8" rx="0.5" />
-                <rect x="8" y="3" width="3" height="8" rx="0.5" />
-              </svg>
-              { __( 'Pause Subscription', 'mission-donation-platform' ) }
-            </button>
-          ) }
-          <div className="mission-dropdown__divider" />
-          <button
-            className="mission-dropdown__item mission-dropdown__item--danger"
-            onClick={ () => {
-              setIsOpen( false );
-              onCancel();
-            } }
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="7" cy="7" r="6" />
-              <path d="M9 5L5 9M5 5l4 4" />
-            </svg>
-            { __( 'Cancel Subscription', 'mission-donation-platform' ) }
-          </button>
-        </div>
-      ) }
-    </div>
-  );
-}
+const CancelIcon = () => (
+  <MenuIcon>
+    <circle cx="7" cy="7" r="6" />
+    <path d="M9 5L5 9M5 5l4 4" />
+  </MenuIcon>
+);
 
 export default function SubscriptionDetail( { id } ) {
   const [ subscription, setSubscription ] = useState( null );
@@ -385,16 +281,41 @@ export default function SubscriptionDetail( { id } ) {
           </a>
           { hasActions && (
             <ActionsDropdown
-              status={ s.status }
-              onPause={ () => setShowPauseModal( true ) }
-              onResume={ handleResume }
-              onCancel={ () => setShowCancelModal( true ) }
+              items={ [
+                s.status === SUBSCRIPTION_STATUS.PAUSED
+                  ? {
+                      label: __(
+                        'Resume Subscription',
+                        'mission-donation-platform'
+                      ),
+                      icon: <ResumeIcon />,
+                      onClick: handleResume,
+                    }
+                  : {
+                      label: __(
+                        'Pause Subscription',
+                        'mission-donation-platform'
+                      ),
+                      icon: <PauseIcon />,
+                      onClick: () => setShowPauseModal( true ),
+                    },
+                { divider: true },
+                {
+                  label: __(
+                    'Cancel Subscription',
+                    'mission-donation-platform'
+                  ),
+                  icon: <CancelIcon />,
+                  isDanger: true,
+                  onClick: () => setShowCancelModal( true ),
+                },
+              ] }
             />
           ) }
         </HStack>
 
         { /* Two-column grid */ }
-        <div className="mission-donor-detail-grid">
+        <div className="mission-detail-grid">
           <VStack spacing={ 4 }>
             { /* Header */ }
             <div

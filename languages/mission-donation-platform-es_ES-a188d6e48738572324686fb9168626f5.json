@@ -1,0 +1,27 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-supporters\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Preview uses sample data.": [
+                "La vista previa usa datos de ejemplo."
+            ],
+            "Supporter name": [
+                "Nombre del colaborador"
+            ],
+            "A note of support appears here.": [
+                "Aqu\u00ed aparece un mensaje de apoyo."
+            ],
+            "Just now": [
+                "Ahora mismo"
+            ]
+        }
+    }
+}

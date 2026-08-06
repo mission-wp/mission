@@ -221,7 +221,6 @@ function NotifySection( { tabId, ctaText } ) {
       setSubscribedEmail( email );
       setView( 'subscribed' );
 
-      // Persist signup in user meta so it survives page reloads.
       saveUserMeta( tabId, email );
     } catch {
       setError( true );
@@ -247,7 +246,6 @@ function NotifySection( { tabId, ctaText } ) {
     setSubscribedEmail( '' );
     setView( 'cta' );
 
-    // Remove from user meta.
     deleteUserMeta( tabId );
   };
 

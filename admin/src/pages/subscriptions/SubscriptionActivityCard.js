@@ -1,9 +1,7 @@
-import { useState, useEffect } from '@wordpress/element';
-import { Spinner } from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDateTime } from '@shared/date';
 import { formatAmount } from '@shared/currency';
+import ActivityTimelineCard from '../../components/ActivityTimelineCard';
 import { FREQUENCY_SUFFIXES, TRANSACTION_STATUS } from '../../constants';
 
 const EVENT_LABELS = {
@@ -86,16 +84,6 @@ function getEventLabel( entry ) {
   return EVENT_LABELS[ entry.event ] || entry.event;
 }
 
-function TimelineItem( { title, date, dotClass } ) {
-  return (
-    <div className="mission-timeline__item is-reached">
-      <div className={ `mission-timeline__dot ${ dotClass }` } />
-      <div className="mission-timeline__title">{ title }</div>
-      <div className="mission-timeline__date">{ date }</div>
-    </div>
-  );
-}
-
 function deriveFallbackEvents( subscription ) {
   const events = [];
 
@@ -107,7 +95,6 @@ function deriveFallbackEvents( subscription ) {
     } );
   }
 
-  // Add completed transaction events.
   const transactions = subscription.transactions || [];
   transactions.forEach( ( txn ) => {
     if ( txn.status === TRANSACTION_STATUS.COMPLETED && txn.date_completed ) {
@@ -129,55 +116,21 @@ function deriveFallbackEvents( subscription ) {
 }
 
 export default function SubscriptionActivityCard( { subscription } ) {
-  const [ entries, setEntries ] = useState( null );
-  const [ isLoading, setIsLoading ] = useState( true );
-
   const id = subscription?.id;
 
-  useEffect( () => {
-    if ( ! id ) {
-      setIsLoading( false );
-      return;
-    }
-
-    apiFetch( {
-      path: `/mission-donation-platform/v1/activity?object_type=subscription&object_id=${ id }&per_page=25`,
-    } )
-      .then( ( data ) => setEntries( data ) )
-      .catch( () => setEntries( null ) )
-      .finally( () => setIsLoading( false ) );
-  }, [ id ] );
-
-  const useFallback = ! isLoading && ( ! entries || entries.length === 0 );
-  const events = useFallback
-    ? deriveFallbackEvents( subscription )
-    : ( entries || [] ).map( ( entry ) => ( {
+  return (
+    <ActivityTimelineCard
+      path={
+        id
+          ? `/mission-donation-platform/v1/activity?object_type=subscription&object_id=${ id }&per_page=25`
+          : null
+      }
+      mapEntry={ ( entry ) => ( {
         title: getEventLabel( entry ),
         date: formatDateTime( entry.date_created ),
         dotClass: DOT_CLASSES[ entry.event ] || '',
-      } ) );
-
-  return (
-    <div className="mission-card" style={ { padding: 0 } }>
-      <h2 className="mission-card__heading">
-        { __( 'Activity', 'mission-donation-platform' ) }
-      </h2>
-      { isLoading ? (
-        <div style={ { padding: '24px', textAlign: 'center' } }>
-          <Spinner />
-        </div>
-      ) : (
-        <div className="mission-timeline">
-          { events.map( ( event, index ) => (
-            <TimelineItem
-              key={ index }
-              title={ event.title }
-              date={ event.date }
-              dotClass={ event.dotClass }
-            />
-          ) ) }
-        </div>
-      ) }
-    </div>
+      } ) }
+      fallbackEvents={ deriveFallbackEvents( subscription ) }
+    />
   );
 }

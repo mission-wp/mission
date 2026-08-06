@@ -345,6 +345,10 @@ class SubscriptionEmailListenerTest extends WP_UnitTestCase {
 
 	/**
 	 * Test a custom activation subject resolves all subscription tags.
+	 *
+	 * {frequency} keeps its original case in custom subjects (an admin's
+	 * "{frequency} donation confirmed" must send "Monthly …", as released);
+	 * only the default subjects lowercase it for mid-sentence use.
 	 */
 	public function test_custom_subject_tags_for_activation(): void {
 		update_option(

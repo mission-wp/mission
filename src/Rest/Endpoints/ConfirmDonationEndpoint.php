@@ -131,7 +131,6 @@ class ConfirmDonationEndpoint {
 			);
 		}
 
-		// Transaction is still pending — verify with Stripe synchronously.
 		$verification = $this->verifier->verify(
 			$payment_intent_id,
 			(bool) $transaction->is_test,
@@ -139,9 +138,6 @@ class ConfirmDonationEndpoint {
 		);
 
 		if ( ! $verification['verified'] ) {
-			// Mission API unavailable or not deployed — fall back to the
-			// webhook path. Client will see "processing" and can retry or the
-			// webhook will complete the transaction asynchronously.
 			return new WP_REST_Response(
 				[
 					'status'         => 'processing',
@@ -176,8 +172,8 @@ class ConfirmDonationEndpoint {
 			);
 		}
 
-		// Stripe reports processing / requires_action / requires_confirmation — payment is
-		// still in flight. Client should poll or show a processing state.
+		// Remaining Stripe statuses (processing, requires_action, requires_confirmation)
+		// mean the payment is still in flight; the client should poll.
 		return new WP_REST_Response(
 			[
 				'status'         => 'processing',

@@ -77,7 +77,6 @@ export default function LogsPanel() {
     [ filters ]
   );
 
-  // Fetch on mount and when filters change.
   useEffect( () => {
     setPage( 1 );
     setExpandedId( null );
@@ -131,7 +130,6 @@ export default function LogsPanel() {
     setExpandedId( ( prev ) => ( prev === id ? null : id ) );
   };
 
-  // Skeleton loading rows.
   if ( isLoading ) {
     return (
       <div className="mission-settings-panel">

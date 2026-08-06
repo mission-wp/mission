@@ -10,25 +10,18 @@
  * @var WP_Block $block      Block instance.
  */
 
-use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
+use MissionDP\P2P\BlockSupport;
+use MissionDP\P2P\SignupModal;
 
 defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes, $content, $block ): void {
-// Resolve the campaign.
-$campaign = null;
-
-if ( ! empty( $attributes['campaignId'] ) ) {
-	$campaign = Campaign::find( (int) $attributes['campaignId'] );
-} else {
-	$current_post = get_post();
-	if ( $current_post && CampaignPostType::POST_TYPE === $current_post->post_type ) {
-		$campaign = Campaign::find_by_post_id( $current_post->ID );
-	}
-}
+$campaign = BlockSupport::resolve_campaign( $attributes );
 
 if ( ! $campaign ) {
 	return;
@@ -44,11 +37,17 @@ $goal_amount   = $campaign->goal_amount;
 $goal_type     = $campaign->goal_type;
 $goal_progress = $campaign->get_goal_progress( $is_test );
 $has_goal      = $goal_amount > 0;
-$percentage    = $has_goal ? (int) min( 100, round( $goal_progress / $goal_amount * 100 ) ) : 0;
+$percentage    = BlockSupport::progress_percent( (int) $goal_progress, (int) $goal_amount );
 $real_percent  = $has_goal ? (int) round( $goal_progress / $goal_amount * 100 ) : 0;
 
 // Donor count.
 $donor_count = $is_test ? $campaign->test_donor_count : $campaign->donor_count;
+
+// Peer-to-peer campaigns add fundraiser/team counts and a sign-up CTA.
+$is_p2p           = $campaign->is_p2p();
+$fundraiser_count = $is_p2p ? Fundraiser::count( [ 'campaign_id' => $campaign->id, 'status' => Fundraiser::STATUS_ACTIVE ] ) : 0;
+$team_count       = $is_p2p ? Team::count( [ 'campaign_id' => $campaign->id, 'status' => Team::STATUS_ACTIVE ] ) : 0;
+$show_become      = $campaign->is_registration_open();
 
 // Days remaining.
 $date_end       = $campaign->date_end;
@@ -81,95 +80,100 @@ if ( 'amount' === $goal_type ) {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donations of %s goal', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
-		: __( 'donations', 'mission-donation-platform' );
+		? sprintf( _n( 'donation of %s goal', 'donations of %s goal', $goal_progress, 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: _n( 'donation', 'donations', $goal_progress, 'mission-donation-platform' );
 } else {
 	$progress_text = number_format_i18n( $goal_progress );
 	$goal_text     = $has_goal
 		/* translators: %s: goal number */
-		? sprintf( __( 'donors of %s goal', 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
-		: __( 'donors', 'mission-donation-platform' );
+		? sprintf( _n( 'donor of %s goal', 'donors of %s goal', $goal_progress, 'mission-donation-platform' ), number_format_i18n( $goal_amount ) )
+		: _n( 'donor', 'donors', $goal_progress, 'mission-donation-platform' );
 }
-
-// Primary color (same pattern as donation form).
-$global_primary = $mission_settings['primary_color'] ?? '#2fa36b';
-$primary_color  = $global_primary;
-
-$darken_color = static function ( string $hex, float $percent ): string {
-	$hex = ltrim( $hex, '#' );
-	$r   = max( 0, (int) round( hexdec( substr( $hex, 0, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$g   = max( 0, (int) round( hexdec( substr( $hex, 2, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$b   = max( 0, (int) round( hexdec( substr( $hex, 4, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	return sprintf( '#%02x%02x%02x', $r, $g, $b );
-};
-
-$primary_hover = $darken_color( $primary_color, 12 );
-$hex_trimmed   = ltrim( $primary_color, '#' );
-$primary_r     = hexdec( substr( $hex_trimmed, 0, 2 ) );
-$primary_g     = hexdec( substr( $hex_trimmed, 2, 2 ) );
-$primary_b     = hexdec( substr( $hex_trimmed, 4, 2 ) );
-$luminance     = ( 0.299 * $primary_r + 0.587 * $primary_g + 0.114 * $primary_b ) / 255;
-$primary_text  = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
 
 // Build context for Interactivity API.
 $context = [
 	'donateAction' => $donate_action,
 ];
+if ( $show_become ) {
+	$context['signup'] = SignupModal::payload( $campaign );
+}
 
-// Build the output.
+// Build the output. The legacy mission-campaign-progress/mission-cp-* classes
+// carry no plugin styles; they're kept so user CSS overrides written against
+// shipped releases keep applying.
 ob_start();
 ?>
 <div
-	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-campaign-progress' ] ) ); ?>
+	<?php echo wp_kses_post( get_block_wrapper_attributes( [ 'class' => 'mission-progress mission-campaign-progress' ] ) ); ?>
 	data-wp-interactive="mission-donation-platform/campaign-progress"
 	<?php echo wp_kses_post( wp_interactivity_data_wp_context( $context ) ); ?>
-	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>;"
+	style="<?php echo esc_attr( BlockSupport::primary_color_style() ); ?>"
 >
-	<div class="mission-cp-header">
-		<span class="mission-cp-raised"><?php echo esc_html( $progress_text ); ?></span>
-		<span class="mission-cp-goal"><?php echo esc_html( $goal_text ); ?></span>
+	<div class="mission-progress__header mission-cp-header">
+		<span class="mission-progress__raised mission-cp-raised"><?php echo esc_html( $progress_text ); ?></span>
+		<span class="mission-progress__goal mission-cp-goal"><?php echo esc_html( $goal_text ); ?></span>
 		<?php if ( $has_goal ) : ?>
-			<span class="mission-cp-percentage"><?php echo esc_html( $real_percent . '%' ); ?></span>
+			<span class="mission-progress__percentage mission-cp-percentage"><?php echo esc_html( $real_percent . '%' ); ?></span>
 		<?php endif; ?>
 	</div>
 
 	<?php if ( $has_goal ) : ?>
-		<div class="mission-cp-bar" data-wp-init="callbacks.animateBar">
-			<div class="mission-cp-bar__fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
+		<div class="mission-progress__bar mission-cp-bar" data-wp-init="callbacks.animateBar">
+			<div class="mission-progress__bar-fill mission-cp-bar__fill" style="--bar-width: <?php echo esc_attr( $percentage ); ?>%"></div>
 		</div>
 	<?php endif; ?>
 
-	<?php if ( $show_donors || $show_days_remaining ) : ?>
-		<div class="mission-cp-stats">
+	<?php if ( $show_donors || $show_days_remaining || $is_p2p ) : ?>
+		<div class="mission-progress__stats mission-cp-stats">
 			<?php if ( $show_donors ) : ?>
-				<div class="mission-cp-stat">
-					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'donors', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $donor_count ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'donor', 'donors', $donor_count, 'mission-donation-platform' ) ); ?></span>
+				</div>
+			<?php endif; ?>
+			<?php if ( $is_p2p ) : ?>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $fundraiser_count ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'fundraiser', 'fundraisers', $fundraiser_count, 'mission-donation-platform' ) ); ?></span>
+				</div>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $team_count ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'team', 'teams', $team_count, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 			<?php if ( $show_days_remaining ) : ?>
-				<div class="mission-cp-stat">
-					<span class="mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
-					<span class="mission-cp-stat__label"><?php esc_html_e( 'days remaining', 'mission-donation-platform' ); ?></span>
+				<div class="mission-progress__stat mission-cp-stat">
+					<span class="mission-progress__stat-value mission-cp-stat__value"><?php echo esc_html( number_format_i18n( $days_remaining ) ); ?></span>
+					<span class="mission-progress__stat-label mission-cp-stat__label"><?php echo esc_html( _n( 'day remaining', 'days remaining', $days_remaining, 'mission-donation-platform' ) ); ?></span>
 				</div>
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 
-	<?php if ( $show_button ) : ?>
-		<?php if ( 'scroll' === $donate_action ) : ?>
-			<button
-				type="button"
-				class="mission-cp-donate-btn"
-				data-wp-on--click="actions.scrollToForm"
-			>
-				<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
-			</button>
-		<?php else : ?>
-			<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-cp-donate-btn">
-				<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
-			</a>
-		<?php endif; ?>
+	<?php if ( $show_become || $show_button ) : ?>
+		<div class="mission-progress__actions">
+			<?php if ( $show_become ) : ?>
+				<button type="button" class="mission-progress__btn" data-wp-on--click="actions.openSignup">
+					<?php esc_html_e( 'Become a Fundraiser', 'mission-donation-platform' ); ?>
+				</button>
+			<?php endif; ?>
+			<?php if ( $show_button ) : ?>
+				<?php $donate_btn_class = ( $show_become ? 'mission-progress__btn mission-progress__btn--secondary' : 'mission-progress__btn' ) . ' mission-cp-donate-btn'; ?>
+				<?php if ( 'scroll' === $donate_action ) : ?>
+					<button
+						type="button"
+						class="<?php echo esc_attr( $donate_btn_class ); ?>"
+						data-wp-on--click="actions.scrollToForm"
+					>
+						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+					</button>
+				<?php else : ?>
+					<a href="<?php echo esc_url( $donate_url ); ?>" class="<?php echo esc_attr( $donate_btn_class ); ?>">
+						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+					</a>
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
 	<?php endif; ?>
 </div>
 <?php
@@ -183,4 +187,8 @@ $output = ob_get_clean();
  * @param array    $attributes Block attributes.
  */
 echo wp_kses( apply_filters( 'mission_campaign_progress_output', $output, $campaign, $attributes ), \MissionDP\Helpers\Kses::block_allowed_html() );
+
+if ( $show_become ) {
+	echo SignupModal::render( $campaign ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered and kses'd in render().
+}
 } )( $attributes, $content, $block );

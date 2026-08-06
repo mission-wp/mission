@@ -1,0 +1,27 @@
+{
+    "translation-revision-date": "2026-06-12T17:33:14+00:00",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-supporters\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fi",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Preview uses sample data.": [
+                "Esikatselu k\u00e4ytt\u00e4\u00e4 esimerkkitietoja."
+            ],
+            "Supporter name": [
+                "Tukijan nimi"
+            ],
+            "A note of support appears here.": [
+                "Tukiviesti n\u00e4kyy t\u00e4ss\u00e4."
+            ],
+            "Just now": [
+                "Juuri nyt"
+            ]
+        }
+    }
+}

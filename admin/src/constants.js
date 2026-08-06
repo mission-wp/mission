@@ -152,6 +152,29 @@ export const SUBSCRIPTION_STATUS_OPTIONS = [
   },
 ];
 
+export const P2P_STATUS = {
+  ACTIVE: 'active',
+  PENDING: 'pending',
+  INACTIVE: 'inactive',
+};
+
+// P2P pending is an amber "awaiting approval", not the blue transaction
+// pending, so the badge tone diverges from the raw status value.
+export const P2P_STATUS_META = {
+  [ P2P_STATUS.ACTIVE ]: {
+    label: __( 'Active', 'mission-donation-platform' ),
+    tone: 'active',
+  },
+  [ P2P_STATUS.PENDING ]: {
+    label: __( 'Pending', 'mission-donation-platform' ),
+    tone: 'warning',
+  },
+  [ P2P_STATUS.INACTIVE ]: {
+    label: __( 'Inactive', 'mission-donation-platform' ),
+    tone: 'inactive',
+  },
+};
+
 const toLabelMap = ( options ) =>
   Object.fromEntries( options.map( ( o ) => [ o.value, o.label ] ) );
 
@@ -162,3 +185,11 @@ export const TRANSACTION_STATUS_LABELS = toLabelMap(
 export const SUBSCRIPTION_STATUS_LABELS = toLabelMap(
   SUBSCRIPTION_STATUS_OPTIONS
 );
+
+// Fallback labels for any status a badge can render, across domains.
+// Overlapping keys (pending, active, cancelled) share the same label.
+export const STATUS_BADGE_LABELS = {
+  ...TRANSACTION_STATUS_LABELS,
+  ...SUBSCRIPTION_STATUS_LABELS,
+  [ P2P_STATUS.INACTIVE ]: __( 'Inactive', 'mission-donation-platform' ),
+};

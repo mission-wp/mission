@@ -152,7 +152,6 @@ describe( 'ImportPanel', () => {
 
     expect( screen.getByText( 'Import Data' ) ).toBeTruthy();
     expect( screen.getByText( 'Drag and drop your file here' ) ).toBeTruthy();
-    // Columns from the API render as code chips.
     expect( screen.getByText( 'first_name' ) ).toBeTruthy();
     expect( callsTo( 'import/columns?type=donors' ) ).toBe( 1 );
   } );
@@ -237,7 +236,6 @@ describe( 'ImportPanel', () => {
       new File( [ 'email\na@example.com' ], 'donors.csv', { type: 'text/csv' } )
     );
 
-    // With duplicates present, the strategy picker appears.
     expect( screen.getByText( 'Import Options' ) ).toBeTruthy();
     await act( async () => {
       fireEvent.click( screen.getByText( 'Update existing' ) );
@@ -309,14 +307,12 @@ describe( 'ImportPanel', () => {
     } );
 
     expect( screen.getByText( 'Import complete' ) ).toBeTruthy();
-    // Result lines join into a single summary sentence.
     expect(
       screen.getByText(
         '8 donors were successfully imported. 2 duplicates were skipped.'
       )
     ).toBeTruthy();
 
-    // Polling stopped: no further status calls however long we wait.
     const settled = callsTo( 'import/status' );
     await act( async () => {
       jest.advanceTimersByTime( 10000 );
@@ -377,7 +373,6 @@ describe( 'ImportPanel', () => {
 
     await startImport( container );
 
-    // Resumed into progress instead of erroring.
     expect( screen.getByText( 'Importing your donors' ) ).toBeTruthy();
 
     await act( async () => {

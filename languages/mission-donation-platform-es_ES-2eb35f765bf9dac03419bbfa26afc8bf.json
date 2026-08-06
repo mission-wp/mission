@@ -11,7 +11,7 @@
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
             "Ongoing": [
-                "En curso"
+                "Recurrente"
             ],
             "One Time": [
                 "Una vez"
@@ -64,6 +64,9 @@
             "Settings": [
                 "Ajustes"
             ],
+            "Donation Form": [
+                "Formulario de donaci\u00f3n"
+            ],
             "Payments": [
                 "Pagos"
             ],
@@ -81,6 +84,9 @@
             ],
             "default": [
                 "predeterminado"
+            ],
+            "Options": [
+                "Opciones"
             ],
             "Copy from\u2026": [
                 "Copiar de\u2026"
@@ -322,9 +328,6 @@
             "Placeholder": [
                 "Marcador de posici\u00f3n"
             ],
-            "Options": [
-                "Opciones"
-            ],
             "Option": [
                 "Opci\u00f3n"
             ],
@@ -357,9 +360,6 @@
             ],
             "Donation Form Settings": [
                 "Ajustes del formulario de donaci\u00f3n"
-            ],
-            "Donation Form": [
-                "Formulario de donaci\u00f3n"
             ],
             "Form Settings": [
                 "Ajustes del formulario"

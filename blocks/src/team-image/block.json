@@ -1,0 +1,80 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/team-image",
+	"version": "0.1.0",
+	"title": "Team Image",
+	"category": "mission-donation-platform",
+	"icon": "format-image",
+	"description": "A team's cover photo.",
+	"supports": {
+		"html": false,
+		"align": [ "left", "center", "right", "wide", "full" ],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"width": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"color": true,
+				"radius": true,
+				"width": true
+			}
+		},
+		"shadow": true,
+		"filter": {
+			"duotone": true
+		}
+	},
+	"selectors": {
+		"border": ".wp-block-mission-donation-platform-team-image img, .wp-block-mission-donation-platform-team-image .mission-image-placeholder",
+		"shadow": ".wp-block-mission-donation-platform-team-image img, .wp-block-mission-donation-platform-team-image .mission-image-placeholder",
+		"filter": {
+			"duotone": ".wp-block-mission-donation-platform-team-image img"
+		}
+	},
+	"styles": [
+		{ "name": "default", "label": "Default", "isDefault": true },
+		{ "name": "rounded", "label": "Rounded" }
+	],
+	"attributes": {
+		"teamId": {
+			"type": "number",
+			"default": 0
+		},
+		"alt": {
+			"type": "string",
+			"default": ""
+		},
+		"aspectRatio": {
+			"type": "string",
+			"default": ""
+		},
+		"width": {
+			"type": "string",
+			"default": ""
+		},
+		"height": {
+			"type": "string",
+			"default": ""
+		},
+		"scale": {
+			"type": "string",
+			"default": "cover"
+		},
+		"resolution": {
+			"type": "string",
+			"default": "large"
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

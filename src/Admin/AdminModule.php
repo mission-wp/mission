@@ -10,12 +10,15 @@ namespace MissionDP\Admin;
 use MissionDP\Admin\Pages\CampaignsPage;
 use MissionDP\Admin\Pages\DashboardPage;
 use MissionDP\Admin\Pages\DonorsPage;
+use MissionDP\Admin\Pages\FundraisersPage;
 use MissionDP\Admin\Pages\SettingsPage;
 use MissionDP\Admin\Pages\SubscriptionsPage;
+use MissionDP\Admin\Pages\TeamsPage;
 use MissionDP\Admin\Pages\ToolsPage;
 use MissionDP\Admin\Pages\TransactionsPage;
 use MissionDP\Constants\Frequency;
 use MissionDP\Import\ImportService;
+use MissionDP\Models\Campaign;
 use MissionDP\Models\ImportJob;
 
 defined( 'ABSPATH' ) || exit;
@@ -44,6 +47,16 @@ class AdminModule {
 	 * Submenu slug for Donors.
 	 */
 	public const DONORS_SLUG = 'mission-donation-platform-donors';
+
+	/**
+	 * Submenu slug for Fundraisers (peer-to-peer).
+	 */
+	public const FUNDRAISERS_SLUG = 'mission-donation-platform-fundraisers';
+
+	/**
+	 * Submenu slug for Teams (peer-to-peer).
+	 */
+	public const TEAMS_SLUG = 'mission-donation-platform-teams';
 
 	/**
 	 * Submenu slug for Subscriptions.
@@ -78,6 +91,8 @@ class AdminModule {
 			'campaigns'     => new CampaignsPage(),
 			'transactions'  => new TransactionsPage(),
 			'donors'        => new DonorsPage(),
+			'fundraisers'   => new FundraisersPage(),
+			'teams'         => new TeamsPage(),
 			'subscriptions' => new SubscriptionsPage(),
 			'settings'      => new SettingsPage(),
 			'tools'         => new ToolsPage(),
@@ -95,8 +110,16 @@ class AdminModule {
 		add_filter( 'parent_file', [ $this, 'set_campaign_parent_menu' ] );
 		add_filter( 'submenu_file', [ $this, 'set_campaign_submenu_file' ] );
 		add_filter( 'plugin_action_links_' . MISSIONDP_BASENAME, [ $this, 'add_plugin_action_links' ] );
+		add_action( 'mission_campaign_created', [ $this, 'invalidate_p2p_campaigns_cache' ] );
 
 		( new DeactivationSurvey() )->init();
+	}
+
+	/**
+	 * Drop the cached has-P2P-campaigns flag when a campaign is created.
+	 */
+	public function invalidate_p2p_campaigns_cache(): void {
+		delete_transient( 'missiondp_has_p2p_campaigns' );
 	}
 
 	/**
@@ -158,7 +181,6 @@ class AdminModule {
 			$asset['version']
 		);
 
-		// Enqueue block editor assets when viewing a campaign detail page.
 		$this->maybe_enqueue_block_editor( $screen );
 
 		$settings         = get_option( 'missiondp_settings', [] );
@@ -218,27 +240,22 @@ class AdminModule {
 			return;
 		}
 
-		// Only load on the campaign detail view (has ?campaign=ID).
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check for page context.
 		$campaign_id = isset( $_GET['campaign'] ) ? absint( $_GET['campaign'] ) : 0;
 		if ( ! $campaign_id ) {
 			return;
 		}
 
-		// Enqueue block editor UI, editor chrome, and block-level styles
-		// (core-registered handles; suffix built at runtime so this file
-		// doesn't read as declaring `wp-`-prefixed identifiers itself).
+		// Suffix built at runtime so this file doesn't read as declaring
+		// `wp-`-prefixed identifiers itself.
 		$core_prefix = 'wp-';
 		foreach ( [ 'block-editor', 'editor', 'edit-blocks', 'format-library' ] as $suffix ) {
 			wp_enqueue_style( $core_prefix . $suffix );
 		}
 
-		// Fire the block editor assets action so registered blocks
-		// get their editor scripts/styles enqueued.
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Invoking WordPress core action to load block editor assets on our custom admin page.
 		do_action( 'enqueue_block_editor_assets' );
 
-		// Build editor settings and inline them for the JS block editor.
 		$block_editor_context = new \WP_Block_Editor_Context( [ 'name' => 'mission-donation-platform/campaign-editor' ] );
 		$editor_settings      = get_block_editor_settings(
 			[],
@@ -251,9 +268,8 @@ class AdminModule {
 			'before'
 		);
 
-		// Register the "mission-donation-platform" block category in the JS store before block
-		// scripts run. Without this, registerBlockType() warns about an
-		// invalid category because BlockEditorProvider hasn't mounted yet.
+		// Register the block category before block scripts run, or
+		// registerBlockType() warns about an invalid category.
 		wp_add_inline_script(
 			'wp-blocks',
 			'( function() {' .
@@ -265,8 +281,6 @@ class AdminModule {
 			'after'
 		);
 
-		// Bootstrap server-side block definitions so registerBlockType()
-		// calls in block scripts can merge the full metadata (title, category, etc.).
 		$block_definitions = get_block_editor_server_block_settings();
 		wp_add_inline_script(
 			'wp-blocks',
@@ -288,6 +302,8 @@ class AdminModule {
 			'mission_page_mission-donation-platform-campaigns',
 			'mission_page_mission-donation-platform-transactions',
 			'mission_page_mission-donation-platform-donors',
+			'mission_page_mission-donation-platform-fundraisers',
+			'mission_page_mission-donation-platform-teams',
 			'mission_page_mission-donation-platform-subscriptions',
 			'mission_page_mission-donation-platform-settings',
 			'mission_page_mission-donation-platform-tools',
@@ -295,6 +311,29 @@ class AdminModule {
 		];
 
 		return in_array( $screen_id, $mission_screens, true );
+	}
+
+	/**
+	 * Whether at least one peer-to-peer campaign exists.
+	 *
+	 * Gates the Fundraisers and Teams menu items so they stay hidden on sites
+	 * that only run standard donation forms.
+	 *
+	 * @return bool
+	 */
+	private function has_p2p_campaigns(): bool {
+		$cached = get_transient( 'missiondp_has_p2p_campaigns' );
+
+		if ( false !== $cached ) {
+			return '1' === $cached;
+		}
+
+		$has = Campaign::count( [ 'type' => Campaign::TYPE_P2P ] ) > 0;
+
+		// Short TTL: creates invalidate explicitly; deletes just age out.
+		set_transient( 'missiondp_has_p2p_campaigns', $has ? '1' : '0', HOUR_IN_SECONDS );
+
+		return $has;
 	}
 
 	/**
@@ -350,6 +389,26 @@ class AdminModule {
 			self::DONORS_SLUG,
 			[ $this->pages['donors'], 'render' ]
 		);
+
+		if ( $this->has_p2p_campaigns() ) {
+			add_submenu_page(
+				self::MENU_SLUG,
+				__( 'Fundraisers', 'mission-donation-platform' ),
+				__( 'Fundraisers', 'mission-donation-platform' ),
+				'manage_options',
+				self::FUNDRAISERS_SLUG,
+				[ $this->pages['fundraisers'], 'render' ]
+			);
+
+			add_submenu_page(
+				self::MENU_SLUG,
+				__( 'Teams', 'mission-donation-platform' ),
+				__( 'Teams', 'mission-donation-platform' ),
+				'manage_options',
+				self::TEAMS_SLUG,
+				[ $this->pages['teams'], 'render' ]
+			);
+		}
 
 		add_submenu_page(
 			self::MENU_SLUG,

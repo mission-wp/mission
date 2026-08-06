@@ -228,7 +228,7 @@ class ImportJobDataStore implements DataStoreInterface {
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		$sql = 'SELECT * FROM %i' . $where_sql . " ORDER BY %i {$direction} LIMIT %d OFFSET %d";
+		$sql = 'SELECT * FROM %i' . $where_sql . " ORDER BY %i {$direction}, id {$direction} LIMIT %d OFFSET %d";
 
 		$prepare_args = array_merge(
 			[ $this->get_table_name() ],

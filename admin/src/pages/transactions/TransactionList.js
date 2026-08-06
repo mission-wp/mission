@@ -353,12 +353,10 @@ export default function TransactionList() {
       .catch( () => {} );
   }, [] );
 
-  // Fetch summary stats on mount.
   useEffect( () => {
     fetchSummary();
   }, [ fetchSummary ] );
 
-  // Fetch campaign list for filter elements on mount.
   useEffect( () => {
     apiFetch( { path: '/mission-donation-platform/v1/campaigns?per_page=100' } )
       .then( ( campaigns ) => {

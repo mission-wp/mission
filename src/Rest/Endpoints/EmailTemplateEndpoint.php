@@ -29,24 +29,6 @@ class EmailTemplateEndpoint {
 	use AdminPermissionTrait;
 
 	/**
-	 * Template file name per email type (hyphenated).
-	 *
-	 * @var array<string, string>
-	 */
-	private const TEMPLATE_MAP = [
-		'donation_receipt'          => 'donation-receipt',
-		'subscription_activated'    => 'subscription-activated',
-		'renewal_receipt'           => 'renewal-receipt',
-		'payment_failed'            => 'payment-failed',
-		'subscription_cancelled'    => 'subscription-cancelled',
-		'account_activation'        => 'account-activation',
-		'password_reset'            => 'password-reset',
-		'email_change_verification' => 'email-change-verification',
-		'donor_note'                => 'donor-note',
-		'tribute_notification'      => 'tribute-notification',
-	];
-
-	/**
 	 * Constructor.
 	 *
 	 * @param EmailModule $email Email module.
@@ -56,28 +38,6 @@ class EmailTemplateEndpoint {
 	) {}
 
 	/**
-	 * Default subjects per email type, with merge tags as literal placeholders.
-	 *
-	 * Wrapped in a method instead of a const so strings can be translated.
-	 *
-	 * @return array<string, string>
-	 */
-	private function default_subjects(): array {
-		return [
-			'donation_receipt'          => __( 'Thank you for your {amount} donation', 'mission-donation-platform' ),
-			'subscription_activated'    => __( 'Thank you for your {amount} {frequency} donation', 'mission-donation-platform' ),
-			'renewal_receipt'           => __( 'Thank you for your {frequency} gift of {amount}', 'mission-donation-platform' ),
-			'payment_failed'            => __( 'Action needed: Update your payment for your recurring donation', 'mission-donation-platform' ),
-			'subscription_cancelled'    => __( 'Your recurring donation has ended', 'mission-donation-platform' ),
-			'account_activation'        => __( 'Verify your email to activate your donor account', 'mission-donation-platform' ),
-			'password_reset'            => __( 'Reset your password', 'mission-donation-platform' ),
-			'email_change_verification' => __( 'Verify your new email address', 'mission-donation-platform' ),
-			'donor_note'                => __( 'A note about your donation', 'mission-donation-platform' ),
-			'tribute_notification'      => __( 'A donation has been made {tribute_type_label} {honoree_name}', 'mission-donation-platform' ),
-		];
-	}
-
-	/**
 	 * Register REST routes.
 	 *
 	 * @return void
@@ -85,7 +45,7 @@ class EmailTemplateEndpoint {
 	public function register(): void {
 		register_rest_route(
 			RestModule::NAMESPACE,
-			'/email/template/(?P<type>[a-z_]+)',
+			'/email/template/(?P<type>[a-z0-9_]+)',
 			[
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_template' ],
@@ -115,7 +75,7 @@ class EmailTemplateEndpoint {
 	public function get_template( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$type = $request->get_param( 'type' );
 
-		if ( ! isset( self::TEMPLATE_MAP[ $type ] ) ) {
+		if ( ! isset( EmailModule::TEMPLATE_MAP[ $type ] ) ) {
 			return new WP_Error(
 				'invalid_email_type',
 				__( 'Unknown email type.', 'mission-donation-platform' ),
@@ -124,14 +84,12 @@ class EmailTemplateEndpoint {
 		}
 
 		$email_module = $this->email;
-		$template     = self::TEMPLATE_MAP[ $type ];
-		$subject      = $this->default_subjects()[ $type ] ?? '';
+		$template     = EmailModule::TEMPLATE_MAP[ $type ];
+		$subject      = $this->email->default_subject( $type );
 
-		// Build data where values ARE the merge tag strings.
 		$data            = $this->build_tag_data( $type );
 		$data['subject'] = $subject;
 
-		// Render body, header, and footer separately.
 		$body   = $email_module->render_template_body( $template, $data );
 		$header = $email_module->render_partial( 'header', $data );
 		$footer = $email_module->render_partial( 'footer', $data );
@@ -154,7 +112,6 @@ class EmailTemplateEndpoint {
 	 * @return array<string, mixed>
 	 */
 	private function build_tag_data( string $type ): array {
-		// Create a fake donor with merge tag as first_name.
 		$donor = new Donor(
 			[
 				'id'         => 0,
@@ -171,10 +128,9 @@ class EmailTemplateEndpoint {
 			'campaign_name'          => '{campaign}',
 			'frequency_label'        => '{frequency}',
 			'next_renewal_formatted' => '{next_renewal_date}',
-			'subject'                => $this->default_subjects()[ $type ] ?? '',
+			'subject'                => $this->email->default_subject( $type ),
 		];
 
-		// Add type-specific tag data.
 		switch ( $type ) {
 			case 'renewal_receipt':
 			case 'donation_receipt':
@@ -211,8 +167,59 @@ class EmailTemplateEndpoint {
 				$data['message']            = '{message}';
 				$data['organization']       = '{organization}';
 				break;
+
+			case 'p2p_fundraiser_approved':
+				$data['page_url'] = '{page_url}';
+				break;
+
+			case 'p2p_fundraiser_received_donation':
+				$data['page_url']   = '{page_url}';
+				$data['giver_name'] = '{giver_name}';
+				break;
+
+			case 'p2p_fundraiser_milestone':
+				$data['page_url']         = '{page_url}';
+				$data['milestone_label']  = '{milestone}';
+				$data['raised_formatted'] = '{amount}';
+				$data['goal_formatted']   = '{goal}';
+				break;
+
+			case 'p2p_team_invitation':
+				$data['team']       = (object) [ 'name' => '{team_name}' ];
+				$data['accept_url'] = '{accept_url}';
+				break;
+
+			case 'p2p_team_member_joined':
+				$data['donor']       = $this->fake_captain();
+				$data['team']        = (object) [ 'name' => '{team_name}' ];
+				$data['member_name'] = '{member_name}';
+				$data['page_url']    = '{page_url}';
+				break;
+
+			case 'p2p_team_approved':
+				$data['donor']    = $this->fake_captain();
+				$data['team']     = (object) [ 'name' => '{team_name}' ];
+				$data['page_url'] = '{page_url}';
+				break;
 		}
 
 		return $data;
+	}
+
+	/**
+	 * A fake donor whose name renders as the captain merge tag (team emails
+	 * greet the captain, so the editor should show {captain_name}).
+	 *
+	 * @return Donor
+	 */
+	private function fake_captain(): Donor {
+		return new Donor(
+			[
+				'id'         => 0,
+				'email'      => '',
+				'first_name' => '{captain_name}',
+				'last_name'  => '',
+			]
+		);
 	}
 }

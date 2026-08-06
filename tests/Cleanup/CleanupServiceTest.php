@@ -12,6 +12,7 @@ use MissionDP\Database\DatabaseModule;
 use MissionDP\Database\DataStore\DonorDataStore;
 use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Models\Tribute;
@@ -55,7 +56,7 @@ class CleanupServiceTest extends WP_UnitTestCase {
 		global $wpdb;
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		foreach ( [ 'transactionmeta', 'transactions', 'tributes', 'transaction_history', 'subscriptionmeta', 'subscriptions', 'donormeta', 'donors', 'notes', 'webhook_deliveries', 'activity_log' ] as $table ) {
+		foreach ( [ 'transactionmeta', 'transactions', 'tributes', 'transaction_history', 'subscriptionmeta', 'subscriptions', 'donormeta', 'donors', 'fundraisers', 'notes', 'webhook_deliveries', 'activity_log' ] as $table ) {
 			$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_{$table}" );
 		}
 		// phpcs:enable
@@ -154,6 +155,48 @@ class CleanupServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test delete_test_transactions resets fundraiser test aggregates but keeps live ones.
+	 */
+	public function test_delete_test_transactions_resets_fundraiser_test_totals(): void {
+		$donor      = $this->create_donor( 'p2p' );
+		$fundraiser = new Fundraiser(
+			[
+				'campaign_id' => 1,
+				'donor_id'    => $donor->id,
+			]
+		);
+		$fundraiser->save();
+
+		// One live and one test donation, completed through the lifecycle so
+		// the fundraiser aggregates recompute.
+		foreach ( [ false, true ] as $is_test ) {
+			$transaction = new Transaction(
+				[
+					'status'        => 'pending',
+					'donor_id'      => $donor->id,
+					'fundraiser_id' => $fundraiser->id,
+					'amount'        => $is_test ? 2000 : 3000,
+					'is_test'       => $is_test,
+				]
+			);
+			$transaction->save();
+			$transaction->status = 'completed';
+			$transaction->save();
+		}
+
+		$this->assertSame( 2000, Fundraiser::find( $fundraiser->id )->test_total_raised );
+
+		$this->cleanup->delete_test_transactions();
+
+		$fresh = Fundraiser::find( $fundraiser->id );
+
+		$this->assertSame( 0, $fresh->test_total_raised );
+		$this->assertSame( 0, $fresh->test_transaction_count );
+		$this->assertSame( 0, $fresh->test_donor_count );
+		$this->assertSame( 3000, $fresh->total_raised );
+	}
+
+	/**
 	 * Test delete_test_donors removes orphaned donors and their meta, keeps donors with live history.
 	 */
 	public function test_delete_test_donors_cascades_and_keeps_live_donors(): void {
@@ -172,6 +215,35 @@ class CleanupServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( 1, $this->count_meta_rows( 'donormeta', 'missiondp_donor_id', $live_donor->id ) );
 		$this->assertSame( 0, $this->count_meta_rows( 'donormeta', 'missiondp_donor_id', $orphan_donor->id ) );
+	}
+
+	/**
+	 * Test delete_test_donors keeps fundraiser owners and account holders even
+	 * when they have no transactions yet (a P2P registrant awaiting their
+	 * first donation must survive the cleanup).
+	 */
+	public function test_delete_test_donors_keeps_fundraiser_owners_and_account_holders(): void {
+		$fundraiser_donor = $this->create_donor( 'fundraiser-owner' );
+		$account_donor    = $this->create_donor( 'account-holder' );
+		$orphan_donor     = $this->create_donor( 'deletable' );
+
+		$fundraiser = new Fundraiser(
+			[
+				'campaign_id' => 1,
+				'donor_id'    => $fundraiser_donor->id,
+			]
+		);
+		$fundraiser->save();
+
+		$account_donor->user_id = self::factory()->user->create();
+		$account_donor->save();
+
+		$this->cleanup->delete_test_donors();
+
+		$this->assertNotNull( Donor::find( $fundraiser_donor->id ) );
+		$this->assertNotNull( Fundraiser::find( $fundraiser->id ) );
+		$this->assertNotNull( Donor::find( $account_donor->id ) );
+		$this->assertNull( Donor::find( $orphan_donor->id ) );
 	}
 
 	/**
@@ -207,6 +279,40 @@ class CleanupServiceTest extends WP_UnitTestCase {
 
 		$this->assertSame( 1, $this->count_meta_rows( 'subscriptionmeta', 'missiondp_subscription_id', $live_sub->id ) );
 		$this->assertSame( 0, $this->count_meta_rows( 'subscriptionmeta', 'missiondp_subscription_id', $test_sub->id ) );
+	}
+
+	/**
+	 * Test delete_all_data removes campaign, fundraiser, and team shell posts
+	 * (with their meta) and the P2P upload markers, matching uninstall.php.
+	 */
+	public function test_delete_all_data_removes_shell_posts_and_upload_markers(): void {
+		$post_ids = [];
+
+		foreach ( [ 'missiondp_campaign', 'missiondp_fundraiser', 'missiondp_team' ] as $post_type ) {
+			$post_ids[ $post_type ] = self::factory()->post->create(
+				[
+					'post_type'   => $post_type,
+					'post_status' => 'publish',
+				]
+			);
+			update_post_meta( $post_ids[ $post_type ], 'probe_key', 'probe' );
+		}
+
+		$attachment_id = self::factory()->attachment->create();
+		update_post_meta( $attachment_id, '_missiondp_p2p_upload', 1 );
+
+		$this->cleanup->delete_all_data();
+
+		foreach ( $post_ids as $post_type => $post_id ) {
+			$this->assertNull( get_post( $post_id ), "{$post_type} shell post should be deleted." );
+			$this->assertSame( '', get_post_meta( $post_id, 'probe_key', true ) );
+		}
+
+		$this->assertSame( '', get_post_meta( $attachment_id, '_missiondp_p2p_upload', true ) );
+
+		// The TRUNCATEs in delete_all_data() commit the test transaction, so
+		// the attachment post won't roll back; remove it explicitly.
+		wp_delete_post( $attachment_id, true );
 	}
 
 	/**

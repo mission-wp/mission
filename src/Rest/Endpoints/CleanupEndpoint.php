@@ -128,7 +128,6 @@ class CleanupEndpoint {
 	public function run_action( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$action = $request->get_param( 'action' );
 
-		// Nuclear option requires typed confirmation.
 		if ( 'delete_all_data' === $action ) {
 			$confirmation = $request->get_param( 'confirmation' );
 			if ( 'DELETE' !== $confirmation ) {

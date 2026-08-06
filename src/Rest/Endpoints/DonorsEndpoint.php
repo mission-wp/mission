@@ -373,7 +373,6 @@ class DonorsEndpoint {
 		$data['is_recurring'] = $detail_stats['is_recurring'];
 		$data['is_top_donor'] = $detail_stats['is_top_donor'];
 
-		// Since label — formatted "Jan 2024" from date_created.
 		$data['since_label'] = '';
 		if ( $donor->date_created && ! str_starts_with( $donor->date_created, '0000' ) ) {
 			$timestamp           = strtotime( $donor->date_created );

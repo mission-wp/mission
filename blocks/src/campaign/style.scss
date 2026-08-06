@@ -9,6 +9,7 @@
   --mission-bg: #fff;
   --mission-radius: 6px;
 
+  box-sizing: border-box;
   background: var(--mission-bg);
   border: 1px solid var(--mission-border);
   border-radius: var(--mission-radius);

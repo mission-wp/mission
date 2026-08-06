@@ -115,7 +115,6 @@ class DeactivationSurveyEndpoint {
 			]
 		);
 
-		// Non-blocking so a slow or unreachable API never delays deactivation.
 		wp_remote_post(
 			'https://api.missionwp.com/v1/deactivation-survey',
 			[

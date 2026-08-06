@@ -99,7 +99,36 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 
 		$output = do_shortcode( '[mission_campaign_progress campaign_id="' . $campaign->id . '"]' );
 
-		$this->assertStringContainsString( 'mission-cp-', $output );
+		$this->assertStringContainsString( 'mission-progress__', $output );
+	}
+
+	/**
+	 * The legacy campaign progress classes stay on the markup for user CSS overrides.
+	 *
+	 * These shipped in earlier releases; themes target them, so they must
+	 * remain alongside the mission-progress__* classes.
+	 */
+	public function test_campaign_progress_keeps_legacy_classes(): void {
+		$campaign = $this->create_campaign( [ 'goal_amount' => 10000 ] );
+
+		$output = do_shortcode( '[mission_campaign_progress campaign_id="' . $campaign->id . '"]' );
+
+		foreach ( [
+			'mission-campaign-progress',
+			'mission-cp-header',
+			'mission-cp-raised',
+			'mission-cp-goal',
+			'mission-cp-percentage',
+			'mission-cp-bar',
+			'mission-cp-bar__fill',
+			'mission-cp-stats',
+			'mission-cp-stat',
+			'mission-cp-stat__value',
+			'mission-cp-stat__label',
+			'mission-cp-donate-btn',
+		] as $legacy_class ) {
+			$this->assertStringContainsString( $legacy_class, $output, "Legacy class {$legacy_class} missing from output." );
+		}
 	}
 
 	/**

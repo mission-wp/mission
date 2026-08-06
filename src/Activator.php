@@ -42,14 +42,14 @@ class Activator {
 			self::log_plugin_activated();
 		}
 
-		// Store the plugin version for future upgrade routines.
 		update_option( 'missiondp_version', MISSIONDP_VERSION );
-
-		// Set a transient to trigger a welcome/activation notice.
 		set_transient( 'missiondp_activated', true, 30 );
 
-		// Register the post type so its rewrite rules are included in the flush.
+		// Register post types and rules so they're included in the flush.
 		( new Campaigns\CampaignPostType() )->register();
+		( new P2P\FundraiserPostType() )->register();
+		( new P2P\TeamPostType() )->register();
+		( new P2P\P2PRewrites() )->add_rewrite_rules();
 		flush_rewrite_rules();
 	}
 
@@ -117,7 +117,6 @@ class Activator {
 	 * @return void
 	 */
 	private static function set_default_options(): void {
-		// Only set defaults on fresh installs, not reactivations.
 		if ( false === get_option( 'missiondp_settings' ) ) {
 			add_option( 'missiondp_settings', self::get_default_settings() );
 		}

@@ -25,36 +25,20 @@ import {
   minorToMajor,
 } from '@shared/currencies';
 import { PLATFORM_FEE_RATE } from '@shared/fees';
+import {
+  PRE_CHARGE_DEADLINE_MS,
+  CONFIRM_SLOW_NOTICE_MS,
+  RECORD_DONATION_DEADLINE_MS,
+  withDeadline,
+  buildAppearance,
+  buildElementsOptions,
+  buildPaymentElementOptions,
+  getPaymentConfig,
+  paymentIntentIdFrom,
+} from '@shared/stripe';
 
-// Deadlines keep the submit spinner from spinning forever if a promise
-// never settles. Only the non-interactive steps get a hard deadline:
-// confirmPayment may show a 3D Secure challenge the donor can legitimately
-// sit on for minutes, so it gets a soft "taking too long" notice instead.
-const PRE_CHARGE_DEADLINE_MS = 30000;
-const CONFIRM_SLOW_NOTICE_MS = 30000;
-const RECORD_DONATION_DEADLINE_MS = 15000;
 const PRE_CHARGE_TIMEOUT_MESSAGE =
   'The payment could not be started. Please check your connection and try again.';
-
-/**
- * Race a promise against a deadline that rejects with the given message.
- *
- * Exported for unit tests only.
- *
- * @param {Promise} promise The promise to guard.
- * @param {number}  ms      Deadline in milliseconds.
- * @param {string}  message Error message shown to the donor on timeout.
- * @return {Promise} The guarded promise.
- */
-export function withDeadline( promise, ms, message ) {
-  let timer;
-  return Promise.race( [
-    Promise.resolve( promise ).finally( () => clearTimeout( timer ) ),
-    new Promise( ( _resolve, reject ) => {
-      timer = setTimeout( () => reject( new Error( message ) ), ms );
-    } ),
-  ] );
-}
 
 /**
  * Get the platform fee rate for fee recovery calculations.
@@ -272,7 +256,6 @@ store( 'mission-donation-platform/donation-form', {
     selectOngoing() {
       const ctx = getContext();
       ctx.isOngoing = true;
-      // Prefer monthly when switching to ongoing, fall back to first available.
       const freq = ctx.recurringFrequencies.includes( 'monthly' )
         ? 'monthly'
         : ctx.recurringFrequencies[ 0 ] || 'monthly';
@@ -330,7 +313,6 @@ store( 'mission-donation-platform/donation-form', {
         return;
       }
 
-      // Step 1 → validate amount + tribute.
       if ( ctx.currentStep === 1 ) {
         const amount = getEffectiveAmount( ctx );
         const minimum = ctx.settings.minimumAmount || 0;
@@ -338,7 +320,6 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Validate tribute fields.
         if ( ctx.tributeChecked ) {
           ctx.honoreeNameError = ! ctx.honoreeName.trim();
           if ( ctx.notifyEnabled ) {
@@ -363,7 +344,6 @@ store( 'mission-donation-platform/donation-form', {
         }
       }
 
-      // Step 2 (custom fields) → validate required fields.
       if ( ctx.currentStep === 2 && ctx.hasCustomFields ) {
         if ( ! validateCustomFields( ctx ) ) {
           const { ref } = getElement();
@@ -462,7 +442,6 @@ store( 'mission-donation-platform/donation-form', {
       event.stopPropagation();
       const ctx = getContext();
       ctx.isCustomTip = true;
-      // Pre-fill at 15% of donation amount.
       const amount = getEffectiveAmount( ctx );
       ctx.customTipAmount = calculateTip( amount, 15, ctx.settings.currency );
       ctx.selectedTipPercent = 0;
@@ -584,7 +563,6 @@ store( 'mission-donation-platform/donation-form', {
       } else {
         ctx.customFieldValues[ fieldId ] = event.target.value;
       }
-      // Clear error on interaction.
       if ( ctx.customFieldErrors?.[ fieldId ] ) {
         const errors = { ...ctx.customFieldErrors };
         delete errors[ fieldId ];
@@ -616,7 +594,6 @@ store( 'mission-donation-platform/donation-form', {
       } else {
         ctx.customFieldValues[ fieldId ] = [ ...current, optionValue ];
       }
-      // Clear error on interaction.
       if ( ctx.customFieldErrors?.[ fieldId ] ) {
         const errors = { ...ctx.customFieldErrors };
         delete errors[ fieldId ];
@@ -631,7 +608,6 @@ store( 'mission-donation-platform/donation-form', {
       // eslint-disable-next-line @wordpress/no-unused-vars-before-return -- getElement() must be called synchronously at action start.
       const stripeState = getStripeState( getElement().ref );
 
-      // Prevent double-submit.
       if ( ctx.isSubmitting ) {
         return;
       }
@@ -647,7 +623,6 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Validate all fields at once — our own and Stripe's.
         if ( ! ctx.settings.collectAddress ) {
           ctx.firstNameError = ! ctx.firstName;
           ctx.lastNameError = ! ctx.lastName;
@@ -680,7 +655,6 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Calculate amounts (tip first — fee depends on it).
         const donationAmount = getEffectiveAmount( ctx );
         const tipAmount = getTipAmount( ctx, donationAmount );
         const { rate, fixed } = getFeeParams( ctx );
@@ -718,6 +692,8 @@ store( 'mission-donation-platform/donation-form', {
               donor_last_name: ctx.lastName,
               frequency: ctx.selectedFrequency,
               campaign_id: ctx.campaignId || 0,
+              fundraiser_id: ctx.fundraiserId || 0,
+              team_id: ctx.teamId || 0,
               source_post_id: ctx.sourcePostId || 0,
               form_id: ctx.formId || '',
               stripe_account_id: ctx.stripeAccountId || '',
@@ -838,18 +814,14 @@ store( 'mission-donation-platform/donation-form', {
           return;
         }
 
-        // Step 4: Confirm the donation. The server verifies PaymentIntent
-        // status with Stripe and transitions the transaction synchronously
-        // in the common case. If the server returns 202 (still processing),
-        // the webhook will complete the transaction asynchronously — we
-        // show the success UI either way because Stripe.js has already
-        // confirmed the payment client-side.
+        // On 202 (still processing) the webhook completes the transaction;
+        // success UI shows either way since Stripe.js already confirmed.
         const confirmEndpoint = isRecurring
           ? 'donations/confirm-subscription'
           : 'donations/confirm';
         const confirmBody = {
           transaction_id: intentData.transaction_id,
-          payment_intent_id: intentData.client_secret.split( '_secret_' )[ 0 ],
+          payment_intent_id: paymentIntentIdFrom( intentData.client_secret ),
         };
 
         if ( isRecurring ) {
@@ -886,7 +858,6 @@ store( 'mission-donation-platform/donation-form', {
           console.error( 'Mission: Failed to record confirmation', confirmErr );
         }
 
-        // Step 5: Handle confirmation — redirect or show success state.
         if (
           ctx.confirmationType === 'redirect' &&
           ctx.confirmationRedirectUrl
@@ -1145,17 +1116,13 @@ store( 'mission-donation-platform/donation-form', {
         return;
       }
 
-      const configResponse = yield fetch(
-        `${ ctx.restUrl }donations/payment-config`
-      );
+      const configData = yield getPaymentConfig( ctx.restUrl );
 
-      if ( ! configResponse.ok ) {
+      if ( ! configData ) {
         ctx.paymentError =
           'Payment processing is not available right now. Please try again later.';
         return;
       }
-
-      const configData = yield configResponse.json();
 
       if ( ! configData.connected_account_id ) {
         ctx.paymentError =
@@ -1187,55 +1154,28 @@ store( 'mission-donation-platform/donation-form', {
           )
         : 0;
 
-      const customAppearance = ctx.stripeAppearance || {};
+      stripeState.appearance = buildAppearance(
+        ctx.primaryColor,
+        ctx.stripeAppearance || {}
+      );
 
-      stripeState.appearance = {
-        theme: customAppearance.theme || 'stripe',
-        variables: {
-          colorPrimary: ctx.primaryColor || '#2FA36B',
-          colorDanger: '#dc2626',
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          borderRadius: '10px',
-          ...( customAppearance.variables || {} ),
-        },
-        rules: {
-          '.Input--invalid': {
-            borderColor: '#dc2626',
-            boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.12)',
-          },
-          '.Error': {
-            fontSize: '0.8125rem',
-          },
-          ...( customAppearance.rules || {} ),
-        },
-      };
+      stripeState.elements = stripeState.stripe.elements(
+        buildElementsOptions( {
+          amount: amount + fee + tip,
+          currency: ctx.settings.currency,
+          appearance: stripeState.appearance,
+        } )
+      );
 
-      stripeState.elements = stripeState.stripe.elements( {
-        mode: 'payment',
-        amount: amount + fee + tip,
-        currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
-        paymentMethodTypes: [ 'card' ],
-        appearance: stripeState.appearance,
-      } );
-
-      const paymentElement = stripeState.elements.create( 'payment', {
-        layout: 'tabs',
-        fields: {
-          billingDetails: {
-            name: 'never',
-            email: 'never',
-            address: ctx.settings.collectAddress ? 'never' : 'auto',
-          },
-        },
-        wallets: {
-          link: 'never',
-        },
-      } );
+      const paymentElement = stripeState.elements.create(
+        'payment',
+        buildPaymentElementOptions( {
+          address: ctx.settings.collectAddress ? 'never' : 'auto',
+        } )
+      );
 
       paymentElement.mount( ref );
 
-      // Mount Address Element for full billing address collection.
       if ( ctx.settings.collectAddress ) {
         const addressContainer = document.getElementById(
           ref.id.replace( 'payment-element', 'address-element' )
@@ -1251,7 +1191,6 @@ store( 'mission-donation-platform/donation-form', {
             if ( event.value ) {
               ctx.firstName = event.value.firstName || '';
               ctx.lastName = event.value.lastName || '';
-              // Capture billing address.
               const addr = event.value.address || {};
               ctx.addressLine1 = addr.line1 || '';
               ctx.addressLine2 = addr.line2 || '';
@@ -1306,27 +1245,20 @@ store( 'mission-donation-platform/donation-form', {
       if ( isRecurring !== stripeState.isRecurring ) {
         stripeState.isRecurring = isRecurring;
         if ( container && total > 0 ) {
-          stripeState.elements = stripeState.stripe.elements( {
-            mode: 'payment',
-            amount: total,
-            currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
-            paymentMethodTypes: [ 'card' ],
-            ...( isRecurring && {
-              setupFutureUsage: 'off_session',
-            } ),
-            appearance: stripeState.appearance,
-          } );
-          const paymentElement = stripeState.elements.create( 'payment', {
-            layout: 'tabs',
-            fields: {
-              billingDetails: {
-                name: 'never',
-                email: 'never',
-                address: ctx.settings.collectAddress ? 'never' : 'auto',
-              },
-            },
-            wallets: { link: 'never' },
-          } );
+          stripeState.elements = stripeState.stripe.elements(
+            buildElementsOptions( {
+              amount: total,
+              currency: ctx.settings.currency,
+              appearance: stripeState.appearance,
+              recurring: isRecurring,
+            } )
+          );
+          const paymentElement = stripeState.elements.create(
+            'payment',
+            buildPaymentElementOptions( {
+              address: ctx.settings.collectAddress ? 'never' : 'auto',
+            } )
+          );
           container.replaceChildren();
           paymentElement.mount( container );
 

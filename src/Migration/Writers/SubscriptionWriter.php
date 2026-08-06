@@ -49,10 +49,8 @@ class SubscriptionWriter extends AbstractWriter {
 					continue;
 				}
 
-				// A Mission subscription already exists for this gateway
-				// subscription (e.g. the same data was CSV-imported earlier).
-				// Reuse it: stamp it so transactions resolve their references,
-				// but never mark it created — rollback must not delete it.
+				// A subscription may already exist for this gateway ID (e.g. CSV-imported earlier).
+				// Stamp it so transactions resolve, but never mark it created: rollback must not delete it.
 				$gateway_id  = (string) ( $record['gateway_subscription_id'] ?? '' );
 				$existing_id = '' !== $gateway_id ? ( $gateway_map[ $gateway_id ] ?? null ) : null;
 

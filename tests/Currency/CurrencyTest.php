@@ -105,6 +105,28 @@ class CurrencyTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test major-to-minor conversion per decimal class.
+	 */
+	public function test_major_to_minor(): void {
+		$this->assertSame( 4500, Currency::major_to_minor( 45.0, 'USD' ) );
+		$this->assertSame( 30000, Currency::major_to_minor( 300, 'USD' ) );
+		$this->assertSame( 1250, Currency::major_to_minor( 12.5, 'USD' ) );
+		$this->assertSame( 500, Currency::major_to_minor( 500, 'JPY' ) );
+		$this->assertSame( 1500, Currency::major_to_minor( 1.5, 'KWD' ) );
+	}
+
+	/**
+	 * Test major-to-minor round-trips with minor-to-major.
+	 */
+	public function test_major_minor_round_trip(): void {
+		foreach ( [ 'USD', 'JPY', 'KWD' ] as $code ) {
+			$minor = 12345;
+			$major = Currency::minor_to_major( $minor, $code );
+			$this->assertSame( $minor, Currency::major_to_minor( $major, $code ) );
+		}
+	}
+
+	/**
 	 * Test format_amount uses two decimals for USD.
 	 */
 	public function test_format_amount_usd(): void {
@@ -137,5 +159,69 @@ class CurrencyTest extends WP_UnitTestCase {
 	 */
 	public function test_get_symbol_usd(): void {
 		$this->assertSame( '$', Currency::get_symbol( 'USD' ) );
+	}
+
+	/**
+	 * Test format_amount_i18n matches format_amount for en_US whole workflow.
+	 */
+	public function test_format_amount_i18n_usd(): void {
+		if ( ! class_exists( \NumberFormatter::class ) ) {
+			$this->markTestSkipped( 'ext-intl not available.' );
+		}
+
+		$this->assertSame( '$50.00', Currency::format_amount_i18n( 5000, 'USD' ) );
+		$this->assertSame( '$1,000.00', Currency::format_amount_i18n( 100000, 'USD' ) );
+	}
+
+	/**
+	 * Test format_amount_i18n strips zero cents for whole amounts only.
+	 */
+	public function test_format_amount_i18n_strip_zero_cents(): void {
+		if ( ! class_exists( \NumberFormatter::class ) ) {
+			$this->markTestSkipped( 'ext-intl not available.' );
+		}
+
+		$this->assertSame( '$25', Currency::format_amount_i18n( 2500, 'USD', true ) );
+		$this->assertSame( '$25.50', Currency::format_amount_i18n( 2550, 'USD', true ) );
+	}
+
+	/**
+	 * Test format_amount_i18n handles zero-decimal currencies.
+	 */
+	public function test_format_amount_i18n_jpy(): void {
+		if ( ! class_exists( \NumberFormatter::class ) ) {
+			$this->markTestSkipped( 'ext-intl not available.' );
+		}
+
+		$this->assertSame( '¥500', Currency::format_amount_i18n( 500, 'JPY' ) );
+	}
+
+	/**
+	 * Test format_amount_i18n follows the site locale.
+	 */
+	public function test_format_amount_i18n_site_locale(): void {
+		if ( ! class_exists( \NumberFormatter::class ) ) {
+			$this->markTestSkipped( 'ext-intl not available.' );
+		}
+
+		// Some builds ship ICU with English-only locale data (e.g. the wp-env
+		// image); German formatting then silently falls back to en.
+		$probe = new \NumberFormatter( 'de_DE', \NumberFormatter::DECIMAL );
+		if ( ',' !== $probe->getSymbol( \NumberFormatter::DECIMAL_SEPARATOR_SYMBOL ) ) {
+			$this->markTestSkipped( 'ICU locale data for de_DE not available.' );
+		}
+
+		add_filter( 'locale', fn() => 'de_DE' );
+		$formatted = Currency::format_amount_i18n( 5000, 'EUR' );
+		remove_all_filters( 'locale' );
+
+		$this->assertSame( '50,00 €', str_replace( "\u{a0}", ' ', $formatted ) );
+	}
+
+	/**
+	 * Test format_amount_i18n always produces the number, intl or not.
+	 */
+	public function test_format_amount_i18n_contains_amount(): void {
+		$this->assertStringContainsString( '50', Currency::format_amount_i18n( 5000, 'USD' ) );
 	}
 }

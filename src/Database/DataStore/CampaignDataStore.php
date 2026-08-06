@@ -22,7 +22,36 @@ defined( 'ABSPATH' ) || exit;
  */
 class CampaignDataStore implements DataStoreInterface {
 
+	use CachesRows;
 	use MetaTrait;
+
+	/**
+	 * Non-persistent cache group for memoized campaign rows.
+	 */
+	public const CACHE_GROUP = 'missiondp_campaigns';
+
+	/**
+	 * Aggregate columns owned by recompute_aggregates(). Excluded from update()
+	 * so a stale in-memory model can't overwrite a concurrent recompute (e.g. a
+	 * donation webhook landing between a request's find() and save()).
+	 *
+	 * @var string[]
+	 */
+	private const AGGREGATE_COLUMNS = [
+		'total_raised',
+		'transaction_count',
+		'donor_count',
+		'test_total_raised',
+		'test_transaction_count',
+		'test_donor_count',
+	];
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function cache_group(): string {
+		return self::CACHE_GROUP;
+	}
 
 	/**
 	 * Get the fully-prefixed table name.
@@ -85,10 +114,18 @@ class CampaignDataStore implements DataStoreInterface {
 	public function read( int $id ): ?Campaign {
 		global $wpdb;
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
-			ARRAY_A
-		);
+		$row = $this->cached_row( $id );
+
+		if ( null === $row ) {
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $this->get_table_name(), $id ),
+				ARRAY_A
+			);
+
+			if ( $row ) {
+				$this->prime_row_cache( $row );
+			}
+		}
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -103,10 +140,22 @@ class CampaignDataStore implements DataStoreInterface {
 	public function find_by_post_id( int $post_id ): ?Campaign {
 		global $wpdb;
 
-		$row = $wpdb->get_row(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
-			ARRAY_A
-		);
+		if ( $post_id <= 0 ) {
+			return null;
+		}
+
+		$row = $this->cached_row_by_post_id( $post_id );
+
+		if ( null === $row ) {
+			$row = $wpdb->get_row(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE post_id = %d', $this->get_table_name(), $post_id ),
+				ARRAY_A
+			);
+
+			if ( $row ) {
+				$this->prime_row_cache( $row );
+			}
+		}
 
 		return $row ? $this->row_to_model( $row ) : null;
 	}
@@ -180,7 +229,9 @@ class CampaignDataStore implements DataStoreInterface {
 
 		$data                  = $this->model_to_row( $model );
 		$data['date_modified'] = current_time( 'mysql', true );
-		unset( $data['id'] );
+		// A campaign's type (standard/p2p) is fixed at creation; never rewrite it.
+		unset( $data['id'], $data['type'] );
+		$data = array_diff_key( $data, array_flip( self::AGGREGATE_COLUMNS ) );
 
 		$result = $wpdb->update(
 			$this->get_table_name(),
@@ -189,6 +240,8 @@ class CampaignDataStore implements DataStoreInterface {
 			null,
 			[ '%d' ]
 		);
+
+		$this->forget_cached_row( $model->id, $old->post_id );
 
 		return false !== $result;
 	}
@@ -272,6 +325,8 @@ class CampaignDataStore implements DataStoreInterface {
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
+		$this->forget_cached_row( $id );
+
 		return false !== $result;
 	}
 
@@ -295,13 +350,18 @@ class CampaignDataStore implements DataStoreInterface {
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order} LIMIT %d OFFSET %d";
+		$sql          = "SELECT * FROM %i WHERE {$where} ORDER BY %i {$order}, id {$order} LIMIT %d OFFSET %d";
 		$prepare_args = array_merge( [ $this->get_table_name() ], $values, [ $orderby, $per_page, $offset ] );
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via placeholders built from counted arrays, direction whitelisted.
-		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A ) ?: [];
 
-		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
+		// Prime the memo so later find()/find_by_post_id() reads are free.
+		foreach ( $rows as $row ) {
+			$this->prime_row_cache( $row );
+		}
+
+		return array_map( [ $this, 'row_to_model' ], $rows );
 	}
 
 	/**
@@ -334,6 +394,23 @@ class CampaignDataStore implements DataStoreInterface {
 			$placeholders = implode( ', ', array_fill( 0, count( $args['status__in'] ), '%s' ) );
 			$clauses[]    = "status IN ( {$placeholders} )";
 			$values       = array_merge( $values, array_map( 'strval', $args['status__in'] ) );
+		}
+
+		if ( ! empty( $args['type'] ) ) {
+			$clauses[] = 'type = %s';
+			$values[]  = (string) $args['type'];
+		}
+
+		if ( ! empty( $args['type__in'] ) && is_array( $args['type__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['type__in'] ), '%s' ) );
+			$clauses[]    = "type IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'strval', $args['type__in'] ) );
+		}
+
+		if ( ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['id__in'] ), '%d' ) );
+			$clauses[]    = "id IN ( {$placeholders} )";
+			$values       = array_merge( $values, array_map( 'intval', $args['id__in'] ) );
 		}
 
 		if ( isset( $args['show_in_listings'] ) ) {
@@ -429,6 +506,7 @@ class CampaignDataStore implements DataStoreInterface {
 			'description'            => $model->description,
 			'goal_amount'            => $model->goal_amount,
 			'goal_type'              => $model->goal_type,
+			'type'                   => $model->type,
 			'total_raised'           => $model->total_raised,
 			'transaction_count'      => $model->transaction_count,
 			'donor_count'            => $model->donor_count,

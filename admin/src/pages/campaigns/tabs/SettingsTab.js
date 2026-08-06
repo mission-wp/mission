@@ -7,6 +7,7 @@ import { getCurrencySymbol } from '@shared/currency';
 import GoalTypePicker from '../../../components/GoalTypePicker';
 import ToggleRow from '@shared/components/ToggleRow';
 import DangerZone from './settings/DangerZone';
+import P2PSettings from './settings/P2PSettings';
 
 const GOAL_LABELS = {
   amount: __( 'Fundraising Goal', 'mission-donation-platform' ),
@@ -37,7 +38,6 @@ export default function SettingsTab( {
     }
   };
 
-  // Fetch other campaigns for the redirect dropdown.
   const fetchCampaigns = useCallback( async () => {
     try {
       const items = await apiFetch( {
@@ -340,6 +340,15 @@ export default function SettingsTab( {
           </>
         ) }
       </div>
+
+      { /* Peer-to-Peer */ }
+      { campaign.type === 'p2p' && (
+        <P2PSettings
+          formState={ formState }
+          updateField={ updateField }
+          handleKeyDown={ handleKeyDown }
+        />
+      ) }
 
       { /* Danger Zone */ }
       <DangerZone campaignId={ campaign.id } campaignTitle={ campaign.title } />

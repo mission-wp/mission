@@ -10,9 +10,9 @@
  * @var WP_Block $block      Block instance.
  */
 
-use MissionDP\Campaigns\CampaignPostType;
 use MissionDP\Currency\Currency;
 use MissionDP\Models\Campaign;
+use MissionDP\P2P\BlockSupport;
 use MissionDP\Reporting\ReportingService;
 use MissionDP\Settings\SettingsService;
 
@@ -20,22 +20,9 @@ defined( 'ABSPATH' ) || exit;
 
 
 ( static function ( $attributes, $content, $block ): void {
-// Resolve the campaign.
-$campaign    = null;
-$campaign_id = 0;
-
-if ( ! empty( $attributes['campaignId'] ) ) {
-	$campaign = Campaign::find( (int) $attributes['campaignId'] );
-} else {
-	$current_post = get_post();
-	if ( $current_post && CampaignPostType::POST_TYPE === $current_post->post_type ) {
-		$campaign = Campaign::find_by_post_id( $current_post->ID );
-	}
-}
-
-if ( $campaign ) {
-	$campaign_id = $campaign->id;
-}
+// Resolve the campaign (0 shows donors across all campaigns).
+$campaign    = BlockSupport::resolve_campaign( $attributes );
+$campaign_id = $campaign->id ?? 0;
 
 if ( ! $campaign_id ) {
 	return;
@@ -178,26 +165,6 @@ foreach ( $items as $i => &$entry ) {
 }
 unset( $entry );
 
-// Primary color.
-$global_primary = $mission_settings['primary_color'] ?? '#2fa36b';
-$primary_color  = $global_primary;
-
-$darken_color = static function ( string $hex, float $percent ): string {
-	$hex = ltrim( $hex, '#' );
-	$r   = max( 0, (int) round( hexdec( substr( $hex, 0, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$g   = max( 0, (int) round( hexdec( substr( $hex, 2, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$b   = max( 0, (int) round( hexdec( substr( $hex, 4, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	return sprintf( '#%02x%02x%02x', $r, $g, $b );
-};
-
-$primary_hover = $darken_color( $primary_color, 12 );
-$hex_trimmed   = ltrim( $primary_color, '#' );
-$primary_r     = hexdec( substr( $hex_trimmed, 0, 2 ) );
-$primary_g     = hexdec( substr( $hex_trimmed, 2, 2 ) );
-$primary_b     = hexdec( substr( $hex_trimmed, 4, 2 ) );
-$luminance     = ( 0.299 * $primary_r + 0.587 * $primary_g + 0.114 * $primary_b ) / 255;
-$primary_text  = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
-
 // Compute truncated comments for display.
 foreach ( $items as &$entry ) {
 	if ( ! empty( $entry['comment'] ) && mb_strlen( $entry['comment'] ) > $comment_length ) {
@@ -231,9 +198,7 @@ $context = [
 
 // Wrapper attributes.
 $style_parts = [
-	'--mission-primary:' . esc_attr( $primary_color ),
-	'--mission-primary-hover:' . esc_attr( $primary_hover ),
-	'--mission-primary-text:' . esc_attr( $primary_text ),
+	BlockSupport::primary_color_style(),
 	'--mission-dw-columns:' . $columns,
 	'--mission-dw-avatar-size:' . $avatar_width . 'px',
 ];

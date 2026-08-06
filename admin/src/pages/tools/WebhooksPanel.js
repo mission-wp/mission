@@ -206,7 +206,6 @@ function WebhookRow( {
   const menuRef = useRef();
   const urlInputRef = useRef();
 
-  // Close dropdown on outside click.
   useEffect( () => {
     if ( ! openMenu ) {
       return;
@@ -220,7 +219,6 @@ function WebhookRow( {
     return () => document.removeEventListener( 'click', close, true );
   }, [ openMenu ] );
 
-  // Auto-select URL input on expand.
   useEffect( () => {
     if ( expandedUrl && urlInputRef.current ) {
       urlInputRef.current.focus();

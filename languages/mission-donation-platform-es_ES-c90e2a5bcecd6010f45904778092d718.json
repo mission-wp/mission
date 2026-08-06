@@ -1,0 +1,67 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/top-teams\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Campaign": [
+                "Campa\u00f1a"
+            ],
+            "Top Teams": [
+                "Mejores equipos"
+            ],
+            "%s member": [
+                "%s miembro",
+                "%s miembros"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "Show progress bar": [
+                "Mostrar barra de progreso"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "Selecciona una campa\u00f1a o coloca este bloque en una p\u00e1gina de campa\u00f1a."
+            ],
+            "Custom URL": [
+                "URL personalizada"
+            ],
+            "Hide": [
+                "Ocultar"
+            ],
+            "Show ribbons": [
+                "Mostrar distintivos"
+            ],
+            "Open the sign-up modal": [
+                "Abrir la ventana de registro"
+            ],
+            "Button (empty state)": [
+                "Bot\u00f3n (estado vac\u00edo)"
+            ],
+            "Button URL": [
+                "URL del bot\u00f3n"
+            ],
+            "Number of teams": [
+                "N\u00famero de equipos"
+            ],
+            "Show logos": [
+                "Mostrar logotipos"
+            ],
+            "Show member count": [
+                "Mostrar n\u00famero de miembros"
+            ],
+            "Gold, silver, and bronze badges for the top 3 teams.": [
+                "Insignias de oro, plata y bronce para los 3 mejores equipos."
+            ]
+        }
+    }
+}

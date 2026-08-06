@@ -1,0 +1,27 @@
+// Campaign Description — frontend styles.
+
+.mission-cd-description {
+  --mission-text: #333;
+  --mission-text-secondary: #666;
+
+  color: var(--mission-text);
+  line-height: 1.6;
+
+  p {
+    margin: 0 0 14px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.mission-cd-description__link a {
+  color: var(--mission-primary);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

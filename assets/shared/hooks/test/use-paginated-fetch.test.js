@@ -125,7 +125,7 @@ describe( 'usePaginatedFetch', () => {
     expect( result.current.totalPages ).toBe( 3 );
   } );
 
-  it( 'resets to an empty list with zero totals on error', async () => {
+  it( 'resets to an empty list with zero totals and exposes the error', async () => {
     apiFetch.mockResolvedValueOnce(
       mockResponse( [ { id: 1 } ], { total: 1, pages: 1 } )
     );
@@ -140,6 +140,7 @@ describe( 'usePaginatedFetch', () => {
     );
 
     await waitFor( () => expect( result.current.totalItems ).toBe( 1 ) );
+    expect( result.current.error ).toBeNull();
 
     apiFetch.mockRejectedValueOnce( new Error( 'boom' ) );
     rerender( { view: { ...BASE_VIEW, page: 2 } } );
@@ -148,6 +149,66 @@ describe( 'usePaginatedFetch', () => {
     expect( result.current.data ).toEqual( [] );
     expect( result.current.totalPages ).toBe( 0 );
     expect( result.current.isLoading ).toBe( false );
+    expect( result.current.error ).toEqual( new Error( 'boom' ) );
+  } );
+
+  it( 'clears the error after a subsequent successful fetch', async () => {
+    apiFetch.mockRejectedValueOnce( new Error( 'boom' ) );
+
+    const { result } = renderHook( () =>
+      usePaginatedFetch( {
+        path: '/mission-donation-platform/v1/donors',
+        view: BASE_VIEW,
+      } )
+    );
+
+    await waitFor( () => expect( result.current.error ).not.toBeNull() );
+
+    apiFetch.mockResolvedValueOnce( mockResponse( [ { id: 1 } ] ) );
+
+    await act( async () => {
+      await result.current.refresh();
+    } );
+
+    expect( result.current.error ).toBeNull();
+    expect( result.current.data ).toEqual( [ { id: 1 } ] );
+  } );
+
+  it( 'ignores a superseded request that resolves late', async () => {
+    let resolveFirst;
+    apiFetch.mockImplementationOnce(
+      () =>
+        new Promise( ( resolve ) => {
+          resolveFirst = resolve;
+        } )
+    );
+
+    const { result, rerender } = renderHook(
+      ( { view } ) =>
+        usePaginatedFetch( {
+          path: '/mission-donation-platform/v1/donors',
+          view,
+        } ),
+      { initialProps: { view: BASE_VIEW } }
+    );
+
+    // Second request (page 2) starts before the first resolves.
+    apiFetch.mockResolvedValueOnce(
+      mockResponse( [ { id: 2 } ], { total: 1, pages: 1 } )
+    );
+    rerender( { view: { ...BASE_VIEW, page: 2 } } );
+
+    await waitFor( () =>
+      expect( result.current.data ).toEqual( [ { id: 2 } ] )
+    );
+
+    // The stale first response arrives late and must not paint.
+    await act( async () => {
+      resolveFirst( mockResponse( [ { id: 1 } ], { total: 9, pages: 9 } ) );
+    } );
+
+    expect( result.current.data ).toEqual( [ { id: 2 } ] );
+    expect( result.current.totalItems ).toBe( 1 );
   } );
 
   it( 'refetches when refresh() is called', async () => {

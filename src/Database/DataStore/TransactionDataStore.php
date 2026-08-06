@@ -62,9 +62,9 @@ class TransactionDataStore implements DataStoreInterface {
 		 */
 		do_action( 'mission_transaction_created', $model );
 
-		// Update donor/campaign aggregates if created with a completed status.
 		if ( Transaction::STATUS_COMPLETED === $model->status ) {
 			$this->increment_aggregates( $model );
+			$this->recompute_fundraiser_aggregates( $model->fundraiser_id, (bool) $model->is_test );
 		}
 
 		return $model->id;
@@ -246,9 +246,20 @@ class TransactionDataStore implements DataStoreInterface {
 			$this->adjust_aggregates_for_refund( $model, $refund_delta );
 		}
 
-		// Fire status transition hooks and update aggregates.
 		if ( $old->status !== $model->status ) {
 			$this->handle_status_transition( $model, $old->status, $model->status );
+		}
+
+		// Rebuild fundraiser totals only after the row reflects its final state;
+		// a re-credit must rebuild both the old and new fundraiser.
+		$recredited = (int) $old->fundraiser_id !== (int) $model->fundraiser_id;
+
+		if ( $recredited || $model->amount_refunded > $old->amount_refunded || $old->status !== $model->status ) {
+			$this->recompute_fundraiser_aggregates( $model->fundraiser_id, (bool) $model->is_test );
+		}
+
+		if ( $recredited ) {
+			$this->recompute_fundraiser_aggregates( $old->fundraiser_id, (bool) $model->is_test );
 		}
 
 		return true;
@@ -304,18 +315,15 @@ class TransactionDataStore implements DataStoreInterface {
 	public function delete( int $id ): bool {
 		global $wpdb;
 
-		// Decrement aggregates before deleting if the transaction was completed.
 		$transaction = $this->read( $id );
 		if ( $transaction && Transaction::STATUS_COMPLETED === $transaction->status ) {
 			$this->decrement_aggregates( $transaction );
 		}
 
-		// Delete associated notes, history, and tribute first.
 		( new NoteDataStore() )->delete_by_object( 'transaction', $id );
 		( new TransactionHistoryDataStore() )->delete_by_transaction( $id );
 		( new TributeDataStore() )->delete_by_transaction( $id );
 
-		// Delete associated meta.
 		$wpdb->query(
 			$wpdb->prepare(
 				'DELETE FROM %i WHERE missiondp_transaction_id = %d',
@@ -326,14 +334,35 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$result = $wpdb->delete( $this->get_table_name(), [ 'id' => $id ], [ '%d' ] );
 
+		// Recompute after the row is gone so the deleted transaction is excluded.
+		if ( $transaction && Transaction::STATUS_COMPLETED === $transaction->status ) {
+			$this->recompute_fundraiser_aggregates( $transaction->fundraiser_id, (bool) $transaction->is_test );
+		}
+
 		return false !== $result;
+	}
+
+	/**
+	 * Rebuild a fundraiser's stored aggregates from attributed transactions.
+	 *
+	 * Teams carry no stored aggregates (their totals are summed live), so only
+	 * fundraisers need this. No-op when the transaction has no fundraiser.
+	 *
+	 * @param int|null $fundraiser_id The attributed fundraiser ID, if any.
+	 * @return void
+	 */
+	private function recompute_fundraiser_aggregates( ?int $fundraiser_id, bool $is_test = false ): void {
+		if ( $fundraiser_id ) {
+			( new FundraiserDataStore() )->recompute_aggregates( $fundraiser_id, $is_test );
+		}
 	}
 
 	/**
 	 * Query transactions.
 	 *
 	 * Supported filters: status, type, type__not, donor_id, campaign_id,
-	 * subscription_id, gateway_transaction_id, is_test, date_after, date_before.
+	 * fundraiser_id, team_id, subscription_id, gateway_transaction_id, is_test,
+	 * date_after, date_before, id__in.
 	 * Pagination/order: orderby, order, per_page, page.
 	 *
 	 * @param array<string, mixed> $args Query arguments.
@@ -358,6 +387,12 @@ class TransactionDataStore implements DataStoreInterface {
 		$campaign_id  = (int) ( $args['campaign_id'] ?? 0 );
 		$has_campaign = $campaign_id > 0 ? 1 : 0;
 
+		$fundraiser_id  = (int) ( $args['fundraiser_id'] ?? 0 );
+		$has_fundraiser = $fundraiser_id > 0 ? 1 : 0;
+
+		$team_id  = (int) ( $args['team_id'] ?? 0 );
+		$has_team = $team_id > 0 ? 1 : 0;
+
 		$subscription_id  = (int) ( $args['subscription_id'] ?? 0 );
 		$has_subscription = $subscription_id > 0 ? 1 : 0;
 
@@ -373,101 +408,66 @@ class TransactionDataStore implements DataStoreInterface {
 		$date_before     = (string) ( $args['date_before'] ?? '' );
 		$has_date_before = '' !== $date_before ? 1 : 0;
 
+		$id__in       = ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ? array_values( array_map( 'intval', $args['id__in'] ) ) : [];
+		$id_in_clause = $id__in ? ' AND id IN ( ' . implode( ', ', array_fill( 0, count( $id__in ), '%d' ) ) . ' )' : '';
+
 		$allowed_orderby = [ 'id', 'date_created', 'date_completed', 'date_modified', 'total_amount', 'status' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
-		$order_asc       = 'ASC' === strtoupper( $args['order'] ?? 'DESC' );
+		$order           = 'ASC' === strtoupper( $args['order'] ?? 'DESC' ) ? 'ASC' : 'DESC';
 
 		$per_page = max( 1, (int) ( $args['per_page'] ?? PHP_INT_MAX ) );
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		if ( $order_asc ) {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR status = %s )
-					   AND ( %d = 0 OR type = %s )
-					   AND ( %d = 0 OR type != %s )
-					   AND ( %d = 0 OR donor_id = %d )
-					   AND ( %d = 0 OR campaign_id = %d )
-					   AND ( %d = 0 OR subscription_id = %d )
-					   AND ( %d = 0 OR gateway_transaction_id = %s )
-					   AND ( %d = 0 OR is_test = %d )
-					   AND ( %d = 0 OR date_created >= %s )
-					   AND ( %d = 0 OR date_created <= %s )
-					 ORDER BY %i ASC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_status,
-					$status,
-					$has_type,
-					$type,
-					$has_type_not,
-					$type_not,
-					$has_donor,
-					$donor_id,
-					$has_campaign,
-					$campaign_id,
-					$has_subscription,
-					$subscription_id,
-					$has_gateway_txn_id,
-					$gateway_txn_id,
-					$has_is_test,
-					$is_test_val,
-					$has_date_after,
-					$date_after,
-					$has_date_before,
-					$date_before,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		} else {
-			$rows = $wpdb->get_results(
-				$wpdb->prepare(
-					'SELECT * FROM %i
-					 WHERE ( %d = 0 OR status = %s )
-					   AND ( %d = 0 OR type = %s )
-					   AND ( %d = 0 OR type != %s )
-					   AND ( %d = 0 OR donor_id = %d )
-					   AND ( %d = 0 OR campaign_id = %d )
-					   AND ( %d = 0 OR subscription_id = %d )
-					   AND ( %d = 0 OR gateway_transaction_id = %s )
-					   AND ( %d = 0 OR is_test = %d )
-					   AND ( %d = 0 OR date_created >= %s )
-					   AND ( %d = 0 OR date_created <= %s )
-					 ORDER BY %i DESC
-					 LIMIT %d OFFSET %d',
-					$this->get_table_name(),
-					$has_status,
-					$status,
-					$has_type,
-					$type,
-					$has_type_not,
-					$type_not,
-					$has_donor,
-					$donor_id,
-					$has_campaign,
-					$campaign_id,
-					$has_subscription,
-					$subscription_id,
-					$has_gateway_txn_id,
-					$gateway_txn_id,
-					$has_is_test,
-					$is_test_val,
-					$has_date_after,
-					$date_after,
-					$has_date_before,
-					$date_before,
-					$orderby,
-					$per_page,
-					$offset
-				),
-				ARRAY_A
-			);
-		}
+		$sql          = 'SELECT * FROM %i
+			 WHERE ( %d = 0 OR status = %s )
+			   AND ( %d = 0 OR type = %s )
+			   AND ( %d = 0 OR type != %s )
+			   AND ( %d = 0 OR donor_id = %d )
+			   AND ( %d = 0 OR campaign_id = %d )
+			   AND ( %d = 0 OR fundraiser_id = %d )
+			   AND ( %d = 0 OR team_id = %d )
+			   AND ( %d = 0 OR subscription_id = %d )
+			   AND ( %d = 0 OR gateway_transaction_id = %s )
+			   AND ( %d = 0 OR is_test = %d )
+			   AND ( %d = 0 OR date_created >= %s )
+			   AND ( %d = 0 OR date_created <= %s )' . $id_in_clause . "
+			 ORDER BY %i {$order}, id {$order}
+			 LIMIT %d OFFSET %d";
+		$prepare_args = array_merge(
+			[
+				$this->get_table_name(),
+				$has_status,
+				$status,
+				$has_type,
+				$type,
+				$has_type_not,
+				$type_not,
+				$has_donor,
+				$donor_id,
+				$has_campaign,
+				$campaign_id,
+				$has_fundraiser,
+				$fundraiser_id,
+				$has_team,
+				$team_id,
+				$has_subscription,
+				$subscription_id,
+				$has_gateway_txn_id,
+				$gateway_txn_id,
+				$has_is_test,
+				$is_test_val,
+				$has_date_after,
+				$date_after,
+				$has_date_before,
+				$date_before,
+			],
+			$id__in,
+			[ $orderby, $per_page, $offset ]
+		);
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table/orderby via %i, filters via literal placeholders, id__in via %d placeholders built from a counted array, direction whitelisted.
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $prepare_args ), ARRAY_A );
 
 		return array_map( [ $this, 'row_to_model' ], $rows ?: [] );
 	}
@@ -475,7 +475,7 @@ class TransactionDataStore implements DataStoreInterface {
 	/**
 	 * Count transactions matching filters.
 	 *
-	 * Supported filters mirror query() (excluding pagination/order).
+	 * Supported filters mirror query() (excluding pagination/order and id__in).
 	 *
 	 * @param array<string, mixed> $args Query arguments.
 	 *
@@ -498,6 +498,12 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$campaign_id  = (int) ( $args['campaign_id'] ?? 0 );
 		$has_campaign = $campaign_id > 0 ? 1 : 0;
+
+		$fundraiser_id  = (int) ( $args['fundraiser_id'] ?? 0 );
+		$has_fundraiser = $fundraiser_id > 0 ? 1 : 0;
+
+		$team_id  = (int) ( $args['team_id'] ?? 0 );
+		$has_team = $team_id > 0 ? 1 : 0;
 
 		$subscription_id  = (int) ( $args['subscription_id'] ?? 0 );
 		$has_subscription = $subscription_id > 0 ? 1 : 0;
@@ -522,6 +528,8 @@ class TransactionDataStore implements DataStoreInterface {
 				   AND ( %d = 0 OR type != %s )
 				   AND ( %d = 0 OR donor_id = %d )
 				   AND ( %d = 0 OR campaign_id = %d )
+				   AND ( %d = 0 OR fundraiser_id = %d )
+				   AND ( %d = 0 OR team_id = %d )
 				   AND ( %d = 0 OR subscription_id = %d )
 				   AND ( %d = 0 OR gateway_transaction_id = %s )
 				   AND ( %d = 0 OR is_test = %d )
@@ -538,6 +546,10 @@ class TransactionDataStore implements DataStoreInterface {
 				$donor_id,
 				$has_campaign,
 				$campaign_id,
+				$has_fundraiser,
+				$fundraiser_id,
+				$has_team,
+				$team_id,
 				$has_subscription,
 				$subscription_id,
 				$has_gateway_txn_id,
@@ -576,13 +588,10 @@ class TransactionDataStore implements DataStoreInterface {
 		 */
 		do_action( "mission_transaction_status_{$old_status}_to_{$new_status}", $transaction );
 
-		// Update donor and campaign aggregates.
 		if ( Transaction::STATUS_COMPLETED === $new_status ) {
 			$this->increment_aggregates( $transaction );
 		} elseif ( Transaction::STATUS_COMPLETED === $old_status && in_array( $new_status, [ Transaction::STATUS_REFUNDED, Transaction::STATUS_CANCELLED, Transaction::STATUS_FAILED ], true ) ) {
 			if ( Transaction::STATUS_REFUNDED === $new_status && $transaction->amount_refunded > 0 ) {
-				// Dollar amounts already adjusted by adjust_aggregates_for_refund().
-				// Only decrement counts.
 				$this->decrement_counts( $transaction );
 			} else {
 				$this->decrement_aggregates( $transaction );
@@ -666,7 +675,6 @@ class TransactionDataStore implements DataStoreInterface {
 				)
 			);
 
-			// Increment donor_count if this is the donor's first completed transaction for this campaign.
 			if ( $transaction->donor_id ) {
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
@@ -774,7 +782,6 @@ class TransactionDataStore implements DataStoreInterface {
 				)
 			);
 
-			// Decrement donor_count if the donor has no remaining completed transactions for this campaign.
 			if ( $transaction->donor_id ) {
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
@@ -828,7 +835,6 @@ class TransactionDataStore implements DataStoreInterface {
 
 		$now = current_time( 'mysql', true );
 
-		// Attribute the refund to the donation first, then any excess to the tip.
 		$previous_refunded          = $transaction->amount_refunded - $refund_delta;
 		$previous_donation_refunded = min( $previous_refunded, $transaction->amount );
 		$current_donation_refunded  = min( $transaction->amount_refunded, $transaction->amount );
@@ -946,7 +952,6 @@ class TransactionDataStore implements DataStoreInterface {
 				)
 			);
 
-			// Decrement donor_count if the donor has no remaining completed transactions for this campaign.
 			if ( $transaction->donor_id ) {
 				$donor_count_col = $transaction->is_test ? 'test_donor_count' : 'donor_count';
 				$is_test_val     = (int) $transaction->is_test;
@@ -1011,6 +1016,8 @@ class TransactionDataStore implements DataStoreInterface {
 			'parent_id'               => $model->parent_id,
 			'source_post_id'          => $model->source_post_id,
 			'campaign_id'             => $model->campaign_id,
+			'fundraiser_id'           => $model->fundraiser_id,
+			'team_id'                 => $model->team_id,
 			'amount'                  => $model->amount,
 			'fee_amount'              => $model->fee_amount,
 			'tip_amount'              => $model->tip_amount,

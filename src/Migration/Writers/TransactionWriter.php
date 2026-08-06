@@ -57,10 +57,8 @@ class TransactionWriter extends AbstractWriter {
 					continue;
 				}
 
-				// A Mission transaction already exists for this gateway charge
-				// (e.g. the same data was CSV-imported earlier). Reuse it: stamp
-				// it so references resolve, but never mark it created — rollback
-				// must not delete it.
+				// Reuse a pre-existing transaction for this gateway charge: stamp it
+				// so references resolve, but never mark it created; rollback must not delete it.
 				$gateway_id  = (string) ( $record['gateway_transaction_id'] ?? '' );
 				$existing_id = '' !== $gateway_id ? ( $gateway_map[ $gateway_id ] ?? null ) : null;
 

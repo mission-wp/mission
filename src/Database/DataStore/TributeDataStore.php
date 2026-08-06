@@ -226,7 +226,7 @@ class TributeDataStore implements DataStoreInterface {
 			$wpdb->prepare(
 				'SELECT * FROM %i
 				 WHERE ( %d = 0 OR transaction_id = %d )
-				 ORDER BY date_created DESC
+				 ORDER BY date_created DESC, id DESC
 				 LIMIT %d OFFSET %d',
 				$this->get_table_name(),
 				$has_transaction_id,

@@ -67,7 +67,6 @@ class DonationFormSettings {
 		$settings    = [];
 
 		foreach ( self::DEFAULTS as $key => $default ) {
-			// Block attribute wins if explicitly set, otherwise use default.
 			if ( isset( $attributes[ $key ] ) ) {
 				$settings[ $key ] = $attributes[ $key ];
 			} else {
@@ -92,7 +91,31 @@ class DonationFormSettings {
 		 * @param array<string, mixed> $attributes  Original block attributes.
 		 * @param int                  $campaign_id The campaign table ID (0 if none).
 		 */
-		return apply_filters( 'mission_donation_form_settings', $settings, $attributes, $campaign_id );
+		$settings = apply_filters( 'mission_donation_form_settings', $settings, $attributes, $campaign_id );
+
+		return self::normalize_amounts( $settings );
+	}
+
+	/**
+	 * Cast amount settings to integers after the filter.
+	 *
+	 * Block attributes and filters may supply string amounts; the frontend
+	 * store compares them strictly (===) against integer context values, so
+	 * normalize once at the boundary.
+	 *
+	 * @param array<string, mixed> $settings Filtered settings.
+	 *
+	 * @return array<string, mixed> Settings with integer amounts.
+	 */
+	private static function normalize_amounts( array $settings ): array {
+		foreach ( (array) ( $settings['amountsByFrequency'] ?? [] ) as $frequency => $amounts ) {
+			$settings['amountsByFrequency'][ $frequency ] = array_values( array_map( 'intval', (array) $amounts ) );
+		}
+
+		$settings['defaultAmounts'] = array_map( 'intval', (array) ( $settings['defaultAmounts'] ?? [] ) );
+		$settings['minimumAmount']  = (int) ( $settings['minimumAmount'] ?? 0 );
+
+		return $settings;
 	}
 
 	/**
@@ -103,12 +126,10 @@ class DonationFormSettings {
 	 * @return int Campaign table ID, or 0 if none.
 	 */
 	private static function resolve_campaign_id( array $attributes ): int {
-		// Explicit campaignId attribute (campaign table ID).
 		if ( ! empty( $attributes['campaignId'] ) ) {
 			return (int) $attributes['campaignId'];
 		}
 
-		// Auto-detect: if this block is rendered on a campaign post, look up the table ID.
 		$post = get_post();
 		if ( $post && CampaignPostType::POST_TYPE === $post->post_type ) {
 			$campaign = Campaign::find_by_post_id( $post->ID );

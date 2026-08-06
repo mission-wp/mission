@@ -6,6 +6,8 @@ import EmailEditor from './EmailEditor';
 import {
   DONATION_EMAILS,
   ACCOUNT_EMAILS,
+  FUNDRAISER_EMAILS,
+  TEAM_EMAILS,
   ADMIN_EMAILS,
   EMAIL_ICONS,
 } from './email-templates';
@@ -92,7 +94,6 @@ function AdminEmailRow( {
       e.preventDefault();
       handleAddRecipient();
     }
-    // Backspace on empty input removes last recipient.
     if (
       e.key === 'Backspace' &&
       inputValue === '' &&
@@ -299,9 +300,12 @@ export default function EmailsPanel( {
 
   const editingEmail =
     editingEmailId &&
-    [ ...DONATION_EMAILS, ...ACCOUNT_EMAILS ].find(
-      ( e ) => e.id === editingEmailId
-    );
+    [
+      ...DONATION_EMAILS,
+      ...ACCOUNT_EMAILS,
+      ...FUNDRAISER_EMAILS,
+      ...TEAM_EMAILS,
+    ].find( ( e ) => e.id === editingEmailId );
 
   return (
     <div className="mission-settings-panel" key="emails">
@@ -401,6 +405,42 @@ export default function EmailsPanel( {
       </h3>
       <div className="mission-settings-email-list">
         { ACCOUNT_EMAILS.map( ( email ) => (
+          <EmailRow
+            key={ email.id }
+            email={ email }
+            enabled={ getEmailEnabled( email.id ) }
+            onToggle={ ( val ) =>
+              updateEmailSetting( email.id, 'enabled', val )
+            }
+            onEdit={ () => setEditingEmailId( email.id ) }
+          />
+        ) ) }
+      </div>
+
+      { /* Fundraiser Emails */ }
+      <h3 className="mission-settings-email-group-title">
+        { __( 'Fundraiser Emails', 'mission-donation-platform' ) }
+      </h3>
+      <div className="mission-settings-email-list">
+        { FUNDRAISER_EMAILS.map( ( email ) => (
+          <EmailRow
+            key={ email.id }
+            email={ email }
+            enabled={ getEmailEnabled( email.id ) }
+            onToggle={ ( val ) =>
+              updateEmailSetting( email.id, 'enabled', val )
+            }
+            onEdit={ () => setEditingEmailId( email.id ) }
+          />
+        ) ) }
+      </div>
+
+      { /* Team Emails */ }
+      <h3 className="mission-settings-email-group-title">
+        { __( 'Team Emails', 'mission-donation-platform' ) }
+      </h3>
+      <div className="mission-settings-email-list">
+        { TEAM_EMAILS.map( ( email ) => (
           <EmailRow
             key={ email.id }
             email={ email }

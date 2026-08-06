@@ -1,0 +1,82 @@
+// Profile header card shared by donor, fundraiser, and team detail pages.
+
+.mission-profile {
+  background: #fff;
+  border: 1px solid #e8e6e1;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  &__main {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 2px;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: #9b9ba8;
+    margin: 0 0 8px;
+  }
+
+  &__tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 28px;
+    flex-shrink: 0;
+  }
+
+  &__stat {
+    text-align: center;
+  }
+
+  &__stat-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a2e;
+    line-height: 1.2;
+  }
+
+  &__stat-label {
+    font-size: 11px;
+    color: #9b9ba8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (max-width: 1024px) {
+
+  .mission-profile {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mission-profile__stats {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+}

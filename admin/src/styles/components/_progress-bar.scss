@@ -36,3 +36,9 @@
   font-size: 12px;
   color: #9b9ba8;
 }
+
+// Wider track for detail-page member tables.
+
+.mission-progress-bar--wide .mission-progress-bar__track {
+  width: 120px;
+}

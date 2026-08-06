@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mission-donation-platform/team-story",
+	"version": "0.1.0",
+	"title": "Team Story",
+	"category": "mission-donation-platform",
+	"icon": "text",
+	"description": "A team's description of who they are and why they are fundraising.",
+	"supports": {
+		"html": false,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"attributes": {
+		"teamId": {
+			"type": "number",
+			"default": 0
+		},
+		"fallback": {
+			"type": "string"
+		}
+	},
+	"example": {},
+	"textdomain": "mission-donation-platform",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"render": "file:./index.php"
+}

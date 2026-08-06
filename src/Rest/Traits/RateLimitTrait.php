@@ -7,6 +7,8 @@
 
 namespace MissionDP\Rest\Traits;
 
+use MissionDP\Helpers\AttemptCounter;
+use MissionDP\Helpers\ClientIp;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -42,12 +44,11 @@ trait RateLimitTrait {
 		 */
 		$window = (int) apply_filters( 'mission_rate_window', $window, $action );
 
-		$ip  = $this->get_client_ip();
-		$key = 'missiondp_rl_' . $action . '_' . md5( $ip );
+		$ip = $this->get_client_ip();
 
-		$attempts = (int) get_transient( $key );
-
-		if ( $attempts >= $limit ) {
+		// Atomic claim: parallel requests cannot race past the cap the way a
+		// transient read-modify-write counter could.
+		if ( ! AttemptCounter::claim( 'rl_' . $action . '_' . md5( $ip ), $limit, $window ) ) {
 			return new WP_Error(
 				'rate_limited',
 				__( 'Too many attempts. Please try again in a few minutes.', 'mission-donation-platform' ),
@@ -55,30 +56,19 @@ trait RateLimitTrait {
 			);
 		}
 
-		set_transient( $key, $attempts + 1, $window );
-
 		return null;
 	}
 
 	/**
-	 * Get the client IP address, accounting for common proxies.
+	 * Get the client IP address.
+	 *
+	 * Cloudflare's CF-Connecting-IP header is trusted automatically when the
+	 * request comes from a Cloudflare address; other proxies opt in via the
+	 * `mission_trusted_proxy_headers` filter (see ClientIp).
 	 *
 	 * @return string Client IP.
 	 */
 	private function get_client_ip(): string {
-		$headers = [ 'HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR' ];
-
-		foreach ( $headers as $header ) {
-			if ( ! empty( $_SERVER[ $header ] ) ) {
-				// X-Forwarded-For can contain multiple IPs; use the first.
-				$ip = strtok( sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ), ',' );
-				$ip = trim( $ip );
-				if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
-					return $ip;
-				}
-			}
-		}
-
-		return '0.0.0.0';
+		return ClientIp::get();
 	}
 }

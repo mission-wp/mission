@@ -57,7 +57,6 @@ class MigrationJobHandler {
 		$status = $this->service->job_status( $phases );
 
 		if ( in_array( $status, [ MigrationPhase::STATUS_FAILED, MigrationPhase::STATUS_CANCELLED ], true ) ) {
-			// Propagate the terminal state to phases that never ran, then stop.
 			foreach ( $phases as $phase ) {
 				if ( ! $phase->is_terminal() ) {
 					$phase->mark_cancelled();
@@ -91,8 +90,7 @@ class MigrationJobHandler {
 		try {
 			$result = $this->service->process_phase_batch( $current, $this->service->get_batch_size() );
 		} catch ( \Throwable $e ) {
-			// Do NOT rethrow — AS would retry, and the failure would just repeat.
-			// Mark this phase failed and cancel the rest of the run.
+			// Do NOT rethrow: Action Scheduler would retry and the failure would just repeat.
 			$current->mark_failed( $e->getMessage() );
 
 			foreach ( $phases as $phase ) {
@@ -115,7 +113,6 @@ class MigrationJobHandler {
 			return;
 		}
 
-		// Atomic counter update — defensive against concurrent worker overlap.
 		$current->increment_counts(
 			[
 				'processed_items' => $result['processed'],
@@ -137,7 +134,6 @@ class MigrationJobHandler {
 			}
 		}
 
-		// Mid-flight cancellation by the user.
 		$fresh = $current->fresh();
 		if ( ! $fresh || MigrationPhase::STATUS_CANCELLED === $fresh->status ) {
 			$this->service->release_lock( $job_id );
@@ -161,7 +157,6 @@ class MigrationJobHandler {
 			return;
 		}
 
-		// More work in this phase — schedule the next tick.
 		$this->service->enqueue_tick( $job_id );
 	}
 

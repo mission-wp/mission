@@ -1,0 +1,96 @@
+{
+    "translation-revision-date": "2026-06-08 16:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-image\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "es_ES",
+                "plural-forms": "nplurals=2; plural=(n != 1);"
+            },
+            "Cover photo": [
+                "Foto de portada"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "Original": [
+                "Original"
+            ],
+            "Square - 1:1": [
+                "Cuadrada - 1:1"
+            ],
+            "Standard - 4:3": [
+                "Est\u00e1ndar - 4:3"
+            ],
+            "Portrait - 3:4": [
+                "Vertical - 3:4"
+            ],
+            "Classic - 3:2": [
+                "Cl\u00e1sica - 3:2"
+            ],
+            "Classic Portrait - 2:3": [
+                "Vertical cl\u00e1sica - 2:3"
+            ],
+            "Wide - 16:9": [
+                "Panor\u00e1mica - 16:9"
+            ],
+            "Tall - 9:16": [
+                "Alta - 9:16"
+            ],
+            "Thumbnail": [
+                "Miniatura"
+            ],
+            "Medium": [
+                "Mediana"
+            ],
+            "Large": [
+                "Grande"
+            ],
+            "Full Size": [
+                "Tama\u00f1o completo"
+            ],
+            "Alternative text": [
+                "Texto alternativo"
+            ],
+            "Describe the purpose of the image. Leave empty if decorative.": [
+                "Describe el prop\u00f3sito de la imagen. D\u00e9jalo vac\u00edo si es decorativa."
+            ],
+            "Aspect ratio": [
+                "Relaci\u00f3n de aspecto"
+            ],
+            "Width": [
+                "Ancho"
+            ],
+            "Auto": [
+                "Autom\u00e1tico"
+            ],
+            "Height": [
+                "Alto"
+            ],
+            "Scale": [
+                "Escala"
+            ],
+            "Image covers the space evenly.": [
+                "La imagen cubre el espacio de manera uniforme."
+            ],
+            "Image is contained without distortion.": [
+                "La imagen se ajusta sin distorsi\u00f3n."
+            ],
+            "Cover": [
+                "Cubrir"
+            ],
+            "Contain": [
+                "Ajustar"
+            ],
+            "Resolution": [
+                "Resoluci\u00f3n"
+            ],
+            "Select the size of the source image.": [
+                "Selecciona el tama\u00f1o de la imagen de origen."
+            ]
+        }
+    }
+}

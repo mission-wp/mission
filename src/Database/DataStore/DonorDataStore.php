@@ -259,8 +259,17 @@ class DonorDataStore implements DataStoreInterface {
 			(string) ( $args['search'] ?? '' ),
 			[ 'email', 'first_name', 'last_name' ]
 		);
-		$where_sql     = $search_clause ? ' WHERE ' . $search_clause['sql'] : '';
-		$search_params = $search_clause ? $search_clause['params'] : [];
+
+		$clauses      = $search_clause ? [ $search_clause['sql'] ] : [];
+		$where_params = $search_clause ? $search_clause['params'] : [];
+
+		if ( ! empty( $args['id__in'] ) && is_array( $args['id__in'] ) ) {
+			$placeholders = implode( ', ', array_fill( 0, count( $args['id__in'] ), '%d' ) );
+			$clauses[]    = "id IN ( {$placeholders} )";
+			$where_params = array_merge( $where_params, array_map( 'intval', $args['id__in'] ) );
+		}
+
+		$where_sql = $clauses ? ' WHERE ' . implode( ' AND ', $clauses ) : '';
 
 		$allowed_orderby = [ 'id', 'date_created', 'total_donated', 'transaction_count', 'last_transaction', 'test_total_donated', 'test_transaction_count', 'test_last_transaction' ];
 		$orderby         = in_array( $args['orderby'] ?? '', $allowed_orderby, true ) ? $args['orderby'] : 'date_created';
@@ -270,11 +279,11 @@ class DonorDataStore implements DataStoreInterface {
 		$page     = max( 1, (int) ( $args['page'] ?? 1 ) );
 		$offset   = ( $page - 1 ) * $per_page;
 
-		$sql = 'SELECT * FROM %i' . $where_sql . " ORDER BY %i {$direction} LIMIT %d OFFSET %d";
+		$sql = 'SELECT * FROM %i' . $where_sql . " ORDER BY %i {$direction}, id {$direction} LIMIT %d OFFSET %d";
 
 		$prepare_args = array_merge(
 			[ $this->get_table_name() ],
-			$search_params,
+			$where_params,
 			[ $orderby, $per_page, $offset ]
 		);
 

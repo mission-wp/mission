@@ -282,6 +282,22 @@ class DonorTest extends WP_UnitTestCase {
 		$this->assertNull( Donor::find( 99999 ) );
 	}
 
+	/**
+	 * Test find_many() honors id__in and returns models keyed by ID.
+	 */
+	public function test_find_many_returns_only_requested_ids(): void {
+		$first  = $this->create_donor( [ 'email' => 'first@example.com' ] );
+		$second = $this->create_donor( [ 'email' => 'second@example.com' ] );
+		$third  = $this->create_donor( [ 'email' => 'third@example.com' ] );
+
+		$found = Donor::find_many( [ $first->id, $third->id ] );
+
+		$this->assertCount( 2, $found );
+		$this->assertArrayHasKey( $first->id, $found );
+		$this->assertArrayHasKey( $third->id, $found );
+		$this->assertArrayNotHasKey( $second->id, $found );
+	}
+
 	// -------------------------------------------------------------------------
 	// delete() tests.
 	// -------------------------------------------------------------------------
@@ -318,6 +334,22 @@ class DonorTest extends WP_UnitTestCase {
 			$id
 		) );
 		$this->assertSame( 0, $count );
+	}
+
+	/**
+	 * Test delete() removes the donor's fundraiser records and their shell posts.
+	 */
+	public function test_delete_cascades_fundraiser_records(): void {
+		$donor = $this->create_donor();
+
+		$fundraiser = new \MissionDP\Models\Fundraiser( [ 'campaign_id' => 1, 'donor_id' => $donor->id, 'status' => 'active' ] );
+		$fundraiser->save();
+		$post_id = $fundraiser->post_id;
+
+		$donor->delete();
+
+		$this->assertNull( \MissionDP\Models\Fundraiser::find( $fundraiser->id ) );
+		$this->assertNull( get_post( $post_id ) );
 	}
 
 	// -------------------------------------------------------------------------

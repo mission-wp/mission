@@ -61,7 +61,6 @@ trait MetaTrait {
 	public function get_meta( int $object_id, string $meta_key, bool $single = true ): mixed {
 		$value = get_metadata( $this->get_meta_type(), $object_id, $meta_key, $single );
 
-		// WP returns '' for single when key doesn't exist, [] for multi — matches our previous behavior.
 		return $value;
 	}
 

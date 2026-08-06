@@ -7,7 +7,13 @@
 
 namespace MissionDP\Cleanup;
 
+use MissionDP\Campaigns\CampaignPostType;
+use MissionDP\Database\DataStore\CampaignDataStore;
+use MissionDP\Database\DataStore\FundraiserDataStore;
 use MissionDP\Database\Schema;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
+use MissionDP\P2P\FundraiserImageUploader;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -46,7 +52,6 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $prefix . 'activity_log' )
 		);
 
-		// Log files.
 		$log_dir         = $this->get_log_dir();
 		$log_files_size  = 0;
 		$log_files_count = 0;
@@ -61,7 +66,6 @@ class CleanupService {
 			}
 		}
 
-		// Test data counts.
 		$test_transaction_count = (int) $wpdb->get_var(
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 		);
@@ -70,15 +74,19 @@ class CleanupService {
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE is_test = 1', $prefix . 'subscriptions' )
 		);
 
-		// Donors that have only test transactions (no live ones).
+		// Mirrors the delete_test_donors() exclusions: fundraiser owners and
+		// account holders are live registrations, never test data.
 		$test_donor_count = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				'SELECT COUNT(*) FROM %i WHERE transaction_count = 0 AND test_transaction_count > 0',
-				$prefix . 'donors'
+				'SELECT COUNT(*) FROM %i d
+				 WHERE d.transaction_count = 0 AND d.test_transaction_count > 0
+				 AND ( d.user_id IS NULL OR d.user_id = 0 )
+				 AND NOT EXISTS ( SELECT 1 FROM %i f WHERE f.donor_id = d.id )',
+				$prefix . 'donors',
+				$prefix . 'fundraisers'
 			)
 		);
 
-		// Webhook delivery count.
 		$webhook_delivery_count = (int) $wpdb->get_var(
 			$wpdb->prepare( 'SELECT COUNT(*) FROM %i', $prefix . 'webhook_deliveries' )
 		);
@@ -233,7 +241,6 @@ class CleanupService {
 
 		$prefix = $wpdb->prefix . 'missiondp_';
 
-		// Get IDs first for cascade cleanup.
 		$ids = $wpdb->get_col(
 			$wpdb->prepare( 'SELECT id FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 		);
@@ -247,7 +254,6 @@ class CleanupService {
 			$by_txn_sql   = "DELETE FROM %i WHERE transaction_id IN ( {$placeholders} )";
 			$notes_sql    = "DELETE FROM %i WHERE object_type = %s AND object_id IN ( {$placeholders} )";
 
-			// Cascade: meta, history, notes, tributes.
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
 			$wpdb->query( $wpdb->prepare( $meta_sql, array_merge( [ $prefix . 'transactionmeta' ], $ids ) ) );
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
@@ -257,12 +263,10 @@ class CleanupService {
 			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- table via %i, ids via %d placeholders built from a counted array.
 			$wpdb->query( $wpdb->prepare( $by_txn_sql, array_merge( [ $prefix . 'tributes' ], $ids ) ) );
 
-			// Delete the transactions.
 			$wpdb->query(
 				$wpdb->prepare( 'DELETE FROM %i WHERE is_test = 1', $prefix . 'transactions' )
 			);
 
-			// Reset test aggregate columns on donors and campaigns.
 			$wpdb->query(
 				$wpdb->prepare(
 					'UPDATE %i SET
@@ -284,6 +288,20 @@ class CleanupService {
 					$prefix . 'campaigns'
 				)
 			);
+
+			$wpdb->query(
+				$wpdb->prepare(
+					'UPDATE %i SET
+						test_total_raised = 0,
+						test_donor_count = 0,
+						test_transaction_count = 0',
+					$prefix . 'fundraisers'
+				)
+			);
+
+			// The bulk UPDATEs bypass the DataStores, so drop their row memos.
+			wp_cache_flush_group( CampaignDataStore::CACHE_GROUP );
+			wp_cache_flush_group( FundraiserDataStore::CACHE_GROUP );
 		}
 
 		$this->announce_cleanup( 'test_transactions_deleted', [ 'count' => $count ] );
@@ -295,6 +313,9 @@ class CleanupService {
 	 * Delete donors that only had test transactions (no live ones).
 	 *
 	 * Should be called after delete_test_transactions() so aggregates are reset.
+	 * Donors who own a fundraiser page or have a linked WordPress account are
+	 * live registrations, not test data, so they are excluded even when they
+	 * have no transactions yet.
 	 *
 	 * @return array{deleted: int}
 	 */
@@ -303,11 +324,14 @@ class CleanupService {
 
 		$prefix = $wpdb->prefix . 'missiondp_';
 
-		// Donors with zero live and zero test transactions remaining.
 		$ids = $wpdb->get_col(
 			$wpdb->prepare(
-				'SELECT id FROM %i WHERE transaction_count = 0 AND test_transaction_count = 0',
-				$prefix . 'donors'
+				'SELECT d.id FROM %i d
+				 WHERE d.transaction_count = 0 AND d.test_transaction_count = 0
+				 AND ( d.user_id IS NULL OR d.user_id = 0 )
+				 AND NOT EXISTS ( SELECT 1 FROM %i f WHERE f.donor_id = d.id )',
+				$prefix . 'donors',
+				$prefix . 'fundraisers'
 			)
 		);
 
@@ -425,32 +449,45 @@ class CleanupService {
 	public function delete_all_data(): array {
 		global $wpdb;
 
-		// Truncate all custom tables.
 		$schema = new Schema();
 		foreach ( $schema->get_table_names() as $table ) {
 			$wpdb->query( $wpdb->prepare( 'TRUNCATE TABLE %i', $table ) );
 		}
 
-		// Delete campaign CPT posts and meta.
+		// Campaign posts plus the P2P fundraiser/team shell posts; mirrors the
+		// post-type list in uninstall.php (kept literal there — it must work
+		// without the autoloader).
+		$post_types = [ CampaignPostType::POST_TYPE, Fundraiser::POST_TYPE, Team::POST_TYPE ];
+
+		foreach ( $post_types as $post_type ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE meta FROM %i meta
+					 INNER JOIN %i posts ON posts.ID = meta.post_id
+					 WHERE posts.post_type = %s',
+					$wpdb->postmeta,
+					$wpdb->posts,
+					$post_type
+				)
+			);
+			$wpdb->query(
+				$wpdb->prepare(
+					'DELETE FROM %i WHERE post_type = %s',
+					$wpdb->posts,
+					$post_type
+				)
+			);
+		}
+
+		// P2P upload markers live on attachment posts, not plugin CPTs.
 		$wpdb->query(
 			$wpdb->prepare(
-				'DELETE meta FROM %i meta
-				 INNER JOIN %i posts ON posts.ID = meta.post_id
-				 WHERE posts.post_type = %s',
+				'DELETE FROM %i WHERE meta_key = %s',
 				$wpdb->postmeta,
-				$wpdb->posts,
-				'missiondp_campaign'
-			)
-		);
-		$wpdb->query(
-			$wpdb->prepare(
-				'DELETE FROM %i WHERE post_type = %s',
-				$wpdb->posts,
-				'missiondp_campaign'
+				FundraiserImageUploader::UPLOAD_MARKER_META
 			)
 		);
 
-		// Reset settings to defaults.
 		update_option( 'missiondp_settings', $this->settings->get_defaults() );
 		delete_option( 'missiondp_default_campaign' );
 

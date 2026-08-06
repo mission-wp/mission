@@ -35,6 +35,8 @@ class DonorAuthServiceTest extends WP_UnitTestCase {
 	public function tear_down(): void {
 		global $wpdb;
 
+		wp_set_current_user( 0 );
+
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
@@ -174,6 +176,122 @@ class DonorAuthServiceTest extends WP_UnitTestCase {
 			$service->send_activation_email( 'nobody@example.com' );
 		} finally {
 			$this->assertCount( 0, $email->sent );
+		}
+	}
+
+	// -------------------------------------------------------------------------
+	// create_account() / login_user() / set_password() tests.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test create_account() makes a donor-role WP user without logging in.
+	 */
+	public function test_create_account_creates_donor_user(): void {
+		$donor = new Donor( [ 'email' => 'new@example.com', 'first_name' => 'New', 'last_name' => 'User' ] );
+		$donor->save();
+
+		$service = new DonorAuthService( $this->stub_email_module() );
+		$result  = $service->create_account( $donor, 'longenough1' );
+
+		$this->assertNotEmpty( $result->user_id );
+		$user = get_userdata( $result->user_id );
+		$this->assertContains( 'missiondp_donor', $user->roles );
+		$this->assertSame( 'new@example.com', $user->user_email );
+		$this->assertSame( 0, get_current_user_id() );
+	}
+
+	/**
+	 * Test create_account() rejects a short password and creates no user.
+	 */
+	public function test_create_account_rejects_short_password(): void {
+		$donor = new Donor( [ 'email' => 'short@example.com', 'first_name' => 'S', 'last_name' => 'P' ] );
+		$donor->save();
+
+		$service = new DonorAuthService( $this->stub_email_module() );
+
+		try {
+			$service->create_account( $donor, 'short' );
+			$this->fail( 'Expected a RuntimeException for a short password.' );
+		} catch ( \RuntimeException $e ) {
+			$this->assertNull( Donor::find( $donor->id )->user_id );
+		}
+	}
+
+	/**
+	 * Test login() sets the current user, so a nonce minted right after is valid.
+	 *
+	 * Regression guard: the signup modal logs in mid-flow and immediately mints a
+	 * REST nonce for the register call; if login() leaves the current user as 0,
+	 * that nonce is rejected as an invalid cookie nonce.
+	 */
+	public function test_login_sets_current_user(): void {
+		$donor = new Donor( [ 'email' => 'loginnow@example.com', 'first_name' => 'L', 'last_name' => 'N' ] );
+		$donor->save();
+
+		$service = new DonorAuthService( $this->stub_email_module() );
+		$service->create_account( $donor, 'longenough1' );
+		wp_set_current_user( 0 );
+
+		$service->login( 'loginnow@example.com', 'longenough1' );
+
+		$this->assertSame( $donor->user_id, get_current_user_id() );
+	}
+
+	/**
+	 * Test login_user() establishes a session for a donor.
+	 */
+	public function test_login_user_establishes_session(): void {
+		$donor = new Donor( [ 'email' => 'login@example.com', 'first_name' => 'Log', 'last_name' => 'In' ] );
+		$donor->save();
+
+		$service = new DonorAuthService( $this->stub_email_module() );
+		$service->create_account( $donor, 'longenough1' );
+
+		$logged = $service->login_user( $donor->user_id );
+
+		$this->assertSame( $donor->id, $logged->id );
+		$this->assertSame( $donor->user_id, get_current_user_id() );
+	}
+
+	/**
+	 * Test login_user() rejects a non-donor user.
+	 */
+	public function test_login_user_rejects_non_donor(): void {
+		$admin_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
+		$service  = new DonorAuthService( $this->stub_email_module() );
+
+		$this->expectException( \RuntimeException::class );
+		$service->login_user( $admin_id );
+	}
+
+	/**
+	 * Test set_password() changes the user's password.
+	 */
+	public function test_set_password_updates_credentials(): void {
+		$donor = new Donor( [ 'email' => 'pw@example.com', 'first_name' => 'P', 'last_name' => 'W' ] );
+		$donor->save();
+
+		$service = new DonorAuthService( $this->stub_email_module() );
+		$service->create_account( $donor, 'originalpw1' );
+
+		$service->set_password( $donor->user_id, 'brandnewpw2' );
+
+		$this->assertTrue( wp_check_password( 'brandnewpw2', get_userdata( $donor->user_id )->user_pass, $donor->user_id ) );
+	}
+
+	/**
+	 * Test set_password() refuses a privileged (non-donor) account and leaves
+	 * its password unchanged.
+	 */
+	public function test_set_password_rejects_non_donor(): void {
+		$admin_id = self::factory()->user->create( [ 'role' => 'administrator', 'user_pass' => 'adminpass99' ] );
+		$service  = new DonorAuthService( $this->stub_email_module() );
+
+		try {
+			$service->set_password( $admin_id, 'attackerpw1' );
+			$this->fail( 'Expected RuntimeException for a non-donor user.' );
+		} catch ( \RuntimeException $e ) {
+			$this->assertTrue( wp_check_password( 'adminpass99', get_userdata( $admin_id )->user_pass, $admin_id ) );
 		}
 	}
 }

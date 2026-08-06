@@ -10,6 +10,7 @@ namespace MissionDP\Tests\Database\DataStore;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Database\DataStore\CampaignDataStore;
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Transaction;
 use WP_UnitTestCase;
 
 /**
@@ -119,6 +120,37 @@ class CampaignDataStoreTest extends WP_UnitTestCase {
 		$read = $this->store->read( $id );
 		$this->assertInstanceOf( Campaign::class, $read );
 		$this->assertSame( 50000, $read->goal_amount );
+	}
+
+	/**
+	 * update() must not overwrite aggregates recomputed after the model was
+	 * loaded (e.g. by a donation webhook landing mid-request).
+	 */
+	public function test_update_preserves_concurrently_recomputed_aggregates(): void {
+		$campaign = $this->make_campaign();
+		$id       = $this->store->create( $campaign );
+
+		// Stale copy loaded before the "webhook" recompute.
+		$stale = $this->store->read( $id );
+
+		( new Transaction(
+			array(
+				'donor_id'       => 1,
+				'campaign_id'    => $id,
+				'amount'         => 5000,
+				'status'         => Transaction::STATUS_COMPLETED,
+				'date_completed' => '2026-01-01 10:00:00',
+			)
+		) )->save();
+		$this->store->recompute_aggregates( $id );
+
+		$stale->description = 'Edited mid-race';
+		$this->assertTrue( $this->store->update( $stale ) );
+
+		$fresh = $this->store->read( $id );
+		$this->assertSame( 'Edited mid-race', $fresh->description );
+		$this->assertSame( 5000, $fresh->total_raised );
+		$this->assertSame( 1, $fresh->transaction_count );
 	}
 
 	/**

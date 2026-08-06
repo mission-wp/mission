@@ -10,6 +10,9 @@
 
 use MissionDP\Blocks\DonationFormSettings;
 use MissionDP\Currency\Currency;
+use MissionDP\DonorDashboard\PrimaryColorResolver;
+use MissionDP\Models\Fundraiser;
+use MissionDP\Models\Team;
 use MissionDP\Settings\SettingsService;
 
 defined( 'ABSPATH' ) || exit;
@@ -17,6 +20,40 @@ defined( 'ABSPATH' ) || exit;
 
 ( static function ( $attributes, $content, $block ): void {
 $settings = DonationFormSettings::resolve( $attributes );
+
+// Bind the form to a fundraiser or team, explicitly via a block attribute, or
+// implicitly when the form is rendered on a fundraiser/team shell page. The
+// bound record is authoritative for its campaign, so align the form's campaign.
+// A form configured with its own campaignId is never rebound by the page it
+// happens to render on (e.g. a footer form on a shell page keeps its campaign).
+$fundraiser_id = isset( $attributes['fundraiserId'] ) ? (int) $attributes['fundraiserId'] : 0;
+$team_id       = isset( $attributes['teamId'] ) ? (int) $attributes['teamId'] : 0;
+
+if ( ! $fundraiser_id && ! $team_id && empty( $attributes['campaignId'] ) ) {
+	$queried = get_queried_object();
+
+	if ( $queried instanceof \WP_Post && Fundraiser::POST_TYPE === $queried->post_type ) {
+		$fundraiser_id = Fundraiser::find_by_post_id( $queried->ID )?->id ?? 0;
+	} elseif ( $queried instanceof \WP_Post && Team::POST_TYPE === $queried->post_type ) {
+		$team_id = Team::find_by_post_id( $queried->ID )?->id ?? 0;
+	}
+}
+
+if ( $fundraiser_id ) {
+	$bound_fundraiser = Fundraiser::find( $fundraiser_id );
+	$fundraiser_id    = $bound_fundraiser?->id ?? 0;
+
+	if ( $bound_fundraiser ) {
+		$settings['campaignId'] = $bound_fundraiser->campaign_id;
+	}
+} elseif ( $team_id ) {
+	$bound_team = Team::find( $team_id );
+	$team_id    = $bound_team?->id ?? 0;
+
+	if ( $bound_team ) {
+		$settings['campaignId'] = $bound_team->campaign_id;
+	}
+}
 
 $block_classes = [ 'mission-donation-form' ];
 if ( ! empty( $attributes['align'] ) ) {
@@ -61,6 +98,11 @@ $default_amount       = $default_amounts[ $initial_freq_key ] ?? ( $initial_amou
 
 $currency_symbol = Currency::get_symbol( $currency );
 
+// Initial amount descriptions, keyed by amount string (matches the JS lookup).
+$amount_descriptions  = $settings['amountDescriptions'] ?? [];
+$initial_descriptions = $amount_descriptions[ $initial_freq_key ] ?? [];
+$initial_has_descs    = (bool) array_filter( array_map( 'trim', array_map( 'strval', $initial_descriptions ) ) );
+
 // Unique prefix for field IDs (multi-form support).
 $uid = wp_unique_id( 'mission-df-' );
 
@@ -71,31 +113,7 @@ $default_tip_percent = 15;
 $mission_settings = ( new SettingsService() )->get_all();
 $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $settings['primaryColor'] ) ? $settings['primaryColor'] : $global_primary;
-
-/**
- * Darken a hex color by a percentage.
- *
- * @param string $hex     Hex color (e.g. '#2fa36b').
- * @param float  $percent Percentage to darken (0–100).
- * @return string Darkened hex color.
- */
-$darken_color = static function ( string $hex, float $percent ): string {
-	$hex = ltrim( $hex, '#' );
-	$r   = max( 0, (int) round( hexdec( substr( $hex, 0, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$g   = max( 0, (int) round( hexdec( substr( $hex, 2, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	$b   = max( 0, (int) round( hexdec( substr( $hex, 4, 2 ) ) * ( 1 - $percent / 100 ) ) );
-	return sprintf( '#%02x%02x%02x', $r, $g, $b );
-};
-
-$primary_hover = $darken_color( $primary_color, 12 );
-$hex_trimmed   = ltrim( $primary_color, '#' );
-$primary_r     = hexdec( substr( $hex_trimmed, 0, 2 ) );
-$primary_g     = hexdec( substr( $hex_trimmed, 2, 2 ) );
-$primary_b     = hexdec( substr( $hex_trimmed, 4, 2 ) );
-$primary_light = "rgba({$primary_r}, {$primary_g}, {$primary_b}, 0.08)";
-$luminance            = ( 0.299 * $primary_r + 0.587 * $primary_g + 0.114 * $primary_b ) / 255;
-$primary_text         = $luminance > 0.5 ? '#1e1e1e' : '#ffffff';
-$primary_text_on_light = $luminance > 0.5 ? $darken_color( $primary_color, 45 ) : $primary_color;
+$color_style      = PrimaryColorResolver::inline_style( $primary_color );
 
 // Initial context for Interactivity API.
 $context = [
@@ -106,9 +124,8 @@ $context = [
 	'frequencyLabels'      => $frequency_labels,
 	'frequencyDropdownOpen' => false,
 	'amountsByFrequency'   => $amounts_by_frequency,
-	'currentAmounts'       => $amounts_by_frequency[ $is_ongoing ? $default_frequency : 'one_time' ] ?? $amounts_by_frequency['one_time'] ?? [],
 	'defaultAmounts'       => (object) $default_amounts,
-	'amountDescriptions'   => (object) ( $settings['amountDescriptions'] ?? [] ),
+	'amountDescriptions'   => (object) $amount_descriptions,
 	'selectedAmount'       => $default_amount,
 	'isCustomAmount'       => false,
 	'customAmountValue'    => '',
@@ -150,6 +167,8 @@ $context = [
 	'restNonce'            => wp_create_nonce( 'wp_rest' ),
 	'formId'               => $attributes['formId'] ?? '',
 	'campaignId'           => $settings['campaignId'] ?? 0,
+	'fundraiserId'         => $fundraiser_id,
+	'teamId'               => $team_id,
 	'stripeAccountId'      => $attributes['stripeAccountId'] ?? '',
 	'sourcePostId'         => get_the_ID() ?: 0,
 	'isSubmitting'         => false,
@@ -181,7 +200,7 @@ $context = [
 	<?php echo get_block_wrapper_attributes( [ 'class' => implode( ' ', $block_classes ) ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
 	data-wp-interactive="mission-donation-platform/donation-form"
 	<?php echo wp_interactivity_data_wp_context( $context ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core function, self-escaping. ?>
-	style="--mission-primary: <?php echo esc_attr( $primary_color ); ?>; --mission-primary-hover: <?php echo esc_attr( $primary_hover ); ?>; --mission-primary-light: <?php echo esc_attr( $primary_light ); ?>; --mission-primary-text: <?php echo esc_attr( $primary_text ); ?>; --mission-primary-text-on-light: <?php echo esc_attr( $primary_text_on_light ); ?>;"
+	style="<?php echo esc_attr( $color_style ); ?>"
 >
 	<?php if ( ! empty( $mission_settings['test_mode'] ) ) : ?>
 		<div class="mission-df-test-mode-banner">
@@ -281,7 +300,7 @@ $context = [
 		<?php endif; ?>
 
 		<?php // Amount grid. ?>
-		<div class="mission-df-amount-grid" data-wp-class--has-descriptions="state.currentFrequencyHasDescriptions">
+		<div class="mission-df-amount-grid<?php echo $initial_has_descs ? ' has-descriptions' : ''; ?>" data-wp-class--has-descriptions="state.currentFrequencyHasDescriptions">
 			<template data-wp-each--amount="state.currentAmounts">
 				<button
 					type="button"
@@ -293,6 +312,23 @@ $context = [
 					<span class="mission-df-amount-desc" data-wp-text="callbacks.amountDescription"></span>
 				</button>
 			</template>
+			<?php
+			// `state.currentAmounts` is a JS-only derived getter, so the server
+			// can't expand the template above. Render the initial items manually
+			// with `data-wp-each-child` so hydration finds matching DOM nodes.
+			foreach ( $initial_amounts as $preset_amount ) :
+				?>
+				<button
+					type="button"
+					class="mission-df-amount-btn<?php echo $preset_amount === $default_amount ? ' active' : ''; ?>"
+					data-wp-each-child="mission-donation-platform/donation-form::state.currentAmounts"
+					data-wp-on--click="actions.selectAmount"
+					data-wp-class--active="callbacks.isSelectedAmount"
+				>
+					<span data-wp-text="callbacks.formattedPresetAmount"><?php echo esc_html( Currency::format_amount_i18n( $preset_amount, $currency ) ); ?></span>
+					<span class="mission-df-amount-desc" data-wp-text="callbacks.amountDescription"><?php echo esc_html( $initial_descriptions[ (string) $preset_amount ] ?? '' ); ?></span>
+				</button>
+			<?php endforeach; ?>
 
 			<?php if ( ! empty( $settings['customAmount'] ) ) : ?>
 				<div class="mission-df-amount-other-cell">

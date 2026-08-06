@@ -470,9 +470,11 @@
   width: 32px;
   height: 18px;
 
+  // stylelint-disable-next-line no-descending-specificity
   .mission-toggle-switch__slider {
     border-radius: 9px;
 
+    // stylelint-disable-next-line no-descending-specificity
     &::before {
       height: 12px;
       width: 12px;

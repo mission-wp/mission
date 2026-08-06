@@ -10,6 +10,7 @@ namespace MissionDP\Tests\Rest\Endpoints;
 use MissionDP\Database\DatabaseModule;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
+use MissionDP\Models\Fundraiser;
 use MissionDP\Models\Subscription;
 use MissionDP\Models\Transaction;
 use MissionDP\Settings\SettingsService;
@@ -165,6 +166,7 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactionmeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_transactions" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_subscriptions" );
+		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_fundraisers" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donormeta" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_donors" );
 		$wpdb->query( "DELETE FROM {$wpdb->prefix}missiondp_campaignmeta" );
@@ -679,6 +681,34 @@ class SubscriptionsEndpointTest extends WP_UnitTestCase {
 		// Verify persisted.
 		$updated = Subscription::find( $subscription->id );
 		$this->assertSame( $campaign2->id, $updated->campaign_id );
+	}
+
+	/**
+	 * Test PATCH campaign re-assignment clears stale fundraiser attribution.
+	 */
+	public function test_patch_campaign_reassign_clears_fundraiser_attribution(): void {
+		$campaign2 = new Campaign( [ 'title' => 'Building Fund', 'goal_amount' => 50000 ] );
+		$campaign2->save();
+
+		$fundraiser = new Fundraiser( [
+			'campaign_id' => $this->campaign->id,
+			'donor_id'    => $this->donor->id,
+			'status'      => Fundraiser::STATUS_ACTIVE,
+		] );
+		$fundraiser->save();
+
+		$subscription = $this->create_subscription( [ 'fundraiser_id' => $fundraiser->id ] );
+
+		$response = $this->dispatch_patch( "/mission-donation-platform/v1/subscriptions/{$subscription->id}", [
+			'campaign_id' => $campaign2->id,
+		] );
+
+		$this->assertSame( 200, $response->get_status() );
+
+		// Renewals stop crediting a fundraiser on the old campaign.
+		$updated = Subscription::find( $subscription->id );
+		$this->assertSame( $campaign2->id, $updated->campaign_id );
+		$this->assertNull( $updated->fundraiser_id );
 	}
 
 	/**
