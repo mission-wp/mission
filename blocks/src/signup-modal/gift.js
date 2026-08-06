@@ -8,7 +8,8 @@
  * reconciliation, receipt emails), so a kickoff gift behaves exactly like a
  * donation made on the fundraiser's page.
  *
- * The Stripe mount/watch/submit code below is deliberately duplicated from
+ * The mount/appearance/deadline plumbing is shared via @shared/stripe; the
+ * generator flow control below remains deliberately duplicated from
  * blocks/src/donation-form/view.js (mountPaymentElement, watchAmounts,
  * submit), minus the recurring/address/tribute/custom-field branches the
  * wizard never needs — keep fixes to that flow in sync here.
@@ -22,39 +23,24 @@ import {
   defaultFixedFee,
   PLATFORM_FEE_RATE,
 } from '@shared/fees';
+import {
+  PRE_CHARGE_DEADLINE_MS,
+  CONFIRM_SLOW_NOTICE_MS,
+  RECORD_DONATION_DEADLINE_MS,
+  withDeadline,
+  buildAppearance,
+  buildElementsOptions,
+  buildPaymentElementOptions,
+  getPaymentConfig,
+  resetPaymentConfigCache,
+  paymentIntentIdFrom,
+} from '@shared/stripe';
 import { i18n, post, shareUrl } from './view';
-
-// Deadlines keep the submit spinner from spinning forever if a promise never
-// settles. confirmPayment gets a soft "taking long" notice instead of a hard
-// deadline: a 3D Secure challenge can legitimately sit open for minutes.
-const PRE_CHARGE_DEADLINE_MS = 30000;
-const CONFIRM_SLOW_NOTICE_MS = 30000;
-const RECORD_DONATION_DEADLINE_MS = 15000;
-
-/**
- * Race a promise against a deadline that rejects with the given message.
- *
- * @param {Promise} promise The promise to guard.
- * @param {number}  ms      Deadline in milliseconds.
- * @param {string}  message Error message shown to the donor on timeout.
- * @return {Promise} The guarded promise.
- */
-function withDeadline( promise, ms, message ) {
-  let timer;
-  return Promise.race( [
-    Promise.resolve( promise ).finally( () => clearTimeout( timer ) ),
-    new Promise( ( _resolve, reject ) => {
-      timer = setTimeout( () => reject( new Error( message ) ), ms );
-    } ),
-  ] );
-}
 
 // The modal is a page singleton, so unlike the donation form's per-form
 // WeakMap this is a single mutable holder. Deliberately outside the reactive
 // state: proxying Stripe's internals breaks them.
 const giftStripe = { stripe: null, elements: null, appearance: null };
-
-let paymentConfigPromise = null;
 
 // Guards showGiftPayment against overlapping runs: without it, a second click
 // while the config fetch is pending would mount a second Payment Element into
@@ -64,26 +50,16 @@ let mountingGiftPayment = false;
 /**
  * Prefetch the connected Stripe account so the payment view can mount the
  * Payment Element without a loading pause (see CLAUDE.md: prefetch over
- * loading spinners). Kicked off as soon as the fundraiser is registered.
+ * loading spinners). Kicked off as soon as the fundraiser is registered;
+ * the shared module memoizes the lookup and never caches a failure.
  *
  * @param {Object} ctx Shell context (restUrl).
  * @return {Promise<string>} Resolves with the connected account ID, or ''.
  */
 export function prefetchGiftPaymentConfig( ctx ) {
-  const request = fetch( `${ ctx.restUrl }donations/payment-config` )
-    .then( ( response ) => ( response.ok ? response.json() : null ) )
-    .then( ( data ) => ( data && data.connected_account_id ) || '' )
-    .catch( () => '' )
-    .then( ( accountId ) => {
-      // Never cache a failed lookup: a transient error at register time must
-      // not permanently block the payment view within the session.
-      if ( ! accountId && paymentConfigPromise === request ) {
-        paymentConfigPromise = null;
-      }
-      return accountId;
-    } );
-  paymentConfigPromise = request;
-  return request;
+  return getPaymentConfig( ctx.restUrl ).then(
+    ( config ) => ( config && config.connected_account_id ) || ''
+  );
 }
 
 /**
@@ -96,7 +72,7 @@ export function teardownGiftStripe() {
   giftStripe.stripe = null;
   giftStripe.elements = null;
   giftStripe.appearance = null;
-  paymentConfigPromise = null;
+  resetPaymentConfigCache();
 }
 
 /**
@@ -420,8 +396,7 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       try {
         let accountId = '';
         try {
-          accountId = yield paymentConfigPromise ||
-            prefetchGiftPaymentConfig( ctx );
+          accountId = yield prefetchGiftPaymentConfig( ctx );
         } catch ( e ) {
           accountId = '';
         }
@@ -465,53 +440,25 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
               .getPropertyValue( '--mission-primary' )
               .trim()
           : '';
-        const customAppearance = state.stripeAppearance || {};
+        giftStripe.appearance = buildAppearance(
+          primaryColor,
+          state.stripeAppearance || {}
+        );
 
-        giftStripe.appearance = {
-          theme: customAppearance.theme || 'stripe',
-          variables: {
-            colorPrimary: primaryColor || '#2FA36B',
-            colorDanger: '#dc2626',
-            fontFamily:
-              '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            borderRadius: '10px',
-            ...( customAppearance.variables || {} ),
-          },
-          rules: {
-            '.Input--invalid': {
-              borderColor: '#dc2626',
-              boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.12)',
-            },
-            '.Error': {
-              fontSize: '0.8125rem',
-            },
-            ...( customAppearance.rules || {} ),
-          },
-        };
+        giftStripe.elements = giftStripe.stripe.elements(
+          buildElementsOptions( {
+            amount: giftTotal(),
+            currency: currency(),
+            appearance: giftStripe.appearance,
+          } )
+        );
 
-        giftStripe.elements = giftStripe.stripe.elements( {
-          mode: 'payment',
-          amount: giftTotal(),
-          currency: currency().toLowerCase(),
-          paymentMethodTypes: [ 'card' ],
-          appearance: giftStripe.appearance,
-        } );
-
-        const paymentElement = giftStripe.elements.create( 'payment', {
-          layout: 'tabs',
-          fields: {
-            billingDetails: {
-              // Name and email come from the step-1 account and are passed at
-              // confirm time, so the element never asks for them.
-              name: 'never',
-              email: 'never',
-              address: 'auto',
-            },
-          },
-          wallets: {
-            link: 'never',
-          },
-        } );
+        // Name and email come from the step-1 account and are passed at
+        // confirm time, so the element never asks for them.
+        const paymentElement = giftStripe.elements.create(
+          'payment',
+          buildPaymentElementOptions()
+        );
 
         paymentElement.mount( container );
 
@@ -640,8 +587,9 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
           const confirmResponse = yield withDeadline(
             post( ctx, 'donations/confirm', {
               transaction_id: intentData.transaction_id,
-              payment_intent_id:
-                intentData.client_secret.split( '_secret_' )[ 0 ],
+              payment_intent_id: paymentIntentIdFrom(
+                intentData.client_secret
+              ),
             } ),
             RECORD_DONATION_DEADLINE_MS,
             'confirm request timed out'
