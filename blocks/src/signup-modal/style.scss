@@ -900,7 +900,7 @@ a.mission-su__btn {
   font-weight: 700;
   line-height: 1;
   text-align: center;
-  color: var(--mission-primary);
+  color: var(--mission-primary-text-on-light);
 }
 
 .mission-su__tip-chevron {
@@ -952,7 +952,7 @@ a.mission-su__btn {
   }
 
   &.is-active {
-    color: var(--mission-primary);
+    color: var(--mission-primary-text-on-light);
     font-weight: 600;
   }
 }
