@@ -25,36 +25,20 @@ import {
   minorToMajor,
 } from '@shared/currencies';
 import { PLATFORM_FEE_RATE } from '@shared/fees';
+import {
+  PRE_CHARGE_DEADLINE_MS,
+  CONFIRM_SLOW_NOTICE_MS,
+  RECORD_DONATION_DEADLINE_MS,
+  withDeadline,
+  buildAppearance,
+  buildElementsOptions,
+  buildPaymentElementOptions,
+  getPaymentConfig,
+  paymentIntentIdFrom,
+} from '@shared/stripe';
 
-// Deadlines keep the submit spinner from spinning forever if a promise
-// never settles. Only the non-interactive steps get a hard deadline:
-// confirmPayment may show a 3D Secure challenge the donor can legitimately
-// sit on for minutes, so it gets a soft "taking too long" notice instead.
-const PRE_CHARGE_DEADLINE_MS = 30000;
-const CONFIRM_SLOW_NOTICE_MS = 30000;
-const RECORD_DONATION_DEADLINE_MS = 15000;
 const PRE_CHARGE_TIMEOUT_MESSAGE =
   'The payment could not be started. Please check your connection and try again.';
-
-/**
- * Race a promise against a deadline that rejects with the given message.
- *
- * Exported for unit tests only.
- *
- * @param {Promise} promise The promise to guard.
- * @param {number}  ms      Deadline in milliseconds.
- * @param {string}  message Error message shown to the donor on timeout.
- * @return {Promise} The guarded promise.
- */
-export function withDeadline( promise, ms, message ) {
-  let timer;
-  return Promise.race( [
-    Promise.resolve( promise ).finally( () => clearTimeout( timer ) ),
-    new Promise( ( _resolve, reject ) => {
-      timer = setTimeout( () => reject( new Error( message ) ), ms );
-    } ),
-  ] );
-}
 
 /**
  * Get the platform fee rate for fee recovery calculations.
@@ -837,7 +821,7 @@ store( 'mission-donation-platform/donation-form', {
           : 'donations/confirm';
         const confirmBody = {
           transaction_id: intentData.transaction_id,
-          payment_intent_id: intentData.client_secret.split( '_secret_' )[ 0 ],
+          payment_intent_id: paymentIntentIdFrom( intentData.client_secret ),
         };
 
         if ( isRecurring ) {
@@ -1132,17 +1116,13 @@ store( 'mission-donation-platform/donation-form', {
         return;
       }
 
-      const configResponse = yield fetch(
-        `${ ctx.restUrl }donations/payment-config`
-      );
+      const configData = yield getPaymentConfig( ctx.restUrl );
 
-      if ( ! configResponse.ok ) {
+      if ( ! configData ) {
         ctx.paymentError =
           'Payment processing is not available right now. Please try again later.';
         return;
       }
-
-      const configData = yield configResponse.json();
 
       if ( ! configData.connected_account_id ) {
         ctx.paymentError =
@@ -1174,51 +1154,25 @@ store( 'mission-donation-platform/donation-form', {
           )
         : 0;
 
-      const customAppearance = ctx.stripeAppearance || {};
+      stripeState.appearance = buildAppearance(
+        ctx.primaryColor,
+        ctx.stripeAppearance || {}
+      );
 
-      stripeState.appearance = {
-        theme: customAppearance.theme || 'stripe',
-        variables: {
-          colorPrimary: ctx.primaryColor || '#2FA36B',
-          colorDanger: '#dc2626',
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          borderRadius: '10px',
-          ...( customAppearance.variables || {} ),
-        },
-        rules: {
-          '.Input--invalid': {
-            borderColor: '#dc2626',
-            boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.12)',
-          },
-          '.Error': {
-            fontSize: '0.8125rem',
-          },
-          ...( customAppearance.rules || {} ),
-        },
-      };
+      stripeState.elements = stripeState.stripe.elements(
+        buildElementsOptions( {
+          amount: amount + fee + tip,
+          currency: ctx.settings.currency,
+          appearance: stripeState.appearance,
+        } )
+      );
 
-      stripeState.elements = stripeState.stripe.elements( {
-        mode: 'payment',
-        amount: amount + fee + tip,
-        currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
-        paymentMethodTypes: [ 'card' ],
-        appearance: stripeState.appearance,
-      } );
-
-      const paymentElement = stripeState.elements.create( 'payment', {
-        layout: 'tabs',
-        fields: {
-          billingDetails: {
-            name: 'never',
-            email: 'never',
-            address: ctx.settings.collectAddress ? 'never' : 'auto',
-          },
-        },
-        wallets: {
-          link: 'never',
-        },
-      } );
+      const paymentElement = stripeState.elements.create(
+        'payment',
+        buildPaymentElementOptions( {
+          address: ctx.settings.collectAddress ? 'never' : 'auto',
+        } )
+      );
 
       paymentElement.mount( ref );
 
@@ -1291,27 +1245,20 @@ store( 'mission-donation-platform/donation-form', {
       if ( isRecurring !== stripeState.isRecurring ) {
         stripeState.isRecurring = isRecurring;
         if ( container && total > 0 ) {
-          stripeState.elements = stripeState.stripe.elements( {
-            mode: 'payment',
-            amount: total,
-            currency: ( ctx.settings.currency || 'USD' ).toLowerCase(),
-            paymentMethodTypes: [ 'card' ],
-            ...( isRecurring && {
-              setupFutureUsage: 'off_session',
-            } ),
-            appearance: stripeState.appearance,
-          } );
-          const paymentElement = stripeState.elements.create( 'payment', {
-            layout: 'tabs',
-            fields: {
-              billingDetails: {
-                name: 'never',
-                email: 'never',
-                address: ctx.settings.collectAddress ? 'never' : 'auto',
-              },
-            },
-            wallets: { link: 'never' },
-          } );
+          stripeState.elements = stripeState.stripe.elements(
+            buildElementsOptions( {
+              amount: total,
+              currency: ctx.settings.currency,
+              appearance: stripeState.appearance,
+              recurring: isRecurring,
+            } )
+          );
+          const paymentElement = stripeState.elements.create(
+            'payment',
+            buildPaymentElementOptions( {
+              address: ctx.settings.collectAddress ? 'never' : 'auto',
+            } )
+          );
           container.replaceChildren();
           paymentElement.mount( container );
 
