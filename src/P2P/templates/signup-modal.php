@@ -291,7 +291,7 @@ $share_buttons = [
 						<div class="mission-su__pay-amount" data-wp-text="state.giftAmountDisplay"></div>
 
 						<p class="mission-su__pay-fee" data-wp-bind--hidden="!state.feeRecovery">
-							<span class="mission-su__pay-fee-text" data-wp-class--uncovered="!state.giftFeeCovered">+ <span data-wp-text="state.giftFeeDisplay"></span> <?php esc_html_e( 'processing fee', 'mission-donation-platform' ); ?></span>
+							<span class="mission-su__pay-fee-text" data-wp-class--is-uncovered="!state.giftFeeCovered">+ <span data-wp-text="state.giftFeeDisplay"></span> <?php esc_html_e( 'processing fee', 'mission-donation-platform' ); ?></span>
 							<button type="button" class="mission-su__link mission-su__pay-fee-edit" data-wp-bind--hidden="!state.isGiftFeeOptional" data-wp-on--click="actions.toggleGiftFeeDetails"><?php esc_html_e( 'Edit', 'mission-donation-platform' ); ?></button>
 						</p>
 						<div class="mission-su__pay-fee-details" data-wp-bind--hidden="!state.showGiftFeeDetails" hidden>

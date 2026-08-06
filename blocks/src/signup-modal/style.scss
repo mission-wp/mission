@@ -9,6 +9,10 @@
   --mission-error: #dc2626;
   --mission-radius: 10px;
 
+  // Derived here rather than inlined from PHP: kses strips function values
+  // from inline custom properties.
+  --mission-primary-light: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+
   *,
   *::before,
   *::after {
@@ -258,7 +262,7 @@
   gap: 2px;
   padding: 12px 14px;
   margin-bottom: 18px;
-  background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+  background: var(--mission-primary-light);
   border: 1px solid color-mix(in srgb, var(--mission-primary) 18%, transparent);
   border-radius: var(--mission-radius);
 
@@ -318,7 +322,7 @@
   border: 1.5px solid var(--mission-border);
 
   &:hover {
-    background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+    background: var(--mission-primary-light);
     border-color: var(--mission-primary);
   }
 }
@@ -696,7 +700,7 @@ a.mission-su__btn {
 
   &:hover {
     border-color: var(--mission-primary);
-    background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+    background: var(--mission-primary-light);
   }
 
   &.is-active {
@@ -713,7 +717,6 @@ a.mission-su__btn {
 
   .mission-su__amount-btn--other {
     width: 100%;
-    height: 100%;
   }
 }
 
@@ -741,7 +744,7 @@ a.mission-su__btn {
   font-weight: 600;
   font-family: inherit;
   color: var(--mission-text);
-  background: color-mix(in srgb, var(--mission-primary) 8%, transparent);
+  background: var(--mission-primary-light);
   border: 1.5px solid var(--mission-primary);
   border-radius: var(--mission-radius);
   outline: none;
@@ -794,7 +797,7 @@ a.mission-su__btn {
   color: var(--mission-text-secondary);
 }
 
-.mission-su__pay-fee-text.uncovered {
+.mission-su__pay-fee-text.is-uncovered {
   text-decoration: line-through;
 }
 
@@ -865,12 +868,16 @@ a.mission-su__btn {
 
 .mission-su__tip-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: 12px;
 }
 
 .mission-su__tip-text {
-  flex: 1;
+  // The basis floor wraps the percent trigger onto its own line when the
+  // card is too narrow to fit both comfortably.
+  flex: 1 1 220px;
+  min-width: 0;
   margin: 0;
   font-size: 13.5px;
   line-height: 1.5;
@@ -1091,5 +1098,14 @@ a.mission-su__btn {
   .mission-su__row {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .mission-su__tip-custom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 }

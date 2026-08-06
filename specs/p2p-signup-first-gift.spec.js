@@ -286,7 +286,7 @@ test.describe( 'Peer-to-peer sign-up: first-gift nudge', () => {
       .getByRole( 'checkbox', { name: 'I want to cover the fee' } )
       .uncheck();
     await expect( modal.locator( '.mission-su__pay-fee-text' ) ).toHaveClass(
-      /uncovered/
+      /is-uncovered/
     );
     await expect( submitLabel ).toContainText( 'Donate $28.75 & launch' );
   } );
