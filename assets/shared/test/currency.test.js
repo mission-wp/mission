@@ -49,6 +49,27 @@ describe( 'formatAmount', () => {
   } );
 } );
 
+describe( 'formatAmount locale', () => {
+  beforeEach( () => {
+    window.missiondpAdmin = { currency: 'USD' };
+  } );
+
+  afterEach( () => {
+    delete window.missiondpAdmin;
+    document.documentElement.lang = '';
+  } );
+
+  it( 'follows the html lang attribute (site locale), not the browser locale', () => {
+    document.documentElement.lang = 'de-DE';
+    expect( formatAmount( 5000, 'EUR' ) ).toBe( '50,00 €' );
+  } );
+
+  it( 'falls back to the browser locale when html lang is invalid', () => {
+    document.documentElement.lang = 'not a locale';
+    expect( formatAmount( 5000, 'USD' ) ).toBe( '$50.00' );
+  } );
+} );
+
 describe( 'getCurrencySymbol', () => {
   beforeEach( () => {
     window.missiondpAdmin = { currency: 'USD' };
