@@ -26,7 +26,13 @@ const TWO_FORMS_CONTENT =
  * @param {string}                             email Donor email.
  */
 async function completeDonation( form, email ) {
-  await form.getByRole( 'button', { name: '$25.00', exact: true } ).click();
+  // Presets are server-rendered: click until the active state confirms the
+  // handler was attached and the selection took (hydration race).
+  const amountBtn = form.getByRole( 'button', { name: '$25.00', exact: true } );
+  await expect( async () => {
+    await amountBtn.click();
+    await expect( amountBtn ).toHaveClass( /active/, { timeout: 1500 } );
+  } ).toPass( { timeout: 15000 } );
   await form.locator( '.mission-df-btn--primary' ).first().click();
 
   await form.locator( 'input[id$="first-name"]' ).fill( 'Multi' );

@@ -34,7 +34,27 @@ class DonationFormPage {
   async selectAmount( text ) {
     // Ensure the text includes ".00" for exact matching.
     const label = text.includes( '.' ) ? text : `${ text }.00`;
-    await this.form.getByRole( 'button', { name: label, exact: true } ).click();
+    const button = this.form.getByRole( 'button', {
+      name: label,
+      exact: true,
+    } );
+    const active = this.form
+      .locator( '.mission-df-amount-btn.active' )
+      .filter( { hasText: label } );
+
+    // Preset buttons are server-rendered, so the first click can land before
+    // hydration attaches the handler (same race as openTipMenu). Click until
+    // the active state confirms the selection took.
+    for ( let attempt = 0; attempt < 3; attempt++ ) {
+      await button.click();
+      try {
+        await active.waitFor( { state: 'attached', timeout: 1500 } );
+        return;
+      } catch {
+        await this.page.waitForTimeout( 200 );
+      }
+    }
+    throw new Error( `Amount ${ label } was not selected after 3 attempts.` );
   }
 
   /**
