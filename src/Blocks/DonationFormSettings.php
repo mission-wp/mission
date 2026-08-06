@@ -91,7 +91,31 @@ class DonationFormSettings {
 		 * @param array<string, mixed> $attributes  Original block attributes.
 		 * @param int                  $campaign_id The campaign table ID (0 if none).
 		 */
-		return apply_filters( 'mission_donation_form_settings', $settings, $attributes, $campaign_id );
+		$settings = apply_filters( 'mission_donation_form_settings', $settings, $attributes, $campaign_id );
+
+		return self::normalize_amounts( $settings );
+	}
+
+	/**
+	 * Cast amount settings to integers after the filter.
+	 *
+	 * Block attributes and filters may supply string amounts; the frontend
+	 * store compares them strictly (===) against integer context values, so
+	 * normalize once at the boundary.
+	 *
+	 * @param array<string, mixed> $settings Filtered settings.
+	 *
+	 * @return array<string, mixed> Settings with integer amounts.
+	 */
+	private static function normalize_amounts( array $settings ): array {
+		foreach ( (array) ( $settings['amountsByFrequency'] ?? [] ) as $frequency => $amounts ) {
+			$settings['amountsByFrequency'][ $frequency ] = array_values( array_map( 'intval', (array) $amounts ) );
+		}
+
+		$settings['defaultAmounts'] = array_map( 'intval', (array) ( $settings['defaultAmounts'] ?? [] ) );
+		$settings['minimumAmount']  = (int) ( $settings['minimumAmount'] ?? 0 );
+
+		return $settings;
 	}
 
 	/**

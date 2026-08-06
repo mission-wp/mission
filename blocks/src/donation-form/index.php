@@ -124,7 +124,6 @@ $context = [
 	'frequencyLabels'      => $frequency_labels,
 	'frequencyDropdownOpen' => false,
 	'amountsByFrequency'   => $amounts_by_frequency,
-	'currentAmounts'       => $amounts_by_frequency[ $is_ongoing ? $default_frequency : 'one_time' ] ?? $amounts_by_frequency['one_time'] ?? [],
 	'defaultAmounts'       => (object) $default_amounts,
 	'amountDescriptions'   => (object) $amount_descriptions,
 	'selectedAmount'       => $default_amount,
@@ -321,12 +320,12 @@ $context = [
 				?>
 				<button
 					type="button"
-					class="mission-df-amount-btn<?php echo (int) $preset_amount === (int) $default_amount ? ' active' : ''; ?>"
+					class="mission-df-amount-btn<?php echo $preset_amount === $default_amount ? ' active' : ''; ?>"
 					data-wp-each-child="mission-donation-platform/donation-form::state.currentAmounts"
 					data-wp-on--click="actions.selectAmount"
 					data-wp-class--active="callbacks.isSelectedAmount"
 				>
-					<span data-wp-text="callbacks.formattedPresetAmount"><?php echo esc_html( Currency::format_amount( (int) $preset_amount, $currency ) ); ?></span>
+					<span data-wp-text="callbacks.formattedPresetAmount"><?php echo esc_html( Currency::format_amount_i18n( $preset_amount, $currency ) ); ?></span>
 					<span class="mission-df-amount-desc" data-wp-text="callbacks.amountDescription"><?php echo esc_html( $initial_descriptions[ (string) $preset_amount ] ?? '' ); ?></span>
 				</button>
 			<?php endforeach; ?>

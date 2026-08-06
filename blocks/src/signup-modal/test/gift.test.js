@@ -122,6 +122,12 @@ describe( 'nudge amount picker', () => {
     expect( storeDef.state.customGiftValue ).toBe( '25' );
   } );
 
+  it( 'labels a preset with zero cents stripped, matching the SSR string', () => {
+    interactivity._mockContext.preset = 2500;
+
+    expect( storeDef.callbacks.giftPresetLabel() ).toBe( '$25' );
+  } );
+
   it( 'a custom amount drives the headline', () => {
     storeDef.actions.chooseOtherGift();
     storeDef.actions.updateCustomGift( { target: { value: '12.34' } } );

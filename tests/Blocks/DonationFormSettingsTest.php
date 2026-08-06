@@ -382,4 +382,27 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 
 		remove_all_filters( 'mission_donation_form_settings' );
 	}
+
+	/**
+	 * Test resolve casts string amounts from filters/attributes to integers.
+	 */
+	public function test_resolve_normalizes_amounts_to_integers(): void {
+		add_filter(
+			'mission_donation_form_settings',
+			function ( $settings ) {
+				$settings['amountsByFrequency']['one_time'] = [ '2500', '5000.0', 7500 ];
+				$settings['defaultAmounts']                 = [ 'one_time' => '2500' ];
+				$settings['minimumAmount']                  = '500';
+				return $settings;
+			}
+		);
+
+		$result = DonationFormSettings::resolve( [] );
+
+		remove_all_filters( 'mission_donation_form_settings' );
+
+		$this->assertSame( [ 2500, 5000, 7500 ], $result['amountsByFrequency']['one_time'] );
+		$this->assertSame( [ 'one_time' => 2500 ], $result['defaultAmounts'] );
+		$this->assertSame( 500, $result['minimumAmount'] );
+	}
 }

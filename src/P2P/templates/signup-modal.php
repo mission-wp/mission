@@ -268,7 +268,7 @@ $share_buttons = [
 									<button type="button" class="mission-su__amount-btn" data-wp-class--is-active="callbacks.isGiftPresetActive" data-wp-on--click="actions.selectGiftPreset" data-wp-text="callbacks.giftPresetLabel"></button>
 								</template>
 								<?php foreach ( $payload['kickoffAmounts'] as $kickoff_amount ) : ?>
-									<button type="button" class="mission-su__amount-btn" data-wp-each-child="mission-donation-platform/p2p-signup::state.kickoffAmounts" data-wp-context='<?php echo esc_attr( wp_json_encode( [ 'preset' => $kickoff_amount ] ) ); ?>' data-wp-class--is-active="callbacks.isGiftPresetActive" data-wp-on--click="actions.selectGiftPreset" data-wp-text="callbacks.giftPresetLabel"><?php echo esc_html( $payload['currencySymbol'] . Currency::minor_to_major( $kickoff_amount, $payload['currency'] ) ); ?></button>
+									<button type="button" class="mission-su__amount-btn" data-wp-each-child="mission-donation-platform/p2p-signup::state.kickoffAmounts" data-wp-context='<?php echo esc_attr( wp_json_encode( [ 'preset' => $kickoff_amount ] ) ); ?>' data-wp-class--is-active="callbacks.isGiftPresetActive" data-wp-on--click="actions.selectGiftPreset" data-wp-text="callbacks.giftPresetLabel"><?php echo esc_html( Currency::format_amount_i18n( $kickoff_amount, $payload['currency'], true ) ); ?></button>
 								<?php endforeach; ?>
 								<div class="mission-su__amount-other-cell">
 									<button type="button" class="mission-su__amount-btn mission-su__amount-btn--other" data-wp-bind--hidden="state.isCustomGift" data-wp-on--click="actions.chooseOtherGift"><?php esc_html_e( 'Other', 'mission-donation-platform' ); ?></button>
