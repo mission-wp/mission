@@ -194,7 +194,7 @@ async function advanceToSetup( modal, account ) {
  */
 async function dashboardLogin( page, email, password ) {
   wpEval(
-    'global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE \\"%missiondp_rl_login%\\"" );'
+    'global $wpdb; $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE \\"%missiondp_attempts_rl_login_%\\"" );'
   );
 
   await page.locator( '#mission-dd-login-email' ).fill( email );
