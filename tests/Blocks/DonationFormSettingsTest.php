@@ -105,7 +105,6 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['feeRecovery'] );
 		$this->assertSame( 'optional', $result['feeMode'] );
 		$this->assertTrue( $result['tipEnabled'] );
-		$this->assertSame( [ 5, 10, 15, 20 ], $result['tipPercentages'] );
 
 		// Form field defaults.
 		$this->assertTrue( $result['collectAddress'] );
@@ -150,7 +149,6 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 			'feeRecovery'          => false,
 			'feeMode'              => 'always',
 			'tipEnabled'           => false,
-			'tipPercentages'       => [ 10, 20 ],
 			'collectAddress'       => false,
 			'anonymousEnabled'     => true,
 			'tributeEnabled'       => true,
@@ -170,7 +168,6 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		$this->assertFalse( $result['feeRecovery'] );
 		$this->assertSame( 'always', $result['feeMode'] );
 		$this->assertFalse( $result['tipEnabled'] );
-		$this->assertSame( [ 10, 20 ], $result['tipPercentages'] );
 		$this->assertFalse( $result['collectAddress'] );
 		$this->assertTrue( $result['anonymousEnabled'] );
 		$this->assertTrue( $result['tributeEnabled'] );

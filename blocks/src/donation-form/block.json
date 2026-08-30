@@ -57,9 +57,6 @@
 		"tipEnabled": {
 			"type": "boolean"
 		},
-		"tipPercentages": {
-			"type": "array"
-		},
 		"anonymousEnabled": {
 			"type": "boolean"
 		},

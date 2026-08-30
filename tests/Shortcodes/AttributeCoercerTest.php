@@ -24,7 +24,7 @@ class AttributeCoercerTest extends WP_UnitTestCase {
 		'campaignId'         => [ 'type' => 'number' ],
 		'showImage'          => [ 'type' => 'boolean' ],
 		'buttonText'         => [ 'type' => 'string' ],
-		'tipPercentages'     => [ 'type' => 'array' ],
+		'sampleList'     => [ 'type' => 'array' ],
 		'amountsByFrequency' => [ 'type' => 'object' ],
 		'customFields'       => [ 'type' => 'array' ],
 	];
@@ -67,9 +67,9 @@ class AttributeCoercerTest extends WP_UnitTestCase {
 	 * Comma lists become arrays with numeric items cast and empties discarded.
 	 */
 	public function test_array_coercion(): void {
-		$this->assertSame( [ 'tipPercentages' => [ 5, 10, 15 ] ], AttributeCoercer::coerce( self::SCHEMA, [ 'tip_percentages' => '5, 10 ,15' ] ) );
-		$this->assertSame( [ 'tipPercentages' => [ 'a', 'b' ] ], AttributeCoercer::coerce( self::SCHEMA, [ 'tip_percentages' => 'a,,b' ] ) );
-		$this->assertSame( [], AttributeCoercer::coerce( self::SCHEMA, [ 'tip_percentages' => '' ] ) );
+		$this->assertSame( [ 'sampleList' => [ 5, 10, 15 ] ], AttributeCoercer::coerce( self::SCHEMA, [ 'sample_list' => '5, 10 ,15' ] ) );
+		$this->assertSame( [ 'sampleList' => [ 'a', 'b' ] ], AttributeCoercer::coerce( self::SCHEMA, [ 'sample_list' => 'a,,b' ] ) );
+		$this->assertSame( [], AttributeCoercer::coerce( self::SCHEMA, [ 'sample_list' => '' ] ) );
 	}
 
 	/**

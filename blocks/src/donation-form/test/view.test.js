@@ -72,7 +72,6 @@ function resetContext() {
       recurringFrequencies: [ 'monthly', 'quarterly', 'annually' ],
       feeRecovery: true,
       tipEnabled: true,
-      tipPercentages: [ 5, 10, 15, 20 ],
       currency: 'USD',
       siteName: 'Test Org',
     },
