@@ -319,7 +319,7 @@ $share_buttons = [
 							<?php esc_html_e( 'This is taking longer than expected. If nothing happens shortly, refresh the page and try again. Your card is only charged when a payment completes.', 'mission-donation-platform' ); ?>
 						</p>
 
-						<div class="mission-su__tip" data-wp-bind--hidden="!state.tipEnabled" data-wp-on-document--click="actions.closeGiftTipMenu" <?php echo $payload['tipEnabled'] ? '' : 'hidden'; ?>>
+						<div class="mission-su__tip" data-wp-bind--hidden="!state.tipEnabled" data-wp-on-document--click="actions.closeGiftTipMenu" data-wp-watch="callbacks.watchGiftTipVisibility" <?php echo $payload['tipEnabled'] ? '' : 'hidden'; ?>>
 							<div class="mission-su__tip-card">
 								<div class="mission-su__tip-header">
 									<p class="mission-su__tip-text"><?php esc_html_e( 'An optional tip keeps this free donation platform running', 'mission-donation-platform' ); ?></p>

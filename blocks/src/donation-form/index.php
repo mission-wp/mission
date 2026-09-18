@@ -894,7 +894,7 @@ $context = [
 
 		<?php // Tip section. ?>
 		<?php if ( ! empty( $settings['tipEnabled'] ) ) : ?>
-			<div class="mission-df-tip" data-wp-on-document--click="actions.closeTipMenu">
+			<div class="mission-df-tip" data-wp-on-document--click="actions.closeTipMenu" data-wp-watch="callbacks.watchTipVisibility">
 				<div class="mission-df-tip-card">
 					<div class="mission-df-tip-header">
 						<p class="mission-df-tip-text">

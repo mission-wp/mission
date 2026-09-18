@@ -12,7 +12,91 @@ import {
   calculateTip,
   getPaymentStep,
   validateCustomFields,
+  resolveSubmitTip,
+  zeroTip,
+  TIP_GUARD_OPTS,
 } from '../utils';
+
+// ── zeroTip ──
+
+describe( 'zeroTip', () => {
+  it( 'clears the percentage and custom tip state', () => {
+    const ctx = {
+      selectedTipPercent: 15,
+      isCustomTip: true,
+      customTipAmount: 300,
+    };
+    zeroTip( ctx );
+    expect( ctx ).toEqual( {
+      selectedTipPercent: 0,
+      isCustomTip: false,
+      customTipAmount: 0,
+    } );
+  } );
+} );
+
+jest.mock( '@shared/tip-guard', () => ( {
+  isTipSuppressed: jest.fn( () => false ),
+} ) );
+
+const { isTipSuppressed } = require( '@shared/tip-guard' );
+
+// ── resolveSubmitTip ──
+
+describe( 'resolveSubmitTip', () => {
+  const ctx = {
+    selectedTipPercent: 15,
+    isCustomTip: false,
+    customTipAmount: 0,
+    settings: { tipEnabled: true, currency: 'USD' },
+  };
+
+  beforeEach( () => {
+    isTipSuppressed.mockClear();
+    isTipSuppressed.mockReturnValue( false );
+    document.body.innerHTML =
+      '<section class="root"><div class="mission-df-tip"></div></section>';
+  } );
+
+  it( 'sends the tip in tip mode when the section is shown', () => {
+    const root = document.querySelector( '.root' );
+    expect( resolveSubmitTip( ctx, root, 10000 ) ).toEqual( {
+      tipHidden: false,
+      tipAmount: 1500,
+      feeMode: 'tip',
+    } );
+    expect( isTipSuppressed ).toHaveBeenCalledWith(
+      document.querySelector( '.mission-df-tip' ),
+      root,
+      TIP_GUARD_OPTS
+    );
+  } );
+
+  it( 'falls back to the flat fee with no tip when suppressed', () => {
+    isTipSuppressed.mockReturnValue( true );
+    expect(
+      resolveSubmitTip( ctx, document.querySelector( '.root' ), 10000 )
+    ).toEqual( { tipHidden: true, tipAmount: 0, feeMode: 'flat' } );
+  } );
+
+  it( 'never consults the guard when tips are disabled', () => {
+    const flatCtx = { ...ctx, settings: { tipEnabled: false } };
+    expect(
+      resolveSubmitTip( flatCtx, document.querySelector( '.root' ), 10000 )
+    ).toEqual( { tipHidden: false, tipAmount: 0, feeMode: 'flat' } );
+    expect( isTipSuppressed ).not.toHaveBeenCalled();
+  } );
+
+  it( 'passes a null container to the guard when the section is gone', () => {
+    document.querySelector( '.mission-df-tip' ).remove();
+    resolveSubmitTip( ctx, document.querySelector( '.root' ), 10000 );
+    expect( isTipSuppressed ).toHaveBeenCalledWith(
+      null,
+      document.querySelector( '.root' ),
+      TIP_GUARD_OPTS
+    );
+  } );
+} );
 
 // ── getEffectiveAmount ──
 

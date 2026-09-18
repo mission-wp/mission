@@ -5,6 +5,12 @@
  */
 import { majorToMinor, roundToCurrency } from '@shared/currencies';
 import { calculateTip, defaultFixedFee } from '@shared/fees';
+import { isTipSuppressed } from '@shared/tip-guard';
+
+/** Tip guard options: parts of the tip section that must be visible. */
+export const TIP_GUARD_OPTS = {
+  essentials: [ '.mission-df-tip-text', '.mission-df-tip-trigger' ],
+};
 
 /**
  * Get the effective donation amount in minor units.
@@ -87,6 +93,45 @@ export function getTipAmount( ctx, amount ) {
     return Math.max( 0, roundToCurrency( ctx.customTipAmount || 0, currency ) );
   }
   return calculateTip( amount, ctx.selectedTipPercent, currency );
+}
+
+/**
+ * Resolve the tip and fee mode to submit, falling back to the flat platform
+ * fee when custom code has hidden the tip section.
+ *
+ * Touches the DOM (via the tip guard) unlike the rest of this module.
+ *
+ * @param {Object}   ctx    Interactivity context.
+ * @param {?Element} root   Form root element.
+ * @param {number}   amount Donation amount in minor units.
+ * @return {{ tipAmount: number, feeMode: string, tipHidden: boolean }} Submit values.
+ */
+export function resolveSubmitTip( ctx, root, amount ) {
+  const tipEnabled = !! ctx.settings?.tipEnabled;
+  const tipHidden =
+    tipEnabled &&
+    isTipSuppressed(
+      root?.querySelector( '.mission-df-tip' ) ?? null,
+      root,
+      TIP_GUARD_OPTS
+    );
+  const tipMode = tipEnabled && ! tipHidden;
+  return {
+    tipHidden,
+    tipAmount: tipMode ? getTipAmount( ctx, amount ) : 0,
+    feeMode: tipMode ? 'tip' : 'flat',
+  };
+}
+
+/**
+ * Zero the tip in form state so the displayed total matches a tip-less charge.
+ *
+ * @param {Object} ctx Interactivity context.
+ */
+export function zeroTip( ctx ) {
+  ctx.selectedTipPercent = 0;
+  ctx.isCustomTip = false;
+  ctx.customTipAmount = 0;
 }
 
 /**
