@@ -18,7 +18,11 @@ import {
   getTipAmount,
   getPaymentStep,
   validateCustomFields,
+  resolveSubmitTip,
+  zeroTip,
+  TIP_GUARD_OPTS,
 } from './utils';
+import { isTrustedEvent, watchTipVisibility } from '@shared/tip-guard';
 import {
   getCurrencyDecimals,
   majorToMinor,
@@ -59,6 +63,23 @@ function getPlatformRate( ctx ) {
 // internals breaks them.
 const stripeStateByForm = new WeakMap();
 
+// Active tip visibility watchers, keyed by form root like the Stripe state.
+const tipWatchByForm = new WeakMap();
+
+/**
+ * Find the donation form root containing an element.
+ *
+ * @param {Element|null} el Any element inside a donation form block.
+ * @return {?Element} The form root, or null.
+ */
+function getFormRoot( el ) {
+  return (
+    el?.closest(
+      '[data-wp-interactive="mission-donation-platform/donation-form"]'
+    ) ?? null
+  );
+}
+
 /**
  * Get (or create) the Stripe state for the form containing an element.
  *
@@ -66,9 +87,7 @@ const stripeStateByForm = new WeakMap();
  * @return {?Object} Mutable { stripe, elements, isRecurring, appearance }, or null.
  */
 function getStripeState( el ) {
-  const root = el?.closest(
-    '[data-wp-interactive="mission-donation-platform/donation-form"]'
-  );
+  const root = getFormRoot( el );
   if ( ! root ) {
     return null;
   }
@@ -91,9 +110,7 @@ function getStripeState( el ) {
  * @param {Element} ref Element inside the form.
  */
 function focusPaymentError( ref ) {
-  const form = ref?.closest(
-    '[data-wp-interactive="mission-donation-platform/donation-form"]'
-  );
+  const form = getFormRoot( ref );
   const errorEl = form?.querySelector( '.mission-df-card-error' );
   if ( errorEl ) {
     errorEl.setAttribute( 'tabindex', '-1' );
@@ -107,9 +124,7 @@ function focusPaymentError( ref ) {
  * @param {Element} ref Element inside the form.
  */
 function focusStepHeading( ref ) {
-  const form = ref?.closest(
-    '[data-wp-interactive="mission-donation-platform/donation-form"]'
-  );
+  const form = getFormRoot( ref );
   const heading = form?.querySelector(
     '.mission-df-step.active .mission-df-step-title'
   );
@@ -119,7 +134,7 @@ function focusStepHeading( ref ) {
   }
 }
 
-store( 'mission-donation-platform/donation-form', {
+const { callbacks } = store( 'mission-donation-platform/donation-form', {
   state: {
     get currentAmounts() {
       const ctx = getContext();
@@ -393,6 +408,9 @@ store( 'mission-donation-platform/donation-form', {
       ctx.showFeeDetails = ! ctx.showFeeDetails;
     },
     toggleTipMenu( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       event.stopPropagation();
       const ctx = getContext();
       if ( ! ctx.tipMenuOpen ) {
@@ -431,6 +449,9 @@ store( 'mission-donation-platform/donation-form', {
       getContext().tipMenuOpen = false;
     },
     selectTipPercent( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       event.stopPropagation();
       const ctx = getContext();
       ctx.selectedTipPercent = ctx.tipPercent;
@@ -439,6 +460,9 @@ store( 'mission-donation-platform/donation-form', {
       ctx.tipMenuOpen = false;
     },
     selectCustomTip( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       event.stopPropagation();
       const ctx = getContext();
       ctx.isCustomTip = true;
@@ -448,6 +472,11 @@ store( 'mission-donation-platform/donation-form', {
       ctx.tipMenuOpen = false;
     },
     updateCustomTipAmount( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        // Undo a scripted write so the field shows the tip actually charged.
+        event.target.value = callbacks.customTipDisplayValue();
+        return;
+      }
       const ctx = getContext();
       const value = parseFloat( event.target.value ) || 0;
       ctx.customTipAmount = majorToMinor(
@@ -455,11 +484,17 @@ store( 'mission-donation-platform/donation-form', {
         ctx.settings.currency || 'USD'
       );
     },
-    tipCustomUp() {
+    tipCustomUp( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       const ctx = getContext();
       ctx.customTipAmount += 100;
     },
-    tipCustomDown() {
+    tipCustomDown( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       const ctx = getContext();
       ctx.customTipAmount = Math.max( 0, ctx.customTipAmount - 100 );
     },
@@ -606,7 +641,9 @@ store( 'mission-donation-platform/donation-form', {
     *submit() {
       const ctx = getContext();
       // eslint-disable-next-line @wordpress/no-unused-vars-before-return -- getElement() must be called synchronously at action start.
-      const stripeState = getStripeState( getElement().ref );
+      const formRoot = getFormRoot( getElement().ref );
+      // eslint-disable-next-line @wordpress/no-unused-vars-before-return -- derived from the root captured above.
+      const stripeState = getStripeState( formRoot );
 
       if ( ctx.isSubmitting ) {
         return;
@@ -646,17 +683,17 @@ store( 'mission-donation-platform/donation-form', {
 
         if ( hasOwnErrors || submitError ) {
           if ( hasOwnErrors ) {
-            const { ref } = getElement();
-            const form = ref?.closest(
-              '[data-wp-interactive="mission-donation-platform/donation-form"]'
-            );
-            form?.querySelector( '[aria-invalid="true"]' )?.focus();
+            formRoot?.querySelector( '[aria-invalid="true"]' )?.focus();
           }
           return;
         }
 
         const donationAmount = getEffectiveAmount( ctx );
-        const tipAmount = getTipAmount( ctx, donationAmount );
+        const { tipAmount, feeMode, tipHidden } = resolveSubmitTip(
+          ctx,
+          formRoot,
+          donationAmount
+        );
         const { rate, fixed } = getFeeParams( ctx );
         const platformRate = getPlatformRate( ctx );
         const feeAmount = ctx.feeRecoveryChecked
@@ -674,6 +711,11 @@ store( 'mission-donation-platform/donation-form', {
           ? 'donations/create-subscription'
           : 'donations/create-payment-intent';
 
+        if ( tipHidden ) {
+          // Keep the Elements amount in step with the tip-less charge.
+          stripeState.elements.update( { amount: donationAmount + feeAmount } );
+        }
+
         // Step 2: Create PaymentIntent (one-time) or Subscription (recurring).
         const intentResponse = yield withDeadline(
           fetch( `${ ctx.restUrl }${ createEndpoint }`, {
@@ -686,7 +728,9 @@ store( 'mission-donation-platform/donation-form', {
               donation_amount: donationAmount + feeAmount,
               tip_amount: tipAmount,
               fee_amount: feeAmount,
-              fee_mode: ctx.settings.tipEnabled ? 'tip' : 'flat',
+              fee_mode: feeMode,
+              tip_hidden: tipHidden,
+              page_url: tipHidden ? window.location.href : '',
               donor_email: ctx.email,
               donor_first_name: ctx.firstName,
               donor_last_name: ctx.lastName,
@@ -1100,6 +1144,31 @@ store( 'mission-donation-platform/donation-form', {
         if ( ref && ref.tagName === 'INPUT' ) {
           ref.focus();
         }
+      }
+    },
+    watchTipVisibility() {
+      const ctx = getContext();
+      // Read before any early return so the watcher re-runs on step changes.
+      void ctx.currentStep;
+      const { ref } = getElement();
+      const root = getFormRoot( ref );
+      if ( ! root ) {
+        return;
+      }
+      const active = ctx.currentStep === getPaymentStep( ctx );
+      const existing = tipWatchByForm.get( root );
+      if ( active && ! existing ) {
+        tipWatchByForm.set(
+          root,
+          watchTipVisibility( ref, root, {
+            ...TIP_GUARD_OPTS,
+            // A tip the donor can't see is never charged; keep the total honest.
+            onChange: ( hidden ) => hidden && zeroTip( ctx ),
+          } )
+        );
+      } else if ( ! active && existing ) {
+        existing.stop();
+        tipWatchByForm.delete( root );
       }
     },
     *mountPaymentElement() {
