@@ -730,7 +730,7 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
               fee_amount: feeAmount,
               fee_mode: feeMode,
               tip_hidden: tipHidden,
-              page_url: tipHidden ? window.location.href : '',
+              page_url: window.location.href,
               donor_email: ctx.email,
               donor_first_name: ctx.firstName,
               donor_last_name: ctx.lastName,

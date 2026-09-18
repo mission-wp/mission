@@ -424,7 +424,7 @@ describe( 'payment flow', () => {
       fee_amount: 106,
       fee_mode: 'tip',
       tip_hidden: false,
-      page_url: '',
+      page_url: window.location.href,
       donor_email: 'jane@example.com',
       donor_first_name: 'Jane',
       donor_last_name: 'Doe',

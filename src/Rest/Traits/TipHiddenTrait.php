@@ -40,23 +40,32 @@ trait TipHiddenTrait {
 	}
 
 	/**
-	 * Resolve the page URL to report for a suppressed tip.
+	 * Resolve the page URL the donation was made from, for the Mission API.
 	 *
-	 * Prefers the URL the form reported, falling back to the source post's
-	 * permalink.
+	 * Prefers the URL the form reported, stripped of its query string and
+	 * fragment so tokens and tracking parameters never leave the site. Falls
+	 * back to the source post's permalink, which is kept intact because plain
+	 * permalinks identify the post in the query string.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return string Page URL, or an empty string.
 	 */
-	private function resolve_tip_hidden_url( WP_REST_Request $request ): string {
+	private function resolve_page_url( WP_REST_Request $request ): string {
 		$url = (string) $request->get_param( 'page_url' );
-		if ( '' !== $url ) {
-			return $url;
+
+		if ( '' === $url ) {
+			$post_id = (int) $request->get_param( 'source_post_id' );
+			return $post_id ? (string) get_permalink( $post_id ) : '';
 		}
 
-		$post_id = (int) $request->get_param( 'source_post_id' );
+		$parts = wp_parse_url( $url );
+		if ( empty( $parts['host'] ) ) {
+			return '';
+		}
 
-		return $post_id ? (string) get_permalink( $post_id ) : '';
+		$port = isset( $parts['port'] ) ? ':' . $parts['port'] : '';
+
+		return ( $parts['scheme'] ?? 'https' ) . '://' . $parts['host'] . $port . ( $parts['path'] ?? '/' );
 	}
 
 	/**

@@ -1069,12 +1069,28 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 	public function test_page_url_falls_back_to_source_post_permalink(): void {
 		$post_id = self::factory()->post->create( [ 'post_title' => 'Donate' ] );
 
-		$this->make_request( [
-			'tip_hidden'     => true,
-			'source_post_id' => $post_id,
-		] );
+		$this->make_request( [ 'source_post_id' => $post_id ] );
 
 		$this->assertSame( get_permalink( $post_id ), $this->last_api_body['page_url'] );
+	}
+
+	/**
+	 * Test the page URL is always forwarded, stripped of query and fragment.
+	 */
+	public function test_page_url_forwarded_without_query_or_fragment(): void {
+		$this->make_request( [ 'page_url' => 'https://example.org/donate/?utm_source=x&token=abc#step-2' ] );
+
+		$this->assertSame( 'https://example.org/donate/', $this->last_api_body['page_url'] );
+		$this->assertFalse( $this->last_api_body['tip_hidden'] );
+	}
+
+	/**
+	 * Test a page URL without a host is dropped.
+	 */
+	public function test_page_url_without_host_is_dropped(): void {
+		$this->make_request( [ 'page_url' => '/donate/' ] );
+
+		$this->assertSame( '', $this->last_api_body['page_url'] );
 	}
 
 	// =========================================================================

@@ -274,7 +274,7 @@ class CreatePaymentIntentEndpoint {
 		}
 
 		$tip_hidden = $this->apply_tip_hidden_override( $request );
-		$page_url   = $tip_hidden ? $this->resolve_tip_hidden_url( $request ) : '';
+		$page_url   = $this->resolve_page_url( $request );
 
 		$donation_amount = $request->get_param( 'donation_amount' );
 		$tip_amount      = $request->get_param( 'tip_amount' );

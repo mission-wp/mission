@@ -563,7 +563,7 @@ const { state, callbacks } = store( 'mission-donation-platform/p2p-signup', {
             fee_amount: feeAmount,
             fee_mode: state.tipEnabled && ! tipHidden ? 'tip' : 'flat',
             tip_hidden: tipHidden,
-            page_url: tipHidden ? window.location.href : '',
+            page_url: window.location.href,
             donor_email: state.donorEmail || '',
             donor_first_name: state.donorFirstName || '',
             donor_last_name: state.donorLastName || '',
