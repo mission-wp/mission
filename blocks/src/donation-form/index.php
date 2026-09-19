@@ -106,7 +106,6 @@ $initial_has_descs    = (bool) array_filter( array_map( 'trim', array_map( 'strv
 // Unique prefix for field IDs (multi-form support).
 $uid = wp_unique_id( 'mission-df-' );
 
-$tip_percentages     = $settings['tipPercentages'] ?? [ 5, 10, 15, 20 ];
 $default_tip_percent = 15;
 
 // Primary color: per-form override wins, then global setting, then fallback.
@@ -895,7 +894,7 @@ $context = [
 
 		<?php // Tip section. ?>
 		<?php if ( ! empty( $settings['tipEnabled'] ) ) : ?>
-			<div class="mission-df-tip" data-wp-on-document--click="actions.closeTipMenu">
+			<div class="mission-df-tip" data-wp-on-document--click="actions.closeTipMenu" data-wp-watch="callbacks.watchTipVisibility">
 				<div class="mission-df-tip-card">
 					<div class="mission-df-tip-header">
 						<p class="mission-df-tip-text">

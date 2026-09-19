@@ -105,7 +105,7 @@
 
 // ── Email Change ──
 
-:where(.mission-dd-email-change-link) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-email-change-link {
   background: none;
   border: none;
   color: var(--mission-primary, #2fa36b);
@@ -130,7 +130,7 @@
   margin-top: 4px;
 }
 
-:where(.mission-dd-email-pending-cancel) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-email-pending-cancel {
   background: none;
   border: none;
   color: var(--mission-error, #b85c5c);
@@ -150,7 +150,7 @@
   margin-top: 8px;
 }
 
-:where(.mission-dd-btn-sm) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn-sm {
   font-size: 13px;
   min-width: auto;
   padding: 7px 14px;
@@ -179,7 +179,7 @@
   margin-top: 20px;
 }
 
-:where(.mission-dd-btn-primary) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn-primary {
   align-items: center;
   background: var(--mission-primary, #2fa36b);
   border: none;
@@ -196,19 +196,19 @@
   padding: 10px 20px;
   transition: background 0.15s, opacity 0.15s;
 
-  &:hover:not(:disabled) {
-    background: var(--mission-primary-hover, #29905e);
-  }
-
   &:disabled {
     cursor: default;
     opacity: 0.6;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--mission-primary-hover, #29905e);
   }
 }
 
 // Post-save confirmation flash: the label swaps to "Saved" and a check
 // appears. Stays at full opacity even though the button is disabled.
-:where(.mission-dd-btn-primary.mission-dd-btn-saved) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn-primary.mission-dd-btn-saved {
 
   &::before {
     content: "✓";
@@ -356,7 +356,7 @@
   font-size: 14px;
 }
 
-:where(.mission-dd-btn-secondary) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn-secondary {
   background: var(--mission-bg, #fff);
   border: 1px solid var(--mission-border, #ddd);
   border-radius: 6px;
@@ -369,14 +369,14 @@
   transition: background 0.15s, border-color 0.15s;
   white-space: nowrap;
 
-  &:hover:not(:disabled) {
-    background: var(--mission-bg-secondary, #f7f7f7);
-    border-color: var(--mission-text-secondary, #6b7280);
-  }
-
   &:disabled {
     cursor: default;
     opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--mission-bg-secondary, #f7f7f7);
+    border-color: var(--mission-text-secondary, #6b7280);
   }
 }
 

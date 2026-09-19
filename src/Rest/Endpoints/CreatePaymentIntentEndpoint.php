@@ -16,6 +16,7 @@ use MissionDP\Rest\DonationAttribution;
 use MissionDP\Rest\RestModule;
 use MissionDP\Rest\Traits\MinimumAmountTrait;
 use MissionDP\Rest\Traits\RateLimitTrait;
+use MissionDP\Rest\Traits\TipHiddenTrait;
 use MissionDP\Settings\SettingsService;
 use MissionDP\Tip\TipCalculator;
 use WP_REST_Request;
@@ -31,6 +32,7 @@ class CreatePaymentIntentEndpoint {
 
 	use MinimumAmountTrait;
 	use RateLimitTrait;
+	use TipHiddenTrait;
 
 	/**
 	 * API base URL.
@@ -226,6 +228,18 @@ class CreatePaymentIntentEndpoint {
 						'sanitize_callback' => 'sanitize_text_field',
 						'validate_callback' => static fn( $val ) => in_array( $val, [ 'tip', 'flat' ], true ),
 					],
+					'tip_hidden'           => [
+						'required'          => false,
+						'type'              => 'boolean',
+						'default'           => false,
+						'sanitize_callback' => 'rest_sanitize_boolean',
+					],
+					'page_url'             => [
+						'required'          => false,
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => 'esc_url_raw',
+					],
 					'stripe_account_id'    => [
 						'required'          => false,
 						'type'              => 'string',
@@ -258,6 +272,9 @@ class CreatePaymentIntentEndpoint {
 				[ 'status' => 400 ]
 			);
 		}
+
+		$tip_hidden = $this->apply_tip_hidden_override( $request );
+		$page_url   = $this->resolve_page_url( $request );
 
 		$donation_amount = $request->get_param( 'donation_amount' );
 		$tip_amount      = $request->get_param( 'tip_amount' );
@@ -334,6 +351,8 @@ class CreatePaymentIntentEndpoint {
 						'donation_amount'      => $donation_amount,
 						'tip_amount'           => $tip_amount,
 						'fee_mode'             => $fee_mode,
+						'tip_hidden'           => $tip_hidden,
+						'page_url'             => $page_url,
 						'currency'             => $currency,
 						'description'          => $description,
 						'payment_method_types' => [ 'card' ],
@@ -439,6 +458,10 @@ class CreatePaymentIntentEndpoint {
 		$transaction->add_meta( 'stripe_fee_fixed', (string) $fee_fixed );
 
 		$transaction->add_meta( 'fee_mode', $fee_mode );
+
+		if ( $tip_hidden ) {
+			$this->record_tip_hidden( $transaction );
+		}
 
 		$tribute_type = $request->get_param( 'tribute_type' );
 		if ( ! empty( $tribute_type ) ) {

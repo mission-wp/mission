@@ -70,7 +70,7 @@
   padding-top: 20px;
 }
 
-:where(.mission-dd-btn) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn {
   align-items: center;
   background: var(--mission-bg, #fff);
   border: 1px solid var(--mission-border, #ddd);
@@ -85,14 +85,14 @@
   padding: 8px 16px;
   transition: border-color var(--mission-transition, 0.15s), background var(--mission-transition, 0.15s);
 
-  &:hover:not(:disabled) {
-    background: var(--mission-bg-secondary, #f7f7f7);
-    border-color: color-mix(in srgb, var(--mission-border, #ddd) 70%, #000);
-  }
-
   &:disabled {
     cursor: default;
     opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--mission-bg-secondary, #f7f7f7);
+    border-color: color-mix(in srgb, var(--mission-border, #ddd) 70%, #000);
   }
 
   svg {
@@ -100,7 +100,7 @@
   }
 }
 
-:where(.mission-dd-btn-danger) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn-danger {
   color: var(--mission-error, #c0392b);
 
   &:hover:not(:disabled) {
@@ -140,18 +140,18 @@
 
 // ── Primary Button ──
 
-:where(.mission-dd-btn-primary) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-btn-primary {
   background: var(--mission-primary, #2fa36b);
   border-color: var(--mission-primary, #2fa36b);
   color: #fff;
 
+  &:disabled {
+    opacity: 0.6;
+  }
+
   &:hover:not(:disabled) {
     background: var(--mission-primary-hover, #278a5a);
     border-color: var(--mission-primary-hover, #278a5a);
-  }
-
-  &:disabled {
-    opacity: 0.6;
   }
 }
 
@@ -308,7 +308,7 @@
   line-height: 1;
 }
 
-:where(.mission-dd-ca-amount-input) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-amount-input {
   width: 100px;
   padding: 10px 14px 10px 6px;
   border: none;
@@ -344,7 +344,7 @@
   opacity: 0.5;
 }
 
-:where(.mission-dd-ca-fee-edit) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-fee-edit {
   background: none;
   border: none;
   color: var(--mission-primary, #2fa36b);
@@ -387,7 +387,7 @@
   }
 }
 
-:where(.mission-dd-ca-checkbox-label) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-checkbox-label {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -467,7 +467,7 @@
   flex-shrink: 0;
 }
 
-:where(.mission-dd-ca-tip-trigger) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-tip-trigger {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -489,7 +489,7 @@
   transition: color 0.15s ease;
 }
 
-:where(.mission-dd-ca-tip-trigger:hover .mission-dd-ca-tip-trigger-chevron) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-tip-trigger:hover .mission-dd-ca-tip-trigger-chevron {
   color: var(--mission-primary, #2fa36b);
 }
 
@@ -525,7 +525,7 @@
   }
 }
 
-:where(.mission-dd-ca-tip-option) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-tip-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -631,7 +631,7 @@
   }
 }
 
-:where(.mission-dd-ca-tip-custom-btn) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-tip-custom-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -676,7 +676,7 @@
   flex-shrink: 0;
 }
 
-:where(.mission-dd-ca-tip-custom-input) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-tip-custom-input {
   width: 64px;
   height: 38px;
   padding: 0 10px 0 4px;
@@ -705,7 +705,7 @@
   gap: 16px;
 }
 
-:where(.mission-dd-ca-update-btn) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-update-btn {
   flex: 1;
   padding: 12px 24px;
   border-radius: var(--mission-radius, 8px);
@@ -729,7 +729,7 @@
   }
 }
 
-:where(.mission-dd-ca-cancel) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-ca-cancel {
   background: none;
   border: none;
   color: var(--mission-text-secondary, #6b7280);
@@ -792,7 +792,7 @@
     flex-direction: column;
   }
 
-  :where(.mission-dd-subscription-actions .mission-dd-btn) {
+  .mission-donor-dashboard .mission-dd-subscription-actions .mission-dd-btn {
     justify-content: center;
   }
 }

@@ -55,7 +55,7 @@
   }
 }
 
-:where(.mission-dd-receipt-download) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-receipt-download {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -97,7 +97,7 @@
     margin-top: 4px;
   }
 
-  :where(.mission-dd-receipt-download) {
+  .mission-donor-dashboard .mission-dd-receipt-download {
     order: 2;
   }
 }

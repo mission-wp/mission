@@ -8,6 +8,7 @@
 namespace MissionDP\Tests\Rest\Endpoints;
 
 use MissionDP\Database\DatabaseModule;
+use MissionDP\Models\ActivityLog;
 use MissionDP\Models\Campaign;
 use MissionDP\Models\Donor;
 use MissionDP\Models\Transaction;
@@ -995,6 +996,101 @@ class CreatePaymentIntentEndpointTest extends WP_UnitTestCase {
 		$this->assertNotNull( $this->last_api_body );
 		$this->assertSame( 5000, $this->last_api_body['donation_amount'] );
 		$this->assertSame( 0, $this->last_api_body['tip_amount'] );
+	}
+
+	// =========================================================================
+	// Hidden tip fallback
+	// =========================================================================
+
+	/**
+	 * Test a hidden tip forces flat fee mode and a zero tip in the API body.
+	 */
+	public function test_tip_hidden_forces_flat_fee_mode_in_api_body(): void {
+		$this->make_request( [
+			'tip_amount' => 750,
+			'fee_mode'   => 'tip',
+			'tip_hidden' => true,
+			'page_url'   => 'https://example.org/donate/',
+		] );
+
+		$this->assertNotNull( $this->last_api_body );
+		$this->assertSame( 'flat', $this->last_api_body['fee_mode'] );
+		$this->assertSame( 0, $this->last_api_body['tip_amount'] );
+		$this->assertSame( 5000, $this->last_api_body['donation_amount'] );
+		$this->assertTrue( $this->last_api_body['tip_hidden'] );
+		$this->assertSame( 'https://example.org/donate/', $this->last_api_body['page_url'] );
+	}
+
+	/**
+	 * Test a hidden tip zeroes the transaction tip and stores meta.
+	 */
+	public function test_tip_hidden_zeroes_tip_on_transaction_and_stores_meta(): void {
+		$response = $this->make_request( [
+			'tip_amount' => 750,
+			'tip_hidden' => true,
+			'page_url'   => 'https://example.org/donate/',
+		] );
+		$txn      = Transaction::find( $response->get_data()['transaction_id'] );
+
+		$this->assertSame( 0, $txn->tip_amount );
+		$this->assertSame( 5000, $txn->total_amount );
+		$this->assertSame( 'flat', $txn->get_meta( 'fee_mode' ) );
+		$this->assertSame( '1', $txn->get_meta( 'tip_hidden' ) );
+	}
+
+	/**
+	 * Test a hidden tip is not logged to the activity feed.
+	 */
+	public function test_tip_hidden_is_not_logged(): void {
+		$before = ActivityLog::count( [] );
+
+		$this->make_request( [ 'tip_hidden' => true ] );
+
+		$this->assertSame( $before, ActivityLog::count( [] ) );
+	}
+
+	/**
+	 * Test tip_hidden defaults to false and changes nothing.
+	 */
+	public function test_tip_hidden_defaults_to_false(): void {
+		$response = $this->make_request( [ 'tip_amount' => 750 ] );
+		$txn      = Transaction::find( $response->get_data()['transaction_id'] );
+
+		$this->assertSame( 'tip', $this->last_api_body['fee_mode'] );
+		$this->assertFalse( $this->last_api_body['tip_hidden'] );
+		$this->assertSame( '', $this->last_api_body['page_url'] );
+		$this->assertSame( 750, $txn->tip_amount );
+		$this->assertEmpty( $txn->get_meta( 'tip_hidden' ) );
+	}
+
+	/**
+	 * Test the page URL falls back to the source post permalink.
+	 */
+	public function test_page_url_falls_back_to_source_post_permalink(): void {
+		$post_id = self::factory()->post->create( [ 'post_title' => 'Donate' ] );
+
+		$this->make_request( [ 'source_post_id' => $post_id ] );
+
+		$this->assertSame( get_permalink( $post_id ), $this->last_api_body['page_url'] );
+	}
+
+	/**
+	 * Test the page URL is always forwarded, stripped of query and fragment.
+	 */
+	public function test_page_url_forwarded_without_query_or_fragment(): void {
+		$this->make_request( [ 'page_url' => 'https://example.org/donate/?utm_source=x&token=abc#step-2' ] );
+
+		$this->assertSame( 'https://example.org/donate/', $this->last_api_body['page_url'] );
+		$this->assertFalse( $this->last_api_body['tip_hidden'] );
+	}
+
+	/**
+	 * Test a page URL without a host is dropped.
+	 */
+	public function test_page_url_without_host_is_dropped(): void {
+		$this->make_request( [ 'page_url' => '/donate/' ] );
+
+		$this->assertSame( '', $this->last_api_body['page_url'] );
 	}
 
 	// =========================================================================

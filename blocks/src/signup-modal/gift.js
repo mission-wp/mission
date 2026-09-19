@@ -8,13 +8,20 @@
  * reconciliation, receipt emails), so a kickoff gift behaves exactly like a
  * donation made on the fundraiser's page.
  *
- * The mount/appearance/deadline plumbing is shared via @shared/stripe; the
- * generator flow control below remains deliberately duplicated from
+ * The mount/appearance/deadline plumbing is shared via @shared/stripe and
+ * the tip tamper guard via @shared/tip-guard; the generator flow control
+ * below remains deliberately duplicated from
  * blocks/src/donation-form/view.js (mountPaymentElement, watchAmounts,
- * submit), minus the recurring/address/tribute/custom-field branches the
- * wizard never needs — keep fixes to that flow in sync here.
+ * submit, the tip-hidden fallback), minus the recurring/address/tribute/
+ * custom-field branches the wizard never needs — keep fixes to that flow in
+ * sync here.
  */
 import { store, getContext, getElement } from '@wordpress/interactivity';
+import {
+  isTrustedEvent,
+  isTipSuppressed,
+  watchTipVisibility,
+} from '@shared/tip-guard';
 import { formatAmount } from '@shared/currency';
 import { majorToMinor, minorToMajor } from '@shared/currencies';
 import {
@@ -46,6 +53,14 @@ const giftStripe = { stripe: null, elements: null, appearance: null };
 // while the config fetch is pending would mount a second Payment Element into
 // the same container.
 let mountingGiftPayment = false;
+
+// The active tip visibility watcher (the modal is a singleton).
+let giftTipWatch = null;
+
+/** Tip guard options: parts of the tip section that must be visible. */
+const GIFT_TIP_OPTS = {
+  essentials: [ '.mission-su__tip-text', '.mission-su__tip-trigger' ],
+};
 
 /**
  * Prefetch the connected Stripe account so the payment view can mount the
@@ -171,7 +186,7 @@ function giftTotal() {
   return amount + giftFeeAmount( amount ) + giftTipAmount( amount );
 }
 
-const { state } = store( 'mission-donation-platform/p2p-signup', {
+const { state, callbacks } = store( 'mission-donation-platform/p2p-signup', {
   state: {
     // Server-seeded keys (kickoffEnabled, kickoffAmounts, kickoffMessage,
     // currency, feeRecovery, feeMode, tipEnabled, campaignPostId,
@@ -308,7 +323,10 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
     toggleGiftFeeCovered( event ) {
       state.giftFeeCovered = event.target.checked;
     },
-    toggleGiftTipMenu() {
+    toggleGiftTipMenu( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       state.giftTipMenuOpen = ! state.giftTipMenuOpen;
     },
     closeGiftTipMenu( event ) {
@@ -316,12 +334,18 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         state.giftTipMenuOpen = false;
       }
     },
-    selectGiftTipPercent() {
+    selectGiftTipPercent( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       state.giftTipPercent = getContext().tipPercent;
       state.isCustomGiftTip = false;
       state.giftTipMenuOpen = false;
     },
-    selectGiftCustomTip() {
+    selectGiftCustomTip( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       if ( ! state.isCustomGiftTip ) {
         state.isCustomGiftTip = true;
         state.customGiftTipAmount = calculateTip(
@@ -333,16 +357,27 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
       state.giftTipMenuOpen = false;
     },
     updateGiftCustomTip( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        // Undo a scripted write so the field shows the tip actually charged.
+        event.target.value = callbacks.customGiftTipDisplay();
+        return;
+      }
       const value = parseFloat( event.target.value );
       state.customGiftTipAmount = isNaN( value )
         ? 0
         : Math.max( 0, majorToMinor( value, currency() ) || 0 );
     },
-    giftTipUp() {
+    giftTipUp( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       state.customGiftTipAmount =
         ( state.customGiftTipAmount || 0 ) + majorToMinor( 1, currency() );
     },
-    giftTipDown() {
+    giftTipDown( event ) {
+      if ( ! isTrustedEvent( event ) ) {
+        return;
+      }
       state.customGiftTipAmount = Math.max(
         0,
         ( state.customGiftTipAmount || 0 ) - majorToMinor( 1, currency() )
@@ -507,14 +542,28 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
 
         const donationAmount = giftEffectiveAmount();
         const feeAmount = giftFeeAmount( donationAmount );
-        const tipAmount = giftTipAmount( donationAmount );
+        const tipHidden =
+          !! state.tipEnabled &&
+          isTipSuppressed(
+            document.querySelector( '.mission-su__tip' ),
+            document.querySelector( '.mission-su__dialog' ),
+            GIFT_TIP_OPTS
+          );
+        const tipAmount = tipHidden ? 0 : giftTipAmount( donationAmount );
+
+        if ( tipHidden ) {
+          // Keep the Elements amount in step with the tip-less charge.
+          giftStripe.elements.update( { amount: donationAmount + feeAmount } );
+        }
 
         const intentResponse = yield withDeadline(
           post( ctx, 'donations/create-payment-intent', {
             donation_amount: donationAmount + feeAmount,
             tip_amount: tipAmount,
             fee_amount: feeAmount,
-            fee_mode: state.tipEnabled ? 'tip' : 'flat',
+            fee_mode: state.tipEnabled && ! tipHidden ? 'tip' : 'flat',
+            tip_hidden: tipHidden,
+            page_url: window.location.href,
             donor_email: state.donorEmail || '',
             donor_first_name: state.donorFirstName || '',
             donor_last_name: state.donorLastName || '',
@@ -643,6 +692,33 @@ const { state } = store( 'mission-donation-platform/p2p-signup', {
         if ( ref && ref.tagName === 'INPUT' ) {
           ref.focus();
         }
+      }
+    },
+    watchGiftTipVisibility() {
+      const active = !! (
+        state.isOpen &&
+        state.isGiftPaymentView &&
+        state.tipEnabled
+      );
+      const { ref } = getElement();
+      // The dialog, not .mission-su: the latter's only child is the fixed
+      // overlay, so its own box is empty.
+      const dialog = ref?.closest( '.mission-su__dialog' );
+      if ( active && ! giftTipWatch && dialog ) {
+        giftTipWatch = watchTipVisibility( ref, dialog, {
+          ...GIFT_TIP_OPTS,
+          // A tip the donor can't see is never charged; keep the total honest.
+          onChange: ( hidden ) => {
+            if ( hidden ) {
+              state.giftTipPercent = 0;
+              state.isCustomGiftTip = false;
+              state.customGiftTipAmount = 0;
+            }
+          },
+        } );
+      } else if ( ! active && giftTipWatch ) {
+        giftTipWatch.stop();
+        giftTipWatch = null;
       }
     },
     watchGiftAmounts() {

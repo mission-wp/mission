@@ -17,7 +17,6 @@ const DEFAULT_BLOCK_ATTRS = {
   feeRecovery: false,
   feeMode: 'optional',
   tipEnabled: true,
-  tipPercentages: [ 5, 10, 15, 20 ],
   anonymousEnabled: false,
   tributeEnabled: false,
   collectAddress: false,

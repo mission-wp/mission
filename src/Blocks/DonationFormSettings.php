@@ -37,7 +37,6 @@ class DonationFormSettings {
 		'feeRecovery'             => true,
 		'feeMode'                 => 'optional',
 		'tipEnabled'              => true,
-		'tipPercentages'          => [ 5, 10, 15, 20 ],
 		'collectAddress'          => true,
 		'anonymousEnabled'        => false,
 		'tributeEnabled'          => false,

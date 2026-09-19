@@ -1,6 +1,37 @@
 // Fundraiser sign-up modal — frontend styles.
 
-.mission-su {
+@use "../../../assets/shared/styles/theme-reset" as reset;
+
+// Theme reset for native controls; see assets/shared/styles/_theme-reset.scss.
+.mission-su.mission-su {
+
+  .mission-su__btn,
+  .mission-su__amount-btn,
+  .mission-su__back,
+  .mission-su__close,
+  .mission-su__link,
+  .mission-su__share-btn,
+  .mission-su__tip-option,
+  .mission-su__tip-step-btn,
+  .mission-su__tip-trigger,
+  .mission-su__toggle-btn {
+
+    @include reset.button;
+  }
+
+  .mission-su__amount-other-field,
+  .mission-su__otp-input,
+  .mission-su__tip-input,
+  .mission-su__field input:where(:not([type="checkbox"], [type="radio"])),
+  .mission-su__field select,
+  .mission-su__field textarea {
+
+    @include reset.field;
+  }
+}
+
+// stylelint-disable-next-line no-duplicate-selectors
+.mission-su.mission-su {
   --mission-text: #1e1e1e;
   --mission-text-secondary: #6b7280;
   --mission-border: #ddd;
@@ -75,7 +106,7 @@
   color: var(--mission-primary);
 }
 
-.mission-su__close {
+.mission-su.mission-su .mission-su__close {
   background: none;
   border: none;
   font-size: 24px;
@@ -149,7 +180,7 @@
   gap: 12px;
 }
 
-.mission-su__field {
+.mission-su.mission-su .mission-su__field {
   display: block;
   margin-bottom: 16px;
 
@@ -197,7 +228,7 @@
   }
 }
 
-.mission-su__prefix-wrap {
+.mission-su.mission-su .mission-su__prefix-wrap {
   position: relative;
   display: flex;
   align-items: center;
@@ -228,7 +259,7 @@
   border-radius: 9999px;
 }
 
-.mission-su__toggle-btn {
+.mission-su.mission-su .mission-su__toggle-btn {
   flex: 1;
   padding: 10px 12px;
   font-size: 14px;
@@ -271,13 +302,14 @@
     color: var(--mission-text);
   }
 
+  // stylelint-disable-next-line no-descending-specificity
   span {
     font-size: 12px;
     color: var(--mission-text-secondary);
   }
 }
 
-.mission-su__check {
+.mission-su.mission-su .mission-su__check {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -296,7 +328,7 @@
   }
 }
 
-.mission-su__btn {
+.mission-su.mission-su .mission-su__btn {
   display: block;
   width: 100%;
   padding: 14px 24px;
@@ -315,7 +347,7 @@
   }
 }
 
-.mission-su__btn--ghost {
+.mission-su.mission-su .mission-su__btn--ghost {
   margin-top: 10px;
   color: var(--mission-primary);
   background: transparent;
@@ -369,7 +401,7 @@
   }
 }
 
-.mission-su__access .mission-su__access-toggle {
+.mission-su.mission-su .mission-su__access .mission-su__access-toggle {
   position: relative;
   display: inline-flex;
   flex-shrink: 0;
@@ -437,23 +469,23 @@
   opacity: 0;
 }
 
-.mission-su__access input:checked ~ .mission-su__access-track {
+.mission-su.mission-su .mission-su__access input:checked ~ .mission-su__access-track {
   background: var(--mission-error);
 }
 
-.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-knob {
+.mission-su.mission-su .mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-knob {
   inset-inline-start: calc(100% - 27px);
 }
 
-.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-labels {
+.mission-su.mission-su .mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-labels {
   transform: translateX(-10px);
 }
 
-.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-text--public {
+.mission-su.mission-su .mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-text--public {
   opacity: 0;
 }
 
-.mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-text--private {
+.mission-su.mission-su .mission-su__access input:checked ~ .mission-su__access-track .mission-su__access-text--private {
   opacity: 1;
 }
 
@@ -464,7 +496,7 @@
   color: var(--mission-text-secondary);
 }
 
-.mission-su__link {
+.mission-su.mission-su .mission-su__link {
   padding: 0;
   font: inherit;
   font-weight: 600;
@@ -495,7 +527,7 @@
   border-radius: 8px;
 }
 
-.mission-su__back {
+.mission-su.mission-su .mission-su__back {
   display: inline-flex;
   align-items: center;
   margin-bottom: 14px;
@@ -534,6 +566,7 @@
     color: var(--mission-text);
   }
 
+  // stylelint-disable-next-line no-descending-specificity
   span {
     font-size: 13px;
     color: var(--mission-text-secondary);
@@ -547,7 +580,7 @@
   margin: 6px 0 16px;
 }
 
-.mission-su__otp-input {
+.mission-su.mission-su .mission-su__otp-input {
   width: 46px;
   height: 54px;
   text-align: center;
@@ -585,7 +618,7 @@
   margin: 18px 0;
 }
 
-.mission-su__share-btn {
+.mission-su.mission-su .mission-su__share-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -641,7 +674,7 @@
 }
 
 // While the copied state is active, the copy icon becomes a checkmark.
-.mission-su__share-btn.is-copied .mission-su__share-icon--copy {
+.mission-su.mission-su .mission-su__share-btn.is-copied .mission-su__share-icon--copy {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
 }
@@ -656,7 +689,7 @@
 }
 
 // The "View my page" button is an anchor; keep it looking like a button.
-a.mission-su__btn {
+.mission-su.mission-su a.mission-su__btn {
   text-align: center;
   text-decoration: none;
 }
@@ -673,7 +706,7 @@ a.mission-su__btn {
   color: var(--mission-text);
 }
 
-.mission-su__kickoff-change {
+.mission-su.mission-su .mission-su__kickoff-change {
   display: block;
   margin: 0 auto 16px;
   font-size: 13px;
@@ -686,7 +719,7 @@ a.mission-su__btn {
   margin-bottom: 14px;
 }
 
-.mission-su__amount-btn {
+.mission-su.mission-su .mission-su__amount-btn {
   height: 48px;
   font-size: 15px;
   font-weight: 600;
@@ -712,7 +745,7 @@ a.mission-su__btn {
 
 // The "Other" grid cell swaps its button for an inline amount input,
 // mirroring the donation form's custom-amount treatment.
-.mission-su__amount-other-cell {
+.mission-su.mission-su .mission-su__amount-other-cell {
   position: relative;
 
   .mission-su__amount-btn--other {
@@ -736,7 +769,7 @@ a.mission-su__btn {
   pointer-events: none;
 }
 
-.mission-su__amount-other-field {
+.mission-su.mission-su .mission-su__amount-other-field {
   width: 100%;
   height: 48px;
   padding: 0 10px 0 26px;
@@ -762,13 +795,16 @@ a.mission-su__btn {
 }
 
 // Inline (not full-width) primary button, e.g. "Make the first gift".
-.mission-su__btn--inline {
+.mission-su.mission-su .mission-su__btn--inline {
   display: inline-block;
   width: auto;
   margin: 4px auto 0;
 }
 
-.mission-su__skip {
+.mission-su.mission-su .mission-su__skip {
+
+  @include reset.link;
+
   font-size: 14px;
   color: var(--mission-text-secondary);
   text-decoration: underline;
@@ -801,7 +837,7 @@ a.mission-su__btn {
   text-decoration: line-through;
 }
 
-.mission-su__pay-fee-edit {
+.mission-su.mission-su .mission-su__pay-fee-edit {
   margin-left: 4px;
   font-size: 13px;
 }
@@ -816,6 +852,7 @@ a.mission-su__btn {
     color: var(--mission-text-secondary);
   }
 
+  // stylelint-disable-next-line no-descending-specificity
   .mission-su__check {
     margin-bottom: 0;
   }
@@ -889,7 +926,7 @@ a.mission-su__btn {
   flex-shrink: 0;
 }
 
-.mission-su__tip-trigger {
+.mission-su.mission-su .mission-su__tip-trigger {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -942,7 +979,7 @@ a.mission-su__btn {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
-.mission-su__tip-option {
+.mission-su.mission-su .mission-su__tip-option {
   display: block;
   width: 100%;
   padding: 10px 14px;
@@ -1009,7 +1046,7 @@ a.mission-su__btn {
   }
 }
 
-.mission-su__tip-step-btn {
+.mission-su.mission-su .mission-su__tip-step-btn {
   width: 40px;
   font-size: 18px;
   font-weight: 500;
@@ -1039,7 +1076,7 @@ a.mission-su__btn {
   color: var(--mission-text-secondary);
 }
 
-.mission-su__tip-input {
+.mission-su.mission-su .mission-su__tip-input {
   width: 64px;
   padding: 10px 10px 10px 4px;
   font-size: 14px;

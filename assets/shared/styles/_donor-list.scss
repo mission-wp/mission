@@ -1,5 +1,7 @@
 // Shared donor list styles used by both top-donors and recent-donors blocks.
 
+@use "theme-reset" as reset;
+
 .mission-donor-heading {
   font-size: 13px;
   font-weight: 600;
@@ -113,7 +115,10 @@
   margin: 0 0 16px;
 }
 
-.mission-donor-empty__btn {
+.mission-donor-empty.mission-donor-empty .mission-donor-empty__btn {
+
+  @include reset.button;
+
   display: inline-block;
   padding: 8px 20px;
   border: 1px solid var(--mission-primary);

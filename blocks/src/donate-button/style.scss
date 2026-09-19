@@ -1,5 +1,9 @@
 // Donate Button — frontend styles.
-// Wrapped in :where() for low specificity so users can easily override.
+// Layout stays in :where() so it is trivial to override. The button's own
+// look is declared at two-class specificity so themes that style `a`,
+// `button` or `[type="button"]` by element name cannot restyle it, with
+// guards so block presets (`has-*-background-color`, `has-*-color`,
+// `has-*-font-size`) and inline block-support styles still win.
 
 // Layout and alignment.
 :where(.wp-block-mission-donation-platform-donate-button) {
@@ -44,47 +48,85 @@
 }
 
 // Default (fill) button styles.
-:where(.wp-block-mission-donation-platform-donate-button .mission-donate-button__link) {
+.wp-block-mission-donation-platform-donate-button .mission-donate-button__link {
+  appearance: none;
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--mission-primary, #2fa36b);
-  color: var(--mission-primary-text, #fff);
-  border-radius: var(--mission-radius, 6px);
+  margin: 0;
   padding: 12px 32px;
-  font-weight: 600;
-  font-size: inherit;
-  font-family: inherit;
-  line-height: inherit;
-  text-decoration: none;
   border: none;
+  border-radius: var(--mission-radius, 6px);
+  box-shadow: none;
+  font-weight: 600;
+  font-family: inherit;
+  font-style: normal;
+  line-height: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none;
+  text-shadow: none;
   cursor: pointer;
   transition:
     filter 200ms ease,
     opacity 200ms ease,
     border-color 200ms ease,
     box-shadow 200ms ease;
-}
 
-:where(.wp-block-mission-donation-platform-donate-button .mission-donate-button__link:hover) {
-  filter: brightness(0.92);
-}
+  &:not(.has-background) {
+    background-color: var(--mission-primary, #2fa36b);
+  }
 
-:where(.wp-block-mission-donation-platform-donate-button .mission-donate-button__link:focus-visible) {
-  outline: 2px solid var(--mission-primary, #2fa36b);
-  outline-offset: 2px;
+  &:not(.has-text-color) {
+    color: var(--mission-primary-text, #fff);
+  }
+
+  &:not([class*="-font-size"]) {
+    font-size: inherit;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mission-primary, #2fa36b);
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    filter: brightness(0.92);
+    text-decoration: none;
+
+    &:not(.has-background) {
+      background-color: var(--mission-primary, #2fa36b);
+    }
+
+    &:not(.has-text-color) {
+      color: var(--mission-primary-text, #fff);
+    }
+  }
 }
 
 // Outline variant.
-:where(.wp-block-mission-donation-platform-donate-button.is-style-outline .mission-donate-button__link) {
-  background-color: transparent;
+// stylelint-disable-next-line no-descending-specificity
+.wp-block-mission-donation-platform-donate-button.is-style-outline .mission-donate-button__link {
   border: 2px solid currentcolor;
-  color: var(--mission-primary, #2fa36b);
-}
 
-:where(.wp-block-mission-donation-platform-donate-button.is-style-outline .mission-donate-button__link:hover) {
-  background-color: var(--mission-primary, #2fa36b);
-  color: var(--mission-primary-text, #fff);
-  filter: none;
+  &:not(.has-background) {
+    background-color: transparent;
+  }
+
+  &:not(.has-text-color) {
+    color: var(--mission-primary, #2fa36b);
+  }
+
+  &:hover {
+    filter: none;
+
+    &:not(.has-background) {
+      background-color: var(--mission-primary, #2fa36b);
+    }
+
+    &:not(.has-text-color) {
+      color: var(--mission-primary-text, #fff);
+    }
+  }
 }

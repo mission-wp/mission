@@ -4,7 +4,7 @@ Tags: crowdfunding, donate, donation, fundraising, recurring donations
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable Tag: 1.4.0
+Stable Tag: 1.5.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -207,6 +207,11 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.5.0 =
+* Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
+* Enhancement: The optional tip now stays visible to donors even when a theme or custom CSS hides it by mistake, and any form where it can't be shown is handled the same way as the 3% platform fee option
+* Fix: Plugin updates now reach returning visitors right away instead of waiting for cached block styles to expire
+
 = 1.4.0 =
 * Security: User-supplied names and titles in admin activity feed messages are now escaped before display
 * New: Peer-to-peer fundraising! Create a P2P campaign and let supporters raise money for your cause with their own personal fundraising pages, on their own or in teams
@@ -240,15 +245,5 @@ This plugin connects to the following third-party services:
 * Tweak: Added save_silent() and recompute_aggregates() model methods for developers
 * Tweak: REST API not-found errors now use entity-specific error codes (e.g. campaign_not_found)
 * Tweak: The subscriptions and donor wall list endpoints now validate page and per_page ranges like all other endpoints
-
-= 1.3.0 =
-* New: One-click migration from GiveWP, bringing over donors, donations, campaigns, and subscriptions with a pre-flight scan, live progress, and a full undo (Tools > Migration)
-* New: Outgoing webhooks. Notify external services when donations, subscriptions, donors, or campaigns change, with signed payloads, automatic retries, and a delivery log (Tools > Webhooks)
-* New: Choose the URL slug used for campaign pages (Settings > General). Fresh installs automatically avoid clashing with an existing "campaigns" page
-* Enhancement: The donation form shortcode now inherits the campaign's configured form settings when campaign_id is set
-* Fix: Mission now works on SQLite-based WordPress installs (WordPress Playground, WP Studio) by removing MySQL-only SQL from campaign, subscription, reporting, cleanup, and activity log queries
-* Fix: The "delete test data" tools now also remove the meta rows belonging to deleted test transactions, donors, and subscriptions (the cleanup previously referenced the wrong meta column and silently skipped them)
-* Tweak: Renamed all developer hooks (actions and filters) from missiondp_ to mission_. If you have custom code hooking into Mission, update the hook names. Scheduled task hooks, options, and database tables are unchanged.
-* Tweak: REST API parameters that declare allowed values or numeric ranges now reject invalid input with a clear 400 error instead of silently accepting it
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

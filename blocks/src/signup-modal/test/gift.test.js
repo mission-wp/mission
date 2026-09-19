@@ -423,6 +423,8 @@ describe( 'payment flow', () => {
       tip_amount: 375,
       fee_amount: 106,
       fee_mode: 'tip',
+      tip_hidden: false,
+      page_url: window.location.href,
       donor_email: 'jane@example.com',
       donor_first_name: 'Jane',
       donor_last_name: 'Doe',
@@ -464,6 +466,42 @@ describe( 'payment flow', () => {
     expect( storeDef.state.giftSuccessText ).toBe(
       'Your $25 gift is in. Your page is off to a great start, so keep the momentum going by sharing it:'
     );
+  } );
+
+  it( 'submitGift falls back to the flat fee when the tip section is suppressed', () => {
+    // jsdom lays nothing out, so a present dialog + tip reads as hidden and
+    // cannot be forced visible: exactly the suppressed case.
+    document.body.innerHTML = `
+      <div class="mission-su">
+        <div class="mission-su__dialog">
+          <div class="mission-su__payment-element"></div>
+          <div class="mission-su__tip"><p class="mission-su__tip-text">Tip</p></div>
+        </div>
+      </div>`;
+    const { elements } = mountStubbedElement();
+
+    const generator = storeDef.actions.submitGift();
+    drive( generator, [
+      {},
+      { ok: true, json: () => Promise.resolve( {} ) },
+      { client_secret: 'pi_123_secret_abc', transaction_id: 31 },
+      {},
+      { ok: true, status: 200 },
+    ] );
+
+    const createCall = global.fetch.mock.calls.find( ( [ url ] ) =>
+      url.includes( 'donations/create-payment-intent' )
+    );
+    expect( JSON.parse( createCall[ 1 ].body ) ).toEqual(
+      expect.objectContaining( {
+        donation_amount: 2606,
+        tip_amount: 0,
+        fee_mode: 'flat',
+        tip_hidden: true,
+        page_url: window.location.href,
+      } )
+    );
+    expect( elements.update ).toHaveBeenCalledWith( { amount: 2606 } );
   } );
 
   it( 'shows the slow notice while a 3DS confirm is pending, then clears it', async () => {
@@ -513,6 +551,28 @@ describe( 'payment flow', () => {
 } );
 
 describe( 'tip menu', () => {
+  it( 'ignores synthetic events on every tip control', () => {
+    const untrusted = { isTrusted: false };
+    interactivity._mockContext.tipPercent = 20;
+
+    storeDef.actions.toggleGiftTipMenu( untrusted );
+    expect( storeDef.state.giftTipMenuOpen ).toBe( false );
+
+    storeDef.actions.selectGiftTipPercent( untrusted );
+    expect( storeDef.state.giftTipPercent ).toBe( 15 );
+
+    storeDef.actions.selectGiftCustomTip( untrusted );
+    expect( storeDef.state.isCustomGiftTip ).toBe( false );
+
+    storeDef.state.customGiftTipAmount = 500;
+    const target = { value: '0' };
+    storeDef.actions.updateGiftCustomTip( { ...untrusted, target } );
+    storeDef.actions.giftTipUp( untrusted );
+    storeDef.actions.giftTipDown( untrusted );
+    expect( storeDef.state.customGiftTipAmount ).toBe( 500 );
+    expect( target.value ).toBe( 5 );
+  } );
+
   it( 'marks the selected percentage active until a custom tip takes over', () => {
     interactivity._mockContext.tipPercent = 15;
     expect( storeDef.callbacks.isGiftTipOptionActive() ).toBe( true );

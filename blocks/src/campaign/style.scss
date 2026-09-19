@@ -1,3 +1,5 @@
+@use "../../../assets/shared/styles/theme-reset" as reset;
+
 .mission-cc {
   --mission-primary: #2fa36b;
   --mission-primary-hover: #29905e;
@@ -111,7 +113,7 @@
   flex: 1;
 }
 
-.mission-cc-title {
+.mission-cc.mission-cc .mission-cc-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--mission-text);
@@ -222,7 +224,10 @@
   padding: 0 20px 20px;
 }
 
-.mission-cc-btn {
+.mission-cc.mission-cc .mission-cc-btn {
+
+  @include reset.link;
+
   display: block;
   box-sizing: border-box;
   width: 100%;

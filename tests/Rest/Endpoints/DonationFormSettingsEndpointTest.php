@@ -146,7 +146,6 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			'feeRecovery',
 			'feeMode',
 			'tipEnabled',
-			'tipPercentages',
 			'collectAddress',
 			'anonymousEnabled',
 			'tributeEnabled',
@@ -212,9 +211,6 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 
 		// Recurring frequencies.
 		$this->assertSame( [ 'monthly', 'quarterly', 'annually' ], $data['recurringFrequencies'] );
-
-		// Tip percentages.
-		$this->assertSame( [ 5, 10, 15, 20 ], $data['tipPercentages'] );
 
 		// Minimum amount.
 		$this->assertSame( 500, $data['minimumAmount'] );

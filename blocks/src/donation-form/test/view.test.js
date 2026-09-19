@@ -72,7 +72,6 @@ function resetContext() {
       recurringFrequencies: [ 'monthly', 'quarterly', 'annually' ],
       feeRecovery: true,
       tipEnabled: true,
-      tipPercentages: [ 5, 10, 15, 20 ],
       currency: 'USD',
       siteName: 'Test Org',
     },
@@ -248,6 +247,44 @@ describe( 'tip dropdown', () => {
     ctx.tipMenuOpen = true;
     storeDef.actions.closeTipMenu();
     expect( ctx.tipMenuOpen ).toBe( false );
+  } );
+
+  it( 'ignores synthetic events on every tip control', () => {
+    const untrusted = { isTrusted: false, stopPropagation: jest.fn() };
+    ctx.tipPercent = 20;
+    ctx.customTipAmount = 500;
+
+    storeDef.actions.toggleTipMenu( untrusted );
+    expect( ctx.tipMenuOpen ).toBe( false );
+
+    storeDef.actions.selectTipPercent( untrusted );
+    expect( ctx.selectedTipPercent ).toBe( 15 );
+
+    storeDef.actions.selectCustomTip( untrusted );
+    expect( ctx.isCustomTip ).toBe( false );
+
+    const target = { value: '0' };
+    storeDef.actions.updateCustomTipAmount( { ...untrusted, target } );
+    expect( ctx.customTipAmount ).toBe( 500 );
+    expect( target.value ).toBe( '5.00' );
+
+    storeDef.actions.tipCustomUp( untrusted );
+    storeDef.actions.tipCustomDown( untrusted );
+    expect( ctx.customTipAmount ).toBe( 500 );
+    expect( untrusted.stopPropagation ).not.toHaveBeenCalled();
+  } );
+
+  it( 'accepts trusted events on the stepper', () => {
+    ctx.customTipAmount = 500;
+    storeDef.actions.tipCustomUp( { isTrusted: true } );
+    expect( ctx.customTipAmount ).toBe( 600 );
+  } );
+} );
+
+describe( 'watchTipVisibility', () => {
+  it( 'is a no-op without a form root', () => {
+    ctx.currentStep = 2;
+    expect( () => storeDef.callbacks.watchTipVisibility() ).not.toThrow();
   } );
 } );
 
