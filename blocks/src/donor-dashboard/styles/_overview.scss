@@ -51,7 +51,7 @@
   margin-bottom: 0;
 }
 
-:where(.mission-dd-view-all) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-view-all {
   background: none;
   border: none;
   color: var(--mission-primary, #2fa36b);
@@ -183,7 +183,7 @@
   font-size: 13px;
 }
 
-:where(.mission-dd-recurring-card-link) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-recurring-card-link {
   background: none;
   border: none;
   color: var(--mission-primary, #2fa36b);

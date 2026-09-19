@@ -2,7 +2,9 @@
 
 ## 1.5.0 (unreleased)
 
+* Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
 * Enhancement: The optional tip now stays visible to donors even when a theme or custom CSS hides it by mistake, and any form where it can't be shown is handled the same way as the 3% platform fee option
+* Fix: Plugin updates now reach returning visitors right away instead of waiting for cached block styles to expire
 
 ## 1.4.0 (2026-08-06)
 

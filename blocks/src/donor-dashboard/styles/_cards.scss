@@ -3,7 +3,7 @@
 
 // ── Cards ──
 
-:where(.mission-dd-fr-card) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-fr-card {
   display: block;
   width: 100%;
   text-align: left;
@@ -181,7 +181,7 @@
 
 // ── Detail views ──
 
-:where(.mission-dd-detail-back) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-detail-back {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -456,7 +456,7 @@
 
 // ── Forms shared by the detail views ──
 
-:where(.mission-dd-goal-input) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-goal-input {
   position: relative;
   display: flex;
   align-items: center;
@@ -475,7 +475,7 @@
   padding-left: 28px;
 }
 
-:where(.mission-dd-story) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-story {
   resize: vertical;
   min-height: 160px;
 }
@@ -521,7 +521,7 @@
   margin-bottom: 16px;
 }
 
-:where(.mission-dd-share-url .mission-dd-profile-input) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-share-url .mission-dd-profile-input {
   flex: 1;
 }
 
@@ -537,7 +537,7 @@
   margin-bottom: 8px;
 }
 
-:where(.mission-dd-invite .mission-dd-profile-input) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-invite .mission-dd-profile-input {
   flex: 1;
 }
 
@@ -563,7 +563,7 @@
 
 // ── Danger zone (leave team) ──
 
-:where(.mission-dd-danger-link) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-danger-link {
   font-size: 13px;
   font-family: inherit;
   color: var(--mission-error, #b85c5c);

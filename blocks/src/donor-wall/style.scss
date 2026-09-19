@@ -1,5 +1,7 @@
 // Donor Wall — Frontend styles.
 
+@use "../../../assets/shared/styles/theme-reset" as reset;
+
 :where(.mission-donor-wall) {
   --mission-dw-columns: 2;
   --mission-dw-avatar-size: 48px;
@@ -12,7 +14,10 @@
   margin-bottom: 16px;
 }
 
-:where(.mission-dw-sort) {
+.mission-donor-wall.mission-donor-wall .mission-dw-sort {
+
+  @include reset.field;
+
   appearance: none;
   background:
     var(--mission-bg, #fff)
@@ -276,7 +281,10 @@
   margin: 0;
 }
 
-:where(.mission-dw-load-more) {
+.mission-donor-wall.mission-donor-wall .mission-dw-load-more {
+
+  @include reset.button;
+
   background: var(--mission-bg, #fff);
   border: 1px solid var(--mission-border, #e5e7eb);
   border-radius: 6px;

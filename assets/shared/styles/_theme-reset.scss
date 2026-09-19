@@ -1,0 +1,63 @@
+// Resets for native controls that themes style by element name.
+// Themes commonly ship rules like `button`, `[type="button"]`, `button:hover`,
+// `input[type="text"]` and `a:hover`. An attribute selector ties a single
+// class and wins by load order; a pseudo-class beats a single class outright.
+// Each block stylesheet opens with one rule, scoped under the block root,
+// that includes the matching mixin for every control class, and every rule
+// that styles a control is scoped the same way. The root class is written
+// twice (`.mission-donation-form.mission-donation-form .mission-df-btn`) so
+// the base rule sits at three classes: theme hover rules such as
+// `[type="button"]:hover` and `.elementor-kit-1 button:hover` reach two, and
+// a tie goes to whichever loads last. The reset covers the properties we
+// would otherwise never set, and hidden controls stay hidden because the
+// `[hidden]` rule here outranks the control's own display value.
+
+@mixin control {
+  appearance: none;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: normal;
+  line-height: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  text-decoration: none;
+  text-shadow: none;
+  transition: none;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+@mixin button {
+
+  @include control;
+
+  text-align: center;
+  cursor: pointer;
+}
+
+@mixin field {
+
+  @include control;
+
+  text-align: left;
+}
+
+@mixin link {
+  border: 0;
+  background: none;
+  box-shadow: none;
+  color: inherit;
+  text-decoration: none;
+  text-shadow: none;
+}
