@@ -35,6 +35,7 @@ class BlocksModule {
 	 */
 	public function init(): void {
 		add_filter( 'block_categories_all', [ $this, 'register_block_category' ] );
+		add_filter( 'block_type_metadata', [ $this, 'set_block_version' ] );
 		add_action( 'init', [ $this, 'register_blocks' ] );
 		add_action( 'init', [ $this, 'set_block_script_translations' ], 20 );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ] );
@@ -216,6 +217,24 @@ class BlocksModule {
 		);
 
 		return $categories;
+	}
+
+	/**
+	 * Version every Mission block's assets with the plugin version.
+	 *
+	 * block.json ships a fixed version, so without this each release would
+	 * serve new scripts and styles from URLs that browsers and CDNs have
+	 * already cached.
+	 *
+	 * @param array $metadata Block metadata read from block.json.
+	 * @return array
+	 */
+	public function set_block_version( array $metadata ): array {
+		if ( str_starts_with( $metadata['name'] ?? '', 'mission-donation-platform/' ) ) {
+			$metadata['version'] = MISSIONDP_VERSION;
+		}
+
+		return $metadata;
 	}
 
 	/**
