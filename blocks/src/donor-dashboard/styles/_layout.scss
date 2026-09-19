@@ -1,5 +1,53 @@
 // Donor Dashboard — Layout, sidebar, nav, content shell.
 
+@use "../../../../assets/shared/styles/theme-reset" as reset;
+
+// Theme reset for native controls; see assets/shared/styles/_theme-reset.scss.
+.mission-donor-dashboard.mission-donor-dashboard {
+
+  .mission-dd-mobile-toggle,
+  .mission-dd-btn-primary,
+  .mission-dd-btn-secondary,
+  .mission-dd-danger-link,
+  .mission-dd-detail-back,
+  .mission-dd-auth-pw-toggle,
+  .mission-dd-auth-submit,
+  .mission-dd-recurring-card-link,
+  .mission-dd-view-all,
+  .mission-dd-fr-card,
+  .mission-dd-download-btn,
+  .mission-dd-pagination-btn,
+  .mission-dd-btn,
+  .mission-dd-ca-cancel,
+  .mission-dd-ca-fee-edit,
+  .mission-dd-ca-tip-custom-btn,
+  .mission-dd-ca-tip-option,
+  .mission-dd-ca-tip-trigger,
+  .mission-dd-ca-update-btn,
+  .mission-dd-email-change-link,
+  .mission-dd-email-pending-cancel,
+  .mission-dd-receipt-download,
+  .mission-dd-nav-link,
+  .mission-dd-sidebar-close {
+
+    @include reset.button;
+  }
+
+  .mission-dd-profile-input,
+  .mission-dd-auth-input,
+  .mission-dd-filter-select,
+  .mission-dd-ca-amount-input,
+  .mission-dd-ca-tip-custom-input {
+
+    @include reset.field;
+  }
+
+  .mission-dd-auth-forgot {
+
+    @include reset.link;
+  }
+}
+
 :where(.mission-donor-dashboard) *,
 :where(.mission-donor-dashboard) *::before,
 :where(.mission-donor-dashboard) *::after {
@@ -8,7 +56,8 @@
 
 // Derived here rather than inlined from PHP: kses strips function values
 // from inline custom properties.
-.mission-donor-dashboard {
+// stylelint-disable-next-line no-duplicate-selectors
+.mission-donor-dashboard.mission-donor-dashboard {
   --mission-primary-light: color-mix(in srgb, var(--mission-primary, #2fa36b) 10%, transparent);
 }
 
@@ -209,7 +258,7 @@
   padding: 14px 12px 4px;
 }
 
-:where(.mission-dd-nav-link) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-nav-link {
   align-items: center;
   background: none;
   border: none;
@@ -253,7 +302,7 @@
   margin: 12px 0;
 }
 
-:where(.mission-dd-nav-link-logout) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-nav-link-logout {
   color: var(--mission-text-secondary, #999);
   font-size: 13px;
 
@@ -284,7 +333,7 @@
 
 // ── Mobile Toggle ──
 
-:where(.mission-dd-mobile-toggle) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-mobile-toggle {
   display: none;
 }
 
@@ -296,7 +345,7 @@
 
 // ── Sidebar Close ──
 
-:where(.mission-dd-sidebar-close) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-sidebar-close {
   display: none;
 }
 
@@ -405,7 +454,7 @@
   }
 
   // Close button inside sidebar drawer.
-  :where(.mission-dd-sidebar-close) {
+  .mission-donor-dashboard .mission-dd-sidebar-close {
     align-items: center;
     background: none;
     border: none;
@@ -444,7 +493,7 @@
   }
 
   // Mobile toggle replaces the page title.
-  :where(.mission-dd-mobile-toggle) {
+  .mission-donor-dashboard .mission-dd-mobile-toggle {
     align-items: center;
     background: none;
     border: 1px solid var(--mission-border, #eee);

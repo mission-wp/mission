@@ -111,7 +111,7 @@
 
 // ── Password toggle ──
 
-:where(.mission-dd-auth-pw-toggle) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-auth-pw-toggle {
   align-items: center;
   background: none;
   border: none;
@@ -194,7 +194,7 @@
   margin-bottom: 24px;
 }
 
-:where(.mission-dd-auth-remember) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-auth-remember {
   align-items: center;
   color: var(--mission-text-secondary, #6b7280);
   cursor: pointer;
@@ -211,7 +211,7 @@
   }
 }
 
-:where(.mission-dd-auth-forgot) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-auth-forgot {
   color: var(--mission-primary, #2fa36b);
   font-size: 14px;
   font-weight: 500;
@@ -241,7 +241,7 @@
 
 // ── Submit button ──
 
-:where(.mission-dd-auth-submit) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-auth-submit {
   align-items: center;
   background: var(--mission-primary, #2fa36b);
   border: none;
@@ -302,7 +302,7 @@
 
 // ── Switch link ──
 
-:where(.mission-dd-auth-switch) {
+.mission-donor-dashboard.mission-donor-dashboard .mission-dd-auth-switch {
   color: var(--mission-text-secondary, #6b7280);
   font-size: 14px;
   margin-top: 24px;
