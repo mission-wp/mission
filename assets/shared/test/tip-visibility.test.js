@@ -296,6 +296,34 @@ describe( 'forceShown', () => {
     expect( card.style.getPropertyPriority( 'display' ) ).toBe( 'important' );
   } );
 
+  it( 'restores a descendant padding that a stylesheet zeroed', () => {
+    const { root, tip } = mountFixture();
+    addSheet( '.card { padding: 16px; } .card { padding: 0 !important; }' );
+    const card = tip.querySelector( '.card' );
+    computedOverrides.set( card, {
+      paddingTop: '0px',
+      paddingRight: '0px',
+      paddingBottom: '0px',
+      paddingLeft: '0px',
+    } );
+    forceShown( tip, root );
+    expect( card.style.getPropertyValue( 'padding' ) ).toBe( '16px' );
+    expect( card.style.getPropertyPriority( 'padding' ) ).toBe( 'important' );
+  } );
+
+  it( 'leaves padding alone when nothing declares a non-zero value', () => {
+    const { root, tip } = mountFixture();
+    const card = tip.querySelector( '.card' );
+    computedOverrides.set( card, {
+      paddingTop: '0px',
+      paddingRight: '0px',
+      paddingBottom: '0px',
+      paddingLeft: '0px',
+    } );
+    forceShown( tip, root );
+    expect( card.style.getPropertyValue( 'padding' ) ).toBe( '' );
+  } );
+
   it( 'falls back to revert when no declaration exists', () => {
     const { root, tip } = mountFixture();
     const card = tip.querySelector( '.card' );

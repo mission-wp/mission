@@ -83,6 +83,20 @@ function isZeroish( value ) {
 }
 
 /**
+ * Whether every computed padding side is zero, as when a site stylesheet
+ * zeroes the tip card's padding alongside hiding it.
+ *
+ * @param {Element} node Element to test.
+ * @return {boolean} True when all four sides compute to 0.
+ */
+function hasCollapsedPadding( node ) {
+  const cs = window.getComputedStyle( node );
+  return [ 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft' ].every(
+    ( side ) => parseFloat( cs[ side ] ) === 0
+  );
+}
+
+/**
  * Whether the browser considers the node rendered (display, visibility,
  * opacity and content-visibility, including ancestors).
  *
@@ -362,6 +376,12 @@ function restoreDescendant( node, containerRect ) {
       'font-size',
       readDeclaredStyle( node, 'font-size', isZeroish ) || 'revert'
     );
+  }
+  if ( hasCollapsedPadding( node ) ) {
+    const declared = readDeclaredStyle( node, 'padding', isZeroish );
+    if ( declared ) {
+      setImportant( node, 'padding', declared );
+    }
   }
   let rect = node.getBoundingClientRect();
   if ( rect.width < 1 || rect.height < 1 ) {
