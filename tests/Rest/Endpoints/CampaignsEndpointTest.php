@@ -439,6 +439,8 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'meta', $data );
 		$this->assertArrayHasKey( 'close_on_goal', $data['meta'] );
 		$this->assertArrayHasKey( 'stop_donations_on_end', $data['meta'] );
+		$this->assertNull( $data['meta']['close_on_goal'] );
+		$this->assertNull( $data['meta']['stop_donations_on_end'] );
 		$this->assertArrayHasKey( 'recurring_end_behavior', $data['meta'] );
 		$this->assertArrayHasKey( 'recurring_redirect_campaign', $data['meta'] );
 		$this->assertSame( $campaign->id, $data['id'] );
@@ -525,12 +527,19 @@ class CampaignsEndpointTest extends WP_UnitTestCase {
 		$data     = $response->get_data();
 
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertNotEmpty( $data['meta']['close_on_goal'] );
-		$this->assertEmpty( $data['meta']['stop_donations_on_end'] );
-		$this->assertNotEmpty( $data['meta']['show_ended_message'] );
-		$this->assertNotEmpty( $data['meta']['remove_from_listings_on_end'] );
+		$this->assertTrue( $data['meta']['close_on_goal'] );
+		$this->assertFalse( $data['meta']['stop_donations_on_end'] );
+		$this->assertTrue( $data['meta']['show_ended_message'] );
+		$this->assertTrue( $data['meta']['remove_from_listings_on_end'] );
 		$this->assertSame( 'cancel', $data['meta']['recurring_end_behavior'] );
 		$this->assertSame( '5', $data['meta']['recurring_redirect_campaign'] );
+
+		// A fresh read must also return booleans, not the stored '1'/'0' strings.
+		$get      = new WP_REST_Request( 'GET', '/mission-donation-platform/v1/campaigns/' . $campaign->id );
+		$get_data = $this->server->dispatch( $get )->get_data();
+
+		$this->assertTrue( $get_data['meta']['close_on_goal'] );
+		$this->assertFalse( $get_data['meta']['stop_donations_on_end'] );
 	}
 
 	/**

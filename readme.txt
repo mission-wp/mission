@@ -207,6 +207,9 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.5.1 =
+* Fix: Campaign settings that are switched off now stay shown as off after saving
+
 = 1.5.0 =
 * Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
 * Enhancement: The optional tip now stays visible to donors even when a theme or custom CSS hides it by mistake, and any form where it can't be shown is handled the same way as the 3% platform fee option
@@ -232,18 +235,5 @@ This plugin connects to the following third-party services:
 
 = 1.3.2 =
 * New: Added a complete Finnish (fi) translation
-
-= 1.3.1 =
-* Enhancement: Faster dashboard and reports on sites with many donations
-* Enhancement: New developer hooks fire when imports, exports, and cleanup operations complete, and clearing the activity log now leaves an audit entry
-* Enhancement: Clearer error messages when cancelling, pausing, resuming, or updating subscriptions
-* Fix: Ending a campaign now cancels or redirects all of its active recurring donations, no matter how many there are
-* Fix: Restored the donate button's filled/outline styles and the campaign image block's border, shadow, and duotone settings
-* Fix: Restored donor card rendering on the donor wall
-* Fix: Improved PHP 8.0 compatibility by aligning all plugin code and bundled dependencies with Mission's minimum supported PHP version
-* Fix: Weekly recurring donations now show as recurring in admin donation lists and are accepted by the REST API frequency filter
-* Tweak: Added save_silent() and recompute_aggregates() model methods for developers
-* Tweak: REST API not-found errors now use entity-specific error codes (e.g. campaign_not_found)
-* Tweak: The subscriptions and donor wall list endpoints now validate page and per_page ranges like all other endpoints
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1 (unreleased)
+
+* Fix: Campaign settings that are switched off now stay shown as off after saving
+
 ## 1.5.0 (2026-09-18)
 
 * Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
