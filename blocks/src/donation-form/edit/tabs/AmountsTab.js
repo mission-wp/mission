@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import FrequencyChips from '@shared/components/FrequencyChips';
 import AmountChipsTabs from '@shared/components/AmountChipsTabs';
 import ToggleRow from '@shared/components/ToggleRow';
+import { resolveDefaultFrequency } from '../frequencies';
 
 /**
  * Check whether any frequency has a non-empty description.
@@ -28,6 +29,15 @@ export default function AmountsTab( {
   currencySymbol,
 } ) {
   const showDefaultFrequency = localState.frequencies.length > 1;
+  const recurringOnly = ! localState.frequencies.includes( 'one_time' );
+
+  const handleFrequenciesChange = ( freqs ) => {
+    updateField( 'frequencies', freqs );
+    updateField(
+      'defaultFrequency',
+      resolveDefaultFrequency( freqs, localState.defaultFrequency )
+    );
+  };
   const [ showDescriptions, setShowDescriptions ] = useState( () =>
     hasAnyDescription( localState.amountDescriptions )
   );
@@ -41,13 +51,18 @@ export default function AmountsTab( {
         </span>
         <FrequencyChips
           selected={ localState.frequencies }
-          onChange={ ( freqs ) => updateField( 'frequencies', freqs ) }
+          onChange={ handleFrequenciesChange }
         />
         <span className="mission-field-hint">
-          { __(
-            'Select which frequencies are available on donation forms',
-            'mission-donation-platform'
-          ) }
+          { recurringOnly
+            ? __(
+                'Donors will only be able to set up a recurring gift.',
+                'mission-donation-platform'
+              )
+            : __(
+                'Select which frequencies are available on donation forms',
+                'mission-donation-platform'
+              ) }
         </span>
       </div>
 

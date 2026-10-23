@@ -84,9 +84,26 @@ if ( ! empty( $settings['recurringEnabled'] ) && ! empty( $settings['recurringFr
 	}
 }
 
+// One-time can only be switched off when a recurring option remains.
+$one_time_enabled  = empty( $recurring_frequencies ) || ! empty( $settings['oneTimeEnabled'] );
 $default_frequency = $settings['recurringDefault'] ?? 'one_time';
-// If the default is a recurring frequency, the mode starts as "ongoing".
-$is_ongoing = 'one_time' !== $default_frequency && ! empty( $recurring_frequencies );
+if ( ! $one_time_enabled && ! in_array( $default_frequency, $recurring_frequencies, true ) ) {
+	$default_frequency = in_array( 'monthly', $recurring_frequencies, true ) ? 'monthly' : $recurring_frequencies[0];
+}
+// Recurring-only forms start as "ongoing", as does a form whose default is a recurring frequency.
+$is_ongoing = ! $one_time_enabled || ( 'one_time' !== $default_frequency && ! empty( $recurring_frequencies ) );
+
+// A recurring-only form with a single frequency names it in the heading instead of offering a selector.
+$recurring_headings   = [
+	'weekly'    => __( 'Choose Your Weekly Gift', 'mission-donation-platform' ),
+	'monthly'   => __( 'Choose Your Monthly Gift', 'mission-donation-platform' ),
+	'quarterly' => __( 'Choose Your Quarterly Gift', 'mission-donation-platform' ),
+	'annually'  => __( 'Choose Your Annual Gift', 'mission-donation-platform' ),
+];
+$default_gift_heading = __( 'Choose Your Gift', 'mission-donation-platform' );
+if ( ! $one_time_enabled && 1 === count( $recurring_frequencies ) ) {
+	$default_gift_heading = $recurring_headings[ $recurring_frequencies[0] ] ?? $default_gift_heading;
+}
 $currency   = $settings['currency'] ?? 'USD';
 
 // Determine initial frequency key for amounts lookup.
@@ -235,18 +252,19 @@ $context = [
 		data-wp-class--active="callbacks.isStep1Active"
 		data-wp-class--leaving="callbacks.isStep1Leaving"
 	>
-		<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['chooseGiftHeading'] ) ? $settings['chooseGiftHeading'] : __( 'Choose Your Gift', 'mission-donation-platform' ) ); ?></h2>
+		<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['chooseGiftHeading'] ) ? $settings['chooseGiftHeading'] : $default_gift_heading ); ?></h2>
 
-		<?php // Frequency toggle (only if recurring is enabled). ?>
+		<?php // Frequency toggle (only when one-time and recurring are both offered). ?>
 		<?php if ( ! empty( $settings['recurringEnabled'] ) && ! empty( $recurring_frequencies ) ) : ?>
+			<?php if ( $one_time_enabled ) : ?>
 			<div class="mission-df-frequency-toggle" role="tablist">
-				<div class="mission-df-frequency-slider" data-wp-class--right="state.isOngoing"></div>
+				<div class="mission-df-frequency-slider" data-wp-class--right="context.isOngoing"></div>
 				<button
 					type="button"
 					role="tab"
 					class="mission-df-frequency-btn"
 					data-wp-on--click="actions.selectOneTime"
-					data-wp-class--active="!state.isOngoing"
+					data-wp-class--active="!context.isOngoing"
 				>
 					<?php esc_html_e( 'One Time', 'mission-donation-platform' ); ?>
 				</button>
@@ -255,7 +273,7 @@ $context = [
 					role="tab"
 					class="mission-df-frequency-btn"
 					data-wp-on--click="actions.selectOngoing"
-					data-wp-class--active="state.isOngoing"
+					data-wp-class--active="context.isOngoing"
 				>
 					<?php
 					if ( 1 === count( $recurring_frequencies ) ) {
@@ -266,9 +284,15 @@ $context = [
 					?>
 				</button>
 			</div>
+			<?php endif; ?>
 
-			<?php // Recurring frequency selector — visible when Ongoing is active (hidden for single frequency). ?>
-			<div class="mission-df-recurring-selector<?php echo 1 === count( $recurring_frequencies ) ? ' mission-df-recurring-selector--single' : ''; ?>" data-wp-bind--hidden="!state.isOngoing" data-wp-class--visible="state.isOngoing">
+			<?php
+			// Recurring frequency selector, shown while Ongoing is active. A single frequency
+			// needs none: the toggle or the heading already names it. The directives read
+			// the context directly so the server renders the initial state.
+			?>
+			<?php if ( 1 < count( $recurring_frequencies ) ) : ?>
+			<div class="mission-df-recurring-selector" data-wp-bind--hidden="!context.isOngoing" data-wp-class--visible="context.isOngoing">
 				<span class="mission-df-recurring-label"><?php esc_html_e( 'Give', 'mission-donation-platform' ); ?></span>
 				<div class="mission-df-recurring-dropdown" data-wp-on-document--click="actions.closeFrequencyDropdown">
 					<button
@@ -296,6 +320,7 @@ $context = [
 					</div>
 				</div>
 			</div>
+			<?php endif; ?>
 		<?php endif; ?>
 
 		<?php // Amount grid. ?>

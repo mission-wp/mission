@@ -2,6 +2,7 @@
 
 ## 1.5.1 (unreleased)
 
+* New: Donation forms can now be recurring-only. Turn off One-time under Donation Frequencies and donors choose from the recurring options alone
 * Fix: Campaign settings that are switched off now stay shown as off after saving
 
 ## 1.5.0 (2026-09-18)

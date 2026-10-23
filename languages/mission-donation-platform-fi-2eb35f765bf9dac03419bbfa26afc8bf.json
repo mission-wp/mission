@@ -31,6 +31,9 @@
             "Choose Your Gift": [
                 "Valitse lahjoituksesi"
             ],
+            "Give": [
+                "Lahjoita"
+            ],
             "Other": [
                 "Muu"
             ],
@@ -375,6 +378,21 @@
             ],
             "This is displayed after a successful donation. Add any blocks you like.": [
                 "T\u00e4m\u00e4 n\u00e4ytet\u00e4\u00e4n onnistuneen lahjoituksen j\u00e4lkeen. Lis\u00e4\u00e4 haluamiasi lohkoja."
+            ],
+            "Donors will only be able to set up a recurring gift.": [
+                "Lahjoittajat voivat m\u00e4\u00e4ritt\u00e4\u00e4 vain toistuvan lahjoituksen."
+            ],
+            "Choose Your Weekly Gift": [
+                "Valitse viikoittainen lahjoituksesi"
+            ],
+            "Choose Your Monthly Gift": [
+                "Valitse kuukausittainen lahjoituksesi"
+            ],
+            "Choose Your Quarterly Gift": [
+                "Valitse nelj\u00e4nnesvuosittainen lahjoituksesi"
+            ],
+            "Choose Your Annual Gift": [
+                "Valitse vuosittainen lahjoituksesi"
             ]
         }
     }

@@ -31,6 +31,9 @@
             "Choose Your Gift": [
                 "Elige tu donativo"
             ],
+            "Give": [
+                "Donar"
+            ],
             "Other": [
                 "Otro"
             ],
@@ -375,6 +378,21 @@
             ],
             "This is displayed after a successful donation. Add any blocks you like.": [
                 "Esto se muestra tras una donaci\u00f3n correcta. A\u00f1ade los bloques que quieras."
+            ],
+            "Donors will only be able to set up a recurring gift.": [
+                "Los donantes solo podr\u00e1n configurar un donativo recurrente."
+            ],
+            "Choose Your Weekly Gift": [
+                "Elige tu donativo semanal"
+            ],
+            "Choose Your Monthly Gift": [
+                "Elige tu donativo mensual"
+            ],
+            "Choose Your Quarterly Gift": [
+                "Elige tu donativo trimestral"
+            ],
+            "Choose Your Annual Gift": [
+                "Elige tu donativo anual"
             ]
         }
     }

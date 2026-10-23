@@ -134,7 +134,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 
 		$this->assertSame( 200, $response->get_status() );
 
-		// All 25 DEFAULTS keys.
+		// All 26 DEFAULTS keys.
 		$default_keys = [
 			'amountsByFrequency',
 			'defaultAmounts',
@@ -143,6 +143,7 @@ class DonationFormSettingsEndpointTest extends WP_UnitTestCase {
 			'recurringEnabled',
 			'recurringFrequencies',
 			'recurringDefault',
+			'oneTimeEnabled',
 			'feeRecovery',
 			'feeMode',
 			'tipEnabled',

@@ -208,6 +208,7 @@ This plugin connects to the following third-party services:
 == Changelog ==
 
 = 1.5.1 =
+* New: Donation forms can now be recurring-only. Turn off One-time under Donation Frequencies and donors choose from the recurring options alone
 * Fix: Campaign settings that are switched off now stay shown as off after saving
 
 = 1.5.0 =

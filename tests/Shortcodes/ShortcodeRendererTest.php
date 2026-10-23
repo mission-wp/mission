@@ -344,4 +344,64 @@ class ShortcodeRendererTest extends WP_UnitTestCase {
 		$this->assertStringNotContainsString( 'Support Our Cause', $output );
 		$this->assertStringContainsString( 'mission-df-frequency-toggle', $output );
 	}
+
+	// -------------------------------------------------------------------------
+	// Recurring-only forms.
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Assert that the form's Interactivity API context contains a JSON fragment.
+	 *
+	 * @param string $fragment Raw JSON fragment, e.g. '"isOngoing":true'.
+	 * @param string $output   Rendered form HTML.
+	 */
+	private function assert_context_contains( string $fragment, string $output ): void {
+		$this->assertStringContainsString( $fragment, html_entity_decode( $output, ENT_QUOTES ) );
+	}
+
+	/**
+	 * A recurring-only form drops the One Time / Ongoing toggle and starts on a recurring frequency.
+	 */
+	public function test_recurring_only_form_has_no_frequency_toggle(): void {
+		$output = do_shortcode( '[mission_donation_form recurring_enabled="true" recurring_frequencies="monthly,annually" recurring_default="one_time" one_time_enabled="false"]' );
+
+		$this->assertStringNotContainsString( 'mission-df-frequency-toggle', $output );
+		$this->assertStringContainsString( 'mission-df-recurring-dropdown', $output );
+		$this->assertStringContainsString( 'mission-df-recurring-selector visible', $output );
+		$this->assert_context_contains( '"isOngoing":true', $output );
+		$this->assert_context_contains( '"selectedFrequency":"monthly"', $output );
+	}
+
+	/**
+	 * With a single recurring frequency the heading names it and no selector is rendered.
+	 */
+	public function test_recurring_only_form_with_one_frequency_names_it_in_the_heading(): void {
+		$output = do_shortcode( '[mission_donation_form recurring_enabled="true" recurring_frequencies="annually" one_time_enabled="false"]' );
+
+		$this->assertStringContainsString( 'Choose Your Annual Gift', $output );
+		$this->assertStringNotContainsString( 'mission-df-frequency-toggle', $output );
+		$this->assertStringNotContainsString( 'mission-df-recurring-selector', $output );
+		$this->assert_context_contains( '"selectedFrequency":"annually"', $output );
+	}
+
+	/**
+	 * A custom heading is kept as-is on a recurring-only form.
+	 */
+	public function test_recurring_only_form_keeps_custom_heading(): void {
+		$output = do_shortcode( '[mission_donation_form recurring_enabled="true" recurring_frequencies="annually" one_time_enabled="false" choose_gift_heading="Support Us Every Year"]' );
+
+		$this->assertStringContainsString( 'Support Us Every Year', $output );
+		$this->assertStringNotContainsString( 'Choose Your Annual Gift', $output );
+	}
+
+	/**
+	 * One-time cannot be switched off when no recurring frequency is offered.
+	 */
+	public function test_one_time_stays_on_without_recurring_frequencies(): void {
+		$output = do_shortcode( '[mission_donation_form recurring_enabled="false" one_time_enabled="false"]' );
+
+		$this->assertStringNotContainsString( 'mission-df-frequency-toggle', $output );
+		$this->assert_context_contains( '"isOngoing":false', $output );
+		$this->assert_context_contains( '"selectedFrequency":"one_time"', $output );
+	}
 }
