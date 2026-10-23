@@ -383,7 +383,7 @@ $context = [
 
 		<?php // Minimum amount warning. ?>
 		<?php if ( ! empty( $settings['customAmount'] ) ) : ?>
-			<p class="mission-df-minimum-warning" data-wp-bind--hidden="!callbacks.showMinimumWarning">
+			<p class="mission-df-minimum-warning" data-wp-bind--hidden="!state.showMinimumWarning">
 				<?php
 				printf(
 					/* translators: %s: formatted minimum amount */
@@ -431,13 +431,13 @@ $context = [
 
 				<div class="mission-df-tribute-notify" data-wp-bind--hidden="!state.notifyEnabled" data-wp-class--visible="state.notifyEnabled">
 					<div class="mission-df-notify-method-toggle">
-						<div class="mission-df-notify-method-slider" data-wp-class--right="callbacks.isNotifyMail"></div>
+						<div class="mission-df-notify-method-slider" data-wp-class--right="state.isNotifyMail"></div>
 						<button
 							type="button"
 							class="mission-df-notify-method-btn"
 							data-wp-context='<?php echo wp_json_encode( [ 'method' => 'email' ] ); ?>'
 							data-wp-on--click="actions.selectNotifyMethod"
-							data-wp-class--active="callbacks.isNotifyEmail"
+							data-wp-class--active="state.isNotifyEmail"
 						>
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M1.5 4.5L8 9l6.5-4.5"/></svg>
 							<?php esc_html_e( 'Email', 'mission-donation-platform' ); ?>
@@ -447,7 +447,7 @@ $context = [
 							class="mission-df-notify-method-btn"
 							data-wp-context='<?php echo wp_json_encode( [ 'method' => 'mail' ] ); ?>'
 							data-wp-on--click="actions.selectNotifyMethod"
-							data-wp-class--active="callbacks.isNotifyMail"
+							data-wp-class--active="state.isNotifyMail"
 						>
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M2 7h12M6 10h4"/></svg>
 							<?php esc_html_e( 'Mail', 'mission-donation-platform' ); ?>
@@ -467,7 +467,7 @@ $context = [
 					</div>
 
 					<?php // Email panel. ?>
-					<div class="mission-df-notify-panel" data-wp-bind--hidden="!callbacks.isNotifyEmail" data-wp-class--active="callbacks.isNotifyEmail">
+					<div class="mission-df-notify-panel" data-wp-bind--hidden="!state.isNotifyEmail" data-wp-class--active="state.isNotifyEmail">
 						<div class="mission-df-notify-row">
 							<div class="mission-df-field">
 								<label for="<?php echo esc_attr( $uid . 'notify-name' ); ?>"><?php esc_html_e( 'Recipient Name', 'mission-donation-platform' ); ?></label>
@@ -499,7 +499,7 @@ $context = [
 					</div>
 
 					<?php // Mail panel. ?>
-					<div class="mission-df-notify-panel" data-wp-bind--hidden="!callbacks.isNotifyMail" data-wp-class--active="callbacks.isNotifyMail">
+					<div class="mission-df-notify-panel" data-wp-bind--hidden="!state.isNotifyMail" data-wp-class--active="state.isNotifyMail">
 						<div class="mission-df-field">
 							<label for="<?php echo esc_attr( $uid . 'notify-name-mail' ); ?>"><?php esc_html_e( 'Recipient Name', 'mission-donation-platform' ); ?></label>
 							<input
@@ -634,8 +634,8 @@ $context = [
 					class="mission-df-custom-field__input"
 					placeholder="<?php echo esc_attr( $cf_placeholder ); ?>"
 					data-wp-on--input="actions.updateCustomField"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				/>
 
@@ -645,8 +645,8 @@ $context = [
 					rows="3"
 					placeholder="<?php echo esc_attr( $cf_placeholder ); ?>"
 					data-wp-on--input="actions.updateCustomField"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				></textarea>
 
@@ -666,8 +666,8 @@ $context = [
 				<select
 					class="mission-df-select"
 					data-wp-on--change="actions.updateCustomField"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				>
 					<option value=""><?php esc_html_e( 'Select an option', 'mission-donation-platform' ); ?></option>
@@ -679,8 +679,8 @@ $context = [
 			<?php elseif ( 'multiselect' === $cf_type ) : ?>
 				<div
 					class="mission-df-multiselect"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 					data-wp-on-document--click="actions.closeMultiselectDropdown"
 				>
@@ -690,7 +690,7 @@ $context = [
 						data-wp-on--click="actions.toggleMultiselectDropdown"
 						data-wp-text="callbacks.multiselectLabel"
 					></button>
-					<div class="mission-df-multiselect__dropdown" data-wp-bind--hidden="!callbacks.isMultiselectOpen" data-wp-class--visible="callbacks.isMultiselectOpen">
+					<div class="mission-df-multiselect__dropdown" data-wp-bind--hidden="!state.isMultiselectOpen" data-wp-class--visible="state.isMultiselectOpen">
 						<?php foreach ( $cf_options as $opt ) : ?>
 							<button
 								type="button"
@@ -727,7 +727,7 @@ $context = [
 			<?php endif; ?>
 
 			<?php if ( 'checkbox' !== $cf_type ) : ?>
-				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>" role="alert" data-wp-bind--hidden="!callbacks.hasCustomFieldError">
+				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>" role="alert" data-wp-bind--hidden="!state.hasCustomFieldError">
 					<?php esc_html_e( 'This field is required.', 'mission-donation-platform' ); ?>
 				</p>
 			<?php endif; ?>

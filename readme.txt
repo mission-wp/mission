@@ -210,6 +210,7 @@ This plugin connects to the following third-party services:
 = 1.5.1 =
 * New: Donation forms can now be recurring-only. Turn off One-time under Donation Frequencies and donors choose from the recurring options alone
 * Fix: Campaign settings that are switched off now stay shown as off after saving
+* Fix: The minimum donation notice, tribute notification fields and custom field errors now stay hidden until they apply, including on sites running the Gutenberg plugin
 
 = 1.5.0 =
 * Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
