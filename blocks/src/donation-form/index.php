@@ -84,9 +84,26 @@ if ( ! empty( $settings['recurringEnabled'] ) && ! empty( $settings['recurringFr
 	}
 }
 
+// One-time can only be switched off when a recurring option remains.
+$one_time_enabled  = empty( $recurring_frequencies ) || ! empty( $settings['oneTimeEnabled'] );
 $default_frequency = $settings['recurringDefault'] ?? 'one_time';
-// If the default is a recurring frequency, the mode starts as "ongoing".
-$is_ongoing = 'one_time' !== $default_frequency && ! empty( $recurring_frequencies );
+if ( ! $one_time_enabled && ! in_array( $default_frequency, $recurring_frequencies, true ) ) {
+	$default_frequency = in_array( 'monthly', $recurring_frequencies, true ) ? 'monthly' : $recurring_frequencies[0];
+}
+// Recurring-only forms start as "ongoing", as does a form whose default is a recurring frequency.
+$is_ongoing = ! $one_time_enabled || ( 'one_time' !== $default_frequency && ! empty( $recurring_frequencies ) );
+
+// A recurring-only form with a single frequency names it in the heading instead of offering a selector.
+$recurring_headings   = [
+	'weekly'    => __( 'Choose Your Weekly Gift', 'mission-donation-platform' ),
+	'monthly'   => __( 'Choose Your Monthly Gift', 'mission-donation-platform' ),
+	'quarterly' => __( 'Choose Your Quarterly Gift', 'mission-donation-platform' ),
+	'annually'  => __( 'Choose Your Annual Gift', 'mission-donation-platform' ),
+];
+$default_gift_heading = __( 'Choose Your Gift', 'mission-donation-platform' );
+if ( ! $one_time_enabled && 1 === count( $recurring_frequencies ) ) {
+	$default_gift_heading = $recurring_headings[ $recurring_frequencies[0] ] ?? $default_gift_heading;
+}
 $currency   = $settings['currency'] ?? 'USD';
 
 // Determine initial frequency key for amounts lookup.
@@ -235,18 +252,19 @@ $context = [
 		data-wp-class--active="callbacks.isStep1Active"
 		data-wp-class--leaving="callbacks.isStep1Leaving"
 	>
-		<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['chooseGiftHeading'] ) ? $settings['chooseGiftHeading'] : __( 'Choose Your Gift', 'mission-donation-platform' ) ); ?></h2>
+		<h2 class="mission-df-step-title"><?php echo esc_html( ! empty( $settings['chooseGiftHeading'] ) ? $settings['chooseGiftHeading'] : $default_gift_heading ); ?></h2>
 
-		<?php // Frequency toggle (only if recurring is enabled). ?>
+		<?php // Frequency toggle (only when one-time and recurring are both offered). ?>
 		<?php if ( ! empty( $settings['recurringEnabled'] ) && ! empty( $recurring_frequencies ) ) : ?>
+			<?php if ( $one_time_enabled ) : ?>
 			<div class="mission-df-frequency-toggle" role="tablist">
-				<div class="mission-df-frequency-slider" data-wp-class--right="state.isOngoing"></div>
+				<div class="mission-df-frequency-slider" data-wp-class--right="context.isOngoing"></div>
 				<button
 					type="button"
 					role="tab"
 					class="mission-df-frequency-btn"
 					data-wp-on--click="actions.selectOneTime"
-					data-wp-class--active="!state.isOngoing"
+					data-wp-class--active="!context.isOngoing"
 				>
 					<?php esc_html_e( 'One Time', 'mission-donation-platform' ); ?>
 				</button>
@@ -255,7 +273,7 @@ $context = [
 					role="tab"
 					class="mission-df-frequency-btn"
 					data-wp-on--click="actions.selectOngoing"
-					data-wp-class--active="state.isOngoing"
+					data-wp-class--active="context.isOngoing"
 				>
 					<?php
 					if ( 1 === count( $recurring_frequencies ) ) {
@@ -266,9 +284,15 @@ $context = [
 					?>
 				</button>
 			</div>
+			<?php endif; ?>
 
-			<?php // Recurring frequency selector — visible when Ongoing is active (hidden for single frequency). ?>
-			<div class="mission-df-recurring-selector<?php echo 1 === count( $recurring_frequencies ) ? ' mission-df-recurring-selector--single' : ''; ?>" data-wp-bind--hidden="!state.isOngoing" data-wp-class--visible="state.isOngoing">
+			<?php
+			// Recurring frequency selector, shown while Ongoing is active. A single frequency
+			// needs none: the toggle or the heading already names it. The directives read
+			// the context directly so the server renders the initial state.
+			?>
+			<?php if ( 1 < count( $recurring_frequencies ) ) : ?>
+			<div class="mission-df-recurring-selector" data-wp-bind--hidden="!context.isOngoing" data-wp-class--visible="context.isOngoing">
 				<span class="mission-df-recurring-label"><?php esc_html_e( 'Give', 'mission-donation-platform' ); ?></span>
 				<div class="mission-df-recurring-dropdown" data-wp-on-document--click="actions.closeFrequencyDropdown">
 					<button
@@ -296,6 +320,7 @@ $context = [
 					</div>
 				</div>
 			</div>
+			<?php endif; ?>
 		<?php endif; ?>
 
 		<?php // Amount grid. ?>
@@ -358,7 +383,7 @@ $context = [
 
 		<?php // Minimum amount warning. ?>
 		<?php if ( ! empty( $settings['customAmount'] ) ) : ?>
-			<p class="mission-df-minimum-warning" data-wp-bind--hidden="!callbacks.showMinimumWarning">
+			<p class="mission-df-minimum-warning" data-wp-bind--hidden="!state.showMinimumWarning">
 				<?php
 				printf(
 					/* translators: %s: formatted minimum amount */
@@ -406,13 +431,13 @@ $context = [
 
 				<div class="mission-df-tribute-notify" data-wp-bind--hidden="!state.notifyEnabled" data-wp-class--visible="state.notifyEnabled">
 					<div class="mission-df-notify-method-toggle">
-						<div class="mission-df-notify-method-slider" data-wp-class--right="callbacks.isNotifyMail"></div>
+						<div class="mission-df-notify-method-slider" data-wp-class--right="state.isNotifyMail"></div>
 						<button
 							type="button"
 							class="mission-df-notify-method-btn"
 							data-wp-context='<?php echo wp_json_encode( [ 'method' => 'email' ] ); ?>'
 							data-wp-on--click="actions.selectNotifyMethod"
-							data-wp-class--active="callbacks.isNotifyEmail"
+							data-wp-class--active="state.isNotifyEmail"
 						>
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="3" width="13" height="10" rx="1.5"/><path d="M1.5 4.5L8 9l6.5-4.5"/></svg>
 							<?php esc_html_e( 'Email', 'mission-donation-platform' ); ?>
@@ -422,7 +447,7 @@ $context = [
 							class="mission-df-notify-method-btn"
 							data-wp-context='<?php echo wp_json_encode( [ 'method' => 'mail' ] ); ?>'
 							data-wp-on--click="actions.selectNotifyMethod"
-							data-wp-class--active="callbacks.isNotifyMail"
+							data-wp-class--active="state.isNotifyMail"
 						>
 							<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M2 7h12M6 10h4"/></svg>
 							<?php esc_html_e( 'Mail', 'mission-donation-platform' ); ?>
@@ -442,7 +467,7 @@ $context = [
 					</div>
 
 					<?php // Email panel. ?>
-					<div class="mission-df-notify-panel" data-wp-bind--hidden="!callbacks.isNotifyEmail" data-wp-class--active="callbacks.isNotifyEmail">
+					<div class="mission-df-notify-panel" data-wp-bind--hidden="!state.isNotifyEmail" data-wp-class--active="state.isNotifyEmail">
 						<div class="mission-df-notify-row">
 							<div class="mission-df-field">
 								<label for="<?php echo esc_attr( $uid . 'notify-name' ); ?>"><?php esc_html_e( 'Recipient Name', 'mission-donation-platform' ); ?></label>
@@ -474,7 +499,7 @@ $context = [
 					</div>
 
 					<?php // Mail panel. ?>
-					<div class="mission-df-notify-panel" data-wp-bind--hidden="!callbacks.isNotifyMail" data-wp-class--active="callbacks.isNotifyMail">
+					<div class="mission-df-notify-panel" data-wp-bind--hidden="!state.isNotifyMail" data-wp-class--active="state.isNotifyMail">
 						<div class="mission-df-field">
 							<label for="<?php echo esc_attr( $uid . 'notify-name-mail' ); ?>"><?php esc_html_e( 'Recipient Name', 'mission-donation-platform' ); ?></label>
 							<input
@@ -609,8 +634,8 @@ $context = [
 					class="mission-df-custom-field__input"
 					placeholder="<?php echo esc_attr( $cf_placeholder ); ?>"
 					data-wp-on--input="actions.updateCustomField"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				/>
 
@@ -620,8 +645,8 @@ $context = [
 					rows="3"
 					placeholder="<?php echo esc_attr( $cf_placeholder ); ?>"
 					data-wp-on--input="actions.updateCustomField"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				></textarea>
 
@@ -641,8 +666,8 @@ $context = [
 				<select
 					class="mission-df-select"
 					data-wp-on--change="actions.updateCustomField"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 				>
 					<option value=""><?php esc_html_e( 'Select an option', 'mission-donation-platform' ); ?></option>
@@ -654,8 +679,8 @@ $context = [
 			<?php elseif ( 'multiselect' === $cf_type ) : ?>
 				<div
 					class="mission-df-multiselect"
-					data-wp-class--mission-df-field-error="callbacks.hasCustomFieldError"
-					data-wp-bind--aria-invalid="callbacks.hasCustomFieldError"
+					data-wp-class--mission-df-field-error="state.hasCustomFieldError"
+					data-wp-bind--aria-invalid="state.hasCustomFieldError"
 					aria-describedby="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>"
 					data-wp-on-document--click="actions.closeMultiselectDropdown"
 				>
@@ -665,7 +690,7 @@ $context = [
 						data-wp-on--click="actions.toggleMultiselectDropdown"
 						data-wp-text="callbacks.multiselectLabel"
 					></button>
-					<div class="mission-df-multiselect__dropdown" data-wp-bind--hidden="!callbacks.isMultiselectOpen" data-wp-class--visible="callbacks.isMultiselectOpen">
+					<div class="mission-df-multiselect__dropdown" data-wp-bind--hidden="!state.isMultiselectOpen" data-wp-class--visible="state.isMultiselectOpen">
 						<?php foreach ( $cf_options as $opt ) : ?>
 							<button
 								type="button"
@@ -702,7 +727,7 @@ $context = [
 			<?php endif; ?>
 
 			<?php if ( 'checkbox' !== $cf_type ) : ?>
-				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>" role="alert" data-wp-bind--hidden="!callbacks.hasCustomFieldError">
+				<p class="mission-df-field-error-msg" id="<?php echo esc_attr( $uid . 'cf-' . $cf_id . '-error' ); ?>" role="alert" data-wp-bind--hidden="!state.hasCustomFieldError">
 					<?php esc_html_e( 'This field is required.', 'mission-donation-platform' ); ?>
 				</p>
 			<?php endif; ?>

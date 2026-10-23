@@ -39,6 +39,9 @@
 		"minimumAmount": {
 			"type": "number"
 		},
+		"oneTimeEnabled": {
+			"type": "boolean"
+		},
 		"recurringEnabled": {
 			"type": "boolean"
 		},

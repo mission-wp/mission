@@ -395,9 +395,9 @@ describe( 'multi-currency formatting', () => {
     ctx.settings.minimumAmount = 500;
     ctx.isCustomAmount = true;
     ctx.customAmountValue = '300';
-    expect( storeDef.callbacks.showMinimumWarning() ).toBe( true );
+    expect( storeDef.state.showMinimumWarning ).toBe( true );
     ctx.customAmountValue = '500';
-    expect( storeDef.callbacks.showMinimumWarning() ).toBe( false );
+    expect( storeDef.state.showMinimumWarning ).toBe( false );
   } );
 } );
 

@@ -74,6 +74,18 @@ class CampaignsEndpoint {
 	];
 
 	/**
+	 * Meta fields stored as '1'/'0' that the response returns as booleans.
+	 *
+	 * @var string[]
+	 */
+	private const BOOLEAN_META = [
+		'close_on_goal',
+		'stop_donations_on_end',
+		'show_ended_message',
+		'remove_from_listings_on_end',
+	];
+
+	/**
 	 * Register REST routes.
 	 *
 	 * @return void
@@ -262,7 +274,12 @@ class CampaignsEndpoint {
 		$all_meta = $campaign->get_all_meta();
 		$meta     = [];
 		foreach ( self::ALL_META as $key ) {
-			$meta[ $key ] = array_key_exists( $key, $all_meta ) ? $all_meta[ $key ] : null;
+			if ( ! array_key_exists( $key, $all_meta ) ) {
+				$meta[ $key ] = null;
+				continue;
+			}
+
+			$meta[ $key ] = in_array( $key, self::BOOLEAN_META, true ) ? (bool) $all_meta[ $key ] : $all_meta[ $key ];
 		}
 
 		$milestones = $all_meta['milestones'] ?? [];

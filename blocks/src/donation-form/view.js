@@ -157,6 +157,31 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
     get isCustomAmount() {
       return getContext().isCustomAmount;
     },
+    get showMinimumWarning() {
+      const ctx = getContext();
+      if ( ! ctx.isCustomAmount || ! ctx.customAmountValue ) {
+        return false;
+      }
+      const amount = majorToMinor(
+        parseFloat( ctx.customAmountValue ),
+        ctx.settings.currency || 'USD'
+      );
+      return amount > 0 && amount < ( ctx.settings.minimumAmount || 0 );
+    },
+    get isNotifyEmail() {
+      return getContext().notifyMethod === 'email';
+    },
+    get isNotifyMail() {
+      return getContext().notifyMethod === 'mail';
+    },
+    get hasCustomFieldError() {
+      const ctx = getContext();
+      return !! ctx.customFieldErrors?.[ ctx.fieldId ];
+    },
+    get isMultiselectOpen() {
+      const ctx = getContext();
+      return ctx.openMultiselectId === ctx.fieldId;
+    },
     get tributeChecked() {
       return getContext().tributeChecked;
     },
@@ -973,14 +998,6 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
       const ctx = getContext();
       return ctx.currentStep === getPaymentStep( ctx );
     },
-    hasCustomFieldError() {
-      const ctx = getContext();
-      return !! ctx.customFieldErrors?.[ ctx.fieldId ];
-    },
-    isMultiselectOpen() {
-      const ctx = getContext();
-      return ctx.openMultiselectId === ctx.fieldId;
-    },
     isMultiselectOptionSelected() {
       const ctx = getContext();
       const values = ctx.customFieldValues?.[ ctx.fieldId ] || [];
@@ -1037,23 +1054,6 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
       return getContext().notifyEnabled
         ? '\u2212 Remove notification'
         : 'Notify someone of this tribute';
-    },
-    isNotifyEmail() {
-      return getContext().notifyMethod === 'email';
-    },
-    isNotifyMail() {
-      return getContext().notifyMethod === 'mail';
-    },
-    showMinimumWarning() {
-      const ctx = getContext();
-      if ( ! ctx.isCustomAmount || ! ctx.customAmountValue ) {
-        return false;
-      }
-      const amount = majorToMinor(
-        parseFloat( ctx.customAmountValue ),
-        ctx.settings.currency || 'USD'
-      );
-      return amount > 0 && amount < ( ctx.settings.minimumAmount || 0 );
     },
     formattedPresetAmount() {
       const ctx = getContext();
