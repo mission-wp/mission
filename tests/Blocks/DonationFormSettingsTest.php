@@ -100,6 +100,7 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['recurringEnabled'] );
 		$this->assertSame( [ 'monthly', 'quarterly', 'annually' ], $result['recurringFrequencies'] );
 		$this->assertSame( 'one_time', $result['recurringDefault'] );
+		$this->assertTrue( $result['oneTimeEnabled'] );
 
 		// Fee/tip defaults.
 		$this->assertTrue( $result['feeRecovery'] );
@@ -146,6 +147,7 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 			'customAmount'         => false,
 			'recurringEnabled'     => false,
 			'recurringDefault'     => 'monthly',
+			'oneTimeEnabled'       => false,
 			'feeRecovery'          => false,
 			'feeMode'              => 'always',
 			'tipEnabled'           => false,
@@ -165,6 +167,7 @@ class DonationFormSettingsTest extends WP_UnitTestCase {
 		$this->assertFalse( $result['customAmount'] );
 		$this->assertFalse( $result['recurringEnabled'] );
 		$this->assertSame( 'monthly', $result['recurringDefault'] );
+		$this->assertFalse( $result['oneTimeEnabled'] );
 		$this->assertFalse( $result['feeRecovery'] );
 		$this->assertSame( 'always', $result['feeMode'] );
 		$this->assertFalse( $result['tipEnabled'] );

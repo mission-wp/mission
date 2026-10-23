@@ -9,6 +9,7 @@ import PaymentsTab from './tabs/PaymentsTab';
 import ConfirmationTab from './tabs/ConfirmationTab';
 import AppearanceTab from './tabs/AppearanceTab';
 import CustomFieldsTab, { findEmptyLabelField } from './tabs/CustomFieldsTab';
+import { buildFrequencyArray, frequencyAttributes } from './frequencies';
 
 const TABS = [
   { id: 'amounts', label: __( 'Amounts', 'mission-donation-platform' ) },
@@ -27,26 +28,6 @@ const TABS = [
     label: __( 'Appearance', 'mission-donation-platform' ),
   },
 ];
-
-/**
- * Build a unified frequencies array from the split recurring fields.
- *
- * @param {Object} data Resolved settings object.
- * @return {string[]} Array of frequency IDs.
- */
-function buildFrequencyArray( data ) {
-  const freqs = [];
-  const recurringFreqs = data.recurringFrequencies || [];
-  const recurringEnabled = data.recurringEnabled ?? recurringFreqs.length > 0;
-
-  if ( ! recurringEnabled || recurringFreqs.length === 0 ) {
-    return [ 'one_time' ];
-  }
-
-  freqs.push( 'one_time' );
-  freqs.push( ...recurringFreqs );
-  return freqs;
-}
 
 /**
  * Convert amounts objects from minor to major units for display.
@@ -243,6 +224,7 @@ function resolveSettings( defaults, attrs ) {
     'defaultAmounts',
     'customAmount',
     'minimumAmount',
+    'oneTimeEnabled',
     'recurringEnabled',
     'recurringFrequencies',
     'recurringDefault',
@@ -300,6 +282,7 @@ const FALLBACK_DEFAULTS = {
   defaultAmounts: {},
   customAmount: true,
   minimumAmount: 500,
+  oneTimeEnabled: true,
   recurringEnabled: false,
   recurringFrequencies: [],
   recurringDefault: 'one_time',
@@ -381,9 +364,6 @@ export default function FormSettingsModal( {
       return;
     }
 
-    const hasRecurring = localState.frequencies.some(
-      ( f ) => f !== 'one_time'
-    );
     const minAmount = Math.max(
       1,
       parseFloat( localState.minimumAmount ) || 1
@@ -404,11 +384,10 @@ export default function FormSettingsModal( {
       ),
       customAmount: localState.customAmount,
       minimumAmount: majorToMinor( minAmount, currency ),
-      recurringEnabled: hasRecurring,
-      recurringFrequencies: localState.frequencies.filter(
-        ( f ) => f !== 'one_time'
+      ...frequencyAttributes(
+        localState.frequencies,
+        localState.defaultFrequency
       ),
-      recurringDefault: localState.defaultFrequency,
       feeRecovery: localState.feeMode !== 'none',
       feeMode: localState.feeMode,
       tipEnabled: localState.tipEnabled,

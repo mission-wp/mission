@@ -34,6 +34,7 @@ class DonationFormSettings {
 		'recurringEnabled'        => true,
 		'recurringFrequencies'    => [ Frequency::MONTHLY, Frequency::QUARTERLY, Frequency::ANNUALLY ],
 		'recurringDefault'        => Frequency::ONE_TIME,
+		'oneTimeEnabled'          => true,
 		'feeRecovery'             => true,
 		'feeMode'                 => 'optional',
 		'tipEnabled'              => true,
