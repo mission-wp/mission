@@ -121,7 +121,7 @@ class DonorAuthService {
 	 * @param string $token Plain-text activation token.
 	 * @return Donor|null The donor if valid, null otherwise.
 	 */
-	public function validate_activation_token( string $email, string $token ): ?Donor {
+	public static function validate_activation_token( string $email, string $token ): ?Donor {
 		$donor = Donor::find_by_email( $email );
 
 		if ( ! $donor || $donor->user_id ) {
@@ -163,7 +163,7 @@ class DonorAuthService {
 	public function activate( string $email, string $password, string $token ): Donor {
 		$this->validate_password_length( $password );
 
-		$donor = $this->validate_activation_token( $email, $token );
+		$donor = self::validate_activation_token( $email, $token );
 
 		if ( ! $donor ) {
 			throw new \RuntimeException( esc_html__( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
@@ -521,7 +521,7 @@ class DonorAuthService {
 	 * @param string $key   Password reset key.
 	 * @return \WP_User|null The user if valid, null otherwise.
 	 */
-	public function validate_reset_key( string $login, string $key ): ?\WP_User {
+	public static function validate_reset_key( string $login, string $key ): ?\WP_User {
 		$user = check_password_reset_key( $key, $login );
 
 		if ( is_wp_error( $user ) ) {

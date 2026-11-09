@@ -40,8 +40,7 @@ $activation_token_valid = false;
 $activation_token_error = '';
 
 if ( $activation_token && $activation_email && ! $is_donor ) {
-	$auth_service           = new \MissionDP\DonorDashboard\DonorAuthService();
-	$activation_token_valid = null !== $auth_service->validate_activation_token( $activation_email, $activation_token );
+	$activation_token_valid = null !== \MissionDP\DonorDashboard\DonorAuthService::validate_activation_token( $activation_email, $activation_token );
 
 	if ( ! $activation_token_valid ) {
 		$activation_token_error = __( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' );
@@ -56,8 +55,7 @@ $reset_key_valid = false;
 $reset_key_error = '';
 
 if ( 'reset-password' === $reset_action && $reset_key && $reset_login && ! $is_donor ) {
-	$auth_service    = $auth_service ?? new \MissionDP\DonorDashboard\DonorAuthService();
-	$reset_key_valid = null !== $auth_service->validate_reset_key( $reset_login, $reset_key );
+	$reset_key_valid = null !== \MissionDP\DonorDashboard\DonorAuthService::validate_reset_key( $reset_login, $reset_key );
 
 	if ( ! $reset_key_valid ) {
 		$reset_key_error = __( 'This password reset link is invalid or has expired. Please request a new one.', 'mission-donation-platform' );
