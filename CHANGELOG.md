@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.2 (2026-11-09)
+
+* Fix: Account activation and password reset links from Mission emails now open the donor account page as expected
+
 ## 1.5.1 (2026-10-23)
 
 * New: Donation forms can now be recurring-only. Turn off One-time under Donation Frequencies and donors choose from the recurring options alone

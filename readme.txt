@@ -4,7 +4,7 @@ Tags: crowdfunding, donate, donation, fundraising, recurring donations
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable Tag: 1.5.1
+Stable Tag: 1.5.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -207,6 +207,9 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.5.2 =
+* Fix: Account activation and password reset links from Mission emails now open the donor account page as expected
+
 = 1.5.1 =
 * New: Donation forms can now be recurring-only. Turn off One-time under Donation Frequencies and donors choose from the recurring options alone
 * Fix: Campaign settings that are switched off now stay shown as off after saving
@@ -234,8 +237,5 @@ This plugin connects to the following third-party services:
 * Enhancement: The donation form now explains when the payment field can't load, instead of failing silently
 * Fix: Restored reliable checkout on pages that contain more than one donation form
 * Tweak: Stripe.js now loads with Stripe's recommended script tag for maximum compatibility with Stripe's fraud protection
-
-= 1.3.2 =
-* New: Added a complete Finnish (fi) translation
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).
