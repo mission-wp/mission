@@ -142,6 +142,7 @@ class ActivityFeedModule {
 
 		add_action( 'mission_donor_activation_email_suppressed', [ $this, 'on_donor_activation_suppressed' ], 10, 2 );
 		add_action( 'mission_donor_password_reset_email_suppressed', [ $this, 'on_donor_password_reset_suppressed' ], 10, 2 );
+		add_action( 'mission_donor_user_linked', [ $this, 'on_donor_user_linked' ], 10, 2 );
 	}
 
 	/**
@@ -1272,6 +1273,29 @@ class ActivityFeedModule {
 			false,
 			'warning',
 			'email'
+		);
+	}
+
+	/**
+	 * Log a donor record being linked to an existing WordPress account.
+	 *
+	 * @param object $donor   Donor model.
+	 * @param int    $user_id Linked WordPress user ID.
+	 *
+	 * @return void
+	 */
+	public function on_donor_user_linked( object $donor, int $user_id ): void {
+		$user = get_userdata( $user_id );
+
+		$this->log(
+			'donor_account_linked',
+			'donor',
+			(int) $donor->id,
+			[
+				'donor_name' => trim( $donor->first_name . ' ' . $donor->last_name ),
+				'user_id'    => $user_id,
+				'user_login' => $user ? $user->user_login : '',
+			]
 		);
 	}
 }
