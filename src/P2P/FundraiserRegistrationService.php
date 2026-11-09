@@ -54,7 +54,9 @@ class FundraiserRegistrationService {
 	 * d are deliberately indistinguishable so donor status never leaks. Branch
 	 * b does reveal that a full account exists for the email — a deliberate
 	 * trade-off of the combined login/signup screen (the user has to be told a
-	 * password is required), consistent with core's own login behavior.
+	 * password is required), consistent with core's own login behavior. An
+	 * email owned by an unlinked site account must match that account's
+	 * password before a code is sent; complete_signup() then links it.
 	 *
 	 * @param string $email    Email address.
 	 * @param string $password Password the user entered.
@@ -75,8 +77,18 @@ class FundraiserRegistrationService {
 			}
 		}
 
-		// New account: reject a weak password now, before mailing a code.
-		$this->auth->validate_password( $password );
+		$existing = DonorAuthService::existing_user_for_email( $email );
+
+		if ( $existing ) {
+			// Unlinked site account: its password now, then a code to prove the email before linking.
+			if ( ! $this->auth->existing_password_matches( $existing, $password ) ) {
+				return self::BRANCH_PASSWORD_MISMATCH;
+			}
+		} else {
+			// New account: reject a weak password now, before mailing a code.
+			$this->auth->validate_password( $password );
+		}
+
 		$this->otp->send( $email, self::PURPOSE_SIGNUP );
 
 		return self::BRANCH_VERIFY_REQUIRED;
@@ -110,22 +122,30 @@ class FundraiserRegistrationService {
 	/**
 	 * Verify a signup code, then create-or-link the account and log in.
 	 *
+	 * When the email already belongs to a site account, that account is linked
+	 * (code plus its password) instead of creating a new one.
+	 *
 	 * @param string $email    Email address.
 	 * @param string $code     Submitted code.
 	 * @param string $first    First name (new donors only).
 	 * @param string $last     Last name (new donors only).
-	 * @param string $password Chosen password.
+	 * @param string $password Chosen password, or the existing account's password.
 	 * @return Donor The logged-in donor.
 	 *
 	 * @throws \MissionDP\DonorDashboard\OtpException If the code is wrong/expired.
 	 * @throws \RuntimeException If account creation fails.
 	 */
 	public function complete_signup( string $email, string $code, string $first, string $last, string $password ): Donor {
-		$donor = Donor::find_by_email( $email );
+		$donor    = Donor::find_by_email( $email );
+		$existing = ( $donor && $donor->user_id ) ? null : DonorAuthService::existing_user_for_email( $email );
 
 		// Reject a bad password BEFORE burning the one-time code, so a failed
 		// attempt doesn't consume the code.
-		if ( ! $donor || ! $donor->user_id ) {
+		if ( $existing ) {
+			if ( ! $this->auth->existing_password_matches( $existing, $password ) ) {
+				throw new \RuntimeException( esc_html__( 'That password does not match the existing account for this email.', 'mission-donation-platform' ) );
+			}
+		} elseif ( ! $donor || ! $donor->user_id ) {
 			$this->auth->validate_password( $password );
 		}
 
@@ -145,6 +165,13 @@ class FundraiserRegistrationService {
 				]
 			);
 			$donor->save();
+		}
+
+		if ( $existing ) {
+			$this->auth->link_existing_account( $donor, $existing, $password );
+			$donor->update_meta( 'email_confirmed', '1' );
+
+			return $donor;
 		}
 
 		$this->auth->create_account( $donor, $password );

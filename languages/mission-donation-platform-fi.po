@@ -897,27 +897,27 @@ msgstr "Toistuva lahjoituksesi on määritetty onnistuneesti. Saat pian vahvistu
 msgid "Secure donation powered by %s"
 msgstr "Turvallinen lahjoitus, mahdollistaja %s"
 
-#: blocks/build/donor-dashboard/index.php:47
-#: blocks/src/donor-dashboard/index.php:47
-#: src/DonorDashboard/DonorAuthService.php:169
+#: blocks/build/donor-dashboard/index.php:39
+#: blocks/src/donor-dashboard/index.php:39
+#: src/DonorDashboard/DonorAuthService.php:168
 msgid "This activation link is invalid or has expired. Please request a new one."
 msgstr "Tämä aktivointilinkki on virheellinen tai vanhentunut. Pyydä uusi linkki."
 
-#: blocks/build/donor-dashboard/index.php:63
-#: blocks/src/donor-dashboard/index.php:63
-#: src/DonorDashboard/DonorAuthService.php:478
-#: src/DonorDashboard/DonorAuthService.php:482
-#: src/DonorDashboard/DonorAuthService.php:488
+#: blocks/build/donor-dashboard/index.php:56
+#: blocks/src/donor-dashboard/index.php:56
+#: src/DonorDashboard/DonorAuthService.php:560
+#: src/DonorDashboard/DonorAuthService.php:564
+#: src/DonorDashboard/DonorAuthService.php:570
 msgid "This password reset link is invalid or has expired. Please request a new one."
 msgstr "Tämä salasanan palautuslinkki on virheellinen tai vanhentunut. Pyydä uusi linkki."
 
-#: blocks/build/donor-dashboard/index.php:117
-#: blocks/src/donor-dashboard/index.php:117
+#: blocks/build/donor-dashboard/index.php:111
+#: blocks/src/donor-dashboard/index.php:111
 msgid "Show password"
 msgstr "Näytä salasana"
 
-#: blocks/build/donor-dashboard/index.php:134
-#: blocks/src/donor-dashboard/index.php:134
+#: blocks/build/donor-dashboard/index.php:128
+#: blocks/src/donor-dashboard/index.php:128
 #: src/DonorDashboard/DashboardContextBuilder.php:304
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignTabNav.js:4
@@ -926,8 +926,8 @@ msgstr "Näytä salasana"
 msgid "Overview"
 msgstr "Yleiskatsaus"
 
-#: blocks/build/donor-dashboard/index.php:160
-#: blocks/src/donor-dashboard/index.php:160
+#: blocks/build/donor-dashboard/index.php:154
+#: blocks/src/donor-dashboard/index.php:154
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/donors/DonorDetail.js:180
 #: blocks/build/donor-dashboard/index.js:1
@@ -935,8 +935,8 @@ msgstr "Yleiskatsaus"
 msgid "Donation History"
 msgstr "Lahjoitushistoria"
 
-#: blocks/build/donor-dashboard/index.php:166
-#: blocks/src/donor-dashboard/index.php:166
+#: blocks/build/donor-dashboard/index.php:160
+#: blocks/src/donor-dashboard/index.php:160
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/tabs/SettingsTab.js:232
 #: blocks/build/donor-dashboard/index.js:1
@@ -944,22 +944,22 @@ msgstr "Lahjoitushistoria"
 msgid "Recurring Donations"
 msgstr "Toistuvat lahjoitukset"
 
-#: blocks/build/donor-dashboard/index.php:172
-#: blocks/src/donor-dashboard/index.php:172
+#: blocks/build/donor-dashboard/index.php:166
+#: blocks/src/donor-dashboard/index.php:166
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:42
 msgid "Annual Receipts"
 msgstr "Vuosikuitit"
 
-#: blocks/build/donor-dashboard/index.php:178
-#: blocks/src/donor-dashboard/index.php:178
+#: blocks/build/donor-dashboard/index.php:172
+#: blocks/src/donor-dashboard/index.php:172
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:45
 msgid "Profile"
 msgstr "Profiili"
 
-#: blocks/build/donor-dashboard/index.php:295
-#: blocks/src/donor-dashboard/index.php:295
+#: blocks/build/donor-dashboard/index.php:289
+#: blocks/src/donor-dashboard/index.php:289
 msgid "Open menu"
 msgstr "Avaa valikko"
 
@@ -977,10 +977,10 @@ msgstr "Kirjaudu sisään nähdäksesi lahjoitushistoriasi, ladataksesi verokuit
 
 #: blocks/build/donor-dashboard/parts/auth.php:43
 #: blocks/build/donor-dashboard/parts/auth.php:142
-#: blocks/build/donor-dashboard/parts/auth.php:314
+#: blocks/build/donor-dashboard/parts/auth.php:380
 #: blocks/src/donor-dashboard/parts/auth.php:43
 #: blocks/src/donor-dashboard/parts/auth.php:142
-#: blocks/src/donor-dashboard/parts/auth.php:314
+#: blocks/src/donor-dashboard/parts/auth.php:380
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/transactions/DedicationSection.js:454
 msgid "Email address"
@@ -988,14 +988,18 @@ msgstr "Sähköpostiosoite"
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
+#: blocks/build/donor-dashboard/parts/auth.php:314
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
+#: blocks/src/donor-dashboard/parts/auth.php:314
 #: src/P2P/templates/signup-modal.php:106
 msgid "Password"
 msgstr "Salasana"
 
 #: blocks/build/donor-dashboard/parts/auth.php:63
+#: blocks/build/donor-dashboard/parts/auth.php:319
 #: blocks/src/donor-dashboard/parts/auth.php:63
+#: blocks/src/donor-dashboard/parts/auth.php:319
 msgid "Enter your password"
 msgstr "Syötä salasanasi"
 
@@ -1005,20 +1009,22 @@ msgid "Remember me"
 msgstr "Muista minut"
 
 #: blocks/build/donor-dashboard/parts/auth.php:90
+#: blocks/build/donor-dashboard/parts/auth.php:338
 #: blocks/src/donor-dashboard/parts/auth.php:90
+#: blocks/src/donor-dashboard/parts/auth.php:338
 msgid "Forgot password?"
 msgstr "Unohtuiko salasana?"
 
 #: blocks/build/donor-dashboard/parts/auth.php:99
 #: blocks/build/donor-dashboard/parts/auth.php:178
 #: blocks/build/donor-dashboard/parts/auth.php:212
-#: blocks/build/donor-dashboard/parts/auth.php:345
-#: blocks/build/donor-dashboard/parts/auth.php:378
+#: blocks/build/donor-dashboard/parts/auth.php:411
+#: blocks/build/donor-dashboard/parts/auth.php:444
 #: blocks/src/donor-dashboard/parts/auth.php:99
 #: blocks/src/donor-dashboard/parts/auth.php:178
 #: blocks/src/donor-dashboard/parts/auth.php:212
-#: blocks/src/donor-dashboard/parts/auth.php:345
-#: blocks/src/donor-dashboard/parts/auth.php:378
+#: blocks/src/donor-dashboard/parts/auth.php:411
+#: blocks/src/donor-dashboard/parts/auth.php:444
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
@@ -1030,11 +1036,13 @@ msgstr "Kirjaudutaan sisään..."
 #: blocks/build/donor-dashboard/parts/auth.php:105
 #: blocks/build/donor-dashboard/parts/auth.php:168
 #: blocks/build/donor-dashboard/parts/auth.php:287
-#: blocks/build/donor-dashboard/parts/auth.php:453
+#: blocks/build/donor-dashboard/parts/auth.php:353
+#: blocks/build/donor-dashboard/parts/auth.php:519
 #: blocks/src/donor-dashboard/parts/auth.php:105
 #: blocks/src/donor-dashboard/parts/auth.php:168
 #: blocks/src/donor-dashboard/parts/auth.php:287
-#: blocks/src/donor-dashboard/parts/auth.php:453
+#: blocks/src/donor-dashboard/parts/auth.php:353
+#: blocks/src/donor-dashboard/parts/auth.php:519
 msgid "Secured with encryption"
 msgstr "Suojattu salauksella"
 
@@ -1062,9 +1070,9 @@ msgid "Send verification email"
 msgstr "Lähetä vahvistussähköposti"
 
 #: blocks/build/donor-dashboard/parts/auth.php:163
-#: blocks/build/donor-dashboard/parts/auth.php:335
+#: blocks/build/donor-dashboard/parts/auth.php:401
 #: blocks/src/donor-dashboard/parts/auth.php:163
-#: blocks/src/donor-dashboard/parts/auth.php:335
+#: blocks/src/donor-dashboard/parts/auth.php:401
 msgid "Sending..."
 msgstr "Lähetetään..."
 
@@ -1077,9 +1085,9 @@ msgid "Already have an account? %s"
 msgstr "Onko sinulla jo tili? %s"
 
 #: blocks/build/donor-dashboard/parts/auth.php:188
-#: blocks/build/donor-dashboard/parts/auth.php:354
+#: blocks/build/donor-dashboard/parts/auth.php:420
 #: blocks/src/donor-dashboard/parts/auth.php:188
-#: blocks/src/donor-dashboard/parts/auth.php:354
+#: blocks/src/donor-dashboard/parts/auth.php:420
 msgid "Check your email"
 msgstr "Tarkista sähköpostisi"
 
@@ -1089,16 +1097,16 @@ msgid "If a donor account exists for that email, we've sent a verification link.
 msgstr "Jos tähän sähköpostiosoitteeseen on liitetty lahjoittajatili, olemme lähettäneet vahvistuslinkin. Viimeistele tilisi luonti klikkaamalla sähköpostissa olevaa linkkiä."
 
 #: blocks/build/donor-dashboard/parts/auth.php:196
-#: blocks/build/donor-dashboard/parts/auth.php:362
+#: blocks/build/donor-dashboard/parts/auth.php:428
 #: blocks/src/donor-dashboard/parts/auth.php:196
-#: blocks/src/donor-dashboard/parts/auth.php:362
+#: blocks/src/donor-dashboard/parts/auth.php:428
 msgid "Didn't receive an email? Check your spam folder or try again with a different email address."
 msgstr "Etkö saanut sähköpostia? Tarkista roskapostikansiosi tai yritä uudelleen toisella sähköpostiosoitteella."
 
 #: blocks/build/donor-dashboard/parts/auth.php:203
-#: blocks/build/donor-dashboard/parts/auth.php:369
+#: blocks/build/donor-dashboard/parts/auth.php:435
 #: blocks/src/donor-dashboard/parts/auth.php:203
-#: blocks/src/donor-dashboard/parts/auth.php:369
+#: blocks/src/donor-dashboard/parts/auth.php:435
 msgid "Try another email"
 msgstr "Kokeile toista sähköpostiosoitetta"
 
@@ -1127,63 +1135,63 @@ msgstr "Aktivoi tili"
 msgid "Activating..."
 msgstr "Aktivoidaan..."
 
-#: blocks/build/donor-dashboard/parts/auth.php:296
-#: blocks/src/donor-dashboard/parts/auth.php:296
+#: blocks/build/donor-dashboard/parts/auth.php:362
+#: blocks/src/donor-dashboard/parts/auth.php:362
 msgid "Forgot your password?"
 msgstr "Unohtuiko salasanasi?"
 
-#: blocks/build/donor-dashboard/parts/auth.php:297
-#: blocks/src/donor-dashboard/parts/auth.php:297
+#: blocks/build/donor-dashboard/parts/auth.php:363
+#: blocks/src/donor-dashboard/parts/auth.php:363
 msgid "Enter your email address and we'll send you a link to reset your password."
 msgstr "Anna sähköpostiosoitteesi, niin lähetämme sinulle linkin salasanan nollaamiseksi."
 
-#: blocks/build/donor-dashboard/parts/auth.php:334
-#: blocks/src/donor-dashboard/parts/auth.php:334
+#: blocks/build/donor-dashboard/parts/auth.php:400
+#: blocks/src/donor-dashboard/parts/auth.php:400
 msgid "Send reset link"
 msgstr "Lähetä nollauslinkki"
 
 #. translators: %s: log in link
-#: blocks/build/donor-dashboard/parts/auth.php:344
-#: blocks/build/donor-dashboard/parts/auth.php:377
-#: blocks/src/donor-dashboard/parts/auth.php:344
-#: blocks/src/donor-dashboard/parts/auth.php:377
+#: blocks/build/donor-dashboard/parts/auth.php:410
+#: blocks/build/donor-dashboard/parts/auth.php:443
+#: blocks/src/donor-dashboard/parts/auth.php:410
+#: blocks/src/donor-dashboard/parts/auth.php:443
 msgid "Remember your password? %s"
 msgstr "Muistatko salasanasi? %s"
 
-#: blocks/build/donor-dashboard/parts/auth.php:356
-#: blocks/src/donor-dashboard/parts/auth.php:356
+#: blocks/build/donor-dashboard/parts/auth.php:422
+#: blocks/src/donor-dashboard/parts/auth.php:422
 msgid "If an account exists for that email, we've sent a password reset link. Click the link in the email to choose a new password."
 msgstr "Jos tähän sähköpostiosoitteeseen on liitetty tili, olemme lähettäneet salasanan nollauslinkin. Valitse uusi salasana klikkaamalla sähköpostissa olevaa linkkiä."
 
-#: blocks/build/donor-dashboard/parts/auth.php:387
-#: blocks/src/donor-dashboard/parts/auth.php:387
+#: blocks/build/donor-dashboard/parts/auth.php:453
+#: blocks/src/donor-dashboard/parts/auth.php:453
 msgid "Choose a new password"
 msgstr "Valitse uusi salasana"
 
-#: blocks/build/donor-dashboard/parts/auth.php:388
-#: blocks/src/donor-dashboard/parts/auth.php:388
+#: blocks/build/donor-dashboard/parts/auth.php:454
+#: blocks/src/donor-dashboard/parts/auth.php:454
 msgid "Enter a new password for your donor account."
 msgstr "Anna lahjoittajatilillesi uusi salasana."
 
-#: blocks/build/donor-dashboard/parts/auth.php:405
-#: blocks/src/donor-dashboard/parts/auth.php:405
+#: blocks/build/donor-dashboard/parts/auth.php:471
+#: blocks/src/donor-dashboard/parts/auth.php:471
 #: src/P2P/templates/signup-modal.php:149
 msgid "New password"
 msgstr "Uusi salasana"
 
-#: blocks/build/donor-dashboard/parts/auth.php:410
-#: blocks/src/donor-dashboard/parts/auth.php:410
+#: blocks/build/donor-dashboard/parts/auth.php:476
+#: blocks/src/donor-dashboard/parts/auth.php:476
 msgid "Enter a new password"
 msgstr "Anna uusi salasana"
 
-#: blocks/build/donor-dashboard/parts/auth.php:447
-#: blocks/src/donor-dashboard/parts/auth.php:447
+#: blocks/build/donor-dashboard/parts/auth.php:513
+#: blocks/src/donor-dashboard/parts/auth.php:513
 #: src/Email/templates/password-reset.php:36
 msgid "Reset password"
 msgstr "Nollaa salasana"
 
-#: blocks/build/donor-dashboard/parts/auth.php:448
-#: blocks/src/donor-dashboard/parts/auth.php:448
+#: blocks/build/donor-dashboard/parts/auth.php:514
+#: blocks/src/donor-dashboard/parts/auth.php:514
 msgid "Resetting..."
 msgstr "Nollataan..."
 
@@ -2487,7 +2495,7 @@ msgid "Verify your email to activate your donor account"
 msgstr "Vahvista sähköpostisi aktivoidaksesi lahjoittajatilisi"
 
 #: src/DonorDashboard/DonorAuthService.php:98
-#: src/DonorDashboard/DonorAuthService.php:437
+#: src/DonorDashboard/DonorAuthService.php:519
 #: src/Email/DonationEmailListener.php:122
 #: src/Email/EmailModule.php:267
 #: src/Email/EmailModule.php:400
@@ -2511,25 +2519,24 @@ msgstr "Vahvista sähköpostisi aktivoidaksesi lahjoittajatilisi"
 msgid "Friend"
 msgstr "Ystävä"
 
-#: src/DonorDashboard/DonorAuthService.php:220
-#: src/DonorDashboard/DonorAuthService.php:225
-#: src/DonorDashboard/DonorAuthService.php:232
+#: src/DonorDashboard/DonorAuthService.php:295
+#: src/DonorDashboard/DonorAuthService.php:302
 msgid "Invalid email or password."
 msgstr "Virheellinen sähköposti tai salasana."
 
-#: src/DonorDashboard/DonorAuthService.php:400
+#: src/DonorDashboard/DonorAuthService.php:471
 msgid "We couldn't find a donor account with this email address."
 msgstr "Emme löytäneet lahjoittajatiliä tällä sähköpostiosoitteella."
 
-#: src/DonorDashboard/DonorAuthService.php:404
+#: src/DonorDashboard/DonorAuthService.php:475
 msgid "No account has been activated for this email. Please activate your account first."
 msgstr "Tälle sähköpostille ei ole aktivoitu tiliä. Aktivoi tilisi ensin."
 
-#: src/DonorDashboard/DonorAuthService.php:410
+#: src/DonorDashboard/DonorAuthService.php:481
 msgid "Unable to process this request."
 msgstr "Tätä pyyntöä ei voitu käsitellä."
 
-#: src/DonorDashboard/DonorAuthService.php:416
+#: src/DonorDashboard/DonorAuthService.php:498
 msgid "Unable to generate a password reset link. Please try again later."
 msgstr "Salasanan palautuslinkkiä ei voitu luoda. Yritä myöhemmin uudelleen."
 
@@ -2539,7 +2546,7 @@ msgid "Reset your password"
 msgstr "Palauta salasanasi"
 
 #. translators: %d: minimum password length
-#: src/DonorDashboard/DonorAuthService.php:588
+#: src/DonorDashboard/DonorAuthService.php:670
 msgid "Password must be at least %d characters."
 msgstr "Salasanassa on oltava vähintään %d merkkiä."
 
@@ -3683,6 +3690,7 @@ msgid "The donation donor was not migrated, so the donation was skipped."
 msgstr "Lahjoituksen lahjoittajaa ei siirretty, joten lahjoitus ohitettiin."
 
 #: src/Models/Donor.php:133
+#: src/Models/Donor.php:170
 msgid "This donor already has an account."
 msgstr "Tällä lahjoittajalla on jo tili."
 
@@ -4367,11 +4375,11 @@ msgstr "Muistiinpanoa ei löytynyt."
 msgid "Stripe account not found."
 msgstr "Stripe-tiliä ei löytynyt."
 
-#: src/Rest/Traits/DonorPermissionTrait.php:26
+#: src/Rest/Traits/DonorPermissionTrait.php:27
 msgid "You must be logged in."
 msgstr "Sinun on kirjauduttava sisään."
 
-#: src/Rest/Traits/DonorPermissionTrait.php:32
+#: src/Rest/Traits/DonorPermissionTrait.php:31
 msgid "Access denied."
 msgstr "Pääsy estetty."
 
@@ -4609,7 +4617,7 @@ msgstr "Kuva"
 msgid "Create Campaign"
 msgstr "Luo kampanja"
 
-#: src/P2P/SignupModal.php:120
+#: src/P2P/SignupModal.php:118
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateModal.js:135
 msgid "Something went wrong. Please try again."
@@ -9057,7 +9065,7 @@ msgstr "Allekirjoitussalaisuus"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:122
+#: src/P2P/SignupModal.php:120
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -10828,10 +10836,10 @@ msgstr[1] "päivää jäljellä"
 msgid "Become a Fundraiser"
 msgstr "Ryhdy varainkerääjäksi"
 
-#: blocks/build/donor-dashboard/index.php:145
-#: blocks/build/donor-dashboard/index.php:153
-#: blocks/src/donor-dashboard/index.php:145
-#: blocks/src/donor-dashboard/index.php:153
+#: blocks/build/donor-dashboard/index.php:139
+#: blocks/build/donor-dashboard/index.php:147
+#: blocks/src/donor-dashboard/index.php:139
+#: blocks/src/donor-dashboard/index.php:147
 msgid "Fundraising"
 msgstr "Varainkeruu"
 
@@ -11075,35 +11083,35 @@ msgid "%1$s is fundraising for %2$s"
 msgstr "%1$s kerää varoja kampanjalle %2$s"
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:191
+#: src/P2P/SignupModal.php:189
 msgid "Join %s"
 msgstr "Liity tiimiin %s"
 
-#: src/P2P/SignupModal.php:123
+#: src/P2P/SignupModal.php:121
 msgid "Copied"
 msgstr "Kopioitu"
 
-#: src/P2P/SignupModal.php:125
+#: src/P2P/SignupModal.php:123
 msgid "Enter the 6-digit code."
 msgstr "Syötä 6-numeroinen koodi."
 
-#: src/P2P/SignupModal.php:126
+#: src/P2P/SignupModal.php:124
 msgid "Enter a new password."
 msgstr "Syötä uusi salasana."
 
-#: src/P2P/SignupModal.php:256
+#: src/P2P/SignupModal.php:254
 msgid "You're a fundraiser!"
 msgstr "Olet nyt varainkerääjä!"
 
-#: src/P2P/SignupModal.php:264
+#: src/P2P/SignupModal.php:262
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr "Sivusi on julkaistu. Jaa se ystäville ja perheelle aloittaaksesi varojen keräämisen."
 
-#: src/P2P/SignupModal.php:272
+#: src/P2P/SignupModal.php:270
 msgid "You're almost there!"
 msgstr "Olet melkein valmis!"
 
-#: src/P2P/SignupModal.php:280
+#: src/P2P/SignupModal.php:278
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Varainkeruusivusi on lähetetty tarkistettavaksi. Saat sähköpostia heti, kun se on hyväksytty ja valmis jaettavaksi."
 
@@ -11508,9 +11516,9 @@ msgstr "%1$s kerätty %2$s tavoitteesta"
 msgid "%s raised"
 msgstr "%s kerätty"
 
-#: src/DonorDashboard/DonorAuthService.php:255
-#: src/DonorDashboard/DonorAuthService.php:262
-#: src/DonorDashboard/DonorAuthService.php:353
+#: src/DonorDashboard/DonorAuthService.php:325
+#: src/DonorDashboard/DonorAuthService.php:332
+#: src/DonorDashboard/DonorAuthService.php:423
 msgid "This account cannot be used here."
 msgstr "Tätä tiliä ei voi käyttää tässä."
 
@@ -11736,12 +11744,12 @@ msgstr "Varainkeruusivu"
 msgid "Displays a single fundraiser page."
 msgstr "Näyttää yksittäisen varainkeruusivun."
 
-#: src/P2P/FundraiserRegistrationService.php:183
-#: src/P2P/FundraiserRegistrationService.php:189
+#: src/P2P/FundraiserRegistrationService.php:210
+#: src/P2P/FundraiserRegistrationService.php:216
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr "Tämä palautusistunto on virheellinen tai vanhentunut. Aloita alusta."
 
-#: src/P2P/FundraiserRegistrationService.php:274
+#: src/P2P/FundraiserRegistrationService.php:301
 msgid "We could not create your fundraising page. Please try again."
 msgstr "Varainkeruusivuasi ei voitu luoda. Yritä uudelleen."
 
@@ -12743,26 +12751,26 @@ msgctxt "block style label"
 msgid "Outline"
 msgstr "Ääriviiva"
 
-#: blocks/build/donor-dashboard/index.php:143
+#: blocks/build/donor-dashboard/index.php:137
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:17
-#: blocks/src/donor-dashboard/index.php:143
+#: blocks/src/donor-dashboard/index.php:137
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:17
 msgid "My Fundraisers"
 msgstr "Omat keräykset"
 
-#: blocks/build/donor-dashboard/index.php:151
+#: blocks/build/donor-dashboard/index.php:145
 #: blocks/build/donor-dashboard/parts/team-detail.php:17
-#: blocks/src/donor-dashboard/index.php:151
+#: blocks/src/donor-dashboard/index.php:145
 #: blocks/src/donor-dashboard/parts/team-detail.php:17
 msgid "My Teams"
 msgstr "Omat tiimit"
 
+#: blocks/build/donor-dashboard/index.php:156
 #: blocks/build/donor-dashboard/index.php:162
 #: blocks/build/donor-dashboard/index.php:168
-#: blocks/build/donor-dashboard/index.php:174
+#: blocks/src/donor-dashboard/index.php:156
 #: blocks/src/donor-dashboard/index.php:162
 #: blocks/src/donor-dashboard/index.php:168
-#: blocks/src/donor-dashboard/index.php:174
 msgid "Giving"
 msgstr "Lahjoittaminen"
 
@@ -13468,27 +13476,27 @@ msgstr "Tehdäänkö jäsenestä %s tiimin kapteeni? Nykyisestä kapteenista tul
 msgid "Make Captain"
 msgstr "Tee kapteeniksi"
 
-#: src/P2P/FundraiserRegistrationService.php:318
+#: src/P2P/FundraiserRegistrationService.php:345
 msgid "Team creation is not available for this campaign."
 msgstr "Tiimien luominen ei ole käytettävissä tässä kampanjassa."
 
-#: src/P2P/FundraiserRegistrationService.php:322
+#: src/P2P/FundraiserRegistrationService.php:349
 msgid "Please enter a team name."
 msgstr "Anna tiimin nimi."
 
-#: src/P2P/FundraiserRegistrationService.php:343
+#: src/P2P/FundraiserRegistrationService.php:370
 msgid "Teams are not available for this campaign."
 msgstr "Tiimit eivät ole käytettävissä tässä kampanjassa."
 
-#: src/P2P/FundraiserRegistrationService.php:349
+#: src/P2P/FundraiserRegistrationService.php:376
 msgid "This team is no longer accepting new members."
 msgstr "Tämä tiimi ei enää ota vastaan uusia jäseniä."
 
-#: src/P2P/FundraiserRegistrationService.php:448
+#: src/P2P/FundraiserRegistrationService.php:475
 msgid "This invitation was sent to a different email address. Please sign up with the address that received it."
 msgstr "Tämä kutsu lähetettiin eri sähköpostiosoitteeseen. Ilmoittaudu sillä osoitteella, johon kutsu saapui."
 
-#: src/P2P/FundraiserRegistrationService.php:464
+#: src/P2P/FundraiserRegistrationService.php:491
 msgid "This invitation is invalid or has expired. Please ask your team captain to send a new one."
 msgstr "Tämä kutsu on virheellinen tai vanhentunut. Pyydä tiimisi kapteenia lähettämään uusi kutsu."
 
@@ -13565,7 +13573,7 @@ msgstr "Ei tiimiä"
 msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
 msgstr "Tämä varainkerääjä on tiiminsä kapteeni. Tiimin vaihtaminen jättää kapteenin paikan avoimeksi."
 
-#: src/P2P/SignupModal.php:124
+#: src/P2P/SignupModal.php:122
 msgid "Copy failed"
 msgstr "Kopiointi epäonnistui"
 
@@ -13595,7 +13603,7 @@ msgstr "Jäsenten lataaminen epäonnistui. Yritä uudelleen."
 msgid "You are not a member of this team."
 msgstr "Et ole tämän tiimin jäsen."
 
-#: src/P2P/SignupModal.php:121
+#: src/P2P/SignupModal.php:119
 msgid "Please check the highlighted fields."
 msgstr "Tarkista korostetut kentät."
 
@@ -13606,41 +13614,41 @@ msgid "This is taking longer than expected. If nothing happens shortly, refresh 
 msgstr "Tämä kestää odotettua kauemmin. Jos mitään ei tapahdu pian, päivitä sivu ja yritä uudelleen. Korttiasi veloitetaan vasta, kun maksu on suoritettu."
 
 #. translators: %s: formatted donation amount
-#: src/P2P/SignupModal.php:128
+#: src/P2P/SignupModal.php:126
 msgid "Give %s to kick off your page"
 msgstr "Lahjoita %s sivusi alkuun"
 
 #. translators: %s: formatted charge total
-#: src/P2P/SignupModal.php:130
+#: src/P2P/SignupModal.php:128
 msgid "Donate %s & launch"
 msgstr "Lahjoita %s ja aloita"
 
 #. translators: %s: formatted donation amount
-#: src/P2P/SignupModal.php:132
+#: src/P2P/SignupModal.php:130
 msgid "Your %s gift is in. Your page is off to a great start, so keep the momentum going by sharing it:"
 msgstr "Lahjoituksesi (%s) on perillä. Sivusi sai hyvän alun, joten pidä vauhtia yllä jakamalla sitä:"
 
-#: src/P2P/SignupModal.php:133
+#: src/P2P/SignupModal.php:131
 msgid "Payment system unavailable. Please refresh and try again."
 msgstr "Maksujärjestelmä ei ole käytettävissä. Päivitä sivu ja yritä uudelleen."
 
-#: src/P2P/SignupModal.php:134
+#: src/P2P/SignupModal.php:132
 msgid "Payment processing is not available right now. Please try again later."
 msgstr "Maksujen käsittely ei ole juuri nyt käytettävissä. Yritä myöhemmin uudelleen."
 
-#: src/P2P/SignupModal.php:135
+#: src/P2P/SignupModal.php:133
 msgid "Failed to create payment. Please try again."
 msgstr "Maksun luominen epäonnistui. Yritä uudelleen."
 
-#: src/P2P/SignupModal.php:136
+#: src/P2P/SignupModal.php:134
 msgid "The payment could not be started. Please check your connection and try again."
 msgstr "Maksua ei voitu aloittaa. Tarkista yhteytesi ja yritä uudelleen."
 
-#: src/P2P/SignupModal.php:137
+#: src/P2P/SignupModal.php:135
 msgid "Payment element not loaded. Please refresh the page."
 msgstr "Maksulomake ei latautunut. Päivitä sivu."
 
-#: src/P2P/SignupModal.php:248
+#: src/P2P/SignupModal.php:246
 msgid "Your page is live. Pages that start with a donation raise more, so make the first gift to yours."
 msgstr "Sivusi on julkaistu. Lahjoituksella alkavat sivut keräävät enemmän, joten tee ensimmäinen lahjoitus omallesi."
 
@@ -13696,3 +13704,32 @@ msgstr "Valitse neljännesvuosittainen lahjoituksesi"
 #: blocks/src/donation-form/edit/FormPreview.js:28
 msgid "Choose Your Annual Gift"
 msgstr "Valitse vuosittainen lahjoituksesi"
+
+#: blocks/build/donor-dashboard/parts/auth.php:296
+#: blocks/src/donor-dashboard/parts/auth.php:296
+msgid "Connect your account"
+msgstr "Yhdistä tilisi"
+
+#: blocks/build/donor-dashboard/parts/auth.php:297
+#: blocks/src/donor-dashboard/parts/auth.php:297
+msgid "This email already has an account on this site. Enter its password to connect your donations."
+msgstr "Tällä sähköpostilla on jo tili tällä sivustolla. Syötä sen salasana yhdistääksesi lahjoituksesi."
+
+#: blocks/build/donor-dashboard/parts/auth.php:347
+#: blocks/src/donor-dashboard/parts/auth.php:347
+msgid "Connect account"
+msgstr "Yhdistä tili"
+
+#: blocks/build/donor-dashboard/parts/auth.php:348
+#: blocks/src/donor-dashboard/parts/auth.php:348
+msgid "Connecting..."
+msgstr "Yhdistetään..."
+
+#: src/DonorDashboard/DonorAuthService.php:248
+msgid "This account is already connected to a different donor record. Please contact the site administrator."
+msgstr "Tämä tili on jo yhdistetty toiseen lahjoittajatietueeseen. Ota yhteyttä sivuston ylläpitäjään."
+
+#: src/DonorDashboard/DonorAuthService.php:263
+#: src/P2P/FundraiserRegistrationService.php:146
+msgid "That password does not match the existing account for this email."
+msgstr "Salasana ei vastaa tämän sähköpostin olemassa olevaa tiliä."

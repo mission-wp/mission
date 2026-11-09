@@ -74,10 +74,8 @@ class SignupModal {
 		$payload = self::payload( $campaign, $preselected_team );
 
 		// Resolve a signed-in donor inline (cheap; avoids booting the auth service).
-		$current_user  = wp_get_current_user();
-		$current_donor = ( $current_user->ID && in_array( 'missiondp_donor', (array) $current_user->roles, true ) )
-			? Donor::find_by_user_id( $current_user->ID )
-			: null;
+		$current_user_id = get_current_user_id();
+		$current_donor   = $current_user_id ? Donor::find_by_user_id( $current_user_id ) : null;
 
 		$mission_settings = ( new SettingsService() )->get_all();
 

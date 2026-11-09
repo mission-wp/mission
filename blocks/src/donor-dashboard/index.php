@@ -20,30 +20,25 @@ $global_primary   = $mission_settings['primary_color'] ?? '#2fa36b';
 $primary_color    = ! empty( $attributes['primaryColor'] ) ? $attributes['primaryColor'] : $global_primary;
 $color_style      = \MissionDP\DonorDashboard\PrimaryColorResolver::inline_style( $primary_color );
 
-// Check if the current user is a logged-in donor.
-$is_donor = false;
-$donor    = null;
-$wp_user  = wp_get_current_user();
-
-if ( $wp_user->ID && in_array( 'missiondp_donor', $wp_user->roles, true ) ) {
-	// Look up the donor record linked to this WP user.
-	$donor = \MissionDP\Models\Donor::find_by_user_id( $wp_user->ID );
-	if ( $donor ) {
-		$is_donor = true;
-	}
-}
+// Any logged-in user linked to a donor record gets the dashboard, whatever their role.
+$wp_user_id = get_current_user_id();
+$donor      = $wp_user_id ? \MissionDP\Models\Donor::find_by_user_id( $wp_user_id ) : null;
+$is_donor   = null !== $donor;
 
 // Check for an activation token in the URL (email verification link).
 $activation_token       = isset( $_GET['activation_token'] ) ? sanitize_text_field( wp_unslash( $_GET['activation_token'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $activation_email       = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $activation_token_valid = false;
 $activation_token_error = '';
+$activation_has_account = false;
 
 if ( $activation_token && $activation_email && ! $is_donor ) {
 	$activation_token_valid = null !== \MissionDP\DonorDashboard\DonorAuthService::validate_activation_token( $activation_email, $activation_token );
 
 	if ( ! $activation_token_valid ) {
 		$activation_token_error = __( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' );
+	} else {
+		$activation_has_account = null !== \MissionDP\DonorDashboard\DonorAuthService::existing_user_for_email( $activation_email );
 	}
 }
 
@@ -70,7 +65,7 @@ if ( ! $is_donor ) :
 	$initial_error = '';
 
 	if ( $activation_token_valid ) {
-		$initial_view = 'set-password';
+		$initial_view = $activation_has_account ? 'link-account' : 'set-password';
 	} elseif ( $reset_key_valid ) {
 		$initial_view = 'reset-password';
 	} elseif ( $activation_token_error ) {
@@ -108,6 +103,7 @@ if ( ! $is_donor ) :
 			'isActivateView'           => 'activate' === $initial_view,
 			'isActivateSentView'       => false,
 			'isSetPasswordView'        => 'set-password' === $initial_view,
+			'isLinkAccountView'        => 'link-account' === $initial_view,
 			'isForgotPasswordView'     => 'forgot-password' === $initial_view,
 			'isForgotPasswordSentView' => false,
 			'isResetPasswordView'      => 'reset-password' === $initial_view,

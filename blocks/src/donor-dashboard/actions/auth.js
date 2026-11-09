@@ -102,6 +102,9 @@ export const authState = {
   get isSetPasswordView() {
     return getContext().authView === 'set-password';
   },
+  get isLinkAccountView() {
+    return getContext().authView === 'link-account';
+  },
   get isForgotPasswordView() {
     return getContext().authView === 'forgot-password';
   },
@@ -135,12 +138,12 @@ export const authCallbacks = {
   /**
    * Initialise auth forms — read hash, listen for back-button navigation.
    *
-   * Server-set views (set-password, reset-password) take priority over hash
-   * because they require tokens from the original email link URL.
+   * Server-set views (set-password, link-account, reset-password) take priority
+   * over hash because they require tokens from the original email link URL.
    */
   initAuth() {
     const ctx = getContext();
-    const SERVER_VIEWS = [ 'set-password', 'reset-password' ];
+    const SERVER_VIEWS = [ 'set-password', 'link-account', 'reset-password' ];
 
     if ( ! SERVER_VIEWS.includes( ctx.authView ) ) {
       ctx.authView = authViewFromHash();
@@ -292,20 +295,26 @@ export const authActions = {
   },
 
   /**
-   * Complete activation with a password (activate step 2, after email verification).
+   * Complete activation (activate step 2, after email verification).
+   *
+   * Sends a new password, or on the link-account view the existing
+   * account's password, which isn't held to the new-password length rule.
    *
    * @param {Event} event Submit event.
    */
   *submitSetPassword( event ) {
     event.preventDefault();
     const ctx = getContext();
+    const linking = ctx.authView === 'link-account';
 
     if ( ! ctx.authPassword ) {
-      ctx.authError = 'Please create a password.';
+      ctx.authError = linking
+        ? 'Please enter your password.'
+        : 'Please create a password.';
       return;
     }
 
-    if ( ctx.authPassword.length < 8 ) {
+    if ( ! linking && ctx.authPassword.length < 8 ) {
       ctx.authError = 'Password must be at least 8 characters.';
       return;
     }

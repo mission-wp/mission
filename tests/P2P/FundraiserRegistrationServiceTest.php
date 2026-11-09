@@ -250,6 +250,55 @@ class FundraiserRegistrationServiceTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test an email owned by a non-donor WP user needs that account's password before a code is sent.
+	 */
+	public function test_resolve_account_existing_wp_user_wrong_password(): void {
+		self::factory()->user->create( [ 'role' => 'subscriber', 'user_email' => 'member@example.com', 'user_pass' => 'memberpw11' ] );
+
+		$branch = $this->service()->resolve_account( 'member@example.com', 'notmypass1' );
+
+		$this->assertSame( FundraiserRegistrationService::BRANCH_PASSWORD_MISMATCH, $branch );
+		$this->assertSame( '', $this->last_code );
+	}
+
+	/**
+	 * Test signup with an existing WP user's email links after the code and password, leaving the account as-is.
+	 */
+	public function test_complete_signup_links_existing_wp_user(): void {
+		$admin_id = self::factory()->user->create( [ 'role' => 'administrator', 'user_email' => 'boss@example.com', 'user_pass' => 'abc12' ] );
+
+		$service = $this->service();
+		$branch  = $service->resolve_account( 'boss@example.com', 'abc12' );
+		$this->assertSame( FundraiserRegistrationService::BRANCH_VERIFY_REQUIRED, $branch );
+
+		$donor = $service->complete_signup( 'boss@example.com', $this->last_code, 'Big', 'Boss', 'abc12' );
+
+		$this->assertSame( $admin_id, $donor->user_id );
+		$this->assertSame( $admin_id, get_current_user_id() );
+		$this->assertSame( [ 'administrator' ], array_values( get_userdata( $admin_id )->roles ) );
+		$this->assertTrue( wp_check_password( 'abc12', get_userdata( $admin_id )->user_pass, $admin_id ) );
+	}
+
+	/**
+	 * Test a correct code with the wrong account password links nothing.
+	 */
+	public function test_complete_signup_existing_wp_user_wrong_password_does_not_link(): void {
+		self::factory()->user->create( [ 'role' => 'subscriber', 'user_email' => 'swap@example.com', 'user_pass' => 'rightpass11' ] );
+
+		$service = $this->service();
+		$service->resolve_account( 'swap@example.com', 'rightpass11' );
+
+		try {
+			$service->complete_signup( 'swap@example.com', $this->last_code, 'S', 'W', 'wrongpass11' );
+			$this->fail( 'Expected a RuntimeException for the wrong password.' );
+		} catch ( \RuntimeException $e ) {
+			$donor = Donor::find_by_email( 'swap@example.com' );
+			$this->assertTrue( ! $donor || ! $donor->user_id );
+			$this->assertSame( 0, get_current_user_id() );
+		}
+	}
+
+	/**
 	 * Test a wrong code fails to complete signup.
 	 */
 	public function test_complete_signup_wrong_code_throws(): void {

@@ -155,6 +155,34 @@ class Donor extends Model {
 	}
 
 	/**
+	 * Link this donor to an existing WordPress user.
+	 *
+	 * Callers must have proven both control of the email and the account's
+	 * password; see DonorAuthService::link_existing_account().
+	 *
+	 * @param int $user_id WordPress user ID.
+	 * @return void
+	 *
+	 * @throws \RuntimeException If the donor is already linked to a user.
+	 */
+	public function link_user( int $user_id ): void {
+		if ( $this->user_id ) {
+			throw new \RuntimeException( esc_html__( 'This donor already has an account.', 'mission-donation-platform' ) );
+		}
+
+		$this->user_id = $user_id;
+		$this->save();
+
+		/**
+		 * Fires after a donor record is linked to an existing WordPress user.
+		 *
+		 * @param Donor $donor   The donor.
+		 * @param int   $user_id The linked WordPress user ID.
+		 */
+		do_action( 'mission_donor_user_linked', $this, $user_id );
+	}
+
+	/**
 	 * Change the donor's email address.
 	 *
 	 * Updates the donors table and the linked WordPress user's user_email.

@@ -4,7 +4,7 @@ Tags: crowdfunding, donate, donation, fundraising, recurring donations
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable Tag: 1.5.2
+Stable Tag: 1.6.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -207,6 +207,10 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.6.0 =
+* Fix: Donors whose email already has an account on the site can now connect their donations by signing in with that account's password, from the activation link or fundraiser signup
+* Fix: Donors linked to an existing site account, such as those brought over from GiveWP, can now log in to the donor dashboard
+
 = 1.5.2 =
 * Fix: Account activation and password reset links from Mission emails now open the donor account page as expected
 
@@ -231,11 +235,5 @@ This plugin connects to the following third-party services:
 * Fix: Block cards and buttons no longer overflow their containers in themes without a border-box reset
 * Tweak: Sites behind a proxy other than Cloudflare can declare trusted client-IP headers with the mission_trusted_proxy_headers filter so rate limits see real visitor addresses
 * Tweak: Updated the Spanish and Finnish translations with all of the new peer-to-peer strings
-
-= 1.3.3 =
-* Enhancement: The donation form now shows a clear message when a payment can't start or is taking unusually long, instead of an endless loading spinner
-* Enhancement: The donation form now explains when the payment field can't load, instead of failing silently
-* Fix: Restored reliable checkout on pages that contain more than one donation form
-* Tweak: Stripe.js now loads with Stripe's recommended script tag for maximum compatibility with Stripe's fraud protection
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

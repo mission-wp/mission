@@ -149,39 +149,46 @@ class DonorAuthService {
 	/**
 	 * Activate a donor account using a verified token.
 	 *
-	 * Validates the token, creates a WordPress user with the
-	 * `missiondp_donor` role, links it to the donor record, cleans up
-	 * the token meta, and logs them in.
+	 * Validates the token, then either creates a WordPress user with the
+	 * `missiondp_donor` role or, when the email already belongs to a user,
+	 * links that user after checking its existing password. Cleans up the
+	 * token meta and logs them in.
 	 *
 	 * @param string $email    Donor email address.
-	 * @param string $password Plain-text password.
+	 * @param string $password New password, or the existing account's password.
 	 * @param string $token    Plain-text activation token from the email link.
 	 * @return Donor The activated donor.
 	 *
-	 * @throws \RuntimeException If the token is invalid, expired, or the donor already has an account.
+	 * @throws \RuntimeException If the token is invalid, the password is wrong or too short, or linking fails.
 	 */
 	public function activate( string $email, string $password, string $token ): Donor {
-		$this->validate_password_length( $password );
-
 		$donor = self::validate_activation_token( $email, $token );
 
 		if ( ! $donor ) {
 			throw new \RuntimeException( esc_html__( 'This activation link is invalid or has expired. Please request a new one.', 'mission-donation-platform' ) );
 		}
 
-		$user_id = $donor->create_user_account( $password );
+		$existing = self::existing_user_for_email( $email );
+
+		if ( $existing ) {
+			$this->link_existing_account( $donor, $existing, $password );
+			$user_id = $existing->ID;
+		} else {
+			$this->validate_password_length( $password );
+			$user_id = $donor->create_user_account( $password );
+
+			wp_signon(
+				[
+					'user_login'    => $email,
+					'user_password' => $password,
+					'remember'      => true,
+				],
+				is_ssl()
+			);
+		}
 
 		$donor->delete_meta( 'activation_token' );
 		$donor->delete_meta( 'activation_token_expires' );
-
-		wp_signon(
-			[
-				'user_login'    => $email,
-				'user_password' => $password,
-				'remember'      => true,
-			],
-			is_ssl()
-		);
 
 		/**
 		 * Fires after a donor activates their account.
@@ -195,6 +202,74 @@ class DonorAuthService {
 	}
 
 	/**
+	 * Find the WordPress user that already owns an email address.
+	 *
+	 * @param string $email Email address.
+	 * @return \WP_User|null
+	 */
+	public static function existing_user_for_email( string $email ): ?\WP_User {
+		$user = get_user_by( 'email', $email );
+
+		return $user ?: null;
+	}
+
+	/**
+	 * Check an existing account's password without starting a session.
+	 *
+	 * Runs core's authenticate filters, so lockout and similar plugins still apply.
+	 *
+	 * @param \WP_User $user     Existing WordPress user.
+	 * @param string   $password Password to check.
+	 * @return bool
+	 */
+	public function existing_password_matches( \WP_User $user, string $password ): bool {
+		$result = wp_authenticate( $user->user_login, $password );
+
+		return ! is_wp_error( $result ) && $result->ID === $user->ID;
+	}
+
+	/**
+	 * Link a donor to an existing WordPress user and log in with its password.
+	 *
+	 * Callers must already have proven control of the email (activation token
+	 * or signup code). Requiring the account's password as well stops a donor
+	 * record from being linked to an account someone else created with that
+	 * email. The account's password and roles are never changed here.
+	 *
+	 * @param Donor    $donor    Unlinked donor.
+	 * @param \WP_User $user     Existing user that owns the donor's email.
+	 * @param string   $password The existing account's password.
+	 * @return Donor The linked donor.
+	 *
+	 * @throws \RuntimeException If the user is linked to another donor or the password is wrong.
+	 */
+	public function link_existing_account( Donor $donor, \WP_User $user, string $password ): Donor {
+		if ( Donor::find_by_user_id( $user->ID ) ) {
+			throw new \RuntimeException( esc_html__( 'This account is already connected to a different donor record. Please contact the site administrator.', 'mission-donation-platform' ) );
+		}
+
+		$this->persist_cookie_for_nonce();
+
+		$signed_in = wp_signon(
+			[
+				'user_login'    => $user->user_login,
+				'user_password' => $password,
+				'remember'      => true,
+			],
+			is_ssl()
+		);
+
+		if ( is_wp_error( $signed_in ) ) {
+			throw new \RuntimeException( esc_html__( 'That password does not match the existing account for this email.', 'mission-donation-platform' ) );
+		}
+
+		wp_set_current_user( $user->ID );
+		$donor->link_user( $user->ID );
+
+		return $donor;
+	}
+
+	/**
 	 * Log a donor in.
 	 *
 	 * @param string $email    Email address.
@@ -202,7 +277,7 @@ class DonorAuthService {
 	 * @param bool   $remember Whether to persist the session.
 	 * @return Donor The authenticated donor.
 	 *
-	 * @throws \RuntimeException If credentials are invalid or the user is not a donor.
+	 * @throws \RuntimeException If credentials are invalid or the user has no linked donor record.
 	 */
 	public function login( string $email, string $password, bool $remember = false ): Donor {
 		$this->persist_cookie_for_nonce();
@@ -217,11 +292,6 @@ class DonorAuthService {
 		);
 
 		if ( is_wp_error( $user ) ) {
-			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
-		}
-
-		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
-			wp_logout();
 			throw new \RuntimeException( esc_html__( 'Invalid email or password.', 'mission-donation-platform' ) );
 		}
 
@@ -374,7 +444,7 @@ class DonorAuthService {
 	public function get_current_donor(): ?Donor {
 		$user = wp_get_current_user();
 
-		if ( ! $user->ID || ! in_array( 'missiondp_donor', $user->roles, true ) ) {
+		if ( ! $user->ID ) {
 			return null;
 		}
 
@@ -386,7 +456,8 @@ class DonorAuthService {
 	 *
 	 * Looks up the donor and their linked WordPress user, generates a
 	 * WP-native password reset key, and sends a branded email with a
-	 * link to reset their password on the donor dashboard.
+	 * link to reset their password on the donor dashboard. Linked accounts
+	 * without the donor role get core's reset email instead.
 	 *
 	 * @param string $email Donor email address.
 	 * @return void
@@ -408,6 +479,17 @@ class DonorAuthService {
 
 		if ( ! $user ) {
 			throw new \RuntimeException( esc_html__( 'Unable to process this request.', 'mission-donation-platform' ) );
+		}
+
+		// Mission's reset flow only changes donor-role passwords; other accounts get core's reset email.
+		if ( ! in_array( 'missiondp_donor', $user->roles, true ) ) {
+			$sent = retrieve_password( $user->user_login );
+
+			if ( is_wp_error( $sent ) ) {
+				throw new \RuntimeException( esc_html( $sent->get_error_message() ) );
+			}
+
+			return;
 		}
 
 		$key = get_password_reset_key( $user );

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.0 (2026-11-09)
+
+* Fix: Donors whose email already has an account on the site can now connect their donations by signing in with that account's password, from the activation link or fundraiser signup
+* Fix: Donors linked to an existing site account, such as those brought over from GiveWP, can now log in to the donor dashboard
+
 ## 1.5.2 (2026-11-09)
 
 * Fix: Account activation and password reset links from Mission emails now open the donor account page as expected
