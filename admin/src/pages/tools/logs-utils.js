@@ -200,6 +200,14 @@ export function buildLogMessage( entry ) {
       return `<strong>${ title }</strong> reached its goal`;
     }
 
+    case 'donor_account_linked': {
+      const name = data.donor_name ? esc( data.donor_name ) : 'A donor';
+      const login = data.user_login ? esc( data.user_login ) : '';
+      return login
+        ? `<strong>${ name }</strong> connected their donations to the existing account <strong>${ login }</strong>`
+        : `<strong>${ name }</strong> connected their donations to an existing account`;
+    }
+
     case 'fundraiser_registered': {
       const name = data.donor_name ? esc( data.donor_name ) : 'A donor';
       const campaign = data.campaign_title ? esc( data.campaign_title ) : '';

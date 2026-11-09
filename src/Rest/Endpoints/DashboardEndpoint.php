@@ -160,6 +160,7 @@ class DashboardEndpoint {
 				'admin_notification_sent',
 				'donor_send_activation_suppressed',
 				'donor_forgot_password_suppressed',
+				'donor_account_linked',
 			]
 		);
 

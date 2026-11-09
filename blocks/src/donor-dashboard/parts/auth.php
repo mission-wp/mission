@@ -1,6 +1,6 @@
 <?php
 /**
- * Donor Dashboard — Auth forms (login, activate, check-email, set-password).
+ * Donor Dashboard — Auth forms (login, activate, check-email, set-password, link-account).
  *
  * @package MissionDP
  *
@@ -280,6 +280,72 @@ defined( 'ABSPATH' ) || exit;
 						>
 							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Activate account', 'mission-donation-platform' ); ?></span>
 							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Activating...', 'mission-donation-platform' ); ?></span>
+						</button>
+
+						<div class="mission-dd-auth-secure">
+							<span class="mission-dd-icon mission-dd-icon-lock" aria-hidden="true"></span>
+							<?php esc_html_e( 'Secured with encryption', 'mission-donation-platform' ); ?>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<!-- ── Link Existing Account View (verified email already has a site account) ── -->
+			<div data-wp-bind--hidden="!state.isLinkAccountView">
+				<div class="mission-dd-auth-header">
+					<h1 class="mission-dd-auth-title"><?php esc_html_e( 'Connect your account', 'mission-donation-platform' ); ?></h1>
+					<p class="mission-dd-auth-subtitle"><?php esc_html_e( 'This email already has an account on this site. Enter its password to connect your donations.', 'mission-donation-platform' ); ?></p>
+				</div>
+
+				<div class="mission-dd-auth-form-card">
+					<!-- Error banner -->
+					<div
+						class="mission-dd-auth-error"
+						role="alert"
+						aria-live="polite"
+						data-wp-bind--hidden="!context.authError"
+					>
+						<span class="mission-dd-icon mission-dd-icon-alert" aria-hidden="true"></span>
+						<span data-wp-text="context.authError"></span>
+					</div>
+
+					<form data-wp-on--submit="actions.submitSetPassword" novalidate>
+						<div class="mission-dd-auth-field">
+							<label class="mission-dd-auth-label" for="mission-dd-link-password"><?php esc_html_e( 'Password', 'mission-donation-platform' ); ?></label>
+							<div class="mission-dd-auth-input-wrap">
+								<input
+									id="mission-dd-link-password"
+									class="mission-dd-auth-input mission-dd-auth-input-has-toggle"
+									placeholder="<?php esc_attr_e( 'Enter your password', 'mission-donation-platform' ); ?>"
+									autocomplete="current-password"
+									data-wp-bind--value="context.authPassword"
+									data-wp-bind--type="state.passwordInputType"
+									data-wp-on--input="actions.updatePassword"
+								>
+								<button
+									type="button"
+									class="mission-dd-auth-pw-toggle"
+									data-wp-on--click="actions.togglePasswordVisibility"
+									data-wp-bind--aria-label="state.passwordToggleLabel"
+								>
+									<span class="mission-dd-icon mission-dd-icon-eye" data-wp-bind--hidden="context.passwordVisible" aria-hidden="true"></span>
+									<span class="mission-dd-icon mission-dd-icon-eye-off" data-wp-bind--hidden="!context.passwordVisible" aria-hidden="true"></span>
+								</button>
+							</div>
+						</div>
+
+						<div class="mission-dd-auth-options">
+							<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="mission-dd-auth-forgot"><?php esc_html_e( 'Forgot password?', 'mission-donation-platform' ); ?></a>
+						</div>
+
+						<button
+							type="submit"
+							class="mission-dd-auth-submit"
+							data-wp-class--is-loading="context.authLoading"
+							data-wp-bind--disabled="context.authLoading"
+						>
+							<span data-wp-bind--hidden="context.authLoading"><?php esc_html_e( 'Connect account', 'mission-donation-platform' ); ?></span>
+							<span data-wp-bind--hidden="!context.authLoading"><?php esc_html_e( 'Connecting...', 'mission-donation-platform' ); ?></span>
 						</button>
 
 						<div class="mission-dd-auth-secure">

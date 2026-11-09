@@ -60,6 +60,37 @@ class DonorDashboardRenderTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * A valid activation link for an email that already has a WP account asks for that account's password.
+	 */
+	public function test_activation_link_for_existing_account_renders_link_account_view(): void {
+		self::factory()->user->create( [ 'role' => 'subscriber', 'user_email' => 'member@example.com' ] );
+		$this->create_donor_with_token( 'member@example.com', 'valid-token' );
+
+		$_GET = [
+			'activation_token' => 'valid-token',
+			'email'            => 'member@example.com',
+		];
+
+		$state = $this->render_and_get_state();
+
+		$this->assertTrue( $state['isLinkAccountView'] );
+		$this->assertFalse( $state['isSetPasswordView'] );
+	}
+
+	/**
+	 * A logged-in user linked to a donor record sees the dashboard whatever their role.
+	 */
+	public function test_linked_non_donor_user_sees_dashboard(): void {
+		$admin_id = self::factory()->user->create( [ 'role' => 'administrator', 'user_email' => 'admin-donor@example.com' ] );
+		( new Donor( [ 'email' => 'admin-donor@example.com', 'user_id' => $admin_id ] ) )->save();
+		wp_set_current_user( $admin_id );
+
+		$html = do_blocks( '<!-- wp:' . self::BLOCK . ' /-->' );
+
+		$this->assertStringNotContainsString( 'callbacks.initAuth', $html );
+	}
+
+	/**
 	 * A bad activation token falls back to the activate view with an error.
 	 */
 	public function test_invalid_activation_link_renders_activate_view(): void {

@@ -912,27 +912,27 @@ msgstr "Tu donación recurrente se ha configurado correctamente. Recibirás un c
 msgid "Secure donation powered by %s"
 msgstr "Donación segura con la tecnología de %s"
 
-#: blocks/build/donor-dashboard/index.php:47
-#: blocks/src/donor-dashboard/index.php:47
-#: src/DonorDashboard/DonorAuthService.php:169
+#: blocks/build/donor-dashboard/index.php:39
+#: blocks/src/donor-dashboard/index.php:39
+#: src/DonorDashboard/DonorAuthService.php:168
 msgid "This activation link is invalid or has expired. Please request a new one."
 msgstr "Este enlace de activación no es válido o ha caducado. Solicita uno nuevo."
 
-#: blocks/build/donor-dashboard/index.php:63
-#: blocks/src/donor-dashboard/index.php:63
-#: src/DonorDashboard/DonorAuthService.php:478
-#: src/DonorDashboard/DonorAuthService.php:482
-#: src/DonorDashboard/DonorAuthService.php:488
+#: blocks/build/donor-dashboard/index.php:56
+#: blocks/src/donor-dashboard/index.php:56
+#: src/DonorDashboard/DonorAuthService.php:560
+#: src/DonorDashboard/DonorAuthService.php:564
+#: src/DonorDashboard/DonorAuthService.php:570
 msgid "This password reset link is invalid or has expired. Please request a new one."
 msgstr "Este enlace para restablecer la contraseña no es válido o ha caducado. Solicita uno nuevo."
 
-#: blocks/build/donor-dashboard/index.php:117
-#: blocks/src/donor-dashboard/index.php:117
+#: blocks/build/donor-dashboard/index.php:111
+#: blocks/src/donor-dashboard/index.php:111
 msgid "Show password"
 msgstr "Mostrar la contraseña"
 
-#: blocks/build/donor-dashboard/index.php:134
-#: blocks/src/donor-dashboard/index.php:134
+#: blocks/build/donor-dashboard/index.php:128
+#: blocks/src/donor-dashboard/index.php:128
 #: src/DonorDashboard/DashboardContextBuilder.php:304
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignTabNav.js:4
@@ -941,8 +941,8 @@ msgstr "Mostrar la contraseña"
 msgid "Overview"
 msgstr "Resumen"
 
-#: blocks/build/donor-dashboard/index.php:160
-#: blocks/src/donor-dashboard/index.php:160
+#: blocks/build/donor-dashboard/index.php:154
+#: blocks/src/donor-dashboard/index.php:154
 #: admin/build/mission-admin.js:194
 #: admin/src/pages/donors/DonorDetail.js:180
 #: blocks/build/donor-dashboard/index.js:1
@@ -950,8 +950,8 @@ msgstr "Resumen"
 msgid "Donation History"
 msgstr "Historial de donaciones"
 
-#: blocks/build/donor-dashboard/index.php:166
-#: blocks/src/donor-dashboard/index.php:166
+#: blocks/build/donor-dashboard/index.php:160
+#: blocks/src/donor-dashboard/index.php:160
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/tabs/SettingsTab.js:232
 #: blocks/build/donor-dashboard/index.js:1
@@ -959,29 +959,29 @@ msgstr "Historial de donaciones"
 msgid "Recurring Donations"
 msgstr "Donaciones recurrentes"
 
-#: blocks/build/donor-dashboard/index.php:172
-#: blocks/src/donor-dashboard/index.php:172
+#: blocks/build/donor-dashboard/index.php:166
+#: blocks/src/donor-dashboard/index.php:166
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:42
 msgid "Annual Receipts"
 msgstr "Recibos anuales"
 
-#: blocks/build/donor-dashboard/index.php:178
-#: blocks/src/donor-dashboard/index.php:178
+#: blocks/build/donor-dashboard/index.php:172
+#: blocks/src/donor-dashboard/index.php:172
 #: blocks/build/donor-dashboard/index.js:1
 #: blocks/src/donor-dashboard/edit/Edit.js:45
 msgid "Profile"
 msgstr "Perfil"
 
-#: blocks/build/donor-dashboard/index.php:145
-#: blocks/build/donor-dashboard/index.php:153
-#: blocks/src/donor-dashboard/index.php:145
-#: blocks/src/donor-dashboard/index.php:153
+#: blocks/build/donor-dashboard/index.php:139
+#: blocks/build/donor-dashboard/index.php:147
+#: blocks/src/donor-dashboard/index.php:139
+#: blocks/src/donor-dashboard/index.php:147
 msgid "Fundraising"
 msgstr "Recaudación"
 
-#: blocks/build/donor-dashboard/index.php:295
-#: blocks/src/donor-dashboard/index.php:295
+#: blocks/build/donor-dashboard/index.php:289
+#: blocks/src/donor-dashboard/index.php:289
 msgid "Open menu"
 msgstr "Abrir el menú"
 
@@ -999,10 +999,10 @@ msgstr "Inicia sesión para ver tu historial de donaciones, descargar recibos fi
 
 #: blocks/build/donor-dashboard/parts/auth.php:43
 #: blocks/build/donor-dashboard/parts/auth.php:142
-#: blocks/build/donor-dashboard/parts/auth.php:314
+#: blocks/build/donor-dashboard/parts/auth.php:380
 #: blocks/src/donor-dashboard/parts/auth.php:43
 #: blocks/src/donor-dashboard/parts/auth.php:142
-#: blocks/src/donor-dashboard/parts/auth.php:314
+#: blocks/src/donor-dashboard/parts/auth.php:380
 #: admin/build/mission-admin.js:204
 #: admin/src/pages/transactions/DedicationSection.js:454
 msgid "Email address"
@@ -1010,14 +1010,18 @@ msgstr "Dirección de correo electrónico"
 
 #: blocks/build/donor-dashboard/parts/auth.php:58
 #: blocks/build/donor-dashboard/parts/auth.php:239
+#: blocks/build/donor-dashboard/parts/auth.php:314
 #: blocks/src/donor-dashboard/parts/auth.php:58
 #: blocks/src/donor-dashboard/parts/auth.php:239
+#: blocks/src/donor-dashboard/parts/auth.php:314
 #: src/P2P/templates/signup-modal.php:106
 msgid "Password"
 msgstr "Contraseña"
 
 #: blocks/build/donor-dashboard/parts/auth.php:63
+#: blocks/build/donor-dashboard/parts/auth.php:319
 #: blocks/src/donor-dashboard/parts/auth.php:63
+#: blocks/src/donor-dashboard/parts/auth.php:319
 msgid "Enter your password"
 msgstr "Introduce tu contraseña"
 
@@ -1027,20 +1031,22 @@ msgid "Remember me"
 msgstr "Recordarme"
 
 #: blocks/build/donor-dashboard/parts/auth.php:90
+#: blocks/build/donor-dashboard/parts/auth.php:338
 #: blocks/src/donor-dashboard/parts/auth.php:90
+#: blocks/src/donor-dashboard/parts/auth.php:338
 msgid "Forgot password?"
 msgstr "¿Has olvidado la contraseña?"
 
 #: blocks/build/donor-dashboard/parts/auth.php:99
 #: blocks/build/donor-dashboard/parts/auth.php:178
 #: blocks/build/donor-dashboard/parts/auth.php:212
-#: blocks/build/donor-dashboard/parts/auth.php:345
-#: blocks/build/donor-dashboard/parts/auth.php:378
+#: blocks/build/donor-dashboard/parts/auth.php:411
+#: blocks/build/donor-dashboard/parts/auth.php:444
 #: blocks/src/donor-dashboard/parts/auth.php:99
 #: blocks/src/donor-dashboard/parts/auth.php:178
 #: blocks/src/donor-dashboard/parts/auth.php:212
-#: blocks/src/donor-dashboard/parts/auth.php:345
-#: blocks/src/donor-dashboard/parts/auth.php:378
+#: blocks/src/donor-dashboard/parts/auth.php:411
+#: blocks/src/donor-dashboard/parts/auth.php:444
 msgid "Log in"
 msgstr "Iniciar sesión"
 
@@ -1052,11 +1058,13 @@ msgstr "Iniciando sesión..."
 #: blocks/build/donor-dashboard/parts/auth.php:105
 #: blocks/build/donor-dashboard/parts/auth.php:168
 #: blocks/build/donor-dashboard/parts/auth.php:287
-#: blocks/build/donor-dashboard/parts/auth.php:453
+#: blocks/build/donor-dashboard/parts/auth.php:353
+#: blocks/build/donor-dashboard/parts/auth.php:519
 #: blocks/src/donor-dashboard/parts/auth.php:105
 #: blocks/src/donor-dashboard/parts/auth.php:168
 #: blocks/src/donor-dashboard/parts/auth.php:287
-#: blocks/src/donor-dashboard/parts/auth.php:453
+#: blocks/src/donor-dashboard/parts/auth.php:353
+#: blocks/src/donor-dashboard/parts/auth.php:519
 msgid "Secured with encryption"
 msgstr "Protegido con cifrado"
 
@@ -1084,9 +1092,9 @@ msgid "Send verification email"
 msgstr "Enviar correo de verificación"
 
 #: blocks/build/donor-dashboard/parts/auth.php:163
-#: blocks/build/donor-dashboard/parts/auth.php:335
+#: blocks/build/donor-dashboard/parts/auth.php:401
 #: blocks/src/donor-dashboard/parts/auth.php:163
-#: blocks/src/donor-dashboard/parts/auth.php:335
+#: blocks/src/donor-dashboard/parts/auth.php:401
 msgid "Sending..."
 msgstr "Enviando..."
 
@@ -1099,9 +1107,9 @@ msgid "Already have an account? %s"
 msgstr "¿Ya tienes una cuenta? %s"
 
 #: blocks/build/donor-dashboard/parts/auth.php:188
-#: blocks/build/donor-dashboard/parts/auth.php:354
+#: blocks/build/donor-dashboard/parts/auth.php:420
 #: blocks/src/donor-dashboard/parts/auth.php:188
-#: blocks/src/donor-dashboard/parts/auth.php:354
+#: blocks/src/donor-dashboard/parts/auth.php:420
 msgid "Check your email"
 msgstr "Revisa tu correo electrónico"
 
@@ -1111,16 +1119,16 @@ msgid "If a donor account exists for that email, we've sent a verification link.
 msgstr "Si existe una cuenta de donante para ese correo electrónico, te hemos enviado un enlace de verificación. Haz clic en el enlace del correo para terminar de configurar tu cuenta."
 
 #: blocks/build/donor-dashboard/parts/auth.php:196
-#: blocks/build/donor-dashboard/parts/auth.php:362
+#: blocks/build/donor-dashboard/parts/auth.php:428
 #: blocks/src/donor-dashboard/parts/auth.php:196
-#: blocks/src/donor-dashboard/parts/auth.php:362
+#: blocks/src/donor-dashboard/parts/auth.php:428
 msgid "Didn't receive an email? Check your spam folder or try again with a different email address."
 msgstr "¿No has recibido ningún correo? Revisa tu carpeta de spam o vuelve a intentarlo con otra dirección de correo electrónico."
 
 #: blocks/build/donor-dashboard/parts/auth.php:203
-#: blocks/build/donor-dashboard/parts/auth.php:369
+#: blocks/build/donor-dashboard/parts/auth.php:435
 #: blocks/src/donor-dashboard/parts/auth.php:203
-#: blocks/src/donor-dashboard/parts/auth.php:369
+#: blocks/src/donor-dashboard/parts/auth.php:435
 msgid "Try another email"
 msgstr "Probar con otro correo electrónico"
 
@@ -1149,63 +1157,63 @@ msgstr "Activar la cuenta"
 msgid "Activating..."
 msgstr "Activando..."
 
-#: blocks/build/donor-dashboard/parts/auth.php:296
-#: blocks/src/donor-dashboard/parts/auth.php:296
+#: blocks/build/donor-dashboard/parts/auth.php:362
+#: blocks/src/donor-dashboard/parts/auth.php:362
 msgid "Forgot your password?"
 msgstr "¿Has olvidado tu contraseña?"
 
-#: blocks/build/donor-dashboard/parts/auth.php:297
-#: blocks/src/donor-dashboard/parts/auth.php:297
+#: blocks/build/donor-dashboard/parts/auth.php:363
+#: blocks/src/donor-dashboard/parts/auth.php:363
 msgid "Enter your email address and we'll send you a link to reset your password."
 msgstr "Introduce tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña."
 
-#: blocks/build/donor-dashboard/parts/auth.php:334
-#: blocks/src/donor-dashboard/parts/auth.php:334
+#: blocks/build/donor-dashboard/parts/auth.php:400
+#: blocks/src/donor-dashboard/parts/auth.php:400
 msgid "Send reset link"
 msgstr "Enviar enlace de restablecimiento"
 
 #. translators: %s: log in link
-#: blocks/build/donor-dashboard/parts/auth.php:344
-#: blocks/build/donor-dashboard/parts/auth.php:377
-#: blocks/src/donor-dashboard/parts/auth.php:344
-#: blocks/src/donor-dashboard/parts/auth.php:377
+#: blocks/build/donor-dashboard/parts/auth.php:410
+#: blocks/build/donor-dashboard/parts/auth.php:443
+#: blocks/src/donor-dashboard/parts/auth.php:410
+#: blocks/src/donor-dashboard/parts/auth.php:443
 msgid "Remember your password? %s"
 msgstr "¿Recuerdas tu contraseña? %s"
 
-#: blocks/build/donor-dashboard/parts/auth.php:356
-#: blocks/src/donor-dashboard/parts/auth.php:356
+#: blocks/build/donor-dashboard/parts/auth.php:422
+#: blocks/src/donor-dashboard/parts/auth.php:422
 msgid "If an account exists for that email, we've sent a password reset link. Click the link in the email to choose a new password."
 msgstr "Si existe una cuenta para ese correo electrónico, te hemos enviado un enlace para restablecer la contraseña. Haz clic en el enlace del correo para elegir una nueva contraseña."
 
-#: blocks/build/donor-dashboard/parts/auth.php:387
-#: blocks/src/donor-dashboard/parts/auth.php:387
+#: blocks/build/donor-dashboard/parts/auth.php:453
+#: blocks/src/donor-dashboard/parts/auth.php:453
 msgid "Choose a new password"
 msgstr "Elige una nueva contraseña"
 
-#: blocks/build/donor-dashboard/parts/auth.php:388
-#: blocks/src/donor-dashboard/parts/auth.php:388
+#: blocks/build/donor-dashboard/parts/auth.php:454
+#: blocks/src/donor-dashboard/parts/auth.php:454
 msgid "Enter a new password for your donor account."
 msgstr "Introduce una nueva contraseña para tu cuenta de donante."
 
-#: blocks/build/donor-dashboard/parts/auth.php:405
-#: blocks/src/donor-dashboard/parts/auth.php:405
+#: blocks/build/donor-dashboard/parts/auth.php:471
+#: blocks/src/donor-dashboard/parts/auth.php:471
 #: src/P2P/templates/signup-modal.php:149
 msgid "New password"
 msgstr "Nueva contraseña"
 
-#: blocks/build/donor-dashboard/parts/auth.php:410
-#: blocks/src/donor-dashboard/parts/auth.php:410
+#: blocks/build/donor-dashboard/parts/auth.php:476
+#: blocks/src/donor-dashboard/parts/auth.php:476
 msgid "Enter a new password"
 msgstr "Introduce una nueva contraseña"
 
-#: blocks/build/donor-dashboard/parts/auth.php:447
-#: blocks/src/donor-dashboard/parts/auth.php:447
+#: blocks/build/donor-dashboard/parts/auth.php:513
+#: blocks/src/donor-dashboard/parts/auth.php:513
 #: src/Email/templates/password-reset.php:36
 msgid "Reset password"
 msgstr "Restablecer contraseña"
 
-#: blocks/build/donor-dashboard/parts/auth.php:448
-#: blocks/src/donor-dashboard/parts/auth.php:448
+#: blocks/build/donor-dashboard/parts/auth.php:514
+#: blocks/src/donor-dashboard/parts/auth.php:514
 msgid "Resetting..."
 msgstr "Restableciendo..."
 
@@ -1306,7 +1314,7 @@ msgstr "Comparte tu página"
 
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:228
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:228
-#: src/P2P/SignupModal.php:122
+#: src/P2P/SignupModal.php:120
 #: admin/build/mission-admin.js:269
 #: admin/src/pages/tools/WebhookModal.js:408
 #: admin/src/pages/tools/WebhooksPanel.js:321
@@ -2416,15 +2424,15 @@ msgid "Your name could be the first one on this list."
 msgstr "Tu nombre podría ser el primero de esta lista."
 
 #. translators: %s: team name
-#: src/P2P/SignupModal.php:191
+#: src/P2P/SignupModal.php:189
 msgid "Join %s"
 msgstr "Únete a %s"
 
-#: src/P2P/SignupModal.php:256
+#: src/P2P/SignupModal.php:254
 msgid "You're a fundraiser!"
 msgstr "¡Ya eres recaudador!"
 
-#: src/P2P/SignupModal.php:264
+#: src/P2P/SignupModal.php:262
 msgid "Your page is live. Share it with friends and family to start raising funds."
 msgstr "Tu página está activa. Compártela con amigos y familiares para empezar a recaudar fondos."
 
@@ -3239,7 +3247,7 @@ msgid "Verify your email to activate your donor account"
 msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 
 #: src/DonorDashboard/DonorAuthService.php:98
-#: src/DonorDashboard/DonorAuthService.php:437
+#: src/DonorDashboard/DonorAuthService.php:519
 #: src/Email/DonationEmailListener.php:122
 #: src/Email/EmailModule.php:267
 #: src/Email/EmailModule.php:400
@@ -3263,31 +3271,30 @@ msgstr "Verifica tu correo electrónico para activar tu cuenta de donante"
 msgid "Friend"
 msgstr "Amigo"
 
-#: src/DonorDashboard/DonorAuthService.php:220
-#: src/DonorDashboard/DonorAuthService.php:225
-#: src/DonorDashboard/DonorAuthService.php:232
+#: src/DonorDashboard/DonorAuthService.php:295
+#: src/DonorDashboard/DonorAuthService.php:302
 msgid "Invalid email or password."
 msgstr "Correo electrónico o contraseña no válidos."
 
-#: src/DonorDashboard/DonorAuthService.php:255
-#: src/DonorDashboard/DonorAuthService.php:262
-#: src/DonorDashboard/DonorAuthService.php:353
+#: src/DonorDashboard/DonorAuthService.php:325
+#: src/DonorDashboard/DonorAuthService.php:332
+#: src/DonorDashboard/DonorAuthService.php:423
 msgid "This account cannot be used here."
 msgstr "Esta cuenta no se puede usar aquí."
 
-#: src/DonorDashboard/DonorAuthService.php:400
+#: src/DonorDashboard/DonorAuthService.php:471
 msgid "We couldn't find a donor account with this email address."
 msgstr "No hemos encontrado ninguna cuenta de donante con esta dirección de correo electrónico."
 
-#: src/DonorDashboard/DonorAuthService.php:404
+#: src/DonorDashboard/DonorAuthService.php:475
 msgid "No account has been activated for this email. Please activate your account first."
 msgstr "No se ha activado ninguna cuenta para este correo electrónico. Activa primero tu cuenta."
 
-#: src/DonorDashboard/DonorAuthService.php:410
+#: src/DonorDashboard/DonorAuthService.php:481
 msgid "Unable to process this request."
 msgstr "No se ha podido procesar esta solicitud."
 
-#: src/DonorDashboard/DonorAuthService.php:416
+#: src/DonorDashboard/DonorAuthService.php:498
 msgid "Unable to generate a password reset link. Please try again later."
 msgstr "No se ha podido generar un enlace para restablecer la contraseña. Inténtalo de nuevo más tarde."
 
@@ -3297,7 +3304,7 @@ msgid "Reset your password"
 msgstr "Restablecer tu contraseña"
 
 #. translators: %d: minimum password length
-#: src/DonorDashboard/DonorAuthService.php:588
+#: src/DonorDashboard/DonorAuthService.php:670
 msgid "Password must be at least %d characters."
 msgstr "La contraseña debe tener al menos %d caracteres."
 
@@ -4541,6 +4548,7 @@ msgid "The donation donor was not migrated, so the donation was skipped."
 msgstr "El donante de la donación no se migró, así que la donación se omitió."
 
 #: src/Models/Donor.php:133
+#: src/Models/Donor.php:170
 msgid "This donor already has an account."
 msgstr "Este donante ya tiene una cuenta."
 
@@ -4742,8 +4750,8 @@ msgstr "Página de recaudador"
 msgid "Displays a single fundraiser page."
 msgstr "Muestra la página de un recaudador."
 
-#: src/P2P/FundraiserRegistrationService.php:183
-#: src/P2P/FundraiserRegistrationService.php:189
+#: src/P2P/FundraiserRegistrationService.php:210
+#: src/P2P/FundraiserRegistrationService.php:216
 msgid "This reset session is invalid or has expired. Please start over."
 msgstr "Esta sesión de restablecimiento no es válida o ha caducado. Empieza de nuevo."
 
@@ -5410,11 +5418,11 @@ msgstr "Nota no encontrada."
 msgid "Stripe account not found."
 msgstr "Cuenta de Stripe no encontrada."
 
-#: src/Rest/Traits/DonorPermissionTrait.php:26
+#: src/Rest/Traits/DonorPermissionTrait.php:27
 msgid "You must be logged in."
 msgstr "Debes haber iniciado sesión."
 
-#: src/Rest/Traits/DonorPermissionTrait.php:32
+#: src/Rest/Traits/DonorPermissionTrait.php:31
 msgid "Access denied."
 msgstr "Acceso denegado."
 
@@ -5681,7 +5689,7 @@ msgstr "Imagen"
 msgid "Create Campaign"
 msgstr "Crear campaña"
 
-#: src/P2P/SignupModal.php:120
+#: src/P2P/SignupModal.php:118
 #: admin/build/mission-admin.js:152
 #: admin/src/pages/campaigns/CampaignCreateModal.js:135
 msgid "Something went wrong. Please try again."
@@ -12398,11 +12406,11 @@ msgctxt "block description"
 msgid "Display a ranked list of top teams for a peer-to-peer campaign."
 msgstr "Muestra una lista clasificada de los principales equipos de una campaña entre pares."
 
-#: src/P2P/SignupModal.php:272
+#: src/P2P/SignupModal.php:270
 msgid "You're almost there!"
 msgstr "¡Ya casi está!"
 
-#: src/P2P/SignupModal.php:280
+#: src/P2P/SignupModal.php:278
 msgid "Your fundraising page has been submitted for review. We'll email you as soon as it's approved and ready to share."
 msgstr "Tu página de recaudación se ha enviado para su revisión. Te enviaremos un correo en cuanto esté aprobada y lista para compartir."
 
@@ -12438,15 +12446,15 @@ msgstr "Privado — solo con invitación"
 msgid "Private teams are hidden from the sign-up form; people join through your email invitations."
 msgstr "Los equipos privados no aparecen en el formulario de inscripción; las personas se unen mediante tus invitaciones por correo."
 
-#: src/P2P/SignupModal.php:123
+#: src/P2P/SignupModal.php:121
 msgid "Copied"
 msgstr "Copiado"
 
-#: src/P2P/SignupModal.php:125
+#: src/P2P/SignupModal.php:123
 msgid "Enter the 6-digit code."
 msgstr "Introduce el código de 6 dígitos."
 
-#: src/P2P/SignupModal.php:126
+#: src/P2P/SignupModal.php:124
 msgid "Enter a new password."
 msgstr "Introduce una nueva contraseña."
 
@@ -12588,7 +12596,7 @@ msgstr "<captain /> se convirtió en capitán de equipo"
 msgid "Team captain changed"
 msgstr "Cambio de capitán del equipo"
 
-#: src/P2P/FundraiserRegistrationService.php:274
+#: src/P2P/FundraiserRegistrationService.php:301
 msgid "We could not create your fundraising page. Please try again."
 msgstr "No hemos podido crear tu página de recaudación. Inténtalo de nuevo."
 
@@ -12743,26 +12751,26 @@ msgstr "Se muestra cuando un recaudador aún no ha escrito su historia."
 msgid "Shown when a team has not written a story yet."
 msgstr "Se muestra cuando un equipo aún no ha escrito su historia."
 
-#: blocks/build/donor-dashboard/index.php:143
+#: blocks/build/donor-dashboard/index.php:137
 #: blocks/build/donor-dashboard/parts/fundraiser-detail.php:17
-#: blocks/src/donor-dashboard/index.php:143
+#: blocks/src/donor-dashboard/index.php:137
 #: blocks/src/donor-dashboard/parts/fundraiser-detail.php:17
 msgid "My Fundraisers"
 msgstr "Mis recaudaciones"
 
-#: blocks/build/donor-dashboard/index.php:151
+#: blocks/build/donor-dashboard/index.php:145
 #: blocks/build/donor-dashboard/parts/team-detail.php:17
-#: blocks/src/donor-dashboard/index.php:151
+#: blocks/src/donor-dashboard/index.php:145
 #: blocks/src/donor-dashboard/parts/team-detail.php:17
 msgid "My Teams"
 msgstr "Mis equipos"
 
+#: blocks/build/donor-dashboard/index.php:156
 #: blocks/build/donor-dashboard/index.php:162
 #: blocks/build/donor-dashboard/index.php:168
-#: blocks/build/donor-dashboard/index.php:174
+#: blocks/src/donor-dashboard/index.php:156
 #: blocks/src/donor-dashboard/index.php:162
 #: blocks/src/donor-dashboard/index.php:168
-#: blocks/src/donor-dashboard/index.php:174
 msgid "Giving"
 msgstr "Donaciones"
 
@@ -13468,27 +13476,27 @@ msgstr "¿Hacer a %s capitán del equipo? El capitán actual pasará a ser un mi
 msgid "Make Captain"
 msgstr "Hacer capitán"
 
-#: src/P2P/FundraiserRegistrationService.php:318
+#: src/P2P/FundraiserRegistrationService.php:345
 msgid "Team creation is not available for this campaign."
 msgstr "La creación de equipos no está disponible para esta campaña."
 
-#: src/P2P/FundraiserRegistrationService.php:322
+#: src/P2P/FundraiserRegistrationService.php:349
 msgid "Please enter a team name."
 msgstr "Introduce un nombre de equipo."
 
-#: src/P2P/FundraiserRegistrationService.php:343
+#: src/P2P/FundraiserRegistrationService.php:370
 msgid "Teams are not available for this campaign."
 msgstr "Los equipos no están disponibles para esta campaña."
 
-#: src/P2P/FundraiserRegistrationService.php:349
+#: src/P2P/FundraiserRegistrationService.php:376
 msgid "This team is no longer accepting new members."
 msgstr "Este equipo ya no acepta nuevos miembros."
 
-#: src/P2P/FundraiserRegistrationService.php:448
+#: src/P2P/FundraiserRegistrationService.php:475
 msgid "This invitation was sent to a different email address. Please sign up with the address that received it."
 msgstr "Esta invitación se envió a otra dirección de correo electrónico. Inscríbete con la dirección que la recibió."
 
-#: src/P2P/FundraiserRegistrationService.php:464
+#: src/P2P/FundraiserRegistrationService.php:491
 msgid "This invitation is invalid or has expired. Please ask your team captain to send a new one."
 msgstr "Esta invitación no es válida o ha caducado. Pide al capitán de tu equipo que envíe una nueva."
 
@@ -13565,7 +13573,7 @@ msgstr "Sin equipo"
 msgid "This fundraiser is their team’s captain. Changing their team leaves the captain role vacant."
 msgstr "Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el puesto de capitán quedará vacante."
 
-#: src/P2P/SignupModal.php:124
+#: src/P2P/SignupModal.php:122
 msgid "Copy failed"
 msgstr "Error al copiar"
 
@@ -13595,7 +13603,7 @@ msgstr "No se han podido cargar los miembros. Inténtalo de nuevo."
 msgid "You are not a member of this team."
 msgstr "No eres miembro de este equipo."
 
-#: src/P2P/SignupModal.php:121
+#: src/P2P/SignupModal.php:119
 msgid "Please check the highlighted fields."
 msgstr "Revisa los campos resaltados."
 
@@ -13606,41 +13614,41 @@ msgid "This is taking longer than expected. If nothing happens shortly, refresh 
 msgstr "Esto está tardando más de lo esperado. Si no ocurre nada en breve, recarga la página e inténtalo de nuevo. Solo se realizará el cargo en tu tarjeta cuando se complete el pago."
 
 #. translators: %s: formatted donation amount
-#: src/P2P/SignupModal.php:128
+#: src/P2P/SignupModal.php:126
 msgid "Give %s to kick off your page"
 msgstr "Dona %s para poner en marcha tu página"
 
 #. translators: %s: formatted charge total
-#: src/P2P/SignupModal.php:130
+#: src/P2P/SignupModal.php:128
 msgid "Donate %s & launch"
 msgstr "Donar %s y lanzar"
 
 #. translators: %s: formatted donation amount
-#: src/P2P/SignupModal.php:132
+#: src/P2P/SignupModal.php:130
 msgid "Your %s gift is in. Your page is off to a great start, so keep the momentum going by sharing it:"
 msgstr "Tu donativo de %s está registrado. Tu página ha empezado con buen pie, así que mantén el impulso compartiéndola:"
 
-#: src/P2P/SignupModal.php:133
+#: src/P2P/SignupModal.php:131
 msgid "Payment system unavailable. Please refresh and try again."
 msgstr "El sistema de pago no está disponible. Recarga la página e inténtalo de nuevo."
 
-#: src/P2P/SignupModal.php:134
+#: src/P2P/SignupModal.php:132
 msgid "Payment processing is not available right now. Please try again later."
 msgstr "El procesamiento de pagos no está disponible en este momento. Inténtalo de nuevo más tarde."
 
-#: src/P2P/SignupModal.php:135
+#: src/P2P/SignupModal.php:133
 msgid "Failed to create payment. Please try again."
 msgstr "No se pudo crear el pago. Inténtalo de nuevo."
 
-#: src/P2P/SignupModal.php:136
+#: src/P2P/SignupModal.php:134
 msgid "The payment could not be started. Please check your connection and try again."
 msgstr "No se pudo iniciar el pago. Comprueba tu conexión e inténtalo de nuevo."
 
-#: src/P2P/SignupModal.php:137
+#: src/P2P/SignupModal.php:135
 msgid "Payment element not loaded. Please refresh the page."
 msgstr "El formulario de pago no se ha cargado. Recarga la página."
 
-#: src/P2P/SignupModal.php:248
+#: src/P2P/SignupModal.php:246
 msgid "Your page is live. Pages that start with a donation raise more, so make the first gift to yours."
 msgstr "Tu página está activa. Las páginas que empiezan con un donativo recaudan más, así que haz el primer donativo a la tuya."
 
@@ -13696,3 +13704,32 @@ msgstr "Elige tu donativo trimestral"
 #: blocks/src/donation-form/edit/FormPreview.js:28
 msgid "Choose Your Annual Gift"
 msgstr "Elige tu donativo anual"
+
+#: blocks/build/donor-dashboard/parts/auth.php:296
+#: blocks/src/donor-dashboard/parts/auth.php:296
+msgid "Connect your account"
+msgstr "Conecta tu cuenta"
+
+#: blocks/build/donor-dashboard/parts/auth.php:297
+#: blocks/src/donor-dashboard/parts/auth.php:297
+msgid "This email already has an account on this site. Enter its password to connect your donations."
+msgstr "Este correo electrónico ya tiene una cuenta en este sitio. Introduce su contraseña para conectar tus donaciones."
+
+#: blocks/build/donor-dashboard/parts/auth.php:347
+#: blocks/src/donor-dashboard/parts/auth.php:347
+msgid "Connect account"
+msgstr "Conectar la cuenta"
+
+#: blocks/build/donor-dashboard/parts/auth.php:348
+#: blocks/src/donor-dashboard/parts/auth.php:348
+msgid "Connecting..."
+msgstr "Conectando..."
+
+#: src/DonorDashboard/DonorAuthService.php:248
+msgid "This account is already connected to a different donor record. Please contact the site administrator."
+msgstr "Esta cuenta ya está conectada a otro registro de donante. Ponte en contacto con el administrador del sitio."
+
+#: src/DonorDashboard/DonorAuthService.php:263
+#: src/P2P/FundraiserRegistrationService.php:146
+msgid "That password does not match the existing account for this email."
+msgstr "Esa contraseña no coincide con la cuenta existente de este correo electrónico."
