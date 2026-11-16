@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.6.1 (unreleased)
+## 1.6.1 (2026-11-16)
 
 * New: Mission is now available in French, including Canadian and Belgian French
 * Enhancement: Button labels on the Campaign Progress, Fundraiser Progress, Team Progress, Recent Donors, Top Donors, Top Fundraisers and Top Teams blocks can now be edited in the block settings
