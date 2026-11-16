@@ -1,4 +1,4 @@
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { timeAgo } from '@shared/time';
 import { formatAmount } from '@shared/currency';
@@ -661,13 +661,23 @@ function getEventText( event ) {
         if ( gType === 'donors' ) {
           goal = sprintf(
             // translators: %s: donor count toward goal.
-            __( '%s donor', 'mission-donation-platform' ),
+            _n(
+              '%s donor',
+              '%s donors',
+              Number( data.goal_amount ),
+              'mission-donation-platform'
+            ),
             count
           );
         } else {
           goal = sprintf(
             // translators: %s: donation count toward goal.
-            __( '%s donation', 'mission-donation-platform' ),
+            _n(
+              '%s donation',
+              '%s donations',
+              Number( data.goal_amount ),
+              'mission-donation-platform'
+            ),
             count
           );
         }

@@ -331,9 +331,6 @@
             "Placeholder": [
                 "Marcador de posici\u00f3n"
             ],
-            "Option": [
-                "Opci\u00f3n"
-            ],
             "Remove option": [
                 "Eliminar opci\u00f3n"
             ],
@@ -393,6 +390,9 @@
             ],
             "Choose Your Annual Gift": [
                 "Elige tu donativo anual"
+            ],
+            "Option %d": [
+                "Opci\u00f3n %d"
             ]
         }
     }

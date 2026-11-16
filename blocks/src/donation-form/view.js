@@ -8,6 +8,7 @@ import {
   withScope,
 } from '@wordpress/interactivity';
 import { formatAmount } from '@shared/currency';
+import { t } from '@shared/context-i18n';
 import {
   getEffectiveAmount,
   getAmountsForFrequency,
@@ -679,8 +680,11 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
 
       try {
         if ( ! stripeState?.elements ) {
-          ctx.paymentError =
-            'Payment element not loaded. Please refresh the page.';
+          ctx.paymentError = t(
+            ctx,
+            'elementNotLoaded',
+            'Payment element not loaded. Please refresh the page.'
+          );
           focusPaymentError( getElement().ref );
           return;
         }
@@ -837,7 +841,12 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
 
         if ( ! intentResponse.ok || ! intentData.client_secret ) {
           ctx.paymentError =
-            intentData.message || 'Failed to create payment. Please try again.';
+            intentData.message ||
+            t(
+              ctx,
+              'paymentCreateFailed',
+              'Failed to create payment. Please try again.'
+            );
           focusPaymentError( getElement().ref );
           return;
         }
@@ -946,7 +955,12 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
         }
       } catch ( err ) {
         ctx.paymentError =
-          err.message || 'An unexpected error occurred. Please try again.';
+          err.message ||
+          t(
+            ctx,
+            'unexpectedError',
+            'An unexpected error occurred. Please try again.'
+          );
       } finally {
         ctx.isSubmitting = false;
       }
@@ -1007,7 +1021,7 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
       const ctx = getContext();
       const values = ctx.customFieldValues?.[ ctx.fieldId ] || [];
       if ( values.length === 0 ) {
-        return 'Select options';
+        return t( ctx, 'selectOptions', 'Select options' );
       }
       return values.join( ', ' );
     },
@@ -1051,9 +1065,10 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
       );
     },
     notifyLinkLabel() {
-      return getContext().notifyEnabled
-        ? '\u2212 Remove notification'
-        : 'Notify someone of this tribute';
+      const ctx = getContext();
+      return ctx.notifyEnabled
+        ? '\u2212 ' + t( ctx, 'removeNotification', 'Remove notification' )
+        : t( ctx, 'notifySomeone', 'Notify someone of this tribute' );
     },
     formattedPresetAmount() {
       const ctx = getContext();
@@ -1083,7 +1098,7 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
     },
     frequencySuffix() {
       const ctx = getContext();
-      const suffixes = {
+      const suffixes = ctx.i18n?.suffixes || {
         weekly: '/wk',
         monthly: '/mo',
         quarterly: '/qtr',
@@ -1180,22 +1195,31 @@ const { callbacks } = store( 'mission-donation-platform/donation-form', {
       }
 
       if ( ! window.Stripe ) {
-        ctx.paymentError =
-          'Payment system unavailable. Please refresh and try again.';
+        ctx.paymentError = t(
+          ctx,
+          'paymentUnavailable',
+          'Payment system unavailable. Please refresh and try again.'
+        );
         return;
       }
 
       const configData = yield getPaymentConfig( ctx.restUrl );
 
       if ( ! configData ) {
-        ctx.paymentError =
-          'Payment processing is not available right now. Please try again later.';
+        ctx.paymentError = t(
+          ctx,
+          'paymentInitFailed',
+          'Payment processing is not available right now. Please try again later.'
+        );
         return;
       }
 
       if ( ! configData.connected_account_id ) {
-        ctx.paymentError =
-          'Payment processing is not available. The site owner needs to reconnect Stripe in the Mission settings.';
+        ctx.paymentError = t(
+          ctx,
+          'stripeDisconnected',
+          'Payment processing is not available. The site owner needs to reconnect Stripe in the Mission settings.'
+        );
         return;
       }
 

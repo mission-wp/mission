@@ -28,6 +28,12 @@
 			"type": "string",
 			"default": ""
 		},
+		"donateButtonText": {
+			"type": "string"
+		},
+		"fundraiserButtonText": {
+			"type": "string"
+		},
 		"showDonors": {
 			"type": "boolean",
 			"default": true

@@ -67,6 +67,10 @@ $show_days_remaining = ( $attributes['showDaysRemaining'] ?? true ) && $has_end_
 // Donate button.
 $donate_action = $attributes['donateButtonAction'] ?? 'scroll';
 $donate_url    = $attributes['donateButtonUrl'] ?? '';
+
+// Empty labels fall back to the translatable defaults.
+$donate_text     = ( $attributes['donateButtonText'] ?? '' ) ?: __( 'Donate Now', 'mission-donation-platform' );
+$fundraiser_text = ( $attributes['fundraiserButtonText'] ?? '' ) ?: __( 'Become a Fundraiser', 'mission-donation-platform' );
 $show_button   = 'hide' !== $donate_action;
 
 // Display text by goal type.
@@ -154,7 +158,7 @@ ob_start();
 		<div class="mission-progress__actions">
 			<?php if ( $show_become ) : ?>
 				<button type="button" class="mission-progress__btn" data-wp-on--click="actions.openSignup">
-					<?php esc_html_e( 'Become a Fundraiser', 'mission-donation-platform' ); ?>
+					<?php echo esc_html( $fundraiser_text ); ?>
 				</button>
 			<?php endif; ?>
 			<?php if ( $show_button ) : ?>
@@ -165,11 +169,11 @@ ob_start();
 						class="<?php echo esc_attr( $donate_btn_class ); ?>"
 						data-wp-on--click="actions.scrollToForm"
 					>
-						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $donate_text ); ?>
 					</button>
 				<?php else : ?>
 					<a href="<?php echo esc_url( $donate_url ); ?>" class="<?php echo esc_attr( $donate_btn_class ); ?>">
-						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $donate_text ); ?>
 					</a>
 				<?php endif; ?>
 			<?php endif; ?>

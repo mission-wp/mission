@@ -4,6 +4,7 @@
  * Handles history filters, pagination, and REST fetching.
  */
 import { getContext } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import { formatAmount } from '@shared/currency';
 
 /**
@@ -30,9 +31,10 @@ function formatTxnDate( txn ) {
  *
  * @param {Object} txn      Raw transaction from REST.
  * @param {string} currency Currency code.
+ * @param {Object} ctx      Dashboard context, for translated labels.
  * @return {Object} Prepared transaction for context.
  */
-function prepareTxn( txn, currency ) {
+function prepareTxn( txn, currency, ctx ) {
   const isRecurring = txn.type !== 'one_time';
   return {
     id: txn.id,
@@ -40,9 +42,13 @@ function prepareTxn( txn, currency ) {
     formattedDate: formatTxnDate( txn ),
     campaignName: txn.campaign_name,
     status: txn.status,
-    statusLabel: txn.status.charAt( 0 ).toUpperCase() + txn.status.slice( 1 ),
+    statusLabel:
+      ctx.i18n?.statuses?.[ txn.status ] ||
+      txn.status.charAt( 0 ).toUpperCase() + txn.status.slice( 1 ),
     isRecurring,
-    typeLabel: isRecurring ? 'Recurring' : 'One-time',
+    typeLabel: isRecurring
+      ? t( ctx, 'typeRecurring', 'Recurring' )
+      : t( ctx, 'typeOneTime', 'One-time' ),
   };
 }
 
@@ -86,7 +92,9 @@ async function fetchHistory( ctx ) {
         history.transactions[ 0 ]?.currency ||
         'USD';
 
-      history.transactions = data.map( ( txn ) => prepareTxn( txn, currency ) );
+      history.transactions = data.map( ( txn ) =>
+        prepareTxn( txn, currency, ctx )
+      );
       history.total = parseInt( response.headers.get( 'X-WP-Total' ) ) || 0;
       history.totalPages =
         parseInt( response.headers.get( 'X-WP-TotalPages' ) ) || 0;
@@ -117,7 +125,9 @@ export const historyState = {
     const ctx = getContext();
     const page = ctx.history?.page ?? 1;
     const totalPages = ctx.history?.totalPages ?? 1;
-    return `Page ${ page } of ${ totalPages }`;
+    return ( ctx.history?.pageLabel ?? '' )
+      .replace( '%1$d', page )
+      .replace( '%2$d', totalPages );
   },
 
   // Per-row transaction status (used inside data-wp-each--txn).

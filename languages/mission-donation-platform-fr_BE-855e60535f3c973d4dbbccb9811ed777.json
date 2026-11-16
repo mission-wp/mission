@@ -1,0 +1,33 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/fundraiser-story\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_BE",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "I am raising money for a cause that means a lot to me. Every donation, big or small, helps me get closer to my goal. Thank you for your support!": [
+                "Je collecte des fonds pour une cause qui me tient \u00e0 c\u0153ur. Chaque don, petit ou grand, me rapproche de mon objectif. Merci pour votre soutien\u00a0!"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Fallback text": [
+                "Texte par d\u00e9faut"
+            ],
+            "Shown when a fundraiser has not written a story yet.": [
+                "Affich\u00e9 lorsqu\u2019un collecteur n\u2019a pas encore r\u00e9dig\u00e9 son histoire."
+            ],
+            "Your fundraiser's story appears here. Share why this cause matters to you and what donations will make possible.": [
+                "L\u2019histoire de votre collecte appara\u00eet ici. Expliquez pourquoi cette cause vous tient \u00e0 c\u0153ur et ce que les dons rendront possible."
+            ],
+            "Supporters read this before they give, so make it personal.": [
+                "Vos soutiens lisent ce texte avant de donner, alors donnez-lui une touche personnelle."
+            ]
+        }
+    }
+}

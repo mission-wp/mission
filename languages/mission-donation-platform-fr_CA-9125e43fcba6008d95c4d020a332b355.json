@@ -1,0 +1,108 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/campaign-image\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_CA",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Campaign": [
+                "Campagne"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Campaign Image": [
+                "Image de la campagne"
+            ],
+            "Original": [
+                "Original"
+            ],
+            "Square - 1:1": [
+                "Carr\u00e9 - 1:1"
+            ],
+            "Standard - 4:3": [
+                "Standard - 4:3"
+            ],
+            "Portrait - 3:4": [
+                "Portrait - 3:4"
+            ],
+            "Classic - 3:2": [
+                "Classique - 3:2"
+            ],
+            "Classic Portrait - 2:3": [
+                "Portrait classique - 2:3"
+            ],
+            "Wide - 16:9": [
+                "Large - 16:9"
+            ],
+            "Tall - 9:16": [
+                "Haut - 9:16"
+            ],
+            "Thumbnail": [
+                "Miniature"
+            ],
+            "Medium": [
+                "Moyenne"
+            ],
+            "Large": [
+                "Grande"
+            ],
+            "Full Size": [
+                "Pleine taille"
+            ],
+            "Alternative text": [
+                "Texte alternatif"
+            ],
+            "Describe the purpose of the image. Leave empty if decorative.": [
+                "D\u00e9crivez le r\u00f4le de l\u2019image. Laissez vide si elle est purement d\u00e9corative."
+            ],
+            "Aspect ratio": [
+                "Proportions"
+            ],
+            "Width": [
+                "Largeur"
+            ],
+            "Auto": [
+                "Auto"
+            ],
+            "Height": [
+                "Hauteur"
+            ],
+            "Scale": [
+                "\u00c9chelle"
+            ],
+            "Image covers the space evenly.": [
+                "L\u2019image couvre l\u2019espace de mani\u00e8re uniforme."
+            ],
+            "Image is contained without distortion.": [
+                "L\u2019image est contenue sans d\u00e9formation."
+            ],
+            "Cover": [
+                "Couvrir"
+            ],
+            "Contain": [
+                "Contenir"
+            ],
+            "Resolution": [
+                "R\u00e9solution"
+            ],
+            "Select the size of the source image.": [
+                "S\u00e9lectionnez la taille de l\u2019image source."
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si ce champ est vide, la campagne sera d\u00e9tect\u00e9e \u00e0 partir de la publication en cours."
+            ],
+            "No campaign image set.": [
+                "Aucune image de campagne d\u00e9finie."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "S\u00e9lectionnez une campagne ou placez ce bloc sur une page de campagne."
+            ]
+        }
+    }
+}

@@ -40,6 +40,7 @@ defined( 'ABSPATH' ) || exit;
 	$show_team    = $attributes['showTeam'] ?? true;
 	$cta_action   = $attributes['ctaAction'] ?? 'signup';
 	$cta_url      = $attributes['ctaUrl'] ?? '';
+	$cta_text     = ( $attributes['ctaText'] ?? '' ) ?: __( 'Become a Fundraiser', 'mission-donation-platform' );
 	$limit        = max( 1, (int) ( $attributes['numberOfFundraisers'] ?? 5 ) );
 
 	// Query top fundraisers.
@@ -78,11 +79,11 @@ defined( 'ABSPATH' ) || exit;
 				<p class="mission-donor-empty__subtitle"><?php esc_html_e( 'Start your own page and rally your friends.', 'mission-donation-platform' ); ?></p>
 				<?php if ( 'url' === $cta_action && '' !== $cta_url ) : ?>
 					<a href="<?php echo esc_url( $cta_url ); ?>" class="mission-donor-empty__btn">
-						<?php esc_html_e( 'Become a Fundraiser', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $cta_text ); ?>
 					</a>
 				<?php elseif ( 'signup' === $cta_action && $registration_open ) : ?>
 					<button type="button" class="mission-donor-empty__btn" data-wp-on--click="actions.openSignup">
-						<?php esc_html_e( 'Become a Fundraiser', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $cta_text ); ?>
 					</button>
 				<?php endif; ?>
 			</div>

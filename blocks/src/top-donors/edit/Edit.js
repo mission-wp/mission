@@ -56,6 +56,7 @@ export default function Edit( { attributes, setAttributes } ) {
     showRibbons,
     donateButtonAction,
     donateButtonUrl,
+    donateButtonText,
     numberOfDonors,
   } = attributes;
 
@@ -262,6 +263,17 @@ export default function Edit( { attributes, setAttributes } ) {
               onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
               type="url"
               placeholder="https://..."
+            />
+          ) }
+          { donateButtonAction !== 'hide' && (
+            <TextControl
+              label={ __( 'Button text', 'mission-donation-platform' ) }
+              value={ donateButtonText ?? '' }
+              placeholder={ __(
+                'Be the First Donor',
+                'mission-donation-platform'
+              ) }
+              onChange={ ( val ) => setAttributes( { donateButtonText: val } ) }
             />
           ) }
           <ToggleControl

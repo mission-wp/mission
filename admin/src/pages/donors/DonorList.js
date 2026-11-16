@@ -15,7 +15,7 @@ import {
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
 import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
@@ -309,10 +309,11 @@ export default function DonorList() {
             value={ summary ? summary.top_donor_name || '\u2014' : '' }
             subtitle={
               summary?.top_donor_total
-                ? `${ formatAmount( summary.top_donor_total ) } ${ __(
-                    'lifetime',
-                    'mission-donation-platform'
-                  ) }`
+                ? sprintf(
+                    /* translators: %s: total amount a donor has given */
+                    __( '%s lifetime', 'mission-donation-platform' ),
+                    formatAmount( summary.top_donor_total )
+                  )
                 : undefined
             }
             isLoading={ ! summary }
@@ -327,13 +328,14 @@ export default function DonorList() {
             value={ summary ? summary.repeat_donors.toLocaleString() : '' }
             subtitle={
               summary?.total_donors > 0
-                ? `${ (
-                    ( summary.repeat_donors / summary.total_donors ) *
-                    100
-                  ).toFixed( 1 ) }% ${ __(
-                    'of all donors',
-                    'mission-donation-platform'
-                  ) }`
+                ? sprintf(
+                    /* translators: %s: percentage of donors who gave more than once */
+                    __( '%s%% of all donors', 'mission-donation-platform' ),
+                    (
+                      ( summary.repeat_donors / summary.total_donors ) *
+                      100
+                    ).toFixed( 1 )
+                  )
                 : undefined
             }
             isLoading={ ! summary }

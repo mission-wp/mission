@@ -16,6 +16,9 @@
             "Settings": [
                 "Asetukset"
             ],
+            "Button text": [
+                "Painikkeen teksti"
+            ],
             "If empty, the campaign will be detected from the current post.": [
                 "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."
             ],
@@ -33,6 +36,9 @@
             ],
             "Show ribbons": [
                 "N\u00e4yt\u00e4 nauhat"
+            ],
+            "Become a Fundraiser": [
+                "Ryhdy varainker\u00e4\u00e4j\u00e4ksi"
             ],
             "Top Fundraisers": [
                 "Parhaat varainker\u00e4\u00e4j\u00e4t"

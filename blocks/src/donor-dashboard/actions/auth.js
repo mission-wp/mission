@@ -5,6 +5,7 @@
  * Auth views use hash-based routing so the browser back button works.
  */
 import { getContext } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 
 /**
  * Auth views that can be reached via hash navigation.
@@ -52,9 +53,10 @@ function resetAuthFormState( ctx ) {
  * Compute password strength from a plain-text value.
  *
  * @param {string} password The password to evaluate.
+ * @param {Object} ctx      Dashboard context, for translated labels.
  * @return {{ level: string, label: string }} Strength level and label.
  */
-function computePasswordStrength( password ) {
+function computePasswordStrength( password, ctx ) {
   if ( ! password ) {
     return { level: '', label: '' };
   }
@@ -78,15 +80,24 @@ function computePasswordStrength( password ) {
   }
 
   if ( score <= 1 ) {
-    return { level: 'weak', label: 'Weak — try adding more characters' };
+    return {
+      level: 'weak',
+      label: t( ctx, 'passwordWeak', 'Weak — try adding more characters' ),
+    };
   }
   if ( score <= 2 ) {
-    return { level: 'fair', label: 'Fair — add numbers or symbols' };
+    return {
+      level: 'fair',
+      label: t( ctx, 'passwordFair', 'Fair — add numbers or symbols' ),
+    };
   }
   if ( score <= 3 ) {
-    return { level: 'good', label: 'Good password' };
+    return { level: 'good', label: t( ctx, 'passwordGood', 'Good password' ) };
   }
-  return { level: 'strong', label: 'Strong password' };
+  return {
+    level: 'strong',
+    label: t( ctx, 'passwordStrong', 'Strong password' ),
+  };
 }
 
 export const authState = {
@@ -118,7 +129,10 @@ export const authState = {
     return getContext().passwordVisible ? 'text' : 'password';
   },
   get passwordToggleLabel() {
-    return getContext().passwordVisible ? 'Hide password' : 'Show password';
+    const ctx = getContext();
+    return ctx.passwordVisible
+      ? t( ctx, 'hidePassword', 'Hide password' )
+      : t( ctx, 'showPassword', 'Show password' );
   },
   get isStrengthWeak() {
     return getContext().passwordStrength === 'weak';
@@ -181,7 +195,7 @@ export const authActions = {
       ctx.authView === 'set-password' ||
       ctx.authView === 'reset-password'
     ) {
-      const { level, label } = computePasswordStrength( ctx.authPassword );
+      const { level, label } = computePasswordStrength( ctx.authPassword, ctx );
       ctx.passwordStrength = level;
       ctx.strengthLabel = label;
     }
@@ -212,7 +226,11 @@ export const authActions = {
     const ctx = getContext();
 
     if ( ! ctx.authEmail || ! ctx.authPassword ) {
-      ctx.authError = 'Please enter your email and password.';
+      ctx.authError = t(
+        ctx,
+        'enterEmailPassword',
+        'Please enter your email and password.'
+      );
       return;
     }
 
@@ -237,14 +255,20 @@ export const authActions = {
       const data = yield response.json();
 
       if ( ! response.ok ) {
-        ctx.authError = data.message || 'Login failed. Please try again.';
+        ctx.authError =
+          data.message ||
+          t( ctx, 'loginFailed', 'Login failed. Please try again.' );
         ctx.authLoading = false;
         return;
       }
 
       window.location.reload();
     } catch {
-      ctx.authError = 'Something went wrong. Please try again.';
+      ctx.authError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.authLoading = false;
     }
   },
@@ -259,7 +283,11 @@ export const authActions = {
     const ctx = getContext();
 
     if ( ! ctx.authEmail ) {
-      ctx.authError = 'Please enter your email address.';
+      ctx.authError = t(
+        ctx,
+        'enterEmail',
+        'Please enter your email address.'
+      );
       return;
     }
 
@@ -289,7 +317,11 @@ export const authActions = {
       ctx.authLoading = false;
       window.location.hash = 'activate-sent';
     } catch {
-      ctx.authError = 'Something went wrong. Please try again.';
+      ctx.authError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.authLoading = false;
     }
   },
@@ -309,13 +341,17 @@ export const authActions = {
 
     if ( ! ctx.authPassword ) {
       ctx.authError = linking
-        ? 'Please enter your password.'
-        : 'Please create a password.';
+        ? t( ctx, 'enterPassword', 'Please enter your password.' )
+        : t( ctx, 'createPassword', 'Please create a password.' );
       return;
     }
 
     if ( ! linking && ctx.authPassword.length < 8 ) {
-      ctx.authError = 'Password must be at least 8 characters.';
+      ctx.authError = t(
+        ctx,
+        'passwordTooShort',
+        'Password must be at least 8 characters.'
+      );
       return;
     }
 
@@ -340,7 +376,9 @@ export const authActions = {
       const data = yield response.json();
 
       if ( ! response.ok ) {
-        ctx.authError = data.message || 'Activation failed. Please try again.';
+        ctx.authError =
+          data.message ||
+          t( ctx, 'activationFailed', 'Activation failed. Please try again.' );
         ctx.authLoading = false;
         return;
       }
@@ -350,7 +388,11 @@ export const authActions = {
       url.searchParams.delete( 'email' );
       window.location.replace( url.toString() );
     } catch {
-      ctx.authError = 'Something went wrong. Please try again.';
+      ctx.authError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.authLoading = false;
     }
   },
@@ -365,7 +407,11 @@ export const authActions = {
     const ctx = getContext();
 
     if ( ! ctx.authEmail ) {
-      ctx.authError = 'Please enter your email address.';
+      ctx.authError = t(
+        ctx,
+        'enterEmail',
+        'Please enter your email address.'
+      );
       return;
     }
 
@@ -395,7 +441,11 @@ export const authActions = {
       ctx.authLoading = false;
       window.location.hash = 'forgot-password-sent';
     } catch {
-      ctx.authError = 'Something went wrong. Please try again.';
+      ctx.authError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.authLoading = false;
     }
   },
@@ -410,12 +460,20 @@ export const authActions = {
     const ctx = getContext();
 
     if ( ! ctx.authPassword ) {
-      ctx.authError = 'Please enter a new password.';
+      ctx.authError = t(
+        ctx,
+        'enterNewPassword',
+        'Please enter a new password.'
+      );
       return;
     }
 
     if ( ctx.authPassword.length < 8 ) {
-      ctx.authError = 'Password must be at least 8 characters.';
+      ctx.authError = t(
+        ctx,
+        'passwordTooShort',
+        'Password must be at least 8 characters.'
+      );
       return;
     }
 
@@ -441,7 +499,8 @@ export const authActions = {
 
       if ( ! response.ok ) {
         ctx.authError =
-          data.message || 'Password reset failed. Please try again.';
+          data.message ||
+          t( ctx, 'resetFailed', 'Password reset failed. Please try again.' );
         ctx.authLoading = false;
         return;
       }
@@ -452,7 +511,11 @@ export const authActions = {
       url.searchParams.delete( 'login' );
       window.location.replace( url.toString() );
     } catch {
-      ctx.authError = 'Something went wrong. Please try again.';
+      ctx.authError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.authLoading = false;
     }
   },

@@ -45,6 +45,9 @@
             ],
             "Show donations": [
                 "N\u00e4yt\u00e4 lahjoitukset"
+            ],
+            "Donate button text": [
+                "Lahjoita-painikkeen teksti"
             ]
         }
     }

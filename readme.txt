@@ -207,6 +207,16 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.6.1 =
+* New: Mission is now available in French, including Canadian and Belgian French
+* Enhancement: Button labels on the Campaign Progress, Fundraiser Progress, Team Progress, Recent Donors, Top Donors, Top Fundraisers and Top Teams blocks can now be edited in the block settings
+* Fix: Campaigns with no end date are now labeled correctly on campaign cards in Spanish and Finnish
+* Fix: The Donor Wall and the donor dashboard's donation history now stay in the site's language after loading more donations or changing pages
+* Fix: Messages, button labels and confirmations in the donation form and donor dashboard now appear in the site's language instead of English
+* Fix: Donation and donor counts above one now appear in Spanish and Finnish instead of English
+* Tweak: Counts and summaries in the admin now read naturally in every language
+* Tweak: Developers can adjust the donor dashboard's script text with the mission_donor_dashboard_strings filter
+
 = 1.6.0 =
 * Fix: Donors whose email already has an account on the site can now connect their donations by signing in with that account's password, from the activation link or fundraiser signup
 * Fix: Donors linked to an existing site account, such as those brought over from GiveWP, can now log in to the donor dashboard
@@ -223,17 +233,5 @@ This plugin connects to the following third-party services:
 * Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
 * Enhancement: The optional tip now stays visible to donors even when a theme or custom CSS hides it by mistake, and any form where it can't be shown is handled the same way as the 3% platform fee option
 * Fix: Plugin updates now reach returning visitors right away instead of waiting for cached block styles to expire
-
-= 1.4.0 =
-* Security: User-supplied names and titles in admin activity feed messages are now escaped before display
-* New: Peer-to-peer fundraising! Create a P2P campaign and let supporters raise money for your cause with their own personal fundraising pages, on their own or in teams
-* New: Fundraisers sign up right on the campaign page and manage their story, photo, goal, and sharing from a new dashboard, while admins review and manage everyone from new Fundraisers and Teams screens with an optional approval workflow
-* New: Donations through a fundraiser page credit the fundraiser and their team on live progress bars and leaderboards, and seven new editable emails cover the lifecycle from welcome to goal milestones
-* Enhancement: The donor dashboard is now a full account area with separate Donations and Fundraising sections that appear based on each person's role
-* Enhancement: Donation form amounts now follow the site's language for number formatting instead of the browser's
-* Enhancement: Database updates now run on any visit, so a background plugin update can never stall donation processing
-* Fix: Block cards and buttons no longer overflow their containers in themes without a border-box reset
-* Tweak: Sites behind a proxy other than Cloudflare can declare trusted client-IP headers with the mission_trusted_proxy_headers filter so rate limits see real visitor addresses
-* Tweak: Updated the Spanish and Finnish translations with all of the new peer-to-peer strings
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

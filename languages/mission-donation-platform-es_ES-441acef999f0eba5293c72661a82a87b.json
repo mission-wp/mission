@@ -10,6 +10,9 @@
                 "lang": "es_ES",
                 "plural-forms": "nplurals=2; plural=(n != 1);"
             },
+            "Become a Fundraiser": [
+                "Convi\u00e9rtete en recaudador"
+            ],
             "Campaign": [
                 "Campa\u00f1a"
             ],
@@ -21,6 +24,9 @@
             ],
             "Settings": [
                 "Ajustes"
+            ],
+            "Button text": [
+                "Texto del bot\u00f3n"
             ],
             "If empty, the campaign will be detected from the current post.": [
                 "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."

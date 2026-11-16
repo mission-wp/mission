@@ -40,6 +40,7 @@ defined( 'ABSPATH' ) || exit;
 	$show_progress = $attributes['showProgress'] ?? true;
 	$cta_action    = $attributes['ctaAction'] ?? 'signup';
 	$cta_url       = $attributes['ctaUrl'] ?? '';
+	$cta_text      = ( $attributes['ctaText'] ?? '' ) ?: __( 'Start a Team', 'mission-donation-platform' );
 	$limit         = max( 1, (int) ( $attributes['numberOfTeams'] ?? 5 ) );
 
 	// Query top teams.
@@ -78,11 +79,11 @@ defined( 'ABSPATH' ) || exit;
 				<p class="mission-donor-empty__subtitle"><?php esc_html_e( 'Create a team and fundraise together.', 'mission-donation-platform' ); ?></p>
 				<?php if ( 'url' === $cta_action && '' !== $cta_url ) : ?>
 					<a href="<?php echo esc_url( $cta_url ); ?>" class="mission-donor-empty__btn">
-						<?php esc_html_e( 'Start a Team', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $cta_text ); ?>
 					</a>
 				<?php elseif ( 'signup' === $cta_action && $registration_open ) : ?>
 					<button type="button" class="mission-donor-empty__btn" data-wp-on--click="actions.openSignup">
-						<?php esc_html_e( 'Start a Team', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $cta_text ); ?>
 					</button>
 				<?php endif; ?>
 			</div>

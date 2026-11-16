@@ -5,6 +5,7 @@
  * payment method display, and account deletion.
  */
 import { getContext } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import { showToast } from '../utils/toast';
 
 /**
@@ -38,13 +39,25 @@ async function togglePreference( ctx, restKey, contextKey, newValue ) {
 
     if ( ! response.ok ) {
       ctx.profile.preferences[ contextKey ] = previous;
-      showToast( ctx, 'Failed to save preference. Please try again.', 'error' );
+      showToast(
+        ctx,
+        t(
+          ctx,
+          'preferenceSaveFailed',
+          'Failed to save preference. Please try again.'
+        ),
+        'error'
+      );
     } else {
-      showToast( ctx, 'Preference saved' );
+      showToast( ctx, t( ctx, 'preferenceSaved', 'Preference saved' ) );
     }
   } catch {
     ctx.profile.preferences[ contextKey ] = previous;
-    showToast( ctx, 'Something went wrong. Please try again.', 'error' );
+    showToast(
+      ctx,
+      t( ctx, 'genericError', 'Something went wrong. Please try again.' ),
+      'error'
+    );
   }
 
   ctx.profile.prefSaving = '';
@@ -54,11 +67,12 @@ async function togglePreference( ctx, restKey, contextKey, newValue ) {
  * Capitalise the first letter of a card brand string.
  *
  * @param {string} brand Raw brand (e.g. "visa", "mastercard").
+ * @param {Object} ctx   Dashboard context, for the translated fallback.
  * @return {string} Display name (e.g. "Visa", "Mastercard").
  */
-function brandDisplayName( brand ) {
+function brandDisplayName( brand, ctx ) {
   if ( ! brand ) {
-    return 'Card';
+    return t( ctx, 'card', 'Card' );
   }
   return brand.charAt( 0 ).toUpperCase() + brand.slice( 1 );
 }
@@ -67,12 +81,12 @@ export const profileState = {
   get profileSaveLabel() {
     const ctx = getContext();
     if ( ctx.profile?.saved ) {
-      return 'Saved';
+      return t( ctx, 'saved', 'Saved' );
     }
     if ( ctx.profile?.saving ) {
-      return 'Saving\u2026';
+      return t( ctx, 'saving', 'Saving\u2026' );
     }
-    return 'Save Changes';
+    return t( ctx, 'saveChanges', 'Save Changes' );
   },
   get profileSaveDisabled() {
     const ctx = getContext();
@@ -107,30 +121,40 @@ export const profileState = {
     );
   },
   get emailSendLabel() {
-    return getContext().profile?.emailChangeSending
-      ? 'Sending\u2026'
-      : 'Send Verification';
+    const ctx = getContext();
+    return ctx.profile?.emailChangeSending
+      ? t( ctx, 'sending', 'Sending\u2026' )
+      : t( ctx, 'sendVerification', 'Send Verification' );
   },
 
   // ── Payment method display ──
   get paymentBrandLabel() {
-    const pm = getContext().profile?.paymentMethod;
-    return pm ? brandDisplayName( pm.brand ) : '';
+    const ctx = getContext();
+    const pm = ctx.profile?.paymentMethod;
+    return pm ? brandDisplayName( pm.brand, ctx ) : '';
   },
   get paymentCardDisplay() {
-    const pm = getContext().profile?.paymentMethod;
+    const ctx = getContext();
+    const pm = ctx.profile?.paymentMethod;
     if ( ! pm ) {
       return '';
     }
-    return `${ brandDisplayName( pm.brand ) } ending in ${ pm.last4 }`;
+    return t(
+      ctx,
+      'cardEndingIn',
+      '%1$s ending in %2$s',
+      brandDisplayName( pm.brand, ctx ),
+      pm.last4
+    );
   },
   get paymentExpiry() {
-    const pm = getContext().profile?.paymentMethod;
+    const ctx = getContext();
+    const pm = ctx.profile?.paymentMethod;
     if ( ! pm?.expMonth || ! pm?.expYear ) {
       return '';
     }
     const month = String( pm.expMonth ).padStart( 2, '0' );
-    return `Expires ${ month }/${ pm.expYear }`;
+    return t( ctx, 'cardExpires', 'Expires %s', `${ month }/${ pm.expYear }` );
   },
 };
 
@@ -198,7 +222,12 @@ export const profileActions = {
       if ( ! response.ok ) {
         const data = yield response.json();
         ctx.profile.emailChangeError =
-          data.message || 'Failed to send verification email.';
+          data.message ||
+          t(
+            ctx,
+            'verificationSendFailed',
+            'Failed to send verification email.'
+          );
         ctx.profile.emailChangeSending = false;
         return;
       }
@@ -208,9 +237,20 @@ export const profileActions = {
       ctx.profile.emailChangeEditing = false;
       ctx.profile.newEmail = '';
       ctx.profile.emailChangeSending = false;
-      showToast( ctx, 'Verification email sent. Check your inbox.' );
+      showToast(
+        ctx,
+        t(
+          ctx,
+          'verificationSent',
+          'Verification email sent. Check your inbox.'
+        )
+      );
     } catch {
-      ctx.profile.emailChangeError = 'Something went wrong. Please try again.';
+      ctx.profile.emailChangeError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.profile.emailChangeSending = false;
     }
   },
@@ -232,10 +272,17 @@ export const profileActions = {
 
       if ( response.ok ) {
         ctx.profile.pendingEmail = '';
-        showToast( ctx, 'Email change cancelled.' );
+        showToast(
+          ctx,
+          t( ctx, 'emailChangeCancelled', 'Email change cancelled.' )
+        );
       }
     } catch {
-      showToast( ctx, 'Failed to cancel. Please try again.', 'error' );
+      showToast(
+        ctx,
+        t( ctx, 'cancelFailed', 'Failed to cancel. Please try again.' ),
+        'error'
+      );
     }
   },
 
@@ -273,7 +320,9 @@ export const profileActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        ctx.profile.error = data.message || 'Failed to save. Please try again.';
+        ctx.profile.error =
+          data.message ||
+          t( ctx, 'saveFailed', 'Failed to save. Please try again.' );
         ctx.profile.saving = false;
         return;
       }
@@ -288,13 +337,17 @@ export const profileActions = {
       ctx.profile.saving = false;
       ctx.profile.saved = true;
 
-      showToast( ctx, 'Profile updated' );
+      showToast( ctx, t( ctx, 'profileUpdated', 'Profile updated' ) );
 
       setTimeout( () => {
         ctx.profile.saved = false;
       }, 2000 );
     } catch {
-      ctx.profile.error = 'Something went wrong. Please try again.';
+      ctx.profile.error = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       ctx.profile.saving = false;
     }
   },

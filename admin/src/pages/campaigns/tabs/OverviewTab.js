@@ -1,7 +1,7 @@
 import ClickableRows from '@shared/components/ClickableRows';
 import SkeletonBar from '@shared/components/SkeletonBar';
 import { DataViews } from '@wordpress/dataviews';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDate } from '@shared/date';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
@@ -281,14 +281,26 @@ function formatGoalValue( value, goalType ) {
   return value.toLocaleString();
 }
 
-function goalUnit( goalType ) {
+function formatGoalReached( value, goalType ) {
   if ( goalType === 'donors' ) {
-    return __( 'donors', 'mission-donation-platform' );
+    return sprintf(
+      /* translators: %s: number of donors */
+      _n( '%s donor', '%s donors', value, 'mission-donation-platform' ),
+      value.toLocaleString()
+    );
   }
   if ( goalType === 'donations' ) {
-    return __( 'donations', 'mission-donation-platform' );
+    return sprintf(
+      /* translators: %s: number of donations */
+      _n( '%s donation', '%s donations', value, 'mission-donation-platform' ),
+      value.toLocaleString()
+    );
   }
-  return __( 'raised', 'mission-donation-platform' );
+  return sprintf(
+    /* translators: %s: formatted amount raised */
+    __( '%s raised', 'mission-donation-platform' ),
+    formatAmount( value )
+  );
 }
 
 function prepareMilestones( campaign ) {
@@ -310,14 +322,14 @@ function prepareMilestones( campaign ) {
     if ( pctVal && goal > 0 ) {
       const target = Math.round( goal * ( pctVal / 100 ) );
       if ( m.reached ) {
-        milestone.detail =
-          formatGoalValue( target, gType ) + ' ' + goalUnit( gType );
+        milestone.detail = formatGoalReached( target, gType );
       } else {
         const remaining = Math.max( 0, target - progress );
-        milestone.detail =
-          formatGoalValue( remaining, gType ) +
-          ' ' +
-          __( 'more needed', 'mission-donation-platform' );
+        milestone.detail = sprintf(
+          /* translators: %s: amount or count still needed to reach a milestone */
+          __( '%s more needed', 'mission-donation-platform' ),
+          formatGoalValue( remaining, gType )
+        );
       }
     }
 

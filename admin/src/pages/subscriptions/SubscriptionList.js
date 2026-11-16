@@ -12,7 +12,7 @@ import {
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { usePersistedView } from '@shared/hooks/use-persisted-view';
 import { usePaginatedFetch } from '@shared/hooks/use-paginated-fetch';
@@ -331,10 +331,16 @@ export default function SubscriptionList() {
             value={ summary ? String( summary.active ) : '' }
             subtitle={
               summary
-                ? `${ summary.new_this_month } ${ __(
-                    'new this month',
-                    'mission-donation-platform'
-                  ) }`
+                ? sprintf(
+                    /* translators: %s: number of subscriptions started this month */
+                    _n(
+                      '%s new this month',
+                      '%s new this month',
+                      summary.new_this_month,
+                      'mission-donation-platform'
+                    ),
+                    summary.new_this_month
+                  )
                 : ''
             }
             isLoading={ ! summary }
@@ -350,10 +356,11 @@ export default function SubscriptionList() {
             value={ summary ? String( summary.churned ) : '' }
             subtitle={
               summary
-                ? `${ formatAmount( summary.churned_mrr ) }${ __(
-                    '/mo lost',
-                    'mission-donation-platform'
-                  ) }`
+                ? sprintf(
+                    /* translators: %s: monthly recurring amount lost to cancellations */
+                    __( '%s/mo lost', 'mission-donation-platform' ),
+                    formatAmount( summary.churned_mrr )
+                  )
                 : ''
             }
             isLoading={ ! summary }

@@ -50,6 +50,9 @@
 		"ctaUrl": {
 			"type": "string",
 			"default": ""
+		},
+		"ctaText": {
+			"type": "string"
 		}
 	},
 	"example": {},

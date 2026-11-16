@@ -54,6 +54,18 @@
             ],
             "This campaign has no end date, so days remaining will be hidden automatically.": [
                 "T\u00e4ll\u00e4 kampanjalla ei ole p\u00e4\u00e4ttymisp\u00e4iv\u00e4\u00e4, joten j\u00e4ljell\u00e4 olevat p\u00e4iv\u00e4t piilotetaan automaattisesti."
+            ],
+            "Become a Fundraiser": [
+                "Ryhdy varainker\u00e4\u00e4j\u00e4ksi"
+            ],
+            "Donate button text": [
+                "Lahjoita-painikkeen teksti"
+            ],
+            "Fundraiser button text": [
+                "Varainker\u00e4\u00e4j\u00e4painikkeen teksti"
+            ],
+            "Shown on peer-to-peer campaigns while fundraiser signup is open.": [
+                "N\u00e4ytet\u00e4\u00e4n vertaisvarainkeruukampanjoissa, kun varainker\u00e4\u00e4jien ilmoittautuminen on avoinna."
             ]
         }
     }

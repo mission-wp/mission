@@ -16,14 +16,11 @@
 			"Ended": [
 				"Päättynyt"
 			],
+			"of %s": [
+				"/ %s"
+			],
 			"Ends %s": [
 				"Päättyy %s"
-			],
-			"donors": [
-				"lahjoittajaa"
-			],
-			"raised": [
-				"kerätty"
 			],
 			"donations": [
 				"lahjoitusta"
@@ -419,15 +416,6 @@
 			"Ends": [
 				"Päättyy"
 			],
-			"active": [
-				"aktiivinen"
-			],
-			"ended": [
-				"päättynyt"
-			],
-			"scheduled": [
-				"ajastettu"
-			],
 			"All": [
 				"Kaikki"
 			],
@@ -478,12 +466,6 @@
 			],
 			"View Campaign Page": [
 				"Näytä kampanjasivu"
-			],
-			"of": [
-				"/"
-			],
-			"funded": [
-				"rahoitettu"
 			],
 			"Edit Page": [
 				"Muokkaa sivua"
@@ -538,9 +520,6 @@
 			],
 			"100% — Goal reached!": [
 				"100 % — Tavoite saavutettu!"
-			],
-			"more needed": [
-				"tarvitaan vielä"
 			],
 			"Donations to this campaign will appear here as they come in": [
 				"Tämän kampanjan lahjoitukset näkyvät täällä sitä mukaa kun niitä saapuu"
@@ -783,10 +762,12 @@
 				"Kampanjan välitavoite saavutettu"
 			],
 			"%s donor": [
-				"%s lahjoittaja"
+				"%s lahjoittaja",
+				"%s lahjoittajaa"
 			],
 			"%s donation": [
-				"%s lahjoitus"
+				"%s lahjoitus",
+				"%s lahjoitusta"
 			],
 			"<campaign /> reached its <goal /> goal": [
 				"<campaign /> saavutti <goal /> tavoitteensa"
@@ -1114,9 +1095,6 @@
 			],
 			"Repeat Donors": [
 				"Toistuvat lahjoittajat"
-			],
-			"of all donors": [
-				"kaikista lahjoittajista"
 			],
 			"No donors yet.": [
 				"Ei vielä lahjoittajia."
@@ -1577,9 +1555,6 @@
 			"Active Subscriptions": [
 				"Aktiiviset tilaukset"
 			],
-			"new this month": [
-				"uutta tässä kuussa"
-			],
 			"Avg. Subscription": [
 				"Keskim. tilaus"
 			],
@@ -1588,9 +1563,6 @@
 			],
 			"Churned": [
 				"Menetetty"
-			],
-			"/mo lost": [
-				"/kk menetetty"
 			],
 			"No subscriptions yet": [
 				"Ei vielä tilauksia"
@@ -1605,7 +1577,8 @@
 				"Näytä profiili"
 			],
 			"donation": [
-				"lahjoitus"
+				"lahjoitus",
+				"lahjoitusta"
 			],
 			"Email notification sent to": [
 				"Sähköposti-ilmoitus lähetetty vastaanottajalle"
@@ -1955,9 +1928,6 @@
 			"Remove all transactions made with Stripe test mode keys. %s found.": [
 				"Poista kaikki maksutapahtumat, jotka on tehty Stripen testitilan avaimilla. %s löytyi."
 			],
-			"test transactions": [
-				"testimaksutapahtumat"
-			],
 			"This will permanently delete %s test transactions. This cannot be undone.": [
 				"Tämä poistaa pysyvästi %s testimaksutapahtumaa. Tätä ei voi kumota."
 			],
@@ -1972,9 +1942,6 @@
 			],
 			"Remove donors that only have test mode transactions (no live donations). %s found.": [
 				"Poista lahjoittajat, joilla on vain testitilan maksutapahtumia (ei tuotantotilan lahjoituksia). %s löytyi."
-			],
-			"test-only donors": [
-				"vain testilahjoittajat"
 			],
 			"This will permanently delete %s test-only donors and their associated data. This cannot be undone.": [
 				"Tämä poistaa pysyvästi %s vain testilahjoittajaa ja heihin liittyvät tiedot. Tätä ei voi kumota."
@@ -2697,9 +2664,6 @@
 			"Available": [
 				"Saatavilla"
 			],
-			"seconds": [
-				"sekuntia"
-			],
 			"Database prefix": [
 				"Tietokannan etuliite"
 			],
@@ -2708,9 +2672,6 @@
 			],
 			"Mission tables size": [
 				"Mission-taulujen koko"
-			],
-			"by": [
-				"tekijä"
 			],
 			"Version": [
 				"Versio"
@@ -2976,18 +2937,6 @@
 			"Receipt sent": [
 				"Kuitti lähetetty"
 			],
-			"Sent to": [
-				"Vastaanottaja"
-			],
-			"By": [
-				"Tekijä"
-			],
-			"returned to": [
-				"palautettu vastaanottajalle"
-			],
-			"returned": [
-				"palautettu"
-			],
 			"This transaction is part of a recurring subscription.": [
 				"Tämä maksutapahtuma on osa toistuvaa tilausta."
 			],
@@ -3179,6 +3128,9 @@
 			],
 			"Inactive": [
 				"Ei aktiivinen"
+			],
+			"%s raised": [
+				"%s kerätty"
 			],
 			"Fundraiser": [
 				"Varainkerääjä"
@@ -3690,6 +3642,90 @@
 			],
 			"This fundraiser is their team’s captain. Changing their team leaves the captain role vacant.": [
 				"Tämä varainkerääjä on tiiminsä kapteeni. Tiimin vaihtaminen jättää kapteenin paikan avoimeksi."
+			],
+			"All active": [
+				"Kaikki aktiivisia"
+			],
+			"%s active": [
+				"%s aktiivinen",
+				"%s aktiivista"
+			],
+			"All ended": [
+				"Kaikki päättyneitä"
+			],
+			"%s ended": [
+				"%s päättynyt",
+				"%s päättynyttä"
+			],
+			"All scheduled": [
+				"Kaikki ajastettuja"
+			],
+			"%s scheduled": [
+				"%s ajastettu",
+				"%s ajastettua"
+			],
+			"of %s donor": [
+				"/ %s lahjoittaja",
+				"/ %s lahjoittajaa"
+			],
+			"of %s donation": [
+				"/ %s lahjoitus",
+				"/ %s lahjoitusta"
+			],
+			"%s%% funded": [
+				"%s %% rahoitettu"
+			],
+			"%s more needed": [
+				"tarvitaan vielä %s"
+			],
+			"%s lifetime": [
+				"%s kaikkiaan"
+			],
+			"%s%% of all donors": [
+				"%s %% kaikista lahjoittajista"
+			],
+			"donation recipient column\u0004To": [
+				"Saaja"
+			],
+			"%s new this month": [
+				"%s uusi tässä kuussa",
+				"%s uutta tässä kuussa"
+			],
+			"%s/mo lost": [
+				"%s/kk menetetty"
+			],
+			"%s test transaction": [
+				"%s testimaksutapahtuma",
+				"%s testimaksutapahtumaa"
+			],
+			"%s test-only donor": [
+				"%s vain testilahjoittaja",
+				"%s vain testilahjoittajaa"
+			],
+			"Export %s": [
+				"Vie: %s"
+			],
+			"%s second": [
+				"%s sekunti",
+				"%s sekuntia"
+			],
+			"by %s": [
+				"tekijä: %s"
+			],
+			"Active Plugins (%d)": [
+				"Aktiiviset lisäosat (%d)"
+			],
+			"Sent to %s": [
+				"Vastaanottaja: %s"
+			],
+			"By %s": [
+				"Tekijä: %s"
+			],
+			"%1$s returned to %2$s": [
+				"%1$s palautettu maksutavalle %2$s"
+			],
+			"%s returned": [
+				"%s palautettu"
 			]
 		}
 	}

@@ -104,15 +104,16 @@ class DonorWallEndpoint {
 	private function sanitize_item( array $item ): array {
 		if ( $item['is_anonymous'] ) {
 			return [
-				'name'          => __( 'Anonymous', 'mission-donation-platform' ),
-				'initials'      => '?',
-				'is_anonymous'  => true,
-				'amount'        => $item['amount'],
-				'currency'      => $item['currency'],
-				'date'          => $item['date'],
-				'type'          => $item['type'],
-				'gravatar_hash' => null,
-				'comment'       => $this->truncate_comment( $item['comment'] ),
+				'name'           => __( 'Anonymous', 'mission-donation-platform' ),
+				'initials'       => '?',
+				'is_anonymous'   => true,
+				'amount'         => $item['amount'],
+				'currency'       => $item['currency'],
+				'date'           => $item['date'],
+				'type'           => $item['type'],
+				'gravatar_hash'  => null,
+				'comment'        => $this->truncate_comment( $item['comment'] ),
+				'formatted_date' => $this->relative_date( $item['date'] ),
 			];
 		}
 
@@ -134,16 +135,28 @@ class DonorWallEndpoint {
 		}
 
 		return [
-			'name'          => $name,
-			'initials'      => $initials,
-			'is_anonymous'  => false,
-			'amount'        => $item['amount'],
-			'currency'      => $item['currency'],
-			'date'          => $item['date'],
-			'type'          => $item['type'],
-			'gravatar_hash' => $gravatar_hash,
-			'comment'       => $this->truncate_comment( $item['comment'] ),
+			'name'           => $name,
+			'initials'       => $initials,
+			'is_anonymous'   => false,
+			'amount'         => $item['amount'],
+			'currency'       => $item['currency'],
+			'date'           => $item['date'],
+			'type'           => $item['type'],
+			'gravatar_hash'  => $gravatar_hash,
+			'comment'        => $this->truncate_comment( $item['comment'] ),
+			'formatted_date' => $this->relative_date( $item['date'] ),
 		];
+	}
+
+	/**
+	 * Format a donation date relative to now, in the site language.
+	 *
+	 * @param string $date Donation date (GMT).
+	 * @return string e.g. "2 hours ago".
+	 */
+	private function relative_date( string $date ): string {
+		/* translators: %s: human time diff, e.g. "2 hours" */
+		return sprintf( __( '%s ago', 'mission-donation-platform' ), human_time_diff( strtotime( $date ) ) );
 	}
 
 	/**

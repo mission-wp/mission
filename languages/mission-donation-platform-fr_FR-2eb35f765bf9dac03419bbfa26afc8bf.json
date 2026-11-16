@@ -1,0 +1,399 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/donation-form\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_FR",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "One Time": [
+                "Ponctuel"
+            ],
+            "Weekly": [
+                "Hebdomadaire"
+            ],
+            "Monthly": [
+                "Mensuel"
+            ],
+            "Quarterly": [
+                "Trimestriel"
+            ],
+            "Annually": [
+                "Annuel"
+            ],
+            "Choose Your Weekly Gift": [
+                "Choisissez votre don hebdomadaire"
+            ],
+            "Choose Your Monthly Gift": [
+                "Choisissez votre don mensuel"
+            ],
+            "Choose Your Quarterly Gift": [
+                "Choisissez votre don trimestriel"
+            ],
+            "Choose Your Annual Gift": [
+                "Choisissez votre don annuel"
+            ],
+            "Choose Your Gift": [
+                "Choisissez votre don"
+            ],
+            "Ongoing": [
+                "R\u00e9current"
+            ],
+            "Give": [
+                "Donner"
+            ],
+            "Other": [
+                "Autre"
+            ],
+            "Continue": [
+                "Continuer"
+            ],
+            "Additional Information": [
+                "Informations compl\u00e9mentaires"
+            ],
+            "Donate": [
+                "Donner"
+            ],
+            "Thank you!": [
+                "Merci\u00a0!"
+            ],
+            "Your donation has been processed successfully. You will receive a confirmation email shortly.": [
+                "Votre don a bien \u00e9t\u00e9 trait\u00e9. Vous recevrez un e-mail de confirmation sous peu."
+            ],
+            "One-time": [
+                "Ponctuel"
+            ],
+            "Campaign": [
+                "Campagne"
+            ],
+            "Type": [
+                "Type"
+            ],
+            "Cancel": [
+                "Annuler"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Donation Form": [
+                "Formulaire de don"
+            ],
+            "Payments": [
+                "Paiements"
+            ],
+            "Select": [
+                "S\u00e9lectionner"
+            ],
+            "Save": [
+                "Enregistrer"
+            ],
+            "Stripe account": [
+                "Compte Stripe"
+            ],
+            "Appearance": [
+                "Apparence"
+            ],
+            "default": [
+                "par d\u00e9faut"
+            ],
+            "Options": [
+                "Options"
+            ],
+            "Copy from\u2026": [
+                "Copier depuis\u2026"
+            ],
+            "Add a description (optional)": [
+                "Ajoutez une description (facultatif)"
+            ],
+            "Add": [
+                "Ajouter"
+            ],
+            "Select a Campaign": [
+                "S\u00e9lectionnez une campagne"
+            ],
+            "Donation Frequencies": [
+                "Fr\u00e9quences de don"
+            ],
+            "Donors will only be able to set up a recurring gift.": [
+                "Les donateurs pourront uniquement mettre en place un don r\u00e9current."
+            ],
+            "Select which frequencies are available on donation forms": [
+                "S\u00e9lectionnez les fr\u00e9quences disponibles sur les formulaires de don"
+            ],
+            "Suggested Amounts": [
+                "Montants sugg\u00e9r\u00e9s"
+            ],
+            "With descriptions": [
+                "Avec descriptions"
+            ],
+            "Press Enter to add an amount. Click an amount to set it as the pre-selected default.": [
+                "Appuyez sur Entr\u00e9e pour ajouter un montant. Cliquez sur un montant pour le d\u00e9finir comme valeur pr\u00e9s\u00e9lectionn\u00e9e par d\u00e9faut."
+            ],
+            "Default Frequency": [
+                "Fr\u00e9quence par d\u00e9faut"
+            ],
+            "Pre-selected frequency when the form loads": [
+                "Fr\u00e9quence pr\u00e9s\u00e9lectionn\u00e9e au chargement du formulaire"
+            ],
+            "Allow custom amount": [
+                "Autoriser le montant libre"
+            ],
+            "Let donors enter their own amount": [
+                "Permet aux donateurs de saisir leur propre montant"
+            ],
+            "Minimum Donation": [
+                "Don minimum"
+            ],
+            "Allow anonymous donations": [
+                "Autoriser les dons anonymes"
+            ],
+            "Let donors hide their name from public displays": [
+                "Permet aux donateurs de masquer leur nom dans les affichages publics"
+            ],
+            "Allow donor comments": [
+                "Autoriser les commentaires des donateurs"
+            ],
+            "Show a comment field where donors can leave a message": [
+                "Affiche un champ de commentaire o\u00f9 les donateurs peuvent laisser un message"
+            ],
+            "Require phone number": [
+                "Exiger le num\u00e9ro de t\u00e9l\u00e9phone"
+            ],
+            "Show and require a phone number field": [
+                "Affiche et rend obligatoire un champ de num\u00e9ro de t\u00e9l\u00e9phone"
+            ],
+            "Require billing address": [
+                "Exiger l\u2019adresse de facturation"
+            ],
+            "Collect the donor's full billing address": [
+                "Recueille l\u2019adresse de facturation compl\u00e8te du donateur"
+            ],
+            "Allow dedications": [
+                "Autoriser les d\u00e9dicaces"
+            ],
+            "Let donors dedicate their gift in honor or memory of someone": [
+                "Permet aux donateurs de d\u00e9dier leur don en l\u2019honneur ou \u00e0 la m\u00e9moire de quelqu\u2019un"
+            ],
+            "Default account (%s)": [
+                "Compte par d\u00e9faut (%s)"
+            ],
+            "unnamed": [
+                "sans nom"
+            ],
+            "Default account": [
+                "Compte par d\u00e9faut"
+            ],
+            "Organization absorbs fees": [
+                "L\u2019organisation prend en charge les frais"
+            ],
+            "Your organization covers all processing fees": [
+                "Votre organisation couvre tous les frais de traitement"
+            ],
+            "Give donors the option to cover fees": [
+                "Proposer aux donateurs de couvrir les frais"
+            ],
+            "Donors can choose to add processing fees to their donation": [
+                "Les donateurs peuvent choisir d\u2019ajouter les frais de traitement \u00e0 leur don"
+            ],
+            "Require donors to cover fees": [
+                "Exiger que les donateurs couvrent les frais"
+            ],
+            "Processing fees are automatically included in every donation": [
+                "Les frais de traitement sont automatiquement inclus dans chaque don"
+            ],
+            "Optional donor tip": [
+                "Contribution volontaire du donateur"
+            ],
+            "Donors can leave an optional tip to support the Mission platform": [
+                "Les donateurs peuvent laisser une contribution volontaire pour soutenir la plateforme Mission"
+            ],
+            "Flat platform fee (3%)": [
+                "Frais de plateforme fixes (3\u00a0%)"
+            ],
+            "A flat 3% of each donation goes to support Mission": [
+                "Un taux fixe de 3\u00a0% de chaque don sert \u00e0 soutenir Mission"
+            ],
+            "Choose which connected Stripe account receives donations from this form.": [
+                "Choisissez le compte Stripe connect\u00e9 qui re\u00e7oit les dons de ce formulaire."
+            ],
+            "The previously selected account is no longer connected. Donations from this form will use the default account.": [
+                "Le compte pr\u00e9c\u00e9demment s\u00e9lectionn\u00e9 n\u2019est plus connect\u00e9. Les dons de ce formulaire utiliseront le compte par d\u00e9faut."
+            ],
+            "Processing Fees": [
+                "Frais de traitement"
+            ],
+            "Stripe charges %1$s%% + %2$s%3$s per transaction for payment processing.": [
+                "Stripe pr\u00e9l\u00e8ve %1$s\u00a0%% + %2$s%3$s par transaction pour le traitement des paiements."
+            ],
+            "Platform Fee": [
+                "Frais de plateforme"
+            ],
+            "Mission is funded by optional donor tips or a small platform fee \u2014 your choice.": [
+                "Mission est financ\u00e9 par les contributions volontaires des donateurs ou par de modestes frais de plateforme\u00a0: \u00e0 vous de choisir."
+            ],
+            "Display a confirmation message": [
+                "Afficher un message de confirmation"
+            ],
+            "Show a thank-you message after a successful donation": [
+                "Affiche un message de remerciement apr\u00e8s un don r\u00e9ussi"
+            ],
+            "Redirect to a URL": [
+                "Rediriger vers une URL"
+            ],
+            "Send donors to a specific page after donating": [
+                "Redirige les donateurs vers une page pr\u00e9cise apr\u00e8s leur don"
+            ],
+            "After Donation": [
+                "Apr\u00e8s le don"
+            ],
+            "Choose what happens after a donor completes their donation.": [
+                "Choisissez ce qui se passe une fois qu\u2019un donateur a finalis\u00e9 son don."
+            ],
+            "Tip: Use the \"Edit Confirmation\" button in the editor to customize the message.": [
+                "Astuce\u00a0: utilisez le bouton \u00ab\u00a0Modifier la confirmation\u00a0\u00bb dans l\u2019\u00e9diteur pour personnaliser le message."
+            ],
+            "Redirect URL": [
+                "URL de redirection"
+            ],
+            "Search or type a URL": [
+                "Recherchez ou saisissez une URL"
+            ],
+            "Donors will be redirected to this page after a successful donation.": [
+                "Les donateurs seront redirig\u00e9s vers cette page apr\u00e8s un don r\u00e9ussi."
+            ],
+            "Primary Color": [
+                "Couleur principale"
+            ],
+            "Reset to global": [
+                "R\u00e9tablir le r\u00e9glage global"
+            ],
+            "Using a custom color for this form": [
+                "Couleur personnalis\u00e9e utilis\u00e9e pour ce formulaire"
+            ],
+            "Using global setting": [
+                "R\u00e9glage global utilis\u00e9"
+            ],
+            "Choose Gift Heading": [
+                "Titre du choix du don"
+            ],
+            "The heading shown on the first step of the form": [
+                "Le titre affich\u00e9 \u00e0 la premi\u00e8re \u00e9tape du formulaire"
+            ],
+            "Continue Button": [
+                "Bouton Continuer"
+            ],
+            "Text on the button that advances each step": [
+                "Texte du bouton qui fait passer \u00e0 l\u2019\u00e9tape suivante"
+            ],
+            "Additional Info Heading": [
+                "Titre des informations compl\u00e9mentaires"
+            ],
+            "The heading shown on the custom fields step": [
+                "Le titre affich\u00e9 \u00e0 l\u2019\u00e9tape des champs personnalis\u00e9s"
+            ],
+            "Summary Heading": [
+                "Titre du r\u00e9capitulatif"
+            ],
+            "Summary": [
+                "R\u00e9capitulatif"
+            ],
+            "The heading shown on the payment\/summary step": [
+                "Le titre affich\u00e9 \u00e0 l\u2019\u00e9tape de paiement\/r\u00e9capitulatif"
+            ],
+            "Donate Button": [
+                "Bouton de don"
+            ],
+            "Text on the final submit button": [
+                "Texte du bouton d\u2019envoi final"
+            ],
+            "Text": [
+                "Texte"
+            ],
+            "Textarea": [
+                "Zone de texte"
+            ],
+            "Checkbox": [
+                "Case \u00e0 cocher"
+            ],
+            "Multiselect": [
+                "S\u00e9lection multiple"
+            ],
+            "Radio": [
+                "Bouton radio"
+            ],
+            "Required": [
+                "Obligatoire"
+            ],
+            "Move up": [
+                "Monter"
+            ],
+            "Move down": [
+                "Descendre"
+            ],
+            "Label": [
+                "Libell\u00e9"
+            ],
+            "Enter a label\u2026": [
+                "Saisissez un libell\u00e9\u2026"
+            ],
+            "A label is required.": [
+                "Un libell\u00e9 est obligatoire."
+            ],
+            "Placeholder": [
+                "Texte indicatif"
+            ],
+            "Option %d": [
+                "Option %d"
+            ],
+            "Remove option": [
+                "Retirer l\u2019option"
+            ],
+            "Add option": [
+                "Ajouter une option"
+            ],
+            "Remove field": [
+                "Retirer le champ"
+            ],
+            "Collect additional information from donors.": [
+                "Recueillez des informations compl\u00e9mentaires aupr\u00e8s des donateurs."
+            ],
+            "Add Field": [
+                "Ajouter un champ"
+            ],
+            "Amounts": [
+                "Montants"
+            ],
+            "Donor Info": [
+                "Infos du donateur"
+            ],
+            "Custom Fields": [
+                "Champs personnalis\u00e9s"
+            ],
+            "Confirmation": [
+                "Confirmation"
+            ],
+            "Donation Form Settings": [
+                "R\u00e9glages du formulaire de don"
+            ],
+            "Form Settings": [
+                "R\u00e9glages du formulaire"
+            ],
+            "Edit Confirmation": [
+                "Modifier la confirmation"
+            ],
+            "Back to form": [
+                "Retour au formulaire"
+            ],
+            "Confirmation Message": [
+                "Message de confirmation"
+            ],
+            "This is displayed after a successful donation. Add any blocks you like.": [
+                "Ce contenu s\u2019affiche apr\u00e8s un don r\u00e9ussi. Ajoutez les blocs de votre choix."
+            ]
+        }
+    }
+}

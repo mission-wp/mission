@@ -209,6 +209,24 @@ $context = [
 	'customFieldErrors'        => (object) [],
 	'hasCustomFields'          => ! empty( $settings['customFields'] ),
 	'openMultiselectId'        => '',
+	// Translated strings for view.js (script modules can't import @wordpress/i18n).
+	'i18n'                     => [
+		'selectOptions'       => __( 'Select options', 'mission-donation-platform' ),
+		'removeNotification'  => __( 'Remove notification', 'mission-donation-platform' ),
+		'notifySomeone'       => __( 'Notify someone of this tribute', 'mission-donation-platform' ),
+		'suffixes'            => [
+			'weekly'    => __( '/wk', 'mission-donation-platform' ),
+			'monthly'   => __( '/mo', 'mission-donation-platform' ),
+			'quarterly' => __( '/qtr', 'mission-donation-platform' ),
+			'annually'  => __( '/yr', 'mission-donation-platform' ),
+		],
+		'elementNotLoaded'    => __( 'Payment element not loaded. Please refresh the page.', 'mission-donation-platform' ),
+		'paymentCreateFailed' => __( 'Failed to create payment. Please try again.', 'mission-donation-platform' ),
+		'unexpectedError'     => __( 'An unexpected error occurred. Please try again.', 'mission-donation-platform' ),
+		'paymentUnavailable'  => __( 'Payment system unavailable. Please refresh and try again.', 'mission-donation-platform' ),
+		'paymentInitFailed'   => __( 'Payment processing is not available right now. Please try again later.', 'mission-donation-platform' ),
+		'stripeDisconnected'  => __( 'Payment processing is not available. The site owner needs to reconnect Stripe in the Mission settings.', 'mission-donation-platform' ),
+	],
 ];
 ?>
 

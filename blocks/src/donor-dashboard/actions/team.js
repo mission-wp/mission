@@ -6,6 +6,7 @@
  * lock), so the client state is presentation only.
  */
 import { getContext } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import { showToast } from '../utils/toast';
 import { createPhotoFlow } from '../utils/photo-flow';
 import { findFundraiserCard } from './fundraisers';
@@ -292,7 +293,9 @@ export const teamActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        teams.edit.error = data.message || 'Could not save. Please try again.';
+        teams.edit.error =
+          data.message ||
+          t( ctx, 'couldNotSave', 'Could not save. Please try again.' );
         teams.edit.saving = false;
         return;
       }
@@ -320,7 +323,7 @@ export const teamActions = {
         teams.edit.saved = false;
       }, 2000 );
     } catch {
-      teams.edit.error = GENERIC_ERROR;
+      teams.edit.error = t( ctx, 'genericError', GENERIC_ERROR );
       teams.edit.saving = false;
     }
   },
@@ -358,7 +361,8 @@ export const teamActions = {
       const data = yield response.json();
 
       if ( ! response.ok ) {
-        teams.invite.error = data.message || GENERIC_ERROR;
+        teams.invite.error =
+          data.message || t( ctx, 'genericError', GENERIC_ERROR );
         teams.invite.sending = false;
         return;
       }
@@ -368,7 +372,7 @@ export const teamActions = {
       teams.invite.sending = false;
       showToast( ctx, teams.i18n?.inviteToast || 'Invitation sent' );
     } catch {
-      teams.invite.error = GENERIC_ERROR;
+      teams.invite.error = t( ctx, 'genericError', GENERIC_ERROR );
       teams.invite.sending = false;
     }
   },
@@ -400,7 +404,8 @@ export const teamActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        teams.edit.error = data.message || GENERIC_ERROR;
+        teams.edit.error =
+          data.message || t( ctx, 'genericError', GENERIC_ERROR );
         return;
       }
 
@@ -408,7 +413,7 @@ export const teamActions = {
       applyRoster( teams, card, data );
       showToast( ctx, teams.i18n?.removeToast || 'Member removed' );
     } catch {
-      teams.edit.error = GENERIC_ERROR;
+      teams.edit.error = t( ctx, 'genericError', GENERIC_ERROR );
     }
   },
 
@@ -439,7 +444,8 @@ export const teamActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        teams.edit.error = data.message || GENERIC_ERROR;
+        teams.edit.error =
+          data.message || t( ctx, 'genericError', GENERIC_ERROR );
         return;
       }
 
@@ -455,7 +461,7 @@ export const teamActions = {
       card.invitations = [];
       showToast( ctx, teams.i18n?.promoteToast || 'New captain set' );
     } catch {
-      teams.edit.error = GENERIC_ERROR;
+      teams.edit.error = t( ctx, 'genericError', GENERIC_ERROR );
     }
   },
 
@@ -488,7 +494,11 @@ export const teamActions = {
       if ( ! response.ok ) {
         const data = yield response.json();
         teams.leaving = false;
-        showToast( ctx, data.message || GENERIC_ERROR, 'error' );
+        showToast(
+          ctx,
+          data.message || t( ctx, 'genericError', GENERIC_ERROR ),
+          'error'
+        );
         return;
       }
 
@@ -514,7 +524,7 @@ export const teamActions = {
       showToast( ctx, teams.i18n?.leaveToast || 'You left the team' );
     } catch {
       teams.leaving = false;
-      showToast( ctx, GENERIC_ERROR, 'error' );
+      showToast( ctx, t( ctx, 'genericError', GENERIC_ERROR ), 'error' );
     }
   },
 

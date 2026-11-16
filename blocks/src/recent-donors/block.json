@@ -39,6 +39,9 @@
 			"type": "string",
 			"default": ""
 		},
+		"donateButtonText": {
+			"type": "string"
+		},
 		"numberOfDonors": {
 			"type": "number",
 			"default": 5

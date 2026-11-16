@@ -88,6 +88,8 @@ export default function Edit( { attributes, setAttributes } ) {
     campaignId,
     donateButtonAction,
     donateButtonUrl,
+    donateButtonText,
+    fundraiserButtonText,
     showDonors,
     showDaysRemaining,
   } = attributes;
@@ -268,7 +270,8 @@ export default function Edit( { attributes, setAttributes } ) {
         ) }
         { donateButtonAction !== 'hide' && (
           <div className="mission-progress__btn">
-            { __( 'Donate Now', 'mission-donation-platform' ) }
+            { donateButtonText ||
+              __( 'Donate Now', 'mission-donation-platform' ) }
           </div>
         ) }
       </div>
@@ -309,6 +312,32 @@ export default function Edit( { attributes, setAttributes } ) {
               placeholder="https://..."
             />
           ) }
+          { donateButtonAction !== 'hide' && (
+            <TextControl
+              label={ __( 'Donate button text', 'mission-donation-platform' ) }
+              value={ donateButtonText ?? '' }
+              placeholder={ __( 'Donate Now', 'mission-donation-platform' ) }
+              onChange={ ( val ) => setAttributes( { donateButtonText: val } ) }
+            />
+          ) }
+          <TextControl
+            label={ __(
+              'Fundraiser button text',
+              'mission-donation-platform'
+            ) }
+            value={ fundraiserButtonText ?? '' }
+            placeholder={ __(
+              'Become a Fundraiser',
+              'mission-donation-platform'
+            ) }
+            onChange={ ( val ) =>
+              setAttributes( { fundraiserButtonText: val } )
+            }
+            help={ __(
+              'Shown on peer-to-peer campaigns while fundraiser signup is open.',
+              'mission-donation-platform'
+            ) }
+          />
           <ToggleControl
             label={ __( 'Show donors', 'mission-donation-platform' ) }
             checked={ showDonors }
