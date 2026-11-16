@@ -3,7 +3,7 @@
  *
  * Used by both the Campaign Card and Campaign Grid blocks.
  */
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 
 /**
@@ -113,7 +113,11 @@ export function getTimeText( campaign, daysRemaining ) {
   const { status, date_end: dateEnd } = campaign;
 
   if ( ! dateEnd ) {
-    return __( 'Ongoing', 'mission-donation-platform' );
+    return _x(
+      'Ongoing',
+      'campaign with no end date',
+      'mission-donation-platform'
+    );
   }
 
   const datePart = dateEnd.split( ' ' )[ 0 ];
