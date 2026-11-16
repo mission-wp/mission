@@ -8,6 +8,7 @@
 namespace MissionDP\DonorDashboard;
 
 use MissionDP\Models\Campaign;
+use MissionDP\Models\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -137,5 +138,46 @@ class DashboardLabels {
 
 		/* translators: %s: campaign end date */
 		return sprintf( __( 'Ends %s', 'mission-donation-platform' ), date_i18n( 'M j, Y', strtotime( (string) $campaign->date_end ) ) );
+	}
+
+	/**
+	 * Human-readable transaction status labels keyed by status.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function transaction_status_labels(): array {
+		return [
+			Transaction::STATUS_PENDING   => __( 'Pending', 'mission-donation-platform' ),
+			Transaction::STATUS_COMPLETED => __( 'Completed', 'mission-donation-platform' ),
+			Transaction::STATUS_REFUNDED  => __( 'Refunded', 'mission-donation-platform' ),
+			Transaction::STATUS_CANCELLED => __( 'Cancelled', 'mission-donation-platform' ),
+			Transaction::STATUS_FAILED    => __( 'Failed', 'mission-donation-platform' ),
+		];
+	}
+
+	/**
+	 * Human-readable label for a transaction status ("Completed").
+	 *
+	 * @param string $status Transaction status.
+	 * @return string
+	 */
+	public static function transaction_status_label( string $status ): string {
+		return self::transaction_status_labels()[ $status ] ?? ucfirst( $status );
+	}
+
+	/**
+	 * Human-readable label for a saved card ("Visa ending in 4242").
+	 *
+	 * @param string $brand Card brand, e.g. "visa". Empty when unknown.
+	 * @param string $last4 Last four digits of the card.
+	 * @return string
+	 */
+	public static function payment_method_label( string $brand, string $last4 ): string {
+		return sprintf(
+			/* translators: 1: card brand, e.g. "Visa", 2: last four digits of the card */
+			__( '%1$s ending in %2$s', 'mission-donation-platform' ),
+			'' !== $brand ? ucfirst( $brand ) : __( 'Card', 'mission-donation-platform' ),
+			$last4
+		);
 	}
 }

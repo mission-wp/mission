@@ -5,6 +5,7 @@
  * ownership (and that the campaign is still live) on every request.
  */
 import { getContext } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import { showToast } from '../utils/toast';
 import { createPhotoFlow } from '../utils/photo-flow';
 
@@ -274,7 +275,9 @@ export const fundraisersActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        fr.edit.error = data.message || 'Could not save. Please try again.';
+        fr.edit.error =
+          data.message ||
+          t( ctx, 'couldNotSave', 'Could not save. Please try again.' );
         fr.edit.saving = false;
         return;
       }
@@ -305,7 +308,7 @@ export const fundraisersActions = {
         fr.edit.saved = false;
       }, 2000 );
     } catch {
-      fr.edit.error = GENERIC_ERROR;
+      fr.edit.error = t( ctx, 'genericError', GENERIC_ERROR );
       fr.edit.saving = false;
     }
   },

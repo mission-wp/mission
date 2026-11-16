@@ -268,6 +268,7 @@ class DashboardContextBuilder {
 			'stripeAppearance'     => apply_filters( 'mission_stripe_appearance', [] ),
 			'validPanels'          => array_values( array_keys( $panels ) ),
 			'panelLabels'          => $panel_labels,
+			'i18n'                 => DashboardStrings::all(),
 			'toast'                => [
 				'visible'    => false,
 				'message'    => '',
@@ -442,7 +443,7 @@ class DashboardContextBuilder {
 				: date_i18n( 'M j, Y', strtotime( $txn->date_created ) ),
 			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'mission-donation-platform' ),
 			'status'          => $txn->status,
-			'statusLabel'     => ucfirst( $txn->status ),
+			'statusLabel'     => DashboardLabels::transaction_status_label( $txn->status ),
 			'isRecurring'     => $is_recurring,
 		];
 	}
@@ -472,6 +473,7 @@ class DashboardContextBuilder {
 			'tipAmount'                => $sub->tip_amount,
 			'currency'                 => strtoupper( $sub->currency ),
 			'formattedAmount'          => Currency::format_amount( $sub->amount, $this->currency ),
+			'frequency'                => $sub->frequency,
 			'frequencySuffix'          => $this->frequency_suffix[ $sub->frequency ] ?? $sub->frequency,
 			'frequencyLabel'           => $this->frequency_labels[ $sub->frequency ] ?? ucfirst( $sub->frequency ),
 			'campaignName'             => $campaign?->title ?? __( 'Deleted Campaign', 'mission-donation-platform' ),
@@ -482,7 +484,7 @@ class DashboardContextBuilder {
 				? date_i18n( 'M j, Y', strtotime( $sub->date_next_renewal ) )
 				: '',
 			'paymentMethod'            => $pm_last4
-				? ucfirst( $sub->get_meta( 'payment_method_brand' ) ?: 'Card' ) . ' ending in ' . $pm_last4
+				? DashboardLabels::payment_method_label( (string) $sub->get_meta( 'payment_method_brand' ), (string) $pm_last4 )
 				: __( 'Card on file', 'mission-donation-platform' ),
 			'cancelLoading'            => false,
 			'pauseLoading'             => false,
@@ -545,7 +547,7 @@ class DashboardContextBuilder {
 				: date_i18n( 'M j, Y', strtotime( $txn->date_created ) ),
 			'campaignName'    => $campaign?->title ?? __( 'Deleted Campaign', 'mission-donation-platform' ),
 			'status'          => $txn->status,
-			'statusLabel'     => ucfirst( $txn->status ),
+			'statusLabel'     => DashboardLabels::transaction_status_label( $txn->status ),
 			'isRecurring'     => $is_recurring,
 			'typeLabel'       => $is_recurring ? __( 'Recurring', 'mission-donation-platform' ) : __( 'One-time', 'mission-donation-platform' ),
 		];

@@ -5,6 +5,7 @@
  * and update payment method actions.
  */
 import { getContext, getElement } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import {
   getCurrencyDecimals,
   minorToMajor,
@@ -325,12 +326,13 @@ export const recurringState = {
     );
   },
   get changeUpdateButtonLabel() {
-    const sub = getContext().sub;
+    const ctx = getContext();
+    const sub = ctx.sub;
     if ( ! sub ) {
-      return 'Update';
+      return t( ctx, 'update', 'Update' );
     }
     if ( sub.changeLoading ) {
-      return 'Updating\u2026';
+      return t( ctx, 'updating', 'Updating\u2026' );
     }
     const base = majorToMinor(
       parseFloat( sub.changeAmountInput ) || 0,
@@ -357,16 +359,17 @@ export const recurringState = {
         );
       }
     }
-    return `Update to ${ formatAmount( total, sub.currency ) } ${
-      sub.frequencySuffix
-    }`;
+    return t(
+      ctx,
+      'updateTo',
+      'Update to %s',
+      `${ formatAmount( total, sub.currency ) } ${ sub.frequencySuffix }`
+    );
   },
   get changeAmountLabel() {
-    const sub = getContext().sub;
-    if ( ! sub ) {
-      return 'New amount';
-    }
-    return `New ${ sub.frequencyLabel?.toLowerCase() || '' } amount`;
+    const ctx = getContext();
+    const newAmount = t( ctx, 'newAmount', 'New amount' );
+    return ctx.i18n?.newAmountByFrequency?.[ ctx.sub?.frequency ] || newAmount;
   },
   get subPaymentElementId() {
     const sub = getContext().sub;
@@ -377,11 +380,12 @@ export const recurringState = {
     return sub?.updatePaymentLoading || ! sub?.updatePaymentReady;
   },
   get subUpdatePaymentLabel() {
-    const sub = getContext().sub;
+    const ctx = getContext();
+    const sub = ctx.sub;
     if ( sub?.updatePaymentLoading ) {
-      return 'Updating\u2026';
+      return t( ctx, 'updating', 'Updating\u2026' );
     }
-    return 'Update Payment Method';
+    return t( ctx, 'updatePaymentMethod', 'Update Payment Method' );
   },
 };
 
@@ -389,7 +393,11 @@ export const recurringActions = {
   *cancelSubscription() {
     // eslint-disable-next-line no-alert
     const confirmed = window.confirm(
-      'Are you sure you want to cancel this recurring donation? This cannot be undone.'
+      t(
+        ctx,
+        'confirmCancel',
+        'Are you sure you want to cancel this recurring donation? This cannot be undone.'
+      )
     );
 
     if ( ! confirmed ) {
@@ -418,15 +426,24 @@ export const recurringActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        sub.actionError = data.message || 'Failed to cancel. Please try again.';
+        sub.actionError =
+          data.message ||
+          t( ctx, 'cancelFailed', 'Failed to cancel. Please try again.' );
         sub.cancelLoading = false;
         return;
       }
 
       moveToCancelled( ctx, subId );
-      showToast( ctx, 'Subscription cancelled' );
+      showToast(
+        ctx,
+        t( ctx, 'subscriptionCancelled', 'Subscription cancelled' )
+      );
     } catch {
-      sub.actionError = 'Something went wrong. Please try again.';
+      sub.actionError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       sub.cancelLoading = false;
     }
   },
@@ -454,16 +471,22 @@ export const recurringActions = {
       const data = yield response.json();
 
       if ( ! response.ok ) {
-        sub.actionError = data.message || 'Failed to pause. Please try again.';
+        sub.actionError =
+          data.message ||
+          t( ctx, 'pauseFailed', 'Failed to pause. Please try again.' );
         sub.pauseLoading = false;
         return;
       }
 
       sub.status = data.status;
       sub.pauseLoading = false;
-      showToast( ctx, 'Subscription paused' );
+      showToast( ctx, t( ctx, 'subscriptionPaused', 'Subscription paused' ) );
     } catch {
-      sub.actionError = 'Something went wrong. Please try again.';
+      sub.actionError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       sub.pauseLoading = false;
     }
   },
@@ -491,16 +514,22 @@ export const recurringActions = {
       const data = yield response.json();
 
       if ( ! response.ok ) {
-        sub.actionError = data.message || 'Failed to resume. Please try again.';
+        sub.actionError =
+          data.message ||
+          t( ctx, 'resumeFailed', 'Failed to resume. Please try again.' );
         sub.pauseLoading = false;
         return;
       }
 
       sub.status = data.status;
       sub.pauseLoading = false;
-      showToast( ctx, 'Subscription resumed' );
+      showToast( ctx, t( ctx, 'subscriptionResumed', 'Subscription resumed' ) );
     } catch {
-      sub.actionError = 'Something went wrong. Please try again.';
+      sub.actionError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       sub.pauseLoading = false;
     }
   },
@@ -719,7 +748,9 @@ export const recurringActions = {
 
       if ( ! response.ok ) {
         const data = yield response.json();
-        sub.changeError = data.message || 'Failed to update. Try again.';
+        sub.changeError =
+          data.message ||
+          t( ctx, 'updateFailed', 'Failed to update. Please try again.' );
         sub.changeLoading = false;
         return;
       }
@@ -730,9 +761,13 @@ export const recurringActions = {
       sub.formattedAmount = formatAmount( donationAmount, sub.currency );
       sub.changeAmountOpen = false;
       sub.changeLoading = false;
-      showToast( ctx, 'Donation amount updated' );
+      showToast( ctx, t( ctx, 'amountUpdated', 'Donation amount updated' ) );
     } catch {
-      sub.changeError = 'Something went wrong. Please try again.';
+      sub.changeError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       sub.changeLoading = false;
     }
   },
@@ -751,8 +786,11 @@ export const recurringActions = {
     sub.updatePaymentLoading = false;
 
     if ( ! window.Stripe ) {
-      sub.updatePaymentError =
-        'Payment system unavailable. Please refresh and try again.';
+      sub.updatePaymentError = t(
+        ctx,
+        'paymentUnavailable',
+        'Payment system unavailable. Please refresh and try again.'
+      );
       return;
     }
 
@@ -772,7 +810,12 @@ export const recurringActions = {
       if ( ! response.ok ) {
         const data = yield response.json();
         sub.updatePaymentError =
-          data.message || 'Failed to initialize. Please try again.';
+          data.message ||
+          t(
+            ctx,
+            'paymentInitFailed',
+            'Failed to initialize. Please try again.'
+          );
         return;
       }
 
@@ -823,7 +866,11 @@ export const recurringActions = {
     } catch ( err ) {
       // eslint-disable-next-line no-console -- Debugging aid.
       console.error( '[Mission] openUpdatePayment error:', err );
-      sub.updatePaymentError = 'Something went wrong. Please try again.';
+      sub.updatePaymentError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
     }
   },
 
@@ -877,7 +924,8 @@ export const recurringActions = {
       if ( ! response.ok ) {
         const data = yield response.json();
         sub.updatePaymentError =
-          data.message || 'Failed to update. Please try again.';
+          data.message ||
+          t( ctx, 'updateFailed', 'Failed to update. Please try again.' );
         sub.updatePaymentLoading = false;
         return;
       }
@@ -886,8 +934,14 @@ export const recurringActions = {
 
       const brand = pmData.brand
         ? pmData.brand.charAt( 0 ).toUpperCase() + pmData.brand.slice( 1 )
-        : 'Card';
-      sub.paymentMethod = `${ brand } ending in ${ pmData.last4 }`;
+        : t( ctx, 'card', 'Card' );
+      sub.paymentMethod = t(
+        ctx,
+        'cardEndingIn',
+        '%1$s ending in %2$s',
+        brand,
+        pmData.last4
+      );
 
       if (
         ctx.recurring.activeSubscriptions.length > 0 &&
@@ -905,9 +959,16 @@ export const recurringActions = {
       sub.updatePaymentLoading = false;
       cleanupStripe();
       cleanupFocusTrap();
-      showToast( ctx, 'Payment method updated' );
+      showToast(
+        ctx,
+        t( ctx, 'paymentMethodUpdated', 'Payment method updated' )
+      );
     } catch {
-      sub.updatePaymentError = 'Something went wrong. Please try again.';
+      sub.updatePaymentError = t(
+        ctx,
+        'genericError',
+        'Something went wrong. Please try again.'
+      );
       sub.updatePaymentLoading = false;
     }
   },
