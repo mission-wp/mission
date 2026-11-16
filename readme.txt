@@ -4,7 +4,7 @@ Tags: crowdfunding, donate, donation, fundraising, recurring donations
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable Tag: 1.6.1
+Stable Tag: 1.6.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -207,6 +207,9 @@ This plugin connects to the following third-party services:
 
 == Changelog ==
 
+= 1.6.2 =
+* Fix: Donors now pay exactly the amount they chose on donation forms set to "Organization absorbs fees"
+
 = 1.6.1 =
 * New: Mission is now available in French, including Canadian and Belgian French
 * Enhancement: Button labels on the Campaign Progress, Fundraiser Progress, Team Progress, Recent Donors, Top Donors, Top Fundraisers and Top Teams blocks can now be edited in the block settings
@@ -228,10 +231,5 @@ This plugin connects to the following third-party services:
 * New: Donation forms can now be recurring-only. Turn off One-time under Donation Frequencies and donors choose from the recurring options alone
 * Fix: Campaign settings that are switched off now stay shown as off after saving
 * Fix: The minimum donation notice, tribute notification fields and custom field errors now stay hidden until they apply, including on sites running the Gutenberg plugin
-
-= 1.5.0 =
-* Enhancement: Buttons, fields and links in the donation form, fundraiser signup, donor dashboard, campaign cards and donate button now keep their own look on any theme, including themes that add borders or outlines to every button
-* Enhancement: The optional tip now stays visible to donors even when a theme or custom CSS hides it by mistake, and any form where it can't be shown is handled the same way as the 3% platform fee option
-* Fix: Plugin updates now reach returning visitors right away instead of waiting for cached block styles to expire
 
 The full changelog for earlier releases is available [on GitHub](https://github.com/mission-wp/mission/blob/main/CHANGELOG.md).

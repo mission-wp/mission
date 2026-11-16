@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.2 (2026-11-16)
+
+* Fix: Donors now pay exactly the amount they chose on donation forms set to "Organization absorbs fees"
+
 ## 1.6.1 (2026-11-16)
 
 * New: Mission is now available in French, including Canadian and Belgian French
