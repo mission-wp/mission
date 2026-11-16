@@ -19,8 +19,9 @@
             "Goal Reached": [
                 "Meta alcanzada"
             ],
-            "Ongoing": [
-                "Recurrente"
+            "%d Day Left": [
+                "Queda %d d\u00eda",
+                "Quedan %d d\u00edas"
             ],
             "donors": [
                 "donantes"
@@ -30,12 +31,6 @@
             ],
             "Settings": [
                 "Ajustes"
-            ],
-            "1 Day Left": [
-                "Queda 1 d\u00eda"
-            ],
-            "Days Left": [
-                "D\u00edas restantes"
             ],
             "Show image": [
                 "Mostrar imagen"
@@ -60,6 +55,9 @@
             ],
             "Select a campaign or place this block on a campaign page.": [
                 "Selecciona una campa\u00f1a o coloca este bloque en una p\u00e1gina de campa\u00f1a."
+            ],
+            "campaign with no end date\u0004Ongoing": [
+                "En curso"
             ]
         }
     }

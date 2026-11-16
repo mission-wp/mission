@@ -16,8 +16,14 @@
             "Top Donors": [
                 "Principales donantes"
             ],
+            "Be the First Donor": [
+                "S\u00e9 el primer donante"
+            ],
             "Settings": [
                 "Ajustes"
+            ],
+            "Button text": [
+                "Texto del bot\u00f3n"
             ],
             "If empty, the campaign will be detected from the current post.": [
                 "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."

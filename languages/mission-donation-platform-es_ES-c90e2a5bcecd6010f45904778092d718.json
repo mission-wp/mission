@@ -16,6 +16,9 @@
             "Top Teams": [
                 "Mejores equipos"
             ],
+            "Start a Team": [
+                "Crear un equipo"
+            ],
             "%s member": [
                 "%s miembro",
                 "%s miembros"
@@ -25,6 +28,9 @@
             ],
             "Show progress bar": [
                 "Mostrar barra de progreso"
+            ],
+            "Button text": [
+                "Texto del bot\u00f3n"
             ],
             "If empty, the campaign will be detected from the current post.": [
                 "Si se deja vac\u00edo, la campa\u00f1a se detectar\u00e1 a partir de la entrada actual."

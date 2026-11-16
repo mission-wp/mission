@@ -19,6 +19,9 @@
             "Show progress bar": [
                 "N\u00e4yt\u00e4 edistymispalkki"
             ],
+            "Button text": [
+                "Painikkeen teksti"
+            ],
             "If empty, the campaign will be detected from the current post.": [
                 "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."
             ],
@@ -36,6 +39,9 @@
             ],
             "Top Teams": [
                 "Parhaat tiimit"
+            ],
+            "Start a Team": [
+                "Perusta tiimi"
             ],
             "%s member": [
                 "%s j\u00e4sen",

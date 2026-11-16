@@ -19,8 +19,9 @@
             "Goal Reached": [
                 "Tavoite saavutettu"
             ],
-            "Ongoing": [
-                "Toistuva"
+            "%d Day Left": [
+                "%d p\u00e4iv\u00e4 j\u00e4ljell\u00e4",
+                "%d p\u00e4iv\u00e4\u00e4 j\u00e4ljell\u00e4"
             ],
             "donors": [
                 "lahjoittajaa"
@@ -30,12 +31,6 @@
             ],
             "Settings": [
                 "Asetukset"
-            ],
-            "1 Day Left": [
-                "1 p\u00e4iv\u00e4 j\u00e4ljell\u00e4"
-            ],
-            "Days Left": [
-                "P\u00e4iv\u00e4\u00e4 j\u00e4ljell\u00e4"
             ],
             "Show image": [
                 "N\u00e4yt\u00e4 kuva"
@@ -60,6 +55,9 @@
             ],
             "Select a campaign or place this block on a campaign page.": [
                 "Valitse kampanja tai sijoita t\u00e4m\u00e4 lohko kampanjasivulle."
+            ],
+            "campaign with no end date\u0004Ongoing": [
+                "K\u00e4ynniss\u00e4"
             ]
         }
     }

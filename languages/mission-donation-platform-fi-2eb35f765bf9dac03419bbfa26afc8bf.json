@@ -328,9 +328,6 @@
             "Placeholder": [
                 "Paikkamerkki"
             ],
-            "Option": [
-                "Vaihtoehto"
-            ],
             "Remove option": [
                 "Poista vaihtoehto"
             ],
@@ -393,6 +390,9 @@
             ],
             "Choose Your Annual Gift": [
                 "Valitse vuosittainen lahjoituksesi"
+            ],
+            "Option %d": [
+                "Vaihtoehto %d"
             ]
         }
     }
