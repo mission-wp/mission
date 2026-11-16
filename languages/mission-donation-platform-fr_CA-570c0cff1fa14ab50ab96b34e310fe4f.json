@@ -1,0 +1,102 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/donor-wall\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_CA",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Monthly": [
+                "Mensuel"
+            ],
+            "Quarterly": [
+                "Trimestriel"
+            ],
+            "Annually": [
+                "Annuel"
+            ],
+            "Campaign": [
+                "Campagne"
+            ],
+            "Read more": [
+                "Lire la suite"
+            ],
+            "Show More Donations": [
+                "Afficher plus de dons"
+            ],
+            "Showing %1$s of %2$s": [
+                "Affichage de %1$s sur %2$s"
+            ],
+            "Most Recent": [
+                "Les plus r\u00e9cents"
+            ],
+            "Highest Amount": [
+                "Montant le plus \u00e9lev\u00e9"
+            ],
+            "Earliest": [
+                "Les plus anciens"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Display": [
+                "Affichage"
+            ],
+            "Columns": [
+                "Colonnes"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si ce champ est vide, la campagne sera d\u00e9tect\u00e9e \u00e0 partir de la publication en cours."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "S\u00e9lectionnez une campagne ou placez ce bloc sur une page de campagne."
+            ],
+            "Donors per page": [
+                "Donateurs par page"
+            ],
+            "Default sort": [
+                "Tri par d\u00e9faut"
+            ],
+            "Load more text": [
+                "Texte de \u00ab\u00a0Charger plus\u00a0\u00bb"
+            ],
+            "Show name": [
+                "Afficher le nom"
+            ],
+            "Show anonymous donations": [
+                "Afficher les dons anonymes"
+            ],
+            "Show avatar": [
+                "Afficher l\u2019avatar"
+            ],
+            "Avatar size (px)": [
+                "Taille de l\u2019avatar (px)"
+            ],
+            "Show donation amount": [
+                "Afficher le montant du don"
+            ],
+            "Show date": [
+                "Afficher la date"
+            ],
+            "Show sort controls": [
+                "Afficher les options de tri"
+            ],
+            "Show comments": [
+                "Afficher les commentaires"
+            ],
+            "Comment length": [
+                "Longueur du commentaire"
+            ],
+            "Read more text": [
+                "Texte de \u00ab\u00a0Lire la suite\u00a0\u00bb"
+            ],
+            "Preview uses sample data.": [
+                "L\u2019aper\u00e7u utilise des donn\u00e9es d\u2019exemple."
+            ]
+        }
+    }
+}
