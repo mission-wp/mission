@@ -65,6 +65,7 @@ export default function Edit( { attributes, setAttributes } ) {
     showProgress,
     ctaAction,
     ctaUrl,
+    ctaText,
     numberOfTeams,
   } = attributes;
 
@@ -287,6 +288,12 @@ export default function Edit( { attributes, setAttributes } ) {
               placeholder="https://..."
             />
           ) }
+          <TextControl
+            label={ __( 'Button text', 'mission-donation-platform' ) }
+            value={ ctaText ?? '' }
+            placeholder={ __( 'Start a Team', 'mission-donation-platform' ) }
+            onChange={ ( val ) => setAttributes( { ctaText: val } ) }
+          />
           <ToggleControl
             label={ __( 'Show logos', 'mission-donation-platform' ) }
             checked={ showAvatars }

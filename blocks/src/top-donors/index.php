@@ -37,6 +37,7 @@ $show_dedication = $attributes['showDedication'] ?? true;
 $show_ribbons    = $attributes['showRibbons'] ?? true;
 $donate_action   = $attributes['donateButtonAction'] ?? 'scroll';
 $donate_url      = $attributes['donateButtonUrl'] ?? '';
+$donate_text     = ( $attributes['donateButtonText'] ?? '' ) ?: __( 'Be the First Donor', 'mission-donation-platform' );
 $limit           = (int) ( $attributes['numberOfDonors'] ?? 5 );
 
 // Query top donors.
@@ -70,11 +71,11 @@ ob_start();
 						class="mission-donor-empty__btn"
 						data-wp-on--click="actions.scrollToForm"
 					>
-						<?php esc_html_e( 'Be the First Donor', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $donate_text ); ?>
 					</button>
 				<?php else : ?>
 					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-donor-empty__btn">
-						<?php esc_html_e( 'Be the First Donor', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $donate_text ); ?>
 					</a>
 				<?php endif; ?>
 			<?php endif; ?>

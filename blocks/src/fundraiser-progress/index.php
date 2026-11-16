@@ -42,6 +42,7 @@ defined( 'ABSPATH' ) || exit;
 	$show_donors    = $attributes['showDonors'] ?? true;
 	$donate_action  = $attributes['donateButtonAction'] ?? 'scroll';
 	$donate_url     = $attributes['donateButtonUrl'] ?? '';
+	$donate_text    = ( $attributes['donateButtonText'] ?? '' ) ?: __( 'Donate Now', 'mission-donation-platform' );
 	$show_donate    = 'hide' !== $donate_action;
 	$show_stats     = $show_donations || $show_donors;
 
@@ -93,11 +94,11 @@ defined( 'ABSPATH' ) || exit;
 			<div class="mission-progress__actions">
 				<?php if ( 'scroll' === $donate_action ) : ?>
 					<button type="button" class="mission-progress__btn" data-wp-on--click="actions.scrollToForm">
-						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $donate_text ); ?>
 					</button>
 				<?php else : ?>
 					<a href="<?php echo esc_url( $donate_url ); ?>" class="mission-progress__btn">
-						<?php esc_html_e( 'Donate Now', 'mission-donation-platform' ); ?>
+						<?php echo esc_html( $donate_text ); ?>
 					</a>
 				<?php endif; ?>
 			</div>

@@ -34,8 +34,13 @@ const SAMPLE = {
 };
 
 export default function Edit( { attributes, setAttributes } ) {
-  const { donateButtonAction, donateButtonUrl, showDonations, showDonors } =
-    attributes;
+  const {
+    donateButtonAction,
+    donateButtonUrl,
+    donateButtonText,
+    showDonations,
+    showDonors,
+  } = attributes;
 
   const primaryColorVars = useMemo( () => {
     const color = window.missiondpBlockEditor?.primaryColor || '#2fa36b';
@@ -63,6 +68,14 @@ export default function Edit( { attributes, setAttributes } ) {
               onChange={ ( val ) => setAttributes( { donateButtonUrl: val } ) }
               type="url"
               placeholder="https://..."
+            />
+          ) }
+          { donateButtonAction !== 'hide' && (
+            <TextControl
+              label={ __( 'Donate button text', 'mission-donation-platform' ) }
+              value={ donateButtonText ?? '' }
+              placeholder={ __( 'Donate Now', 'mission-donation-platform' ) }
+              onChange={ ( val ) => setAttributes( { donateButtonText: val } ) }
             />
           ) }
           <ToggleControl
@@ -127,7 +140,8 @@ export default function Edit( { attributes, setAttributes } ) {
           { showDonate && (
             <div className="mission-progress__actions">
               <span className="mission-progress__btn">
-                { __( 'Donate Now', 'mission-donation-platform' ) }
+                { donateButtonText ||
+                  __( 'Donate Now', 'mission-donation-platform' ) }
               </span>
             </div>
           ) }
