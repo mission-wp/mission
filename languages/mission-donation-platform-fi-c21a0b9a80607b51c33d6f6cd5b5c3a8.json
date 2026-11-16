@@ -19,8 +19,9 @@
             "Goal Reached": [
                 "Tavoite saavutettu"
             ],
-            "Ongoing": [
-                "Toistuva"
+            "%d Day Left": [
+                "%d p\u00e4iv\u00e4 j\u00e4ljell\u00e4",
+                "%d p\u00e4iv\u00e4\u00e4 j\u00e4ljell\u00e4"
             ],
             "donors": [
                 "lahjoittajaa"
@@ -30,12 +31,6 @@
             ],
             "Active campaigns": [
                 "Aktiiviset kampanjat"
-            ],
-            "1 Day Left": [
-                "1 p\u00e4iv\u00e4 j\u00e4ljell\u00e4"
-            ],
-            "Days Left": [
-                "P\u00e4iv\u00e4\u00e4 j\u00e4ljell\u00e4"
             ],
             "Newest first": [
                 "Uusin ensin"
@@ -96,6 +91,9 @@
             ],
             "Button text": [
                 "Painikkeen teksti"
+            ],
+            "campaign with no end date\u0004Ongoing": [
+                "K\u00e4ynniss\u00e4"
             ]
         }
     }

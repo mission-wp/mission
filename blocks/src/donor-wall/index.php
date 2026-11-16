@@ -80,11 +80,16 @@ $result    = $reporting->donor_wall_query(
 $raw_items = $result['items'];
 $total     = $result['total'];
 
-// Frequency suffixes.
+// Frequency suffixes and labels, shared with view.js through context.
 $freq_suffix = [
-	'monthly'   => '/mo',
-	'quarterly' => '/qtr',
-	'annually'  => '/yr',
+	'monthly'   => __( '/mo', 'mission-donation-platform' ),
+	'quarterly' => __( '/qtr', 'mission-donation-platform' ),
+	'annually'  => __( '/yr', 'mission-donation-platform' ),
+];
+$freq_labels = [
+	'monthly'   => __( 'Monthly', 'mission-donation-platform' ),
+	'quarterly' => __( 'Quarterly', 'mission-donation-platform' ),
+	'annually'  => __( 'Annually', 'mission-donation-platform' ),
 ];
 
 // Sanitize items and pre-compute display properties for Interactivity API context.
@@ -97,12 +102,7 @@ foreach ( $raw_items as $item ) {
 	/* translators: %s: human time diff, e.g. "2 hours" */
 	$formatted_date = sprintf( __( '%s ago', 'mission-donation-platform' ), human_time_diff( strtotime( $item['date'] ) ) );
 
-	$freq_labels_map = [
-		'monthly'   => __( 'Monthly', 'mission-donation-platform' ),
-		'quarterly' => __( 'Quarterly', 'mission-donation-platform' ),
-		'annually'  => __( 'Annually', 'mission-donation-platform' ),
-	];
-	$frequency_label = 'one_time' !== $item['type'] ? ( $freq_labels_map[ $item['type'] ] ?? '' ) : '';
+	$frequency_label = 'one_time' !== $item['type'] ? ( $freq_labels[ $item['type'] ] ?? '' ) : '';
 
 	if ( $item['is_anonymous'] ) {
 		$items[] = [
@@ -194,6 +194,12 @@ $context = [
 	'restUrl'       => rest_url( 'mission-donation-platform/v1/donor-wall' ),
 	'nonce'         => wp_create_nonce( 'wp_rest' ),
 	'footerHidden'  => $total <= count( $items ) && $total <= $donors_per_page,
+	'i18n'          => [
+		'suffixes'    => $freq_suffix,
+		'frequencies' => $freq_labels,
+		/* translators: 1: number of donations shown, 2: total number of donations */
+		'showing'     => __( 'Showing %1$s of %2$s', 'mission-donation-platform' ),
+	],
 ];
 
 // Wrapper attributes.

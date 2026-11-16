@@ -15,7 +15,7 @@ import {
 import { DataViews } from '@wordpress/dataviews';
 import { external, pencil, trash } from '@wordpress/icons';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import CampaignCreateModal from './CampaignCreateModal';
 import { formatAmount } from '@shared/currency';
 import { formatDateOnly } from '@shared/date';
@@ -268,17 +268,47 @@ function campaignStatusSubtitle( summary ) {
   }
 
   const parts = [
-    [ summary.active, __( 'active', 'mission-donation-platform' ) ],
-    [ summary.ended, __( 'ended', 'mission-donation-platform' ) ],
-    [ summary.scheduled, __( 'scheduled', 'mission-donation-platform' ) ],
-  ].filter( ( [ count ] ) => count > 0 );
+    {
+      count: summary.active,
+      all: __( 'All active', 'mission-donation-platform' ),
+      /* translators: %s: number of active campaigns */
+      some: _n(
+        '%s active',
+        '%s active',
+        summary.active,
+        'mission-donation-platform'
+      ),
+    },
+    {
+      count: summary.ended,
+      all: __( 'All ended', 'mission-donation-platform' ),
+      /* translators: %s: number of ended campaigns */
+      some: _n(
+        '%s ended',
+        '%s ended',
+        summary.ended,
+        'mission-donation-platform'
+      ),
+    },
+    {
+      count: summary.scheduled,
+      all: __( 'All scheduled', 'mission-donation-platform' ),
+      /* translators: %s: number of scheduled campaigns */
+      some: _n(
+        '%s scheduled',
+        '%s scheduled',
+        summary.scheduled,
+        'mission-donation-platform'
+      ),
+    },
+  ].filter( ( { count } ) => count > 0 );
 
   if ( parts.length === 1 ) {
-    return `${ __( 'All', 'mission-donation-platform' ) } ${ parts[ 0 ][ 1 ] }`;
+    return parts[ 0 ].all;
   }
 
   return parts
-    .map( ( [ count, label ] ) => `${ count } ${ label }` )
+    .map( ( { count, some } ) => sprintf( some, count ) )
     .join( ' \u00B7 ' );
 }
 
@@ -413,10 +443,11 @@ export default function CampaignList() {
         value={ summary ? summary.top_campaign_name || '\u2014' : '' }
         subtitle={
           summary?.top_campaign_raised
-            ? `${ formatAmount( summary.top_campaign_raised ) } ${ __(
-                'raised',
-                'mission-donation-platform'
-              ) }`
+            ? sprintf(
+                /* translators: %s: formatted amount raised */
+                __( '%s raised', 'mission-donation-platform' ),
+                formatAmount( summary.top_campaign_raised )
+              )
             : undefined
         }
         isLoading={ ! summary }

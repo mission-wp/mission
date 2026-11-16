@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.6.1 (2026-11-16)
+
+* New: Mission is now available in French, including Canadian and Belgian French
+* Enhancement: Button labels on the Campaign Progress, Fundraiser Progress, Team Progress, Recent Donors, Top Donors, Top Fundraisers and Top Teams blocks can now be edited in the block settings
+* Fix: Campaigns with no end date are now labeled correctly on campaign cards in Spanish and Finnish
+* Fix: The Donor Wall and the donor dashboard's donation history now stay in the site's language after loading more donations or changing pages
+* Fix: Messages, button labels and confirmations in the donation form and donor dashboard now appear in the site's language instead of English
+* Fix: Donation and donor counts above one now appear in Spanish and Finnish instead of English
+* Tweak: Counts and summaries in the admin now read naturally in every language
+* Tweak: Developers can adjust the donor dashboard's script text with the mission_donor_dashboard_strings filter
+
 ## 1.6.0 (2026-11-09)
 
 * Fix: Donors whose email already has an account on the site can now connect their donations by signing in with that account's password, from the activation link or fundraiser signup

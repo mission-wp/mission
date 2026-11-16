@@ -16,6 +16,9 @@
             "days remaining": [
                 "d\u00edas restantes"
             ],
+            "Become a Fundraiser": [
+                "Convi\u00e9rtete en recaudador"
+            ],
             "Donate Now": [
                 "Donar ahora"
             ],
@@ -54,6 +57,15 @@
             ],
             "This campaign has no end date, so days remaining will be hidden automatically.": [
                 "Esta campa\u00f1a no tiene fecha de finalizaci\u00f3n, por lo que los d\u00edas restantes se ocultar\u00e1n autom\u00e1ticamente."
+            ],
+            "Donate button text": [
+                "Texto del bot\u00f3n de donaci\u00f3n"
+            ],
+            "Fundraiser button text": [
+                "Texto del bot\u00f3n de recaudador"
+            ],
+            "Shown on peer-to-peer campaigns while fundraiser signup is open.": [
+                "Se muestra en las campa\u00f1as entre pares mientras el registro de recaudadores est\u00e1 abierto."
             ]
         }
     }

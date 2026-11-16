@@ -27,6 +27,15 @@
             ],
             "Join this Team": [
                 "Unirse a este equipo"
+            ],
+            "Settings": [
+                "Ajustes"
+            ],
+            "Donate button text": [
+                "Texto del bot\u00f3n de donaci\u00f3n"
+            ],
+            "Join button text": [
+                "Texto del bot\u00f3n para unirse"
             ]
         }
     }

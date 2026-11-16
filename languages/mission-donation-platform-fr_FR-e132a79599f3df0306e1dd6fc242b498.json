@@ -1,0 +1,81 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/campaign-statistics\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_FR",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Number of Donations": [
+                "Nombre de dons"
+            ],
+            "Number of Donors": [
+                "Nombre de donateurs"
+            ],
+            "Average Donation": [
+                "Don moyen"
+            ],
+            "Top Donation": [
+                "Don le plus \u00e9lev\u00e9"
+            ],
+            "Total Raised": [
+                "Total collect\u00e9"
+            ],
+            "Campaign": [
+                "Campagne"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Medium": [
+                "Moyenne"
+            ],
+            "Large": [
+                "Grande"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si ce champ est vide, la campagne sera d\u00e9tect\u00e9e \u00e0 partir de la publication en cours."
+            ],
+            "Small": [
+                "Petite"
+            ],
+            "Extra Large": [
+                "Tr\u00e8s grande"
+            ],
+            "Statistic": [
+                "Statistique"
+            ],
+            "Show heading": [
+                "Afficher le titre"
+            ],
+            "Heading": [
+                "Titre"
+            ],
+            "Color": [
+                "Couleur"
+            ],
+            "Letter case": [
+                "Casse"
+            ],
+            "Uppercase": [
+                "Majuscules"
+            ],
+            "Lowercase": [
+                "Minuscules"
+            ],
+            "Capitalize": [
+                "Premi\u00e8re lettre en majuscule"
+            ],
+            "Campaign Statistic": [
+                "Statistique de campagne"
+            ],
+            "Select a Campaign": [
+                "S\u00e9lectionnez une campagne"
+            ]
+        }
+    }
+}

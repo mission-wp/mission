@@ -6,6 +6,7 @@
  * its PUT. Each flow instance is bound to one context slice and endpoint.
  */
 import { getContext } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import { resizeImageFile } from '@shared/image-resize';
 
 /**
@@ -146,7 +147,12 @@ export function createPhotoFlow( slice ) {
         if ( ! photoResponse.ok ) {
           const data = yield photoResponse.json();
           s.edit.error =
-            data.message || 'Could not upload the image. Please try again.';
+            data.message ||
+            t(
+              ctx,
+              'photoUploadFailed',
+              'Could not upload the image. Please try again.'
+            );
           s.edit.saving = false;
           return false;
         }
@@ -168,7 +174,12 @@ export function createPhotoFlow( slice ) {
         if ( ! photoResponse.ok ) {
           const data = yield photoResponse.json();
           s.edit.error =
-            data.message || 'Could not remove the image. Please try again.';
+            data.message ||
+            t(
+              ctx,
+              'photoRemoveFailed',
+              'Could not remove the image. Please try again.'
+            );
           s.edit.saving = false;
           return false;
         }

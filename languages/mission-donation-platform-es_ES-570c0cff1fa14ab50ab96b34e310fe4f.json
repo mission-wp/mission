@@ -40,9 +40,6 @@
             "Settings": [
                 "Ajustes"
             ],
-            "of": [
-                "de"
-            ],
             "Display": [
                 "Visualizaci\u00f3n"
             ],
@@ -97,8 +94,8 @@
             "Preview uses sample data.": [
                 "La vista previa usa datos de ejemplo."
             ],
-            "Showing": [
-                "Mostrando"
+            "Showing %1$s of %2$s": [
+                "Mostrando %1$s de %2$s"
             ]
         }
     }

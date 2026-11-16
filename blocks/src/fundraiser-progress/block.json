@@ -28,6 +28,9 @@
 			"type": "string",
 			"default": ""
 		},
+		"donateButtonText": {
+			"type": "string"
+		},
 		"showDonations": {
 			"type": "boolean",
 			"default": true

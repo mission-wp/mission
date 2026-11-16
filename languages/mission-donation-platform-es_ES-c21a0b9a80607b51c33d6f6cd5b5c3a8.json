@@ -19,8 +19,9 @@
             "Goal Reached": [
                 "Meta alcanzada"
             ],
-            "Ongoing": [
-                "Recurrente"
+            "%d Day Left": [
+                "Queda %d d\u00eda",
+                "Quedan %d d\u00edas"
             ],
             "donors": [
                 "donantes"
@@ -30,12 +31,6 @@
             ],
             "Active campaigns": [
                 "Campa\u00f1as activas"
-            ],
-            "1 Day Left": [
-                "Queda 1 d\u00eda"
-            ],
-            "Days Left": [
-                "D\u00edas restantes"
             ],
             "Newest first": [
                 "M\u00e1s recientes primero"
@@ -96,6 +91,9 @@
             ],
             "Button text": [
                 "Texto del bot\u00f3n"
+            ],
+            "campaign with no end date\u0004Ongoing": [
+                "En curso"
             ]
         }
     }

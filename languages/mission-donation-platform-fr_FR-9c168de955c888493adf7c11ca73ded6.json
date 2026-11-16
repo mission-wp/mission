@@ -1,0 +1,33 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/team-story\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_FR",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "We have teamed up because we can make a bigger difference together. Every donation to a team member brings us closer to our shared goal.": [
+                "Nous avons uni nos forces, car ensemble nous pouvons faire une plus grande diff\u00e9rence. Chaque don \u00e0 un membre de l\u2019\u00e9quipe nous rapproche de notre objectif commun."
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Fallback text": [
+                "Texte par d\u00e9faut"
+            ],
+            "Shown when a team has not written a story yet.": [
+                "Affich\u00e9 lorsqu\u2019une \u00e9quipe n\u2019a pas encore r\u00e9dig\u00e9 son histoire."
+            ],
+            "Your team's description appears here. Tell visitors who you are and why you're fundraising together.": [
+                "La description de votre \u00e9quipe appara\u00eet ici. Dites aux visiteurs qui vous \u00eates et pourquoi vous collectez des fonds ensemble."
+            ],
+            "Invite others to join the team or chip in toward your shared goal.": [
+                "Invitez d\u2019autres personnes \u00e0 rejoindre l\u2019\u00e9quipe ou \u00e0 contribuer \u00e0 votre objectif commun."
+            ]
+        }
+    }
+}

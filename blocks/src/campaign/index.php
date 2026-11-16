@@ -119,7 +119,7 @@ if ( $is_ended && $has_end_date ) {
 	/* translators: %s: formatted date */
 	$time_text = sprintf( __( 'Ends %s', 'mission-donation-platform' ), wp_date( 'M j, Y', strtotime( $date_end ) ) );
 } else {
-	$time_text = __( 'Ongoing', 'mission-donation-platform' );
+	$time_text = _x( 'Ongoing', 'campaign with no end date', 'mission-donation-platform' );
 }
 
 // Card CSS classes.

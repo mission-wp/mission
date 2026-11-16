@@ -1,0 +1,73 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/top-teams\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_BE",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Campaign": [
+                "Campagne"
+            ],
+            "Top Teams": [
+                "Meilleures \u00e9quipes"
+            ],
+            "Start a Team": [
+                "Cr\u00e9er une \u00e9quipe"
+            ],
+            "%s member": [
+                "%s membre",
+                "%s membres"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Show progress bar": [
+                "Afficher la barre de progression"
+            ],
+            "Button text": [
+                "Texte du bouton"
+            ],
+            "If empty, the campaign will be detected from the current post.": [
+                "Si ce champ est vide, la campagne sera d\u00e9tect\u00e9e \u00e0 partir de la publication en cours."
+            ],
+            "Select a campaign or place this block on a campaign page.": [
+                "S\u00e9lectionnez une campagne ou placez ce bloc sur une page de campagne."
+            ],
+            "Custom URL": [
+                "URL personnalis\u00e9e"
+            ],
+            "Hide": [
+                "Masquer"
+            ],
+            "Show ribbons": [
+                "Afficher les rubans"
+            ],
+            "Open the sign-up modal": [
+                "Ouvrir la fen\u00eatre d\u2019inscription"
+            ],
+            "Button (empty state)": [
+                "Bouton (\u00e9tat vide)"
+            ],
+            "Button URL": [
+                "URL du bouton"
+            ],
+            "Number of teams": [
+                "Nombre d\u2019\u00e9quipes"
+            ],
+            "Show logos": [
+                "Afficher les logos"
+            ],
+            "Show member count": [
+                "Afficher le nombre de membres"
+            ],
+            "Gold, silver, and bronze badges for the top 3 teams.": [
+                "Badges or, argent et bronze pour les 3 meilleures \u00e9quipes."
+            ]
+        }
+    }
+}

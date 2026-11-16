@@ -40,9 +40,6 @@
             "Settings": [
                 "Asetukset"
             ],
-            "of": [
-                "\/"
-            ],
             "Display": [
                 "N\u00e4ytt\u00f6"
             ],
@@ -97,8 +94,8 @@
             "Preview uses sample data.": [
                 "Esikatselu k\u00e4ytt\u00e4\u00e4 esimerkkitietoja."
             ],
-            "Showing": [
-                "N\u00e4ytet\u00e4\u00e4n"
+            "Showing %1$s of %2$s": [
+                "N\u00e4ytet\u00e4\u00e4n %1$s \/ %2$s"
             ]
         }
     }

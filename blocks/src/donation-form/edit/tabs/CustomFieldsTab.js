@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useMemo } from '@wordpress/element';
 import ToggleRow from '@shared/components/ToggleRow';
 
@@ -262,10 +262,11 @@ function FieldCard( {
                       type="text"
                       className="mission-field-input"
                       value={ opt }
-                      placeholder={ `${ __(
-                        'Option',
-                        'mission-donation-platform'
-                      ) } ${ optIdx + 1 }` }
+                      placeholder={ sprintf(
+                        /* translators: %d: option number */
+                        __( 'Option %d', 'mission-donation-platform' ),
+                        optIdx + 1
+                      ) }
                       onChange={ ( e ) =>
                         updateOption( optIdx, e.target.value )
                       }

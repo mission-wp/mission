@@ -341,6 +341,7 @@ class DashboardContextBuilderTest extends WP_UnitTestCase {
 		$this->assertFalse( $result['state']['historyHasOnePage'] );
 		$this->assertFalse( $result['state']['historyIsLastPage'] );
 		$this->assertSame( 'Page 1 of 2', $result['state']['historyPaginationLabel'] );
+		$this->assertSame( 'Page %1$d of %2$d', $history['pageLabel'] );
 	}
 
 	/**

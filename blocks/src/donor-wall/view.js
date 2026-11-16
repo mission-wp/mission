@@ -3,7 +3,6 @@
  *
  * Handles sort changes, load more pagination, and comment expand/collapse.
  */
-/* global navigator */
 import { store, getContext } from '@wordpress/interactivity';
 import { formatAmount } from '@shared/currency';
 
@@ -12,54 +11,6 @@ const SORT_MAP = {
   highest: { orderby: 'amount', order: 'DESC' },
   earliest: { orderby: 'date_completed', order: 'ASC' },
 };
-
-const FREQUENCY_SUFFIX = {
-  monthly: '/mo',
-  quarterly: '/qtr',
-  annually: '/yr',
-};
-
-const FREQUENCY_LABELS = {
-  monthly: 'Monthly',
-  quarterly: 'Quarterly',
-  annually: 'Annually',
-};
-
-/**
- * Format a date string to a relative or absolute display.
- *
- * @param {string} dateStr Date string.
- * @return {string} Formatted date.
- */
-function formatDate( dateStr ) {
-  if ( ! dateStr ) {
-    return '';
-  }
-
-  const date = new Date( dateStr.replace( ' ', 'T' ) + 'Z' );
-  const now = new Date();
-  const diffMs = now - date;
-  const diffHours = Math.floor( diffMs / ( 1000 * 60 * 60 ) );
-
-  if ( diffHours < 1 ) {
-    return 'Just now';
-  }
-  if ( diffHours < 24 ) {
-    return `${ diffHours } hour${ diffHours !== 1 ? 's' : '' } ago`;
-  }
-
-  const diffDays = Math.floor( diffMs / ( 1000 * 60 * 60 * 24 ) );
-
-  if ( diffDays < 7 ) {
-    return `${ diffDays } day${ diffDays !== 1 ? 's' : '' } ago`;
-  }
-
-  return date.toLocaleDateString( navigator.language || 'en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  } );
-}
 
 /**
  * Recompute whether the footer (load more + count) should be hidden.
@@ -99,16 +50,22 @@ function buildUrl( ctx, page ) {
  * @param {string} currency      Currency code.
  * @param {number} startIndex    Index offset for staggered animation delay.
  * @param {number} commentLength Max comment length before truncation.
+ * @param {Object} i18n          Translated labels from the server.
  * @return {Array} Enriched items.
  */
-function enrichItems( items, currency, startIndex = 0, commentLength = 150 ) {
+function enrichItems(
+  items,
+  currency,
+  startIndex = 0,
+  commentLength = 150,
+  i18n = {}
+) {
   return items.map( ( item, i ) => {
-    const suffix =
-      item.type !== 'one_time' && FREQUENCY_SUFFIX[ item.type ]
-        ? FREQUENCY_SUFFIX[ item.type ]
-        : '';
-    const frequencyLabel =
-      item.type !== 'one_time' ? FREQUENCY_LABELS[ item.type ] || '' : '';
+    const isRecurring = item.type !== 'one_time';
+    const suffix = isRecurring ? i18n.suffixes?.[ item.type ] || '' : '';
+    const frequencyLabel = isRecurring
+      ? i18n.frequencies?.[ item.type ] || ''
+      : '';
     const comment = item.comment || '';
     const isTruncated = comment.length > commentLength;
     return {
@@ -117,7 +74,7 @@ function enrichItems( items, currency, startIndex = 0, commentLength = 150 ) {
         formatAmount( item.amount, currency || 'USD', {
           stripZeroCents: true,
         } ) + suffix,
-      formattedDate: formatDate( item.date ),
+      formattedDate: item.formatted_date || '',
       frequencyLabel,
       gravatarSrc: item.gravatar_hash
         ? `https://www.gravatar.com/avatar/${ item.gravatar_hash }?s=96&d=blank`
@@ -140,7 +97,9 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
     get showingText() {
       const ctx = getContext();
       const showing = Math.min( ctx.items.length, ctx.total );
-      return `Showing ${ showing } of ${ ctx.total }`;
+      return ( ctx.i18n?.showing || '' )
+        .replace( '%1$s', showing )
+        .replace( '%2$s', ctx.total );
     },
   },
   callbacks: {
@@ -148,7 +107,13 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
       const ctx = getContext();
       if ( ctx.items && ctx.items.length && ! ctx.items[ 0 ].formattedAmount ) {
         const currency = ctx.items[ 0 ]?.currency || 'USD';
-        ctx.items = enrichItems( ctx.items, currency, 0, ctx.commentLength );
+        ctx.items = enrichItems(
+          ctx.items,
+          currency,
+          0,
+          ctx.commentLength,
+          ctx.i18n
+        );
       }
     },
   },
@@ -173,7 +138,13 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
         const currency =
           data.items[ 0 ]?.currency || ctx.items[ 0 ]?.currency || 'USD';
 
-        ctx.items = enrichItems( data.items, currency, 0, ctx.commentLength );
+        ctx.items = enrichItems(
+          data.items,
+          currency,
+          0,
+          ctx.commentLength,
+          ctx.i18n
+        );
         ctx.total = data.total;
         ctx.page = 1;
         updateFooterHidden( ctx );
@@ -205,7 +176,8 @@ const { state } = store( 'mission-donation-platform/donor-wall', {
           data.items,
           currency,
           0,
-          ctx.commentLength
+          ctx.commentLength,
+          ctx.i18n
         );
 
         ctx.items = [ ...ctx.items, ...newItems ];

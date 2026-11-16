@@ -1,0 +1,33 @@
+{
+    "translation-revision-date": "2026-11-16 20:00+0000",
+    "generator": "WP-CLI\/2.9.0",
+    "source": "blocks\/build\/donate-button\/index.js",
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "fr_CA",
+                "plural-forms": "nplurals=2; plural=(n > 1);"
+            },
+            "Donate Now": [
+                "Faire un don"
+            ],
+            "Settings": [
+                "R\u00e9glages"
+            ],
+            "Scroll to donation form": [
+                "D\u00e9filer jusqu\u2019au formulaire de don"
+            ],
+            "Custom URL": [
+                "URL personnalis\u00e9e"
+            ],
+            "Button action": [
+                "Action du bouton"
+            ],
+            "URL": [
+                "URL"
+            ]
+        }
+    }
+}

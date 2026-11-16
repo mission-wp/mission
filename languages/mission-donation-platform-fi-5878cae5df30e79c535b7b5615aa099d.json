@@ -16,8 +16,14 @@
             "Top Donors": [
                 "Suurimmat lahjoittajat"
             ],
+            "Be the First Donor": [
+                "Ole ensimm\u00e4inen lahjoittaja"
+            ],
             "Settings": [
                 "Asetukset"
+            ],
+            "Button text": [
+                "Painikkeen teksti"
             ],
             "If empty, the campaign will be detected from the current post.": [
                 "Jos kentt\u00e4 on tyhj\u00e4, kampanja tunnistetaan nykyisest\u00e4 julkaisusta."

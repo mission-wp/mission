@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import SkeletonBar from '@shared/components/SkeletonBar';
 import Toast from '../../components/Toast';
 import ConfirmationModal from './ConfirmationModal';
@@ -164,9 +164,15 @@ const SECTIONS = [
               'Remove all transactions made with Stripe test mode keys. %s found.',
               'mission-donation-platform'
             ),
-            `<strong>${ count.toLocaleString() } ${ __(
-              'test transactions',
-              'mission-donation-platform'
+            `<strong>${ sprintf(
+              /* translators: %s: number of test transactions */
+              _n(
+                '%s test transaction',
+                '%s test transactions',
+                count,
+                'mission-donation-platform'
+              ),
+              count.toLocaleString()
             ) }</strong>`
           );
         },
@@ -201,9 +207,15 @@ const SECTIONS = [
               'Remove donors that only have test mode transactions (no live donations). %s found.',
               'mission-donation-platform'
             ),
-            `<strong>${ count.toLocaleString() } ${ __(
-              'test-only donors',
-              'mission-donation-platform'
+            `<strong>${ sprintf(
+              /* translators: %s: number of test-only donors */
+              _n(
+                '%s test-only donor',
+                '%s test-only donors',
+                count,
+                'mission-donation-platform'
+              ),
+              count.toLocaleString()
             ) }</strong>`
           );
         },

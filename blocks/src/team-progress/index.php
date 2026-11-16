@@ -44,6 +44,9 @@ defined( 'ABSPATH' ) || exit;
 		? sprintf( __( 'raised of %s team goal', 'mission-donation-platform' ), Currency::format_amount( $goal, $currency ) )
 		: __( 'raised', 'mission-donation-platform' );
 
+	$donate_text = ( $attributes['donateButtonText'] ?? '' ) ?: __( 'Donate to the Team', 'mission-donation-platform' );
+	$join_text   = ( $attributes['joinButtonText'] ?? '' ) ?: __( 'Join this Team', 'mission-donation-platform' );
+
 	// The Join button hides on private teams (uninvited visitors can't join),
 	// but the modal shell must still render while registration is open:
 	// invitees land on private team pages via ?team_invite= links, and the
@@ -93,7 +96,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<div class="mission-progress__actions">
 			<button type="button" class="mission-progress__btn" data-wp-on--click="actions.scrollToForm">
-				<?php esc_html_e( 'Donate to the Team', 'mission-donation-platform' ); ?>
+				<?php echo esc_html( $donate_text ); ?>
 			</button>
 			<?php if ( $show_join ) : ?>
 				<button
@@ -101,7 +104,7 @@ defined( 'ABSPATH' ) || exit;
 					class="mission-progress__btn mission-progress__btn--secondary"
 					data-wp-on--click="actions.openSignup"
 				>
-					<?php esc_html_e( 'Join this Team', 'mission-donation-platform' ); ?>
+					<?php echo esc_html( $join_text ); ?>
 				</button>
 			<?php endif; ?>
 		</div>

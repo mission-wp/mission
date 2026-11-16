@@ -5,6 +5,7 @@
  * and registers the unified store.
  */
 import { store, getContext, getElement } from '@wordpress/interactivity';
+import { t } from '@shared/context-i18n';
 import { authState, authCallbacks, authActions } from './actions/auth';
 import { historyState, historyActions } from './actions/history';
 import {
@@ -162,7 +163,10 @@ store( 'mission-donation-platform/donor-dashboard', {
         if ( /^team-\d+$/.test( ctx.activePanel ) ) {
           return ctx.teams?.detail?.name || '';
         }
-        return ctx.panelLabels?.[ ctx.activePanel ] || 'Overview';
+        return (
+          ctx.panelLabels?.[ ctx.activePanel ] ||
+          t( ctx, 'overview', 'Overview' )
+        );
       },
       get isOverview() {
         return getContext().activePanel === 'overview';
@@ -245,7 +249,12 @@ store( 'mission-donation-platform/donor-dashboard', {
               ctx.donor.email = data.email;
               showToast(
                 ctx,
-                data.message || 'Email address updated successfully!'
+                data.message ||
+                  t(
+                    ctx,
+                    'emailUpdated',
+                    'Email address updated successfully!'
+                  )
               );
 
               // Server logged us out (user_login changed); reload so the login form appears.
@@ -264,7 +273,11 @@ store( 'mission-donation-platform/donor-dashboard', {
           .catch( () => {
             showToast(
               ctx,
-              'Failed to verify email. Please try again.',
+              t(
+                ctx,
+                'emailVerifyFailed',
+                'Failed to verify email. Please try again.'
+              ),
               'error'
             );
           } );

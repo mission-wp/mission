@@ -19,6 +19,12 @@
 		"teamId": {
 			"type": "number",
 			"default": 0
+		},
+		"donateButtonText": {
+			"type": "string"
+		},
+		"joinButtonText": {
+			"type": "string"
 		}
 	},
 	"example": {},

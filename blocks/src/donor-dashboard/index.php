@@ -93,6 +93,7 @@ if ( ! $is_donor ) :
 		'restUrl'          => rest_url( 'mission-donation-platform/v1/' ),
 		'nonce'            => wp_create_nonce( 'wp_rest' ),
 		'dashboardUrl'     => get_permalink(),
+		'i18n'             => \MissionDP\DonorDashboard\DashboardStrings::all(),
 	];
 
 	// Server-side initial values for derived state — JS getters take over on hydration.

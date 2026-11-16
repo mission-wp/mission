@@ -16,14 +16,11 @@
 			"Ended": [
 				"Finalizada"
 			],
+			"of %s": [
+				"de %s"
+			],
 			"Ends %s": [
 				"Finaliza el %s"
-			],
-			"donors": [
-				"donantes"
-			],
-			"raised": [
-				"recaudado"
 			],
 			"donations": [
 				"donaciones"
@@ -212,7 +209,8 @@
 				"Todavía no hay donaciones"
 			],
 			"%s donation": [
-				"%s donación"
+				"%s donación",
+				"%s donaciones"
 			],
 			"In memory of %s": [
 				"En memoria de %s"
@@ -263,7 +261,11 @@
 				"Inactivo"
 			],
 			"%s donor": [
-				"%s donante"
+				"%s donante",
+				"%s donantes"
+			],
+			"%s raised": [
+				"%s recaudados"
 			],
 			"Avg. Donation": [
 				"Donación media"
@@ -515,15 +517,6 @@
 			"Ends": [
 				"Termina"
 			],
-			"active": [
-				"activa"
-			],
-			"ended": [
-				"finalizada"
-			],
-			"scheduled": [
-				"programada"
-			],
 			"All": [
 				"Todas"
 			],
@@ -575,12 +568,6 @@
 			"View Campaign Page": [
 				"Ver página de la campaña"
 			],
-			"of": [
-				"de"
-			],
-			"funded": [
-				"financiado"
-			],
 			"Edit Page": [
 				"Editar página"
 			],
@@ -631,9 +618,6 @@
 			],
 			"100% — Goal reached!": [
 				"100 % — ¡Meta alcanzada!"
-			],
-			"more needed": [
-				"más por recaudar"
 			],
 			"Donations to this campaign will appear here as they come in": [
 				"Las donaciones a esta campaña aparecerán aquí a medida que se reciban"
@@ -1244,9 +1228,6 @@
 			"Repeat Donors": [
 				"Donantes recurrentes"
 			],
-			"of all donors": [
-				"del total de donantes"
-			],
 			"No donors yet.": [
 				"Aún no hay donantes."
 			],
@@ -1769,9 +1750,6 @@
 			"Active Subscriptions": [
 				"Suscripciones activas"
 			],
-			"new this month": [
-				"nuevas este mes"
-			],
 			"Avg. Subscription": [
 				"Suscripción media"
 			],
@@ -1780,9 +1758,6 @@
 			],
 			"Churned": [
 				"Canceladas"
-			],
-			"/mo lost": [
-				"/mes perdidos"
 			],
 			"No subscriptions yet": [
 				"Todavía no hay suscripciones"
@@ -1797,7 +1772,8 @@
 				"Ver perfil"
 			],
 			"donation": [
-				"donación"
+				"donación",
+				"donaciones"
 			],
 			"Email notification sent to": [
 				"Notificación por correo electrónico enviada a"
@@ -2150,9 +2126,6 @@
 			"Remove all transactions made with Stripe test mode keys. %s found.": [
 				"Elimina todas las transacciones realizadas con claves del modo de prueba de Stripe. %s encontradas."
 			],
-			"test transactions": [
-				"transacciones de prueba"
-			],
 			"This will permanently delete %s test transactions. This cannot be undone.": [
 				"Esto eliminará permanentemente %s transacciones de prueba. No se puede deshacer."
 			],
@@ -2167,9 +2140,6 @@
 			],
 			"Remove donors that only have test mode transactions (no live donations). %s found.": [
 				"Elimina los donantes que solo tienen transacciones del modo de prueba (sin donaciones reales). %s encontrados."
-			],
-			"test-only donors": [
-				"donantes solo de prueba"
 			],
 			"This will permanently delete %s test-only donors and their associated data. This cannot be undone.": [
 				"Esto eliminará permanentemente %s donantes solo de prueba y sus datos asociados. No se puede deshacer."
@@ -2889,9 +2859,6 @@
 			"Available": [
 				"Disponible"
 			],
-			"seconds": [
-				"segundos"
-			],
 			"Database prefix": [
 				"Prefijo de la base de datos"
 			],
@@ -2900,9 +2867,6 @@
 			],
 			"Mission tables size": [
 				"Tamaño de las tablas de Mission"
-			],
-			"by": [
-				"por"
 			],
 			"Version": [
 				"Versión"
@@ -3164,18 +3128,6 @@
 			],
 			"Receipt sent": [
 				"Recibo enviado"
-			],
-			"Sent to": [
-				"Enviado a"
-			],
-			"By": [
-				"Por"
-			],
-			"returned to": [
-				"devuelto a"
-			],
-			"returned": [
-				"devuelto"
 			],
 			"This transaction is part of a recurring subscription.": [
 				"Esta transacción forma parte de una suscripción recurrente."
@@ -3690,6 +3642,90 @@
 			],
 			"This fundraiser is their team’s captain. Changing their team leaves the captain role vacant.": [
 				"Este recaudador es el capitán de su equipo. Al cambiarlo de equipo, el puesto de capitán quedará vacante."
+			],
+			"All active": [
+				"Todas activas"
+			],
+			"%s active": [
+				"%s activa",
+				"%s activas"
+			],
+			"All ended": [
+				"Todas finalizadas"
+			],
+			"%s ended": [
+				"%s finalizada",
+				"%s finalizadas"
+			],
+			"All scheduled": [
+				"Todas programadas"
+			],
+			"%s scheduled": [
+				"%s programada",
+				"%s programadas"
+			],
+			"of %s donor": [
+				"de %s donante",
+				"de %s donantes"
+			],
+			"of %s donation": [
+				"de %s donación",
+				"de %s donaciones"
+			],
+			"%s%% funded": [
+				"%s %% financiado"
+			],
+			"%s more needed": [
+				"%s más por recaudar"
+			],
+			"%s lifetime": [
+				"%s histórico"
+			],
+			"%s%% of all donors": [
+				"%s %% del total de donantes"
+			],
+			"donation recipient column\u0004To": [
+				"Para"
+			],
+			"%s new this month": [
+				"%s nueva este mes",
+				"%s nuevas este mes"
+			],
+			"%s/mo lost": [
+				"%s/mes perdidos"
+			],
+			"%s test transaction": [
+				"%s transacción de prueba",
+				"%s transacciones de prueba"
+			],
+			"%s test-only donor": [
+				"%s donante solo de prueba",
+				"%s donantes solo de prueba"
+			],
+			"Export %s": [
+				"Exportar %s"
+			],
+			"%s second": [
+				"%s segundo",
+				"%s segundos"
+			],
+			"by %s": [
+				"por %s"
+			],
+			"Active Plugins (%d)": [
+				"Plugins activos (%d)"
+			],
+			"Sent to %s": [
+				"Enviado a %s"
+			],
+			"By %s": [
+				"Por %s"
+			],
+			"%1$s returned to %2$s": [
+				"%1$s devueltos a %2$s"
+			],
+			"%s returned": [
+				"%s devueltos"
 			]
 		}
 	}

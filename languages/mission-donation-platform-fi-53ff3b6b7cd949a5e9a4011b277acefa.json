@@ -16,6 +16,9 @@
             "donations": [
                 "lahjoitusta"
             ],
+            "Settings": [
+                "Asetukset"
+            ],
             "raised of %s team goal": [
                 "ker\u00e4tty tiimin %s tavoitteesta"
             ],
@@ -27,6 +30,12 @@
             ],
             "members": [
                 "j\u00e4sent\u00e4"
+            ],
+            "Donate button text": [
+                "Lahjoita-painikkeen teksti"
+            ],
+            "Join button text": [
+                "Liittymispainikkeen teksti"
             ]
         }
     }
