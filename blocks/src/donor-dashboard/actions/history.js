@@ -117,7 +117,9 @@ export const historyState = {
     const ctx = getContext();
     const page = ctx.history?.page ?? 1;
     const totalPages = ctx.history?.totalPages ?? 1;
-    return `Page ${ page } of ${ totalPages }`;
+    return ( ctx.history?.pageLabel ?? '' )
+      .replace( '%1$d', page )
+      .replace( '%2$d', totalPages );
   },
 
   // Per-row transaction status (used inside data-wp-each--txn).

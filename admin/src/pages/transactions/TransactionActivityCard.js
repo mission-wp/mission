@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 import { formatDateTime } from '@shared/date';
 import ActivityTimelineCard from '../../components/ActivityTimelineCard';
@@ -61,41 +61,49 @@ function getEventSubtitle( entry, currency ) {
 
     case 'receipt_sent':
       if ( ctx.email ) {
-        return `${ __( 'Sent to', 'mission-donation-platform' ) } ${
+        return sprintf(
+          /* translators: %s: email address */
+          __( 'Sent to %s', 'mission-donation-platform' ),
           ctx.email
-        }`;
+        );
       }
       return null;
 
     case 'refund_initiated':
       if ( entry.actor_type === 'user' && entry.actor_name ) {
-        return `${ __( 'By', 'mission-donation-platform' ) } ${
+        return sprintf(
+          /* translators: %s: name of the person who took the action */
+          __( 'By %s', 'mission-donation-platform' ),
           entry.actor_name
-        }`;
+        );
       }
       return null;
 
     case 'refund_completed':
       if ( ctx.amount && ctx.payment_method ) {
-        return `${ formatAmount( ctx.amount, currency ) } ${ __(
-          'returned to',
-          'mission-donation-platform'
-        ) } ${ ctx.payment_method }`;
+        return sprintf(
+          /* translators: 1: refunded amount, 2: payment method, e.g. "Visa •••• 4242" */
+          __( '%1$s returned to %2$s', 'mission-donation-platform' ),
+          formatAmount( ctx.amount, currency ),
+          ctx.payment_method
+        );
       }
       if ( ctx.amount ) {
-        return `${ formatAmount( ctx.amount, currency ) } ${ __(
-          'returned',
-          'mission-donation-platform'
-        ) }`;
+        return sprintf(
+          /* translators: %s: refunded amount */
+          __( '%s returned', 'mission-donation-platform' ),
+          formatAmount( ctx.amount, currency )
+        );
       }
       return null;
 
     case 'partial_refund':
       if ( ctx.amount ) {
-        return `${ formatAmount( ctx.amount, currency ) } ${ __(
-          'returned',
-          'mission-donation-platform'
-        ) }`;
+        return sprintf(
+          /* translators: %s: refunded amount */
+          __( '%s returned', 'mission-donation-platform' ),
+          formatAmount( ctx.amount, currency )
+        );
       }
       return null;
 
@@ -104,9 +112,11 @@ function getEventSubtitle( entry, currency ) {
 
     case 'status_changed':
       if ( entry.actor_type === 'user' && entry.actor_name ) {
-        return `${ __( 'By', 'mission-donation-platform' ) } ${
+        return sprintf(
+          /* translators: %s: name of the person who took the action */
+          __( 'By %s', 'mission-donation-platform' ),
           entry.actor_name
-        }`;
+        );
       }
       return null;
 

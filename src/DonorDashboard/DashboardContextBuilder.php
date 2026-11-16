@@ -253,6 +253,8 @@ class DashboardContextBuilder {
 				'years'          => $history_years,
 				'campaigns'      => $history_campaigns,
 				'loading'        => false,
+				/* translators: 1: current page, 2: total pages */
+				'pageLabel'      => __( 'Page %1$d of %2$d', 'mission-donation-platform' ),
 			],
 			'receipts'             => [
 				'years'   => $prepared_receipts,

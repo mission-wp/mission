@@ -443,10 +443,16 @@ function buildSections( data ) {
     },
     {
       label: __( 'PHP max execution time', 'mission-donation-platform' ),
-      value: `${ server.php_max_execution_time } ${ __(
-        'seconds',
-        'mission-donation-platform'
-      ) }`,
+      value: sprintf(
+        /* translators: %s: number of seconds */
+        _n(
+          '%s second',
+          '%s seconds',
+          Number( server.php_max_execution_time ),
+          'mission-donation-platform'
+        ),
+        server.php_max_execution_time
+      ),
     },
     {
       label: __( 'PHP max input vars', 'mission-donation-platform' ),
@@ -501,7 +507,11 @@ function buildSections( data ) {
     label: p.name,
     value: (
       <>
-        { `${ __( 'by', 'mission-donation-platform' ) } ${ p.author } — ` }
+        { sprintf(
+          /* translators: %s: plugin author name */
+          __( 'by %s', 'mission-donation-platform' ),
+          p.author
+        ) + ' — ' }
         <code>{ p.version }</code>
       </>
     ),
@@ -562,9 +572,11 @@ function buildSections( data ) {
     },
     {
       key: 'plugins',
-      title: `${ __( 'Active Plugins', 'mission-donation-platform' ) } (${
+      title: sprintf(
+        /* translators: %d: number of active plugins */
+        __( 'Active Plugins (%d)', 'mission-donation-platform' ),
         plugins.length
-      })`,
+      ),
       rows: pluginRows,
     },
     {

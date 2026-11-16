@@ -3,7 +3,7 @@
  *
  * Used by both the Campaign Card and Campaign Grid blocks.
  */
-import { __, _x } from '@wordpress/i18n';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { formatAmount } from '@shared/currency';
 
 /**
@@ -55,13 +55,16 @@ export function getTag( campaign, daysRemaining ) {
 
   if ( daysRemaining !== null && daysRemaining <= 30 ) {
     return {
-      text:
-        daysRemaining === 1
-          ? __( '1 Day Left', 'mission-donation-platform' )
-          : `${ daysRemaining } ${ __(
-              'Days Left',
-              'mission-donation-platform'
-            ) }`,
+      text: sprintf(
+        /* translators: %d: number of days until the campaign ends */
+        _n(
+          '%d Day Left',
+          '%d Days Left',
+          daysRemaining,
+          'mission-donation-platform'
+        ),
+        daysRemaining
+      ),
       className: 'mission-cc-tag--ending-soon',
     };
   }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import SkeletonBar from '@shared/components/SkeletonBar';
 
 const DATA_TYPES = [
@@ -310,7 +310,11 @@ export default function ExportPanel() {
               <polyline points="5 7 8 10 11 7" />
               <line x1="8" y1="10" x2="8" y2="2" />
             </svg>
-            { __( 'Export', 'mission-donation-platform' ) + ' ' + typeLabel }
+            { sprintf(
+              /* translators: %s: type of data being exported, e.g. "Donors" */
+              __( 'Export %s', 'mission-donation-platform' ),
+              typeLabel
+            ) }
           </button>
         </div>
       </div>

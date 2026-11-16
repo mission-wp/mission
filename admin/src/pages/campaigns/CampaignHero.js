@@ -1,9 +1,43 @@
 import { useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { external } from '@wordpress/icons';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { StatusBadge } from './CampaignList';
 import { formatAmount } from '@shared/currency';
+
+/**
+ * Describe the goal a campaign's progress is measured against.
+ *
+ * @param {number} goal     Goal amount (minor units) or count.
+ * @param {string} goalType Goal type: amount, donors or donations.
+ * @return {string} Label such as "of $5,000" or "of 50 donors".
+ */
+function formatGoalTarget( goal, goalType ) {
+  if ( goalType === 'donors' ) {
+    return sprintf(
+      /* translators: %s: donor goal */
+      _n( 'of %s donor', 'of %s donors', goal, 'mission-donation-platform' ),
+      goal.toLocaleString()
+    );
+  }
+  if ( goalType === 'donations' ) {
+    return sprintf(
+      /* translators: %s: donation goal */
+      _n(
+        'of %s donation',
+        'of %s donations',
+        goal,
+        'mission-donation-platform'
+      ),
+      goal.toLocaleString()
+    );
+  }
+  return sprintf(
+    /* translators: %s: formatted goal amount */
+    __( 'of %s', 'mission-donation-platform' ),
+    formatAmount( goal )
+  );
+}
 
 export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
   const [ copied, setCopied ] = useState( false );
@@ -95,14 +129,7 @@ export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
                     : goalProgress.toLocaleString() }
                 </span>
                 <span className="mission-campaign-hero__progress-goal">
-                  { __( 'of', 'mission-donation-platform' ) }{ ' ' }
-                  { isAmount
-                    ? formatAmount( campaign.goal_amount )
-                    : `${ campaign.goal_amount.toLocaleString() } ${
-                        gType === 'donors'
-                          ? __( 'donors', 'mission-donation-platform' )
-                          : __( 'donations', 'mission-donation-platform' )
-                      }` }
+                  { formatGoalTarget( campaign.goal_amount, gType ) }
                 </span>
               </div>
               <div className="mission-campaign-hero__progress-bar">
@@ -112,10 +139,11 @@ export default function CampaignHero( { campaign, hasCampaignPage = true } ) {
                 />
               </div>
               <span className="mission-campaign-hero__progress-pct">
-                { `${ percentage }% ${ __(
-                  'funded',
-                  'mission-donation-platform'
-                ) }` }
+                { sprintf(
+                  /* translators: %s: percentage of the goal reached */
+                  __( '%s%% funded', 'mission-donation-platform' ),
+                  percentage
+                ) }
               </span>
             </div>
           ) }

@@ -1,5 +1,5 @@
 import { useState } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { formatDate } from '@shared/date';
 import { formatAmount } from '@shared/currency';
 import ClickableRows from '@shared/components/ClickableRows';
@@ -62,7 +62,8 @@ const COLUMNS = {
     ),
   },
   fundraiser: {
-    header: () => __( 'To', 'mission-donation-platform' ),
+    header: () =>
+      _x( 'To', 'donation recipient column', 'mission-donation-platform' ),
     render: ( txn ) =>
       txn.fundraiser_id ? (
         <a

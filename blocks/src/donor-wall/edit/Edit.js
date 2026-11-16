@@ -10,7 +10,7 @@ import {
   TextControl,
   ToggleControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
 import { computePrimaryColorVars } from '@shared/color';
@@ -526,9 +526,12 @@ export default function Edit( { attributes, setAttributes } ) {
                 __( 'Show More Donations', 'mission-donation-platform' ) }
             </button>
             <span className="mission-dw-count">
-              { `${ __( 'Showing', 'mission-donation-platform' ) } ${
-                visibleDonors.length
-              } ${ __( 'of', 'mission-donation-platform' ) } ${ totalDonors }` }
+              { sprintf(
+                /* translators: 1: number of donations shown, 2: total number of donations */
+                __( 'Showing %1$s of %2$s', 'mission-donation-platform' ),
+                visibleDonors.length,
+                totalDonors
+              ) }
             </span>
           </div>
         ) }
